@@ -86,6 +86,7 @@ namespace MailKit.Security {
 				for (int i = 0; i < length; i++)
 					buffer[offset++] = token[startIndex + i];
 
+				md5.Initialize ();
 				digest = md5.ComputeHash (buffer);
 
 				buffer = new byte[opad.Length + digest.Length];
@@ -96,6 +97,7 @@ namespace MailKit.Security {
 				for (int i = 0; i < digest.Length; i++)
 					buffer[offset++] = digest[i];
 
+				md5.Initialize ();
 				digest = md5.ComputeHash (buffer);
 
 				buffer = new byte[userName.Length + 1 + (digest.Length * 2)];

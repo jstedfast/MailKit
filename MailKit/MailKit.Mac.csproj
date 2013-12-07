@@ -82,10 +82,12 @@
     <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\SaslException.cs" />
     <Compile Include="Security\SaslMechanism.cs" />
-    <Compile Include="Security\SaslMechanismPlain.cs" />
-    <Compile Include="Security\SaslMechanismLogin.cs" />
     <Compile Include="Security\SaslMechanismCramMd5.cs" />
+    <Compile Include="Security\SaslMechanismDigestMd5.cs" />
+    <Compile Include="Security\SaslMechanismLogin.cs" />
+    <Compile Include="Security\SaslMechanismPlain.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IFolderNamespace.cs" />
     <Compile Include="IMessageService.cs" />

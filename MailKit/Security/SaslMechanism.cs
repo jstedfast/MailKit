@@ -86,6 +86,7 @@ namespace MailKit.Security {
 				throw new ArgumentNullException ("mechanism");
 
 			switch (mechanism) {
+			case "DIGEST-MD5":  return true;
 			case "CRAM-MD5":    return true;
 			case "PLAIN":       return true;
 			case "LOGIN":       return true;
@@ -106,11 +107,12 @@ namespace MailKit.Security {
 
 			switch (mechanism) {
 			//case "KERBEROS_V4": return null;
-			//case "DIGEST-MD5":  return null;
+			case "DIGEST-MD5":  return new SaslMechanismDigestMd5 (uri, credentials);
 			case "CRAM-MD5":    return new SaslMechanismCramMd5 (uri, credentials);
 			//case "GSSAPI":      return null;
 			case "PLAIN":       return new SaslMechanismPlain (uri, credentials);
 			case "LOGIN":       return new SaslMechanismLogin (uri, credentials);
+			//case "NTLM":        return null;
 			default:            return null;
 			}
 		}
