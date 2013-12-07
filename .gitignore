@@ -1,0 +1,6 @@
+*~
+*.userprefs
+*.suo
+test-results
+obj
+bin

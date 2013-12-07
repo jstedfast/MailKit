@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DB3A2478-4742-452B-80C1-F672B64285AD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MailKit</RootNamespace>
+    <AssemblyName>MailKit</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\lib\net45</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\lib\net45</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.csproj">
+      <Project>{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}</Project>
+      <Name>MimeKit</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
+    <Compile Include="Net\Smtp\SmtpResponse.cs" />
+    <Compile Include="Net\Smtp\SmtpException.cs" />
+    <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
+    <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
+    <Compile Include="Net\Smtp\SmtpClient.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\SaslMechanism.cs" />
+    <Compile Include="Security\SaslMechanismPlain.cs" />
+    <Compile Include="Security\SaslMechanismLogin.cs" />
+    <Compile Include="Security\SaslMechanismCramMd5.cs" />
+    <Compile Include="IFolder.cs" />
+    <Compile Include="IFolderNamespace.cs" />
+    <Compile Include="IMessageService.cs" />
+    <Compile Include="IMessageStore.cs" />
+    <Compile Include="IMessageTransport.cs" />
+    <Compile Include="ProtocolException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Net\" />
+    <Folder Include="Net\Smtp\" />
+    <Folder Include="Security\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>

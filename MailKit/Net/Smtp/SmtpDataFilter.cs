@@ -1,0 +1,86 @@
+//
+// SmtpDataFilter.cs
+//
+// Author: Jeffrey Stedfast <jeff@xamarin.com>
+//
+// Copyright (c) 2013 Jeffrey Stedfast
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+using System;
+
+using MimeKit.IO.Filters;
+
+namespace MailKit.Net.Smtp {
+	class SmtpDataFilter : MimeFilterBase
+	{
+		bool bol = true;
+
+		protected override byte[] Filter (byte[] input, int startIndex, int length, out int outputIndex, out int outputLength, bool flush)
+		{
+			int inputEnd = startIndex + length;
+			bool escape = bol;
+			int ndots = 0;
+
+			for (int i = startIndex; i < inputEnd; i++) {
+				byte c = input[i];
+
+				if (c == (byte) '.' && escape) {
+					escape = false;
+					ndots++;
+				} else if (c == (byte) '\n') {
+					escape = true;
+				} else {
+					escape = false;
+				}
+			}
+
+			EnsureOutputSize (length + ndots, false);
+			int index = 0;
+
+			for (int i = startIndex; i < inputEnd; i++) {
+				byte c = input[i];
+
+				if (c == (byte) '.' && bol) {
+					output[index++] = (byte) '.';
+					output[index++] = (byte) '.';
+					bol = false;
+				} else if (c == (byte) '\n') {
+					output[index++] = (byte) '\n';
+					bol = true;
+				} else {
+					output[index++] = c;
+					bol = false;
+				}
+			}
+
+			outputLength = index;
+			outputIndex = 0;
+
+			return output;
+		}
+
+		public override void Reset ()
+		{
+			base.Reset ();
+			bol = true;
+		}
+	}
+}
