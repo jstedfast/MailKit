@@ -87,6 +87,7 @@
     <Compile Include="Security\SaslMechanismCramMd5.cs" />
     <Compile Include="Security\SaslMechanismDigestMd5.cs" />
     <Compile Include="Security\SaslMechanismLogin.cs" />
+    <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IFolderNamespace.cs" />

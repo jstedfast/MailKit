@@ -383,7 +383,7 @@ namespace MailKit.Net.Smtp {
 
 				if (!smtps & Capabilities.HasFlag (SmtpCapabilities.StartTLS)) {
 					response = SendCommand ("STARTTLS\r\n", token);
-					if (response.StatusCode != SmtpStatusCode.Ok)
+					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpException (response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
