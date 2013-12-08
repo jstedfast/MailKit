@@ -64,7 +64,6 @@ One of the more common operations that MailKit is meant for is sending email mes
 
 ```csharp
 using System;
-using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -75,7 +74,7 @@ using MimeKit;
 namespace TestClient {
 	class Program
 	{
-		public static void Main ()
+		public static void Main (string[] args)
 		{
 			var message = new MimeMessage ();
 			message.From.Add (new MailboxAddress ("Joey Tribbiani", "joey@friends.com"));
@@ -92,12 +91,56 @@ I just wanted to let you know that Monica and I were going to go play some paint
 
 			using (var client = new SmtpClient ()) {
 				var credentials = new NetworkCredential ("joey", "password");
-				var uri = new Uri ("smtp://smtp.gmail.com:587");
-				var cancel = new CancellationTokenSource ();
 
-				client.Connect (uri, credentials, cancel.Token);
-				client.Send (message, cancel.Token);
-				client.Disconnect (true, cancel.Token);
+				// Note: if the server requires SSL-on-connect, use the smtps:// protocol instead
+				var uri = new Uri ("smtp://smtp.gmail.com:587");
+
+				using (var cancel = new CancellationTokenSource ()) {
+					client.Connect (uri, credentials, cancel.Token);
+					client.Send (message, cancel.Token);
+					client.Disconnect (true, cancel.Token);
+				}
+			}
+		}
+	}
+}
+```
+
+## Retrieving Messages (via Pop3)
+
+One of the other main uses of MailKit is retrieving messages from pop3 servers.
+
+```csharp
+using System;
+using System.Net;
+using System.Threading;
+
+using MailKit.Net.Pop3;
+using MailKit;
+using MimeKit;
+
+namespace TestClient {
+	class Program
+	{
+		public static void Main (string[] args)
+		{
+			using (var client = new Pop3Client ()) {
+				var credentials = new NetworkCredential ("joey", "password");
+
+				// Note: if the server requires SSL-on-connect, use the pop3s:// protocol instead
+				var uri = new Uri ("pop3://mail.friends.com");
+
+				using (var cancel = new CancellationTokenSource ()) {
+					client.Connect (uri, credentials, cancel.Token);
+
+					int count = client.Count (cancel.Token);
+					for (int i = 0; i < count; i++) {
+						var message = client.GetMessage (i, cancel.Token);
+						Console.WriteLine ("Subject: {0}", message.Subject);
+					}
+
+					client.Disconnect (true, cancel.Token);
+				}
 			}
 		}
 	}
