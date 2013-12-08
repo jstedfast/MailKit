@@ -1,5 +1,5 @@
 //
-// SmtpException.cs
+// IMessageSpool.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -25,22 +25,35 @@
 //
 
 using System;
+using System.Threading;
+using System.Collections.Generic;
 
-namespace MailKit.Net.Smtp {
-	public class SmtpException : ProtocolException
+using MimeKit;
+
+namespace MailKit {
+	public interface IMessageSpool : IMessageService
 	{
-		public SmtpException (SmtpStatusCode code, string message, Exception innerException) : base (message, innerException)
-		{
-			StatusCode = code;
-		}
+		bool SupportsUids { get; }
 
-		public SmtpException (SmtpStatusCode code, string message) : base (message)
-		{
-			StatusCode = code;
-		}
+		int Count (CancellationToken token);
 
-		public SmtpStatusCode StatusCode {
-			get; private set;
-		}
+		string GetMessageUid (int index, CancellationToken token);
+		string[] GetMessageUids (CancellationToken token);
+
+		int GetMessageSize (string uid, CancellationToken token);
+		int GetMessageSize (int index, CancellationToken token);
+		int[] GetMessageSizes (CancellationToken token);
+
+		HeaderList GetMessageHeaders (string uid, CancellationToken token);
+		HeaderList GetMessageHeaders (int index, CancellationToken token);
+
+		MimeMessage GetMessage (string uid, CancellationToken token);
+		MimeMessage GetMessage (int index, CancellationToken token);
+
+		void DeleteMessage (string uid, CancellationToken token);
+		void DeleteMessage (int index, CancellationToken token);
+
+		void Reset (CancellationToken token);
+		void NoOp (CancellationToken token);
 	}
 }

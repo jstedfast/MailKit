@@ -56,14 +56,6 @@ namespace MailKit.Net.Smtp {
 		{
 		}
 
-		public X509CertificateCollection ClientCertificates {
-			get; set;
-		}
-
-		public HashSet<string> AuthenticationMechanisms {
-			get { return authmechs; }
-		}
-
 		public SmtpCapabilities Capabilities {
 			get; private set;
 		}
@@ -80,6 +72,14 @@ namespace MailKit.Net.Smtp {
 
 		#region IMessageService implementation
 
+		public X509CertificateCollection ClientCertificates {
+			get; set;
+		}
+
+		public HashSet<string> AuthenticationMechanisms {
+			get { return authmechs; }
+		}
+
 		public bool IsConnected {
 			get; private set;
 		}
@@ -88,11 +88,6 @@ namespace MailKit.Net.Smtp {
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
-
-			//if (errors != SslPolicyErrors.None)
-			//	throw new InvalidOperationException ("SSL certificate error: " + errors);
-
-			// FIXME: what more should we do?
 
 			return true;
 		}
@@ -343,7 +338,7 @@ namespace MailKit.Net.Smtp {
 			MaxSize = 0;
 
 			bool smtps = uri.Scheme.ToLowerInvariant () == "smtps";
-			int port = uri.Port != 0 ? uri.Port : (smtps ? 465 : 25);
+			int port = uri.Port > 0 ? uri.Port : (smtps ? 465 : 25);
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			EndPoint localEndPoint = null;
 			SmtpResponse response = null;

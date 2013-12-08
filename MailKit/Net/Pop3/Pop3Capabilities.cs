@@ -1,5 +1,5 @@
 //
-// SmtpException.cs
+// Pop3Capabilities.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -26,21 +26,25 @@
 
 using System;
 
-namespace MailKit.Net.Smtp {
-	public class SmtpException : ProtocolException
-	{
-		public SmtpException (SmtpStatusCode code, string message, Exception innerException) : base (message, innerException)
-		{
-			StatusCode = code;
-		}
+namespace MailKit.Net.Pop3 {
+	[Flags]
+	public enum Pop3Capabilities {
+		None                   = 0,
+		Apop                   = (1 << 0),
+		LoginDelay             = (1 << 1),
+		Pipelining             = (1 << 2),
+		ResponseCodes          = (1 << 3),
+		Sasl                   = (1 << 4),
+		StartTLS               = (1 << 5),
+		Top                    = (1 << 6),
+		UIDL                   = (1 << 7),
+		User                   = (1 << 8),
 
-		public SmtpException (SmtpStatusCode code, string message) : base (message)
-		{
-			StatusCode = code;
-		}
+		// manually probed
+		ProbedTop              = (1 << 9),
+		ProbedUIDL             = (1 << 10),
+		ProbedUser             = (1 << 11),
 
-		public SmtpStatusCode StatusCode {
-			get; private set;
-		}
+		CapaMask               = 0x01fe
 	}
 }

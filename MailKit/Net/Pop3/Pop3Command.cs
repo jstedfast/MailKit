@@ -1,5 +1,5 @@
 //
-// SmtpException.cs
+// Pop3Command.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -25,22 +25,35 @@
 //
 
 using System;
+using System.Threading;
 
-namespace MailKit.Net.Smtp {
-	public class SmtpException : ProtocolException
+namespace MailKit.Net.Pop3 {
+	public delegate void Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text);
+
+	public enum Pop3CommandStatus {
+		Queued         = -5,
+		Active         = -4,
+		Continue       = -3,
+		ProtocolError  = -2,
+		Error          = -1,
+		Ok             =  0
+	}
+
+	public class Pop3Command
 	{
-		public SmtpException (SmtpStatusCode code, string message, Exception innerException) : base (message, innerException)
-		{
-			StatusCode = code;
-		}
+		public CancellationToken CancelToken { get; private set; }
+		public Pop3CommandHandler Handler { get; set; }
+		public string Command { get; private set; }
+		public int Id { get; internal set; }
 
-		public SmtpException (SmtpStatusCode code, string message) : base (message)
-		{
-			StatusCode = code;
-		}
+		// output
+		public Pop3CommandStatus Status { get; internal set; }
+		public Exception Exception { get; set; }
 
-		public SmtpStatusCode StatusCode {
-			get; private set;
+		public Pop3Command (CancellationToken token, string format, params object[] args)
+		{
+			Command = string.Format (format, args);
+			CancelToken = token;
 		}
 	}
 }

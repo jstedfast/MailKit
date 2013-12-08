@@ -1,5 +1,5 @@
 //
-// SmtpException.cs
+// Pop3Exception.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -26,21 +26,15 @@
 
 using System;
 
-namespace MailKit.Net.Smtp {
-	public class SmtpException : ProtocolException
+namespace MailKit.Net.Pop3 {
+	public class Pop3Exception : ProtocolException
 	{
-		public SmtpException (SmtpStatusCode code, string message, Exception innerException) : base (message, innerException)
+		public Pop3Exception (string message, Exception innerException) : base (message, innerException)
 		{
-			StatusCode = code;
 		}
 
-		public SmtpException (SmtpStatusCode code, string message) : base (message)
+		public Pop3Exception (string message) : base (message)
 		{
-			StatusCode = code;
-		}
-
-		public SmtpStatusCode StatusCode {
-			get; private set;
 		}
 	}
 }

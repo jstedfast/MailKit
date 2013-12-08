@@ -27,10 +27,16 @@
 using System;
 using System.Net;
 using System.Threading;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MailKit {
 	public interface IMessageService : IDisposable
 	{
+		X509CertificateCollection ClientCertificates { get; set; }
+
+		HashSet<string> AuthenticationMechanisms { get; }
+
 		bool IsConnected { get; }
 
 		void Connect (Uri uri, ICredentials credentials, CancellationToken token);

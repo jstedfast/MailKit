@@ -29,6 +29,10 @@ using System;
 namespace MailKit {
 	public abstract class ProtocolException : Exception
 	{
+		protected ProtocolException (string message, Exception innerException) : base (message, innerException)
+		{
+		}
+
 		protected ProtocolException (string message) : base (message)
 		{
 		}

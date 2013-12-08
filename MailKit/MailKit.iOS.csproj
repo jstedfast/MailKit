@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -29,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,6 +45,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
+    <Compile Include="Net\Pop3\Pop3Client.cs" />
+    <Compile Include="Net\Pop3\Pop3Command.cs" />
+    <Compile Include="Net\Pop3\Pop3Engine.cs" />
+    <Compile Include="Net\Pop3\Pop3Exception.cs" />
+    <Compile Include="Net\Pop3\Pop3Stream.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpResponse.cs" />
     <Compile Include="Net\Smtp\SmtpException.cs" />
@@ -60,6 +68,7 @@
     <Compile Include="IFolder.cs" />
     <Compile Include="IFolderNamespace.cs" />
     <Compile Include="IMessageService.cs" />
+    <Compile Include="IMessageSpool.cs" />
     <Compile Include="IMessageStore.cs" />
     <Compile Include="IMessageTransport.cs" />
     <Compile Include="ProtocolException.cs" />

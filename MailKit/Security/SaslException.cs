@@ -27,7 +27,7 @@
 using System;
 
 namespace MailKit.Security {
-	public class SaslException : Exception
+	public class SaslException : ProtocolException
 	{
 		public SaslException (string message) : base (message)
 		{
