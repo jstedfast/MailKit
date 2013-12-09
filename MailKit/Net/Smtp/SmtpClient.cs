@@ -57,6 +57,7 @@ namespace MailKit.Net.Smtp {
 	public class SmtpClient : IMessageTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
+		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		readonly HashSet<string> authmechs = new HashSet<string> ();
 		readonly byte[] buffer = new byte[2048];
 		Stream stream;
@@ -158,7 +159,7 @@ namespace MailKit.Net.Smtp {
 			return index > startIndex;
 		}
 
-		static SmtpResponse ReadResponse (Stream stream, byte[] buffer, CancellationToken token)
+		SmtpResponse ReadResponse (byte[] buffer, CancellationToken token)
 		{
 			using (var memory = new MemoryStream ()) {
 				bool complete = false;
@@ -233,8 +234,13 @@ namespace MailKit.Net.Smtp {
 					index = n;
 				} while (more || !complete);
 
-				// FIXME: use MimeKit.Utils.Charset.ConvertToUnicode()?
-				var message = Encoding.ASCII.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+				Encoding encoding;
+				if (Capabilities.HasFlag (SmtpCapabilities.UTF8))
+					encoding = Encoding.UTF8;
+				else
+					encoding = Latin1;
+
+				var message = encoding.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 
 				#if DEBUG
 				var lines = message.Split ('\n');
@@ -258,7 +264,7 @@ namespace MailKit.Net.Smtp {
 
 			stream.Write (bytes, 0, bytes.Length);
 
-			return ReadResponse (stream, buffer, token);
+			return ReadResponse (buffer, token);
 		}
 
 		SmtpResponse SendEhlo (EndPoint localEndPoint, bool ehlo, CancellationToken token)
@@ -460,7 +466,7 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				// read the greeting
-				response = ReadResponse (stream, buffer, token);
+				response = ReadResponse (buffer, token);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
 					throw new SmtpException (response.StatusCode, response.Response);
@@ -702,7 +708,7 @@ namespace MailKit.Net.Smtp {
 				WriteData (stream, data, token);
 			}
 
-			response = ReadResponse (stream, buffer, token);
+			response = ReadResponse (buffer, token);
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpException (response.StatusCode, response.Response);
