@@ -1,6 +1,6 @@
 <Namespace Name="MailKit.Net.Smtp">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>MailKit's SMTP client.</summary>
+    <remarks></remarks>
   </Docs>
 </Namespace>
