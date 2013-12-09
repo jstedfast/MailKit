@@ -28,9 +28,9 @@ using System;
 using System.Threading;
 
 namespace MailKit.Net.Pop3 {
-	public delegate void Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text);
+	delegate void Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text);
 
-	public enum Pop3CommandStatus {
+	enum Pop3CommandStatus {
 		Queued         = -5,
 		Active         = -4,
 		Continue       = -3,
@@ -39,7 +39,7 @@ namespace MailKit.Net.Pop3 {
 		Ok             =  0
 	}
 
-	public class Pop3Command
+	class Pop3Command
 	{
 		public CancellationToken CancelToken { get; private set; }
 		public Pop3CommandHandler Handler { get; set; }

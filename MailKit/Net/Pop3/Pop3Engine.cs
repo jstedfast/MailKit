@@ -31,14 +31,14 @@ using System.Threading;
 using System.Collections.Generic;
 
 namespace MailKit.Net.Pop3 {
-	public enum Pop3EngineState {
+	enum Pop3EngineState {
 		Connect,
 		Authenticate,
 		Transaction,
 		Update
 	}
 
-	public class Pop3Engine
+	class Pop3Engine
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		readonly List<Pop3Command> queue;
