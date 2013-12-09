@@ -1,0 +1,162 @@
+<Type Name="SmtpCapabilities" FullName="MailKit.Net.Smtp.SmtpCapabilities">
+  <TypeSignature Language="C#" Value="public enum SmtpCapabilities" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SmtpCapabilities extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Authentication">
+      <MemberSignature Language="C#" Value="Authentication" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Authentication = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="BinaryMime">
+      <MemberSignature Language="C#" Value="BinaryMime" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities BinaryMime = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Chunking">
+      <MemberSignature Language="C#" Value="Chunking" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Chunking = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EightBitMime">
+      <MemberSignature Language="C#" Value="EightBitMime" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities EightBitMime = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="EnhancedStatusCodes">
+      <MemberSignature Language="C#" Value="EnhancedStatusCodes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities EnhancedStatusCodes = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Pipelining">
+      <MemberSignature Language="C#" Value="Pipelining" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Pipelining = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Size">
+      <MemberSignature Language="C#" Value="Size" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Size = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StartTLS">
+      <MemberSignature Language="C#" Value="StartTLS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities StartTLS = int32(128)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UTF8">
+      <MemberSignature Language="C#" Value="UTF8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities UTF8 = int32(256)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

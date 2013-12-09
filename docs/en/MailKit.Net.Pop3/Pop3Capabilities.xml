@@ -1,0 +1,218 @@
+<Type Name="Pop3Capabilities" FullName="MailKit.Net.Pop3.Pop3Capabilities">
+  <TypeSignature Language="C#" Value="public enum Pop3Capabilities" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Pop3Capabilities extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Apop">
+      <MemberSignature Language="C#" Value="Apop" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Apop = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="CapaMask">
+      <MemberSignature Language="C#" Value="CapaMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities CapaMask = int32(510)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="LoginDelay">
+      <MemberSignature Language="C#" Value="LoginDelay" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities LoginDelay = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Pipelining">
+      <MemberSignature Language="C#" Value="Pipelining" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Pipelining = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProbedTop">
+      <MemberSignature Language="C#" Value="ProbedTop" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ProbedTop = int32(512)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProbedUIDL">
+      <MemberSignature Language="C#" Value="ProbedUIDL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ProbedUIDL = int32(1024)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ProbedUser">
+      <MemberSignature Language="C#" Value="ProbedUser" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ProbedUser = int32(2048)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="ResponseCodes">
+      <MemberSignature Language="C#" Value="ResponseCodes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ResponseCodes = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Sasl">
+      <MemberSignature Language="C#" Value="Sasl" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Sasl = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="StartTLS">
+      <MemberSignature Language="C#" Value="StartTLS" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities StartTLS = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Top">
+      <MemberSignature Language="C#" Value="Top" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Top = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UIDL">
+      <MemberSignature Language="C#" Value="UIDL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities UIDL = int32(128)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="User">
+      <MemberSignature Language="C#" Value="User" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities User = int32(256)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
