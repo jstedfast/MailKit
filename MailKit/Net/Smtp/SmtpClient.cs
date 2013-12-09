@@ -234,13 +234,13 @@ namespace MailKit.Net.Smtp {
 					index = n;
 				} while (more || !complete);
 
-				Encoding encoding;
-				if (Capabilities.HasFlag (SmtpCapabilities.UTF8))
-					encoding = Encoding.UTF8;
-				else
-					encoding = Latin1;
+				string message = null;
 
-				var message = encoding.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+				try {
+					message = Encoding.UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+				} catch {
+					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+				}
 
 				#if DEBUG
 				var lines = message.Split ('\n');
