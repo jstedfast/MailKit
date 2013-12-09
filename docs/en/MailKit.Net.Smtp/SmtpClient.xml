@@ -131,9 +131,18 @@
 	    the schema in the uri is "smtps" the connection is done
 	    using an SslStream, using the X509 client certificates set
 	    on the <see
-	    cref="M:MailKit.Net.Smtp.SmtpClient.ClientCertificates"/>
+	    cref="P:MailKit.Net.Smtp.SmtpClient.ClientCertificates"/>
 	    property and defaults to connecting on port 465.  The port
 	    can be overwritten by making it part of the URI.
+
+	  </para>
+
+	  <para>
+
+	    In addition, even if you are using a plain-text SMTP
+	    server, if the server advertises support for the STARTTLS
+	    capability, the data will be transfered using an
+	    SslSocket, just like using smtps.
 
 	  </para>
 
