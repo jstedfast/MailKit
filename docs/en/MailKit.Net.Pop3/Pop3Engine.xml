@@ -2,7 +2,7 @@
   <TypeSignature Language="C#" Value="public class Pop3Engine" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Pop3Engine extends System.Object" />
   <AssemblyInfo>
-    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>

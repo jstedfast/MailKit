@@ -27,18 +27,36 @@
 using System;
 
 namespace MailKit.Net.Smtp {
+	/// <summary>
+	/// An SMTP protocol exception.
+	/// </summary>
 	public class SmtpException : ProtocolException
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpException"/> class.
+		/// </summary>
+		/// <param name="code">The error code.</param>
+		/// <param name="message">The error message.</param>
+		/// <param name="innerException">An inner exception.</param>
 		public SmtpException (SmtpStatusCode code, string message, Exception innerException) : base (message, innerException)
 		{
 			StatusCode = code;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpException"/> class.
+		/// </summary>
+		/// <param name="code">The error code.</param>
+		/// <param name="message">The error message.</param>
 		public SmtpException (SmtpStatusCode code, string message) : base (message)
 		{
 			StatusCode = code;
 		}
 
+		/// <summary>
+		/// Gets the status code which may provide additional information.
+		/// </summary>
+		/// <value>The status code.</value>
 		public SmtpStatusCode StatusCode {
 			get; private set;
 		}

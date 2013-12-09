@@ -27,12 +27,24 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// A protocol exception.
+	/// </summary>
 	public abstract class ProtocolException : Exception
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
+		/// </summary>
+		/// <param name="message">The error message.</param>
+		/// <param name="innerException">An inner exception.</param>
 		protected ProtocolException (string message, Exception innerException) : base (message, innerException)
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
+		/// </summary>
+		/// <param name="message">The error message.</param>
 		protected ProtocolException (string message) : base (message)
 		{
 		}

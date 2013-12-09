@@ -2,7 +2,7 @@
   <TypeSignature Language="C#" Value="public class SmtpException : MailKit.ProtocolException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SmtpException extends MailKit.ProtocolException" />
   <AssemblyInfo>
-    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -10,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Exception raised when an SMTP server responds with an error code.</summary>
-    <remarks></remarks>
+    <summary>
+            An SMTP protocol exception.
+            </summary>
+    <remarks>
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +29,13 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="code">Status code.</param>
-        <param name="message">Message provided by the server.</param>
-        <summary>Constructs a new SmtpException.</summary>
-        <remarks></remarks>
+        <param name="code">The error code.</param>
+        <param name="message">The error message.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Smtp.SmtpException" /> class.
+            </summary>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -45,11 +51,14 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="code">Status code.</param>
-        <param name="message">Message provided by the server.</param>
-        <param name="innerException">Inner exception.</param>
-        <summary>Constructs a new SmtpException.</summary>
-        <remarks></remarks>
+        <param name="code">The error code.</param>
+        <param name="message">The error message.</param>
+        <param name="innerException">An inner exception.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Smtp.SmtpException" /> class.
+            </summary>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="StatusCode">
@@ -63,9 +72,12 @@
         <ReturnType>MailKit.Net.Smtp.SmtpStatusCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Status code reported by the server.</summary>
-        <value></value>
-        <remarks></remarks>
+        <summary>
+            Gets the status code which may provide additional information.
+            </summary>
+        <value>The status code.</value>
+        <remarks>
+        </remarks>
       </Docs>
     </Member>
   </Members>

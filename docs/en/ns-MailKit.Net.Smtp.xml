@@ -1,6 +1,6 @@
 <Namespace Name="MailKit.Net.Smtp">
   <Docs>
-    <summary>MailKit's SMTP client.</summary>
-    <remarks></remarks>
+    <summary>An SMTP client that can be used to send email messages.</summary>
+    <remarks>An SMTP client that can be used to send email messages.</remarks>
   </Docs>
 </Namespace>

@@ -29,8 +29,19 @@ using System.Threading;
 using MimeKit;
 
 namespace MailKit {
+	/// <summary>
+	/// An interface for sending messages.
+	/// </summary>
+	/// <remarks>
+	/// Implemented by <see cref="MailKit.Net.Smtp.SmtpClient"/>.
+	/// </remarks>
 	public interface IMessageTransport : IMessageService
 	{
+		/// <summary>
+		/// Send the specified message.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		/// <param name="token">A cancellation token.</param>
 		void Send (MimeMessage message, CancellationToken token);
 	}
 }

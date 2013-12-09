@@ -2,7 +2,7 @@
   <TypeSignature Language="C#" Value="public enum SmtpCapabilities" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SmtpCapabilities extends System.Enum" />
   <AssemblyInfo>
-    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -14,10 +14,13 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Capabilities supported by the server.</summary>
+    <summary>
+            Capabilities supported by an SMTP server.
+            </summary>
     <remarks>
-      The values in this enumeration represent the capabilities reported by the SMTP server after the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect"/> has completed.
-    </remarks>
+            Capabilities are read as part of the response to the EHLO command that
+            is issued during the connection phase of the <see cref="T:MailKit.Net.Smtp.SmtpClient" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Authentication">
@@ -31,7 +34,9 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server supports authentication (AUTH feature).</summary>
+        <summary>
+            The server supports SASL AUTH extension.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="BinaryMime">
@@ -45,7 +50,9 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-	<summary>The server supports binary blobs (BINARYMIME feature)</summary>
+        <summary>
+            The server supports the BINARYMIME extension (rfc3030).
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Chunking">
@@ -59,7 +66,10 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server supports data uploads using chunking (CHUNKING feature).</summary>
+        <summary>
+            The server supports the CHUNKING extension (rfc3030), allowing clients
+            to upload messages in chunks.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="EightBitMime">
@@ -73,7 +83,10 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server support 8-bit MIME encoding (8BITMIME feature).</summary>
+        <summary>
+            The server supports the 8BITMIME extension (rfc2821), allowing clients
+            to send messages using the "8bit" Content-Transfer-Encoding.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="EnhancedStatusCodes">
@@ -87,7 +100,9 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server supports enhanced status codes (ENHANCEDSTATUSCODES feature).</summary>
+        <summary>
+            The server supports the ENHANCEDSTATUSCODES extension (rfc2034).
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -101,7 +116,9 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>If the value of the capabilities is this, no features were detected.</summary>
+        <summary>
+            The server does not support any additional extensions.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Pipelining">
@@ -115,7 +132,10 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server supports pipelinining (PIPELININING feature).</summary>
+        <summary>
+            The server supports the PIPELINING extension (rfc2449), allowing clients
+            to send multiple commands at once in order to reduce round-trip latency.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -129,7 +149,10 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server has specified a maximum message size.   If set, the maximum message size can be accessed using the <see cref="P:MailKit.Net.Smtp.SmtpClient.MaxSize"/> property.   (SIZE feature).</summary>
+        <summary>
+            The server supports the SIZE extensions (rfc1870), allowing clients
+            to notify the server of the message size before uploading.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="StartTLS">
@@ -143,7 +166,10 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server can receive the data using the Transport Layer Security (TLS -- feature STARTTLS).</summary>
+        <summary>
+            The server supports the STARTTLS extension (rfc2222), allowing clients
+            to switch to an encrypted SSL/TLS connection after connecting.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="UTF8">
@@ -157,7 +183,9 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The server implements support for UTF8 (RFC 6531, SMTPUTF8 feature).</summary>
+        <summary>
+            The server supports the SMTPUTF8 extension (rfc6531).
+            </summary>
       </Docs>
     </Member>
   </Members>

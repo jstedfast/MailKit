@@ -2,15 +2,18 @@
   <TypeSignature Language="C#" Value="public enum SmtpStatusCode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SmtpStatusCode extends System.Enum" />
   <AssemblyInfo>
-    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>SMTP status codes.</summary>
-    <remarks></remarks>
+    <summary>
+            An enumeration of possible SMTP status codes.
+            </summary>
+    <remarks>
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName="AuthenticationChallenge">
@@ -192,7 +195,9 @@
         <ReturnType>MailKit.Net.Smtp.SmtpStatusCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            A general failure has occurred.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="HelpMessage">

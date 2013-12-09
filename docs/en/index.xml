@@ -1,6 +1,6 @@
 <Overview>
   <Assemblies>
-    <Assembly Name="MailKit.iOS" Version="0.1.0.0">
+    <Assembly Name="MailKit" Version="0.1.0.0">
       <Attributes>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyCompany("")</AttributeName>

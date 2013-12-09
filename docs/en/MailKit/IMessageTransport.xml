@@ -2,7 +2,7 @@
   <TypeSignature Language="C#" Value="public interface IMessageTransport : IDisposable, MailKit.IMessageService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageTransport implements class MailKit.IMessageService, class System.IDisposable" />
   <AssemblyInfo>
-    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
@@ -14,8 +14,12 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            An interface for sending messages.
+            </summary>
+    <remarks>
+            Implemented by <see cref="T:MailKit.Net.Smtp.SmtpClient" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Send">
@@ -33,9 +37,11 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
+        <param name="message">The message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Send the specified message.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

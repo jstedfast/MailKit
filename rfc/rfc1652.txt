@@ -1,0 +1,339 @@
+
+
+
+
+
+
+Network Working Group                               J. Klensin, WG Chair
+Request for Comments: 1652                                           MCI
+Obsoletes: 1426                                         N. Freed, Editor
+Category: Standards Track                                       Innosoft
+                                                                 M. Rose
+                                            Dover Beach Consulting, Inc.
+                                                            E. Stefferud
+                                     Network Management Associates, Inc.
+                                                              D. Crocker
+                                                  Silicon Graphics, Inc.
+                                                               July 1994
+
+
+             SMTP Service Extension for 8bit-MIMEtransport
+
+Status of this Memo
+
+   This document specifies an Internet standards track protocol for the
+   Internet community, and requests discussion and suggestions for
+   improvements.  Please refer to the current edition of the "Internet
+   Official Protocol Standards" (STD 1) for the standardization state
+   and status of this protocol.  Distribution of this memo is unlimited.
+
+Abstract
+
+   This memo defines an extension to the SMTP service whereby an SMTP
+   content body consisting of text containing octets outside of the US-
+   ASCII octet range (hex 00-7F) may be relayed using SMTP.
+
+1.  Introduction
+
+   Although SMTP is widely and robustly deployed, various extensions
+   have been requested by parts of the Internet community. In
+   particular, a significant portion of the Internet community wishes to
+   exchange messages in which the content body consists of a MIME
+   message [3] containing arbitrary octet-aligned material. This memo
+   uses the mechanism described in [5] to define an extension to the
+   SMTP service whereby such contents may be exchanged. Note that this
+   extension does NOT eliminate the possibility of an SMTP server
+   limiting line length; servers are free to implement this extension
+   but nevertheless set a line length limit no lower than 1000 octets.
+   Given that this restriction still applies, this extension does NOT
+   provide a means for transferring unencoded binary via SMTP.
+
+
+
+
+
+
+
+
+Klensin, Freed, Rose, Stefferud & Crocker                       [Page 1]
+
+RFC 1652                SMTP 8bit-MIMEtransport                July 1994
+
+
+2.  Framework for the 8bit MIME Transport Extension
+
+   The 8bit MIME transport extension is laid out as follows:
+
+      (1)  the name of the SMTP service extension defined here is
+           8bit-MIMEtransport;
+
+      (2)  the EHLO keyword value associated with the extension is
+           8BITMIME;
+
+      (3)  no parameter is used with the 8BITMIME EHLO keyword;
+
+      (4)  one optional parameter using the keyword BODY is added to
+           the MAIL FROM command.  The value associated with this
+           parameter is a keyword indicating whether a 7bit message
+           (in strict compliance with [1]) or a MIME message (in
+           strict compliance with [3]) with arbitrary octet content
+           is being sent. The syntax of the value is as follows,
+           using the ABNF notation of [2]:
+
+                body-value ::= "7BIT" / "8BITMIME"
+
+      (5)  no additional SMTP verbs are defined by this extension;
+           and,
+
+      (6)  the next section specifies how support for the extension
+           affects the behavior of a server and client SMTP.
+
+3.  The 8bit-MIMEtransport service extension
+
+   When a client SMTP wishes to submit (using the MAIL command) a
+   content body consisting of a MIME message containing arbitrary lines
+   of octet-aligned material, it first issues the EHLO command to the
+   server SMTP. If the server SMTP responds with code 250 to the EHLO
+   command, and the response includes the EHLO keyword value 8BITMIME,
+   then the server SMTP is indicating that it supports the extended MAIL
+   command and will accept MIME messages containing arbitrary octet-
+   aligned material.
+
+   The extended MAIL command is issued by a client SMTP when it wishes
+   to transmit a content body consisting of a MIME message containing
+   arbitrary lines of octet-aligned material. The syntax for this
+   command is identical to the MAIL command in [1], except that a BODY
+   parameter must appear after the address.  Only one BODY parameter may
+   be used in a single MAIL command.
+
+
+
+
+
+
+Klensin, Freed, Rose, Stefferud & Crocker                       [Page 2]
+
+RFC 1652                SMTP 8bit-MIMEtransport                July 1994
+
+
+   The complete syntax of this extended command is defined in [5]. The
+   esmtp-keyword is BODY and the syntax for esmtp-value is given by the
+   syntax for body-value shown above.
+
+   The value associated with the BODY parameter indicates whether the
+   content body which will be passed using the DATA command consists of
+   a MIME message containing some arbitrary octet-aligned material
+   ("8BITMIME") or is encoded entirely in accordance with [1] ("7BIT").
+
+   A server which supports the 8-bit MIME transport service extension
+   shall preserve all bits in each octet passed using the DATA command.
+
+   Naturally, the usual SMTP data-stuffing algorithm applies so that a
+   content which contains the five-character sequence of
+
+     <CR> <LF> <DOT> <CR> <LF>
+
+   or a content that begins with the three-character sequence of
+
+     <DOT> <CR> <LF>
+
+   does not prematurely terminate the transfer of the content.  Further,
+   it should be noted that the CR-LF pair immediately preceeding the
+   final dot is considered part of the content.  Finally, although the
+   content body contains arbitrary lines of octet-aligned material, the
+   length of each line (number of octets between two CR-LF pairs), is
+   still subject to SMTP server line length restrictions (which may
+   allow as few as 1000 octets on a single line). This restriction means
+   that this extension MAY provide the necessary facilities for
+   transferring a MIME object with the 8BIT content-transfer-encoding,
+   it DOES NOT provide a means of transferring an object with the BINARY
+   content-transfer-encoding.
+
+   Once a server SMTP supporting the 8bit-MIMEtransport service
+   extension accepts a content body containing octets with the high-
+   order (8th) bit set, the server SMTP must deliver or relay the
+   content in such a way as to preserve all bits in each octet.
+
+   If a server SMTP does not support the 8-bit MIME transport extension
+   (either by not responding with code 250 to the EHLO command, or by
+   not including the EHLO keyword value 8BITMIME in its response), then
+   the client SMTP must not, under any circumstances, attempt to
+   transfer a content which contains characters outside the US-ASCII
+   octet range (hex 00-7F).
+
+   A client SMTP has two options in this case: first, it may implement a
+   gateway transformation to convert the message into valid 7bit MIME,
+   or second, or may treat this as a permanent error and handle it in
+
+
+
+Klensin, Freed, Rose, Stefferud & Crocker                       [Page 3]
+
+RFC 1652                SMTP 8bit-MIMEtransport                July 1994
+
+
+   the usual manner for delivery failures.  The specifics of the
+   transformation from 8bit MIME to 7bit MIME are not described by this
+   RFC; the conversion is nevertheless constrained in the following
+   ways:
+
+      (1)  it must cause no loss of information; MIME transport
+           encodings must be employed as needed to insure this is
+           the case, and
+
+      (2)  the resulting message must be valid 7bit MIME.
+
+4.  Usage Example
+
+   The following dialogue illustrates the use of the 8bit-MIMEtransport
+   service extension:
+
+   S: <wait for connection on TCP port 25>
+   C: <open connection to server>
+   S: 220 dbc.mtview.ca.us SMTP service ready
+   C: EHLO ymir.claremont.edu
+   S: 250-dbc.mtview.ca.us says hello
+   S: 250 8BITMIME
+   C: MAIL FROM:<ned@ymir.claremont.edu> BODY=8BITMIME
+   S: 250 <ned@ymir.claremont.edu>... Sender and 8BITMIME ok
+   C: RCPT TO:<mrose@dbc.mtview.ca.us>
+   S: 250 <mrose@dbc.mtview.ca.us>... Recipient ok
+   C: DATA
+   S: 354 Send 8BITMIME message, ending in CRLF.CRLF.
+    ...
+   C: .
+   S: 250 OK
+   C: QUIT
+   S: 250 Goodbye
+
+5.  Security Considerations
+
+   This RFC does not discuss security issues and is not believed to
+   raise any security issues not already endemic in electronic mail and
+   present in fully conforming implementations of [1].
+
+6.  Acknowledgements
+
+   This document represents a synthesis of the ideas of many people and
+   reactions to the ideas and proposals of others.  Randall Atkinson,
+   Craig Everhart, Risto Kankkunen, and Greg Vaudreuil contributed ideas
+   and text sufficient to be considered co-authors.  Other important
+   suggestions, text, or encouragement came from Harald Alvestrand, Jim
+   Conklin, Mark Crispin, Frank da Cruz, 'Olafur Gudmundsson, Per
+
+
+
+Klensin, Freed, Rose, Stefferud & Crocker                       [Page 4]
+
+RFC 1652                SMTP 8bit-MIMEtransport                July 1994
+
+
+   Hedeland, Christian Huitma, Neil Katin, Eliot Lear, Harold A.
+   Miller, Keith Moore, Dan Oscarsson, Julian Onions, Neil Rickert, John
+   Wagner, Rayan Zachariassen, and the contributions of the entire IETF
+   SMTP Working Group. Of course, none of the individuals are
+   necessarily responsible for the combination of ideas represented
+   here. Indeed, in some cases, the response to a particular criticism
+   was to accept the problem identification but to include an entirely
+   different solution from the one originally proposed.
+
+7.  References
+
+   [1] Postel, J., "Simple Mail Transfer Protocol", STD 10, RFC 821,
+       USC/Information Sciences Institute, August 1982.
+
+   [2] Crocker, D., "Standard for the Format of ARPA Internet Text
+       Messages", STD 11, RFC 822, UDEL, August 1982.
+
+   [3] Borenstein, N., and N. Freed, "Multipurpose Internet Mail
+       Extensions", RFC 1521, Bellcore, Innosoft, September 1993.
+
+   [4] Moore, K., "Representation of Non-ASCII Text in Internet Message
+       Headers", RFC 1522, University of Tennessee, September 1993.
+
+   [5] Klensin, J., Freed, N., Rose, M., Stefferud, E., and D. Crocker,
+       "SMTP Service Extensions", RFC 1651, MCI, Innosoft, Dover Beach
+       Consulting, Inc., Network Management Associates, Inc., Silicon
+       Graphics, Inc., July 1994.
+
+   [6] Partridge, C., "Mail Routing and the Domain System", STD 14, RFC
+       974, BBN, January 1986.
+
+8.  Chair, Editor, and Authors' Addresses
+
+   John Klensin, WG Chair
+   MCI Data Services Division
+   2100 Reston Parkway, 6th floor
+   Reston, VA 22091
+   USA
+
+   Phone:: 1 703 715 7361
+   Fax: +1 703 715 7435
+   EMail: klensin@mci.net
+
+
+
+
+
+
+
+
+
+Klensin, Freed, Rose, Stefferud & Crocker                       [Page 5]
+
+RFC 1652                SMTP 8bit-MIMEtransport                July 1994
+
+
+   Ned Freed, Editor
+   Innosoft International, Inc.
+   1050 East Garvey Avenue South
+   West Covina, CA 91790
+   USA
+
+   Phone:: +1 818 919 3600
+   Fax: +1 818 919 3614
+   EMail: ned@innosoft.com
+
+
+   Marshall T. Rose
+   Dover Beach Consulting, Inc.
+   420 Whisman Court
+   Moutain View, CA  94043-2186
+   USA
+
+   Phone: +1 415 968 1052
+   Fax: +1 415 968 2510
+   EMail: mrose@dbc.mtview.ca.us
+
+
+   Einar A. Stefferud
+   Network Management Associates, Inc.
+   17301 Drey Lane
+   Huntington Beach, CA, 92647-5615
+   USA
+
+   Phone: +1 714 842 3711
+   Fax: +1 714 848 2091
+   EMail: stef@nma.com
+
+
+   Dave Crocker
+   Silicon Graphics, Inc.
+   2011 N. Shoreline Blvd.
+   P.O. Box 7311
+   Mountain View, CA 94039
+   USA
+
+   Phone: +1 415 390 1804
+   Fax: +1 415 962 8404
+   EMail: dcrocker@sgi.com
+
+
+
+
+
+
+
+
+Klensin, Freed, Rose, Stefferud & Crocker                       [Page 6]
+
