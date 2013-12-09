@@ -9,8 +9,8 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>SMTP status codes.</summary>
+    <remarks></remarks>
   </Docs>
   <Members>
     <Member MemberName="AuthenticationChallenge">

@@ -10,8 +10,8 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Exception raised when an SMTP server responds with an error code.</summary>
+    <remarks></remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +26,10 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="code">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="code">Status code.</param>
+        <param name="message">Message provided by the server.</param>
+        <summary>Constructs a new SmtpException.</summary>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -45,11 +45,11 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="code">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="code">Status code.</param>
+        <param name="message">Message provided by the server.</param>
+        <param name="innerException">Inner exception.</param>
+        <summary>Constructs a new SmtpException.</summary>
+        <remarks></remarks>
       </Docs>
     </Member>
     <Member MemberName="StatusCode">
@@ -63,9 +63,9 @@
         <ReturnType>MailKit.Net.Smtp.SmtpStatusCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>Status code reported by the server.</summary>
+        <value></value>
+        <remarks></remarks>
       </Docs>
     </Member>
   </Members>

@@ -14,8 +14,10 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Capabilities supported by the server.</summary>
+    <remarks>
+      The values in this enumeration represent the capabilities reported by the SMTP server after the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect"/> has completed.
+    </remarks>
   </Docs>
   <Members>
     <Member MemberName="Authentication">
@@ -29,7 +31,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server supports authentication (AUTH feature).</summary>
       </Docs>
     </Member>
     <Member MemberName="BinaryMime">
@@ -43,7 +45,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+	<summary>The server supports binary blobs (BINARYMIME feature)</summary>
       </Docs>
     </Member>
     <Member MemberName="Chunking">
@@ -57,7 +59,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server supports data uploads using chunking (CHUNKING feature).</summary>
       </Docs>
     </Member>
     <Member MemberName="EightBitMime">
@@ -71,7 +73,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server support 8-bit MIME encoding (8BITMIME feature).</summary>
       </Docs>
     </Member>
     <Member MemberName="EnhancedStatusCodes">
@@ -85,7 +87,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server supports enhanced status codes (ENHANCEDSTATUSCODES feature).</summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -99,7 +101,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>If the value of the capabilities is this, no features were detected.</summary>
       </Docs>
     </Member>
     <Member MemberName="Pipelining">
@@ -113,7 +115,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server supports pipelinining (PIPELININING feature).</summary>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -127,7 +129,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server has specified a maximum message size.   If set, the maximum message size can be accessed using the <see cref="P:MailKit.Net.Smtp.SmtpClient.MaxSize"/> property.   (SIZE feature).</summary>
       </Docs>
     </Member>
     <Member MemberName="StartTLS">
@@ -141,7 +143,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server can receive the data using the Transport Layer Security (TLS -- feature STARTTLS).</summary>
       </Docs>
     </Member>
     <Member MemberName="UTF8">
@@ -155,7 +157,7 @@
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>The server implements support for UTF8 (RFC 6531, SMTPUTF8 feature).</summary>
       </Docs>
     </Member>
   </Members>
