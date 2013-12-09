@@ -48,7 +48,7 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <param name="startIndex">To be added.</param>
         <param name="length">To be added.</param>
         <summary>To be added.</summary>

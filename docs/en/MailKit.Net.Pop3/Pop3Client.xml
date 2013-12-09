@@ -84,7 +84,7 @@
       <Docs>
         <param name="uri">To be added.</param>
         <param name="credentials">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -103,7 +103,7 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -125,7 +125,7 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -146,7 +146,7 @@
       </Parameters>
       <Docs>
         <param name="uid">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -167,7 +167,7 @@
       </Parameters>
       <Docs>
         <param name="quit">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -204,7 +204,7 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -226,7 +226,7 @@
       </Parameters>
       <Docs>
         <param name="uid">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -248,7 +248,7 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -270,7 +270,7 @@
       </Parameters>
       <Docs>
         <param name="uid">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -292,7 +292,7 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -314,7 +314,7 @@
       </Parameters>
       <Docs>
         <param name="uid">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -334,7 +334,7 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -356,7 +356,7 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -376,7 +376,7 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -412,7 +412,7 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -431,7 +431,7 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>

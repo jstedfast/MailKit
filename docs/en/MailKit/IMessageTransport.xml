@@ -34,7 +34,7 @@
       </Parameters>
       <Docs>
         <param name="message">To be added.</param>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>

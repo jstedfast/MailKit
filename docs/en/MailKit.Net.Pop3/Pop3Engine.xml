@@ -195,7 +195,7 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
@@ -223,7 +223,7 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
         <param name="format">To be added.</param>
         <param name="args">To be added.</param>
         <summary>To be added.</summary>
