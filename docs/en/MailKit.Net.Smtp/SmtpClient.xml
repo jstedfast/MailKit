@@ -22,7 +22,7 @@
             </summary>
     <remarks>
             The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> class supports both the "smtp" and "smtps"
-            protocols. The "smtp" protocol makes a cleartext connection to the SMTP
+            protocols. The "smtp" protocol makes a clear-text connection to the SMTP
             server and does not use SSL or TLS unless the SMTP server supports the
             STARTTLS extension (as defined by rfc2222). The "smtps" protocol,
             however, connects to the SMTP server using an SSL-wrapped connection.
@@ -59,11 +59,11 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the authentication mechanisms supported by the message service.
+            Gets the authentication mechanisms supported by the SMTP server.
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried durring the the
+            The authentication mechanisms are queried durring the
             <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
@@ -105,9 +105,10 @@
             </summary>
         <value>The client SSL certificates.</value>
         <remarks>
-            Some servers may require the client SSL certificates in order
-            to allow the user to connect.
-            </remarks>
+          <para>Some servers may require the client SSL certificates in order
+            to allow the user to connect.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Connect">
@@ -227,10 +228,10 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets whether or not the service is currently connected.
+            Gets whether or not the client is currently connected to an SMTP server.
             </summary>
         <value>
-          <c>true</c> if the service connected; otherwise, <c>false</c>.</value>
+          <c>true</c> if the client connected; otherwise, <c>false</c>.</value>
         <remarks>
         </remarks>
       </Docs>

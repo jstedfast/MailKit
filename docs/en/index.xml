@@ -56,14 +56,7 @@
     <Namespace Name="MailKit.Net.Pop3">
       <Type Name="Pop3Capabilities" Kind="Enumeration" />
       <Type Name="Pop3Client" Kind="Class" />
-      <Type Name="Pop3Command" Kind="Class" />
-      <Type Name="Pop3CommandHandler" Kind="Delegate" />
-      <Type Name="Pop3CommandStatus" Kind="Enumeration" />
-      <Type Name="Pop3Engine" Kind="Class" />
-      <Type Name="Pop3EngineState" Kind="Enumeration" />
       <Type Name="Pop3Exception" Kind="Class" />
-      <Type Name="Pop3Stream" Kind="Class" />
-      <Type Name="Pop3StreamMode" Kind="Enumeration" />
     </Namespace>
     <Namespace Name="MailKit.Net.Smtp">
       <Type Name="SmtpCapabilities" Kind="Enumeration" />

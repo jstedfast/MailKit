@@ -36,7 +36,7 @@
             </summary>
         <value>The supported authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried durring the the
+            The authentication mechanisms are queried durring the
             <see cref="M:MailKit.IMessageService.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
@@ -57,9 +57,10 @@
             </summary>
         <value>The client SSL certificates.</value>
         <remarks>
-            Some servers may require the client SSL certificates in order
-            to allow the user to connect.
-            </remarks>
+          <para>Some servers may require the client SSL certificates in order
+            to allow the user to connect.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.IMessageService.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Connect">

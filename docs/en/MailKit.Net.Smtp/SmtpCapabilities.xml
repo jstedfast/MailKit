@@ -150,8 +150,8 @@
       </ReturnValue>
       <Docs>
         <summary>
-            The server supports the SIZE extensions (rfc1870), allowing clients
-            to notify the server of the message size before uploading.
+            The server supports the SIZE extensions (rfc1870) and may have a maximum
+            message size limitation (see <see cref="P:MailKit.Net.Smtp.SmtpClient.MaxSize" />).
             </summary>
       </Docs>
     </Member>
