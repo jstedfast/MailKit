@@ -1,0 +1,106 @@
+<Namespace Name="MailKit">
+  <Docs>
+    <summary>Mail library.</summary>
+    <remarks>
+      <para>
+	MailKit is a cross-platform mail client library for Mono and .NET built using the MimeKit framework.
+      </para>
+      <format type="text/html">
+	<h1>Using MailKit</h1>
+      </format>
+      <format type="text/html">
+	<h1>Sending Messages</h1>
+      </format>
+      <para>
+	One of the more common operations that MailKit is meant for is sending email messages.
+      </para>
+      <example>
+	<code lang="c#">
+using System;
+using System.Net;
+using System.Threading;
+
+using MailKit.Net.Smtp;
+using MailKit;
+using MimeKit;
+
+namespace TestClient {
+    class Program
+    {
+        public static void Main (string[] args)
+        {
+            var message = new MimeMessage ();
+            message.From.Add (new MailboxAddress ("Joey Tribbiani", "joey@friends.com"));
+            message.To.Add (new MailboxAddress ("Mrs. Chanandler Bong", "chandler@friends.com"));
+            message.Subject = "How you doin'?";
+
+            message.Body = new TextPart ("plain") {
+                Text = @"Hey Chandler,
+
+I just wanted to let you know that Monica and I were going to go play some paintball, you in?
+
+-- Joey"
+            };
+
+            using (var client = new SmtpClient ()) {
+                var credentials = new NetworkCredential ("joey", "password");
+
+                // Note: if the server requires SSL-on-connect, use the smtps:// protocol instead
+                var uri = new Uri ("smtp://smtp.gmail.com:587");
+
+                using (var cancel = new CancellationTokenSource ()) {
+                    client.Connect (uri, credentials, cancel.Token);
+                    client.Send (message, cancel.Token);
+                    client.Disconnect (true, cancel.Token);
+                }
+            }
+        }
+    }
+}	</code>
+      </example>
+      <format type="text/html">
+	<h1>Retrieving Messages (POP3)</h1>
+      </format>
+      <para>
+	One of the other main uses of MailKit is retrieving messages from pop3 servers.
+      </para>
+      <example>
+	<code lang="c#">
+using System;
+using System.Net;
+using System.Threading;
+
+using MailKit.Net.Pop3;
+using MailKit;
+using MimeKit;
+
+namespace TestClient {
+    class Program
+    {
+        public static void Main (string[] args)
+        {
+            using (var client = new Pop3Client ()) {
+                var credentials = new NetworkCredential ("joey", "password");
+
+                // Note: if the server requires SSL-on-connect, use the pop3s:// protocol instead
+                var uri = new Uri ("pop3://mail.friends.com");
+
+                using (var cancel = new CancellationTokenSource ()) {
+                    client.Connect (uri, credentials, cancel.Token);
+
+                    int count = client.Count (cancel.Token);
+                    for (int i = 0; i &lt; count; i++) {
+                        var message = client.GetMessage (i, cancel.Token);
+                        Console.WriteLine ("Subject: {0}", message.Subject);
+                    }
+
+                    client.Disconnect (true, cancel.Token);
+                }
+            }
+        }
+    }
+}	</code>
+      </example>
+    </remarks>
+  </Docs>
+</Namespace>

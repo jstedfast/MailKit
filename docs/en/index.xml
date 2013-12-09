@@ -1,0 +1,85 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="MailKit.iOS" Version="0.1.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2013 Jeffrey Stedfast")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("0.1.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.1")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("MailKit")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTrademark("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.Guid("2fe79b66-d107-45da-9493-175f59c4a53c")</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="MailKit">
+      <Type Name="IFolder" Kind="Interface" />
+      <Type Name="IFolderNamespace" Kind="Interface" />
+      <Type Name="IMessageService" Kind="Interface" />
+      <Type Name="IMessageSpool" Kind="Interface" />
+      <Type Name="IMessageStore" Kind="Interface" />
+      <Type Name="IMessageTransport" Kind="Interface" />
+      <Type Name="ProtocolException" Kind="Class" />
+    </Namespace>
+    <Namespace Name="MailKit.Net.Pop3">
+      <Type Name="Pop3Capabilities" Kind="Enumeration" />
+      <Type Name="Pop3Client" Kind="Class" />
+      <Type Name="Pop3Command" Kind="Class" />
+      <Type Name="Pop3CommandHandler" Kind="Delegate" />
+      <Type Name="Pop3CommandStatus" Kind="Enumeration" />
+      <Type Name="Pop3Engine" Kind="Class" />
+      <Type Name="Pop3EngineState" Kind="Enumeration" />
+      <Type Name="Pop3Exception" Kind="Class" />
+      <Type Name="Pop3Stream" Kind="Class" />
+      <Type Name="Pop3StreamMode" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="MailKit.Net.Smtp">
+      <Type Name="SmtpCapabilities" Kind="Enumeration" />
+      <Type Name="SmtpClient" Kind="Class" />
+      <Type Name="SmtpException" Kind="Class" />
+      <Type Name="SmtpStatusCode" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="MailKit.Security">
+      <Type Name="SaslException" Kind="Class" />
+      <Type Name="SaslMechanism" Kind="Class" />
+      <Type Name="SaslMechanismCramMd5" Kind="Class" />
+      <Type Name="SaslMechanismDigestMd5" Kind="Class" />
+      <Type Name="SaslMechanismLogin" Kind="Class" />
+      <Type Name="SaslMechanismOAuth2" Kind="Class" />
+      <Type Name="SaslMechanismPlain" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>MailKit.iOS</Title>
+</Overview>

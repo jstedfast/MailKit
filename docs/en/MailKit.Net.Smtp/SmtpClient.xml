@@ -1,0 +1,257 @@
+<Type Name="SmtpClient" FullName="MailKit.Net.Smtp.SmtpClient">
+  <TypeSignature Language="C#" Value="public class SmtpClient : IDisposable, MailKit.IMessageTransport" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SmtpClient extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageTransport, class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.IMessageTransport</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>MailKit's SMTP client.</summary>
+    <remarks>
+      <para>
+	This class implements an SMTP client that can be used to send MimeMessages to a server.
+      </para>
+      <para>
+	The SMTP client supports both the SMTP and SMTPS protocols.
+	The SMTP protocol sends the data in clear text over the
+	network connection, while the SMTPS version uses an SSL
+	collection (using .NET's SslStream class).
+      </para>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public SmtpClient ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>Creates a new instance of the SmtpClient.</summary>
+        <remarks>
+	  Once you create your client, you need to use the Connect, Send and Disconnect methods.
+	</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticationMechanisms">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>List of SMTP authentication mechanisms supported by the server.</summary>
+        <value>Authentication mechanisms, as returned by the extended SMTP connection setup in the AUTH extension header.</value>
+        <remarks>
+	  <para>
+	    The value of this property is available once you have invoked the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect"/> method.
+	  </para>
+	</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Capabilities">
+      <MemberSignature Language="C#" Value="public MailKit.Net.Smtp.SmtpCapabilities Capabilities { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Smtp.SmtpCapabilities Capabilities" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>List of capabilities supported by the SMTP server you have connected to..</summary>
+        <value>Enumeration value containing falgs</value>
+        <remarks>
+	  <para>
+	    The value of this property is available once you have invoked the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect"/> method.
+	  </para>
+	</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCertificates">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Collection of client certificates used to authenticate with the server.</summary>
+        <value>Collection of X590 certificates.</value>
+        <remarks>This value should be set before you call the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect"/>  method.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.ICredentials credentials, System.Threading.CancellationToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uri">Uri of the SMTP server to connect to, the scheme should be either "smtp" (for a clear-text SMTP connection) or "smtps" (to use an SSL-based SMTP secured connection).</param>
+        <param name="credentials">If provided, contains the credentials used to authenticate with the SMTP server.   Only used if the server supports authentication.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
+        <summary>Establishes a connection to the specified SMTP server.</summary>
+        <remarks>
+	  <para>
+
+	    This method establishes a connection to an SMTP or SMTPS
+	    server.  If the schema in the uri is "smtp" the connection
+	    is done over plaintext and defaults to using port 25.  If
+	    the schema in the uri is "smtps" the connection is done
+	    using an SslStream, using the X509 client certificates set
+	    on the <see
+	    cref="M:MailKit.Net.Smtp.SmtpClient.ClientCertificates"/>
+	    property and defaults to connecting on port 465.  The port
+	    can be overwritten by making it part of the URI.
+
+	  </para>
+
+	  <para>
+
+	    The Connect method will try to use modern SMTP server
+	    commands by trying the EHLO command first, and then
+	    falling back to the standard HELO command if not
+	    supported.
+
+	  </para>
+
+	  <para>
+	    This method can throw exceptions if none of the IP
+	    addresses specified on the URI can be connected to
+	    (Exception), if there is a problem during the initial
+	    connection (Exception), or if an invalid response is
+	    received from the server (SmtpException).
+	  </para>
+	</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Disconnect">
+      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="quit" Type="System.Boolean" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="quit">If true, sends SMTP's QUIT command to the server before disconnecting.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
+        <summary>Disconnects from the SMTP server.</summary>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Disposes this instance.</summary>
+        <remarks>This method closes the connection, without notifying the server that we are going away.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsConnected">
+      <MemberSignature Language="C#" Value="public bool IsConnected { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Determines whether this SMTP client is currently connected to a server.</summary>
+        <value></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MaxSize">
+      <MemberSignature Language="C#" Value="public uint MaxSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 MaxSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken token);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="message">Message to send.</param>
+        <param name="token">The token to monitor for cancellation requests.</param>
+        <summary>Sends the specified MimeMessage to the server.</summary>
+        <remarks>
+	  <para>
+	    This method throws an InvalidOperationException if no sender was specified on the message, or if the number of recipients is zero.
+	  </para>
+	  <para>
+	    This method throws an OperationCanceledException if the method is canceled. 
+	  </para>
+	</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

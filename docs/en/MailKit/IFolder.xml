@@ -1,0 +1,14 @@
+<Type Name="IFolder" FullName="MailKit.IFolder">
+  <TypeSignature Language="C#" Value="public interface IFolder" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFolder" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit.iOS</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

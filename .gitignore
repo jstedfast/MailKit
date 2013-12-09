@@ -4,3 +4,5 @@
 test-results
 obj
 bin
+*.tree
+*.zip

@@ -1,0 +1,7 @@
+<Namespace Name="MailKit.Net.Pop3">
+  <Docs>
+    <summary>MailKit's POP3 Client</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+</Namespace>
