@@ -17,67 +17,71 @@
     </remarks>
   </Docs>
   <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SmtpException (MailKit.Net.Smtp.SmtpStatusCode code, string message);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype MailKit.Net.Smtp.SmtpStatusCode code, string message) cil managed" />
-      <MemberType>Constructor</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Parameters>
-        <Parameter Name="code" Type="MailKit.Net.Smtp.SmtpStatusCode" />
-        <Parameter Name="message" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="code">The error code.</param>
-        <param name="message">The error message.</param>
-        <summary>
-            Initializes a new instance of the <see cref="T:MailKit.Net.Smtp.SmtpException" /> class.
-            </summary>
-        <remarks>
-        </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SmtpException (MailKit.Net.Smtp.SmtpStatusCode code, string message, Exception innerException);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype MailKit.Net.Smtp.SmtpStatusCode code, string message, class System.Exception innerException) cil managed" />
-      <MemberType>Constructor</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Parameters>
-        <Parameter Name="code" Type="MailKit.Net.Smtp.SmtpStatusCode" />
-        <Parameter Name="message" Type="System.String" />
-        <Parameter Name="innerException" Type="System.Exception" />
-      </Parameters>
-      <Docs>
-        <param name="code">The error code.</param>
-        <param name="message">The error message.</param>
-        <param name="innerException">An inner exception.</param>
-        <summary>
-            Initializes a new instance of the <see cref="T:MailKit.Net.Smtp.SmtpException" /> class.
-            </summary>
-        <remarks>
-        </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="StatusCode">
-      <MemberSignature Language="C#" Value="public MailKit.Net.Smtp.SmtpStatusCode StatusCode { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Smtp.SmtpStatusCode StatusCode" />
+    <Member MemberName="ErrorCode">
+      <MemberSignature Language="C#" Value="public MailKit.Net.Smtp.SmtpErrorCode ErrorCode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Smtp.SmtpErrorCode ErrorCode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.Net.Smtp.SmtpStatusCode</ReturnType>
+        <ReturnType>MailKit.Net.Smtp.SmtpErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the status code which may provide additional information.
+            Gets the error code which may provide additional information.
             </summary>
         <value>The status code.</value>
         <remarks>
-        </remarks>
+            The error code can be used to programatically deal with the
+            exception without necessarily needing to display the raw
+            exception message to the user.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Mailbox">
+      <MemberSignature Language="C#" Value="public MimeKit.MailboxAddress Mailbox { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MailboxAddress Mailbox" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.MailboxAddress</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the mailbox that the error occurred on.
+            </summary>
+        <value>The mailbox.</value>
+        <remarks>
+            This property will only be available when the <see cref="P:MailKit.Net.Smtp.SmtpException.ErrorCode" />
+            value is either <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.SenderNotAccepted" /> or
+            <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.RecipientNotAccepted" /> and may be used
+            to help the user decide how to proceed.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="StatusCode">
+      <MemberSignature Language="C#" Value="public int StatusCode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 StatusCode" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the status code returned by the SMTP server.
+            </summary>
+        <value>The status code.</value>
+        <remarks>
+            The raw SMTP status code that resulted in the <see cref="T:MailKit.Net.Smtp.SmtpException" />
+            being thrown or <c>-1</c> if the error was a
+            <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.ProtocolError" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

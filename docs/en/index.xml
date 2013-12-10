@@ -61,8 +61,8 @@
     <Namespace Name="MailKit.Net.Smtp">
       <Type Name="SmtpCapabilities" Kind="Enumeration" />
       <Type Name="SmtpClient" Kind="Class" />
+      <Type Name="SmtpErrorCode" Kind="Enumeration" />
       <Type Name="SmtpException" Kind="Class" />
-      <Type Name="SmtpStatusCode" Kind="Enumeration" />
     </Namespace>
     <Namespace Name="MailKit.Security">
       <Type Name="SaslException" Kind="Class" />

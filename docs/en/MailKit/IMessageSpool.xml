@@ -14,8 +14,12 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            An interface for retreiving messages from a spool.
+            </summary>
+    <remarks>
+            Implemented by <see cref="T:MailKit.Net.Pop3.Pop3Client" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Count">
@@ -32,9 +36,11 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the number of messages available in the message spool.
+            </summary>
+        <returns>The number of available messages.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -53,10 +59,16 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Mark the specified message for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
@@ -74,10 +86,16 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Mark the specified message for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -95,10 +113,12 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the specified message.
+            </summary>
+        <returns>The message.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -117,10 +137,12 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the specified message.
+            </summary>
+        <returns>The message.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -139,10 +161,12 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the headers for the specified message.
+            </summary>
+        <returns>The message headers.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -161,10 +185,12 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the headers for the specified message.
+            </summary>
+        <returns>The message headers.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -183,10 +209,12 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the size of the specified message, in bytes.
+            </summary>
+        <returns>The message size, in bytes.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -205,10 +233,12 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the size of the specified message, in bytes.
+            </summary>
+        <returns>The message size, in bytes.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -226,9 +256,11 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the sizes for all available messages, in bytes.
+            </summary>
+        <returns>The message sizes, in bytes.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -247,11 +279,16 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="index">The message index.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the UID of the message at the specified index.
+            </summary>
+        <returns>The message UID.</returns>
+        <remarks>
+            Not all servers support UIDs, so you should first check
+            the <see cref="P:MailKit.IMessageSpool.SupportsUids" /> property.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
@@ -268,29 +305,15 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken token) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
-      </Parameters>
-      <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the full list of available message UIDs.
+            </summary>
+        <returns>The message UIDs.</returns>
+        <remarks>
+            Not all servers support UIDs, so you should first check
+            the <see cref="P:MailKit.IMessageSpool.SupportsUids" /> property.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -307,9 +330,15 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Reset the state of all messages marked for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SupportsUids">
@@ -323,9 +352,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets a value indicating whether this <see cref="T:MailKit.IMessageSpool" /> supports UIDs.
+            </summary>
+        <value>
+          <c>true</c> if supports uids; otherwise, <c>false</c>.</value>
+        <remarks>
+            Not all servers support referencing messages by UID, so this property should
+            be checked before using <see cref="M:MailKit.IMessageSpool.GetMessageUid(System.Int32,System.Threading.CancellationToken)" /> and <see cref="M:MailKit.IMessageSpool.GetMessageUids(System.Threading.CancellationToken)" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

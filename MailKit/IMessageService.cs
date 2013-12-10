@@ -88,5 +88,14 @@ namespace MailKit {
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
 		/// <param name="token">A cancellation token.</param>
 		void Disconnect (bool quit, CancellationToken token);
+
+		/// <summary>
+		/// Pings the message service to keep the connection alive.
+		/// </summary>
+		/// <remarks>
+		/// Mail servers, if left idle for too long, will automatically drop the connection.
+		/// </remarks>
+		/// <param name="token">A cancellation token.</param>
+		void NoOp (CancellationToken token);
 	}
 }

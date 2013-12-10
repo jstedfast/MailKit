@@ -308,9 +308,11 @@ namespace MailKit.Net.Pop3 {
 				switch (token) {
 				case "EXPIRE":
 					engine.Capabilities |= Pop3Capabilities.Expire;
-					if (int.TryParse (data, out value))
+					var tokens = data.Split (' ');
+
+					if (int.TryParse (tokens[0], out value))
 						engine.Expire = value;
-					else if (data == "NEVER")
+					else if (tokens[0] == "NEVER")
 						engine.Expire = -1;
 					break;
 				case "IMPLEMENTATION":

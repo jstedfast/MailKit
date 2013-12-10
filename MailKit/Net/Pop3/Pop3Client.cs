@@ -261,18 +261,33 @@ namespace MailKit.Net.Pop3 {
 
 				Authenticate (uri.Host, credentials, token);
 				engine.State = Pop3EngineState.Transaction;
+
+				if (!engine.Capabilities.HasFlag (Pop3Capabilities.UIDL)) {
+					// first, get the message count...
+					Count (token);
+
+					// if the message count is > 0, we can probe the UIDL command
+					if (count > 0) {
+						probed |= ProbedCapabilities.UIDL;
+
+						try {
+							GetMessageUid (0, token);
+							engine.Capabilities |= Pop3Capabilities.UIDL;
+						} catch (Pop3Exception) {
+							// ignore
+						}
+					}
+				}
 			} catch (OperationCanceledException) {
 				engine.Disconnect ();
 				throw;
 			} catch (IOException) {
 				engine.Disconnect ();
 				throw;
-			} catch {
-				if (engine.IsConnected)
-					SendCommand (token, "QUIT");
-
+			} catch (Exception ex) {
 				engine.Disconnect ();
-				throw;
+
+				throw new Pop3Exception (string.Format ("Failed to connect to {0}", uri), ex);
 			}
 		}
 
@@ -298,6 +313,16 @@ namespace MailKit.Net.Pop3 {
 			engine.Disconnect ();
 			uids.Clear ();
 			count = 0;
+		}
+
+		public void NoOp (CancellationToken token)
+		{
+			CheckDisposed ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new InvalidOperationException ("You must be authenticated before you can issue a NOOP command.");
+
+			SendCommand (token, "NOOP");
 		}
 
 		#endregion
@@ -755,16 +780,6 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ("You must be authenticated before you can issue an RSET command.");
 
 			SendCommand (token, "RSET");
-		}
-
-		public void NoOp (CancellationToken token)
-		{
-			CheckDisposed ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new InvalidOperationException ("You must be authenticated before you can issue a NOOP command.");
-
-			SendCommand (token, "NOOP");
 		}
 
 		#endregion

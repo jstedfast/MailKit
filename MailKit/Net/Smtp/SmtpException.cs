@@ -26,7 +26,48 @@
 
 using System;
 
+using MimeKit;
+
 namespace MailKit.Net.Smtp {
+	/// <summary>
+	/// An enumeration of the possible error codes that may be reported in <see cref="SmtpException.ErrorCode"/>.
+	/// </summary>
+	public enum SmtpErrorCode {
+		/// <summary>
+		/// The message was not accepted for delivery. This may happen if
+		/// the server runs out of available disk space.
+		/// </summary>
+		MessageNotAccepted,
+
+		/// <summary>
+		/// The sender's mailbox address was not accepted. Check the
+		/// <see cref="SmtpException.Mailbox"/> property for the
+		/// mailbox used as the sender's mailbox address.
+		/// </summary>
+		SenderNotAccepted,
+
+		/// <summary>
+		/// A recipient's mailbox address was not accepted. Check the
+		/// <see cref="SmtpException.Mailbox"/> property for the
+		/// particular recipient mailbox that was not acccepted.
+		/// </summary>
+		RecipientNotAccepted,
+
+		/// <summary>
+		/// A protocol error occurred. Once a protocol error occurs,
+		/// the connection is no longer usable and a new connection
+		/// must be made in order to continue sending messages.
+		/// </summary>
+		ProtocolError,
+
+		/// <summary>
+		/// An unexpected status code was returned by the server.
+		/// For more details, the <see cref="Exception.Message"/>
+		/// property may provide some additional hints.
+		/// </summary>
+		UnexpectedStatusCode,
+	}
+
 	/// <summary>
 	/// An SMTP protocol exception.
 	/// </summary>
@@ -36,11 +77,26 @@ namespace MailKit.Net.Smtp {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpException"/> class.
 		/// </summary>
 		/// <param name="code">The error code.</param>
+		/// <param name="status">The status code.</param>
+		/// <param name="mailbox">The rejected mailbox.</param>
 		/// <param name="message">The error message.</param>
-		/// <param name="innerException">An inner exception.</param>
-		public SmtpException (SmtpStatusCode code, string message, Exception innerException) : base (message, innerException)
+		internal SmtpException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
 		{
-			StatusCode = code;
+			StatusCode = (int) status;
+			Mailbox = mailbox;
+			ErrorCode = code;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpException"/> class.
+		/// </summary>
+		/// <param name="code">The error code.</param>
+		/// <param name="status">The status code.</param>>
+		/// <param name="message">The error message.</param>
+		internal SmtpException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
+		{
+			StatusCode = (int) status;
+			ErrorCode = code;
 		}
 
 		/// <summary>
@@ -48,16 +104,49 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <param name="code">The error code.</param>
 		/// <param name="message">The error message.</param>
-		public SmtpException (SmtpStatusCode code, string message) : base (message)
+		internal SmtpException (SmtpErrorCode code, string message) : base (message)
 		{
-			StatusCode = code;
+			ErrorCode = code;
+			StatusCode = -1;
 		}
 
 		/// <summary>
-		/// Gets the status code which may provide additional information.
+		/// Gets the error code which may provide additional information.
 		/// </summary>
+		/// <remarks>
+		/// The error code can be used to programatically deal with the
+		/// exception without necessarily needing to display the raw
+		/// exception message to the user.
+		/// </remarks>
 		/// <value>The status code.</value>
-		public SmtpStatusCode StatusCode {
+		public SmtpErrorCode ErrorCode {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the mailbox that the error occurred on.
+		/// </summary>
+		/// <remarks>
+		/// This property will only be available when the <see cref="ErrorCode"/>
+		/// value is either <see cref="SmtpErrorCode.SenderNotAccepted"/> or
+		/// <see cref="SmtpErrorCode.RecipientNotAccepted"/> and may be used
+		/// to help the user decide how to proceed.
+		/// </remarks>
+		/// <value>The mailbox.</value>
+		public MailboxAddress Mailbox {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the status code returned by the SMTP server.
+		/// </summary>
+		/// <remarks>
+		/// The raw SMTP status code that resulted in the <see cref="SmtpException"/>
+		/// being thrown or <c>-1</c> if the error was a
+		/// <see cref="SmtpErrorCode.ProtocolError"/>.
+		/// </remarks>
+		/// <value>The status code.</value>
+		public int StatusCode {
 			get; private set;
 		}
 	}

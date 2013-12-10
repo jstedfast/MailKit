@@ -28,11 +28,7 @@ namespace MailKit.Net.Smtp {
 	/// <summary>
 	/// An enumeration of possible SMTP status codes.
 	/// </summary>
-	public enum SmtpStatusCode {
-		/// <summary>
-		/// A general failure has occurred.
-		/// </summary>
-		GeneralFailure = -1,
+	enum SmtpStatusCode {
 		SystemStatus = 211,
 		HelpMessage = 214,
 		ServiceReady = 220,

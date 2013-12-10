@@ -159,7 +159,7 @@ namespace MailKit.Net.Smtp {
 			return index > startIndex;
 		}
 
-		SmtpResponse ReadResponse (byte[] buffer, CancellationToken token)
+		SmtpResponse ReadResponse (CancellationToken token)
 		{
 			using (var memory = new MemoryStream ()) {
 				bool complete = false;
@@ -175,7 +175,7 @@ namespace MailKit.Net.Smtp {
 					int endIndex = index + nread;
 
 					if (nread == 0)
-						throw new SmtpException (SmtpStatusCode.GeneralFailure, "Incomplete response.");
+						throw new SmtpException (SmtpErrorCode.ProtocolError, "The server replied with an incomplete response.");
 
 					complete = false;
 					index = 0;
@@ -187,7 +187,7 @@ namespace MailKit.Net.Smtp {
 							int value;
 
 							if (!TryParseInt32 (buffer, ref index, endIndex, out value))
-								throw new SmtpException (SmtpStatusCode.GeneralFailure, "Unable to parse status code.");
+								throw new SmtpException (SmtpErrorCode.ProtocolError, "Unable to parse status code returned by the server.");
 
 							if (index == endIndex) {
 								index = startIndex;
@@ -197,7 +197,7 @@ namespace MailKit.Net.Smtp {
 							if (code == 0) {
 								code = value;
 							} else if (value != code) {
-								throw new SmtpException (SmtpStatusCode.GeneralFailure, "Mismatched status codes.");
+								throw new SmtpException (SmtpErrorCode.ProtocolError, "The status codes returned by the server did not match.");
 							}
 
 							newLine = false;
@@ -264,7 +264,7 @@ namespace MailKit.Net.Smtp {
 
 			stream.Write (bytes, 0, bytes.Length);
 
-			return ReadResponse (buffer, token);
+			return ReadResponse (token);
 		}
 
 		SmtpResponse SendEhlo (EndPoint localEndPoint, bool ehlo, CancellationToken token)
@@ -299,7 +299,7 @@ namespace MailKit.Net.Smtp {
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				response = SendEhlo (localEndPoint, false, token);
 				if (response.StatusCode != SmtpStatusCode.Ok)
-					throw new SmtpException (response.StatusCode, response.Response);
+					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
 				var lines = response.Response.Split ('\n');
 				for (int i = 0; i < lines.Length; i++) {
@@ -373,7 +373,7 @@ namespace MailKit.Net.Smtp {
 
 				while (!sasl.IsAuthenticated) {
 					if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
-						throw new SmtpException (response.StatusCode, response.Response);
+						throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					challenge = sasl.Challenge (response.Response);
 					response = SendCommand (challenge + "\r\n", token);
@@ -466,10 +466,10 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				// read the greeting
-				response = ReadResponse (buffer, token);
+				response = ReadResponse (token);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpException (response.StatusCode, response.Response);
+					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
 				Ehlo (localEndPoint, token);
@@ -477,7 +477,7 @@ namespace MailKit.Net.Smtp {
 				if (!smtps & Capabilities.HasFlag (SmtpCapabilities.StartTLS)) {
 					response = SendCommand ("STARTTLS\r\n", token);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
-						throw new SmtpException (response.StatusCode, response.Response);
+						throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
@@ -531,6 +531,39 @@ namespace MailKit.Net.Smtp {
 			}
 
 			Disconnect ();
+		}
+
+		/// <summary>
+		/// Pings the SMTP server to keep the connection alive.
+		/// </summary>
+		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpException">
+		/// The SMTP server returned an unexpected status code.
+		/// </exception>
+		public void NoOp (CancellationToken token)
+		{
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new InvalidOperationException ("The SmtpClient is not connected.");
+
+			var response = SendCommand ("NOOP\r\n", token);
+
+			if (response.StatusCode != SmtpStatusCode.Ok)
+				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 		}
 
 		void Disconnect ()
@@ -631,22 +664,29 @@ namespace MailKit.Net.Smtp {
 			return GetSmtpExtensions (message.Body);
 		}
 
-		void MailFrom (MailboxAddress sender, SmtpExtension extensions, CancellationToken token)
+		void MailFrom (MailboxAddress mailbox, SmtpExtension extensions, CancellationToken token)
 		{
 			string command;
 
 			if (Capabilities.HasFlag (SmtpCapabilities.BinaryMime) && extensions.HasFlag (SmtpExtension.BinaryMime)) {
-				command = string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME\r\n", sender.Address);
+				command = string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME\r\n", mailbox.Address);
 			} else if (Capabilities.HasFlag (SmtpCapabilities.EightBitMime) && extensions.HasFlag (SmtpExtension.EightBitMime)) {
-				command = string.Format ("MAIL FROM:<{0}> BODY=8BITMIME\r\n", sender.Address);
+				command = string.Format ("MAIL FROM:<{0}> BODY=8BITMIME\r\n", mailbox.Address);
 			} else {
-				command = string.Format ("MAIL FROM:<{0}>\r\n", sender.Address);
+				command = string.Format ("MAIL FROM:<{0}>\r\n", mailbox.Address);
 			}
 
 			var response = SendCommand (command, token);
 
-			if (response.StatusCode != SmtpStatusCode.Ok)
-				throw new SmtpException (response.StatusCode, response.Response);
+			switch (response.StatusCode) {
+			case SmtpStatusCode.Ok:
+				break;
+			case SmtpStatusCode.MailboxNameNotAllowed:
+			case SmtpStatusCode.MailboxUnavailable:
+				throw new SmtpException (SmtpErrorCode.SenderNotAccepted, response.StatusCode, mailbox, response.Response);
+			default:
+				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+			}
 		}
 
 		void RcptTo (MailboxAddress mailbox, CancellationToken token)
@@ -654,8 +694,18 @@ namespace MailKit.Net.Smtp {
 			var command = string.Format ("RCPT TO:<{0}>\r\n", mailbox.Address);
 			var response = SendCommand (command, token);
 
-			if (response.StatusCode != SmtpStatusCode.Ok)
-				throw new SmtpException (response.StatusCode, response.Response);
+			switch (response.StatusCode) {
+			case SmtpStatusCode.UserNotLocalWillForward:
+			case SmtpStatusCode.Ok:
+				break;
+			case SmtpStatusCode.UserNotLocalTryAlternatePath:
+			case SmtpStatusCode.MailboxNameNotAllowed:
+			case SmtpStatusCode.MailboxUnavailable:
+			case SmtpStatusCode.MailboxBusy:
+				throw new SmtpException (SmtpErrorCode.RecipientNotAccepted, response.StatusCode, mailbox, response.Response);
+			default:
+				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+			}
 		}
 
 		static void WriteData (Stream stream, Stream data, CancellationToken token)
@@ -676,7 +726,7 @@ namespace MailKit.Net.Smtp {
 			var response = SendCommand ("DATA\r\n", token);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
-				throw new SmtpException (response.StatusCode, response.Response);
+				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 			EncodingConstraint constraint;
 
@@ -708,10 +758,10 @@ namespace MailKit.Net.Smtp {
 				WriteData (stream, data, token);
 			}
 
-			response = ReadResponse (buffer, token);
+			response = ReadResponse (token);
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
-				throw new SmtpException (response.StatusCode, response.Response);
+				throw new SmtpException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
 		}
 
 		void Reset ()
@@ -779,6 +829,12 @@ namespace MailKit.Net.Smtp {
 			} catch (OperationCanceledException) {
 				Reset ();
 				throw;
+			} catch (SmtpException ex) {
+				if (ex.ErrorCode == SmtpErrorCode.ProtocolError)
+					Disconnect ();
+				else
+					Reset ();
+				throw;
 			}
 
 			try {
@@ -787,9 +843,12 @@ namespace MailKit.Net.Smtp {
 				// irrecoverable
 				Disconnect ();
 				throw;
-			} finally {
-				if (IsConnected)
+			} catch (SmtpException ex) {
+				if (ex.ErrorCode == SmtpErrorCode.ProtocolError)
+					Disconnect ();
+				else
 					Reset ();
+				throw;
 			}
 		}
 
