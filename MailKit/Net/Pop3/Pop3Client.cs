@@ -44,14 +44,39 @@ using System.Security.Cryptography;
 namespace MailKit.Net.Pop3 {
 	public class Pop3Client : IMessageSpool
 	{
+		[Flags]
+		enum ProbedCapabilities : byte {
+			None   = 0,
+			Top    = (1 << 0),
+			UIDL   = (1 << 1),
+			User   = (1 << 2),
+		}
+
 		readonly Dictionary<string, int> uids = new Dictionary<string, int> ();
 		readonly Pop3Engine engine;
+		ProbedCapabilities probed;
 		bool disposed;
 		int count;
 
 		public Pop3Client ()
 		{
 			engine = new Pop3Engine ();
+		}
+
+		public Pop3Capabilities Capabilities {
+			get { return engine.Capabilities; }
+		}
+
+		public int Expire {
+			get { return engine.Expire; }
+		}
+
+		public string Implementation {
+			get { return engine.Implementation; }
+		}
+
+		public int LoginDelay {
+			get { return engine.LoginDelay; }
 		}
 
 		void CheckDisposed ()
@@ -177,7 +202,7 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			// fall back to good ol' USER & PASS
-			cred = credentials.GetCredential (uri, "APOP");
+			cred = credentials.GetCredential (uri, "USER");
 
 			SendCommand (token, "USER {0}", cred.UserName);
 			SendCommand (token, "PASS {0}", cred.Password);
@@ -216,6 +241,8 @@ namespace MailKit.Net.Pop3 {
 			} else {
 				stream = new NetworkStream (socket);
 			}
+
+			probed = ProbedCapabilities.None;
 
 			try {
 				engine.Connect (new Pop3Stream (stream));
@@ -364,7 +391,7 @@ namespace MailKit.Net.Pop3 {
 				// continue processing commands
 			}
 
-			engine.Capabilities |= Pop3Capabilities.ProbedUIDL;
+			probed |= ProbedCapabilities.UIDL;
 
 			if (pc.Status != Pop3CommandStatus.Ok)
 				throw new Pop3Exception ("Pop3 server did not respond with a +OK response to the UIDL command.");

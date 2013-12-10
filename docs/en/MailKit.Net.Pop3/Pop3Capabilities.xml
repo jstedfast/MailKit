@@ -14,8 +14,13 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            Capabilities supported by a POP3 server.
+            </summary>
+    <remarks>
+            Capabilities are read as part of the response to the CAPA command that
+            is issued during the connection phase of the <see cref="T:MailKit.Net.Pop3.Pop3Client" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Apop">
@@ -29,12 +34,14 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports APOP authentication (rfc1939).
+            </summary>
       </Docs>
     </Member>
-    <Member MemberName="CapaMask">
-      <MemberSignature Language="C#" Value="CapaMask" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities CapaMask = int32(510)" />
+    <Member MemberName="Expire">
+      <MemberSignature Language="C#" Value="Expire" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Expire = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -43,12 +50,15 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the EXPIRE extension (rfc2449) and defines the
+            expiration policy for messages (see <see cref="P:MailKit.Net.Pop3.Pop3Client.Expire" />).
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="LoginDelay">
       <MemberSignature Language="C#" Value="LoginDelay" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities LoginDelay = int32(2)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities LoginDelay = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -57,7 +67,11 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the LOGIN-DELAY extension (rfc2449), allowing the
+            server to specify to the client a minimum number of seconds between
+            login attempts (see <see cref="P:MailKit.Net.Pop3.Pop3Client.LoginDelay" />).
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -71,12 +85,14 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server does not support any additional extensions.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Pipelining">
       <MemberSignature Language="C#" Value="Pipelining" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Pipelining = int32(4)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Pipelining = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -85,54 +101,15 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ProbedTop">
-      <MemberSignature Language="C#" Value="ProbedTop" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ProbedTop = int32(512)" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ProbedUIDL">
-      <MemberSignature Language="C#" Value="ProbedUIDL" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ProbedUIDL = int32(1024)" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-      </Docs>
-    </Member>
-    <Member MemberName="ProbedUser">
-      <MemberSignature Language="C#" Value="ProbedUser" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ProbedUser = int32(2048)" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the PIPELINING extensions (rfc2449), allowing the
+            client to batch multiple requests to the server at at time.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="ResponseCodes">
       <MemberSignature Language="C#" Value="ResponseCodes" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ResponseCodes = int32(8)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities ResponseCodes = int32(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -141,12 +118,15 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the RESP-CODES extension (rfc2449), allowing the server
+            to provide clients with extended information in error responses.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Sasl">
       <MemberSignature Language="C#" Value="Sasl" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Sasl = int32(16)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Sasl = int32(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -155,12 +135,16 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the SASL authentication extension (rfc2449), allowing
+            the client to authenticate using the advertized authentication mechanisms
+            (see <see cref="P:MailKit.Net.Pop3.Pop3Client.AuthenticationMechanisms" />).
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="StartTLS">
       <MemberSignature Language="C#" Value="StartTLS" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities StartTLS = int32(32)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities StartTLS = int32(64)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -169,12 +153,15 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the STLS extension (rfc2595), allowing clients
+            to switch to an encrypted SSL/TLS connection after connecting.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="Top">
       <MemberSignature Language="C#" Value="Top" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Top = int32(64)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Top = int32(128)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -183,12 +170,15 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the TOP command, allowing clients to fetch the
+            headers plus an arbitrary number of lines.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="UIDL">
       <MemberSignature Language="C#" Value="UIDL" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities UIDL = int32(128)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities UIDL = int32(256)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -197,12 +187,15 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the UIDL command, allowing the client to refer to
+            messages via a UID as opposed to a sequence ID.
+            </summary>
       </Docs>
     </Member>
     <Member MemberName="User">
       <MemberSignature Language="C#" Value="User" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities User = int32(256)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities User = int32(512)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -211,7 +204,11 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            The server supports the USER authentication command, allowing the
+            client to authenticate via a plain-text username and password command
+            (not recommended unless no other authentication mechanisms exist).
+            </summary>
       </Docs>
     </Member>
   </Members>

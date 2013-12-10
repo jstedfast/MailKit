@@ -77,6 +77,14 @@ namespace MailKit.Net.Pop3 {
 			get; private set;
 		}
 
+		public int Expire {
+			get; private set;
+		}
+
+		public string Implementation {
+			get; private set;
+		}
+
 		public int LoginDelay {
 			get; private set;
 		}
@@ -266,8 +274,11 @@ namespace MailKit.Net.Pop3 {
 				return;
 
 			// clear all CAPA response capabilities
-			engine.Capabilities &= ~Pop3Capabilities.CapaMask;
+			engine.Capabilities = Pop3Capabilities.None;
 			engine.AuthenticationMechanisms.Clear ();
+			engine.Implementation = null;
+			engine.LoginDelay = 0;
+			engine.Expire = 0;
 
 			string response;
 
@@ -295,6 +306,16 @@ namespace MailKit.Net.Pop3 {
 				}
 
 				switch (token) {
+				case "EXPIRE":
+					engine.Capabilities |= Pop3Capabilities.Expire;
+					if (int.TryParse (data, out value))
+						engine.Expire = value;
+					else if (data == "NEVER")
+						engine.Expire = -1;
+					break;
+				case "IMPLEMENTATION":
+					engine.Implementation = data;
+					break;
 				case "LOGIN-DELAY":
 					if (int.TryParse (data, out value)) {
 						engine.Capabilities |= Pop3Capabilities.LoginDelay;

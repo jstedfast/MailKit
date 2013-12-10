@@ -69,7 +69,7 @@ namespace MailKit.Net.Smtp {
 		Authentication      = (1 << 4),
 
 		/// <summary>
-		/// The server supports the PIPELINING extension (rfc2449), allowing clients
+		/// The server supports the PIPELINING extension (rfc2920), allowing clients
 		/// to send multiple commands at once in order to reduce round-trip latency.
 		/// </summary>
 		Pipelining          = (1 << 5),
@@ -81,7 +81,7 @@ namespace MailKit.Net.Smtp {
 		Size                = (1 << 6),
 
 		/// <summary>
-		/// The server supports the STARTTLS extension (rfc2222), allowing clients
+		/// The server supports the STARTTLS extension (rfc3207), allowing clients
 		/// to switch to an encrypted SSL/TLS connection after connecting.
 		/// </summary>
 		StartTLS            = (1 << 7),
