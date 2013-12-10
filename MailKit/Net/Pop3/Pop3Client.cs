@@ -400,10 +400,32 @@ namespace MailKit.Net.Pop3 {
 
 		#region IMessageSpool implementation
 
+		/// <summary>
+		/// Gets whether or not the <see cref="Pop3Client"/> supports referencing messages by UIDs.
+		/// </summary>
+		/// <remarks>
+		/// If the server does not support UIDs, then all methods that take UID arguments along with
+		/// <see cref="GetMessageUid"/> and <see cref="GetMessageUids"/> will fail.
+		/// </remarks>
+		/// <value><c>true</c> if supports UIDs; otherwise, <c>false</c>.</value>
 		public bool SupportsUids {
 			get { return engine.Capabilities.HasFlag (Pop3Capabilities.UIDL); }
 		}
 
+		/// <summary>
+		/// Gets the number of messages available in the message spool.
+		/// </summary>
+		/// <returns>The number of available messages.</returns>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public int Count (CancellationToken token)
 		{
 			CheckDisposed ();
@@ -444,12 +466,36 @@ namespace MailKit.Net.Pop3 {
 			return count;
 		}
 
+		/// <summary>
+		/// Gets the UID of the message at the specified index.
+		/// </summary>
+		/// <returns>The message UID.</returns>
+		/// <param name="index">The message index.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// The <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public string GetMessageUid (int index, CancellationToken token)
 		{
 			CheckDisposed ();
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new InvalidOperationException ("You must be authenticated before you can issue a UIDL command.");
+
+			if (!SupportsUids && probed.HasFlag (ProbedCapabilities.UIDL))
+				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
 			if (index < 0 || index >= count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -489,23 +535,49 @@ namespace MailKit.Net.Pop3 {
 
 			probed |= ProbedCapabilities.UIDL;
 
-			if (pc.Status != Pop3CommandStatus.Ok)
+			if (pc.Status != Pop3CommandStatus.Ok) {
+				if (!SupportsUids)
+					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
+
 				throw new Pop3Exception ("Pop3 server did not respond with a +OK response to the UIDL command.");
+			}
 
 			if (pc.Exception != null)
 				throw pc.Exception;
+
+			engine.Capabilities |= Pop3Capabilities.UIDL;
 
 			uids[uid] = index + 1;
 
 			return uid;
 		}
 
+		/// <summary>
+		/// Gets the full list of available message UIDs.
+		/// </summary>
+		/// <returns>The message uids.</returns>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public string[] GetMessageUids (CancellationToken token)
 		{
 			CheckDisposed ();
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new InvalidOperationException ("You must be authenticated before you can issue a UIDL command.");
+
+			if (!SupportsUids && probed.HasFlag (ProbedCapabilities.UIDL))
+				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
 			var pc = engine.QueueCommand (token, "UIDL");
 			uids.Clear ();
@@ -543,11 +615,19 @@ namespace MailKit.Net.Pop3 {
 				// continue processing commands
 			}
 
-			if (pc.Status != Pop3CommandStatus.Ok)
+			probed |= ProbedCapabilities.UIDL;
+
+			if (pc.Status != Pop3CommandStatus.Ok) {
+				if (!SupportsUids)
+					throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
+
 				throw new Pop3Exception ("Pop3 server did not respond with a +OK response to the UIDL command.");
+			}
 
 			if (pc.Exception != null)
 				throw pc.Exception;
+
+			engine.Capabilities |= Pop3Capabilities.UIDL;
 
 			return uids.Keys.ToArray ();
 		}

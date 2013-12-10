@@ -353,7 +353,7 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets a value indicating whether this <see cref="T:MailKit.IMessageSpool" /> supports UIDs.
+            Gets whether or not the service supports referencing messages by UIDs.
             </summary>
         <value>
           <c>true</c> if supports uids; otherwise, <c>false</c>.</value>

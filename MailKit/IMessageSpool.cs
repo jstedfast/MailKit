@@ -40,7 +40,7 @@ namespace MailKit {
 	public interface IMessageSpool : IMessageService
 	{
 		/// <summary>
-		/// Gets a value indicating whether this <see cref="MailKit.IMessageSpool"/> supports UIDs.
+		/// Gets whether or not the service supports referencing messages by UIDs.
 		/// </summary>
 		/// <remarks>
 		/// Not all servers support referencing messages by UID, so this property should

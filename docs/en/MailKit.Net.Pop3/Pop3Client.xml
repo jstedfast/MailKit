@@ -158,10 +158,21 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the number of messages available in the message spool.
+            </summary>
+        <returns>The number of available messages.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
@@ -433,11 +444,28 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The message index.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the UID of the message at the specified index.
+            </summary>
+        <returns>The message UID.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+            The <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
@@ -454,10 +482,24 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the full list of available message UIDs.
+            </summary>
+        <returns>The message uids.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Implementation">
@@ -574,9 +616,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets whether or not the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> supports referencing messages by UIDs.
+            </summary>
+        <value>
+          <c>true</c> if supports UIDs; otherwise, <c>false</c>.</value>
+        <remarks>
+            If the server does not support UIDs, then all methods that take UID arguments along with
+            <see cref="M:MailKit.Net.Pop3.Pop3Client.GetMessageUid(System.Int32,System.Threading.CancellationToken)" /> and <see cref="M:MailKit.Net.Pop3.Pop3Client.GetMessageUids(System.Threading.CancellationToken)" /> will fail.
+            </remarks>
       </Docs>
     </Member>
   </Members>
