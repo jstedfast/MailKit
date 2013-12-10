@@ -10,9 +10,13 @@
   </Base>
   <Docs>
     <summary>
-            An enumeration of the possible error codes that may be reported in <see cref="P:MailKit.Net.Smtp.SmtpException.ErrorCode" />.
+            An enumeration of the possible error codes that may be reported by a <see cref="T:MailKit.Net.Smtp.SmtpException" />.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            Other than the <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.ProtocolError" /> error, none of
+            the errors require reconnecting to the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> before
+            continuing to send more messages.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="MessageNotAccepted">

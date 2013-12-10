@@ -208,6 +208,49 @@ namespace MailKit.Net.Pop3 {
 			SendCommand (token, "PASS {0}", cred.Password);
 		}
 
+		/// <summary>
+		/// Establishes a connection to the specified POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establishes a connection to an POP3 or POP3/S server. If the schema
+		/// in the uri is "pop3", a clear-text connection is made and defaults to using
+		/// port 110 if no port is specified in the URI. However, if the schema in the
+		/// uri is "pop3s", an SSL connection is made using the
+		/// <see cref="ClientCertificates"/> and defaults to port 995 unless a port
+		/// is specified in the URI.</para>
+		/// <para>It should be noted that when using a clear-text POP3 connection,
+		/// if the server advertizes support for the STLS extension, the client
+		/// will automatically switch into TLS mode before authenticating.</para>
+		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// and <see cref="Capabilities"/> properties will be populated.
+		/// </remarks>
+		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
+		/// be "pop3" to make a clear-text connection or "pop3s" to make an SSL connection.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para>The <paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The user's <paramref name="credentials"/> were wrong.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public void Connect (Uri uri, ICredentials credentials, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -291,21 +334,29 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
+		/// <summary>
+		/// Disconnect the service.
+		/// </summary>
+		/// <remarks>
+		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
+		/// </remarks>
+		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
 		public void Disconnect (bool quit, CancellationToken token)
 		{
 			CheckDisposed ();
 
 			if (!engine.IsConnected)
-				throw new InvalidOperationException ("The Pop3Client has not been connected.");
+				return;
 
 			if (quit) {
 				try {
 					SendCommand (token, "QUIT");
 				} catch (OperationCanceledException) {
-					engine.Disconnect ();
-					uids.Clear ();
-					count = 0;
-					throw;
+				} catch (Pop3Exception) {
 				} catch (IOException) {
 				}
 			}
@@ -315,6 +366,26 @@ namespace MailKit.Net.Pop3 {
 			count = 0;
 		}
 
+		/// <summary>
+		/// Pings the POP3 server to keep the connection alive.
+		/// </summary>
+		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected or authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// The NOOP command failed.
+		/// </exception>
 		public void NoOp (CancellationToken token)
 		{
 			CheckDisposed ();

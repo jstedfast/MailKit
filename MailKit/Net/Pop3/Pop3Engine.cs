@@ -31,13 +31,30 @@ using System.Threading;
 using System.Collections.Generic;
 
 namespace MailKit.Net.Pop3 {
+	/// <summary>
+	/// The state of the <see cref="Pop3Engine"/>.
+	/// </summary>
 	enum Pop3EngineState {
-		Connect,
-		Authenticate,
-		Transaction,
-		Update
+		/// <summary>
+		/// The connection state indicates that engine is waiting to connect.
+		/// </summary>
+		Connection,
+
+		/// <summary>
+		/// The authentication state indicates that the engine has not yet authenticated.
+		/// </summary>
+		Authentication,
+
+		/// <summary>
+		/// The transaction state indicates that the engine is authenticated and may
+		/// retrieve messages from the server.
+		/// </summary>
+		Transaction
 	}
 
+	/// <summary>
+	/// A POP3 command engine.
+	/// </summary>
 	class Pop3Engine
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
@@ -45,6 +62,9 @@ namespace MailKit.Net.Pop3 {
 		Pop3Stream stream;
 		int nextId;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Engine"/> class.
+		/// </summary>
 		public Pop3Engine ()
 		{
 			AuthenticationMechanisms = new HashSet<string> ();
@@ -53,42 +73,90 @@ namespace MailKit.Net.Pop3 {
 			nextId = 1;
 		}
 
+		/// <summary>
+		/// Gets the authentication mechanisms supported by the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// The authentication mechanisms are queried durring the
+		/// <see cref="Connect"/> method.
+		/// </remarks>
+		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the capabilities supported by the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// The capabilities will not be known until a successful connection
+		/// has been made via the <see cref="Connect"/> method.
+		/// </remarks>
+		/// <value>The capabilities.</value>
 		public Pop3Capabilities Capabilities {
 			get; set;
 		}
 
+		/// <summary>
+		/// Gets the underlying POP3 stream.
+		/// </summary>
+		/// <value>The pop3 stream.</value>
 		public Pop3Stream Stream {
 			get { return stream; }
 		}
 
+		/// <summary>
+		/// Gets or sets the state of the engine.
+		/// </summary>
+		/// <value>The engine state.</value>
 		public Pop3EngineState State {
 			get; set;
 		}
 
+		/// <summary>
+		/// Gets whether or not the engine is currently connected to a POP3 server.
+		/// </summary>
+		/// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get { return stream != null && stream.IsConnected; }
 		}
 
+		/// <summary>
+		/// Gets the APOP authentication token.
+		/// </summary>
+		/// <value>The APOP authentication token.</value>
 		public string ApopToken {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the EXPIRE extension value.
+		/// </summary>
+		/// <value>The EXPIRE extension value.</value>
 		public int Expire {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the implementation details of the server.
+		/// </summary>
+		/// <value>The implementation details.</value>
 		public string Implementation {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the login delay.
+		/// </summary>
+		/// <value>The login delay.</value>
 		public int LoginDelay {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// </summary>
+		/// <param name="pop3">The pop3 stream.</param>
 		public void Connect (Pop3Stream pop3)
 		{
 			if (stream != null)
@@ -96,7 +164,7 @@ namespace MailKit.Net.Pop3 {
 
 			Capabilities = Pop3Capabilities.User;
 			AuthenticationMechanisms.Clear ();
-			State = Pop3EngineState.Connect;
+			State = Pop3EngineState.Connection;
 			ApopToken = null;
 			stream = pop3;
 
@@ -133,12 +201,15 @@ namespace MailKit.Net.Pop3 {
 				Capabilities |= Pop3Capabilities.Apop;
 			}
 
-			State = Pop3EngineState.Authenticate;
+			State = Pop3EngineState.Authentication;
 		}
 
+		/// <summary>
+		/// Disconnects the <see cref="Pop3Stream"/>.
+		/// </summary>
 		public void Disconnect ()
 		{
-			State = Pop3EngineState.Connect;
+			State = Pop3EngineState.Connection;
 
 			if (stream != null) {
 				stream.Dispose ();
@@ -146,6 +217,16 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
+		/// <summary>
+		/// Reads a single line from the <see cref="Pop3Stream"/>.
+		/// </summary>
+		/// <returns>The line.</returns>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
 		public string ReadLine ()
 		{
 			if (stream == null)

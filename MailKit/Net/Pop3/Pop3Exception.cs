@@ -27,13 +27,28 @@
 using System;
 
 namespace MailKit.Net.Pop3 {
+	/// <summary>
+	/// A POP3 protocol exception.
+	/// </summary>
+	/// <remarks>
+	/// Indicates an error communicating with a POP3 server.
+	/// </remarks>
 	public class Pop3Exception : ProtocolException
 	{
-		public Pop3Exception (string message, Exception innerException) : base (message, innerException)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Exception"/> class.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		/// <param name="innerException">Inner exception.</param>
+		internal Pop3Exception (string message, Exception innerException) : base (message, innerException)
 		{
 		}
 
-		public Pop3Exception (string message) : base (message)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Exception"/> class.
+		/// </summary>
+		/// <param name="message">Message.</param>
+		internal Pop3Exception (string message) : base (message)
 		{
 		}
 	}

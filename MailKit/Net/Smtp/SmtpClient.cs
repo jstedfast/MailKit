@@ -134,7 +134,7 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Gets whether or not the client is currently connected to an SMTP server.
 		/// </summary>
-		/// <value><c>true</c> if the client connected; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get; private set;
 		}
@@ -400,10 +400,10 @@ namespace MailKit.Net.Smtp {
 		/// if the server advertizes support for the STARTTLS extension, the client
 		/// will automatically switch into TLS mode before authenticating.</para>
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// property will be populated.
+		/// and <see cref="Capabilities"/> properties will be populated.
 		/// </remarks>
 		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
-		/// be "smtp" to make a cleartext connection or "smtps" to make an SSL connection.</param>
+		/// be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
 		/// <param name="credentials">The user's credentials or <c>null</c> if no credentials are needed.</param>
 		/// <param name="token">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -414,6 +414,12 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The user's <paramref name="credentials"/> were wrong.
 		/// </exception>
 		/// <exception cref="MailKit.Security.SaslException">
 		/// A SASL authentication error occurred.
@@ -509,9 +515,6 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled.
-		/// </exception>
 		public void Disconnect (bool quit, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -523,8 +526,6 @@ namespace MailKit.Net.Smtp {
 				try {
 					SendCommand ("QUIT\r\n", token);
 				} catch (OperationCanceledException) {
-					Disconnect ();
-					throw;
 				} catch (SmtpException) {
 				} catch (IOException) {
 				}

@@ -30,8 +30,13 @@ using MimeKit;
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
-	/// An enumeration of the possible error codes that may be reported in <see cref="SmtpException.ErrorCode"/>.
+	/// An enumeration of the possible error codes that may be reported by a <see cref="SmtpException"/>.
 	/// </summary>
+	/// <remarks>
+	/// Other than the <see cref="SmtpErrorCode.ProtocolError"/> error, none of
+	/// the errors require reconnecting to the <see cref="SmtpClient"/> before
+	/// continuing to send more messages.
+	/// </remarks>
 	public enum SmtpErrorCode {
 		/// <summary>
 		/// The message was not accepted for delivery. This may happen if
@@ -71,6 +76,9 @@ namespace MailKit.Net.Smtp {
 	/// <summary>
 	/// An SMTP protocol exception.
 	/// </summary>
+	/// <remarks>
+	/// Indicates an error communicating with an SMTP server.
+	/// </remarks>
 	public class SmtpException : ProtocolException
 	{
 		/// <summary>

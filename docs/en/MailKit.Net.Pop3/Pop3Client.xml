@@ -98,11 +98,50 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <param name="credentials">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
+            be "pop3" to make a clear-text connection or "pop3s" to make an SSL connection.</param>
+        <param name="credentials">The user's credentials.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Establishes a connection to the specified POP3 server.
+            </summary>
+        <remarks>
+          <para>Establishes a connection to an POP3 or POP3/S server. If the schema
+            in the uri is "pop3", a clear-text connection is made and defaults to using
+            port 110 if no port is specified in the URI. However, if the schema in the
+            uri is "pop3s", an SSL connection is made using the
+            <see cref="P:MailKit.Net.Pop3.Pop3Client.ClientCertificates" /> and defaults to port 995 unless a port
+            is specified in the URI.</para>
+          <para>It should be noted that when using a clear-text POP3 connection,
+            if the server advertizes support for the STLS extension, the client
+            will automatically switch into TLS mode before authenticating.</para>
+            If a successful connection is made, the <see cref="P:MailKit.Net.Pop3.Pop3Client.AuthenticationMechanisms" />
+            and <see cref="P:MailKit.Net.Pop3.Pop3Client.Capabilities" /> properties will be populated.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>The <paramref name="uri" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="credentials" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The user's <paramref name="credentials" /> were wrong.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -182,10 +221,17 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="quit">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Disconnect the service.
+            </summary>
+        <remarks>
+            If <paramref name="quit" /> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -476,9 +522,26 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Pings the POP3 server to keep the connection alive.
+            </summary>
+        <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected or authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            The NOOP command failed.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Reset">

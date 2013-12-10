@@ -128,7 +128,7 @@
       </Parameters>
       <Docs>
         <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
-            be "smtp" to make a cleartext connection or "smtps" to make an SSL connection.</param>
+            be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
         <param name="credentials">The user's credentials or <c>null</c> if no credentials are needed.</param>
         <param name="token">A cancellation token.</param>
         <summary>
@@ -145,7 +145,7 @@
             if the server advertizes support for the STARTTLS extension, the client
             will automatically switch into TLS mode before authenticating.</para>
             If a successful connection is made, the <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" />
-            property will be populated.
+            and <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" /> properties will be populated.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>The <paramref name="uri" /> is <c>null</c>.</para>
@@ -161,6 +161,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Smtp.SmtpException">
             An SMTP protocol error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The user's <paramref name="credentials" /> were wrong.
             </exception>
       </Docs>
     </Member>
@@ -231,7 +237,7 @@
             Gets whether or not the client is currently connected to an SMTP server.
             </summary>
         <value>
-          <c>true</c> if the client connected; otherwise, <c>false</c>.</value>
+          <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
         <remarks>
         </remarks>
       </Docs>

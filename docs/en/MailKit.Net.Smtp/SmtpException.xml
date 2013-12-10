@@ -14,7 +14,8 @@
             An SMTP protocol exception.
             </summary>
     <remarks>
-    </remarks>
+            Indicates an error communicating with an SMTP server.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="ErrorCode">
