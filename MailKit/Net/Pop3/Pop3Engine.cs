@@ -130,10 +130,10 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the EXPIRE extension value.
+		/// Gets the EXPIRE extension policy value.
 		/// </summary>
-		/// <value>The EXPIRE extension value.</value>
-		public int Expire {
+		/// <value>The EXPIRE policy.</value>
+		public int ExpirePolicy {
 			get; private set;
 		}
 
@@ -354,12 +354,12 @@ namespace MailKit.Net.Pop3 {
 			if (pc.Status != Pop3CommandStatus.Ok)
 				return;
 
-			// clear all CAPA response capabilities
-			engine.Capabilities = Pop3Capabilities.None;
+			// clear all CAPA response capabilities (except the APOP capability)
+			engine.Capabilities &= Pop3Capabilities.Apop;
 			engine.AuthenticationMechanisms.Clear ();
 			engine.Implementation = null;
+			engine.ExpirePolicy = 0;
 			engine.LoginDelay = 0;
-			engine.Expire = 0;
 
 			string response;
 
@@ -392,9 +392,9 @@ namespace MailKit.Net.Pop3 {
 					var tokens = data.Split (' ');
 
 					if (int.TryParse (tokens[0], out value))
-						engine.Expire = value;
+						engine.ExpirePolicy = value;
 					else if (tokens[0] == "NEVER")
-						engine.Expire = -1;
+						engine.ExpirePolicy = -1;
 					break;
 				case "IMPLEMENTATION":
 					engine.Implementation = data;

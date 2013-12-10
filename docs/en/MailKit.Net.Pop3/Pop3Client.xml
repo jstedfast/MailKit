@@ -17,8 +17,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            A POP3 client that can be used to retrieve messages from a server.
+            </summary>
+    <remarks>
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> class supports both the "pop3" and "pop3s"
+            protocols. The "pop3" protocol makes a clear-text connection to the POP3
+            server and does not use SSL or TLS unless the POP3 server supports the
+            STLS extension (as defined by rfc2595). The "pop3s" protocol,
+            however, connects to the POP3 server using an SSL-wrapped connection.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,13 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> class.
+            </summary>
+        <remarks>
+            Before you can retrieve messages with the <see cref="T:MailKit.Net.Pop3.Pop3Client" />, you
+            must first call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
@@ -45,9 +58,16 @@
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the authentication mechanisms supported by the POP3 server.
+            </summary>
+        <value>The authentication mechanisms.</value>
+        <remarks>
+          <para>The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.</para>
+          <para>Servers that do not support the SASL capability will typically support either the
+            <c>"APOP"</c> authentication mechanism (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.Apop" />) or the ability to
+            login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.User" />).</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Capabilities">
@@ -61,9 +81,14 @@
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the capabilities supported by the POP3 server.
+            </summary>
+        <value>The capabilities.</value>
+        <remarks>
+            The capabilities will not be known until a successful connection
+            has been made via the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ClientCertificates">
@@ -77,9 +102,15 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets or sets the client SSL certificates.
+            </summary>
+        <value>The client SSL certificates.</value>
+        <remarks>
+          <para>Some servers may require the client SSL certificates in order
+            to allow the user to connect.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Connect">
@@ -261,9 +292,9 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="Expire">
-      <MemberSignature Language="C#" Value="public int Expire { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance int32 Expire" />
+    <Member MemberName="ExpirePolicy">
+      <MemberSignature Language="C#" Value="public int ExpirePolicy { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ExpirePolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -272,9 +303,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the expiration policy.
+            </summary>
+        <value>The expiration policy.</value>
+        <remarks>
+          <para>If the server supports the EXPIRE capability (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.Expire" />), the value
+            of the <see cref="P:MailKit.Net.Pop3.Pop3Client.ExpirePolicy" /> property will reflect the value advertized by the server.</para>
+          <para>A value of <c>-1</c> indicates that messages will never expire.</para>
+          <para>A value of <c>0</c> indicates that messages that have been retrieved during the current session
+            will be purged immediately after the connection is closed via the "QUIT" command.</para>
+          <para>Values larger than <c>0</c> indicate the minimum number of days that the server will retain
+            messages which have been retrieved.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -513,9 +554,14 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the implementation details of the server.
+            </summary>
+        <value>The implementation details.</value>
+        <remarks>
+            If the server advertizes its implementation details, this value will be set to a string containing the
+            information details provided by the server.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsConnected">
@@ -529,8 +575,11 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>
+            Gets whether or not the client is currently connected to an POP3 server.
+            </summary>
+        <value>
+          <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -545,9 +594,14 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the minimum delay, in milliseconds, between logins.
+            </summary>
+        <value>The login delay.</value>
+        <remarks>
+            If the server supports the LOGIN-DELAY capability (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.LoginDelay" />), this value
+            will be set to the minimum number of milliseconds that the client must wait between logins.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="NoOp">

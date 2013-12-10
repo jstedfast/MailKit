@@ -42,6 +42,16 @@ using MailKit.Security;
 using System.Security.Cryptography;
 
 namespace MailKit.Net.Pop3 {
+	/// <summary>
+	/// A POP3 client that can be used to retrieve messages from a server.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="Pop3Client"/> class supports both the "pop3" and "pop3s"
+	/// protocols. The "pop3" protocol makes a clear-text connection to the POP3
+	/// server and does not use SSL or TLS unless the POP3 server supports the
+	/// STLS extension (as defined by rfc2595). The "pop3s" protocol,
+	/// however, connects to the POP3 server using an SSL-wrapped connection.
+	/// </remarks>
 	public class Pop3Client : IMessageSpool
 	{
 		[Flags]
@@ -58,23 +68,67 @@ namespace MailKit.Net.Pop3 {
 		bool disposed;
 		int count;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Client"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you
+		/// must first call the <see cref="Connect"/> method.
+		/// </remarks>
 		public Pop3Client ()
 		{
 			engine = new Pop3Engine ();
 		}
 
+		/// <summary>
+		/// Gets the capabilities supported by the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// The capabilities will not be known until a successful connection
+		/// has been made via the <see cref="Connect"/> method.
+		/// </remarks>
+		/// <value>The capabilities.</value>
 		public Pop3Capabilities Capabilities {
 			get { return engine.Capabilities; }
 		}
 
-		public int Expire {
-			get { return engine.Expire; }
+		/// <summary>
+		/// Gets the expiration policy.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports the EXPIRE capability (<see cref="Pop3Capabilities.Expire"/>), the value
+		/// of the <see cref="ExpirePolicy"/> property will reflect the value advertized by the server.</para>
+		/// <para>A value of <c>-1</c> indicates that messages will never expire.</para>
+		/// <para>A value of <c>0</c> indicates that messages that have been retrieved during the current session
+		/// will be purged immediately after the connection is closed via the "QUIT" command.</para>
+		/// <para>Values larger than <c>0</c> indicate the minimum number of days that the server will retain
+		/// messages which have been retrieved.</para>
+		/// </remarks>
+		/// <value>The expiration policy.</value>
+		public int ExpirePolicy {
+			get { return engine.ExpirePolicy; }
 		}
 
+		/// <summary>
+		/// Gets the implementation details of the server.
+		/// </summary>
+		/// <remarks>
+		/// If the server advertizes its implementation details, this value will be set to a string containing the
+		/// information details provided by the server.
+		/// </remarks>
+		/// <value>The implementation details.</value>
 		public string Implementation {
 			get { return engine.Implementation; }
 		}
 
+		/// <summary>
+		/// Gets the minimum delay, in milliseconds, between logins.
+		/// </summary>
+		/// <remarks>
+		/// If the server supports the LOGIN-DELAY capability (<see cref="Pop3Capabilities.LoginDelay"/>), this value
+		/// will be set to the minimum number of milliseconds that the client must wait between logins.
+		/// </remarks>
+		/// <value>The login delay.</value>
 		public int LoginDelay {
 			get { return engine.LoginDelay; }
 		}
@@ -120,14 +174,37 @@ namespace MailKit.Net.Pop3 {
 
 		#region IMessageService implementation
 
+		/// <summary>
+		/// Gets or sets the client SSL certificates.
+		/// </summary>
+		/// <remarks>
+		/// <para>Some servers may require the client SSL certificates in order
+		/// to allow the user to connect.</para>
+		/// <para>This property should be set before calling <see cref="Connect"/>.</para>
+		/// </remarks>
+		/// <value>The client SSL certificates.</value>
 		public X509CertificateCollection ClientCertificates {
 			get; set;
 		}
 
+		/// <summary>
+		/// Gets the authentication mechanisms supported by the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// <para>The authentication mechanisms are queried durring the <see cref="Connect"/> method.</para>
+		/// <para>Servers that do not support the SASL capability will typically support either the
+		/// <c>"APOP"</c> authentication mechanism (<see cref="Pop3Capabilities.Apop"/>) or the ability to
+		/// login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="Pop3Capabilities.User"/>).</para>
+		/// </remarks>
+		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
 			get { return engine.AuthenticationMechanisms; }
 		}
 
+		/// <summary>
+		/// Gets whether or not the client is currently connected to an POP3 server.
+		/// </summary>
+		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get { return engine.IsConnected; }
 		}

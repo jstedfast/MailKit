@@ -51,7 +51,7 @@ namespace MailKit.Net.Smtp {
 	/// The <see cref="SmtpClient"/> class supports both the "smtp" and "smtps"
 	/// protocols. The "smtp" protocol makes a clear-text connection to the SMTP
 	/// server and does not use SSL or TLS unless the SMTP server supports the
-	/// STARTTLS extension (as defined by rfc2222). The "smtps" protocol,
+	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol,
 	/// however, connects to the SMTP server using an SSL-wrapped connection.
 	/// </remarks>
 	public class SmtpClient : IMessageTransport
@@ -123,8 +123,7 @@ namespace MailKit.Net.Smtp {
 		/// Gets the authentication mechanisms supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried durring the
-		/// <see cref="Connect"/> method.
+		/// The authentication mechanisms are queried durring the <see cref="Connect"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
