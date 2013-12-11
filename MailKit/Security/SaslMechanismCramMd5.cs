@@ -30,6 +30,12 @@ using System.Text;
 using System.Security.Cryptography;
 
 namespace MailKit.Security {
+	/// <summary>
+	/// The CRAM-MD5 SASL mechanism.
+	/// </summary>
+	/// <remarks>
+	/// A SASL mechanism based on HMAC-MD5.
+	/// </remarks>
 	public class SaslMechanismCramMd5 : SaslMechanism
 	{
 		static readonly byte[] HexAlphabet = new byte[16] {
@@ -37,6 +43,11 @@ namespace MailKit.Security {
 			0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, // '8' -> 'F'
 		};
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismCramMd5"/> class.
+		/// </summary>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="credentials">The user's credentials.</param>
 		public SaslMechanismCramMd5 (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}

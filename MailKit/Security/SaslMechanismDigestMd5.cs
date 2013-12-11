@@ -32,6 +32,14 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 
 namespace MailKit.Security {
+	/// <summary>
+	/// The DIGEST-MD5 SASL mechanism.
+	/// </summary>
+	/// <remarks>
+	/// Unlike the PLAIN and LOGIN SASL mechanisms, the DIGEST-MD5 mechanism
+	/// provides some level of protection and should be relatively safe to
+	/// use even with a clear-text connection.
+	/// </remarks>
 	public class SaslMechanismDigestMd5 : SaslMechanism
 	{
 		enum LoginState {
@@ -43,6 +51,11 @@ namespace MailKit.Security {
 		DigestResponse response;
 		LoginState state;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
+		/// </summary>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="credentials">The user's credentials.</param>
 		public SaslMechanismDigestMd5 (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}

@@ -29,8 +29,22 @@ using System.Net;
 using System.Text;
 
 namespace MailKit.Security {
+	/// <summary>
+	/// The PLAIN SASL mechanism.
+	/// </summary>
+	/// <remarks>
+	/// The PLAIN SASL mechanism provides little protection over the use
+	/// of plain-text passwords by combining the user name and password and
+	/// obscuring them within a base64-encoded blob and should be avoided
+	/// unless used in combination with an SSL or TLS connection.
+	/// </remarks>
 	public class SaslMechanismPlain : SaslMechanism
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismPlain"/> class.
+		/// </summary>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="credentials">The user's credentials.</param>
 		public SaslMechanismPlain (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}

@@ -65,6 +65,7 @@
       <Type Name="SmtpException" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Security">
+      <Type Name="SaslErrorCode" Kind="Enumeration" />
       <Type Name="SaslException" Kind="Class" />
       <Type Name="SaslMechanism" Kind="Class" />
       <Type Name="SaslMechanismCramMd5" Kind="Class" />

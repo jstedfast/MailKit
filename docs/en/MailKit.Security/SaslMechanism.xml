@@ -10,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            A SASL authentication mechanism.
+            </summary>
+    <remarks>
+            Authenticating via a SASL mechanism may be a multi-step process, so care should
+            be taken to check the <see cref="P:MailKit.Security.SaslMechanism.IsAuthenticated" /> after each <see cref="M:MailKit.Security.SaslMechanism.Challenge(System.String)" />
+            pass.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +32,11 @@
         <Parameter Name="credentials" Type="System.Net.ICredentials" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <param name="credentials">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="uri">The URI of the service.</param>
+        <param name="credentials">The user's credentials.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanism" /> class.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -46,15 +54,20 @@
         <Parameter Name="token" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">The server's base64-encoded challenge token.</param>
+        <summary>
+            Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
+            </summary>
+        <returns>The next base64-encoded challenge response.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:MailKit.Security.SaslException">
+            An error has occurred while parsing the server's challenge token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Challenge">
-      <MemberSignature Language="C#" Value="public abstract byte[] Challenge (byte[] token, int startIndex, int length);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] Challenge(unsigned int8[] token, int32 startIndex, int32 length) cil managed" />
+      <MemberSignature Language="C#" Value="protected abstract byte[] Challenge (byte[] token, int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance unsigned int8[] Challenge(unsigned int8[] token, int32 startIndex, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -68,12 +81,17 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <param name="startIndex">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">The server's challenge token.</param>
+        <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+        <param name="length">The length of the server's challenge.</param>
+        <summary>
+            Parses the server's challenge token and returns the next challenge response.
+            </summary>
+        <returns>The next challenge response.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:MailKit.Security.SaslException">
+            An error has occurred while parsing the server's challenge token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -92,12 +110,27 @@
         <Parameter Name="credentials" Type="System.Net.ICredentials" />
       </Parameters>
       <Docs>
-        <param name="mechanism">To be added.</param>
-        <param name="uri">To be added.</param>
-        <param name="credentials">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="mechanism">The name of the SASL mechanism.</param>
+        <param name="uri">The URI of the service to authenticate against.</param>
+        <param name="credentials">The user's credentials.</param>
+        <summary>
+            Create an instance of the specified SASL mechanism using the uri and credentials.
+            </summary>
+        <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
+        <remarks>
+            If unsure that a particular SASL mechanism is supported, you should first call
+            <see cref="M:MailKit.Security.SaslMechanism.IsSupported(System.String)" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="mechanism" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="uri" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="credentials" /> is <c>null</c>.</para>
+        </exception>
       </Docs>
     </Member>
     <Member MemberName="Credentials">
@@ -111,8 +144,10 @@
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>
+            Gets the user's credentials.
+            </summary>
+        <value>The user's credentials.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -127,8 +162,11 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>
+            Gets or sets whether the SASL mechanism has finished authenticating.
+            </summary>
+        <value>
+          <c>true</c> if the SASL mechanism has finished authenticating; otherwise, <c>false</c>.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -146,10 +184,19 @@
         <Parameter Name="mechanism" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="mechanism">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="mechanism">The name of the SASL mechanism.</param>
+        <summary>
+            Determines if the specified SASL mechanism is supported by MailKit.
+            </summary>
+        <returns>
+          <c>true</c> if the specified SASL mechanism is supported; otherwise, <c>false</c>.</returns>
+        <remarks>
+            Use this method to make sure that a SASL mechanism is supported before calling
+            <see cref="M:MailKit.Security.SaslMechanism.Create(System.String,System.Uri,System.Net.ICredentials)" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="mechanism" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MechanismName">
@@ -163,8 +210,10 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>
+            Gets the name of the mechanism.
+            </summary>
+        <value>The name of the mechanism.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -180,7 +229,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Resets the state of the SASL mechanism.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -195,8 +246,10 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>
+            Gets or sets the URI of the service.
+            </summary>
+        <value>The URI of the service.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

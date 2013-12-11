@@ -10,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            The LOGIN SASL mechanism.
+            </summary>
+    <remarks>
+            The LOGIN SASL mechanism provides little protection over the use
+            of plain-text passwords by obscuring the user name and password within
+            individual base64-encoded blobs and should be avoided unless used in
+            combination with an SSL or TLS connection.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,15 +33,17 @@
         <Parameter Name="credentials" Type="System.Net.ICredentials" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <param name="credentials">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="uri">The URI of the service.</param>
+        <param name="credentials">The user's credentials.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanismLogin" /> class.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="Challenge">
-      <MemberSignature Language="C#" Value="public override byte[] Challenge (byte[] token, int startIndex, int length);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance unsigned int8[] Challenge(unsigned int8[] token, int32 startIndex, int32 length) cil managed" />
+      <MemberSignature Language="C#" Value="protected override byte[] Challenge (byte[] token, int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance unsigned int8[] Challenge(unsigned int8[] token, int32 startIndex, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -48,12 +57,17 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <param name="startIndex">To be added.</param>
-        <param name="length">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">The server's challenge token.</param>
+        <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+        <param name="length">The length of the server's challenge.</param>
+        <summary>
+            Parses the server's challenge token and returns the next challenge response.
+            </summary>
+        <returns>The next challenge response.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:MailKit.Security.SaslException">
+            An error has occurred while parsing the server's challenge token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MechanismName">
@@ -67,8 +81,10 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
+        <summary>
+            Gets the name of the mechanism.
+            </summary>
+        <value>The name of the mechanism.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -84,7 +100,9 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Resets the state of the SASL mechanism.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

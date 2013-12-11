@@ -1,0 +1,99 @@
+<Type Name="SaslErrorCode" FullName="MailKit.Security.SaslErrorCode">
+  <TypeSignature Language="C#" Value="public enum SaslErrorCode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SaslErrorCode extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            An enumeration of the possible error codes that may be reported by a <see cref="T:MailKit.Security.SaslException" />.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ChallengeTooLong">
+      <MemberSignature Language="C#" Value="ChallengeTooLong" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Security.SaslErrorCode ChallengeTooLong = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Security.SaslErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server's challenge was too long.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncompleteChallenge">
+      <MemberSignature Language="C#" Value="IncompleteChallenge" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Security.SaslErrorCode IncompleteChallenge = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Security.SaslErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server's response contained an incomplete challenge.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IncorrectHash">
+      <MemberSignature Language="C#" Value="IncorrectHash" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Security.SaslErrorCode IncorrectHash = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Security.SaslErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server's challenge contained an incorrect hash.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="InvalidChallenge">
+      <MemberSignature Language="C#" Value="InvalidChallenge" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Security.SaslErrorCode InvalidChallenge = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Security.SaslErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server's challenge was invalid.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="MissingChallenge">
+      <MemberSignature Language="C#" Value="MissingChallenge" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Security.SaslErrorCode MissingChallenge = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Security.SaslErrorCode</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server's response did not contain a challenge.
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -29,6 +29,15 @@ using System.Net;
 using System.Text;
 
 namespace MailKit.Security {
+	/// <summary>
+	/// The LOGIN SASL mechanism.
+	/// </summary>
+	/// <remarks>
+	/// The LOGIN SASL mechanism provides little protection over the use
+	/// of plain-text passwords by obscuring the user name and password within
+	/// individual base64-encoded blobs and should be avoided unless used in
+	/// combination with an SSL or TLS connection.
+	/// </remarks>
 	public class SaslMechanismLogin : SaslMechanism
 	{
 		enum LoginState {
@@ -38,6 +47,11 @@ namespace MailKit.Security {
 
 		LoginState state;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismLogin"/> class.
+		/// </summary>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="credentials">The user's credentials.</param>
 		public SaslMechanismLogin (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}

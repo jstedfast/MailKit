@@ -221,10 +221,31 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Mark the specified message for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
@@ -242,10 +263,37 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Mark the specified message for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uid" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uid" /> is not a valid message UID.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
@@ -288,8 +336,13 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        <remarks>Call <see cref="M:MailKit.Net.Pop3.Pop3Client.Dispose" /> when you are finished using the <see cref="T:MailKit.Net.Pop3.Pop3Client" />. The
+            <see cref="M:MailKit.Net.Pop3.Pop3Client.Dispose" /> method leaves the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> in an unusable state. After
+            calling <see cref="M:MailKit.Net.Pop3.Pop3Client.Dispose" />, you must release all references to the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> so
+            the garbage collector can reclaim the memory that the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> was occupying.</remarks>
       </Docs>
     </Member>
     <Member MemberName="ExpirePolicy">
@@ -333,11 +386,28 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the specified message.
+            </summary>
+        <returns>The message.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -355,11 +425,34 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the specified message.
+            </summary>
+        <returns>The message.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uid" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uid" /> is not a valid message UID.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -377,11 +470,28 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the headers for the specified message.
+            </summary>
+        <returns>The message headers.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -399,11 +509,34 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the headers for the specified message.
+            </summary>
+        <returns>The message headers.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uid" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uid" /> is not a valid message UID.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
@@ -421,11 +554,31 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="index">The index of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the size of the specified message, in bytes.
+            </summary>
+        <returns>The message size, in bytes.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
@@ -443,11 +596,34 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">To be added.</param>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="uid">The UID of the message.</param>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the size of the specified message, in bytes.
+            </summary>
+        <returns>The message size, in bytes.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uid" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uid" /> is not a valid message UID.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
@@ -464,10 +640,24 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Gets the sizes for all available messages, in bytes.
+            </summary>
+        <returns>The message sizes, in bytes.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUid">
@@ -493,7 +683,7 @@
         <returns>The message UID.</returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
-            The <paramref name="index" /> is not a valid message index.
+          <paramref name="index" /> is not a valid message index.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
@@ -654,9 +844,23 @@
         <Parameter Name="token" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">The token to monitor for cancellation requests.</param>
-        <summary>To be added.</summary>
+        <param name="token">A cancellation token.</param>
+        <summary>
+            Reset the state of all messages marked for deletion.
+            </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SupportsUids">

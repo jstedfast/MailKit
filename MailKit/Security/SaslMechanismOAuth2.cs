@@ -28,11 +28,23 @@ using System;
 using System.Net;
 
 namespace MailKit.Security {
+	/// <summary>
+	/// The OAuth2 SASL mechanism.
+	/// </summary>
+	/// <remarks>
+	/// A SASL mechanism used by Google that makes use of a short-lived
+	/// OAuth 2.0 access token.
+	/// </remarks>
 	public class SaslMechanismOAuth2 : SaslMechanism
 	{
 		const string AuthBearer = "auth=Bearer ";
 		const string UserEquals = "user=";
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismOAuth2"/> class.
+		/// </summary>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="credentials">The user's credentials.</param>
 		public SaslMechanismOAuth2 (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}

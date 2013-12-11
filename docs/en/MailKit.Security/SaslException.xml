@@ -10,23 +10,47 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            A SASL authentication exception.
+            </summary>
+    <remarks>
+            Typically indicates an error while parsing a server's challenge token.
+            </remarks>
   </Docs>
   <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SaslException (string message);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
-      <MemberType>Constructor</MemberType>
+    <Member MemberName="ErrorCode">
+      <MemberSignature Language="C#" Value="public MailKit.Security.SaslErrorCode ErrorCode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Security.SaslErrorCode ErrorCode" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Parameters>
-        <Parameter Name="message" Type="System.String" />
-      </Parameters>
+      <ReturnValue>
+        <ReturnType>MailKit.Security.SaslErrorCode</ReturnType>
+      </ReturnValue>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
+        <summary>
+            Gets the error code.
+            </summary>
+        <value>The error code.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Mechanism">
+      <MemberSignature Language="C#" Value="public string Mechanism { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Mechanism" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the name of the SASL mechanism that had the error.
+            </summary>
+        <value>The name of the SASL mechanism.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
