@@ -550,7 +550,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="index">The message index.</param>
 		/// <param name="token">A cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// The <paramref name="index"/> is not a valid message index.
+		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -755,6 +755,33 @@ namespace MailKit.Net.Pop3 {
 			return size;
 		}
 
+		/// <summary>
+		/// Gets the size of the specified message, in bytes.
+		/// </summary>
+		/// <returns>The message size, in bytes.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uid"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is not a valid message UID.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public int GetMessageSize (string uid, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -773,6 +800,30 @@ namespace MailKit.Net.Pop3 {
 			return GetMessageSizeForSequenceId (seqid, token);
 		}
 
+		/// <summary>
+		/// Gets the size of the specified message, in bytes.
+		/// </summary>
+		/// <returns>The message size, in bytes.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public int GetMessageSize (int index, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -786,6 +837,23 @@ namespace MailKit.Net.Pop3 {
 			return GetMessageSizeForSequenceId (index + 1, token);
 		}
 
+		/// <summary>
+		/// Gets the sizes for all available messages, in bytes.
+		/// </summary>
+		/// <returns>The message sizes, in bytes.</returns>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public int[] GetMessageSizes (CancellationToken token)
 		{
 			CheckDisposed ();
@@ -907,6 +975,33 @@ namespace MailKit.Net.Pop3 {
 			return message;
 		}
 
+		/// <summary>
+		/// Gets the headers for the specified message.
+		/// </summary>
+		/// <returns>The message headers.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uid"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is not a valid message UID.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public HeaderList GetMessageHeaders (string uid, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -925,6 +1020,27 @@ namespace MailKit.Net.Pop3 {
 			return GetMessageForSequenceId (seqid, true, token).Headers;
 		}
 
+		/// <summary>
+		/// Gets the headers for the specified message.
+		/// </summary>
+		/// <returns>The message headers.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public HeaderList GetMessageHeaders (int index, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -938,6 +1054,33 @@ namespace MailKit.Net.Pop3 {
 			return GetMessageForSequenceId (index + 1, true, token).Headers;
 		}
 
+		/// <summary>
+		/// Gets the specified message.
+		/// </summary>
+		/// <returns>The message.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uid"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is not a valid message UID.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public MimeMessage GetMessage (string uid, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -956,6 +1099,27 @@ namespace MailKit.Net.Pop3 {
 			return GetMessageForSequenceId (seqid, false, token);
 		}
 
+		/// <summary>
+		/// Gets the specified message.
+		/// </summary>
+		/// <returns>The message.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public MimeMessage GetMessage (int index, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -969,6 +1133,37 @@ namespace MailKit.Net.Pop3 {
 			return GetMessageForSequenceId (index + 1, false, token);
 		}
 
+		/// <summary>
+		/// Mark the specified message for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uid"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is not a valid message UID.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public void DeleteMessage (string uid, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -987,6 +1182,31 @@ namespace MailKit.Net.Pop3 {
 			SendCommand (token, "DELE {0}", seqid);
 		}
 
+		/// <summary>
+		/// Mark the specified message for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public void DeleteMessage (int index, CancellationToken token)
 		{
 			CheckDisposed ();
@@ -1000,6 +1220,22 @@ namespace MailKit.Net.Pop3 {
 			SendCommand (token, "DELE {0}", index + 1);
 		}
 
+		/// <summary>
+		/// Reset the state of all messages marked for deletion.
+		/// </summary>
+		/// <param name="token">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
 		public void Reset (CancellationToken token)
 		{
 			CheckDisposed ();
@@ -1014,6 +1250,13 @@ namespace MailKit.Net.Pop3 {
 
 		#region IDisposable implementation
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Pop3.Pop3Client"/>. The
+		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.Net.Pop3.Pop3Client"/> in an unusable state. After
+		/// calling <see cref="Dispose"/>, you must release all references to the <see cref="MailKit.Net.Pop3.Pop3Client"/> so
+		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Pop3.Pop3Client"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			if (!disposed) {

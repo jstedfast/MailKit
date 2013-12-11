@@ -48,7 +48,7 @@ namespace MailKit.Net.Pop3 {
 
 		/// <summary>
 		/// The server supports the EXPIRE extension (rfc2449) and defines the
-		/// expiration policy for messages (see <see cref="Pop3Client.Expire"/>).
+		/// expiration policy for messages (see <see cref="Pop3Client.ExpirePolicy"/>).
 		/// </summary>
 		Expire                 = (1 << 1),
 

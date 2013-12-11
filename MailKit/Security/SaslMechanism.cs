@@ -28,32 +28,79 @@ using System;
 using System.Net;
 
 namespace MailKit.Security {
+	/// <summary>
+	/// A SASL authentication mechanism.
+	/// </summary>
+	/// <remarks>
+	/// Authenticating via a SASL mechanism may be a multi-step process, so care should
+	/// be taken to check the <see cref="IsAuthenticated"/> after each <see cref="Challenge(string)"/>
+	/// pass.
+	/// </remarks>
 	public abstract class SaslMechanism
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanism"/> class.
+		/// </summary>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="credentials">The user's credentials.</param>
 		protected SaslMechanism (Uri uri, ICredentials credentials)
 		{
 			Credentials = credentials;
 			Uri = uri;
 		}
 
+		/// <summary>
+		/// Gets the name of the mechanism.
+		/// </summary>
+		/// <value>The name of the mechanism.</value>
 		public abstract string MechanismName {
 			get;
 		}
 
+		/// <summary>
+		/// Gets the user's credentials.
+		/// </summary>
+		/// <value>The user's credentials.</value>
 		public ICredentials Credentials {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets or sets whether the SASL mechanism has finished authenticating.
+		/// </summary>
+		/// <value><c>true</c> if the SASL mechanism has finished authenticating; otherwise, <c>false</c>.</value>
 		public bool IsAuthenticated {
 			get; protected set;
 		}
 
+		/// <summary>
+		/// Gets or sets the URI of the service.
+		/// </summary>
+		/// <value>The URI of the service.</value>
 		public Uri Uri {
 			get; protected set;
 		}
 
-		public abstract byte[] Challenge (byte[] token, int startIndex, int length);
+		/// <summary>
+		/// Parses the server's challenge token and returns the next challenge response.
+		/// </summary>
+		/// <returns>The next challenge response.</returns>
+		/// <param name="token">The server's challenge token.</param>
+		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+		/// <param name="length">The length of the server's challenge.</param>
+		/// <exception cref="SaslException">
+		/// An error has occurred while parsing the server's challenge token.
+		/// </exception>
+		protected abstract byte[] Challenge (byte[] token, int startIndex, int length);
 
+		/// <summary>
+		/// Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
+		/// </summary>
+		/// <returns>The next base64-encoded challenge response.</returns>
+		/// <param name="token">The server's base64-encoded challenge token.</param>
+		/// <exception cref="SaslException">
+		/// An error has occurred while parsing the server's challenge token.
+		/// </exception>
 		public string Challenge (string token)
 		{
 			byte[] decoded;
@@ -75,11 +122,26 @@ namespace MailKit.Security {
 			return Convert.ToBase64String (challenge);
 		}
 
+		/// <summary>
+		/// Resets the state of the SASL mechanism.
+		/// </summary>
 		public virtual void Reset ()
 		{
 			IsAuthenticated = false;
 		}
 
+		/// <summary>
+		/// Determines if the specified SASL mechanism is supported by MailKit.
+		/// </summary>
+		/// <remarks>
+		/// Use this method to make sure that a SASL mechanism is supported before calling
+		/// <see cref="Create"/>.
+		/// </remarks>
+		/// <returns><c>true</c> if the specified SASL mechanism is supported; otherwise, <c>false</c>.</returns>
+		/// <param name="mechanism">The name of the SASL mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="mechanism"/> is <c>null</c>.
+		/// </exception>
 		public static bool IsSupported (string mechanism)
 		{
 			if (mechanism == null)
@@ -95,6 +157,24 @@ namespace MailKit.Security {
 			}
 		}
 
+		/// <summary>
+		/// Create an instance of the specified SASL mechanism using the uri and credentials.
+		/// </summary>
+		/// <remarks>
+		/// If unsure that a particular SASL mechanism is supported, you should first call
+		/// <see cref="IsSupported"/>.
+		/// </remarks>
+		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
+		/// <param name="mechanism">The name of the SASL mechanism.</param>
+		/// <param name="uri">The URI of the service to authenticate against.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="mechanism"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
 		public static SaslMechanism Create (string mechanism, Uri uri, ICredentials credentials)
 		{
 			if (mechanism == null)

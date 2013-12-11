@@ -47,11 +47,25 @@ namespace MailKit.Security {
 		{
 		}
 
+		/// <summary>
+		/// Gets the name of the mechanism.
+		/// </summary>
+		/// <value>The name of the mechanism.</value>
 		public override string MechanismName {
 			get { return "DIGEST-MD5"; }
 		}
 
-		public override byte[] Challenge (byte[] token, int startIndex, int length)
+		/// <summary>
+		/// Parses the server's challenge token and returns the next challenge response.
+		/// </summary>
+		/// <returns>The next challenge response.</returns>
+		/// <param name="token">The server's challenge token.</param>
+		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+		/// <param name="length">The length of the server's challenge.</param>
+		/// <exception cref="SaslException">
+		/// An error has occurred while parsing the server's challenge token.
+		/// </exception>
+		protected override byte[] Challenge (byte[] token, int startIndex, int length)
 		{
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
@@ -64,7 +78,7 @@ namespace MailKit.Security {
 			switch (state) {
 			case LoginState.Auth:
 				if (token.Length > 2048)
-					throw new SaslException ("Server challenge too long.");
+					throw new SaslException (MechanismName, SaslErrorCode.ChallengeTooLong, "Server challenge too long.");
 
 				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token));
 				response = new DigestResponse (challenge, Uri.Scheme, Uri.DnsSafeHost, cred.UserName, cred.Password);
@@ -72,18 +86,18 @@ namespace MailKit.Security {
 				return response.Encode ();
 			case LoginState.Final:
 				if (token.Length == 0)
-					throw new SaslException ("Server response did not contain any authentication data.");
+					throw new SaslException (MechanismName, SaslErrorCode.MissingChallenge, "Server response did not contain any authentication data.");
 
 				var text = Encoding.UTF8.GetString (token);
 				string key, value;
 				int index = 0;
 
 				if (!DigestChallenge.TryParseKeyValuePair (text, ref index, out key, out value))
-					throw new SaslException ("Server response contained incomplete authentication data.");
+					throw new SaslException (MechanismName, SaslErrorCode.IncompleteChallenge, "Server response contained incomplete authentication data.");
 
 				var expected = response.ComputeHash (cred.Password, false);
 				if (value != expected)
-					throw new SaslException ("Server response did not contain the expected hash.");
+					throw new SaslException (MechanismName, SaslErrorCode.IncorrectHash, "Server response did not contain the expected hash.");
 
 				IsAuthenticated = true;
 				return new byte[0];
@@ -92,6 +106,9 @@ namespace MailKit.Security {
 			}
 		}
 
+		/// <summary>
+		/// Resets the state of the SASL mechanism.
+		/// </summary>
 		public override void Reset ()
 		{
 			state = LoginState.Auth;
@@ -234,7 +251,7 @@ namespace MailKit.Security {
 				string key, value;
 
 				if (!TryParseKeyValuePair (token, ref index, out key, out value))
-					throw new SaslException (string.Format ("Invalid SASL challenge from the server: {0}", token));
+					throw new SaslException ("DIGEST-MD5", SaslErrorCode.InvalidChallenge, string.Format ("Invalid SASL challenge from the server: {0}", token));
 
 				switch (key.ToLowerInvariant ()) {
 				case "realm":

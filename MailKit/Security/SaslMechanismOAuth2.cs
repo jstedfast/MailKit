@@ -37,11 +37,25 @@ namespace MailKit.Security {
 		{
 		}
 
+		/// <summary>
+		/// Gets the name of the mechanism.
+		/// </summary>
+		/// <value>The name of the mechanism.</value>
 		public override string MechanismName {
 			get { return "XOAUTH2"; }
 		}
 
-		public override byte[] Challenge (byte[] token, int startIndex, int length)
+		/// <summary>
+		/// Parses the server's challenge token and returns the next challenge response.
+		/// </summary>
+		/// <returns>The next challenge response.</returns>
+		/// <param name="token">The server's challenge token.</param>
+		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+		/// <param name="length">The length of the server's challenge.</param>
+		/// <exception cref="SaslException">
+		/// An error has occurred while parsing the server's challenge token.
+		/// </exception>
+		protected override byte[] Challenge (byte[] token, int startIndex, int length)
 		{
 			if (IsAuthenticated)
 				throw new InvalidOperationException ();
