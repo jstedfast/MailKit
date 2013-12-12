@@ -760,13 +760,15 @@ namespace MailKit.Net.Smtp {
 
 		void Reset ()
 		{
-			using (var cancel = new CancellationTokenSource ()) {
-				try {
-					var response = SendCommand ("RSET\r\n", cancel.Token);
-					if (response.StatusCode != SmtpStatusCode.Ok)
-						Disconnect (false, cancel.Token);
-				} catch (IOException) {
-				}
+			try {
+				var response = SendCommand ("RSET\r\n", CancellationToken.None);
+				if (response.StatusCode != SmtpStatusCode.Ok)
+					Disconnect (false, CancellationToken.None);
+			} catch (SmtpException ex) {
+				if (ex.ErrorCode == SmtpErrorCode.ProtocolError)
+					Disconnect ();
+			} catch {
+				Disconnect ();
 			}
 		}
 
@@ -820,28 +822,16 @@ namespace MailKit.Net.Smtp {
 				MailFrom (sender, extensions, token);
 				foreach (var recipient in recipients)
 					RcptTo (recipient, token);
-			} catch (OperationCanceledException) {
-				Reset ();
-				throw;
+				Data (message, token);
 			} catch (SmtpException ex) {
 				if (ex.ErrorCode == SmtpErrorCode.ProtocolError)
 					Disconnect ();
 				else
 					Reset ();
 				throw;
-			}
-
-			try {
-				Data (message, token);
 			} catch (OperationCanceledException) {
 				// irrecoverable
 				Disconnect ();
-				throw;
-			} catch (SmtpException ex) {
-				if (ex.ErrorCode == SmtpErrorCode.ProtocolError)
-					Disconnect ();
-				else
-					Reset ();
 				throw;
 			}
 		}
