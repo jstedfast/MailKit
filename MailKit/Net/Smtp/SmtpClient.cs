@@ -34,7 +34,6 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -745,18 +744,13 @@ namespace MailKit.Net.Smtp {
 			options.HiddenHeaders.Add (HeaderId.ResentBcc);
 			options.HiddenHeaders.Add (HeaderId.Bcc);
 
-			using (var data = new MemoryBlockStream ()) {
-				using (var filtered = new FilteredStream (data)) {
-					filtered.Add (new SmtpDataFilter ());
-					message.WriteTo (options, filtered);
-					filtered.Flush ();
-				}
-
-				data.Write (EndData, 0, EndData.Length);
-				data.Position = 0;
-
-				WriteData (stream, data, token);
+			using (var filtered = new FilteredStream (stream)) {
+				filtered.Add (new SmtpDataFilter ());
+				message.WriteTo (options, filtered, token);
+				filtered.Flush ();
 			}
+
+			stream.Write (EndData, 0, EndData.Length);
 
 			response = ReadResponse (token);
 
