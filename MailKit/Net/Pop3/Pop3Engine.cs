@@ -300,19 +300,28 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				response = ReadLine ().TrimEnd ();
-			} catch (IOException) {
+			} catch {
 				pc.Status = Pop3CommandStatus.ProtocolError;
+				Disconnect ();
 				throw;
 			}
 
 			pc.Status = GetCommandStatus (response, out text);
 			switch (pc.Status) {
 			case Pop3CommandStatus.ProtocolError:
+				Disconnect ();
 				throw new Pop3Exception (string.Format ("Unexpected response from server: {0}", response));
 			case Pop3CommandStatus.Continue:
 			case Pop3CommandStatus.Ok:
-				if (pc.Handler != null)
-					pc.Handler (this, pc, text);
+				if (pc.Handler != null) {
+					try {
+						pc.Handler (this, pc, text);
+					} catch {
+						pc.Status = Pop3CommandStatus.ProtocolError;
+						Disconnect ();
+						throw;
+					}
+				}
 				break;
 			}
 		}

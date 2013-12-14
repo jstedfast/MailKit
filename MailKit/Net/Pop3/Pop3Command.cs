@@ -28,6 +28,14 @@ using System;
 using System.Threading;
 
 namespace MailKit.Net.Pop3 {
+	/// <summary>
+	/// POP3 command handler.
+	/// </summary>
+	/// <remarks>
+	/// All exceptions thrown by the handler are considered fatal and will
+	/// force-disconnect the connection. If a non-fatal error occurs, set
+	/// it on the <see cref="Pop3Command.Exception"/> property.
+	/// </remarks>
 	delegate void Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text);
 
 	enum Pop3CommandStatus {
@@ -48,7 +56,7 @@ namespace MailKit.Net.Pop3 {
 
 		// output
 		public Pop3CommandStatus Status { get; internal set; }
-		public Exception Exception { get; set; }
+		public Pop3Exception Exception { get; set; }
 
 		public Pop3Command (CancellationToken token, string format, params object[] args)
 		{

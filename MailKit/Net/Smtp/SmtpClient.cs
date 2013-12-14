@@ -454,7 +454,7 @@ namespace MailKit.Net.Smtp {
 				try {
 					socket.Connect (ipAddresses[i], port);
 					localEndPoint = socket.LocalEndPoint;
-				} catch (Exception) {
+				} catch {
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}

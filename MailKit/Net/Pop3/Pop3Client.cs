@@ -247,14 +247,9 @@ namespace MailKit.Net.Pop3 {
 							challenge = sasl.Challenge (text);
 							string response;
 
-							try {
-								var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
-								pop3.Stream.Write (buf, 0, buf.Length);
-								response = pop3.ReadLine ();
-							} catch (Exception ex) {
-								cmd.Exception = ex;
-								break;
-							}
+							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+							pop3.Stream.Write (buf, 0, buf.Length);
+							response = pop3.ReadLine ();
 
 							cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
 							if (cmd.Status == Pop3CommandStatus.ProtocolError) {
@@ -364,50 +359,34 @@ namespace MailKit.Net.Pop3 {
 
 			probed = ProbedCapabilities.None;
 
-			try {
-				engine.Connect (new Pop3Stream (stream));
+			engine.Connect (new Pop3Stream (stream));
+			engine.QueryCapabilities (token);
+
+			if (!pop3s && engine.Capabilities.HasFlag (Pop3Capabilities.StartTLS)) {
+				SendCommand (token, "STLS");
+
+				var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+				tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
+				engine.Stream.Stream = tls;
+
+				// re-issue a CAPA command
 				engine.QueryCapabilities (token);
+			}
 
-				if (!pop3s && engine.Capabilities.HasFlag (Pop3Capabilities.StartTLS)) {
-					SendCommand (token, "STLS");
+			Authenticate (uri.Host, credentials, token);
+			engine.State = Pop3EngineState.Transaction;
 
-					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
-					engine.Stream.Stream = tls;
+			if (!engine.Capabilities.HasFlag (Pop3Capabilities.UIDL)) {
+				// first, get the message count...
+				Count (token);
 
-					// re-issue a CAPA command
-					engine.QueryCapabilities (token);
-				}
-
-				Authenticate (uri.Host, credentials, token);
-				engine.State = Pop3EngineState.Transaction;
-
-				if (!engine.Capabilities.HasFlag (Pop3Capabilities.UIDL)) {
-					// first, get the message count...
-					Count (token);
-
-					// if the message count is > 0, we can probe the UIDL command
-					if (count > 0) {
-						probed |= ProbedCapabilities.UIDL;
-
-						try {
-							GetMessageUid (0, token);
-							engine.Capabilities |= Pop3Capabilities.UIDL;
-						} catch (Pop3Exception) {
-							// ignore
-						}
+				// if the message count is > 0, we can probe the UIDL command
+				if (count > 0) {
+					try {
+						GetMessageUid (0, token);
+					} catch (NotSupportedException) {
 					}
 				}
-			} catch (OperationCanceledException) {
-				engine.Disconnect ();
-				throw;
-			} catch (IOException) {
-				engine.Disconnect ();
-				throw;
-			} catch (Exception ex) {
-				engine.Disconnect ();
-
-				throw new Pop3Exception (string.Format ("Failed to connect to {0}", uri), ex);
 			}
 		}
 
@@ -932,27 +911,7 @@ namespace MailKit.Net.Pop3 {
 
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
-					using (var memory = new MemoryBlockStream ()) {
-						byte[] buf = new byte[4096];
-						int nread;
-
-						token.ThrowIfCancellationRequested ();
-						while ((nread = pop3.Stream.Read (buf, 0, buf.Length)) > 0) {
-							token.ThrowIfCancellationRequested ();
-							memory.Write (buf, 0, nread);
-						}
-
-						if (headersOnly) {
-							buf[0] = (byte) '\n';
-							memory.Write (buf, 0, 1);
-						}
-
-						memory.Position = 0;
-
-						message = MimeMessage.Load (memory);
-					}
-				} catch (Exception ex) {
-					cmd.Exception = ex;
+					message = MimeMessage.Load (pop3.Stream, token);
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
