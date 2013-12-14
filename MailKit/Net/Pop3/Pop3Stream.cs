@@ -311,131 +311,59 @@ namespace MailKit.Net.Pop3 {
 
 			ValidateArguments (buffer, offset, count);
 
+			if (Mode != Pop3StreamMode.Data)
+				throw new InvalidOperationException ();
+
+			if (IsEndOfData)
+				return 0;
+
 			unsafe {
 				fixed (byte* inbuf = input, outbuf = buffer) {
 					int left = inputEnd - inputIndex;
 					byte* outptr = outbuf + offset;
 					byte* inptr, inend, outend;
-					byte c = 0;
-					int max;
-
-					if (Mode == Pop3StreamMode.Line) {
-						if (!midline && left < 3 /* ".\r\n" */)
-							left = ReadAhead (inbuf, 3);
-
-						max = Math.Min (count, left);
-						inptr = inbuf + inputIndex;
-						inend = inptr + max;
-
-						while (inptr < inend && c != (byte) '\n')
-							c = *outptr++ = *inptr++;
-
-						// keep midline state
-						midline = c != (byte) '\n';
-
-						inputIndex = (int) (inptr - inbuf);
-
-						return (int) (outptr - outbuf) - offset;
-					}
-
-					if (IsEndOfData)
-						return 0;
 
 					if (left < ReadAheadSize)
 						left = ReadAhead (inbuf, ReadAheadSize);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
-					*inend = (byte) '\r';
+					*inend = (byte) '\n';
 
 					outend = outptr + count;
 
-					do {
-						// read until end-of-line
-						while (midline && outptr < outend) {
-							c = 0;
-
-							while (outptr < outend && c != (byte) '\r' && c != (byte) '\n')
-								c = *outptr++ = *inptr++;
-
-							if (outptr == outend) {
-								// we're done... and we're still in the middle of a line
-								inputIndex = (int) (inptr - inbuf);
-
-								return (int) (outptr - outbuf) - offset;
-							}
-
-							// convert CRLF to LF
-							if (*inptr == (byte) '\r') {
-								if (inptr + 1 >= inend) {
-									// not enough buffered data to finish the line...
-									inputIndex = (int) (inptr - inbuf);
-
-									return (int) (outptr - outbuf) - offset;
-								}
-
-								if (*(inptr + 1) == (byte) '\n') {
-									*outptr++ = (byte) '\n';
-									midline = false;
-									inptr += 2;
-								} else {
-									// '\r' in the middle of a line? odd...
-									*outptr++ = *inptr++;
-								}
-							} else {
+					while (inptr < inend) {
+						if (midline) {
+							// read until end-of-line
+							while (outptr < outend && *inptr != (byte) '\n')
 								*outptr++ = *inptr++;
-								midline = false;
-							}
+
+							if (inptr == inend || outptr == outend)
+								break;
+
+							*outptr++ = *inptr++;
+							midline = false;
 						}
 
-						if (inptr == inend) {
-							// out of buffered data
-							inputIndex = (int) (inptr - inbuf);
-							midline = true;
-
-							return (int) (outptr - outbuf) - offset;
-						}
-
-						if (*inptr != (byte) '.') {
-							// no special processing required...
-							midline = true;
-							continue;
-						}
-
-						// special processing is required for lines beginning with '.'
-
-						if ((inptr + 1) == inend) {
-							// stop here. we don't have enough buffered to continue
-							inputIndex = (int) (inptr - inbuf);
-
-							return (int) (outptr - outbuf) - offset;
-						}
-
-						if (*(inptr + 1) == (byte) '\r') {
-							if ((inptr + 2) == inend) {
-								// stop here. we don't have enough buffered to continue
-								inputIndex = (int) (inptr - inbuf);
-
-								return (int) (outptr - outbuf) - offset;
+						if (*inptr == (byte) '.') {
+							if ((left = (int) (inend - inptr)) < 3) {
+								// not enough data to determine if this is the end-of-data marker
+								break;
 							}
 
-							if (*(inptr + 2) == (byte) '\n') {
-								// this indicates the end of a multi-line response
-								inputIndex = (int) (inptr - inbuf) + 2;
+							if (*(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
 								IsEndOfData = true;
-
-								return (int) (outptr - outbuf) - offset;
+								midline = false;
+								inptr += 2;
+								break;
 							}
-						} else if (*(inptr + 1) == (byte) '.') {
-							// unescape ".." to "."
-							inptr++;
+
+							if (*(inptr + 1) == (byte) '.')
+								inptr++;
 						}
 
-						// we might not technically be midline, but any Beginning-Of-Line
-						// processing that needed to be done has been done so for all
-						// intents and purposes, we are midline.
 						midline = true;
-					} while (outptr < outend);
+					}
 
 					inputIndex = (int) (inptr - inbuf);
 
@@ -461,36 +389,37 @@ namespace MailKit.Net.Pop3 {
 		{
 			unsafe {
 				fixed (byte* inbuf = input) {
-					int left = inputEnd - inputIndex;
-					byte* inptr, inend;
+					byte* start, inptr, inend;
 
-					if (left < 3)
-						left = ReadAhead (inbuf, ReadAheadSize);
+					if ((inputEnd - inputIndex) < 3)
+						ReadAhead (inbuf, ReadAheadSize);
 
 					offset = inputIndex;
 					buffer = input;
 
-					inptr = inbuf + inputIndex;
+					start = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
 					*inend = (byte) '\n';
+					inptr = start;
 
 					// FIXME: use SIMD to optimize this
 					while (*inptr != (byte) '\n')
 						inptr++;
 
-					count = (int) (inptr - inbuf) - inputIndex;
 					inputIndex = (int) (inptr - inbuf);
+					count = (int) (inptr - start);
 
-					if (inptr < inend) {
-						// consume the '\n'
-						midline = false;
-						inputIndex++;
-						count++;
-					} else {
+					if (inptr == inend) {
 						midline = true;
+						return false;
 					}
 
-					return !midline;
+					// consume the '\n'
+					midline = false;
+					inputIndex++;
+					count++;
+
+					return true;
 				}
 			}
 		}
