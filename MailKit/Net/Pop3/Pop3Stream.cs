@@ -319,12 +319,12 @@ namespace MailKit.Net.Pop3 {
 
 			unsafe {
 				fixed (byte* inbuf = input, outbuf = buffer) {
-					int left = inputEnd - inputIndex;
 					byte* outptr = outbuf + offset;
 					byte* inptr, inend, outend;
+					int left;
 
-					if (left < ReadAheadSize)
-						left = ReadAhead (inbuf, ReadAheadSize);
+					// we need at least 3 bytes: ".\r\n"
+					ReadAhead (inbuf, 3);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
@@ -391,8 +391,8 @@ namespace MailKit.Net.Pop3 {
 				fixed (byte* inbuf = input) {
 					byte* start, inptr, inend;
 
-					if ((inputEnd - inputIndex) < 3)
-						ReadAhead (inbuf, ReadAheadSize);
+					// we need at least 1 byte: "\n"
+					ReadAhead (inbuf, 1);
 
 					offset = inputIndex;
 					buffer = input;
