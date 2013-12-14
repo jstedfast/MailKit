@@ -28,28 +28,63 @@ using System;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
+	/// An enumeration of the possible types of POP3 errors.
+	/// </summary>
+	public enum Pop3ErrorType {
+		/// <summary>
+		/// There was a fatal protocol error.
+		/// </summary>
+		ProtocolError,
+
+		/// <summary>
+		/// The POP3 server replied with <c>"-ERR"</c> to a command.
+		/// </summary>
+		CommandError,
+
+		/// <summary>
+		/// An error occurred while parsing the response from the server.
+		/// </summary>
+		ParseError,
+	}
+
+	/// <summary>
 	/// A POP3 protocol exception.
 	/// </summary>
 	/// <remarks>
-	/// Indicates an error communicating with a POP3 server.
+	/// The exception that is thrown when there is an error communicating with a POP3 server.
 	/// </remarks>
 	public class Pop3Exception : ProtocolException
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Exception"/> class.
 		/// </summary>
-		/// <param name="message">Message.</param>
-		/// <param name="innerException">Inner exception.</param>
-		internal Pop3Exception (string message, Exception innerException) : base (message, innerException)
+		/// <param name="type">The error type.</param>
+		/// <param name="message">The error message.</param>
+		/// <param name="innerException">An inner exception.</param>
+		internal Pop3Exception (Pop3ErrorType type, string message, Exception innerException) : base (message, innerException)
 		{
+			ErrorType = type;
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Exception"/> class.
 		/// </summary>
-		/// <param name="message">Message.</param>
-		internal Pop3Exception (string message) : base (message)
+		/// <param name="type">The error type.</param>
+		/// <param name="message">The error message.</param>
+		internal Pop3Exception (Pop3ErrorType type, string message) : base (message)
 		{
+			ErrorType = type;
+		}
+
+		/// <summary>
+		/// Gets the type of the error.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="Pop3ErrorType.ProtocolError"/> always requires the client to reconnect before coninuing.
+		/// </remarks>
+		/// <value>The type of the error.</value>
+		public Pop3ErrorType ErrorType {
+			get; private set;
 		}
 	}
 }

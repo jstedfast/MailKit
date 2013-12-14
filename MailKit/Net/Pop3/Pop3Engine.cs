@@ -157,7 +157,8 @@ namespace MailKit.Net.Pop3 {
 		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </summary>
 		/// <param name="pop3">The pop3 stream.</param>
-		public void Connect (Pop3Stream pop3)
+		/// <param name="cancellationToken">A cancellation token</param>
+		public void Connect (Pop3Stream pop3, CancellationToken cancellationToken)
 		{
 			if (stream != null)
 				stream.Dispose ();
@@ -169,7 +170,7 @@ namespace MailKit.Net.Pop3 {
 			stream = pop3;
 
 			// read the pop3 server greeting
-			var greeting = ReadLine ().TrimEnd ();
+			var greeting = ReadLine (cancellationToken).TrimEnd ();
 
 			int index = greeting.IndexOf (' ');
 			string token, text;
@@ -190,9 +191,10 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			if (token != "+OK") {
+				stream.Dispose ();
 				stream = null;
 
-				throw new Pop3Exception (string.Format ("Unexpected greeting from server: {0}", greeting));
+				throw new Pop3Exception (Pop3ErrorType.ProtocolError, string.Format ("Unexpected greeting from server: {0}", greeting));
 			}
 
 			index = text.IndexOf ('>');
@@ -221,23 +223,31 @@ namespace MailKit.Net.Pop3 {
 		/// Reads a single line from the <see cref="Pop3Stream"/>.
 		/// </summary>
 		/// <returns>The line.</returns>
+		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.InvalidOperationException">
 		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public string ReadLine ()
+		public string ReadLine (CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
+
+			cancellationToken.ThrowIfCancellationRequested ();
 
 			using (var memory = new MemoryStream ()) {
 				int offset, count;
 				byte[] buf;
 
-				while (!stream.ReadLine (out buf, out offset, out count))
+				while (!stream.ReadLine (out buf, out offset, out count)) {
+					cancellationToken.ThrowIfCancellationRequested ();
 					memory.Write (buf, offset, count);
+				}
 
 				memory.Write (buf, offset, count);
 
@@ -299,7 +309,7 @@ namespace MailKit.Net.Pop3 {
 			stream.Write (buf, 0, buf.Length);
 
 			try {
-				response = ReadLine ().TrimEnd ();
+				response = ReadLine (pc.CancelToken).TrimEnd ();
 			} catch {
 				pc.Status = Pop3CommandStatus.ProtocolError;
 				Disconnect ();
@@ -310,7 +320,7 @@ namespace MailKit.Net.Pop3 {
 			switch (pc.Status) {
 			case Pop3CommandStatus.ProtocolError:
 				Disconnect ();
-				throw new Pop3Exception (string.Format ("Unexpected response from server: {0}", response));
+				throw new Pop3Exception (Pop3ErrorType.ProtocolError, string.Format ("Unexpected response from server: {0}", response));
 			case Pop3CommandStatus.Continue:
 			case Pop3CommandStatus.Ok:
 				if (pc.Handler != null) {
@@ -350,9 +360,9 @@ namespace MailKit.Net.Pop3 {
 			return pc.Id;
 		}
 
-		public Pop3Command QueueCommand (CancellationToken token, string format, params object[] args)
+		public Pop3Command QueueCommand (CancellationToken cancellationToken, string format, params object[] args)
 		{
-			var pc = new Pop3Command (token, format, args);
+			var pc = new Pop3Command (cancellationToken, format, args);
 			pc.Id = nextId++;
 			queue.Add (pc);
 			return pc;
@@ -373,7 +383,7 @@ namespace MailKit.Net.Pop3 {
 			string response;
 
 			do {
-				if ((response = engine.ReadLine ().TrimEnd ()) == ".")
+				if ((response = engine.ReadLine (pc.CancelToken).TrimEnd ()) == ".")
 					break;
 
 				int index = response.IndexOf (' ');
@@ -440,12 +450,12 @@ namespace MailKit.Net.Pop3 {
 			} while (true);
 		}
 
-		public Pop3CommandStatus QueryCapabilities (CancellationToken token)
+		public Pop3CommandStatus QueryCapabilities (CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			var pc = QueueCommand (token, "CAPA");
+			var pc = QueueCommand (cancellationToken, "CAPA");
 			pc.Handler = CapaHandler;
 
 			while (Iterate () < pc.Id) {

@@ -24,9 +24,7 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Threading;
-using System.Collections.Generic;
 
 using MimeKit;
 
@@ -53,8 +51,8 @@ namespace MailKit {
 		/// Gets the number of messages available in the message spool.
 		/// </summary>
 		/// <returns>The number of available messages.</returns>
-		/// <param name="token">A cancellation token.</param>
-		int Count (CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		int Count (CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the UID of the message at the specified index.
@@ -65,8 +63,8 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
-		/// <param name="token">A cancellation token.</param>
-		string GetMessageUid (int index, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		string GetMessageUid (int index, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the full list of available message UIDs.
@@ -76,63 +74,63 @@ namespace MailKit {
 		/// the <see cref="SupportsUids"/> property.
 		/// </remarks>
 		/// <returns>The message UIDs.</returns>
-		/// <param name="token">A cancellation token.</param>
-		string[] GetMessageUids (CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		string[] GetMessageUids (CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the size of the specified message, in bytes.
 		/// </summary>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		int GetMessageSize (string uid, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		int GetMessageSize (string uid, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the size of the specified message, in bytes.
 		/// </summary>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		int GetMessageSize (int index, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		int GetMessageSize (int index, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the sizes for all available messages, in bytes.
 		/// </summary>
 		/// <returns>The message sizes, in bytes.</returns>
-		/// <param name="token">A cancellation token.</param>
-		int[] GetMessageSizes (CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		int[] GetMessageSizes (CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the headers for the specified message.
 		/// </summary>
 		/// <returns>The message headers.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		HeaderList GetMessageHeaders (string uid, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the headers for the specified message.
 		/// </summary>
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		HeaderList GetMessageHeaders (int index, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		MimeMessage GetMessage (string uid, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		MimeMessage GetMessage (string uid, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		MimeMessage GetMessage (int index, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Mark the specified message for deletion.
@@ -143,8 +141,8 @@ namespace MailKit {
 		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		void DeleteMessage (string uid, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void DeleteMessage (string uid, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Mark the specified message for deletion.
@@ -155,8 +153,8 @@ namespace MailKit {
 		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="token">A cancellation token.</param>
-		void DeleteMessage (int index, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void DeleteMessage (int index, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Reset the state of all messages marked for deletion.
@@ -166,7 +164,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
-		/// <param name="token">A cancellation token.</param>
-		void Reset (CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void Reset (CancellationToken cancellationToken);
 	}
 }

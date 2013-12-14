@@ -68,16 +68,26 @@ namespace MailKit {
 		bool IsConnected { get; }
 
 		/// <summary>
-		/// Establishes a connection to the specified server using the supplied credentials.
+		/// Establishes a connection to the server specified in the URI.
 		/// </summary>
 		/// <remarks>
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
 		/// property will be populated.
 		/// </remarks>
 		/// <param name="uri">The server URI.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void Connect (Uri uri, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Authenticates using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// If the service supports authentication, then the credentials are used
+		/// to authenticate. Otherwise, this method simply returns.
+		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="token">A cancellation token.</param>
-		void Connect (Uri uri, ICredentials credentials, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void Authenticate (ICredentials credentials, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Disconnect the service.
@@ -86,8 +96,8 @@ namespace MailKit {
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-		/// <param name="token">A cancellation token.</param>
-		void Disconnect (bool quit, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void Disconnect (bool quit, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Pings the message service to keep the connection alive.
@@ -95,7 +105,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Mail servers, if left idle for too long, will automatically drop the connection.
 		/// </remarks>
-		/// <param name="token">A cancellation token.</param>
-		void NoOp (CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void NoOp (CancellationToken cancellationToken);
 	}
 }

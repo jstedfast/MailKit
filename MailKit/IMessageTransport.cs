@@ -41,7 +41,7 @@ namespace MailKit {
 		/// Send the specified message.
 		/// </summary>
 		/// <param name="message">The message.</param>
-		/// <param name="token">A cancellation token.</param>
-		void Send (MimeMessage message, CancellationToken token);
+		/// <param name="cancellationToken">A cancellation token.</param>
+		void Send (MimeMessage message, CancellationToken cancellationToken);
 	}
 }

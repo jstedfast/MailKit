@@ -28,7 +28,7 @@ using System;
 
 namespace MailKit {
 	/// <summary>
-	/// A protocol exception.
+	/// The exception that is thrown when there is a protocol error.
 	/// </summary>
 	public abstract class ProtocolException : Exception
 	{

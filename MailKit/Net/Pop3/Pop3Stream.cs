@@ -354,7 +354,7 @@ namespace MailKit.Net.Pop3 {
 							if (*(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
 								IsEndOfData = true;
 								midline = false;
-								inptr += 2;
+								inptr += 3;
 								break;
 							}
 

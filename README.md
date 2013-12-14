@@ -96,7 +96,11 @@ I just wanted to let you know that Monica and I were going to go play some paint
 				var uri = new Uri ("smtp://smtp.gmail.com:587");
 
 				using (var cancel = new CancellationTokenSource ()) {
-					client.Connect (uri, credentials, cancel.Token);
+					client.Connect (uri, cancel.Token);
+
+					// only needed if the SMTP server requires authentication
+					client.Authenticate (credentials, cancel.Token);
+
 					client.Send (message, cancel.Token);
 					client.Disconnect (true, cancel.Token);
 				}
@@ -131,7 +135,8 @@ namespace TestClient {
 				var uri = new Uri ("pop3://mail.friends.com");
 
 				using (var cancel = new CancellationTokenSource ()) {
-					client.Connect (uri, credentials, cancel.Token);
+					client.Connect (uri, cancel.Token);
+					client.Authenticate (credentials, cancel.Token);
 
 					int count = client.Count (cancel.Token);
 					for (int i = 0; i < count; i++) {

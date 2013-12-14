@@ -32,12 +32,24 @@ namespace MailKit.Security {
 	/// A SASL authentication mechanism.
 	/// </summary>
 	/// <remarks>
-	/// Authenticating via a SASL mechanism may be a multi-step process, so care should
-	/// be taken to check the <see cref="IsAuthenticated"/> after each <see cref="Challenge(string)"/>
-	/// pass.
+	/// Authenticating via a SASL mechanism may be a multi-step process.
+	/// To determine if the mechanism has completed the necessary steps
+	/// to authentication, check the <see cref="IsAuthenticated"/> after
+	/// each call to <see cref="Challenge(string)"/>.
 	/// </remarks>
 	public abstract class SaslMechanism
 	{
+		/// <summary>
+		/// The supported authentication mechanisms in order of strongest to weakest.
+		/// </summary>
+		/// <remarks>
+		/// Use by the various clients when authenticating via SASL to determine
+		/// which order the SASL mechanisms supported by the server should be tried.
+		/// </remarks>
+		public static readonly string[] AuthMechanismRank = new [] {
+			"DIGEST-MD5", "CRAM-MD5", "PLAIN", "LOGIN"
+		};
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanism"/> class.
 		/// </summary>
