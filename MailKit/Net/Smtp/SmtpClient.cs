@@ -324,8 +324,10 @@ namespace MailKit.Net.Smtp {
 						while (index < capability.Length && char.IsWhiteSpace (capability[index]))
 							index++;
 
-						if (uint.TryParse (capability.Substring (index), out size))
+						if (uint.TryParse (capability.Substring (index), out size)) {
+							Capabilities |= SmtpCapabilities.Size;
 							MaxSize = size;
+						}
 					} else if (capability == "BINARYMIME") {
 						Capabilities |= SmtpCapabilities.BinaryMime;
 					} else if (capability == "CHUNKING") {
@@ -434,6 +436,40 @@ namespace MailKit.Net.Smtp {
 			}
 
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
+		}
+
+		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			if (hostName == null)
+				throw new ArgumentNullException ("hostName");
+
+			if (replayStream == null)
+				throw new ArgumentNullException ("replayStream");
+
+			Capabilities = SmtpCapabilities.None;
+			stream = replayStream;
+			authmechs.Clear ();
+			host = hostName;
+			MaxSize = 0;
+
+			try {
+				// read the greeting
+				var response = ReadResponse (cancellationToken);
+
+				if (response.StatusCode != SmtpStatusCode.ServiceReady)
+					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+				// Send EHLO and get a list of supported extensions
+				Ehlo (new IPEndPoint (IPAddress.Loopback, 25), cancellationToken);
+
+				IsConnected = true;
+			} catch {
+				stream.Dispose ();
+				stream = null;
+				throw;
+			}
 		}
 
 		/// <summary>

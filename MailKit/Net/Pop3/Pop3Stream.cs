@@ -321,7 +321,6 @@ namespace MailKit.Net.Pop3 {
 				fixed (byte* inbuf = input, outbuf = buffer) {
 					byte* outptr = outbuf + offset;
 					byte* inptr, inend, outend;
-					int left;
 
 					// we need at least 3 bytes: ".\r\n"
 					ReadAhead (inbuf, 3);
@@ -346,7 +345,7 @@ namespace MailKit.Net.Pop3 {
 						}
 
 						if (*inptr == (byte) '.') {
-							if ((left = (int) (inend - inptr)) < 3) {
+							if ((inend - inptr) < 3) {
 								// not enough data to determine if this is the end-of-data marker
 								break;
 							}

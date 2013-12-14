@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.iOS", "MailKit\Mail
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Mac", "MailKit\MailKit.Mac.csproj", "{A0602141-2BF5-4B19-B6BB-139C971BA60D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,12 @@ Global
 		{60B5D72B-8219-48B6-B688-AD0FE284A96A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60B5D72B-8219-48B6-B688-AD0FE284A96A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60B5D72B-8219-48B6-B688-AD0FE284A96A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
 		{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}.AppStore|Any CPU.Build.0 = Debug|Any CPU
 		{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
