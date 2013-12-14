@@ -92,7 +92,7 @@ I just wanted to let you know that Monica and I were going to go play some paint
 			using (var client = new SmtpClient ()) {
 				var credentials = new NetworkCredential ("joey", "password");
 
-				// Note: if the server requires SSL-on-connect, use the smtps:// protocol instead
+				// Note: if the server requires SSL-on-connect, use the "smtps" protocol instead
 				var uri = new Uri ("smtp://smtp.gmail.com:587");
 
 				using (var cancel = new CancellationTokenSource ()) {
@@ -131,7 +131,7 @@ namespace TestClient {
 			using (var client = new Pop3Client ()) {
 				var credentials = new NetworkCredential ("joey", "password");
 
-				// Note: if the server requires SSL-on-connect, use the pop3s:// protocol instead
+				// Note: if the server requires SSL-on-connect, use the "pop3s" protocol instead
 				var uri = new Uri ("pop3://mail.friends.com");
 
 				using (var cancel = new CancellationTokenSource ()) {

@@ -43,8 +43,65 @@
             </summary>
         <remarks>
             Before you can send messages with the <see cref="T:MailKit.Net.Smtp.SmtpClient" />, you
-            must first call the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            must first call the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method. Depending on the
+            server, you may also need to authenticate using the
+            <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="credentials">The user's credentials.</param>
+        <param name="cancellationToken">A cancellation token.</param>
+        <summary>
+            Authenticates using the supplied credentials.
+            </summary>
+        <remarks>
+          <para>If the SMTP server supports authentication, then the SASL mechanisms
+            that both the client and server support are tried in order of greatest
+            security to weakest security. Once a SASL authentication mechanism is
+            found that both client and server support, the credentials are used to
+            authenticate.</para>
+          <para>If, on the other hand, authentication is not supported, then
+            this method simply returns without attempting to authenticate.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="credentials" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is not connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The client and server failed to agree on an authentication mechanism to use.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.Security.Authentication.AuthenticationException">
+            Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpException">
+            An SMTP protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
@@ -63,7 +120,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -84,7 +141,7 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection
-            has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -106,13 +163,13 @@
         <remarks>
           <para>Some servers may require the client SSL certificates in order
             to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
         </remarks>
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.ICredentials credentials, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -122,14 +179,12 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
-        <Parameter Name="credentials" Type="System.Net.ICredentials" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
             be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
-        <param name="credentials">The user's credentials or <c>null</c> if no credentials are needed.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Establishes a connection to the specified SMTP server.
             </summary>
@@ -155,23 +210,17 @@
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled.
             </exception>
-        <exception cref="T:MailKit.Security.SaslException">
-            A SASL authentication error occurred.
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Smtp.SmtpException">
             An SMTP protocol error occurred.
             </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The user's <paramref name="credentials" /> were wrong.
-            </exception>
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -181,11 +230,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="quit" Type="System.Boolean" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Disconnect the service.
             </summary>
@@ -258,13 +307,13 @@
         <value>The maximum message size supported by the server.</value>
         <remarks>
             The maximum message size will not be known until a successful
-            connect has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            connect has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
     <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -273,10 +322,10 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Pings the SMTP server to keep the connection alive.
             </summary>
@@ -299,8 +348,8 @@
       </Docs>
     </Member>
     <Member MemberName="Send">
-      <MemberSignature Language="C#" Value="public void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -310,11 +359,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="message" Type="MimeKit.MimeMessage" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="message">The message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Send the specified message.
             </summary>
@@ -336,6 +385,15 @@
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation has been canceled.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            Authentication is required before sending a message.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpException">
+            An SMTP protocol exception occurred.
             </exception>
       </Docs>
     </Member>

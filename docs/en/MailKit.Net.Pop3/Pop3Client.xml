@@ -43,8 +43,63 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Pop3.Pop3Client" />, you
-            must first call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            must first call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="credentials">The user's credentials.</param>
+        <param name="cancellationToken">A cancellation token.</param>
+        <summary>
+            Authenticates using the supplied credentials.
+            </summary>
+        <remarks>
+          <para>If the POP3 server supports the APOP authentication mechanism,
+            then APOP is used.</para>
+          <para>If the APOP authentication mechanism is not supported and the
+            server supports one or more SASL authentication mechanisms, then
+            the SASL mechanisms that both the client and server support are tried
+            in order of greatest security to weakest security. Once a SASL
+            authentication mechanism is found that both client and server support,
+            the credentials are used to authenticate.</para>
+          <para>If the server does not support SASL or if no common SASL mechanisms
+            can be found, then the USER and PASS commands are used as a fallback.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="credentials" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.Security.Authentication.AuthenticationException">
+            Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            An POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
@@ -63,7 +118,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-          <para>The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.</para>
+          <para>The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method.</para>
           <para>Servers that do not support the SASL capability will typically support either the
             <c>"APOP"</c> authentication mechanism (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.Apop" />) or the ability to
             login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.User" />).</para>
@@ -87,7 +142,7 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection
-            has been made via the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            has been made via the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -109,13 +164,13 @@
         <remarks>
           <para>Some servers may require the client SSL certificates in order
             to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
         </remarks>
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.ICredentials credentials, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -125,14 +180,12 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
-        <Parameter Name="credentials" Type="System.Net.ICredentials" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
             be "pop3" to make a clear-text connection or "pop3s" to make an SSL connection.</param>
-        <param name="credentials">The user's credentials.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Establishes a connection to the specified POP3 server.
             </summary>
@@ -150,25 +203,16 @@
             and <see cref="P:MailKit.Net.Pop3.Pop3Client.Capabilities" /> properties will be populated.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-          <para>The <paramref name="uri" /> is <c>null</c>.</para>
-          <para>-or-</para>
-          <para>
-            <paramref name="credentials" /> is <c>null</c>.</para>
-        </exception>
+            The <paramref name="uri" /> is <c>null</c>.
+            </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
         <exception cref="T:System.OperationCanceledException">
-            The operation was canceled.
+            The operation was canceled via the cancellation token.
             </exception>
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The user's <paramref name="credentials" /> were wrong.
-            </exception>
-        <exception cref="T:MailKit.Security.SaslException">
-            A SASL authentication error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
@@ -176,8 +220,8 @@
       </Docs>
     </Member>
     <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public int Count (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Count(valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public int Count (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 Count(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -186,10 +230,10 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the number of messages available in the message spool.
             </summary>
@@ -204,11 +248,20 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -218,11 +271,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Mark the specified message for deletion.
             </summary>
@@ -246,11 +299,17 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -260,11 +319,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uid" Type="System.String" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Mark the specified message for deletion.
             </summary>
@@ -294,11 +353,17 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -308,11 +373,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="quit" Type="System.Boolean" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Disconnect the service.
             </summary>
@@ -372,8 +437,8 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -383,11 +448,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the specified message.
             </summary>
@@ -407,12 +472,18 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
             </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -422,11 +493,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uid" Type="System.String" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the specified message.
             </summary>
@@ -453,11 +524,17 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -467,11 +544,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the headers for the specified message.
             </summary>
@@ -492,11 +569,17 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -506,11 +589,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uid" Type="System.String" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the headers for the specified message.
             </summary>
@@ -537,11 +620,17 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (int index, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public int GetMessageSize (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -551,11 +640,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the size of the specified message, in bytes.
             </summary>
@@ -571,7 +660,7 @@
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
         <exception cref="T:System.OperationCanceledException">
-            The operation was canceled.
+            The operation was canceled via the cancellation token.
             </exception>
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
@@ -579,11 +668,14 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -593,11 +685,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uid" Type="System.String" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the size of the specified message, in bytes.
             </summary>
@@ -616,7 +708,7 @@
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
         <exception cref="T:System.OperationCanceledException">
-            The operation was canceled.
+            The operation was canceled via the cancellation token.
             </exception>
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
@@ -624,11 +716,14 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -637,10 +732,10 @@
         <ReturnType>System.Int32[]</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the sizes for all available messages, in bytes.
             </summary>
@@ -658,11 +753,17 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUid">
-      <MemberSignature Language="C#" Value="public string GetMessageUid (int index, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public string GetMessageUid (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -672,11 +773,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="index">The message index.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the UID of the message at the specified index.
             </summary>
@@ -697,11 +798,20 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -710,10 +820,10 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Gets the full list of available message UIDs.
             </summary>
@@ -730,6 +840,15 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
             </exception>
       </Docs>
     </Member>
@@ -795,8 +914,8 @@
       </Docs>
     </Member>
     <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -805,10 +924,10 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Pings the POP3 server to keep the connection alive.
             </summary>
@@ -820,7 +939,7 @@
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected or authenticated.
             </exception>
         <exception cref="T:System.OperationCanceledException">
-            The operation was canceled.
+            The operation was canceled via the cancellation token.
             </exception>
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
@@ -831,8 +950,8 @@
       </Docs>
     </Member>
     <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Reset (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -841,10 +960,10 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Reset the state of all messages marked for deletion.
             </summary>
@@ -860,6 +979,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
             </exception>
       </Docs>
     </Member>

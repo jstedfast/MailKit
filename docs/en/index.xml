@@ -56,6 +56,7 @@
     <Namespace Name="MailKit.Net.Pop3">
       <Type Name="Pop3Capabilities" Kind="Enumeration" />
       <Type Name="Pop3Client" Kind="Class" />
+      <Type Name="Pop3ErrorType" Kind="Enumeration" />
       <Type Name="Pop3Exception" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Net.Smtp">

@@ -14,9 +14,29 @@
             A POP3 protocol exception.
             </summary>
     <remarks>
-            Indicates an error communicating with a POP3 server.
+            The exception that is thrown when there is an error communicating with a POP3 server.
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName="ErrorType">
+      <MemberSignature Language="C#" Value="public MailKit.Net.Pop3.Pop3ErrorType ErrorType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Pop3.Pop3ErrorType ErrorType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3ErrorType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the type of the error.
+            </summary>
+        <value>The type of the error.</value>
+        <remarks>
+          <see cref="F:MailKit.Net.Pop3.Pop3ErrorType.ProtocolError" /> always requires the client to reconnect before coninuing.
+            </remarks>
+      </Docs>
+    </Member>
   </Members>
 </Type>

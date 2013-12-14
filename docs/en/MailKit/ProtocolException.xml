@@ -11,7 +11,7 @@
   <Interfaces />
   <Docs>
     <summary>
-            A protocol exception.
+            The exception that is thrown when there is a protocol error.
             </summary>
     <remarks>To be added.</remarks>
   </Docs>

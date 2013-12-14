@@ -45,18 +45,22 @@ I just wanted to let you know that Monica and I were going to go play some paint
             using (var client = new SmtpClient ()) {
                 var credentials = new NetworkCredential ("joey", "password");
 
-                // Note: if the server requires SSL-on-connect, use the smtps:// protocol instead
+                // Note: if the server requires SSL-on-connect, use the "smtps" protocol instead
                 var uri = new Uri ("smtp://smtp.gmail.com:587");
 
                 using (var cancel = new CancellationTokenSource ()) {
-                    client.Connect (uri, credentials, cancel.Token);
+                    client.Connect (uri, cancel.Token);
+
+                    // only needed if the SMTP server requires authentication
+                    client.Authenticate (credentials, cancel.Token);
+
                     client.Send (message, cancel.Token);
                     client.Disconnect (true, cancel.Token);
                 }
             }
         }
     }
-}	</code>
+}</code>
       </example>
       <format type="text/html">
 	<h1>Retrieving Messages (POP3)</h1>
@@ -82,11 +86,12 @@ namespace TestClient {
             using (var client = new Pop3Client ()) {
                 var credentials = new NetworkCredential ("joey", "password");
 
-                // Note: if the server requires SSL-on-connect, use the pop3s:// protocol instead
+                // Note: if the server requires SSL-on-connect, use the "pop3s" protocol instead
                 var uri = new Uri ("pop3://mail.friends.com");
 
                 using (var cancel = new CancellationTokenSource ()) {
-                    client.Connect (uri, credentials, cancel.Token);
+                    client.Connect (uri, cancel.Token);
+                    client.Authenticate (credentials, cancel.Token);
 
                     int count = client.Count (cancel.Token);
                     for (int i = 0; i &lt; count; i++) {
@@ -99,7 +104,7 @@ namespace TestClient {
             }
         }
     }
-}	</code>
+}</code>
       </example>
     </remarks>
   </Docs>

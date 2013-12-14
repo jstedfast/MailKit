@@ -20,6 +20,32 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="credentials">The user's credentials.</param>
+        <param name="cancellationToken">A cancellation token.</param>
+        <summary>
+            Authenticates using the supplied credentials.
+            </summary>
+        <remarks>
+            If the service supports authentication, then the credentials are used
+            to authenticate. Otherwise, this method simply returns.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="AuthenticationMechanisms">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
@@ -37,7 +63,7 @@
         <value>The supported authentication mechanisms.</value>
         <remarks>
             The authentication mechanisms are queried durring the
-            <see cref="M:MailKit.IMessageService.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            <see cref="M:MailKit.IMessageService.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -59,13 +85,13 @@
         <remarks>
           <para>Some servers may require the client SSL certificates in order
             to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="M:MailKit.IMessageService.Connect(System.Uri,System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.IMessageService.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
         </remarks>
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.ICredentials credentials, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -75,15 +101,13 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
-        <Parameter Name="credentials" Type="System.Net.ICredentials" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uri">The server URI.</param>
-        <param name="credentials">The user's credentials.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Establishes a connection to the specified server using the supplied credentials.
+            Establishes a connection to the server specified in the URI.
             </summary>
         <remarks>
             If a successful connection is made, the <see cref="P:MailKit.IMessageService.AuthenticationMechanisms" />
@@ -92,8 +116,8 @@
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -103,11 +127,11 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="quit" Type="System.Boolean" />
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Disconnect the service.
             </summary>
@@ -136,8 +160,8 @@
       </Docs>
     </Member>
     <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken token);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken token) cil managed" />
+      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -146,10 +170,10 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="token" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="token">A cancellation token.</param>
+        <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Pings the message service to keep the connection alive.
             </summary>

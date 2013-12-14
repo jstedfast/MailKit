@@ -14,9 +14,10 @@
             A SASL authentication mechanism.
             </summary>
     <remarks>
-            Authenticating via a SASL mechanism may be a multi-step process, so care should
-            be taken to check the <see cref="P:MailKit.Security.SaslMechanism.IsAuthenticated" /> after each <see cref="M:MailKit.Security.SaslMechanism.Challenge(System.String)" />
-            pass.
+            Authenticating via a SASL mechanism may be a multi-step process.
+            To determine if the mechanism has completed the necessary steps
+            to authentication, check the <see cref="P:MailKit.Security.SaslMechanism.IsAuthenticated" /> after
+            each call to <see cref="M:MailKit.Security.SaslMechanism.Challenge(System.String)" />.
             </remarks>
   </Docs>
   <Members>
@@ -38,6 +39,26 @@
             Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanism" /> class.
             </summary>
         <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthMechanismRank">
+      <MemberSignature Language="C#" Value="public static readonly string[] AuthMechanismRank;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly string[] AuthMechanismRank" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The supported authentication mechanisms in order of strongest to weakest.
+            </summary>
+        <remarks>
+            Use by the various clients when authenticating via SASL to determine
+            which order the SASL mechanisms supported by the server should be tried.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Challenge">
