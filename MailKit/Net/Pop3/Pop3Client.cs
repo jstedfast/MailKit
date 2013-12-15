@@ -385,6 +385,23 @@ namespace MailKit.Net.Pop3 {
 			ProbeCapabilities (cancellationToken);
 		}
 
+		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			if (hostName == null)
+				throw new ArgumentNullException ("hostName");
+
+			if (replayStream == null)
+				throw new ArgumentNullException ("replayStream");
+
+			probed = ProbedCapabilities.None;
+			host = hostName;
+
+			engine.Connect (new Pop3Stream (replayStream), cancellationToken);
+			engine.QueryCapabilities (cancellationToken);
+		}
+
 		/// <summary>
 		/// Establishes a connection to the specified POP3 server.
 		/// </summary>

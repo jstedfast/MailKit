@@ -46,8 +46,18 @@
   <ItemGroup>
     <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
     <Compile Include="Net\Smtp\SmtpClientTests.cs" />
+    <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
+    <Compile Include="Net\Pop3\Pop3ClientTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Net\Pop3\Resources\capa1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\capa2.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\err.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\greeting.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\ok.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\quit.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\retr1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\stat1.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-required.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-successful.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-plain.txt" />
@@ -59,12 +69,12 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-quit.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rcpt-to.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\mailbox-not-allowed.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />
     <Folder Include="Net\Pop3\" />
+    <Folder Include="Net\Pop3\Resources\" />
     <Folder Include="Net\Smtp\" />
     <Folder Include="Net\Smtp\Resources\" />
   </ItemGroup>

@@ -1,0 +1,7 @@
++OK Capability list follows
+TOP
+USER
+UIDL
+STLS
+EXPIRE 31 USER
+.

@@ -370,15 +370,15 @@ namespace MailKit.Net.Pop3 {
 
 		static void CapaHandler (Pop3Engine engine, Pop3Command pc, string text)
 		{
-			if (pc.Status != Pop3CommandStatus.Ok)
-				return;
-
 			// clear all CAPA response capabilities (except the APOP capability)
 			engine.Capabilities &= Pop3Capabilities.Apop;
 			engine.AuthenticationMechanisms.Clear ();
 			engine.Implementation = null;
 			engine.ExpirePolicy = 0;
 			engine.LoginDelay = 0;
+
+			if (pc.Status != Pop3CommandStatus.Ok)
+				return;
 
 			string response;
 
@@ -431,6 +431,7 @@ namespace MailKit.Net.Pop3 {
 					engine.Capabilities |= Pop3Capabilities.ResponseCodes;
 					break;
 				case "SASL":
+					engine.Capabilities |= Pop3Capabilities.Sasl;
 					foreach (var authmech in data.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
 						engine.AuthenticationMechanisms.Add (authmech);
 					break;
