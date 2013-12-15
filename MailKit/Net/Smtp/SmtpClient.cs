@@ -829,19 +829,6 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		static void WriteData (Stream stream, Stream data, CancellationToken cancellationToken)
-		{
-			var buffer = new byte[4096];
-			int nread;
-
-			do {
-				if ((nread = data.Read (buffer, 0, buffer.Length)) > 0) {
-					cancellationToken.ThrowIfCancellationRequested ();
-					stream.Write (buffer, 0, nread);
-				}
-			} while (nread > 0);
-		}
-
 		void Data (MimeMessage message, CancellationToken cancellationToken)
 		{
 			var response = SendCommand ("DATA\r\n", cancellationToken);
