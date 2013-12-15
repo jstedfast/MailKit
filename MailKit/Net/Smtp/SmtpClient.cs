@@ -849,18 +849,8 @@ namespace MailKit.Net.Smtp {
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-			EncodingConstraint constraint;
-
-			if (Capabilities.HasFlag (SmtpCapabilities.BinaryMime))
-				constraint = EncodingConstraint.None;
-			else if (Capabilities.HasFlag (SmtpCapabilities.EightBitMime))
-				constraint = EncodingConstraint.EightBit;
-			else
-				constraint = EncodingConstraint.SevenBit;
-
 			var options = FormatOptions.Default.Clone ();
 			options.NewLineFormat = NewLineFormat.Dos;
-			options.EncodingConstraint = constraint;
 
 			options.HiddenHeaders.Add (HeaderId.ContentLength);
 			options.HiddenHeaders.Add (HeaderId.ResentBcc);
