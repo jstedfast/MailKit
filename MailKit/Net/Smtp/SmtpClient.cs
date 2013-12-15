@@ -321,13 +321,13 @@ namespace MailKit.Net.Smtp {
 						int index = 4;
 						uint size;
 
+						Capabilities |= SmtpCapabilities.Size;
+
 						while (index < capability.Length && char.IsWhiteSpace (capability[index]))
 							index++;
 
-						if (uint.TryParse (capability.Substring (index), out size)) {
-							Capabilities |= SmtpCapabilities.Size;
+						if (uint.TryParse (capability.Substring (index), out size))
 							MaxSize = size;
-						}
 					} else if (capability == "BINARYMIME") {
 						Capabilities |= SmtpCapabilities.BinaryMime;
 					} else if (capability == "CHUNKING") {

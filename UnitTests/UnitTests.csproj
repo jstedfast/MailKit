@@ -34,36 +34,6 @@
     <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
-    <Compile Include="Net\Smtp\SmtpClientTests.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Net\" />
-    <Folder Include="Net\Smtp\" />
-    <Folder Include="Net\Pop3\" />
-    <Folder Include="Net\Smtp\Resources\" />
-  </ItemGroup>
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <DotNetNamingPolicy DirectoryNamespaceAssociation="None" ResourceNamePolicy="FileFormatDefault" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
-  <ItemGroup>
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-plain.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-data.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-data-done.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-greeting.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-mail-from.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-quit.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-rcpt-to.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.csproj">
       <Project>{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}</Project>
       <Name>MimeKit</Name>
@@ -73,4 +43,39 @@
       <Name>MailKit</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
+    <Compile Include="Net\Smtp\SmtpClientTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Net\Smtp\Resources\auth-required.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\auth-successful.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-plain.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-data.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-data-done.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-greeting.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-mail-from.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-quit.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-rcpt-to.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\mailbox-not-allowed.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Net\" />
+    <Folder Include="Net\Pop3\" />
+    <Folder Include="Net\Smtp\" />
+    <Folder Include="Net\Smtp\Resources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="None" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
