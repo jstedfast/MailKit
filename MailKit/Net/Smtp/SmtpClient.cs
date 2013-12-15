@@ -697,11 +697,56 @@ namespace MailKit.Net.Smtp {
 			BinaryMime   = 1 << 1
 		}
 
-		SmtpExtension GetSmtpExtensions (MimeEntity entity)
+		ContentEncoding GetFinalEncoding (MimePart part)
+		{
+			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0) {
+				// no need to re-encode...
+				return part.ContentTransferEncoding;
+			}
+
+			if ((Capabilities & SmtpCapabilities.EightBitMime) != 0) {
+				switch (part.ContentTransferEncoding) {
+				case ContentEncoding.Default:
+				case ContentEncoding.Binary:
+					break;
+				default:
+					// all other Content-Transfer-Encodings are safe to transmit...
+					return part.ContentTransferEncoding;
+				}
+			}
+
+			switch (part.ContentTransferEncoding) {
+			case ContentEncoding.EightBit:
+			case ContentEncoding.Default:
+			case ContentEncoding.Binary:
+				break;
+			default:
+				// all other Content-Transfer-Encodings are safe to transmit...
+				return part.ContentTransferEncoding;
+			}
+
+			ContentEncoding encoding;
+
+			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
+				encoding = part.GetBestEncoding (EncodingConstraint.None);
+			else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+				encoding = part.GetBestEncoding (EncodingConstraint.EightBit);
+			else
+				encoding = part.GetBestEncoding (EncodingConstraint.SevenBit);
+
+			if (encoding == ContentEncoding.SevenBit)
+				return encoding;
+
+			part.ContentTransferEncoding = encoding;
+
+			return encoding;
+		}
+
+		SmtpExtension PrepareMimeEntity (MimeEntity entity)
 		{
 			if (entity is MessagePart) {
 				var message = ((MessagePart) entity).Message;
-				return GetSmtpExtensions (message);
+				return PrepareMimeEntity (message);
 			}
 
 			if (entity is Multipart) {
@@ -709,22 +754,18 @@ namespace MailKit.Net.Smtp {
 				var multipart = (Multipart) entity;
 
 				foreach (var child in multipart)
-					extensions |= GetSmtpExtensions (child);
+					extensions |= PrepareMimeEntity (child);
 
 				return extensions;
 			}
 
-			var part = (MimePart) entity;
-
-			switch (part.ContentTransferEncoding) {
-			case ContentEncoding.Default:
-				if (Capabilities.HasFlag (SmtpCapabilities.BinaryMime))
-					return SmtpExtension.BinaryMime;
-				if (Capabilities.HasFlag (SmtpCapabilities.EightBitMime))
-					return SmtpExtension.EightBitMime;
-				return SmtpExtension.None;
+			switch (GetFinalEncoding ((MimePart) entity)) {
 			case ContentEncoding.EightBit:
-				return SmtpExtension.EightBitMime;
+				// if the server supports the 8BITMIME extension, use it...
+				if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+					return SmtpExtension.EightBitMime;
+
+				return SmtpExtension.BinaryMime;
 			case ContentEncoding.Binary:
 				return SmtpExtension.BinaryMime;
 			default:
@@ -732,21 +773,21 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		SmtpExtension GetSmtpExtensions (MimeMessage message)
+		SmtpExtension PrepareMimeEntity (MimeMessage message)
 		{
 			if (message.Body == null)
 				throw new ArgumentException ("Message does not contain a body.");
 
-			return GetSmtpExtensions (message.Body);
+			return PrepareMimeEntity (message.Body);
 		}
 
 		void MailFrom (MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
 		{
 			string command;
 
-			if (Capabilities.HasFlag (SmtpCapabilities.BinaryMime) && extensions.HasFlag (SmtpExtension.BinaryMime)) {
+			if (extensions.HasFlag (SmtpExtension.BinaryMime)) {
 				command = string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME\r\n", mailbox.Address);
-			} else if (Capabilities.HasFlag (SmtpCapabilities.EightBitMime) && extensions.HasFlag (SmtpExtension.EightBitMime)) {
+			} else if (extensions.HasFlag (SmtpExtension.EightBitMime)) {
 				command = string.Format ("MAIL FROM:<{0}> BODY=8BITMIME\r\n", mailbox.Address);
 			} else {
 				command = string.Format ("MAIL FROM:<{0}>\r\n", mailbox.Address);
@@ -911,7 +952,7 @@ namespace MailKit.Net.Smtp {
 			if (recipients.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
 
-			var extensions = GetSmtpExtensions (message);
+			var extensions = PrepareMimeEntity (message);
 
 			try {
 				// TODO: support pipelining

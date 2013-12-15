@@ -33,7 +33,6 @@ using System.Security.Authentication;
 using NUnit.Framework;
 
 using MailKit.Net.Pop3;
-using MailKit;
 using MimeKit;
 
 namespace UnitTests {
