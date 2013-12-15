@@ -52,7 +52,7 @@ namespace MailKit {
 		/// </summary>
 		/// <returns>The number of available messages.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		int Count (CancellationToken cancellationToken);
+		int GetMessageCount (CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the UID of the message at the specified index.

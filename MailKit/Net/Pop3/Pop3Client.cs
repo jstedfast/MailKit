@@ -232,7 +232,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			if (!engine.Capabilities.HasFlag (Pop3Capabilities.UIDL)) {
 				// first, get the message count...
-				Count (cancellationToken);
+				GetMessageCount (cancellationToken);
 
 				// if the message count is > 0, we can probe the UIDL command
 				if (count > 0) {
@@ -589,7 +589,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3Exception">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public int Count (CancellationToken cancellationToken)
+		public int GetMessageCount (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 			CheckConnected ();

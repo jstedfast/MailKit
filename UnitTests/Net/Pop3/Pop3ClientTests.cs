@@ -85,7 +85,7 @@ namespace UnitTests {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				try {
-					var count = client.Count (CancellationToken.None);
+					var count = client.GetMessageCount (CancellationToken.None);
 					Assert.AreEqual (1, count, "Expected 1 message");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Count: {0}", ex);
@@ -149,7 +149,7 @@ namespace UnitTests {
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
 				try {
-					var count = client.Count (CancellationToken.None);
+					var count = client.GetMessageCount (CancellationToken.None);
 					Assert.AreEqual (1, count, "Expected 1 message");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Count: {0}", ex);
@@ -208,7 +208,7 @@ namespace UnitTests {
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
 
 				try {
-					var count = client.Count (CancellationToken.None);
+					var count = client.GetMessageCount (CancellationToken.None);
 					Assert.Fail ("Expected UnauthorizedAccessException");
 				} catch (UnauthorizedAccessException) {
 					// we expect this exception...
