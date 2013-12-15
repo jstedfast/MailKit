@@ -56,14 +56,16 @@ namespace UnitTests {
 	{
 		readonly IList<Pop3ReplayCommand> commands;
 		Pop3ReplayState state;
+		bool testUnixFormat;
 		Stream stream;
 		bool disposed;
 		int index;
 
-		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands)
+		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands, bool testUnixFormat)
 		{
 			stream = GetResourceStream (commands[0].Resource);
 			state = Pop3ReplayState.SendResponse;
+			this.testUnixFormat = testUnixFormat;
 			this.commands = commands;
 		}
 
@@ -121,7 +123,10 @@ namespace UnitTests {
 				var memory = new MemoryBlockStream ();
 
 				using (var filtered = new FilteredStream (memory)) {
-					filtered.Add (new Unix2DosFilter ());
+					if (testUnixFormat)
+						filtered.Add (new Dos2UnixFilter ());
+					else
+						filtered.Add (new Unix2DosFilter ());
 					response.CopyTo (filtered, 4096);
 				}
 

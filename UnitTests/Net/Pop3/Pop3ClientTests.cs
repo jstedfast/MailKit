@@ -60,7 +60,71 @@ namespace UnitTests {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (Capa1, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (31, client.ExpirePolicy);
+
+				try {
+					var credentials = new NetworkCredential ("username", "password");
+					client.Authenticate (credentials, CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (Capa2, client.Capabilities);
+				Assert.AreEqual ("ZimbraInc", client.Implementation);
+				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
+				Assert.AreEqual (-1, client.ExpirePolicy);
+
+				try {
+					var count = client.Count (CancellationToken.None);
+					Assert.AreEqual (1, count, "Expected 1 message");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Count: {0}", ex);
+				}
+
+				try {
+					var message = client.GetMessage (0, CancellationToken.None);
+					// TODO: assert that the message is byte-identical to what we expect
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+				}
+
+				try {
+					client.Disconnect (true, CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
+			}
+		}
+
+		[Test]
+		public void TestBasicPop3ClientUnixLineEndings ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, true), CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -121,7 +185,7 @@ namespace UnitTests {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

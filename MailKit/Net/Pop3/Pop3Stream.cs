@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Net.Sockets;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -226,6 +227,10 @@ namespace MailKit.Net.Pop3 {
 			if (left >= atleast)
 				return left;
 
+			var network = Stream as NetworkStream;
+			if (network != null && !network.DataAvailable)
+				return left;
+
 			int index = inputIndex;
 			int start = inputStart;
 			int end = inputEnd;
@@ -322,7 +327,7 @@ namespace MailKit.Net.Pop3 {
 					byte* outptr = outbuf + offset;
 					byte* inptr, inend, outend;
 
-					// we need at least 3 bytes: ".\r\n"
+					// we need at least 2 bytes: ".\r\n"
 					ReadAhead (inbuf, 3);
 
 					inptr = inbuf + inputIndex;
@@ -345,15 +350,17 @@ namespace MailKit.Net.Pop3 {
 						}
 
 						if (*inptr == (byte) '.') {
-							if ((inend - inptr) < 3) {
-								// not enough data to determine if this is the end-of-data marker
-								break;
-							}
-
-							if (*(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
+							if ((inend - inptr) >= 3) {
+								if (*(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
+									IsEndOfData = true;
+									midline = false;
+									inptr += 3;
+									break;
+								}
+							} else if ((inend - inptr) == 2 && *(inptr + 1) == (byte) '\n') {
 								IsEndOfData = true;
 								midline = false;
-								inptr += 3;
+								inptr += 2;
 								break;
 							}
 
