@@ -228,8 +228,14 @@ namespace MailKit.Net.Pop3 {
 				return left;
 
 			var network = Stream as NetworkStream;
-			if (network != null && !network.DataAvailable)
-				return left;
+			if (network != null) {
+				if (!network.DataAvailable)
+					return left;
+			} else if (Stream.CanSeek) {
+				// running the unit tests
+				if (Stream.Position == Stream.Length)
+					return left;
+			}
 
 			int index = inputIndex;
 			int start = inputStart;
@@ -307,6 +313,9 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The stream is in line mode (see <see cref="Pop3StreamMode.Line"/>).
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -327,7 +336,7 @@ namespace MailKit.Net.Pop3 {
 					byte* outptr = outbuf + offset;
 					byte* inptr, inend, outend;
 
-					// we need at least 2 bytes: ".\r\n"
+					// we need at least 3 bytes: ".\r\n"
 					ReadAhead (inbuf, 3);
 
 					inptr = inbuf + inputIndex;
@@ -350,14 +359,14 @@ namespace MailKit.Net.Pop3 {
 						}
 
 						if (*inptr == (byte) '.') {
-							if ((inend - inptr) >= 3) {
-								if (*(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
-									IsEndOfData = true;
-									midline = false;
-									inptr += 3;
-									break;
-								}
-							} else if ((inend - inptr) == 2 && *(inptr + 1) == (byte) '\n') {
+							if ((inend - inptr) >= 3 && *(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
+								IsEndOfData = true;
+								midline = false;
+								inptr += 3;
+								break;
+							}
+
+							if ((inend - inptr) >= 2 && *(inptr + 1) == (byte) '\n') {
 								IsEndOfData = true;
 								midline = false;
 								inptr += 2;

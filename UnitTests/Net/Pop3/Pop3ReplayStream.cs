@@ -82,7 +82,7 @@ namespace UnitTests {
 		}
 
 		public override bool CanSeek {
-			get { return false; }
+			get { return true; }
 		}
 
 		public override bool CanWrite {
@@ -90,11 +90,11 @@ namespace UnitTests {
 		}
 
 		public override long Length {
-			get { throw new NotSupportedException (); }
+			get { return stream.Length; }
 		}
 
 		public override long Position {
-			get { throw new NotSupportedException (); }
+			get { return stream.Position; }
 			set { throw new NotSupportedException (); }
 		}
 
