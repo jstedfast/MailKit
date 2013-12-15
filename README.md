@@ -17,7 +17,8 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports SSL-wrapped connections via the "smtps" protocol.
   * Supports the STARTTLS extension.
   * Supports client SSL/TLS certificates.
-  * Supports 8BITMIME and BINARYMIME extensions.
+  * Supports the 8BITMIME and BINARYMIME extensions.
+  * Supports the PIPELINING extension.
   * Parses the SIZE extension value.
   * All APIs are cancellable.
 * POP3 Client
@@ -39,8 +40,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * NTLM
   * SCRAM-*
 * SMTP Client
-  * PIPELINING
-  * CHUNKING
+  * CHUNKING (hmmm, doesn't really seem all that useful...)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
   * Async APIs
 * POP3 Client

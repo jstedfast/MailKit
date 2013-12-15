@@ -57,8 +57,19 @@ namespace MailKit.Net.Smtp {
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+
+		enum SmtpCommand {
+			MailFrom,
+			RcptTo,
+
+			// TODO:
+			//Data,
+		}
+
+		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		readonly HashSet<string> authmechs = new HashSet<string> ();
-		readonly byte[] buffer = new byte[2048];
+		readonly byte[] buffer = new byte[4096];
+		MemoryBlockStream queue;
 		Stream stream;
 		bool disposed;
 		string host;
@@ -253,16 +264,66 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		void QueueCommand (SmtpCommand type, string command)
+		{
+			#if DEBUG
+			Console.WriteLine ("C: {0}", command);
+			#endif
+
+			if (queue == null)
+				queue = new MemoryBlockStream ();
+
+			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
+			queue.Write (bytes, 0, bytes.Length);
+			queued.Add (type);
+		}
+
+		void FlushCommandQueue (MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		{
+			if (queued.Count == 0)
+				return;
+
+			try {
+				var responses = new List<SmtpResponse> ();
+				int rcpt = 0;
+				int nread;
+
+				queue.Position = 0;
+				while ((nread = queue.Read (buffer, 0, buffer.Length)) > 0) {
+					cancellationToken.ThrowIfCancellationRequested ();
+					stream.Write (buffer, 0, nread);
+				}
+
+				// Note: we need to read all responses from the server before we can process
+				// them in case any of them have any errors so that we can RSET the state.
+				for (int i = 0; i < queued.Count; i++)
+					responses.Add (ReadResponse (cancellationToken));
+
+				for (int i = 0; i < queued.Count; i++) {
+					switch (queued [i]) {
+					case SmtpCommand.MailFrom:
+						ProcessMailFromResponse (responses[i], sender);
+						break;
+					case SmtpCommand.RcptTo:
+						ProcessRcptToResponse (responses[i], recipients[rcpt++]);
+						break;
+					}
+				}
+			} finally {
+				queue.SetLength (0);
+				queued.Clear ();
+			}
+		}
+
 		SmtpResponse SendCommand (string command, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			var bytes = Encoding.UTF8.GetBytes (command);
-
 			#if DEBUG
-			Console.Write ("C: {0}", command);
+			Console.WriteLine ("C: {0}", command);
 			#endif
 
+			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
 			stream.Write (bytes, 0, bytes.Length);
 
 			return ReadResponse (cancellationToken);
@@ -278,10 +339,9 @@ namespace MailKit.Net.Smtp {
 				if (localEndPoint.AddressFamily == AddressFamily.InterNetworkV6)
 					command += "IPv6:";
 				command += ip.Address;
-				command += "]\r\n";
+				command += "]";
 			} else {
 				command += ((DnsEndPoint) localEndPoint).Host;
-				command += "\r\n";
 			}
 
 			return SendCommand (command, cancellationToken);
@@ -411,9 +471,9 @@ namespace MailKit.Net.Smtp {
 
 				// send an initial challenge if the mechanism supports it
 				if ((challenge = sasl.Challenge (null)) != null) {
-					command = string.Format ("AUTH {0} {1}\r\n", authmech, challenge);
+					command = string.Format ("AUTH {0} {1}", authmech, challenge);
 				} else {
-					command = string.Format ("AUTH {0}\r\n", authmech);
+					command = string.Format ("AUTH {0}", authmech);
 				}
 
 				response = SendCommand (command, cancellationToken);
@@ -426,7 +486,7 @@ namespace MailKit.Net.Smtp {
 						throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					challenge = sasl.Challenge (response.Response);
-					response = SendCommand (challenge + "\r\n", cancellationToken);
+					response = SendCommand (challenge, cancellationToken);
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful)
@@ -562,7 +622,7 @@ namespace MailKit.Net.Smtp {
 				Ehlo (localEndPoint, cancellationToken);
 
 				if (!smtps & Capabilities.HasFlag (SmtpCapabilities.StartTLS)) {
-					response = SendCommand ("STARTTLS\r\n", cancellationToken);
+					response = SendCommand ("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
@@ -602,7 +662,7 @@ namespace MailKit.Net.Smtp {
 
 			if (quit) {
 				try {
-					SendCommand ("QUIT\r\n", cancellationToken);
+					SendCommand ("QUIT", cancellationToken);
 				} catch (OperationCanceledException) {
 				} catch (SmtpException) {
 				} catch (IOException) {
@@ -639,7 +699,7 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient is not connected.");
 
-			var response = SendCommand ("NOOP\r\n", cancellationToken);
+			var response = SendCommand ("NOOP", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -781,20 +841,19 @@ namespace MailKit.Net.Smtp {
 			return PrepareMimeEntity (message.Body);
 		}
 
-		void MailFrom (MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
+		string GetMailFromCommand (MailboxAddress mailbox, SmtpExtension extensions)
 		{
-			string command;
+			if (extensions.HasFlag (SmtpExtension.BinaryMime))
+				return string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME", mailbox.Address);
 
-			if (extensions.HasFlag (SmtpExtension.BinaryMime)) {
-				command = string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME\r\n", mailbox.Address);
-			} else if (extensions.HasFlag (SmtpExtension.EightBitMime)) {
-				command = string.Format ("MAIL FROM:<{0}> BODY=8BITMIME\r\n", mailbox.Address);
-			} else {
-				command = string.Format ("MAIL FROM:<{0}>\r\n", mailbox.Address);
-			}
+			if (extensions.HasFlag (SmtpExtension.EightBitMime))
+				return string.Format ("MAIL FROM:<{0}> BODY=8BITMIME", mailbox.Address);
 
-			var response = SendCommand (command, cancellationToken);
+			return string.Format ("MAIL FROM:<{0}>", mailbox.Address);
+		}
 
+		void ProcessMailFromResponse (SmtpResponse response, MailboxAddress mailbox)
+		{
 			switch (response.StatusCode) {
 			case SmtpStatusCode.Ok:
 				break;
@@ -808,11 +867,20 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void RcptTo (MailboxAddress mailbox, CancellationToken cancellationToken)
+		void MailFrom (MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
 		{
-			var command = string.Format ("RCPT TO:<{0}>\r\n", mailbox.Address);
-			var response = SendCommand (command, cancellationToken);
+			var command = GetMailFromCommand (mailbox, extensions);
 
+			if (Capabilities.HasFlag (SmtpCapabilities.Pipelining)) {
+				QueueCommand (SmtpCommand.MailFrom, command);
+				return;
+			}
+
+			ProcessMailFromResponse (SendCommand (command, cancellationToken), mailbox);
+		}
+
+		void ProcessRcptToResponse (SmtpResponse response, MailboxAddress mailbox)
+		{
 			switch (response.StatusCode) {
 			case SmtpStatusCode.UserNotLocalWillForward:
 			case SmtpStatusCode.Ok:
@@ -829,9 +897,21 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		void RcptTo (MailboxAddress mailbox, CancellationToken cancellationToken)
+		{
+			var command = string.Format ("RCPT TO:<{0}>", mailbox.Address);
+
+			if (Capabilities.HasFlag (SmtpCapabilities.Pipelining)) {
+				QueueCommand (SmtpCommand.RcptTo, command);
+				return;
+			}
+
+			ProcessRcptToResponse (SendCommand (command, cancellationToken), mailbox);
+		}
+
 		void Data (MimeMessage message, CancellationToken cancellationToken)
 		{
-			var response = SendCommand ("DATA\r\n", cancellationToken);
+			var response = SendCommand ("DATA", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -866,7 +946,7 @@ namespace MailKit.Net.Smtp {
 		void Reset ()
 		{
 			try {
-				var response = SendCommand ("RSET\r\n", CancellationToken.None);
+				var response = SendCommand ("RSET", CancellationToken.None);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					Disconnect (false, CancellationToken.None);
 			} catch (SmtpException ex) {
@@ -932,10 +1012,17 @@ namespace MailKit.Net.Smtp {
 			var extensions = PrepareMimeEntity (message);
 
 			try {
-				// TODO: support pipelining
+				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
+				// queue their commands instead of sending them immediately.
 				MailFrom (sender, extensions, cancellationToken);
 				foreach (var recipient in recipients)
 					RcptTo (recipient, cancellationToken);
+
+				// Note: if PIPELINING is supported, this will flush all outstanding
+				// MAIL FROM and RCPT TO commands to the server and then process all
+				// of their responses.
+				FlushCommandQueue (sender, recipients, cancellationToken);
+
 				Data (message, cancellationToken);
 			} catch (UnauthorizedAccessException) {
 				throw;
@@ -965,6 +1052,8 @@ namespace MailKit.Net.Smtp {
 		public void Dispose ()
 		{
 			if (!disposed) {
+				if (queue != null)
+					queue.Dispose ();
 				disposed = true;
 				Disconnect ();
 			}
