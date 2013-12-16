@@ -70,6 +70,7 @@ namespace MailKit.Net.Smtp {
 		readonly HashSet<string> authmechs = new HashSet<string> ();
 		readonly byte[] buffer = new byte[4096];
 		MemoryBlockStream queue;
+		EndPoint localEndPoint;
 		Stream stream;
 		bool disposed;
 		string host;
@@ -329,7 +330,7 @@ namespace MailKit.Net.Smtp {
 			return ReadResponse (cancellationToken);
 		}
 
-		SmtpResponse SendEhlo (EndPoint localEndPoint, bool ehlo, CancellationToken cancellationToken)
+		SmtpResponse SendEhlo (bool ehlo, CancellationToken cancellationToken)
 		{
 			string command = ehlo ? "EHLO " : "HELO ";
 			var ip = localEndPoint as IPEndPoint;
@@ -347,7 +348,7 @@ namespace MailKit.Net.Smtp {
 			return SendCommand (command, cancellationToken);
 		}
 
-		void Ehlo (EndPoint localEndPoint, CancellationToken cancellationToken)
+		void Ehlo (CancellationToken cancellationToken)
 		{
 			SmtpResponse response;
 
@@ -356,9 +357,9 @@ namespace MailKit.Net.Smtp {
 			authmechs.Clear ();
 			MaxSize = 0;
 
-			response = SendEhlo (localEndPoint, true, cancellationToken);
+			response = SendEhlo (true, cancellationToken);
 			if (response.StatusCode != SmtpStatusCode.Ok) {
-				response = SendEhlo (localEndPoint, false, cancellationToken);
+				response = SendEhlo (false, cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
@@ -489,8 +490,10 @@ namespace MailKit.Net.Smtp {
 					response = SendCommand (challenge, cancellationToken);
 				}
 
-				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful)
+				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
+					Ehlo (cancellationToken);
 					return;
+				}
 
 				throw new AuthenticationException ();
 			}
@@ -508,6 +511,7 @@ namespace MailKit.Net.Smtp {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
+			localEndPoint = new IPEndPoint (IPAddress.Loopback, 25);
 			Capabilities = SmtpCapabilities.None;
 			stream = replayStream;
 			authmechs.Clear ();
@@ -522,7 +526,7 @@ namespace MailKit.Net.Smtp {
 					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
-				Ehlo (new IPEndPoint (IPAddress.Loopback, 25), cancellationToken);
+				Ehlo (cancellationToken);
 
 				IsConnected = true;
 			} catch {
@@ -583,7 +587,6 @@ namespace MailKit.Net.Smtp {
 			bool smtps = uri.Scheme.ToLowerInvariant () == "smtps";
 			int port = uri.Port > 0 ? uri.Port : (smtps ? 465 : 25);
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
-			EndPoint localEndPoint = null;
 			SmtpResponse response = null;
 			Socket socket = null;
 
@@ -619,7 +622,7 @@ namespace MailKit.Net.Smtp {
 					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
-				Ehlo (localEndPoint, cancellationToken);
+				Ehlo (cancellationToken);
 
 				if (!smtps & Capabilities.HasFlag (SmtpCapabilities.StartTLS)) {
 					response = SendCommand ("STARTTLS", cancellationToken);
@@ -631,7 +634,7 @@ namespace MailKit.Net.Smtp {
 					stream = tls;
 
 					// Send EHLO again and get the new list of supported extensions
-					Ehlo (localEndPoint, cancellationToken);
+					Ehlo (cancellationToken);
 				}
 
 				IsConnected = true;
@@ -707,7 +710,9 @@ namespace MailKit.Net.Smtp {
 
 		void Disconnect ()
 		{
+			localEndPoint = null;
 			IsConnected = false;
+			host = null;
 
 			if (stream != null) {
 				stream.Dispose ();

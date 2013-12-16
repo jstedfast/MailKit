@@ -74,7 +74,7 @@ namespace UnitTests {
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			// FIXME: should we be re-EHLO'ing after AUTH?
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
@@ -133,7 +133,7 @@ namespace UnitTests {
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			// FIXME: should we be re-EHLO'ing after AUTH?
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
@@ -192,7 +192,7 @@ namespace UnitTests {
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			// FIXME: should we be re-EHLO'ing after AUTH?
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "mailbox-unavailable.txt"));
 			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
@@ -254,7 +254,7 @@ namespace UnitTests {
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			// FIXME: should we be re-EHLO'ing after AUTH?
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"));
 			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
