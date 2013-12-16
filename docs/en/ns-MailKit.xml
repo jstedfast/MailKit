@@ -93,7 +93,7 @@ namespace TestClient {
                     client.Connect (uri, cancel.Token);
                     client.Authenticate (credentials, cancel.Token);
 
-                    int count = client.Count (cancel.Token);
+                    int count = client.GetMessageCount (cancel.Token);
                     for (int i = 0; i &lt; count; i++) {
                         var message = client.GetMessage (i, cancel.Token);
                         Console.WriteLine ("Subject: {0}", message.Subject);
