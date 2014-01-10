@@ -77,6 +77,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		public Pop3Client ()
 		{
+			// FIXME: should this take a ParserOptions argument?
 			engine = new Pop3Engine ();
 		}
 
