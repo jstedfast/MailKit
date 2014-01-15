@@ -90,7 +90,7 @@ To switch to that branch,
 In the top-level MailKit source directory, there are three solution files: MailKit.sln, MailKit.Net45.sln and MailKit.Mobile.sln.
 
 * MailKit.Mobile.sln just includes the Xamarin.iOS and Xamarin.Android projects.
-* MailKit.Net45.sln just includes the .NET Framework 4.5 C# project (MailKit/MailKit.csproj)
+* MailKit.Net40.sln just includes the .NET Framework 4.0 C# project (MailKit/MailKit.csproj)
 * MailKit.sln includes everything that is in the MailKit.Net40.sln solution as well as the projects for Xamarin.Android,
 Xamarin.iOS, and Xamarin.Mac.
 
