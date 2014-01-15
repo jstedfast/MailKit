@@ -65,11 +65,8 @@
     <Compile Include="Security\SaslMechanismLogin.cs" />
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
-    <Compile Include="IFolder.cs" />
-    <Compile Include="IFolderNamespace.cs" />
     <Compile Include="IMessageService.cs" />
     <Compile Include="IMessageSpool.cs" />
-    <Compile Include="IMessageStore.cs" />
     <Compile Include="IMessageTransport.cs" />
     <Compile Include="ProtocolException.cs" />
   </ItemGroup>
