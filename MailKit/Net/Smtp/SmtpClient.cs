@@ -71,6 +71,7 @@ namespace MailKit.Net.Smtp {
 		readonly byte[] buffer = new byte[4096];
 		MemoryBlockStream queue;
 		EndPoint localEndPoint;
+		int index, endIndex;
 		Stream stream;
 		bool disposed;
 		string host;
@@ -178,20 +179,29 @@ namespace MailKit.Net.Smtp {
 				bool complete = false;
 				bool newLine = true;
 				bool more = true;
-				int index = 0;
 				int code = 0;
+				int nread;
 
 				do {
-					cancellationToken.ThrowIfCancellationRequested ();
+					if (memory.Length > 0 || index == endIndex) {
+						// make room for the next read by moving the remaining data to the beginning of the buffer
+						int left = endIndex - index;
 
-					int nread = stream.Read (buffer, index, buffer.Length - index);
-					int endIndex = index + nread;
+						for (int i = 0; i < left; i++)
+							buffer[i] = buffer[index + i];
 
-					if (nread == 0)
-						throw new SmtpException (SmtpErrorCode.ProtocolError, "The server replied with an incomplete response.");
+						endIndex = left;
+						index = 0;
+
+						cancellationToken.ThrowIfCancellationRequested ();
+
+						if ((nread = stream.Read (buffer, endIndex, buffer.Length - endIndex)) == 0)
+							throw new SmtpException (SmtpErrorCode.ProtocolError, "The server replied with an incomplete response.");
+
+						endIndex += nread;
+					}
 
 					complete = false;
-					index = 0;
 
 					do {
 						int startIndex = index;
@@ -238,13 +248,7 @@ namespace MailKit.Net.Smtp {
 							newLine = true;
 							index++;
 						}
-					} while (index < endIndex);
-
-					int n = endIndex - index;
-					for (int i = 0; i < n; i++)
-						buffer[i] = buffer[index++];
-
-					index = n;
+					} while (more && index < endIndex);
 				} while (more || !complete);
 
 				string message = null;

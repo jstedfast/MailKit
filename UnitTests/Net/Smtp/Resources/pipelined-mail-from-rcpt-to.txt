@@ -1,0 +1,2 @@
+250 2.1.0 sender ok
+250 2.1.5 recipient ok
