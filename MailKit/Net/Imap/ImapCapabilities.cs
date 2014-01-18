@@ -41,14 +41,14 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		None          = 0,
 
-        /// <summary>
-        /// The server implements the core IMAP4 commands.
-        /// </summary>
+		/// <summary>
+		/// The server implements the core IMAP4 commands.
+		/// </summary>
 		Imap4         = 1 << 0,
 
-        /// <summary>
-        /// The server implements the core IMAP4rev1 commands.
-        /// </summary>
+		/// <summary>
+		/// The server implements the core IMAP4rev1 commands.
+		/// </summary>
 		Imap4rev1     = 1 << 1,
 
 		/// <summary>
