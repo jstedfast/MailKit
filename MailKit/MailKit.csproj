@@ -62,9 +62,22 @@
     <Compile Include="Security\SaslMechanismLogin.cs" />
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
+    <Compile Include="Envelope.cs" />
+    <Compile Include="FetchResult.cs" />
+    <Compile Include="FlagsChangedEventArgs.cs" />
+    <Compile Include="FolderAccess.cs" />
+    <Compile Include="FolderAttributes.cs" />
+    <Compile Include="FolderNamespace.cs" />
+    <Compile Include="FolderNamespaceCollection.cs" />
+    <Compile Include="FolderRenamedEventArgs.cs" />
+    <Compile Include="IFolder.cs" />
     <Compile Include="IMessageService.cs" />
     <Compile Include="IMessageSpool.cs" />
+    <Compile Include="IMessageStore.cs" />
     <Compile Include="IMessageTransport.cs" />
+    <Compile Include="MessageAttributes.cs" />
+    <Compile Include="MessageEventArgs.cs" />
+    <Compile Include="MessageFlags.cs" />
     <Compile Include="ProtocolException.cs" />
   </ItemGroup>
   <ItemGroup>
