@@ -39,18 +39,19 @@ namespace MailKit {
 		MessageFlags AcceptedFlags { get; }
 		char DirectorySeparator { get; }
 		FolderAccess Access { get; }
-		string FullPath { get; }
+		string FullName { get; }
 		string Name { get; }
 
 		bool IsSubscribed { get; }
 		bool IsOpen { get; }
 		bool Exists { get; }
 
-		int FirstUnreadIndex { get; }
-		int MessageCount { get; }
-
 		string UidValidity { get; }
 		string UidNext { get; }
+
+		int FirstUnreadIndex { get; }
+		int Recent { get; }
+		int Count { get; }
 
 		FolderAccess Open (FolderAccess access, CancellationToken cancellationToken);
 		void Close (bool expunge, CancellationToken cancellationToken);
@@ -108,7 +109,8 @@ namespace MailKit {
 
 		event EventHandler<MessageEventArgs> Expunged;
 		event EventHandler<FlagsChangedEventArgs> FlagsChanged;
-		event EventHandler<EventArgs> MessageCountChanged;
-		event EventHandler<EventArgs> MessagesReceived;
+		event EventHandler<EventArgs> UidValidityChanged;
+		event EventHandler<EventArgs> CountChanged;
+		event EventHandler<EventArgs> RecentChanged;
 	}
 }
