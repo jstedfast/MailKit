@@ -341,7 +341,7 @@ namespace MailKit.Net.Pop3 {
 							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 							pop3.Stream.Write (buf, 0, buf.Length);
 
-							response = pop3.ReadLine (cmd.CancelToken);
+							response = pop3.ReadLine (cmd.CancellationToken);
 
 							cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
 							if (cmd.Status == Pop3CommandStatus.ProtocolError)
@@ -772,7 +772,7 @@ namespace MailKit.Net.Pop3 {
 					return;
 
 				do {
-					var response = engine.ReadLine (cmd.CancelToken).TrimEnd ();
+					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ();
 					if (response == ".")
 						break;
 
@@ -992,7 +992,7 @@ namespace MailKit.Net.Pop3 {
 					return;
 
 				do {
-					var response = engine.ReadLine (cmd.CancelToken).TrimEnd ();
+					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ();
 					if (response == ".")
 						break;
 

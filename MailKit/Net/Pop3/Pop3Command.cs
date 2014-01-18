@@ -49,7 +49,7 @@ namespace MailKit.Net.Pop3 {
 
 	class Pop3Command
 	{
-		public CancellationToken CancelToken { get; private set; }
+		public CancellationToken CancellationToken { get; private set; }
 		public Pop3CommandHandler Handler { get; set; }
 		public string Command { get; private set; }
 		public int Id { get; internal set; }
@@ -61,7 +61,7 @@ namespace MailKit.Net.Pop3 {
 		public Pop3Command (CancellationToken cancellationToken, string format, params object[] args)
 		{
 			Command = string.Format (format, args);
-			CancelToken = cancellationToken;
+			CancellationToken = cancellationToken;
 		}
 	}
 }

@@ -309,7 +309,7 @@ namespace MailKit.Net.Pop3 {
 			stream.Write (buf, 0, buf.Length);
 
 			try {
-				response = ReadLine (pc.CancelToken).TrimEnd ();
+				response = ReadLine (pc.CancellationToken).TrimEnd ();
 			} catch {
 				pc.Status = Pop3CommandStatus.ProtocolError;
 				Disconnect ();
@@ -348,9 +348,9 @@ namespace MailKit.Net.Pop3 {
 			queue.RemoveAt (0);
 
 			try {
-				pc.CancelToken.ThrowIfCancellationRequested ();
+				pc.CancellationToken.ThrowIfCancellationRequested ();
 			} catch (OperationCanceledException) {
-				queue.RemoveAll (x => x.CancelToken == pc.CancelToken);
+				queue.RemoveAll (x => x.CancellationToken == pc.CancellationToken);
 				throw;
 			}
 
@@ -383,7 +383,7 @@ namespace MailKit.Net.Pop3 {
 			string response;
 
 			do {
-				if ((response = engine.ReadLine (pc.CancelToken).TrimEnd ()) == ".")
+				if ((response = engine.ReadLine (pc.CancellationToken).TrimEnd ()) == ".")
 					break;
 
 				int index = response.IndexOf (' ');

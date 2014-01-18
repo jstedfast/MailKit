@@ -400,11 +400,16 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="buffer">The buffer containing the line data.</param>
 		/// <param name="offset">The offset into the buffer containing bytes read.</param>
 		/// <param name="count">The number of bytes read.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
 		internal bool ReadLine (out byte[] buffer, out int offset, out int count)
 		{
+			CheckDisposed ();
+
 			unsafe {
 				fixed (byte* inbuf = input) {
 					byte* start, inptr, inend;
