@@ -37,20 +37,25 @@ using System.Security.Cryptography;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-using MimeKit;
 using MailKit.Security;
 
 namespace MailKit.Net.Imap {
 	public class ImapClient : IMessageStore
 	{
+		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
 		bool disposed;
 		string host;
 
-		public ImapClient ()
+		public ImapClient () : this (new NullProtocolLogger ())
+		{
+		}
+
+		public ImapClient (IProtocolLogger logger)
 		{
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine ();
+			this.logger = logger;
 		}
 
 		/// <summary>
@@ -164,7 +169,6 @@ namespace MailKit.Net.Imap {
 
 			var uri = new Uri ("imap://" + host);
 			NetworkCredential cred;
-			string challenge;
 			ImapCommand ic;
 
 			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
@@ -175,7 +179,33 @@ namespace MailKit.Net.Imap {
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				// FIXME: implement sending the AUTHENTICATE command
+				ic = engine.QueueCommand (cancellationToken, null, "AUTHENTICATE %s\r\n");
+				ic.ContinuationHandler = (imap, cmd, text) => {
+					if (sasl.IsAuthenticated) {
+						// the server claims we aren't done authenticating, but our SASL mechanism thinks we are...
+						throw new AuthenticationException ();
+					}
+
+					var challenge = sasl.Challenge (text);
+					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+
+					imap.Stream.Write (buf, 0, buf.Length);
+					imap.Stream.Flush ();
+				};
+
+				while (engine.Iterate () < ic.Id) {
+					// continue processing commands...
+				}
+
+				if (ic.Result == ImapCommandResult.No)
+					continue;
+
+				if (ic.Result == ImapCommandResult.Bad)
+					throw new AuthenticationException ();
+
+				engine.State = ImapEngineState.Authenticated;
+				engine.QueryCapabilities (cancellationToken);
+				return;
 			}
 
 			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
@@ -184,10 +214,17 @@ namespace MailKit.Net.Imap {
 			// fall back to the classic LOGIN command...
 			cred = credentials.GetCredential (uri, "LOGIN");
 
-			// FIXME: implement the LOGIN command
+			ic = engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
+
+			while (engine.Iterate () < ic.Id) {
+				// continue processing commands...
+			}
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new AuthenticationException ();
 
 			engine.State = ImapEngineState.Authenticated;
-			//engine.QueryCapabilities (cancellationToken);
+			engine.QueryCapabilities (cancellationToken);
 		}
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
@@ -202,8 +239,8 @@ namespace MailKit.Net.Imap {
 
 			host = hostName;
 
-			engine.Connect (new ImapStream (replayStream), cancellationToken);
-			//engine.QueryCapabilities (cancellationToken);
+			engine.Connect (new ImapStream (replayStream, logger), cancellationToken);
+			engine.QueryCapabilities (cancellationToken);
 		}
 
 		/// <summary>
@@ -276,18 +313,26 @@ namespace MailKit.Net.Imap {
 
 			host = uri.Host;
 
-			engine.Connect (new ImapStream (stream), cancellationToken);
-			//engine.QueryCapabilities (cancellationToken);
+			logger.LogConnect (uri);
+
+			engine.Connect (new ImapStream (stream, logger), cancellationToken);
+			engine.QueryCapabilities (cancellationToken);
 
 			if (!imaps && engine.Capabilities.HasFlag (ImapCapabilities.StartTLS)) {
-				//SendCommand (cancellationToken, "STARTTLS");
+				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
-				var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-				tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
-				engine.Stream.Stream = tls;
+				while (engine.Iterate () < ic.Id) {
+					// continue processing commands...
+				}
 
-				// re-issue a CAPABILITIES command
-				//engine.QueryCapabilities (cancellationToken);
+				if (ic.Result == ImapCommandResult.Ok) {
+					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
+					engine.Stream.Stream = tls;
+
+					// requery the capabilities
+					engine.QueryCapabilities (cancellationToken);
+				}
 			}
 		}
 
@@ -311,7 +356,11 @@ namespace MailKit.Net.Imap {
 
 			if (quit) {
 				try {
-					//SendCommand (cancellationToken, "LOGOUT");
+					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
+
+					while (engine.Iterate () < ic.Id) {
+						// continue processing commands...
+					}
 				} catch (OperationCanceledException) {
 				} catch (ImapException) {
 				} catch (IOException) {
@@ -348,7 +397,11 @@ namespace MailKit.Net.Imap {
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("You must be authenticated before you can issue a NOOP command.");
 
-			//SendCommand (cancellationToken, "NOOP");
+			var ic = engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
+
+			while (engine.Iterate () < ic.Id) {
+				// continue processing commands...
+			}
 		}
 
 		#endregion
@@ -356,21 +409,15 @@ namespace MailKit.Net.Imap {
 		#region IMessageStore implementation
 
 		public FolderNamespaceCollection PersonalNamespaces {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return engine.PersonalFolderNamespaces; }
 		}
 
 		public FolderNamespaceCollection SharedNamespaces {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return engine.SharedFolderNamespaces; }
 		}
 
 		public FolderNamespaceCollection OtherNamespaces {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return engine.OtherFolderNamespaces; }
 		}
 
 		public IFolder Inbox {

@@ -184,23 +184,39 @@ namespace MailKit.Net.Imap {
 			get { return stream != null && stream.IsConnected; }
 		}
 
+		/// <summary>
+		/// Gets the personal folder namespaces.
+		/// </summary>
+		/// <value>The personal folder namespaces.</value>
 		public FolderNamespaceCollection PersonalFolderNamespaces {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the shared folder namespaces.
+		/// </summary>
+		/// <value>The shared folder namespaces.</value>
 		public FolderNamespaceCollection SharedFolderNamespaces {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the other folder namespaces.
+		/// </summary>
+		/// <value>The other folder namespaces.</value>
 		public FolderNamespaceCollection OtherFolderNamespaces {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the selected folder.
+		/// </summary>
+		/// <value>The selected folder.</value>
 		public ImapFolder Selected {
 			get; private set;
 		}
 
-		static ImapException UnexpectedToken (ImapToken token, bool greeting)
+		internal static ImapException UnexpectedToken (ImapToken token, bool greeting)
 		{
 			string message;
 
@@ -786,7 +802,7 @@ namespace MailKit.Net.Imap {
 					UpdateCapabilities (ImapTokenType.Eoln, cancellationToken);
 
 					// read the eoln token
-					token = stream.ReadToken (cancellationToken);
+					stream.ReadToken (cancellationToken);
 					break;
 				case "FLAGS":
 					folder.AcceptedFlags = ParseFlagsList (cancellationToken);
@@ -899,8 +915,9 @@ namespace MailKit.Net.Imap {
 			current.Status = ImapCommandStatus.Active;
 
 			try {
-				while (current.Step ())
-					;
+				while (current.Step ()) {
+					// more literal data to send...
+				}
 
 				// TODO: Update selected folder state after a SELECT, EXAMINE, CLOSE, and UNSELECT
 				// TODO: Update connection state after LOGOUT
@@ -922,6 +939,20 @@ namespace MailKit.Net.Imap {
 			ic.Id = nextId++;
 			queue.Add (ic);
 			return ic;
+		}
+
+		public ImapCommandResult QueryCapabilities (CancellationToken cancellationToken)
+		{
+			if (stream == null)
+				throw new InvalidOperationException ();
+
+			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
+
+			while (Iterate () < ic.Id) {
+				// continue processing commands...
+			}
+
+			return ic.Result;
 		}
 
 		//public event EventHandler<ImapAlertEventArgs> Alert;

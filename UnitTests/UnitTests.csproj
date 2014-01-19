@@ -44,10 +44,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
-    <Compile Include="Net\Smtp\SmtpClientTests.cs" />
-    <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
+    <Compile Include="Net\Imap\ImapEncodingTests.cs" />
     <Compile Include="Net\Pop3\Pop3ClientTests.cs" />
+    <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
+    <Compile Include="Net\Smtp\SmtpClientTests.cs" />
+    <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Net\Pop3\Resources\capa1.txt" />
@@ -64,17 +65,18 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-data.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-data-done.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+pipelining.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-greeting.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-mail-from.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-quit.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rcpt-to.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
-    <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+pipelining.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mail-from-rcpt-to.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />
+    <Folder Include="Net\Imap\" />
     <Folder Include="Net\Pop3\" />
     <Folder Include="Net\Pop3\Resources\" />
     <Folder Include="Net\Smtp\" />

@@ -85,10 +85,13 @@
     <Compile Include="IMessageSpool.cs" />
     <Compile Include="IMessageStore.cs" />
     <Compile Include="IMessageTransport.cs" />
+    <Compile Include="IProtocolLogger.cs" />
     <Compile Include="MessageAttributes.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
+    <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="ProtocolException.cs" />
+    <Compile Include="ProtocolLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />

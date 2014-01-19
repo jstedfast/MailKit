@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using MimeKit;
@@ -45,10 +46,19 @@ namespace MailKit.Net.Imap {
 	/// </remarks>
 	delegate void ImapContinuationHandler (ImapEngine engine, ImapCommand ic, string text);
 
+	/// <summary>
+	/// IMAP untagged response handler.
+	/// </summary>
+	/// <remarks>
+	/// <para>Most IMAP commands return their results in untagged responses.</para>
+	/// </remarks>
 	delegate void ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, ImapToken token);
 
 	delegate void ImapCommandResetHandler (ImapCommand ic);
 
+	/// <summary>
+	/// IMAP command status.
+	/// </summary>
 	enum ImapCommandStatus {
 		Queued,
 		Active,
@@ -75,6 +85,9 @@ namespace MailKit.Net.Imap {
 		Literal
 	}
 
+	/// <summary>
+	/// An IMAP literal object.
+	/// </summary>
 	class ImapLiteral
 	{
 		public readonly ImapLiteralType Type;
@@ -98,6 +111,10 @@ namespace MailKit.Net.Imap {
 			Literal = literal;
 		}
 
+		/// <summary>
+		/// Gets the length of the literal, in bytes.
+		/// </summary>
+		/// <value>The length.</value>
 		public long Length {
 			get {
 				if (Type == ImapLiteralType.String)
@@ -130,6 +147,7 @@ namespace MailKit.Net.Imap {
 			if (Type == ImapLiteralType.String) {
 				var bytes = (byte[]) Literal;
 				stream.Write (bytes, 0, bytes.Length);
+				stream.Flush ();
 				return;
 			}
 
@@ -140,6 +158,7 @@ namespace MailKit.Net.Imap {
 				var message = (MimeMessage) Literal;
 
 				message.WriteTo (options, stream, cancellationToken);
+				stream.Flush ();
 				return;
 			}
 
@@ -151,6 +170,8 @@ namespace MailKit.Net.Imap {
 				cancellationToken.ThrowIfCancellationRequested ();
 				stream.Write (buf, 0, nread);
 			}
+
+			stream.Flush ();
 		}
 	}
 
@@ -322,6 +343,9 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		/// <summary>
+		/// Sends the next part of the command to the server.
+		/// </summary>
 		public bool Step ()
 		{
 			var result = ImapCommandResult.None;
@@ -336,6 +360,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			Engine.Stream.Write (parts[current].Command, 0, parts[current].Command.Length);
+			Engine.Stream.Flush ();
 
 			// now we need to read the response...
 			do {
@@ -343,53 +368,51 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.Plus) {
 					// we've gotten a continuation response from the server
-					var line = Engine.ReadLine (CancellationToken);
+					var text = Engine.ReadLine (CancellationToken).Trim ();
 
+					// if we've got a Literal pending, the '+' means we can send it now...
 					if (parts[current].Literal != null) {
 						parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 						break;
 					}
 
-					if (ContinuationHandler != null) {
-						ContinuationHandler (Engine, this, line);
-						// now we wait for an OK/NO/BAD response
-					} else {
-						// this shouldn't happen...
-					}
+					Debug.Assert (ContinuationHandler != null, "The ImapCommand's ContinuationHandler is null");
+
+					ContinuationHandler (Engine, this, text);
 				} else if (token.Type == ImapTokenType.Asterisk) {
 					// we got an untagged response, let the engine handle this...
-					//Engine.ProcessUntaggedResponse ();
-					// FIXME: need to handle errors
+					Engine.ProcessUntaggedResponse (CancellationToken);
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
 					token = Engine.Stream.ReadToken (CancellationToken);
 
 					if (token.Type == ImapTokenType.Atom) {
-						switch ((string) token.Value) {
+						string atom = (string) token.Value;
+
+						switch (atom) {
 						case "BAD": result = ImapCommandResult.Bad; break;
 						case "OK": result = ImapCommandResult.Ok; break;
 						case "NO": result = ImapCommandResult.No; break;
 						}
 
-						if (result == ImapCommandResult.None) {
-							// FIXME: throw an exception
-						}
+						if (result == ImapCommandResult.None)
+							throw ImapEngine.UnexpectedToken (token, false);
 
 						token = Engine.Stream.ReadToken (CancellationToken);
 						if (token.Type == ImapTokenType.OpenBracket) {
-							// we have a RESP-CODE
-							//if (!Engine.TryParseRespCode ()) ...
+							var code = Engine.ParseResponseCode (CancellationToken);
+							// FIXME: handle the response code?
 						} else if (token.Type != ImapTokenType.Eoln) {
 							// consume the rest of the line...
 							Engine.ReadLine (CancellationToken);
 						}
 					} else {
 						// looks like we didn't get an "OK", "NO", or "BAD"...
-						// FIXME: throw an exception
+						throw ImapEngine.UnexpectedToken (token, false);
 					}
 				} else {
 					// no clue what we got...
-					// FIXME: throw an exception
+					throw ImapEngine.UnexpectedToken (token, false);
 				}
 			} while (true);
 

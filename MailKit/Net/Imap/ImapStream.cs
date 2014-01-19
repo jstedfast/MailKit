@@ -66,6 +66,7 @@ namespace MailKit.Net.Imap {
 		readonly byte[] output = new byte[BlockSize];
 		int outputIndex;
 
+		readonly IProtocolLogger logger;
 		int literalDataLeft;
 		ImapToken nextToken;
 		bool disposed;
@@ -74,8 +75,10 @@ namespace MailKit.Net.Imap {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Stream"/> class.
 		/// </summary>
 		/// <param name="source">The underlying network stream.</param>
-		public ImapStream (Stream source)
+		/// <param name="logger">The protocol logger.</param>
+		public ImapStream (Stream source, IProtocolLogger logger)
 		{
+			this.logger = logger;
 			IsConnected = true;
 			Stream = source;
 		}
@@ -253,8 +256,10 @@ namespace MailKit.Net.Imap {
 			end = input.Length - PadSize;
 
 			try {
-				if ((nread = Stream.Read (input, start, end - start)) > 0)
+				if ((nread = Stream.Read (input, start, end - start)) > 0) {
+					logger.LogServer (input, start, nread);
 					inputEnd += nread;
+				}
 			} catch (IOException) {
 				IsConnected = false;
 				throw;
@@ -730,6 +735,7 @@ namespace MailKit.Net.Imap {
 					if (outputIndex == BlockSize) {
 						// flush the output buffer
 						Stream.Write (output, 0, BlockSize);
+						logger.LogClient (output, 0, BlockSize);
 						outputIndex = 0;
 					}
 
@@ -737,6 +743,7 @@ namespace MailKit.Net.Imap {
 						// write blocks of data to the stream without buffering
 						while (left >= BlockSize) {
 							Stream.Write (buffer, index, BlockSize);
+							logger.LogClient (buffer, index, BlockSize);
 							index += BlockSize;
 							left -= BlockSize;
 						}
@@ -768,6 +775,7 @@ namespace MailKit.Net.Imap {
 			try {
 				if (outputIndex > 0) {
 					Stream.Write (output, 0, outputIndex);
+					logger.LogClient (output, 0, outputIndex);
 					outputIndex = 0;
 				}
 
