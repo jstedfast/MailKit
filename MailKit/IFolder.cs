@@ -31,6 +31,12 @@ using System.Collections.Generic;
 using MimeKit;
 
 namespace MailKit {
+	/// <summary>
+	/// An interface for a mailbox folder as used by <see cref="IMessageStore"/>.
+	/// </summary>
+	/// <remarks>
+	/// Implemented by message stores such as <see cref="MailKit.Net.Imap.ImapClient"/>
+	/// </remarks>
 	public interface IFolder
 	{
 		IFolder ParentFolder { get; }
@@ -47,6 +53,7 @@ namespace MailKit {
 		bool IsOpen { get; }
 		bool Exists { get; }
 
+		ulong HighestModSeq { get; }
 		string UidValidity { get; }
 		string UidNext { get; }
 
@@ -64,7 +71,6 @@ namespace MailKit {
 		void Subscribe (CancellationToken cancellationToken);
 		void Unsubscribe (CancellationToken cancellationToken);
 
-		IEnumerable<IFolder> GetSubfolders (string pattern, bool subscribedOnly, CancellationToken cancellationToken);
 		IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken);
 
 		void Check (CancellationToken cancellationToken);

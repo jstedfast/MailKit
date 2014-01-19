@@ -664,6 +664,16 @@ namespace MailKit.Net.Imap {
 				token = stream.ReadToken (cancellationToken);
 		}
 
+		void ProcessResponseCodes (ImapCommand ic)
+		{
+			foreach (var code in ic.RespCodes) {
+				if (code.Type == ImapResponseCodeType.Alert) {
+					OnAlert (code.Message);
+					break;
+				}
+			}
+		}
+
 		static ImapResponseCodeType GetResponseCodeType (string atom)
 		{
 			switch (atom) {
@@ -1224,7 +1234,7 @@ namespace MailKit.Net.Imap {
 
 		//public event EventHandler<ImapAlertEventArgs> Alert;
 
-		void OnAlert (string message)
+		internal void OnAlert (string message)
 		{
 //			var handler = Alert;
 //

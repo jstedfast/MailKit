@@ -32,8 +32,18 @@ using System.Collections.Generic;
 using MimeKit;
 
 namespace MailKit.Net.Imap {
+	/// <summary>
+	/// An IMAP folder.
+	/// </summary>
 	public class ImapFolder : IFolder
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="encodedName">The encoded name.</param>
+		/// <param name="attrs">The folder attributes.</param>
+		/// <param name="delim">The path delimeter.</param>
 		internal ImapFolder (ImapEngine engine, string encodedName, FolderAttributes attrs, char delim)
 		{
 			FullName = ImapEncoding.Decode (encodedName);
@@ -46,12 +56,55 @@ namespace MailKit.Net.Imap {
 			Name = names.Length > 0 ? names[names.Length - 1] : FullName;
 		}
 
+		/// <summary>
+		/// Gets the engine.
+		/// </summary>
+		/// <value>The engine.</value>
 		internal ImapEngine Engine {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the encoded name of the folder.
+		/// </summary>
+		/// <value>The encoded name.</value>
 		internal string EncodedName {
 			get; private set;
+		}
+
+		void ProcessResponseCodes (ImapCommand ic)
+		{
+			foreach (var code in ic.RespCodes) {
+				switch (code.Type) {
+				case ImapResponseCodeType.Alert:
+					Engine.OnAlert (code.Message);
+					break;
+				case ImapResponseCodeType.PermanentFlags:
+					PermanentFlags = code.Flags;
+					break;
+				case ImapResponseCodeType.ReadOnly:
+					Access = FolderAccess.ReadOnly;
+					break;
+				case ImapResponseCodeType.ReadWrite:
+					Access = FolderAccess.ReadWrite;
+					break;
+				case ImapResponseCodeType.UidNext:
+					UidNext = code.Uid.ToString ();
+					break;
+				case ImapResponseCodeType.UidValidity:
+					UidValidity = code.UidValidity.ToString ();
+					break;
+				case ImapResponseCodeType.Unseen:
+					FirstUnreadIndex = code.Index;
+					break;
+				case ImapResponseCodeType.HighestModSeq:
+					HighestModSeq = code.HighestModSeq;
+					break;
+				case ImapResponseCodeType.NoModSeq:
+					HighestModSeq = 0;
+					break;
+				}
+			}
 		}
 
 		#region IFolder implementation
@@ -89,15 +142,19 @@ namespace MailKit.Net.Imap {
 		}
 
 		public bool IsSubscribed {
-			get; internal set;
+			get; private set;
 		}
 
 		public bool IsOpen {
-			get; private set;
+			get { return Engine.Selected == this; }
 		}
 
 		public bool Exists {
 			get; internal set;
+		}
+
+		public ulong HighestModSeq {
+			get; private set;
 		}
 
 		public string UidValidity {
@@ -122,12 +179,47 @@ namespace MailKit.Net.Imap {
 
 		public FolderAccess Open (FolderAccess access, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
+				throw new ArgumentOutOfRangeException ("access");
+
+			if (IsOpen && Access == access)
+				throw new InvalidOperationException ("The ImapFolder is already open with the specified access.");
+
+			string format;
+			if (access == FolderAccess.ReadOnly)
+				format = "EXAMINE %F\r\n";
+			else
+				format = "SELECT %F\r\n";
+
+			var ic = Engine.QueueCommand (cancellationToken, this, format, this);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				return FolderAccess.None;
+
+			return Access;
 		}
 
 		public void Close (bool expunge, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
+			ImapCommand ic;
+
+			if (expunge) {
+				ic = Engine.QueueCommand (cancellationToken, this, "CLOSE\r\n");
+			} else if ((Engine.Capabilities & ImapCapabilities.Unselect) != 0) {
+				ic = Engine.QueueCommand (cancellationToken, this, "UNSELECT\r\n");
+			} else {
+				return;
+			}
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
 		}
 
 		public void Rename (string newName, CancellationToken cancellationToken)
@@ -147,32 +239,57 @@ namespace MailKit.Net.Imap {
 
 		public void Subscribe (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var ic = Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic);
+
+			if (ic.Result == ImapCommandResult.Ok)
+				IsSubscribed = true;
 		}
 
 		public void Unsubscribe (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
-		}
+			var ic = Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
 
-		public IEnumerable<IFolder> GetSubfolders (string pattern, bool subscribedOnly, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException ();
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic);
+
+			if (ic.Result == ImapCommandResult.Ok)
+				IsSubscribed = false;
 		}
 
 		public IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator + "%" : "%";
+			var command = subscribedOnly ? "LSUB" : "LIST";
+
+			var ic = Engine.QueueCommand (cancellationToken, null, "%s \"\" %S\r\n", command, pattern);
+			var list = new List<ImapFolder> ();
+
+			ic.RegisterUntaggedHandler (command, ImapUtils.HandleUntaggedListResponse);
+			ic.UserData = list;
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic);
+
+			return list;
 		}
 
 		public void Check (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var ic = Engine.QueueCommand (cancellationToken, this, "CHECK\r\n");
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic);
 		}
 
 		public void Expunge (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var ic = Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic);
 		}
 
 		public void Expunge (string[] uids, CancellationToken cancellationToken)
