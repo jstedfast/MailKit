@@ -39,116 +39,131 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server does not support any additional extensions.
 		/// </summary>
-		None          = 0,
+		None           = 0,
 
 		/// <summary>
 		/// The server implements the core IMAP4 commands.
 		/// </summary>
-		Imap4         = 1 << 0,
+		IMAP4          = 1 << 0,
 
 		/// <summary>
 		/// The server implements the core IMAP4rev1 commands.
 		/// </summary>
-		Imap4rev1     = 1 << 1,
+		IMAP4rev1      = 1 << 1,
 
 		/// <summary>
 		/// The server supports the STATUS command.
 		/// </summary>
-		Status        = 1 << 2,
+		Status         = 1 << 2,
 
 		/// <summary>
 		/// The server supports the QUOTA extension defined in rfc2087.
 		/// </summary>
-		Quota         = 1 << 3,
+		Quota          = 1 << 3,
 
 		/// <summary>
 		/// The server supports the LITERAL+ extension defined in rfc2088.
 		/// </summary>
-		LiteralPlus   = 1 << 4,
+		LiteralPlus    = 1 << 4,
 
 		/// <summary>
 		/// The server supports the IDLE extension defined in rfc2177.
 		/// </summary>
-		Idle          = 1 << 5,
+		Idle           = 1 << 5,
 
 		/// <summary>
 		/// The server supports the NAMESPACE extension defined in rfc2342.
 		/// </summary>
-		Namespace     = 1 << 6,
+		Namespace      = 1 << 6,
 
 		/// <summary>
 		/// The server supports the CHILDREN extension defined in rfc3348.
 		/// </summary>
-		Children      = 1 << 7,
+		Children       = 1 << 7,
 
 		/// <summary>
 		/// The server supports the LOGINDISABLED extension defined in rfc3501.
 		/// </summary>
-		LoginDisabled = 1 << 8,
+		LoginDisabled  = 1 << 8,
 
 		/// <summary>
 		/// The server supports the StartTLS extension defined in rfc3501.
 		/// </summary>
-		StartTLS      = 1 << 9,
+		StartTLS       = 1 << 9,
 
 		/// <summary>
 		/// The server supports the MULTIAPPEND extension defined in rfc3502.
 		/// </summary>
-		MultiAppend   = 1 << 10,
+		MultiAppend    = 1 << 10,
 
 		/// <summary>
 		/// The server supports the BINARY content extension defined in rfc3516.
 		/// </summary>
-		Binary        = 1 << 11,
+		Binary         = 1 << 11,
 
 		/// <summary>
 		/// The server supports the UNSELECT extension defined in rfc3691.
 		/// </summary>
-		Unselect      = 1 << 12,
+		Unselect       = 1 << 12,
 
 		/// <summary>
 		/// The server supports the UIDPLUS extension defined in rfc4315.
 		/// </summary>
-		UidPlus       = 1 << 13,
+		UidPlus        = 1 << 13,
 
 		/// <summary>
 		/// The server supports the CATENATE extension defined in rfc4469.
 		/// </summary>
-		Catenate      = 1 << 14,
+		Catenate       = 1 << 14,
 
 		/// <summary>
 		/// The server supports the CONDSTORE extension defined in rfc4551.
 		/// </summary>
-		CondStore     = 1 << 15,
+		CondStore      = 1 << 15,
+
+		/// <summary>
+		/// The server supports the ESEARCH extension defined in rfc4731.
+		/// </summary>
+		ESearch        = 1 << 16,
 
 		/// <summary>
 		/// The server supports the COMPRESS extension defined in rfc4978.
 		/// </summary>
-		Compress      = 1 << 16,
+		Compress       = 1 << 17,
+
+		/// <summary>
+		/// The server supports the ENABLE extension defined in rfc5161.
+		/// </summary>
+		Enable         = 1 << 18,
 
 		/// <summary>
 		/// The server supports the LIST-EXTENDED extension defined in rfc5258.
 		/// </summary>
-		ListExtended  = 1 << 17,
+		ListExtended   = 1 << 19,
 
 		/// <summary>
 		/// The server supports the CONVERT extension defined in rfc5259.
 		/// </summary>
-		Convert       = 1 << 18,
+		Convert        = 1 << 20,
 
 		/// <summary>
 		/// The server supports the METADATA extension defined in rfc5464.
 		/// </summary>
-		MetaData      = 1 << 19,
+		MetaData       = 1 << 21,
 
 		/// <summary>
 		/// The server supports the FILTERS extension defined in rfc5466.
 		/// </summary>
-		Filters       = 1 << 20,
+		Filters        = 1 << 22,
 
 		/// <summary>
 		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse    = 1 << 21,
+		SpecialUse     = 1 << 23,
+
+		/// <summary>
+		/// The server supports the MOVE extension defined in rfc6851.
+		/// </summary>
+		Move           = 1 << 24,
 	}
 }

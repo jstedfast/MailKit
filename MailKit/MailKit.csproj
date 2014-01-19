@@ -92,6 +92,7 @@
     <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
+    <Compile Include="SpecialFolder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />

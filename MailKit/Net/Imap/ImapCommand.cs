@@ -198,6 +198,7 @@ namespace MailKit.Net.Imap {
 		public readonly List<ImapResponseCode> RespCodes;
 		public ImapFolder Folder { get; private set; }
 		public string Tag { get; private set; }
+		public bool Bye { get; internal set; }
 		public int Id { get; internal set; }
 
 		readonly List<ImapCommandPart> parts = new List<ImapCommandPart> ();
@@ -402,9 +403,13 @@ namespace MailKit.Net.Imap {
 						if (token.Type == ImapTokenType.OpenBracket) {
 							var code = Engine.ParseResponseCode (CancellationToken);
 							// FIXME: handle the response code?
-						} else if (token.Type != ImapTokenType.Eoln) {
+							break;
+						}
+
+						if (token.Type != ImapTokenType.Eoln) {
 							// consume the rest of the line...
 							Engine.ReadLine (CancellationToken);
+							break;
 						}
 					} else {
 						// looks like we didn't get an "OK", "NO", or "BAD"...

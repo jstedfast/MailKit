@@ -609,7 +609,7 @@ namespace MailKit.Net.Imap {
 					if (c == '\\')
 						return ReadFlagToken (inbuf, cancellationToken);
 
-					if (IsAtom (*inptr))
+					if (c != '+' && IsAtom (*inptr))
 						return ReadAtomToken (inbuf, cancellationToken);
 
 					// special character token
@@ -724,7 +724,7 @@ namespace MailKit.Net.Imap {
 				while (left > 0) {
 					int n = Math.Min (BlockSize - outputIndex, left);
 
-					if (outputIndex > 0 && n < BlockSize) {
+					if (outputIndex > 0 || n < BlockSize) {
 						// append the data to the output buffer
 						Buffer.BlockCopy (buffer, index, output, outputIndex, n);
 						outputIndex += n;
@@ -772,14 +772,13 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
-			try {
-				if (outputIndex > 0) {
-					Stream.Write (output, 0, outputIndex);
-					logger.LogClient (output, 0, outputIndex);
-					outputIndex = 0;
-				}
+			if (outputIndex == 0)
+				return;
 
-				Stream.Flush ();
+			try {
+				Stream.Write (output, 0, outputIndex);
+				logger.LogClient (output, 0, outputIndex);
+				outputIndex = 0;
 			} catch (IOException) {
 				IsConnected = false;
 				throw;

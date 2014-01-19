@@ -1,9 +1,9 @@
-//
-// IMessageStore.cs
+﻿//
+// SpecialFolder.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013 Jeffrey Stedfast
+// Copyright (c) 2014 Jeffrey Stedfast
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,18 +24,44 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Threading;
-
 namespace MailKit {
-	public interface IMessageStore : IMessageService
-	{
-		FolderNamespaceCollection PersonalNamespaces { get; }
-		FolderNamespaceCollection SharedNamespaces { get; }
-		FolderNamespaceCollection OtherNamespaces { get; }
+	/// <summary>
+	/// An enumeration of special folders.
+	/// </summary>
+	public enum SpecialFolder {
+		/// <summary>
+		/// The special folder containing an aggregate of all messages.
+		/// </summary>
+		All,
 
-		IFolder Inbox { get; }
-		IFolder GetFolder (SpecialFolder folder, CancellationToken cancellationToken);
-		IFolder GetFolder (FolderNamespace @namespace, CancellationToken cancellationToken);
+		/// <summary>
+		/// The special folder that contains archived messages.
+		/// </summary>
+		Archive,
+
+		/// <summary>
+		/// The special folder that contains message drafts.
+		/// </summary>
+		Drafts,
+
+		/// <summary>
+		/// The special folder that contains important messages.
+		/// </summary>
+		Flagged,
+
+		/// <summary>
+		/// The special folder that contains spam messages.
+		/// </summary>
+		Junk,
+
+		/// <summary>
+		/// The special folder that contains sent messages.
+		/// </summary>
+		Sent,
+
+		/// <summary>
+		/// The special folder that contains deleted messages.
+		/// </summary>
+		Trash
 	}
 }

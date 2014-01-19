@@ -73,7 +73,7 @@ namespace MailKit.Net.Imap {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("Pop3Client");
+				throw new ObjectDisposedException ("ImapClient");
 		}
 
 		void CheckConnected ()
@@ -141,8 +141,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is not connected.
+		/// The <see cref="ImapClient"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -161,8 +164,13 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken)
 		{
+			CheckDisposed ();
+
 			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient must be connected before you can authenticate.");
+
+			if (engine.State >= ImapEngineState.Authenticated)
+				throw new InvalidOperationException ("The ImapClient is already authenticated.");
 
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
@@ -179,7 +187,7 @@ namespace MailKit.Net.Imap {
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				ic = engine.QueueCommand (cancellationToken, null, "AUTHENTICATE %s\r\n");
+				ic = engine.QueueCommand (cancellationToken, null, "AUTHENTICATE %s\r\n", sasl.MechanismName);
 				ic.ContinuationHandler = (imap, cmd, text) => {
 					if (sasl.IsAuthenticated) {
 						// the server claims we aren't done authenticating, but our SASL mechanism thinks we are...
@@ -268,6 +276,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is already connected.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -282,7 +293,7 @@ namespace MailKit.Net.Imap {
 			CheckDisposed ();
 
 			if (IsConnected)
-				return;
+				throw new InvalidOperationException ("The ImapClient is already connected.");
 
 			bool imaps = uri.Scheme.ToLowerInvariant () == "imaps";
 			int port = uri.Port > 0 ? uri.Port : (imaps ? 993 : 143);
@@ -409,21 +420,31 @@ namespace MailKit.Net.Imap {
 		#region IMessageStore implementation
 
 		public FolderNamespaceCollection PersonalNamespaces {
-			get { return engine.PersonalFolderNamespaces; }
+			get { return engine.PersonalNamespaces; }
 		}
 
 		public FolderNamespaceCollection SharedNamespaces {
-			get { return engine.SharedFolderNamespaces; }
+			get { return engine.SharedNamespaces; }
 		}
 
 		public FolderNamespaceCollection OtherNamespaces {
-			get { return engine.OtherFolderNamespaces; }
+			get { return engine.OtherNamespaces; }
 		}
 
 		public IFolder Inbox {
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+
+		public IFolder GetFolder (SpecialFolder folder, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public IFolder GetFolder (FolderNamespace @namespace, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion

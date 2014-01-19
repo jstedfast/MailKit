@@ -64,14 +64,14 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Flag:         return "\\" + (string) Value;
 			case ImapTokenType.QString:      return "\"" + (string) Value + "\"";
 			case ImapTokenType.Literal:      return "{" + (int) Value + "}";
-			case ImapTokenType.Eoln:         return "\\n";
-			case ImapTokenType.OpenParen:    return "(";
-			case ImapTokenType.CloseParen:   return ")";
-			case ImapTokenType.Asterisk:     return "*";
-			case ImapTokenType.Plus:         return "+";
-			case ImapTokenType.OpenBracket:  return "[";
-			case ImapTokenType.CloseBracket: return "]";
-			default:                         return Value.ToString ();
+			case ImapTokenType.Eoln:         return "'\\n'";
+			case ImapTokenType.OpenParen:    return "'('";
+			case ImapTokenType.CloseParen:   return "')'";
+			case ImapTokenType.Asterisk:     return "'*'";
+			case ImapTokenType.Plus:         return "'+'";
+			case ImapTokenType.OpenBracket:  return "'['";
+			case ImapTokenType.CloseBracket: return "']'";
+			default:                         return string.Format ("'{0}'", Value);
 			}
 		}
 	}

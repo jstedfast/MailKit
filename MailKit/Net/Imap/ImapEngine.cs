@@ -188,7 +188,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the personal folder namespaces.
 		/// </summary>
 		/// <value>The personal folder namespaces.</value>
-		public FolderNamespaceCollection PersonalFolderNamespaces {
+		public FolderNamespaceCollection PersonalNamespaces {
 			get; private set;
 		}
 
@@ -196,7 +196,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the shared folder namespaces.
 		/// </summary>
 		/// <value>The shared folder namespaces.</value>
-		public FolderNamespaceCollection SharedFolderNamespaces {
+		public FolderNamespaceCollection SharedNamespaces {
 			get; private set;
 		}
 
@@ -204,7 +204,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the other folder namespaces.
 		/// </summary>
 		/// <value>The other folder namespaces.</value>
-		public FolderNamespaceCollection OtherFolderNamespaces {
+		public FolderNamespaceCollection OtherNamespaces {
 			get; private set;
 		}
 
@@ -272,7 +272,7 @@ namespace MailKit.Net.Imap {
 					var code = ParseResponseCode (cancellationToken);
 					if (code.Type == ImapResponseCodeType.Alert)
 						OnAlert (code.Message);
-				} else if (token.Type == ImapTokenType.Eoln) {
+				} else if (token.Type != ImapTokenType.Eoln) {
 					// throw away any remaining text up until the end of the line
 					ReadLine (cancellationToken);
 				}
@@ -374,9 +374,9 @@ namespace MailKit.Net.Imap {
 					CompressionAlgorithms.Add (atom.Substring ("COMPRESS=".Length));
 					Capabilities |= ImapCapabilities.Compress;
 				} else {
-					switch (atom) {
-					case "IMAP4":         Capabilities |= ImapCapabilities.Imap4; break;
-					case "IMAP4REV1":     Capabilities |= ImapCapabilities.Imap4rev1; break;
+					switch (atom.ToUpperInvariant ()) {
+					case "IMAP4":         Capabilities |= ImapCapabilities.IMAP4; break;
+					case "IMAP4REV1":     Capabilities |= ImapCapabilities.IMAP4rev1; break;
 					case "STATUS":        Capabilities |= ImapCapabilities.Status; break;
 					case "QUOTA":         Capabilities |= ImapCapabilities.Quota; break;
 					case "LITERAL+":      Capabilities |= ImapCapabilities.LiteralPlus; break;
@@ -391,10 +391,13 @@ namespace MailKit.Net.Imap {
 					case "UIDPLUS":       Capabilities |= ImapCapabilities.UidPlus; break;
 					case "CATENATE":      Capabilities |= ImapCapabilities.Catenate; break;
 					case "CONDSTORE":     Capabilities |= ImapCapabilities.CondStore; break;
+					case "ESEARCH":       Capabilities |= ImapCapabilities.ESearch; break;
+					case "ENABLE":        Capabilities |= ImapCapabilities.Enable; break;
 					case "LIST-EXTENDED": Capabilities |= ImapCapabilities.ListExtended; break;
 					case "CONVERT":       Capabilities |= ImapCapabilities.Convert; break;
 					case "METADATA":      Capabilities |= ImapCapabilities.MetaData; break;
 					case "SPECIAL-USE":   Capabilities |= ImapCapabilities.SpecialUse; break;
+					case "MOVE":          Capabilities |= ImapCapabilities.Move; break;
 					}
 				}
 
@@ -409,10 +412,10 @@ namespace MailKit.Net.Imap {
 			// unget the sentinel
 			stream.UngetToken (token);
 
-			if ((Capabilities & ImapCapabilities.Imap4rev1) != 0) {
+			if ((Capabilities & ImapCapabilities.IMAP4rev1) != 0) {
 				ProtocolVersion = ImapProtocolVersion.Imap4rev1;
 				Capabilities |= ImapCapabilities.Status;
-			} else if ((Capabilities & ImapCapabilities.Imap4) != 0) {
+			} else if ((Capabilities & ImapCapabilities.IMAP4) != 0) {
 				ProtocolVersion = ImapProtocolVersion.Imap4;
 			}
 		}
@@ -455,16 +458,16 @@ namespace MailKit.Net.Imap {
 		void UpdateNamespaces (CancellationToken cancellationToken)
 		{
 			var namespaces = new List<FolderNamespaceCollection> () {
-				PersonalFolderNamespaces, SharedFolderNamespaces, OtherFolderNamespaces
+				PersonalNamespaces, SharedNamespaces, OtherNamespaces
 			};
 			ImapToken token;
 			string path;
 			char dirsep;
 			int n = 0;
 
-			PersonalFolderNamespaces.Clear ();
-			SharedFolderNamespaces.Clear ();
-			OtherFolderNamespaces.Clear ();
+			PersonalNamespaces.Clear ();
+			SharedNamespaces.Clear ();
+			OtherNamespaces.Clear ();
 
 			token = stream.ReadToken (cancellationToken);
 
@@ -794,9 +797,12 @@ namespace MailKit.Net.Imap {
 					}
 
 					ReadLine (cancellationToken);
-					Disconnect ();
 
-					// FIXME: throw an exception if the command wasn't LOGOUT?
+					if (current != null) {
+						current.Bye = true;
+					} else {
+						Disconnect ();
+					}
 					break;
 				case "CAPABILITY":
 					UpdateCapabilities (ImapTokenType.Eoln, cancellationToken);
@@ -920,7 +926,9 @@ namespace MailKit.Net.Imap {
 				}
 
 				// TODO: Update selected folder state after a SELECT, EXAMINE, CLOSE, and UNSELECT
-				// TODO: Update connection state after LOGOUT
+
+				if (current.Bye)
+					Disconnect ();
 			} catch (ImapException ex) {
 				// FIXME: not all ImapExceptions are fatal
 				Disconnect ();
