@@ -1,0 +1,451 @@
+
+
+
+
+
+
+Network Working Group                                         M. Crispin
+Request for Comments: 4315                                 December 2005
+Obsoletes: 2359
+Category: Standards Track
+
+
+      Internet Message Access Protocol (IMAP) - UIDPLUS extension
+
+Status of This Memo
+
+   This document specifies an Internet standards track protocol for the
+   Internet community, and requests discussion and suggestions for
+   improvements.  Please refer to the current edition of the "Internet
+   Official Protocol Standards" (STD 1) for the standardization state
+   and status of this protocol.  Distribution of this memo is unlimited.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (2005).
+
+Abstract
+
+   The UIDPLUS extension of the Internet Message Access Protocol (IMAP)
+   provides a set of features intended to reduce the amount of time and
+   resources used by some client operations.  The features in UIDPLUS
+   are primarily intended for disconnected-use clients.
+
+1.  Introduction and Overview
+
+   The UIDPLUS extension is present in any IMAP server implementation
+   that returns "UIDPLUS" as one of the supported capabilities to the
+   CAPABILITY command.
+
+   The UIDPLUS extension defines an additional command.  In addition,
+   this document recommends new status response codes in IMAP that
+   SHOULD be returned by all server implementations, regardless of
+   whether or not the UIDPLUS extension is implemented.
+
+   The added facilities of the features in UIDPLUS are optimizations;
+   clients can provide equivalent functionality, albeit less
+   efficiently, by using facilities in the base protocol.
+
+1.1.  Conventions Used in This Document
+
+   In examples, "C:" and "S:" indicate lines sent by the client and
+   server, respectively.
+
+
+
+
+
+Crispin                     Standards Track                     [Page 1]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "MAY", and "OPTIONAL" in this document are to
+   be interpreted as described in [KEYWORDS].
+
+   A "UID set" is similar to the [IMAP] sequence set; however, the "*"
+   value for a sequence number is not permitted.
+
+2.  Additional Commands
+
+   The following command definition is an extension to [IMAP] section
+   6.4.
+
+2.1.  UID EXPUNGE Command
+
+   Arguments:  sequence set
+
+   Data:       untagged responses: EXPUNGE
+
+   Result:     OK - expunge completed
+               NO - expunge failure (e.g., permission denied)
+               BAD - command unknown or arguments invalid
+
+      The UID EXPUNGE command permanently removes all messages that both
+      have the \Deleted flag set and have a UID that is included in the
+      specified sequence set from the currently selected mailbox.  If a
+      message either does not have the \Deleted flag set or has a UID
+      that is not included in the specified sequence set, it is not
+      affected.
+
+      This command is particularly useful for disconnected use clients.
+      By using UID EXPUNGE instead of EXPUNGE when resynchronizing with
+      the server, the client can ensure that it does not inadvertantly
+      remove any messages that have been marked as \Deleted by other
+      clients between the time that the client was last connected and
+      the time the client resynchronizes.
+
+      If the server does not support the UIDPLUS capability, the client
+      should fall back to using the STORE command to temporarily remove
+      the \Deleted flag from messages it does not want to remove, then
+      issuing the EXPUNGE command.  Finally, the client should use the
+      STORE command to restore the \Deleted flag on the messages in
+      which it was temporarily removed.
+
+      Alternatively, the client may fall back to using just the EXPUNGE
+      command, risking the unintended removal of some messages.
+
+
+
+
+
+
+Crispin                     Standards Track                     [Page 2]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+   Example:    C: A003 UID EXPUNGE 3000:3002
+               S: * 3 EXPUNGE
+               S: * 3 EXPUNGE
+               S: * 3 EXPUNGE
+               S: A003 OK UID EXPUNGE completed
+
+3.  Additional Response Codes
+
+   The following response codes are extensions to the response codes
+   defined in [IMAP] section 7.1.  With limited exceptions, discussed
+   below, server implementations that advertise the UIDPLUS extension
+   SHOULD return these response codes.
+
+   In the case of a mailbox that has permissions set so that the client
+   can COPY or APPEND to the mailbox, but not SELECT or EXAMINE it, the
+   server SHOULD NOT send an APPENDUID or COPYUID response code as it
+   would disclose information about the mailbox.
+
+   In the case of a mailbox that has UIDNOTSTICKY status (as defined
+   below), the server MAY omit the APPENDUID or COPYUID response code as
+   it is not meaningful.
+
+   If the server does not return the APPENDUID or COPYUID response
+   codes, the client can discover this information by selecting the
+   destination mailbox.  The location of messages placed in the
+   destination mailbox by COPY or APPEND can be determined by using
+   FETCH and/or SEARCH commands (e.g., for Message-ID or some unique
+   marker placed in the message in an APPEND).
+
+   APPENDUID
+
+      Followed by the UIDVALIDITY of the destination mailbox and the UID
+      assigned to the appended message in the destination mailbox,
+      indicates that the message has been appended to the destination
+      mailbox with that UID.
+
+      If the server also supports the [MULTIAPPEND] extension, and if
+      multiple messages were appended in the APPEND command, then the
+      second value is a UID set containing the UIDs assigned to the
+      appended messages, in the order they were transmitted in the
+      APPEND command.  This UID set may not contain extraneous UIDs or
+      the symbol "*".
+
+         Note: the UID set form of the APPENDUID response code MUST NOT
+         be used if only a single message was appended.  In particular,
+         a server MUST NOT send a range such as 123:123.  This is
+         because a client that does not support [MULTIAPPEND] expects
+         only a single UID and not a UID set.
+
+
+
+Crispin                     Standards Track                     [Page 3]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+      UIDs are assigned in strictly ascending order in the mailbox
+      (refer to [IMAP], section 2.3.1.1) and UID ranges are as in
+      [IMAP]; in particular, note that a range of 12:10 is exactly
+      equivalent to 10:12 and refers to the sequence 10,11,12.
+
+      This response code is returned in a tagged OK response to the
+      APPEND command.
+
+   COPYUID
+
+      Followed by the UIDVALIDITY of the destination mailbox, a UID set
+      containing the UIDs of the message(s) in the source mailbox that
+      were copied to the destination mailbox and containing the UIDs
+      assigned to the copied message(s) in the destination mailbox,
+      indicates that the message(s) have been copied to the destination
+      mailbox with the stated UID(s).
+
+      The source UID set is in the order the message(s) were copied; the
+      destination UID set corresponds to the source UID set and is in
+      the same order.  Neither of the UID sets may contain extraneous
+      UIDs or the symbol "*".
+
+      UIDs are assigned in strictly ascending order in the mailbox
+      (refer to [IMAP], section 2.3.1.1) and UID ranges are as in
+      [IMAP]; in particular, note that a range of 12:10 is exactly
+      equivalent to 10:12 and refers to the sequence 10,11,12.
+
+      This response code is returned in a tagged OK response to the COPY
+      command.
+
+   UIDNOTSTICKY
+
+      The selected mailbox is supported by a mail store that does not
+      support persistent UIDs; that is, UIDVALIDITY will be different
+      each time the mailbox is selected.  Consequently, APPEND or COPY
+      to this mailbox will not return an APPENDUID or COPYUID response
+      code.
+
+      This response code is returned in an untagged NO response to the
+      SELECT command.
+
+         Note: servers SHOULD NOT have any UIDNOTSTICKY mail stores.
+         This facility exists to support legacy mail stores in which it
+         is technically infeasible to support persistent UIDs.  This
+         should be avoided when designing new mail stores.
+
+
+
+
+
+
+Crispin                     Standards Track                     [Page 4]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+   Example:    C: A003 APPEND saved-messages (\Seen) {297}
+               C: Date: Mon, 7 Feb 1994 21:52:25 -0800 (PST)
+               C: From: Fred Foobar <foobar@example.com>
+               C: Subject: afternoon meeting
+               C: To: mooch@example.com
+               C: Message-Id: <B27397-0100000@example.com>
+               C: MIME-Version: 1.0
+               C: Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
+               C:
+               C: Hello Joe, do you think we can meet at 3:30 tomorrow?
+               C:
+               S: A003 OK [APPENDUID 38505 3955] APPEND completed
+               C: A004 COPY 2:4 meeting
+               S: A004 OK [COPYUID 38505 304,319:320 3956:3958] Done
+               C: A005 UID COPY 305:310 meeting
+               S: A005 OK No matching messages, so nothing copied
+               C: A006 COPY 2 funny
+               S: A006 OK Done
+               C: A007 SELECT funny
+               S: * 1 EXISTS
+               S: * 1 RECENT
+               S: * OK [UNSEEN 1] Message 1 is first unseen
+               S: * OK [UIDVALIDITY 3857529045] Validity session-only
+               S: * OK [UIDNEXT 2] Predicted next UID
+               S: * NO [UIDNOTSTICKY] Non-persistent UIDs
+               S: * FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+               S: * OK [PERMANENTFLAGS (\Deleted \Seen)] Limited
+               S: A007 OK [READ-WRITE] SELECT completed
+
+   In this example, A003 and A004 demonstrate successful appending and
+   copying to a mailbox that returns the UIDs assigned to the messages.
+   A005 is an example in which no messages were copied; this is because
+   in A003, we see that message 2 had UID 304, and message 3 had UID
+   319; therefore, UIDs 305 through 310 do not exist (refer to section
+   2.3.1.1 of [IMAP] for further explanation).  A006 is an example of a
+   message being copied that did not return a COPYUID; and, as expected,
+   A007 shows that the mail store containing that mailbox does not
+   support persistent UIDs.
+
+4.  Formal Syntax
+
+   Formal syntax is defined using ABNF [ABNF], which extends the ABNF
+   rules defined in [IMAP].  The IMAP4 ABNF should be imported before
+   attempting to validate these rules.
+
+   append-uid      = uniqueid
+
+   capability      =/ "UIDPLUS"
+
+
+
+Crispin                     Standards Track                     [Page 5]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+   command-select  =/ uid-expunge
+
+   resp-code-apnd  = "APPENDUID" SP nz-number SP append-uid
+
+   resp-code-copy  = "COPYUID" SP nz-number SP uid-set SP uid-set
+
+   resp-text-code  =/ resp-code-apnd / resp-code-copy / "UIDNOTSTICKY"
+                     ; incorporated before the expansion rule of
+                     ;  atom [SP 1*<any TEXT-CHAR except "]">]
+                     ; that appears in [IMAP]
+
+   uid-expunge     = "UID" SP "EXPUNGE" SP sequence-set
+
+   uid-set         = (uniqueid / uid-range) *("," uid-set)
+
+   uid-range       = (uniqueid ":" uniqueid)
+                     ; two uniqueid values and all values
+                     ; between these two regards of order.
+                     ; Example: 2:4 and 4:2 are equivalent.
+
+   Servers that support [MULTIAPPEND] will have the following extension
+   to the above rules:
+
+   append-uid      =/ uid-set
+                     ; only permitted if client uses [MULTIAPPEND]
+                     ; to append multiple messages.
+
+5.  Security Considerations
+
+   The COPYUID and APPENDUID response codes return information about the
+   mailbox, which may be considered sensitive if the mailbox has
+   permissions set that permit the client to COPY or APPEND to the
+   mailbox, but not SELECT or EXAMINE it.
+
+   Consequently, these response codes SHOULD NOT be issued if the client
+   does not have access to SELECT or EXAMINE the mailbox.
+
+6.  IANA Considerations
+
+   This document constitutes registration of the UIDPLUS capability in
+   the imap4-capabilities registry, replacing [RFC2359].
+
+7.  Normative References
+
+   [ABNF]        Crocker, D. and P. Overell, "Augmented BNF for Syntax
+                 Specifications: ABNF", RFC 4234, October 2005.
+
+
+
+
+
+Crispin                     Standards Track                     [Page 6]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+   [IMAP]        Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL -
+                 VERSION 4rev1", RFC 3501, March 2003.
+
+   [KEYWORDS]    Bradner, S., "Key words for use in RFCs to Indicate
+                 Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [MULTIAPPEND] Crispin, M., "Internet Message Access Protocol (IMAP) -
+                 MULTIAPPEND Extension", RFC 3502, March 2003.
+
+8.  Informative References
+
+   [RFC2359]     Myers, J., "IMAP4 UIDPLUS extension", RFC 2359, June
+                 1998.
+
+9.  Changes from RFC 2359
+
+   This document obsoletes [RFC2359].  However, it is based upon that
+   document, and takes substantial text from it (albeit with numerous
+   clarifications in wording).
+
+   [RFC2359] implied that a server must always return COPYUID/APPENDUID
+   data; thus suggesting that in such cases the server should return
+   arbitrary data if the destination mailbox did not support persistent
+   UIDs.  This document adds the UIDNOTSTICKY response code to indicate
+   that a mailbox does not support persistent UIDs, and stipulates that
+   a UIDPLUS server does not return COPYUID/APPENDUID data when the COPY
+   (or APPEND) destination mailbox has UIDNOTSTICKY status.
+
+Author's Address
+
+   Mark R. Crispin
+   Networks and Distributed Computing
+   University of Washington
+   4545 15th Avenue NE
+   Seattle, WA  98105-4527
+
+   Phone: (206) 543-5762
+   EMail: MRC@CAC.Washington.EDU
+
+
+
+
+
+
+
+
+
+
+
+
+
+Crispin                     Standards Track                     [Page 7]
+
+RFC 4315                IMAP - UIDPLUS Extension           December 2005
+
+
+Full Copyright Statement
+
+   Copyright (C) The Internet Society (2005).
+
+   This document is subject to the rights, licenses and restrictions
+   contained in BCP 78, and except as set forth therein, the authors
+   retain all their rights.
+
+   This document and the information contained herein are provided on an
+   "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE REPRESENTS
+   OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY AND THE INTERNET
+   ENGINEERING TASK FORCE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED,
+   INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE
+   INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED
+   WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+Intellectual Property
+
+   The IETF takes no position regarding the validity or scope of any
+   Intellectual Property Rights or other rights that might be claimed to
+   pertain to the implementation or use of the technology described in
+   this document or the extent to which any license under such rights
+   might or might not be available; nor does it represent that it has
+   made any independent effort to identify any such rights.  Information
+   on the procedures with respect to rights in RFC documents can be
+   found in BCP 78 and BCP 79.
+
+   Copies of IPR disclosures made to the IETF Secretariat and any
+   assurances of licenses to be made available, or the result of an
+   attempt made to obtain a general license or permission for the use of
+   such proprietary rights by implementers or users of this
+   specification can be obtained from the IETF on-line IPR repository at
+   http://www.ietf.org/ipr.
+
+   The IETF invites any interested party to bring to its attention any
+   copyrights, patents or patent applications, or other proprietary
+   rights that may cover technology that may be required to implement
+   this standard.  Please address the information to the IETF at ietf-
+   ipr@ietf.org.
+
+Acknowledgement
+
+   Funding for the RFC Editor function is currently provided by the
+   Internet Society.
+
+
+
+
+
+
+
+Crispin                     Standards Track                     [Page 8]
+

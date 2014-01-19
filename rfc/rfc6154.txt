@@ -1,0 +1,675 @@
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                          B. Leiba
+Request for Comments: 6154                           Huawei Technologies
+Category: Standards Track                                    J. Nicolson
+ISSN: 2070-1721                                                   Google
+                                                              March 2011
+
+
+             IMAP LIST Extension for Special-Use Mailboxes
+
+Abstract
+
+   Some IMAP message stores include special-use mailboxes, such as those
+   used to hold draft messages or sent messages.  Many mail clients
+   allow users to specify where draft or sent messages should be put,
+   but configuring them requires that the user know which mailboxes the
+   server has set aside for these purposes.  This extension adds new
+   optional mailbox attributes that a server may include in IMAP LIST
+   command responses to identify special-use mailboxes to the client,
+   easing configuration.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 5741.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   http://www.rfc-editor.org/info/rfc6154.
+
+Copyright Notice
+
+   Copyright (c) 2011 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 1]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  3
+     1.1.  Conventions Used in This Document  . . . . . . . . . . . .  3
+   2.  New Mailbox Attributes Identifying Special-Use Mailboxes . . .  3
+   3.  Extension to IMAP CREATE Command to Set Special-Use
+       Attributes . . . . . . . . . . . . . . . . . . . . . . . . . .  5
+   4.  IMAP METADATA Entry for Special-Use Attributes . . . . . . . .  6
+   5.  Examples . . . . . . . . . . . . . . . . . . . . . . . . . . .  7
+     5.1.  Example of an IMAP LIST Command  . . . . . . . . . . . . .  7
+     5.2.  Example of an Extended IMAP LIST Command . . . . . . . . .  7
+     5.3.  Example of an IMAP CREATE Command  . . . . . . . . . . . .  8
+     5.4.  Example of Using IMAP METADATA to Manipulate
+           Special-Use Attributes . . . . . . . . . . . . . . . . . .  8
+   6.  Formal Syntax  . . . . . . . . . . . . . . . . . . . . . . . .  9
+   7.  Security Considerations  . . . . . . . . . . . . . . . . . . .  9
+   8.  IANA Considerations  . . . . . . . . . . . . . . . . . . . . . 10
+     8.1.  Registration of USEATTR IMAP Response Code . . . . . . . . 10
+     8.2.  Registration of CREATE-SPECIAL-USE IMAP Capability . . . . 10
+     8.3.  Registration of SPECIAL-USE IMAP Capability  . . . . . . . 10
+     8.4.  Registration of SPECIAL-USE Selection Option . . . . . . . 10
+     8.5.  Registration of SPECIAL-USE Return Option  . . . . . . . . 11
+     8.6.  Registration of SPECIAL-USE Metadata . . . . . . . . . . . 11
+   9.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+     9.1.  Normative References . . . . . . . . . . . . . . . . . . . 12
+     9.2.  Informative References . . . . . . . . . . . . . . . . . . 12
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 2]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+1.  Introduction
+
+   Some IMAP message stores include special-use mailboxes, such as those
+   used to hold draft messages or sent messages.  Many mail clients
+   allow users to specify where draft or sent messages should be put,
+   but configuring them requires that the user know which mailboxes the
+   server has set aside for these purposes.  This extension adds new
+   optional mailbox attributes that a server may include in IMAP LIST
+   command responses to identify special-use mailboxes to the client,
+   easing configuration.
+
+   In addition, this extension adds an optional parameter on the IMAP
+   CREATE command, allowing a client to assign a special use to a
+   mailbox when it is created.  Servers may choose to support this part
+   of the extension, but are not required to.
+
+1.1.  Conventions Used in This Document
+
+   In examples, "C:" indicates lines sent by a client that is connected
+   to a server.  "S:" indicates lines sent by the server to the client.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+2.  New Mailbox Attributes Identifying Special-Use Mailboxes
+
+   An IMAP server that supports this extension MAY include any or all of
+   the following attributes in responses to the non-extended IMAP LIST
+   command.  The new attributes are included along with existing
+   attributes, such as "\Marked" and "\Noselect".  A given mailbox may
+   have none, one, or more than one of these attributes.  In some cases,
+   a special use is advice to a client about what to put in that
+   mailbox.  In other cases, it's advice to a client about what to
+   expect to find there.  There is no capability string related to the
+   support of special-use attributes on the non-extended LIST command.
+
+   For the extended list command [RFC5258], this extension adds a new
+   capability string, a new selection option, and a new return option,
+   all called "SPECIAL-USE".  Supporting implementations MUST include
+   the "SPECIAL-USE" capability string in response to an IMAP CAPABILITY
+   command.  If the client specifies the "SPECIAL-USE" selection option,
+   the LIST command MUST return only those mailboxes that have a
+   special-use attribute set.  If the client specifies the "SPECIAL-USE"
+   return option, the LIST command MUST return the new special-use
+   attributes on those mailboxes that have them set.  The "SPECIAL-USE"
+
+
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 3]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+   return option is implied by the "SPECIAL-USE" selection option.  The
+   extended LIST command MAY return SPECIAL-USE attributes even if the
+   client does not specify the return option.
+
+   The new attributes defined here are as follows:
+
+   \All
+        This mailbox presents all messages in the user's message store.
+        Implementations MAY omit some messages, such as, perhaps, those
+        in \Trash and \Junk.  When this special use is supported, it is
+        almost certain to represent a virtual mailbox.
+
+   \Archive
+        This mailbox is used to archive messages.  The meaning of an
+        "archival" mailbox is server-dependent; typically, it will be
+        used to get messages out of the inbox, or otherwise keep them
+        out of the user's way, while still making them accessible.
+
+   \Drafts
+        This mailbox is used to hold draft messages -- typically,
+        messages that are being composed but have not yet been sent.  In
+        some server implementations, this might be a virtual mailbox,
+        containing messages from other mailboxes that are marked with
+        the "\Draft" message flag.  Alternatively, this might just be
+        advice that a client put drafts here.
+
+   \Flagged
+        This mailbox presents all messages marked in some way as
+        "important".  When this special use is supported, it is likely
+        to represent a virtual mailbox collecting messages (from other
+        mailboxes) that are marked with the "\Flagged" message flag.
+
+   \Junk
+        This mailbox is where messages deemed to be junk mail are held.
+        Some server implementations might put messages here
+        automatically.  Alternatively, this might just be advice to a
+        client-side spam filter.
+
+   \Sent
+        This mailbox is used to hold copies of messages that have been
+        sent.  Some server implementations might put messages here
+        automatically.  Alternatively, this might just be advice that a
+        client save sent messages here.
+
+   \Trash
+        This mailbox is used to hold messages that have been deleted or
+        marked for deletion.  In some server implementations, this might
+        be a virtual mailbox, containing messages from other mailboxes
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 4]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+        that are marked with the "\Deleted" message flag.
+        Alternatively, this might just be advice that a client that
+        chooses not to use the IMAP "\Deleted" model should use this as
+        its trash location.  In server implementations that strictly
+        expect the IMAP "\Deleted" model, this special use is likely not
+        to be supported.
+
+   All of the above attributes are OPTIONAL, and any given server or
+   message store may support any combination of the attributes, or none
+   at all.  In most cases, there will likely be at most one mailbox with
+   a given attribute for a given user, but in some server or message
+   store implementations it might be possible for multiple mailboxes to
+   have the same special-use attribute.
+
+   Special-use attributes are likely to be user-specific.  User Adam
+   might share his \Sent mailbox with user Barb, but that mailbox is
+   unlikely to also serve as Barb's \Sent mailbox.  It's certainly
+   possible for Adam and Barb to each set the \Sent use on the same
+   mailbox, but that would be done by specific action (see the sections
+   below).
+
+3.  Extension to IMAP CREATE Command to Set Special-Use Attributes
+
+   As an OPTIONAL feature, a server MAY allow clients to designate a
+   mailbox, at creation, as having one or more special uses.  This
+   extension defines the "USE" parameter to the IMAP CREATE command for
+   that purpose (using the syntax defined in RFC 4466 section 2.2
+   [RFC4466]).  The new OPTIONAL "USE" parameter is followed by a
+   parenthesized list of zero or more special-use attributes, as defined
+   above.
+
+   In some server implementations, some special uses may imply automatic
+   action by the server.  For example, creation of a "\Junk" mailbox
+   might cause the server to start placing messages that have been
+   evaluated as spam into the mailbox.
+
+   In some server implementations, some special uses may result in a
+   mailbox with unusual characteristics or side effects.  For example,
+   creation of an "\All" mailbox might cause the server to create a
+   virtual mailbox, rather than a standard one, and that mailbox might
+   behave in unexpected ways (COPY into it might fail, for example).
+
+   Servers MAY allow the creation of a special-use mailbox even if one
+   so designated already exists.  This might have the effect of moving
+   the special use from the old mailbox to the new one, or might create
+   multiple mailboxes with the same special use.  Alternatively, servers
+   MAY refuse the creation, considering the designation to be a
+   conflict.
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 5]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+   If the server cannot create a mailbox with the designated special use
+   defined, for whatever reason, it MUST NOT create the mailbox, and
+   MUST respond to the CREATE command with a tagged NO response.  If the
+   reason for the failure is related to the special-use attribute (the
+   specified special use is not supported or cannot be assigned to the
+   specified mailbox), the server SHOULD include the new "USEATTR"
+   response code in the tagged response (see Section 5.3 for an
+   example).
+
+   An IMAP server that supports this OPTIONAL feature will advertise the
+   "CREATE-SPECIAL-USE" capability string.  Clients MUST NOT use the
+   "USE" parameter unless the server advertises the capability.  Note
+   that this capability string is different from the "SPECIAL-USE"
+   string defined above, and a server that supports both functions MUST
+   advertise both capability strings.
+
+4.  IMAP METADATA Entry for Special-Use Attributes
+
+   If a server supports this extension and the METADATA extension
+   [RFC5464], it SHOULD tie the special-use attributes for a mailbox to
+   its metadata entry "/private/specialuse".  The value of /private/
+   specialuse is either NIL (if there are no special-use attributes for
+   that mailbox) or a space-separated list of special-use attributes,
+   presented the same way they would be presented in the LIST command
+   response.
+
+   Such a server MAY allow the setting of special-use attributes through
+   the METADATA mechanisms, thereby allowing clients to change the
+   special uses of existing mailboxes.  These changes might have side
+   effects, as the server automatically adjusts the special uses
+   accordingly, just as it might do with CREATE USE, above.  See
+   Section 5.4 for an example.
+
+   A server that supports this MUST check the validity of changes to the
+   special-use attributes that are done through the metadata in the same
+   way that it checks validity for the CREATE command and for any
+   internal mechanisms for setting special uses on mailboxes.  It MUST
+   NOT just blindly accept setting of these metadata by clients, which
+   might result in the setting of special uses that the implementation
+   does not support, multiple mailboxes with the same special use, or
+   other situations that the implementation considers invalid.
+
+
+
+
+
+
+
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 6]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+5.  Examples
+
+5.1.  Example of an IMAP LIST Command
+
+   This example shows an IMAP LIST response from a server that supports
+   this extension.  Note that not all of the attributes are used.  This
+   server also supports the Child Mailbox extension [RFC3348].
+
+     C: t1 LIST "" "%"
+     S: * LIST (\Marked \HasNoChildren) "/" Inbox
+     S: * LIST (\HasNoChildren) "/" ToDo
+     S: * LIST (\HasChildren) "/" Projects
+     S: * LIST (\Sent \HasNoChildren) "/" SentMail
+     S: * LIST (\Marked \Drafts \HasNoChildren) "/" MyDrafts
+     S: * LIST (\Trash \HasNoChildren) "/" Trash
+     S: t1 OK done
+
+5.2.  Example of an Extended IMAP LIST Command
+
+   This example shows an IMAP LIST response from a server that supports
+   this extension.  The client uses the extended IMAP LIST command.
+
+     C: t1 CAPABILITY
+     S: * CAPABILITY IMAP4rev1 SPECIAL-USE
+     S: t1 OK done
+
+     C: t2 LIST "" "%" RETURN (SPECIAL-USE)
+     S: * LIST (\Marked) "/" Inbox
+     S: * LIST () "/" ToDo
+     S: * LIST () "/" Projects
+     S: * LIST (\Sent) "/" SentMail
+     S: * LIST (\Marked \Drafts) "/" MyDrafts
+     S: * LIST (\Trash) "/" Trash
+     S: t2 OK done
+
+   Here, the client also includes the "SPECIAL-USE" selection option for
+   the same list.  The "SPECIAL-USE" return option could also have been
+   specified, but it is unnecessary, as it is implied by the selection
+   option.  Note that in this case, mailboxes that do not have a
+   special-use attribute are not listed.  Also note that we've used the
+   wildcard "*", rather than "%", to make sure we see all special-use
+   mailboxes, even ones that might not be at the namespace's root.
+
+     C: t3 LIST (SPECIAL-USE) "" "*"
+     S: * LIST (\Sent) "/" SentMail
+     S: * LIST (\Marked \Drafts) "/" MyDrafts
+     S: * LIST (\Trash) "/" Trash
+     S: t3 OK done
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 7]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+5.3.  Example of an IMAP CREATE Command
+
+   This example shows an IMAP CREATE command that might be used to
+   create a mailbox designated to hold draft and sent messages.  It also
+   attempts to create a mailbox that will contain all the user's
+   messages, but the server does not support that special use for this
+   user's message store.
+
+     C: t1 CAPABILITY
+     S: * CAPABILITY IMAP4rev1 CREATE-SPECIAL-USE
+     S: t1 OK done
+
+     C: t2 CREATE MySpecial (USE (\Drafts \Sent))
+     S: t2 OK MySpecial created
+
+     C: t3 CREATE Everything (USE (\All))
+     S: t3 NO [USEATTR] \All not supported
+
+5.4.  Example of Using IMAP METADATA to Manipulate Special-Use
+      Attributes
+
+   This example shows how IMAP METADATA can be used to manipulate
+   special-use attributes, if the operation is supported on the server.
+
+     ==> Starting point:
+     C: t1 LIST "" "%" RETURN (SPECIAL-USE)
+     S: * LIST (\Sent) "/" SentMail
+     S: * LIST (\Drafts) "/" MyDrafts
+     S: * LIST () "/" SavedDrafts
+     S: * LIST (\Trash) "/" Trash
+     S: t1 OK done
+
+     ==> Demonstrate the connection:
+     C: t2 GETMETADATA "MyDrafts" /private/specialuse
+     S: * METADATA "MyDrafts" (/private/specialuse "\\Drafts")
+     S: t2 OK done
+
+     ==> Set new use for SavedDrafts; MyDrafts changes automatically:
+     C: t3 SETMETADATA "SavedDrafts" (/private/specialuse "\\Drafts")
+     S: * METADATA "MyDrafts" (/private/specialuse NIL)
+     S: t3 OK SETMETADATA complete
+
+     ==> Remove special use for SentMail:
+     C: t4 SETMETADATA "SentMail" (/private/specialuse NIL)
+     S: t4 OK SETMETADATA complete
+
+
+
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 8]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+     ==> Check the results:
+     C: t5 LIST "" "%" RETURN (SPECIAL-USE)
+     S: * LIST () "/" SentMail
+     S: * LIST () "/" MyDrafts
+     S: * LIST (\Drafts) "/" SavedDrafts
+     S: * LIST (\Trash) "/" Trash
+     S: t5 OK done
+
+6.  Formal Syntax
+
+   The following syntax specification uses the augmented Backus-Naur
+   Form (BNF) as described in [RFC5234].
+
+   create-param   =/  "USE" SP "(" [use-attr *(SP use-attr)] ")"
+                    ; Extends "create-param" from RFC 4466 [RFC4466]
+
+   mbx-list-oflag =/  use-attr
+                    ; Extends "mbx-list-oflag" from IMAP base [RFC3501]
+
+   list-select-independent-opt =/  "SPECIAL-USE"
+                    ; Extends "list-select-independent-opt" from
+                    ; LIST-extended [RFC5258]
+
+   return-option =/ "SPECIAL-USE"
+                    ; Extends "return-option" from
+                    ; LIST-extended [RFC5258]
+
+   resp-text-code =/  "USEATTR"
+                    ; Extends "resp-text-code" from
+                    ; IMAP [RFC3501]
+
+   use-attr        =  "\All" / "\Archive" / "\Drafts" / "\Flagged" /
+                    "\Junk" / "\Sent" / "\Trash" / use-attr-ext
+
+   use-attr-ext    =  "\" atom
+                    ; Reserved for future extensions.  Clients
+                    ; MUST ignore list attributes they do not understand
+                    ; Server implementations MUST NOT generate
+                    ; extension attributes except as defined by
+                    ; future Standards-Track revisions of or
+                    ; extensions to this specification.
+
+7.  Security Considerations
+
+   LIST response:
+   Conveying special-use information to a client exposes a small bit of
+   extra information that could be of value to an attacker.  Knowing,
+   for example, that a particular mailbox (\All) contains pointers to
+
+
+
+Leiba & Nicolson             Standards Track                    [Page 9]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+   every message the user has might be of particular value.  If the IMAP
+   channel is not protected from passive eavesdropping, this could be an
+   issue.
+
+   CREATE command "USE" parameter and metadata extension: In some server
+   implementations, some special uses may imply automatic action by the
+   server.  For example, creation of a "\Junk" mailbox might cause the
+   server to start placing messages that have been evaluated as spam
+   into the mailbox.  Implementors SHOULD consider the consequences of
+   allowing a user (or client program) to designate the target of such
+   automatic action.
+
+   Example: If a user is allowed to give the "\Junk" attribute to a
+   shared mailbox, legitimate mail that's misclassified as junk (false
+   positives) will be put into that shared mailbox, exposing the user's
+   private mail to others.  The server might warn a user of that
+   possibility, or might refuse to allow the specification to be made on
+   a shared mailbox.  (Note that this problem exists independent of this
+   specification, if the server allows a user to share a mailbox that's
+   already in use for such a function.)
+
+8.  IANA Considerations
+
+8.1.  Registration of USEATTR IMAP Response Code
+
+   This document defines a new IMAP response code, "USEATTR", which IANA
+   added to the IMAP Response Codes registry.
+
+8.2.  Registration of CREATE-SPECIAL-USE IMAP Capability
+
+   This document defines a new IMAP capability, "CREATE-SPECIAL-USE",
+   which IANA added to the IMAP 4 Capabilities registry.
+
+8.3.  Registration of SPECIAL-USE IMAP Capability
+
+   This document defines a new IMAP capability, "SPECIAL-USE", which
+   IANA added to the IMAP 4 Capabilities registry.
+
+8.4.  Registration of SPECIAL-USE Selection Option
+
+   This document defines a new IMAP4 List Extended selection option,
+   "SPECIAL-USE", which IANA added to the IMAP4 List Extended registry,
+   as follows:
+
+   To: iana@iana.org
+   Subject: Registration of LIST-EXTENDED selection option SPECIAL-USE
+   LIST-EXTENDED option name: SPECIAL-USE
+   LIST-EXTENDED option type: SELECTION
+
+
+
+Leiba & Nicolson             Standards Track                   [Page 10]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+   Implied return option(s): SPECIAL-USE
+   LIST-EXTENDED option description: Limit the list to special-use
+   mailboxes only
+   Published specification: RFC 6154
+   Security considerations: none
+   Intended usage: COMMON
+   Person and email address to contact for further information: Authors'
+   Addresses at the end of RFC 6154
+   Owner/Change controller: iesg@ietf.org
+
+8.5.  Registration of SPECIAL-USE Return Option
+
+   This document defines a new IMAP4 List Extended return option,
+   "SPECIAL-USE", which IANA added to the IMAP4 List Extended registry,
+   as follows:
+
+   To: iana@iana.org
+   Subject: Registration of LIST-EXTENDED return option SPECIAL-USE
+   LIST-EXTENDED option name: SPECIAL-USE
+   LIST-EXTENDED option type: RETURN
+   LIST-EXTENDED option description: Request special-use mailbox
+   information
+   Published specification: RFC 6154
+   Security considerations: none
+   Intended usage: COMMON
+   Person and email address to contact for further information: Authors'
+   Addresses at the end of RFC 6154
+   Owner/Change controller: iesg@ietf.org
+
+8.6.  Registration of SPECIAL-USE Metadata
+
+   This document defines a new IMAP METADATA entry.  IANA added the
+   following to the IMAP METADATA Mailbox Entry registry:
+
+   To: iana@iana.org
+   Subject: IMAP METADATA Entry Registration
+   Type: Mailbox
+   Name: /private/specialuse
+   Description: Defines any special-use features of a mailbox.  See the
+   reference specification for details of its use.
+   Content-type: text/plain; charset=us-ascii
+   RFC Number: RFC 6154
+   Contact: MORG mailing list mailto:morg@ietf.org
+
+
+
+
+
+
+
+
+Leiba & Nicolson             Standards Track                   [Page 11]
+
+RFC 6154            IMAP LIST: Special-Use Mailboxes          March 2011
+
+
+9.  References
+
+9.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC3501]  Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL - VERSION
+              4rev1", RFC 3501, March 2003.
+
+   [RFC4466]  Melnikov, A. and C. Daboo, "Collected Extensions to IMAP4
+              ABNF", RFC 4466, April 2006.
+
+   [RFC5234]  Crocker, D. and P. Overell, "Augmented BNF for Syntax
+              Specifications: ABNF", STD 68, RFC 5234, January 2008.
+
+   [RFC5258]  Leiba, B. and A. Melnikov, "Internet Message Access
+              Protocol version 4 - LIST Command Extensions", RFC 5258,
+              June 2008.
+
+   [RFC5464]  Daboo, C., "The IMAP METADATA Extension", RFC 5464,
+              February 2009.
+
+9.2.  Informative References
+
+   [RFC3348]  Gahrns, M. and R. Cheng, "The Internet Message Action
+              Protocol (IMAP4) Child Mailbox Extension", RFC 3348,
+              July 2002.
+
+Authors' Addresses
+
+   Barry Leiba
+   Huawei Technologies
+
+   Phone: +1 646 827 0648
+   EMail: barryleiba@computer.org
+   URI:   http://internetmessagingtechnology.org/
+
+
+   Jamie Nicolson
+   Google
+
+   EMail: nicolson@google.com
+
+
+
+
+
+
+
+
+Leiba & Nicolson             Standards Track                   [Page 12]
+

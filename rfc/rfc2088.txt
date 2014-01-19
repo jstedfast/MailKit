@@ -1,0 +1,115 @@
+
+
+
+
+
+
+Network Working Group                                           J. Myers
+Request for Comments: 2088                               Carnegie Mellon
+Cateogry: Standards Track                                   January 1997
+
+
+                    IMAP4 non-synchronizing literals
+
+Status of this Memo
+
+   This document specifies an Internet standards track protocol for the
+   Internet community, and requests discussion and suggestions for
+   improvements.  Please refer to the current edition of the "Internet
+   Official Protocol Standards" (STD 1) for the standardization state
+   and status of this protocol.  Distribution of this memo is unlimited.
+
+1.   Abstract
+
+   The Internet Message Access Protocol [IMAP4] contains the "literal"
+   syntactic construct for communicating strings.  When sending a
+   literal from client to server, IMAP4 requires the client to wait for
+   the server to send a command continuation request between sending the
+   octet count and the string data.  This document specifies an
+   alternate form of literal which does not require this network round
+   trip.
+
+2.   Conventions Used in this Document
+
+   In examples, "C:" and "S:" indicate lines sent by the client and
+   server respectively.
+
+3.   Specification
+
+   The non-synchronizing literal is added an alternate form of literal,
+   and may appear in communication from client to server instead of the
+   IMAP4 form of literal.  The IMAP4 form of literal, used in
+   communication from client to server, is referred to as a
+   synchronizing literal.
+
+   Non-synchronizing literals may be used with any IMAP4 server
+   implementation which returns "LITERAL+" as one of the supported
+   capabilities to the CAPABILITY command.  If the server does not
+   advertise the LITERAL+ capability, the client must use synchronizing
+   literals instead.
+
+   The non-synchronizing literal is distinguished from the original
+   synchronizing literal by having a plus ('+') between the octet count
+   and the closing brace ('}').  The server does not generate a command
+   continuation request in response to a non-synchronizing literal, and
+
+
+
+Myers                       Standards Track                     [Page 1]
+
+RFC 2088                        LITERAL                     January 1997
+
+
+   clients are not required to wait before sending the octets of a non-
+   synchronizing literal.
+
+   The protocol receiver of an IMAP4 server must check the end of every
+   received line for an open brace ('{') followed by an octet count, a
+   plus ('+'), and a close brace ('}') immediately preceeding the CRLF.
+   If it finds this sequence, it is the octet count of a non-
+   synchronizing literal and the server MUST treat the specified number
+   of following octets and the following line as part of the same
+   command.  A server MAY still process commands and reject errors on a
+   line-by-line basis, as long as it checks for non-synchronizing
+   literals at the end of each line.
+
+   Example:    C: A001 LOGIN {11+}
+               C: FRED FOOBAR {7+}
+               C: fat man
+               S: A001 OK LOGIN completed
+
+4.   Formal Syntax
+
+   The following syntax specification uses the augmented Backus-Naur
+   Form (BNF) notation as specified in [RFC-822] as modified by [IMAP4].
+   Non-terminals referenced but not defined below are as defined by
+   [IMAP4].
+
+   literal         ::= "{" number ["+"] "}" CRLF *CHAR8
+                       ;; Number represents the number of CHAR8 octets
+
+6.   References
+
+   [IMAP4] Crispin, M., "Internet Message Access Protocol - Version 4",
+   draft-crispin-imap-base-XX.txt, University of Washington, April 1996.
+
+   [RFC-822] Crocker, D., "Standard for the Format of ARPA Internet Text
+   Messages", STD 11, RFC 822.
+
+7.   Security Considerations
+
+   There are no known security issues with this extension.
+
+8.   Author's Address
+
+   John G. Myers
+   Carnegie-Mellon University
+   5000 Forbes Ave.
+   Pittsburgh PA, 15213-3890
+
+   Email: jgm+@cmu.edu
+
+
+
+Myers                       Standards Track                     [Page 2]
+

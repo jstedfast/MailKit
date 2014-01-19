@@ -1,0 +1,563 @@
+
+
+
+
+
+
+Network Working Group                                         M. Gahrns
+Request for Comments: 2342                                    Microsoft
+Category: Standards Track                                     C. Newman
+                                                               Innosoft
+                                                               May 1998
+
+
+                            IMAP4 Namespace
+
+Status of this Memo
+
+   This document specifies an Internet standards track protocol for the
+   Internet community, and requests discussion and suggestions for
+   improvements.  Please refer to the current edition of the "Internet
+   Official Protocol Standards" (STD 1) for the standardization state
+   and status of this protocol.  Distribution of this memo is unlimited.
+
+Copyright Notice
+
+   Copyright (C) The Internet Society (1998).  All Rights Reserved.
+
+1. Abstract
+
+   IMAP4 [RFC-2060] does not define a default server namespace. As a
+   result, two common namespace models have evolved:
+
+   The "Personal Mailbox" model, in which the default namespace that is
+   presented consists of only the user's personal mailboxes. To access
+   shared mailboxes, the user must use an escape mechanism to reach
+   another namespace.
+
+   The "Complete Hierarchy" model, in which the default namespace that
+   is presented includes the user's personal mailboxes along with any
+   other mailboxes they have access to.
+
+   These two models, create difficulties for certain client operations.
+   This document defines a NAMESPACE command that allows a client to
+   discover the prefixes of namespaces used by a server for personal
+   mailboxes, other users' mailboxes, and shared mailboxes.  This allows
+   a client to avoid much of the manual user configuration that is now
+   necessary when mixing and matching IMAP4 clients and servers.
+
+2. Conventions used in this document
+
+   In examples, "C:" and "S:" indicate lines sent by the client and
+   server respectively.  If such lines are wrapped without a new "C:" or
+   "S:" label, then the wrapping is for editorial clarity and is not
+   part of the command.
+
+
+
+Gahrns & Newman             Standards Track                     [Page 1]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+   Personal Namespace: A namespace that the server considers within the
+   personal scope of the authenticated user on a particular connection.
+   Typically, only the authenticated user has access to mailboxes in
+   their Personal Namespace. It is the part of the namespace that
+   belongs to the user that is allocated for mailboxes. If an INBOX
+   exists for a user, it MUST appear within the user's personal
+   namespace.  In the typical case, there SHOULD be only one Personal
+   Namespace on a server.
+
+   Other Users' Namespace: A namespace that consists of mailboxes from
+   the Personal Namespaces of other users.  To access mailboxes in the
+   Other Users' Namespace, the currently authenticated user MUST be
+   explicitly granted access rights.  For example, it is common for a
+   manager to grant to their secretary access rights to their mailbox.
+   In the typical case, there SHOULD be only one Other Users' Namespace
+   on a server.
+
+   Shared Namespace: A namespace that consists of mailboxes that are
+   intended to be shared amongst users and do not exist within a user's
+   Personal Namespace.
+
+   The namespaces a server uses MAY differ on a per-user basis.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC-2119].
+
+3. Introduction and Overview
+
+   Clients often attempt to create mailboxes for such purposes as
+   maintaining a record of sent messages (e.g. "Sent Mail") or
+   temporarily saving messages being composed (e.g. "Drafts").  For
+   these clients to inter-operate correctly with the variety of IMAP4
+   servers available, the user must enter the prefix of the Personal
+   Namespace used by the server.  Using the NAMESPACE command, a client
+   is able to automatically discover this prefix without manual user
+   configuration.
+
+   In addition, users are often required to manually enter the prefixes
+   of various namespaces in order to view the mailboxes located there.
+   For example, they might be required to enter the prefix of #shared to
+   view the shared mailboxes namespace. The NAMESPACE command allows a
+   client to automatically discover the namespaces that are available on
+   a server. This allows a client to present the available namespaces to
+   the user in what ever manner it deems appropriate.  For example, a
+
+
+
+
+
+
+Gahrns & Newman             Standards Track                     [Page 2]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+   client could choose to initially display only personal mailboxes, or
+   it may choose to display the complete list of mailboxes available,
+   and initially position the user at the root of their Personal
+   Namespace.
+
+   A server MAY choose to make available to the NAMESPACE command only a
+   subset of the complete set of namespaces the server supports. To
+   provide the ability to access these namespaces, a client SHOULD allow
+   the user the ability to manually enter a namespace prefix.
+
+4. Requirements
+
+   IMAP4 servers that support this extension MUST list the keyword
+   NAMESPACE in their CAPABILITY response.
+
+   The NAMESPACE command is valid in the Authenticated and Selected
+   state.
+
+5. NAMESPACE Command
+
+   Arguments: none
+
+   Response:  an untagged NAMESPACE response that contains the prefix
+                 and hierarchy delimiter to the server's Personal
+                 Namespace(s), Other Users' Namespace(s), and Shared
+                 Namespace(s) that the server wishes to expose. The
+                 response will contain a NIL for any namespace class
+                 that is not available. Namespace_Response_Extensions
+                 MAY be included in the response.
+                 Namespace_Response_Extensions which are not on the IETF
+                 standards track, MUST be prefixed with an "X-".
+
+   Result:    OK - Command completed
+                 NO - Error: Can't complete command
+                 BAD - argument invalid
+
+   Example 5.1:
+   ===========
+
+      < A server that supports a single personal namespace.  No leading
+      prefix is used on personal mailboxes and "/" is the hierarchy
+      delimiter.>
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("" "/")) NIL NIL
+      S: A001 OK NAMESPACE command completed
+
+
+
+
+
+Gahrns & Newman             Standards Track                     [Page 3]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+   Example 5.2:
+   ===========
+
+      < A user logged on anonymously to a server.  No personal mailboxes
+      are associated with the anonymous user and the user does not have
+      access to the Other Users' Namespace.  No prefix is required to
+      access shared mailboxes and the hierarchy delimiter is "." >
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE NIL NIL (("" "."))
+      S: A001 OK NAMESPACE command completed
+
+   Example 5.3:
+   ===========
+
+      < A server that contains a Personal Namespace and a single Shared
+      Namespace. >
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("" "/")) NIL (("Public Folders/" "/"))
+      S: A001 OK NAMESPACE command completed
+
+   Example 5.4:
+   ===========
+
+      < A server that contains a Personal Namespace, Other Users'
+      Namespace and multiple Shared Namespaces.  Note that the hierarchy
+      delimiter used within each namespace can be different. >
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("" "/")) (("~" "/")) (("#shared/" "/")
+         ("#public/" "/")("#ftp/" "/")("#news." "."))
+      S: A001 OK NAMESPACE command completed
+
+   The prefix string allows a client to do things such as automatically
+   creating personal mailboxes or LISTing all available mailboxes within
+   a namespace.
+
+   Example 5.5:
+   ===========
+
+      < A server that supports only the Personal Namespace, with a
+      leading prefix of INBOX to personal mailboxes and a hierarchy
+      delimiter of ".">
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("INBOX." ".")) NIL  NIL
+      S: A001 OK NAMESPACE command completed
+
+
+
+Gahrns & Newman             Standards Track                     [Page 4]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+      < Automatically create a mailbox to store sent items.>
+
+      C: A002 CREATE "INBOX.Sent Mail"
+      S: A002 OK CREATE command completed
+
+   Although typically a server will support only a single Personal
+   Namespace, and a single Other User's Namespace, circumstances exist
+   where there MAY be multiples of these, and a client MUST be prepared
+   for them.   If a client is configured such that it is required to
+   create a certain mailbox, there can be circumstances where it is
+   unclear which Personal Namespaces it should create the mailbox in.
+   In these situations a client SHOULD let the user select which
+   namespaces to create the mailbox in.
+
+   Example 5.6:
+   ===========
+
+      < In this example, a server supports 2 Personal Namespaces.  In
+      addition to the regular Personal Namespace, the user has an
+      additional personal namespace to allow access to mailboxes in an
+      MH format mailstore. >
+
+      < The client is configured to save a copy of all mail sent by the
+      user into a mailbox called 'Sent Mail'.  Furthermore, after a
+      message is deleted from a mailbox, the client is configured to
+      move that message to a mailbox called 'Deleted Items'.>
+
+      < Note that this example demonstrates how some extension flags can
+      be passed to further describe the #mh namespace. >
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("" "/")("#mh/" "/" "X-PARAM" ("FLAG1" "FLAG2")))
+         NIL NIL
+      S: A001 OK NAMESPACE command completed
+
+      < It is desired to keep only one copy of sent mail. It is unclear
+      which Personal Namespace the client should use to create the 'Sent
+      Mail' mailbox.  The user is prompted to select a namespace and
+      only one 'Sent Mail' mailbox is created. >
+
+      C: A002 CREATE "Sent Mail"
+      S: A002 OK CREATE command completed
+
+      < The client is designed so that it keeps two 'Deleted Items'
+      mailboxes, one for each namespace. >
+
+      C: A003 CREATE "Delete Items"
+      S: A003 OK CREATE command completed
+
+
+
+Gahrns & Newman             Standards Track                     [Page 5]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+      C: A004 CREATE "#mh/Deleted Items"
+      S: A004 OK CREATE command completed
+
+   The next level of hierarchy following the Other Users' Namespace
+   prefix SHOULD consist of <username>, where <username> is a user name
+   as per the IMAP4 LOGIN or AUTHENTICATE command.
+
+   A client can construct a LIST command by appending a "%" to the Other
+   Users' Namespace prefix to discover the Personal Namespaces of other
+   users that are available to the currently authenticated user.
+
+   In response to such a LIST command, a server SHOULD NOT return user
+   names that have not granted access to their personal mailboxes to the
+   user in question.
+
+   A server MAY return a LIST response containing only the names of
+   users that have explicitly granted access to the user in question.
+
+   Alternatively, a server MAY return NO to such a LIST command,
+   requiring that a user name be included with the Other Users'
+   Namespace prefix before listing any other user's mailboxes.
+
+   Example 5.7:
+   ===========
+
+      < A server that supports providing a list of other user's
+      mailboxes that are accessible to the currently logged on user. >
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("" "/")) (("Other Users/" "/")) NIL
+      S: A001 OK NAMESPACE command completed
+
+      C: A002 LIST "" "Other Users/%"
+      S: * LIST () "/" "Other Users/Mike"
+      S: * LIST () "/" "Other Users/Karen"
+      S: * LIST () "/" "Other Users/Matthew"
+      S: * LIST () "/" "Other Users/Tesa"
+      S: A002 OK LIST command completed
+
+   Example 5.8:
+   ===========
+
+      < A server that does not support providing a list of other user's
+      mailboxes that are accessible to the currently logged on user.
+      The mailboxes are listable if the client includes the name of the
+      other user with the Other Users' Namespace prefix. >
+
+
+
+
+
+Gahrns & Newman             Standards Track                     [Page 6]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("" "/")) (("#Users/" "/")) NIL
+      S: A001 OK NAMESPACE command completed
+
+      < In this example, the currently logged on user has access to the
+      Personal Namespace of user Mike, but the server chose to suppress
+      this information in the LIST response.  However, by appending the
+      user name Mike (received through user input) to the Other Users'
+      Namespace prefix, the client is able to get a listing of the
+      personal mailboxes of user Mike. >
+
+      C: A002 LIST "" "#Users/%"
+      S: A002 NO The requested item could not be found.
+
+      C: A003 LIST "" "#Users/Mike/%"
+      S: * LIST () "/" "#Users/Mike/INBOX"
+      S: * LIST () "/" "#Users/Mike/Foo"
+      S: A003 OK LIST command completed.
+
+      A prefix string might not contain a hierarchy delimiter, because
+      in some cases it is not needed as part of the prefix.
+
+      Example 5.9:
+      ===========
+
+      < A server that allows access to the Other Users' Namespace by
+      prefixing the others' mailboxes with a '~' followed by <username>,
+      where <username> is a user name as per the IMAP4 LOGIN or
+      AUTHENTICATE command.>
+
+      C: A001 NAMESPACE
+      S: * NAMESPACE (("" "/")) (("~" "/")) NIL
+      S: A001 OK NAMESPACE command completed
+
+      < List the mailboxes for user mark >
+
+      C: A002 LIST "" "~mark/%"
+      S: * LIST () "/" "~mark/INBOX"
+      S: * LIST () "/" "~mark/foo"
+      S: A002 OK LIST command completed
+
+   Historical convention has been to start all namespaces with the "#"
+   character.  Namespaces that include the "#" character are not IMAP
+   URL [IMAP-URL] friendly requiring the "#" character to be represented
+   as %23 when within URLs.  As such, server implementers MAY instead
+   consider using namespace prefixes that do not contain the "#"
+   character.
+
+
+
+
+Gahrns & Newman             Standards Track                     [Page 7]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+6. Formal Syntax
+
+   The following syntax specification uses the augmented Backus-Naur
+   Form (BNF) as described in [ABNF].
+
+   atom = <atom>
+      ; <atom> as defined in [RFC-2060]
+
+   Namespace = nil / "(" 1*( "(" string SP  (<"> QUOTED_CHAR <"> /
+      nil) *(Namespace_Response_Extension) ")" ) ")"
+
+   Namespace_Command = "NAMESPACE"
+
+   Namespace_Response_Extension = SP string SP "(" string *(SP string)
+      ")"
+
+   Namespace_Response = "*" SP "NAMESPACE" SP Namespace SP Namespace SP
+      Namespace
+
+      ; The first Namespace is the Personal Namespace(s)
+      ; The second Namespace is the Other Users' Namespace(s)
+      ; The third Namespace is the Shared Namespace(s)
+
+      nil = <nil>
+         ; <nil> as defined in [RFC-2060]
+
+      QUOTED_CHAR = <QUOTED_CHAR>
+         ; <QUOTED_CHAR> as defined in [RFC-2060]
+
+      string = <string>
+         ; <string> as defined in [RFC-2060]
+         ; Note that  the namespace prefix is to a mailbox and following
+         ; IMAP4 convention, any international string in the NAMESPACE
+         ; response MUST be of modified UTF-7 format as described in
+         ;  [RFC-2060].
+
+7. Security Considerations
+
+   In response to a LIST command containing an argument of the Other
+   Users' Namespace prefix, a server SHOULD NOT list users that have not
+   granted list access to their personal mailboxes to the currently
+   authenticated user.  Providing such a list, could compromise security
+   by potentially disclosing confidential information of who is located
+   on the server, or providing a starting point of a list of user
+   accounts to attack.
+
+
+
+
+
+
+Gahrns & Newman             Standards Track                     [Page 8]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+8. References
+
+   [RFC-2060], Crispin, M., "Internet Message Access Protocol Version
+   4rev1", RFC 2060, December 1996.
+
+   [RFC-2119], Bradner, S., "Key words for use in RFCs to Indicate
+   Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [ABNF] Crocker, D., Editor, and P. Overell, "Augmented BNF for Syntax
+   Specifications: ABNF", RFC 2234, November 1997.
+
+   [IMAP-URL], Newman, C., "IMAP URL Scheme", RFC 2192, September 1997.
+
+9.  Acknowledgments
+
+   Many people have participated in the discussion of IMAP namespaces on
+   the IMAP mailing list.  In particular, the authors would like to
+   thank Mark Crispin for many of the concepts relating to the Personal
+   Namespace and accessing the Personal Namespace of other users, Steve
+   Hole for summarizing the two namespace models, John Myers and Jack De
+   Winter for their work in a preceding effort trying to define a
+   standardized personal namespace, and Larry Osterman for his review
+   and collaboration on this document.
+
+11. Authors' Addresses
+
+   Mike Gahrns
+   Microsoft
+   One Microsoft Way
+   Redmond, WA, 98072, USA
+
+   Phone: (425) 936-9833
+   EMail: mikega@microsoft.com
+
+
+   Chris Newman
+   Innosoft International, Inc.
+   1050 East Garvey Ave. South
+   West Covina, CA, 91790, USA
+
+   EMail: chris.newman@innosoft.com
+
+
+
+
+
+
+
+
+
+
+Gahrns & Newman             Standards Track                     [Page 9]
+
+RFC 2342                    IMAP4 Namespace                     May 1998
+
+
+12.  Full Copyright Statement
+
+   Copyright (C) The Internet Society (1998).  All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works.  However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the Internet Society or other
+   Internet organizations, except as needed for the purpose of
+   developing Internet standards in which case the procedures for
+   copyrights defined in the Internet Standards process must be
+   followed, or as required to translate it into languages other than
+   English.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by the Internet Society or its successors or assigns.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and THE INTERNET SOCIETY AND THE INTERNET ENGINEERING
+   TASK FORCE DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gahrns & Newman             Standards Track                    [Page 10]
+
