@@ -244,15 +244,15 @@ namespace MailKit.Net.Imap {
 					imap.Stream.Flush ();
 				};
 
-				while (engine.Iterate () < ic.Id) {
-					// continue processing commands...
-				}
+				engine.Wait (ic);
 
 				if (ic.Result != ImapCommandResult.Ok)
 					continue;
 
 				engine.State = ImapEngineState.Authenticated;
 				engine.QueryCapabilities (cancellationToken);
+				engine.QueryNamespaces (cancellationToken);
+				engine.QuerySpecialFolders (cancellationToken);
 				return;
 			}
 
@@ -264,15 +264,15 @@ namespace MailKit.Net.Imap {
 
 			ic = engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
 
-			while (engine.Iterate () < ic.Id) {
-				// continue processing commands...
-			}
+			engine.Wait (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new AuthenticationException ();
 
 			engine.State = ImapEngineState.Authenticated;
 			engine.QueryCapabilities (cancellationToken);
+			engine.QueryNamespaces (cancellationToken);
+			engine.QuerySpecialFolders (cancellationToken);
 		}
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
@@ -372,9 +372,7 @@ namespace MailKit.Net.Imap {
 			if (!imaps && engine.Capabilities.HasFlag (ImapCapabilities.StartTLS)) {
 				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
-				while (engine.Iterate () < ic.Id) {
-					// continue processing commands...
-				}
+				engine.Wait (ic);
 
 				if (ic.Result == ImapCommandResult.Ok) {
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
@@ -409,9 +407,7 @@ namespace MailKit.Net.Imap {
 				try {
 					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
 
-					while (engine.Iterate () < ic.Id) {
-						// continue processing commands...
-					}
+					engine.Wait (ic);
 				} catch (OperationCanceledException) {
 				} catch (ImapException) {
 				} catch (IOException) {
@@ -450,9 +446,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
 
-			while (engine.Iterate () < ic.Id) {
-				// continue processing commands...
-			}
+			engine.Wait (ic);
 		}
 
 		#endregion
@@ -471,20 +465,57 @@ namespace MailKit.Net.Imap {
 			get { return engine.OtherNamespaces; }
 		}
 
+		/// <summary>
+		/// Gets the Inbox folder.
+		/// </summary>
+		/// <value>The Inbox folder.</value>
 		public IFolder Inbox {
-			get {
-				throw new NotImplementedException ();
+			get { return engine.Inbox; }
+		}
+
+		/// <summary>
+		/// Gets the specified special folder.
+		/// </summary>
+		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
+		/// <param name="folder">The type of special folder.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="folder"/> is out of range.
+		/// </exception>
+		public IFolder GetFolder (SpecialFolder folder)
+		{
+			switch (folder) {
+			case SpecialFolder.All:     return engine.All;
+			case SpecialFolder.Archive: return engine.Archive;
+			case SpecialFolder.Drafts:  return engine.Drafts;
+			case SpecialFolder.Flagged: return engine.Flagged;
+			case SpecialFolder.Junk:    return engine.Junk;
+			case SpecialFolder.Sent:    return engine.Sent;
+			case SpecialFolder.Trash:   return engine.Trash;
+			default:
+				throw new ArgumentOutOfRangeException ();
 			}
 		}
 
-		public IFolder GetFolder (SpecialFolder folder, CancellationToken cancellationToken)
+		/// <summary>
+		/// Gets the folder for the specified namespace.
+		/// </summary>
+		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		public IFolder GetFolder (FolderNamespace @namespace)
 		{
-			throw new NotImplementedException ();
-		}
+			if (@namespace == null)
+				throw new ArgumentNullException ("namespace");
 
-		public IFolder GetFolder (FolderNamespace @namespace, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException ();
+			var encodedName = ImapEncoding.Encode (@namespace.Path);
+			ImapFolder folder;
+
+			if (engine.FolderCache.TryGetValue (encodedName, out folder))
+				return folder;
+
+			return null;
 		}
 
 		#endregion

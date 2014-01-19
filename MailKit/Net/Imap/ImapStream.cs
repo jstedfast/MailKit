@@ -100,6 +100,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the length of the literal.
+		/// </summary>
+		/// <value>The length of the literal.</value>
+		public int LiteralLength {
+			get { return literalDataLeft; }
+		}
+
+		/// <summary>
 		/// Gets whether or not the stream is connected.
 		/// </summary>
 		/// <value><c>true</c> if the stream is connected; otherwise, <c>false</c>.</value>
@@ -455,6 +463,8 @@ namespace MailKit.Net.Imap {
 
 		unsafe ImapToken ReadFlagToken (byte* inbuf, CancellationToken cancellationToken)
 		{
+			inputIndex++;
+
 			var flag = "\\" + ReadAtomString (inbuf, true, cancellationToken);
 
 			return new ImapToken (ImapTokenType.Flag, flag);

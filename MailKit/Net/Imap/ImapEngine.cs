@@ -86,9 +86,11 @@ namespace MailKit.Net.Imap {
 	class ImapEngine
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		static int TagPrefixIndex = 0;
+
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
-		internal readonly char TagPrefix = 'A';
 		readonly List<ImapCommand> queue;
+		internal char TagPrefix;
 		ImapCommand current;
 		ImapStream stream;
 		internal int Tag;
@@ -101,6 +103,10 @@ namespace MailKit.Net.Imap {
 			CompressionAlgorithms = new HashSet<string> ();
 			SupportedCharsets = new HashSet<string> ();
 			SupportedCharsets.Add ("UTF-8");
+
+			PersonalNamespaces = new FolderNamespaceCollection ();
+			SharedNamespaces = new FolderNamespaceCollection ();
+			OtherNamespaces = new FolderNamespaceCollection ();
 
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
@@ -216,6 +222,74 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
+		#region Special Folders
+
+		/// <summary>
+		/// Gets the Inbox folder.
+		/// </summary>
+		/// <value>The Inbox folder.</value>
+		public ImapFolder Inbox {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the special folder containing an aggregate of all messages.
+		/// </summary>
+		/// <value>The folder containing all messages.</value>
+		public ImapFolder All {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the special archive folder.
+		/// </summary>
+		/// <value>The archive folder.</value>
+		public ImapFolder Archive {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the special folder containing drafts.
+		/// </summary>
+		/// <value>The drafts folder.</value>
+		public ImapFolder Drafts {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the special folder containing flagged messages.
+		/// </summary>
+		/// <value>The flagged folder.</value>
+		public ImapFolder Flagged {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the special folder containing junk messages.
+		/// </summary>
+		/// <value>The junk folder.</value>
+		public ImapFolder Junk {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the special folder containing sent messages.
+		/// </summary>
+		/// <value>The sent.</value>
+		public ImapFolder Sent {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the folder containing deleted messages.
+		/// </summary>
+		/// <value>The trash folder.</value>
+		public ImapFolder Trash {
+			get; private set;
+		}
+
+		#endregion
+
 		internal static ImapException UnexpectedToken (ImapToken token, bool greeting)
 		{
 			string message;
@@ -238,10 +312,12 @@ namespace MailKit.Net.Imap {
 			if (stream != null)
 				stream.Dispose ();
 
+			TagPrefix = (char) ('A' + (TagPrefixIndex++ % 26));
 			Capabilities = ImapCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			State = ImapEngineState.Connected;
 			stream = imap;
+			Tag = 0;
 
 			try {
 				var token = stream.ReadToken (cancellationToken);
@@ -335,6 +411,52 @@ namespace MailKit.Net.Imap {
 				} catch {
 					return Latin1.GetString (buf, 0, count);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Reads the next token.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapToken ReadToken (CancellationToken cancellationToken)
+		{
+			return stream.ReadToken (cancellationToken);
+		}
+
+		/// <summary>
+		/// Reads the literal as a string.
+		/// </summary>
+		/// <returns>The literal.</returns>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Stream"/> is not in literal mode.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public string ReadLiteral (CancellationToken cancellationToken)
+		{
+			if (stream.Mode != ImapStreamMode.Literal)
+				throw new InvalidOperationException ();
+
+			cancellationToken.ThrowIfCancellationRequested ();
+
+			using (var memory = new MemoryStream (stream.LiteralLength)) {
+				var buf = new byte[4096];
+				int nread;
+
+				while ((nread = stream.Read (buf, 0, buf.Length)) > 0) {
+					cancellationToken.ThrowIfCancellationRequested ();
+					memory.Write (buf, 0, nread);
+				}
+
+				nread = (int) memory.Length;
+				buf = memory.GetBuffer ();
+
+				return Encoding.UTF8.GetString (buf, 0, nread);
 			}
 		}
 
@@ -460,9 +582,10 @@ namespace MailKit.Net.Imap {
 			var namespaces = new List<FolderNamespaceCollection> () {
 				PersonalNamespaces, SharedNamespaces, OtherNamespaces
 			};
+			ImapFolder folder;
 			ImapToken token;
 			string path;
-			char dirsep;
+			char delim;
 			int n = 0;
 
 			PersonalNamespaces.Clear ();
@@ -495,12 +618,22 @@ namespace MailKit.Net.Imap {
 							throw UnexpectedToken (token, false);
 						}
 
-						dirsep = ((string) token.Value)[0];
+						var qstring = (string) token.Value;
 
-						// canonicalize the namespace path
-						path = path.TrimEnd (dirsep);
+						if (qstring.Length > 0) {
+							delim = qstring[0];
 
-						namespaces[n].Add (new FolderNamespace (dirsep, path));
+							// canonicalize the namespace path
+							path = path.TrimEnd (delim);
+						} else {
+							delim = '\0';
+						}
+
+						namespaces[n].Add (new FolderNamespace (delim, ImapEncoding.Decode (path)));
+						if (!FolderCache.TryGetValue (path, out folder)) {
+							folder = new ImapFolder (this, path, FolderAttributes.None, delim);
+							FolderCache.Add (path, folder);
+						}
 
 						// read the closing ')'
 						token = stream.ReadToken (cancellationToken);
@@ -555,6 +688,11 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		/// <summary>
+		/// Parses the response code.
+		/// </summary>
+		/// <returns>The response code.</returns>
+		/// <param name="cancellationToken">Cancellation token.</param>
 		public ImapResponseCode ParseResponseCode (CancellationToken cancellationToken)
 		{
 			ImapResponseCode code;
@@ -770,6 +908,11 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
+		/// <summary>
+		/// Processes an untagged response.
+		/// </summary>
+		/// <returns>The untagged response.</returns>
+		/// <param name="cancellationToken">Cancellation token.</param>
 		internal ImapUntaggedResult ProcessUntaggedResponse (CancellationToken cancellationToken)
 		{
 			var result = ImapUntaggedResult.Handled;
@@ -877,7 +1020,7 @@ namespace MailKit.Net.Imap {
 						default:
 							if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 								// the command registered an untagged handler for this atom...
-								handler (this, current, token);
+								handler (this, current, number, token);
 							} else {
 								Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
 							}
@@ -887,7 +1030,7 @@ namespace MailKit.Net.Imap {
 						SkipLine (cancellationToken);
 					} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
-						handler (this, current, token);
+						handler (this, current, -1, token);
 					} else {
 						// don't know how to handle this... eat it?
 						SkipLine (cancellationToken);
@@ -899,6 +1042,9 @@ namespace MailKit.Net.Imap {
 			return result;
 		}
 
+		/// <summary>
+		/// Iterate the command pipeline.
+		/// </summary>
 		public int Iterate ()
 		{
 			if (stream == null)
@@ -941,6 +1087,31 @@ namespace MailKit.Net.Imap {
 			return current.Id;
 		}
 
+		/// <summary>
+		/// Wait for the specified command to finish.
+		/// </summary>
+		/// <param name="ic">The IMAP command.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="ic"/> is <c>null</c>.
+		/// </exception>
+		public void Wait (ImapCommand ic)
+		{
+			if (ic == null)
+				throw new ArgumentNullException ("ic");
+
+			while (Iterate () < ic.Id) {
+				// continue processing commands...
+			}
+		}
+
+		/// <summary>
+		/// Queues the command.
+		/// </summary>
+		/// <returns>The command.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="folder">The folder that the command operates on.</param>
+		/// <param name="format">The command format.</param>
+		/// <param name="args">The command arguments.</param>
 		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
 		{
 			var ic = new ImapCommand (this, cancellationToken, folder, format, args);
@@ -949,18 +1120,106 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
+		/// <summary>
+		/// Queries the capabilities.
+		/// </summary>
+		/// <returns>The command result.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapCommandResult QueryCapabilities (CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
 
 			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
+			Wait (ic);
 
-			while (Iterate () < ic.Id) {
-				// continue processing commands...
+			return ic.Result;
+		}
+
+		/// <summary>
+		/// Queries the namespaces.
+		/// </summary>
+		/// <returns>The command result.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapCommandResult QueryNamespaces (CancellationToken cancellationToken)
+		{
+			if (stream == null)
+				throw new InvalidOperationException ();
+
+			ImapCommand ic;
+
+			if ((Capabilities & ImapCapabilities.Namespace) != 0) {
+				ic = QueueCommand (cancellationToken, null, "NAMESPACE\r\n");
+				Wait (ic);
+			} else {
+				var list = new List<ImapFolder> ();
+
+				ic = QueueCommand (cancellationToken, null, "LIST \"\" \"\"\r\n");
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
+				ic.UserData = list;
+
+				Wait (ic);
+
+				ImapUtils.LookupParentFolders (this, list, cancellationToken);
 			}
 
 			return ic.Result;
+		}
+
+		/// <summary>
+		/// Queries the special folders.
+		/// </summary>
+		/// <returns>The command result.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public void QuerySpecialFolders (CancellationToken cancellationToken)
+		{
+			if (stream == null)
+				throw new InvalidOperationException ();
+
+			ImapFolder folder;
+
+			if (!FolderCache.TryGetValue ("INBOX", out folder)) {
+				var list = new List<ImapFolder> ();
+
+				var ic = QueueCommand (cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
+				ic.UserData = list;
+
+				Wait (ic);
+
+				Inbox = list.Count > 0 ? list[0] : null;
+			}
+
+			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
+				var list = new List<ImapFolder> ();
+
+				var ic = QueueCommand (cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
+				ic.UserData = list;
+
+				Wait (ic);
+
+				ImapUtils.LookupParentFolders (this, list, cancellationToken);
+
+				for (int i = 0; i < list.Count; i++) {
+					folder = list[i];
+
+					if ((folder.Attributes & FolderAttributes.All) != 0)
+						All = folder;
+					if ((folder.Attributes & FolderAttributes.Archive) != 0)
+						Archive = folder;
+					if ((folder.Attributes & FolderAttributes.Drafts) != 0)
+						Drafts = folder;
+					if ((folder.Attributes & FolderAttributes.Flagged) != 0)
+						Flagged = folder;
+					if ((folder.Attributes & FolderAttributes.Junk) != 0)
+						Junk = folder;
+					if ((folder.Attributes & FolderAttributes.Sent) != 0)
+						Sent = folder;
+					if ((folder.Attributes & FolderAttributes.Trash) != 0)
+						Trash = folder;
+				}
+			}
 		}
 
 		//public event EventHandler<ImapAlertEventArgs> Alert;

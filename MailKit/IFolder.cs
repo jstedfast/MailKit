@@ -35,6 +35,7 @@ namespace MailKit {
 	{
 		IFolder ParentFolder { get; }
 
+		FolderAttributes Attributes { get; }
 		MessageFlags PermanentFlags { get; }
 		MessageFlags AcceptedFlags { get; }
 		char DirectorySeparator { get; }

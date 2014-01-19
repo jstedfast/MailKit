@@ -34,16 +34,16 @@ using MimeKit;
 namespace MailKit.Net.Imap {
 	public class ImapFolder : IFolder
 	{
-		internal ImapFolder (ImapEngine engine, ImapFolder parent, string encodedName, char dirSep)
+		internal ImapFolder (ImapEngine engine, string encodedName, FolderAttributes attrs, char delim)
 		{
 			FullName = ImapEncoding.Decode (encodedName);
-			DirectorySeparator = dirSep;
+			DirectorySeparator = delim;
 			EncodedName = encodedName;
-			ParentFolder = parent;
+			Attributes = attrs;
 			Engine = engine;
 
-			var names = FullName.Split (new char[] { dirSep }, StringSplitOptions.RemoveEmptyEntries);
-			Name = names[names.Length - 1];
+			var names = FullName.Split (new char[] { delim }, StringSplitOptions.RemoveEmptyEntries);
+			Name = names.Length > 0 ? names[names.Length - 1] : FullName;
 		}
 
 		internal ImapEngine Engine {
@@ -57,7 +57,11 @@ namespace MailKit.Net.Imap {
 		#region IFolder implementation
 
 		public IFolder ParentFolder {
-			get; private set;
+			get; internal set;
+		}
+
+		public FolderAttributes Attributes {
+			get; internal set;
 		}
 
 		public MessageFlags PermanentFlags {

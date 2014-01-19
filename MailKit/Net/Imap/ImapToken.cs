@@ -53,6 +53,8 @@ namespace MailKit.Net.Imap {
 		{
 			Value = value;
 			Type = type;
+
+			//System.Console.WriteLine ("token: {0}", this);
 		}
 
 		public override string ToString ()
@@ -61,7 +63,7 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.NoData:       return "<no data>";
 			case ImapTokenType.Nil:          return "NIL";
 			case ImapTokenType.Atom:         return (string) Value;
-			case ImapTokenType.Flag:         return "\\" + (string) Value;
+			case ImapTokenType.Flag:         return (string) Value;
 			case ImapTokenType.QString:      return "\"" + (string) Value + "\"";
 			case ImapTokenType.Literal:      return "{" + (int) Value + "}";
 			case ImapTokenType.Eoln:         return "'\\n'";

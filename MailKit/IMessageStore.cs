@@ -24,18 +24,78 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Threading;
-
 namespace MailKit {
+	/// <summary>
+	/// An interface for retreiving messages from a message store such as IMAP.
+	/// </summary>
+	/// <remarks>
+	/// Implemented by <see cref="MailKit.Net.Imap.ImapClient"/>.
+	/// </remarks>
 	public interface IMessageStore : IMessageService
 	{
+		/// <summary>
+		/// Gets the personal namespaces.
+		/// </summary>
+		/// <remarks>
+		/// The personal folder namespaces contain a user's personal mailbox folders.
+		/// </remarks>
+		/// <value>The personal namespaces.</value>
 		FolderNamespaceCollection PersonalNamespaces { get; }
+
+		/// <summary>
+		/// Gets the shared namespaces.
+		/// </summary>
+		/// <remarks>
+		/// The shared folder namespaces contain mailbox folders that are shared with the user.
+		/// </remarks>
+		/// <value>The shared namespaces.</value>
 		FolderNamespaceCollection SharedNamespaces { get; }
+
+		/// <summary>
+		/// Gets the other namespaces.
+		/// </summary>
+		/// <remarks>
+		/// The other folder namespaces contain other mailbox folders.
+		/// </remarks>
+		/// <value>The other namespaces.</value>
 		FolderNamespaceCollection OtherNamespaces { get; }
 
+		/// <summary>
+		/// Gets the Inbox folder.
+		/// </summary>
+		/// <remarks>
+		/// The Inbox folder is the default folder and is typically the folder
+		/// where all new messages are delivered.
+		/// </remarks>
+		/// <value>The Inbox folder.</value>
 		IFolder Inbox { get; }
-		IFolder GetFolder (SpecialFolder folder, CancellationToken cancellationToken);
-		IFolder GetFolder (FolderNamespace @namespace, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets the specified special folder.
+		/// </summary>
+		/// <remarks>
+		/// Not all message stores support the concept of special folders,
+		/// so this method may return <c>null</c>.
+		/// </remarks>
+		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
+		/// <param name="folder">The type of special folder.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="folder"/> is out of range.
+		/// </exception>
+		IFolder GetFolder (SpecialFolder folder);
+
+		/// <summary>
+		/// Gets the folder for the specified namespace.
+		/// </summary>
+		/// <remarks>
+		/// The main reason to get the toplevel fodler in a namespace is
+		/// to list its child folders.
+		/// </remarks>
+		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		IFolder GetFolder (FolderNamespace @namespace);
 	}
 }

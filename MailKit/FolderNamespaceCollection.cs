@@ -32,23 +32,16 @@ namespace MailKit {
 	/// <summary>
 	/// A read-only collection of folder namespaces.
 	/// </summary>
-	public class FolderNamespaceCollection : ICollection<FolderNamespace>
+	public class FolderNamespaceCollection : IEnumerable<FolderNamespace>
 	{
 		readonly List<FolderNamespace> collection;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNamespaceCollection"/> class.
 		/// </summary>
-		/// <param name="namespaces">The folder namespaces.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="namespaces"/> is <c>null</c>.
-		/// </exception>
-		public FolderNamespaceCollection (IEnumerable<FolderNamespace> namespaces)
+		internal FolderNamespaceCollection ()
 		{
-			if (namespaces == null)
-				throw new ArgumentNullException ("namespaces");
-
-			collection = new List<FolderNamespace> (namespaces);
+			collection = new List<FolderNamespace> ();
 		}
 
 		#region ICollection implementation
@@ -61,42 +54,61 @@ namespace MailKit {
 			get { return collection.Count; }
 		}
 
-		public bool IsReadOnly {
-			get { return false; }
-		}
-
-		public void Add (FolderNamespace item)
+		/// <summary>
+		/// Adds the specified namespace.
+		/// </summary>
+		/// <param name="namespace">The namespace to add.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		internal void Add (FolderNamespace @namespace)
 		{
-			if (item == null)
-				throw new ArgumentNullException ("item");
+			if (@namespace == null)
+				throw new ArgumentNullException ("namespace");
 
-			collection.Add (item);
+			collection.Add (@namespace);
 		}
 
-		public void Clear ()
+		/// <summary>
+		/// Removes all namespaces from the collection.
+		/// </summary>
+		internal void Clear ()
 		{
 			collection.Clear ();
 		}
 
-		public bool Contains (FolderNamespace item)
+		/// <summary>
+		/// Checks if the collection contains the specified namespace.
+		/// </summary>
+		/// <returns><value>true</value> if the specified namespace exists;
+		/// otherwise <value>false</value>.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		public bool Contains (FolderNamespace @namespace)
 		{
-			if (item == null)
-				throw new ArgumentNullException ("item");
+			if (@namespace == null)
+				throw new ArgumentNullException ("namespace");
 
-			return collection.Contains (item);
+			return collection.Contains (@namespace);
 		}
 
-		public void CopyTo (FolderNamespace[] array, int arrayIndex)
+		/// <summary>
+		/// Removes the first occurance of the specified namespace.
+		/// </summary>
+		/// <returns><value>true</value> if the frst occurance of the specified
+		/// namespace was removed; otherwise <value>false</value>.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		internal bool Remove (FolderNamespace @namespace)
 		{
-			collection.CopyTo (array, arrayIndex);
-		}
+			if (@namespace == null)
+				throw new ArgumentNullException ("namespace");
 
-		public bool Remove (FolderNamespace item)
-		{
-			if (item == null)
-				throw new ArgumentNullException ("item");
-
-			return collection.Remove (item);
+			return collection.Remove (@namespace);
 		}
 
 		#endregion
@@ -116,6 +128,11 @@ namespace MailKit {
 
 		#region IEnumerable implementation
 
+		/// <summary>
+		/// Gets the enumerator.
+		/// </summary>
+		/// 
+		/// <returns>The enumerator.</returns>
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return collection.GetEnumerator ();

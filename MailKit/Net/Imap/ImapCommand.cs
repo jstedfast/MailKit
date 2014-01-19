@@ -37,7 +37,7 @@ using MimeKit.IO.Filters;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
-	/// IMAP continuation handler.
+	/// An IMAP continuation handler.
 	/// </summary>
 	/// <remarks>
 	/// All exceptions thrown by the handler are considered fatal and will
@@ -47,12 +47,12 @@ namespace MailKit.Net.Imap {
 	delegate void ImapContinuationHandler (ImapEngine engine, ImapCommand ic, string text);
 
 	/// <summary>
-	/// IMAP untagged response handler.
+	/// An IMAP untagged response handler.
 	/// </summary>
 	/// <remarks>
 	/// <para>Most IMAP commands return their results in untagged responses.</para>
 	/// </remarks>
-	delegate void ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, ImapToken token);
+	delegate void ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, int index, ImapToken token);
 
 	delegate void ImapCommandResetHandler (ImapCommand ic);
 
@@ -140,6 +140,11 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		/// <summary>
+		/// Writes the literal to the specified stream.
+		/// </summary>
+		/// <param name="stream">The stream.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public void WriteTo (Stream stream, CancellationToken cancellationToken)
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
@@ -175,6 +180,9 @@ namespace MailKit.Net.Imap {
 		}
 	}
 
+	/// <summary>
+	/// A partial IMAP command.
+	/// </summary>
 	class ImapCommandPart
 	{
 		public readonly byte[] Command;
@@ -187,6 +195,9 @@ namespace MailKit.Net.Imap {
 		}
 	}
 
+	/// <summary>
+	/// An IMAP command.
+	/// </summary>
 	class ImapCommand
 	{
 		public Dictionary<string, ImapUntaggedHandler> UntaggedHandlers { get; private set; }
@@ -197,6 +208,7 @@ namespace MailKit.Net.Imap {
 		public ImapException Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
 		public ImapFolder Folder { get; private set; }
+		public object UserData { get; internal set; }
 		public string Tag { get; private set; }
 		public bool Bye { get; internal set; }
 		public int Id { get; internal set; }
@@ -345,6 +357,22 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Registers the untagged handler for the specified atom token.
+		/// </summary>
+		/// <param name="atom">The atom token.</param>
+		/// <param name="handler">The handler.</param>
+		public void RegisterUntaggedHandler (string atom, ImapUntaggedHandler handler)
+		{
+			if (atom == null)
+				throw new ArgumentNullException ("atom");
+
+			if (handler == null)
+				throw new ArgumentNullException ("handler");
+
+			UntaggedHandlers.Add (atom, handler);
+		}
+
+		/// <summary>
 		/// Sends the next part of the command to the server.
 		/// </summary>
 		public bool Step ()
@@ -365,7 +393,7 @@ namespace MailKit.Net.Imap {
 
 			// now we need to read the response...
 			do {
-				var token = Engine.Stream.ReadToken (CancellationToken);
+				var token = Engine.ReadToken (CancellationToken);
 
 				if (token.Type == ImapTokenType.Plus) {
 					// we've gotten a continuation response from the server
@@ -385,7 +413,7 @@ namespace MailKit.Net.Imap {
 					Engine.ProcessUntaggedResponse (CancellationToken);
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
-					token = Engine.Stream.ReadToken (CancellationToken);
+					token = Engine.ReadToken (CancellationToken);
 
 					if (token.Type == ImapTokenType.Atom) {
 						string atom = (string) token.Value;
@@ -427,7 +455,7 @@ namespace MailKit.Net.Imap {
 
 				if (current == parts.Count || result != ImapCommandResult.None) {
 					Status = ImapCommandStatus.Complete;
-					Result = Result;
+					Result = result;
 					return false;
 				}
 			}
