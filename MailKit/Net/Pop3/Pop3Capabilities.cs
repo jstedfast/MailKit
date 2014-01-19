@@ -32,7 +32,8 @@ namespace MailKit.Net.Pop3 {
 	/// </summary>
 	/// <remarks>
 	/// Capabilities are read as part of the response to the CAPA command that
-	/// is issued during the connection phase of the <see cref="Pop3Client"/>.
+	/// is issued during the connection and authentication phases of the
+	/// <see cref="Pop3Client"/>.
 	/// </remarks>
 	[Flags]
 	public enum Pop3Capabilities {

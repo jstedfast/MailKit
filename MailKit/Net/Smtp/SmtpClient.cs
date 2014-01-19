@@ -95,7 +95,8 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="Connect"/> method.
+		/// has been made via the <see cref="Connect"/> method and may change
+		/// as a side-effect of the <see cref="Authenticate"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public SmtpCapabilities Capabilities {
@@ -106,8 +107,12 @@ namespace MailKit.Net.Smtp {
 		/// Gets the maximum message size supported by the server.
 		/// </summary>
 		/// <remarks>
-		/// The maximum message size will not be known until a successful
-		/// connect has been made via the <see cref="Connect"/> method.
+		/// <para>The maximum message size will not be known until a successful
+		/// connection has been made via the <see cref="Connect"/> method
+		/// and may change as a side-effect of the <see cref="Authenticate"/>
+		/// method.</para>
+		/// <para>Note: This value is only relevant if the <see cref="Capabilities"/>
+		/// includes the <see cref="SmtpCapabilties.Size"/> flag.</para>
 		/// </remarks>
 		/// <value>The maximum message size supported by the server.</value>
 		public uint MaxSize {
@@ -149,6 +154,10 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Gets whether or not the client is currently connected to an SMTP server.
 		/// </summary>
+		/// <remarks>
+		/// When an <see cref="SmtpException"/> is caught, the connection state of the
+		/// <see cref="SmtpClient"/> should be checked before continuing.
+		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get; private set;

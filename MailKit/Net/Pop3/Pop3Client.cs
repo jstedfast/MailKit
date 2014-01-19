@@ -73,7 +73,8 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you
-		/// must first call the <see cref="Connect"/> method.
+		/// must first call the <see cref="Connect"/> method and authenticate with
+		/// the <see cref="Authenticate"/> method.
 		/// </remarks>
 		public Pop3Client ()
 		{
@@ -86,7 +87,8 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="Connect"/> method.
+		/// has been made via the <see cref="Connect"/> method and may change
+		/// as a side-effect of the <see cref="Authenticate"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public Pop3Capabilities Capabilities {
@@ -158,7 +160,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			var type = pc.Status == Pop3CommandStatus.Error ? Pop3ErrorType.CommandError : Pop3ErrorType.ProtocolError;
 			var command = pc.Command.Split (' ')[0].TrimEnd ();
-			var message = string.Format ("Pop3 server did not respond with a +OK response to the {0} command.", command);
+			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
 
 			return new Pop3Exception (type, message);
 		}
@@ -224,6 +226,10 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets whether or not the client is currently connected to an POP3 server.
 		/// </summary>
+		/// <remarks>
+		/// When a <see cref="Pop3Exception"/> is caught, the connection state of the
+		/// <see cref="Pop3Client"/> should be checked before continuing.
+		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get { return engine.IsConnected; }

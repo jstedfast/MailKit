@@ -40,6 +40,16 @@ using System.Security.Cryptography.X509Certificates;
 using MailKit.Security;
 
 namespace MailKit.Net.Imap {
+	/// <summary>
+	/// An IMAP client that can be used to retrieve messages from a server.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="ImapClient"/> class supports both the "imap" and "imaps"
+	/// protocols. The "imap" protocol makes a clear-text connection to the IMAP
+	/// server and does not use SSL or TLS unless the IMAP server supports the
+	/// STARTTLS extension (as defined by rfc3501). The "imaps" protocol,
+	/// however, connects to the IMAP server using an SSL-wrapped connection.
+	/// </remarks>
 	public class ImapClient : IMessageStore
 	{
 		readonly IProtocolLogger logger;
@@ -47,12 +57,35 @@ namespace MailKit.Net.Imap {
 		bool disposed;
 		string host;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapClient"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you
+		/// must first call the <see cref="Connect"/> method and authenticate with
+		/// the <see cref="Authenticate"/> method.
+		/// </remarks>
 		public ImapClient () : this (new NullProtocolLogger ())
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapClient"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you
+		/// must first call the <see cref="Connect"/> method and authenticate with
+		/// the <see cref="Authenticate"/> method.
+		/// </remarks>
+		/// <param name="logger">The protocol logger.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="logger"/> is <c>null</c>.
+		/// </exception>
 		public ImapClient (IProtocolLogger logger)
 		{
+			if (logger == null)
+				throw new ArgumentNullException ("logger");
+
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine ();
 			this.logger = logger;
@@ -63,7 +96,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="Connect"/> method.
+		/// has been made via the <see cref="Connect"/> method and may change
+		/// as a side-effect of the <see cref="Authenticate"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public ImapCapabilities Capabilities {
@@ -106,7 +140,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the authentication mechanisms supported by the POP3 server.
+		/// Gets the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the <see cref="Connect"/> method.
@@ -119,6 +153,10 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets whether or not the client is currently connected to an IMAP server.
 		/// </summary>
+		/// <remarks>
+		/// When an <see cref="ImapException"/> is caught, the connection state of the
+		/// <see cref="ImapClient"/> should be checked before continuing.
+		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get { return engine.IsConnected; }
@@ -189,14 +227,19 @@ namespace MailKit.Net.Imap {
 
 				ic = engine.QueueCommand (cancellationToken, null, "AUTHENTICATE %s\r\n", sasl.MechanismName);
 				ic.ContinuationHandler = (imap, cmd, text) => {
+					string challenge;
+
 					if (sasl.IsAuthenticated) {
 						// the server claims we aren't done authenticating, but our SASL mechanism thinks we are...
-						throw new AuthenticationException ();
+						// FIXME: will sending an empty string abort the AUTHENTICATE command?
+						challenge = string.Empty;
+					} else {
+						challenge = sasl.Challenge (text);
 					}
 
-					var challenge = sasl.Challenge (text);
-					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
+					cmd.CancellationToken.ThrowIfCancellationRequested ();
 
+					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 					imap.Stream.Write (buf, 0, buf.Length);
 					imap.Stream.Flush ();
 				};
@@ -205,11 +248,8 @@ namespace MailKit.Net.Imap {
 					// continue processing commands...
 				}
 
-				if (ic.Result == ImapCommandResult.No)
+				if (ic.Result != ImapCommandResult.Ok)
 					continue;
-
-				if (ic.Result == ImapCommandResult.Bad)
-					throw new AuthenticationException ();
 
 				engine.State = ImapEngineState.Authenticated;
 				engine.QueryCapabilities (cancellationToken);

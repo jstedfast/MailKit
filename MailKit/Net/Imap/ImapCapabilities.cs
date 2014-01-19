@@ -31,8 +31,9 @@ namespace MailKit.Net.Imap {
 	/// Capabilities supported by an IMAP server.
 	/// </summary>
 	/// <remarks>
-	/// Capabilities are read as part of the response to the CAPABILITIES command that
-	/// is issued during the connection phase of the <see cref="ImapClient"/>.
+	/// Capabilities are read as part of the response to the CAPABILITY command that
+	/// is issued during the connection and authentication phases of the
+	/// <see cref="ImapClient"/>.
 	/// </remarks>
 	[Flags]
 	public enum ImapCapabilities {
