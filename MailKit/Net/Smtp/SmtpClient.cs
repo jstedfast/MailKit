@@ -68,10 +68,11 @@ namespace MailKit.Net.Smtp {
 
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		readonly HashSet<string> authmechs = new HashSet<string> ();
-		readonly byte[] buffer = new byte[4096];
+		readonly byte[] input = new byte[4096];
+		int inputIndex, inputEnd;
 		MemoryBlockStream queue;
 		EndPoint localEndPoint;
-		int index, endIndex;
+		bool authenticated;
 		Stream stream;
 		bool disposed;
 		string host;
@@ -183,37 +184,37 @@ namespace MailKit.Net.Smtp {
 				int nread;
 
 				do {
-					if (memory.Length > 0 || index == endIndex) {
+					if (memory.Length > 0 || inputIndex == inputEnd) {
 						// make room for the next read by moving the remaining data to the beginning of the buffer
-						int left = endIndex - index;
+						int left = inputEnd - inputIndex;
 
 						for (int i = 0; i < left; i++)
-							buffer[i] = buffer[index + i];
+							input[i] = input[inputIndex + i];
 
-						endIndex = left;
-						index = 0;
+						inputEnd = left;
+						inputIndex = 0;
 
 						cancellationToken.ThrowIfCancellationRequested ();
 
-						if ((nread = stream.Read (buffer, endIndex, buffer.Length - endIndex)) == 0)
+						if ((nread = stream.Read (input, inputEnd, input.Length - inputEnd)) == 0)
 							throw new SmtpException (SmtpErrorCode.ProtocolError, "The server replied with an incomplete response.");
 
-						endIndex += nread;
+						inputEnd += nread;
 					}
 
 					complete = false;
 
 					do {
-						int startIndex = index;
+						int startIndex = inputIndex;
 
-						if (newLine && index < endIndex) {
+						if (newLine && inputIndex < inputEnd) {
 							int value;
 
-							if (!TryParseInt32 (buffer, ref index, endIndex, out value))
+							if (!TryParseInt32 (input, ref inputIndex, inputEnd, out value))
 								throw new SmtpException (SmtpErrorCode.ProtocolError, "Unable to parse status code returned by the server.");
 
-							if (index == endIndex) {
-								index = startIndex;
+							if (inputIndex == inputEnd) {
+								inputIndex = startIndex;
 								break;
 							}
 
@@ -225,30 +226,30 @@ namespace MailKit.Net.Smtp {
 
 							newLine = false;
 
-							if (buffer[index] != (byte) '\r' && buffer[index] != (byte) '\n')
-								more = buffer[index++] == (byte) '-';
+							if (input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
+								more = input[inputIndex++] == (byte) '-';
 							else
 								more = false;
 
-							startIndex = index;
+							startIndex = inputIndex;
 						}
 
-						while (index < endIndex && buffer[index] != (byte) '\r' && buffer[index] != (byte) '\n')
-							index++;
+						while (inputIndex < inputEnd && input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
+							inputIndex++;
 
-						memory.Write (buffer, startIndex, index - startIndex);
+						memory.Write (input, startIndex, inputIndex - startIndex);
 
-						if (index < endIndex && buffer[index] == (byte) '\r')
-							index++;
+						if (inputIndex < inputEnd && input[inputIndex] == (byte) '\r')
+							inputIndex++;
 
-						if (index < endIndex && buffer[index] == (byte) '\n') {
+						if (inputIndex < inputEnd && input[inputIndex] == (byte) '\n') {
 							if (more)
-								memory.WriteByte (buffer[index]);
+								memory.WriteByte (input[inputIndex]);
 							complete = true;
 							newLine = true;
-							index++;
+							inputIndex++;
 						}
-					} while (more && index < endIndex);
+					} while (more && inputIndex < inputEnd);
 				} while (more || !complete);
 
 				string message = null;
@@ -294,9 +295,9 @@ namespace MailKit.Net.Smtp {
 				int nread;
 
 				queue.Position = 0;
-				while ((nread = queue.Read (buffer, 0, buffer.Length)) > 0) {
+				while ((nread = queue.Read (input, 0, input.Length)) > 0) {
 					cancellationToken.ThrowIfCancellationRequested ();
-					stream.Write (buffer, 0, nread);
+					stream.Write (input, 0, nread);
 				}
 
 				// Note: we need to read all responses from the server before we can process
@@ -430,10 +431,10 @@ namespace MailKit.Net.Smtp {
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="SmtpClient"/> is not connected.
+		/// The <see cref="SmtpClient"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The client and server failed to agree on an authentication mechanism to use.
+		/// The SMTP server does not support authentication.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -455,8 +456,11 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient must be connected before you can authenticate.");
 
+			if (authenticated)
+				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
+
 			if (!Capabilities.HasFlag (SmtpCapabilities.Authentication))
-				return;
+				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
@@ -496,6 +500,7 @@ namespace MailKit.Net.Smtp {
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
 					Ehlo (cancellationToken);
+					authenticated = true;
 					return;
 				}
 
@@ -565,6 +570,9 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="SmtpClient"/> is already connected.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled.
 		/// </exception>
@@ -582,7 +590,7 @@ namespace MailKit.Net.Smtp {
 				throw new ArgumentNullException ("uri");
 
 			if (IsConnected)
-				return;
+				throw new InvalidOperationException ("The SmtpClient is already connected.");
 
 			Capabilities = SmtpCapabilities.None;
 			authmechs.Clear ();
@@ -714,6 +722,7 @@ namespace MailKit.Net.Smtp {
 
 		void Disconnect ()
 		{
+			authenticated = false;
 			localEndPoint = null;
 			IsConnected = false;
 			host = null;
@@ -850,7 +859,7 @@ namespace MailKit.Net.Smtp {
 			return PrepareMimeEntity (message.Body);
 		}
 
-		string GetMailFromCommand (MailboxAddress mailbox, SmtpExtension extensions)
+		static string GetMailFromCommand (MailboxAddress mailbox, SmtpExtension extensions)
 		{
 			if (extensions.HasFlag (SmtpExtension.BinaryMime))
 				return string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME", mailbox.Address);
@@ -861,7 +870,7 @@ namespace MailKit.Net.Smtp {
 			return string.Format ("MAIL FROM:<{0}>", mailbox.Address);
 		}
 
-		void ProcessMailFromResponse (SmtpResponse response, MailboxAddress mailbox)
+		static void ProcessMailFromResponse (SmtpResponse response, MailboxAddress mailbox)
 		{
 			switch (response.StatusCode) {
 			case SmtpStatusCode.Ok:
@@ -888,7 +897,7 @@ namespace MailKit.Net.Smtp {
 			ProcessMailFromResponse (SendCommand (command, cancellationToken), mailbox);
 		}
 
-		void ProcessRcptToResponse (SmtpResponse response, MailboxAddress mailbox)
+		static void ProcessRcptToResponse (SmtpResponse response, MailboxAddress mailbox)
 		{
 			switch (response.StatusCode) {
 			case SmtpStatusCode.UserNotLocalWillForward:

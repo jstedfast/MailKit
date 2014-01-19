@@ -265,8 +265,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="Pop3Client"/> is not connected.
+		/// The <see cref="Pop3Client"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -285,8 +288,13 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken)
 		{
+			CheckDisposed ();
+
 			if (!IsConnected)
 				throw new InvalidOperationException ("The Pop3Client must be connected before you can authenticate.");
+
+			if (engine.State == Pop3EngineState.Transaction)
+				throw new InvalidOperationException ("The Pop3Client is already authenticated.");
 
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
@@ -428,6 +436,9 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is already connected.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -442,7 +453,7 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 
 			if (IsConnected)
-				return;
+				throw new InvalidOperationException ("The Pop3Client is already connected.");
 
 			bool pop3s = uri.Scheme.ToLowerInvariant () == "pop3s";
 			int port = uri.Port > 0 ? uri.Port : (pop3s ? 995 : 110);
