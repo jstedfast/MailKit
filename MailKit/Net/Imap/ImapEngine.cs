@@ -844,13 +844,11 @@ namespace MailKit.Net.Imap {
 
 				token = stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom) {
+				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.DestUidSet)) {
 					Debug.WriteLine ("Expected nz-number or uid-set as second argument to 'APPENDUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
-
-				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
-				code.DestUidSet = ImapUtils.ParseUidSet ((string) token.Value);
 
 				token = stream.ReadToken (cancellationToken);
 				break;
@@ -864,21 +862,17 @@ namespace MailKit.Net.Imap {
 
 				token = stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom) {
-					Debug.WriteLine ("Expected atom as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.SrcUidSet)) {
+					Debug.WriteLine ("Expected uid-set as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
-
-				code.SrcUidSet = ImapUtils.ParseUidSet ((string) token.Value);
 
 				token = stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom) {
-					Debug.WriteLine ("Expected atom as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.DestUidSet)) {
+					Debug.WriteLine ("Expected uid-set as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
-
-				code.DestUidSet = ImapUtils.ParseUidSet ((string) token.Value);
 
 				token = stream.ReadToken (cancellationToken);
 				break;

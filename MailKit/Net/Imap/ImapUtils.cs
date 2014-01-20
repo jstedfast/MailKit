@@ -46,26 +46,38 @@ namespace MailKit.Net.Imap {
 				date.Offset.Hours, date.Offset.Minutes);
 		}
 
-		public static string[] ParseUidSet (string uidset)
+		public static bool TryParseUidSet (string atom, out string[] uids)
 		{
-			var ranges = uidset.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			var uids = new List<string> ();
+			var ranges = atom.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			var list = new List<string> ();
+
+			uids = null;
 
 			for (int i = 0; i < ranges.Length; i++) {
 				var minmax = ranges[i].Split (':');
+				uint min;
+
+				if (!uint.TryParse (minmax[0], out min))
+					return false;
 
 				if (minmax.Length == 2) {
-					uint min = uint.Parse (minmax[0]);
-					uint max = uint.Parse (minmax[1]);
+					uint max;
+
+					if (!uint.TryParse (minmax[1], out max))
+						return false;
 
 					for (uint uid = min; uid <= max; uid++)
-						uids.Add (uid.ToString ());
+						list.Add (uid.ToString ());
+				} else if (minmax.Length == 1) {
+					list.Add (minmax[0]);
 				} else {
-					uids.Add (minmax[0]);
+					return false;
 				}
 			}
 
-			return uids.ToArray ();
+			uids = list.ToArray ();
+
+			return true;
 		}
 
 		public static void HandleUntaggedListResponse (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
