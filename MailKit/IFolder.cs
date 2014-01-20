@@ -79,13 +79,13 @@ namespace MailKit {
 		void Expunge (string[] uids, CancellationToken cancellationToken);
 
 		string Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken);
-		string Append (MimeMessage message, MessageFlags flags, DateTime date, CancellationToken cancellationToken);
+		string Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken);
 
 		string[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken);
-		string[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTime[] dates, CancellationToken cancellationToken);
+		string[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken);
 
-		void CopyTo (string[] uids, IFolder destination, CancellationToken cancellationToken);
-		void MoveTo (string[] uids, IFolder destination, CancellationToken cancellationToken);
+		string[] CopyTo (string[] uids, IFolder destination, CancellationToken cancellationToken);
+		string[] MoveTo (string[] uids, IFolder destination, CancellationToken cancellationToken);
 
 		void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);
 		void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);

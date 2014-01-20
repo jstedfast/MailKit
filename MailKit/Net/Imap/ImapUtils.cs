@@ -34,6 +34,40 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	static class ImapUtils
 	{
+		static readonly string[] Months = {
+			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+		};
+
+		public static string FormatInternalDate (DateTimeOffset date)
+		{
+			return string.Format ("{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6:+00;-00}{7:00}",
+				date.Day, Months[date.Month - 1], date.Year, date.Hour, date.Minute, date.Second,
+				date.Offset.Hours, date.Offset.Minutes);
+		}
+
+		public static string[] ParseUidSet (string uidset)
+		{
+			var ranges = uidset.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			var uids = new List<string> ();
+
+			for (int i = 0; i < ranges.Length; i++) {
+				var minmax = ranges[i].Split (':');
+
+				if (minmax.Length == 2) {
+					uint min = uint.Parse (minmax[0]);
+					uint max = uint.Parse (minmax[1]);
+
+					for (uint uid = min; uid <= max; uid++)
+						uids.Add (uid.ToString ());
+				} else {
+					uids.Add (minmax[0]);
+				}
+			}
+
+			return uids.ToArray ();
+		}
+
 		public static void HandleUntaggedListResponse (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);

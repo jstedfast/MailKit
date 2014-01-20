@@ -297,32 +297,209 @@ namespace MailKit.Net.Imap {
 			throw new NotImplementedException ();
 		}
 
-		public string Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken)
+		static string GetFlagsList (MessageFlags flags)
 		{
-			throw new NotImplementedException ();
+			var builder = new StringBuilder ();
+
+			builder.Append ('(');
+			if ((flags & MessageFlags.Answered) != 0)
+				builder.Append ("\\Answered ");
+			if ((flags & MessageFlags.Deleted) != 0)
+				builder.Append ("\\Deleted ");
+			if ((flags & MessageFlags.Draft) != 0)
+				builder.Append ("\\Draft ");
+			if ((flags & MessageFlags.Flagged) != 0)
+				builder.Append ("\\Flagged ");
+			if ((flags & MessageFlags.Seen) != 0)
+				builder.Append ("\\Seen ");
+			if (builder.Length > 1)
+				builder.Length--;
+			builder.Append (')');
+
+			return builder.ToString ();
 		}
 
-		public string Append (MimeMessage message, MessageFlags flags, DateTime date, CancellationToken cancellationToken)
+		ImapCommand QueueAppend (MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			string format = string.Empty;
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+				format = "UID ";
+
+			format += "APPEND %F";
+
+			if (date.HasValue)
+				format += " \"" + ImapUtils.FormatInternalDate (date.Value) + "\"";
+
+			format += " " + GetFlagsList (flags & AcceptedFlags);
+			format += " %L\r\n";
+
+			return Engine.QueueCommand (cancellationToken, this, format, this, message);
+		}
+
+		public string Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken)
+		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+
+			var ic = QueueAppend (message, flags, null, cancellationToken);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic);
+
+			foreach (var code in ic.RespCodes) {
+				if (code.Type == ImapResponseCodeType.AppendUid)
+					return code.DestSet;
+			}
+
+			return null;
+		}
+
+		public string Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken)
+		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+
+			var ic = QueueAppend (message, flags, date, cancellationToken);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic);
+
+			foreach (var code in ic.RespCodes) {
+				if (code.Type == ImapResponseCodeType.AppendUid)
+					return code.DestSet;
+			}
+
+			return null;
+		}
+
+		ImapCommand QueueMultiAppend (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken)
+		{
+			var args = new List<object> ();
+			string format = string.Empty;
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+				format = "UID ";
+
+			format += "APPEND %F";
+			args.Add (this);
+
+			for (int i = 0; i < messages.Length; i++) {
+				if (dates != null)
+					format += " \"" + ImapUtils.FormatInternalDate (dates[i]) + "\"";
+
+				format += " " + GetFlagsList (flags[i] & AcceptedFlags);
+				format += " %L";
+
+				args.Add (messages[i]);
+			}
+
+			format += "\r\n";
+
+			return Engine.QueueCommand (cancellationToken, this, format, args.ToArray ());
 		}
 
 		public string[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (messages == null)
+				throw new ArgumentNullException ("messages");
+
+			for (int i = 0; i < messages.Length; i++) {
+				if (messages[i] == null)
+					throw new ArgumentException ("One or more of the messages is null.");
+			}
+
+			if (flags == null)
+				throw new ArgumentNullException ("flags");
+
+			if (messages.Length != flags.Length)
+				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
+
+			if (messages.Length == 0)
+				return new string[0];
+
+			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
+				var ic = QueueMultiAppend (messages, flags, null, cancellationToken);
+
+				Engine.Wait (ic);
+				ProcessResponseCodes (ic);
+
+				foreach (var code in ic.RespCodes) {
+					if (code.Type == ImapResponseCodeType.AppendUid)
+						return ImapUtils.ParseUidSet (code.DestSet);
+				}
+
+				return null;
+			}
+
+			var uids = new List<string> ();
+
+			for (int i = 0; i < messages.Length; i++) {
+				var uid = Append (messages[i], flags[i], cancellationToken);
+				if (uids != null && uid != null)
+					uids.Add (uid);
+				else
+					uids = null;
+			}
+
+			return uids != null ? uids.ToArray () : null;
 		}
 
-		public string[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTime[] dates, CancellationToken cancellationToken)
+		public string[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken)
+		{
+			if (messages == null)
+				throw new ArgumentNullException ("messages");
+
+			for (int i = 0; i < messages.Length; i++) {
+				if (messages[i] == null)
+					throw new ArgumentException ("One or more of the messages is null.");
+			}
+
+			if (flags == null)
+				throw new ArgumentNullException ("flags");
+
+			if (dates == null)
+				throw new ArgumentNullException ("dates");
+
+			if (messages.Length != flags.Length || messages.Length != dates.Length)
+				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
+
+			if (messages.Length == 0)
+				return new string[0];
+
+			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
+				var ic = QueueMultiAppend (messages, flags, dates, cancellationToken);
+
+				Engine.Wait (ic);
+				ProcessResponseCodes (ic);
+
+				foreach (var code in ic.RespCodes) {
+					if (code.Type == ImapResponseCodeType.AppendUid)
+						return ImapUtils.ParseUidSet (code.DestSet);
+				}
+
+				return null;
+			}
+
+			var uids = new List<string> ();
+
+			for (int i = 0; i < messages.Length; i++) {
+				var uid = Append (messages[i], flags[i], dates[i], cancellationToken);
+				if (uids != null && uid != null)
+					uids.Add (uid);
+				else
+					uids = null;
+			}
+
+			return uids != null ? uids.ToArray () : null;
+		}
+
+		public string[] CopyTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public void CopyTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public void MoveTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
+		public string[] MoveTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException ();
 		}
