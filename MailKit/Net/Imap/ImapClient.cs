@@ -154,7 +154,7 @@ namespace MailKit.Net.Imap {
 		/// Gets whether or not the client is currently connected to an IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// When an <see cref="ImapException"/> is caught, the connection state of the
+		/// When an <see cref="ImapProtocolException"/> is caught, the connection state of the
 		/// <see cref="ImapClient"/> should be checked before continuing.
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
@@ -197,7 +197,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="ImapException">
+		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
 		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken)
@@ -325,7 +325,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="ImapException">
+		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
 		public void Connect (Uri uri, CancellationToken cancellationToken)
@@ -409,7 +409,8 @@ namespace MailKit.Net.Imap {
 
 					engine.Wait (ic);
 				} catch (OperationCanceledException) {
-				} catch (ImapException) {
+				} catch (ImapProtocolException) {
+				} catch (ImapCommandException) {
 				} catch (IOException) {
 				}
 			}
@@ -434,8 +435,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="ImapException">
-		/// The NOOP command failed.
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the NOOP command with a NO or BAD response.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server responded with an unexpected token.
 		/// </exception>
 		public void NoOp (CancellationToken cancellationToken)
 		{
@@ -447,6 +451,9 @@ namespace MailKit.Net.Imap {
 			var ic = engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
 
 			engine.Wait (ic);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("NOOP", ic.Result);
 		}
 
 		#endregion

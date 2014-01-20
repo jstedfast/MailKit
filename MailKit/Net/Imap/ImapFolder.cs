@@ -209,7 +209,7 @@ namespace MailKit.Net.Imap {
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				return FolderAccess.None;
+				throw new ImapCommandException (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic.Result);
 
 			return Access;
 		}
@@ -232,6 +232,9 @@ namespace MailKit.Net.Imap {
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException (expunge ? "CLOSE" : "UNSELECT", ic.Result);
 		}
 
 		public void Rename (string newName, CancellationToken cancellationToken)
@@ -254,10 +257,13 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result == ImapCommandResult.Ok)
-				IsSubscribed = true;
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("SUBSCRIBE", ic.Result);
+
+			IsSubscribed = true;
 		}
 
 		public void Unsubscribe (CancellationToken cancellationToken)
@@ -265,10 +271,13 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result == ImapCommandResult.Ok)
-				IsSubscribed = false;
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("UNSUBSCRIBE", ic.Result);
+
+			IsSubscribed = false;
 		}
 
 		public IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken)
@@ -285,6 +294,9 @@ namespace MailKit.Net.Imap {
 			Engine.Wait (ic);
 			ProcessResponseCodes (ic, null);
 
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException (subscribedOnly ? "LSUB" : "LIST", ic.Result);
+
 			return list;
 		}
 
@@ -297,6 +309,9 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("CHECK", ic.Result);
 		}
 
 		public void Expunge (CancellationToken cancellationToken)
@@ -308,6 +323,9 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("EXPUNGE", ic.Result);
 		}
 
 		public void Expunge (string[] uids, CancellationToken cancellationToken)
@@ -321,6 +339,9 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("EXPUNGE", ic.Result);
 		}
 
 		static string GetFlagsList (MessageFlags flags)
@@ -374,7 +395,11 @@ namespace MailKit.Net.Imap {
 			var ic = QueueAppend (message, flags, null, cancellationToken);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("APPEND", ic.Result);
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.AppendUid)
@@ -395,7 +420,11 @@ namespace MailKit.Net.Imap {
 			var ic = QueueAppend (message, flags, date, cancellationToken);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("APPEND", ic.Result);
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.AppendUid)
@@ -457,7 +486,11 @@ namespace MailKit.Net.Imap {
 				var ic = QueueMultiAppend (messages, flags, null, cancellationToken);
 
 				Engine.Wait (ic);
+
 				ProcessResponseCodes (ic, null);
+
+				if (ic.Result != ImapCommandResult.Ok)
+					throw new ImapCommandException ("APPEND", ic.Result);
 
 				foreach (var code in ic.RespCodes) {
 					if (code.Type == ImapResponseCodeType.AppendUid)
@@ -509,7 +542,11 @@ namespace MailKit.Net.Imap {
 				var ic = QueueMultiAppend (messages, flags, dates, cancellationToken);
 
 				Engine.Wait (ic);
+
 				ProcessResponseCodes (ic, null);
+
+				if (ic.Result != ImapCommandResult.Ok)
+					throw new ImapCommandException ("APPEND", ic.Result);
 
 				foreach (var code in ic.RespCodes) {
 					if (code.Type == ImapResponseCodeType.AppendUid)
@@ -551,7 +588,11 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID COPY %s %F\r\n", set, destination);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, "destination");
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("COPY", ic.Result);
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.CopyUid)
@@ -588,7 +629,11 @@ namespace MailKit.Net.Imap {
 			ic = Engine.QueueCommand (cancellationToken, this, "UID MOVE %s %F\r\n", set, destination);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, "destination");
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("MOVE", ic.Result);
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.CopyUid)
@@ -614,7 +659,11 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, this, "COPY %s %F\r\n", set, destination);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, "destination");
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("COPY", ic.Result);
 		}
 
 		public void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken)
@@ -622,6 +671,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				CopyTo (indexes, destination, cancellationToken);
 				AddFlags (indexes, MessageFlags.Deleted, true, cancellationToken);
+				return;
 			}
 
 			var set = ImapUtils.FormatUidSet (indexes);
@@ -639,7 +689,11 @@ namespace MailKit.Net.Imap {
 			ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, "destination");
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("MOVE", ic.Result);
 		}
 
 		public FetchResult Fetch (string uid, MessageAttributes attributes, CancellationToken cancellationToken)

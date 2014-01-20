@@ -290,7 +290,7 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
-		internal static ImapException UnexpectedToken (ImapToken token, bool greeting)
+		internal static ImapProtocolException UnexpectedToken (ImapToken token, bool greeting)
 		{
 			string message;
 
@@ -299,7 +299,7 @@ namespace MailKit.Net.Imap {
 			else
 				message = string.Format ("Unexpected token in IMAP response: {0}", token);
 
-			return new ImapException (ImapErrorType.ParseError, message);
+			return new ImapProtocolException (message);
 		}
 
 		/// <summary>
@@ -1080,7 +1080,7 @@ namespace MailKit.Net.Imap {
 
 				if (current.Bye)
 					Disconnect ();
-			} catch (ImapException ex) {
+			} catch (ImapProtocolException ex) {
 				// FIXME: not all ImapExceptions are fatal
 				Disconnect ();
 				throw;

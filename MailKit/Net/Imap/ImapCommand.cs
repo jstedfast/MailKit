@@ -205,7 +205,7 @@ namespace MailKit.Net.Imap {
 		public CancellationToken CancellationToken { get; private set; }
 		public ImapCommandStatus Status { get; internal set; }
 		public ImapCommandResult Result { get; internal set; }
-		public ImapException Exception { get; internal set; }
+		public ImapProtocolException Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
 		public ImapFolder Folder { get; private set; }
 		public object UserData { get; internal set; }

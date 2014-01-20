@@ -27,63 +27,28 @@ using System;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
-	/// An enumeration of the possible types of IMAP errors.
-	/// </summary>
-	public enum ImapErrorType {
-		/// <summary>
-		/// There was a fatal protocol error.
-		/// </summary>
-		ProtocolError,
-
-		/// <summary>
-		/// The IMAP server replied with <c>"BAD"</c> to a command.
-		/// </summary>
-		CommandError,
-
-		/// <summary>
-		/// An error occurred while parsing the response from the server.
-		/// </summary>
-		ParseError,
-	}
-
-	/// <summary>
 	/// A IMAP protocol exception.
 	/// </summary>
 	/// <remarks>
 	/// The exception that is thrown when there is an error communicating with a IMAP server.
 	/// </remarks>
-	public class ImapException : ProtocolException
+	public class ImapProtocolException : ProtocolException
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>
-		/// <param name="type">The error type.</param>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">An inner exception.</param>
-		internal ImapException (ImapErrorType type, string message, Exception innerException) : base (message, innerException)
+		internal ImapProtocolException (string message, Exception innerException) : base (message, innerException)
 		{
-			ErrorType = type;
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>
-		/// <param name="type">The error type.</param>
 		/// <param name="message">The error message.</param>
-		internal ImapException (ImapErrorType type, string message) : base (message)
+		internal ImapProtocolException (string message) : base (message)
 		{
-			ErrorType = type;
-		}
-
-		/// <summary>
-		/// Gets the type of the error.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="ImapErrorType.ProtocolError"/> always requires the client to reconnect before coninuing.
-		/// </remarks>
-		/// <value>The type of the error.</value>
-		public ImapErrorType ErrorType {
-			get; private set;
 		}
 	}
 }
