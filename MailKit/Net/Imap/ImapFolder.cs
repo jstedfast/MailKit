@@ -349,7 +349,7 @@ namespace MailKit.Net.Imap {
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.AppendUid)
-					return code.DestSet;
+					return code.DestUidSet[0];
 			}
 
 			return null;
@@ -367,7 +367,7 @@ namespace MailKit.Net.Imap {
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.AppendUid)
-					return code.DestSet;
+					return code.DestUidSet[0];
 			}
 
 			return null;
@@ -426,7 +426,7 @@ namespace MailKit.Net.Imap {
 
 				foreach (var code in ic.RespCodes) {
 					if (code.Type == ImapResponseCodeType.AppendUid)
-						return ImapUtils.ParseUidSet (code.DestSet);
+						return code.DestUidSet;
 				}
 
 				return null;
@@ -475,7 +475,7 @@ namespace MailKit.Net.Imap {
 
 				foreach (var code in ic.RespCodes) {
 					if (code.Type == ImapResponseCodeType.AppendUid)
-						return ImapUtils.ParseUidSet (code.DestSet);
+						return code.DestUidSet;
 				}
 
 				return null;

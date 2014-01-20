@@ -56,7 +56,7 @@ namespace MailKit.Net.Imap {
 	class ImapResponseCode
 	{
 		public readonly ImapResponseCodeType Type;
-		public string SrcSet, DestSet;
+		public string[] SrcUidSet, DestUidSet;
 		public ulong HighestModSeq;
 		public MessageFlags Flags;
 		public uint UidValidity;

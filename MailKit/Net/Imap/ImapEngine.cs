@@ -844,12 +844,13 @@ namespace MailKit.Net.Imap {
 
 				token = stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
-					Debug.WriteLine ("Expected nz-number as second argument to 'APPENDUID' RESP-CODE, but got: {0}", token);
+				if (token.Type != ImapTokenType.Atom) {
+					Debug.WriteLine ("Expected nz-number or uid-set as second argument to 'APPENDUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
-				code.Uid = n32;
+				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
+				code.DestUidSet = ImapUtils.ParseUidSet ((string) token.Value);
 
 				token = stream.ReadToken (cancellationToken);
 				break;
@@ -868,7 +869,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				code.SrcSet = (string) token.Value;
+				code.SrcUidSet = ImapUtils.ParseUidSet ((string) token.Value);
 
 				token = stream.ReadToken (cancellationToken);
 
@@ -877,7 +878,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				code.DestSet = (string) token.Value;
+				code.DestUidSet = ImapUtils.ParseUidSet ((string) token.Value);
 
 				token = stream.ReadToken (cancellationToken);
 				break;
