@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 
@@ -78,6 +79,76 @@ namespace MailKit.Net.Imap {
 			uids = list.ToArray ();
 
 			return true;
+		}
+
+		public static string FormatUidSet (uint[] uids)
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			var builder = new StringBuilder ();
+			int index = 0;
+
+			while (index < uids.Length) {
+				uint min = uids[0];
+				uint max = min;
+				int i = 0;
+
+				while (i < uids.Length) {
+					if (uids[i] > max + 1)
+						break;
+
+					max = uids[i++];
+				}
+
+				if (builder.Length > 0)
+					builder.Append (',');
+
+				if (max > min)
+					builder.AppendFormat ("{0}:{1}", min, max);
+				else
+					builder.Append (min.ToString ());
+
+				index = i;
+			}
+
+			return builder.ToString ();
+		}
+
+		public static string FormatUidSet (int[] indexes)
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			var uids = new uint[indexes.Length];
+
+			for (int i = 0; i < indexes.Length; i++) {
+				if (i < 0)
+					throw new ArgumentException ("One or more indexes were negative.", "indexes");
+
+				uids[i] = (uint) indexes[i] + 1;
+			}
+
+			return FormatUidSet (uids);
+		}
+
+		public static string FormatUidSet (string[] uids)
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			var values = new uint[uids.Length];
+
+			for (int i = 0; i < uids.Length; i++) {
+				uint uid;
+
+				if (!uint.TryParse (uids[i], out uid))
+					throw new ArgumentException ("One or more uids were invalid.", "uids");
+
+				values[i] = uid;
+			}
+
+			return FormatUidSet (values);
 		}
 
 		public static void HandleUntaggedListResponse (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)

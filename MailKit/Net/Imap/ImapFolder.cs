@@ -72,8 +72,10 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
-		void ProcessResponseCodes (ImapCommand ic)
+		void ProcessResponseCodes (ImapCommand ic, string paramName)
 		{
+			bool tryCreate = false;
+
 			foreach (var code in ic.RespCodes) {
 				switch (code.Type) {
 				case ImapResponseCodeType.Alert:
@@ -87,6 +89,9 @@ namespace MailKit.Net.Imap {
 					break;
 				case ImapResponseCodeType.ReadWrite:
 					Access = FolderAccess.ReadWrite;
+					break;
+				case ImapResponseCodeType.TryCreate:
+					tryCreate = true;
 					break;
 				case ImapResponseCodeType.UidNext:
 					UidNext = code.Uid.ToString ();
@@ -104,6 +109,13 @@ namespace MailKit.Net.Imap {
 					HighestModSeq = 0;
 					break;
 				}
+			}
+
+			if (tryCreate) {
+				if (paramName == null)
+					throw new ArgumentException ("The folder does not exist.");
+
+				throw new ArgumentException ("The destination folder does not exist.", paramName);
 			}
 		}
 
@@ -194,7 +206,7 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, this, format, this);
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				return FolderAccess.None;
@@ -219,7 +231,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 		}
 
 		public void Rename (string newName, CancellationToken cancellationToken)
@@ -242,7 +254,7 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
 
 			Engine.Wait (ic);
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 
 			if (ic.Result == ImapCommandResult.Ok)
 				IsSubscribed = true;
@@ -253,7 +265,7 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
 
 			Engine.Wait (ic);
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 
 			if (ic.Result == ImapCommandResult.Ok)
 				IsSubscribed = false;
@@ -271,30 +283,44 @@ namespace MailKit.Net.Imap {
 			ic.UserData = list;
 
 			Engine.Wait (ic);
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 
 			return list;
 		}
 
 		public void Check (CancellationToken cancellationToken)
 		{
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
 			var ic = Engine.QueueCommand (cancellationToken, this, "CHECK\r\n");
 
 			Engine.Wait (ic);
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 		}
 
 		public void Expunge (CancellationToken cancellationToken)
 		{
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
 			var ic = Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
 
 			Engine.Wait (ic);
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 		}
 
 		public void Expunge (string[] uids, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var set = ImapUtils.FormatUidSet (uids);
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID EXPUNGE %s\r\n", set);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic, null);
 		}
 
 		static string GetFlagsList (MessageFlags flags)
@@ -342,10 +368,13 @@ namespace MailKit.Net.Imap {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
 			var ic = QueueAppend (message, flags, null, cancellationToken);
 
 			Engine.Wait (ic);
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.AppendUid)
@@ -360,10 +389,13 @@ namespace MailKit.Net.Imap {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
 			var ic = QueueAppend (message, flags, date, cancellationToken);
 
 			Engine.Wait (ic);
-			ProcessResponseCodes (ic);
+			ProcessResponseCodes (ic, null);
 
 			foreach (var code in ic.RespCodes) {
 				if (code.Type == ImapResponseCodeType.AppendUid)
@@ -415,6 +447,9 @@ namespace MailKit.Net.Imap {
 			if (messages.Length != flags.Length)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
 			if (messages.Length == 0)
 				return new string[0];
 
@@ -422,7 +457,7 @@ namespace MailKit.Net.Imap {
 				var ic = QueueMultiAppend (messages, flags, null, cancellationToken);
 
 				Engine.Wait (ic);
-				ProcessResponseCodes (ic);
+				ProcessResponseCodes (ic, null);
 
 				foreach (var code in ic.RespCodes) {
 					if (code.Type == ImapResponseCodeType.AppendUid)
@@ -464,6 +499,9 @@ namespace MailKit.Net.Imap {
 			if (messages.Length != flags.Length || messages.Length != dates.Length)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
 
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
 			if (messages.Length == 0)
 				return new string[0];
 
@@ -471,7 +509,7 @@ namespace MailKit.Net.Imap {
 				var ic = QueueMultiAppend (messages, flags, dates, cancellationToken);
 
 				Engine.Wait (ic);
-				ProcessResponseCodes (ic);
+				ProcessResponseCodes (ic, null);
 
 				foreach (var code in ic.RespCodes) {
 					if (code.Type == ImapResponseCodeType.AppendUid)
@@ -496,22 +534,112 @@ namespace MailKit.Net.Imap {
 
 		public string[] CopyTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var set = ImapUtils.FormatUidSet (uids);
+
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+
+			if (!(destination is ImapFolder))
+				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID COPY %s %F\r\n", set, destination);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic, "destination");
+
+			foreach (var code in ic.RespCodes) {
+				if (code.Type == ImapResponseCodeType.CopyUid)
+					return code.DestUidSet;
+			}
+
+			return null;
 		}
 
 		public string[] MoveTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				var copied = CopyTo (uids, destination, cancellationToken);
+				AddFlags (uids, MessageFlags.Deleted, true, cancellationToken);
+				Expunge (uids, cancellationToken);
+				return copied;
+			}
+
+			var set = ImapUtils.FormatUidSet (uids);
+			ImapCommand ic;
+
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+
+			if (!(destination is ImapFolder))
+				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
+
+			ic = Engine.QueueCommand (cancellationToken, this, "UID MOVE %s %F\r\n", set, destination);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic, "destination");
+
+			foreach (var code in ic.RespCodes) {
+				if (code.Type == ImapResponseCodeType.CopyUid)
+					return code.DestUidSet;
+			}
+
+			return null;
 		}
 
 		public void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var set = ImapUtils.FormatUidSet (indexes);
+
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+
+			if (!(destination is ImapFolder))
+				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "COPY %s %F\r\n", set, destination);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic, "destination");
 		}
 
 		public void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
+				CopyTo (indexes, destination, cancellationToken);
+				AddFlags (indexes, MessageFlags.Deleted, true, cancellationToken);
+			}
+
+			var set = ImapUtils.FormatUidSet (indexes);
+			ImapCommand ic;
+
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+
+			if (!(destination is ImapFolder))
+				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+
+			ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
+
+			Engine.Wait (ic);
+			ProcessResponseCodes (ic, "destination");
 		}
 
 		public FetchResult Fetch (string uid, MessageAttributes attributes, CancellationToken cancellationToken)
