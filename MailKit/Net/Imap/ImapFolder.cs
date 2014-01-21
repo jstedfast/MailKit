@@ -52,7 +52,7 @@ namespace MailKit.Net.Imap {
 			Attributes = attrs;
 			Engine = engine;
 
-			var names = FullName.Split (new char[] { delim }, StringSplitOptions.RemoveEmptyEntries);
+			var names = FullName.Split (new [] { delim }, StringSplitOptions.RemoveEmptyEntries);
 			Name = names.Length > 0 ? names[names.Length - 1] : FullName;
 		}
 
@@ -301,12 +301,7 @@ namespace MailKit.Net.Imap {
 			if (IsOpen && Access == access)
 				return access;
 
-			string format;
-			if (access == FolderAccess.ReadOnly)
-				format = "EXAMINE %F\r\n";
-			else
-				format = "SELECT %F\r\n";
-
+			string format = access == FolderAccess.ReadOnly ? "EXAMINE %F\r\n" : "SELECT %F\r\n";
 			var ic = Engine.QueueCommand (cancellationToken, this, format, this);
 
 			Engine.Wait (ic);
@@ -587,28 +582,6 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("EXPUNGE", ic.Result);
 		}
 
-		static string GetFlagsList (MessageFlags flags)
-		{
-			var builder = new StringBuilder ();
-
-			builder.Append ('(');
-			if ((flags & MessageFlags.Answered) != 0)
-				builder.Append ("\\Answered ");
-			if ((flags & MessageFlags.Deleted) != 0)
-				builder.Append ("\\Deleted ");
-			if ((flags & MessageFlags.Draft) != 0)
-				builder.Append ("\\Draft ");
-			if ((flags & MessageFlags.Flagged) != 0)
-				builder.Append ("\\Flagged ");
-			if ((flags & MessageFlags.Seen) != 0)
-				builder.Append ("\\Seen ");
-			if (builder.Length > 1)
-				builder.Length--;
-			builder.Append (')');
-
-			return builder.ToString ();
-		}
-
 		ImapCommand QueueAppend (MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
 		{
 			string format = string.Empty;
@@ -621,7 +594,7 @@ namespace MailKit.Net.Imap {
 			if (date.HasValue)
 				format += " \"" + ImapUtils.FormatInternalDate (date.Value) + "\"";
 
-			format += " " + GetFlagsList (flags & AcceptedFlags);
+			format += " " + ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			format += " %L\r\n";
 
 			return Engine.QueueCommand (cancellationToken, null, format, this, message);
@@ -729,7 +702,7 @@ namespace MailKit.Net.Imap {
 				if (dates != null)
 					format += " \"" + ImapUtils.FormatInternalDate (dates[i]) + "\"";
 
-				format += " " + GetFlagsList (flags[i] & AcceptedFlags);
+				format += " " + ImapUtils.FormatFlagsList (flags[i] & AcceptedFlags);
 				format += " %L";
 
 				args.Add (messages[i]);
@@ -1015,7 +988,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			var set = ImapUtils.FormatUidSet (uids);
-			ImapCommand ic;
 
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
@@ -1029,7 +1001,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
-			ic = Engine.QueueCommand (cancellationToken, this, "UID MOVE %s %F\r\n", set, destination);
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID MOVE %s %F\r\n", set, destination);
 
 			Engine.Wait (ic);
 
@@ -1140,7 +1112,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			var set = ImapUtils.FormatUidSet (indexes);
-			ImapCommand ic;
 
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
@@ -1151,7 +1122,7 @@ namespace MailKit.Net.Imap {
 			if (!IsOpen)
 				throw new InvalidOperationException ("The ImapFolder is not currently open.");
 
-			ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
+			var ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
 
 			Engine.Wait (ic);
 
@@ -1159,6 +1130,17 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("MOVE", ic.Result);
+		}
+
+		static void ValidateUid (string uid)
+		{
+			uint value;
+
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
+			if (!uint.TryParse (uid, out value) || value == 0)
+				throw new ArgumentException ("The uid is invalid.");
 		}
 
 		public FetchResult Fetch (string uid, MessageAttributes attributes, CancellationToken cancellationToken)
@@ -1181,44 +1163,169 @@ namespace MailKit.Net.Imap {
 			throw new NotImplementedException ();
 		}
 
+		static void FetchMessage (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		{
+			var token = engine.ReadToken (ic.CancellationToken);
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			do {
+				token = engine.ReadToken (ic.CancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
+					break;
+
+				if (token.Type != ImapTokenType.Atom)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				var atom = (string) token.Value;
+				uint uid;
+
+				switch (atom) {
+				case "BODY[":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.CloseBracket)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Literal)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					ic.UserData = MimeMessage.Load (engine.Stream, ic.CancellationToken);
+					break;
+				case "UID":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					break;
+				case "FLAGS":
+					// even though we didn't request this piece of information, the IMAP server
+					// may send it if another client has recently modified the message flags.
+					var flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+
+					ic.Folder.OnFlagsChanged (index, flags);
+					break;
+				default:
+					throw ImapEngine.UnexpectedToken (token, false);
+				}
+			} while (true);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+		}
+
 		public MimeMessage GetMessage (string uid, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			ValidateUid (uid);
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The folder is not currently open.");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s BODY.PEEK[]\r\n", uid);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return (MimeMessage) ic.UserData;
 		}
 
 		public MimeMessage GetMessage (int index, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The folder is not currently open.");
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d BODY.PEEK[]\r\n", index + 1);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return (MimeMessage) ic.UserData;
+		}
+
+		void ModifyFlags (string[] uids, MessageFlags flags, string action, CancellationToken cancellationToken)
+		{
+			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
+			var set = ImapUtils.FormatUidSet (uids);
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The folder is not currently open.");
+
+			var format = string.Format ("UID STORE {0} {1} {2}\r\n", set, action, flaglist);
+			var ic = Engine.QueueCommand (cancellationToken, this, format);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("STORE", ic.Result);
 		}
 
 		public void AddFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			ModifyFlags (uids, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
 		public void RemoveFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			ModifyFlags (uids, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
 		public void SetFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			ModifyFlags (uids, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
+		}
+
+		void ModifyFlags (int[] indexes, MessageFlags flags, string action, CancellationToken cancellationToken)
+		{
+			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
+			var set = ImapUtils.FormatUidSet (indexes);
+
+			if (!IsOpen)
+				throw new InvalidOperationException ("The folder is not currently open.");
+
+			var format = string.Format ("STORE {0} {1} {2}\r\n", set, action, flaglist);
+			var ic = Engine.QueueCommand (cancellationToken, this, format);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("STORE", ic.Result);
 		}
 
 		public void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			ModifyFlags (indexes, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
 		public void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			ModifyFlags (indexes, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
 		public void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			ModifyFlags (indexes, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
 
 		public event EventHandler<EventArgs> Deleted;

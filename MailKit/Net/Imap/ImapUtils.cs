@@ -27,6 +27,7 @@
 using System;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Collections.Generic;
 
 namespace MailKit.Net.Imap {
@@ -58,13 +59,13 @@ namespace MailKit.Net.Imap {
 				var minmax = ranges[i].Split (':');
 				uint min;
 
-				if (!uint.TryParse (minmax[0], out min))
+				if (!uint.TryParse (minmax[0], out min) || min == 0)
 					return false;
 
 				if (minmax.Length == 2) {
 					uint max;
 
-					if (!uint.TryParse (minmax[1], out max))
+					if (!uint.TryParse (minmax[1], out max) || max == 0)
 						return false;
 
 					for (uint uid = min; uid <= max; uid++)
@@ -271,6 +272,63 @@ namespace MailKit.Net.Imap {
 
 				folder.ParentFolder = parent;
 			}
+		}
+
+		public static string FormatFlagsList (MessageFlags flags)
+		{
+			var builder = new StringBuilder ();
+
+			builder.Append ('(');
+			if ((flags & MessageFlags.Answered) != 0)
+				builder.Append ("\\Answered ");
+			if ((flags & MessageFlags.Deleted) != 0)
+				builder.Append ("\\Deleted ");
+			if ((flags & MessageFlags.Draft) != 0)
+				builder.Append ("\\Draft ");
+			if ((flags & MessageFlags.Flagged) != 0)
+				builder.Append ("\\Flagged ");
+			if ((flags & MessageFlags.Seen) != 0)
+				builder.Append ("\\Seen ");
+			if (builder.Length > 1)
+				builder.Length--;
+			builder.Append (')');
+
+			return builder.ToString ();
+		}
+
+		public static MessageFlags ParseFlagsList (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			var flags = MessageFlags.None;
+
+			if (token.Type != ImapTokenType.OpenParen) {
+				Debug.WriteLine ("Expected '(' at the start of the flags list, but got: {0}", token);
+				throw ImapEngine.UnexpectedToken (token, false);
+			}
+
+			token = engine.ReadToken (cancellationToken);
+
+			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag) {
+				string flag = (string) token.Value;
+				switch (flag) {
+				case "\\Answered": flags |= MessageFlags.Answered; break;
+				case "\\Deleted":  flags |= MessageFlags.Deleted; break;
+				case "\\Draft":    flags |= MessageFlags.Draft; break;
+				case "\\Flagged":  flags |= MessageFlags.Flagged; break;
+				case "\\Seen":     flags |= MessageFlags.Seen; break;
+				case "\\Recent":   flags |= MessageFlags.Recent; break;
+				case "\\*":        flags |= MessageFlags.UserDefined; break;
+				}
+
+				token = engine.ReadToken (cancellationToken);
+			}
+
+			if (token.Type !=  ImapTokenType.CloseParen) {
+				Debug.WriteLine ("Expected to find a ')' token terminating the flags list, but got: {0}", token);
+				throw ImapEngine.UnexpectedToken (token, false);
+			}
+
+			return flags;
 		}
 	}
 }

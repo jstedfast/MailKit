@@ -542,41 +542,6 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		public MessageFlags ParseFlagsList (CancellationToken cancellationToken)
-		{
-			var token = stream.ReadToken (cancellationToken);
-			var flags = MessageFlags.None;
-
-			if (token.Type != ImapTokenType.OpenParen) {
-				Debug.WriteLine ("Expected '(' at the start of the flags list, but got: {0}", token);
-				throw UnexpectedToken (token, false);
-			}
-
-			token = stream.ReadToken (cancellationToken);
-
-			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag) {
-				string flag = (string) token.Value;
-				switch (flag) {
-				case "\\Answered": flags |= MessageFlags.Answered; break;
-				case "\\Deleted":  flags |= MessageFlags.Deleted; break;
-				case "\\Draft":    flags |= MessageFlags.Draft; break;
-				case "\\Flagged":  flags |= MessageFlags.Flagged; break;
-				case "\\Seen":     flags |= MessageFlags.Seen; break;
-				case "\\Recent":   flags |= MessageFlags.Recent; break;
-				case "\\*":        flags |= MessageFlags.UserDefined; break;
-				}
-
-				token = stream.ReadToken (cancellationToken);
-			}
-
-			if (token.Type !=  ImapTokenType.CloseParen) {
-				Debug.WriteLine ("Expected to find a ')' token terminating the flags list, but got: {0}", token);
-				throw UnexpectedToken (token, false);
-			}
-
-			return flags;
-		}
-
 		void UpdateNamespaces (CancellationToken cancellationToken)
 		{
 			var namespaces = new List<FolderNamespaceCollection> () {
@@ -771,7 +736,7 @@ namespace MailKit.Net.Imap {
 
 				return code;
 			case ImapResponseCodeType.PermanentFlags:
-				code.Flags = ParseFlagsList (cancellationToken);
+				code.Flags = ImapUtils.ParseFlagsList (this, cancellationToken);
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.ReadOnly: break;
@@ -959,7 +924,7 @@ namespace MailKit.Net.Imap {
 					stream.ReadToken (cancellationToken);
 					break;
 				case "FLAGS":
-					folder.AcceptedFlags = ParseFlagsList (cancellationToken);
+					folder.AcceptedFlags = ImapUtils.ParseFlagsList (this, cancellationToken);
 					token = stream.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.Eoln) {
@@ -1001,13 +966,16 @@ namespace MailKit.Net.Imap {
 					break;
 				default:
 					if (int.TryParse (atom, out number)) {
+						if (number == 0)
+							throw UnexpectedToken (token, false);
+
 						// we probably have something like "* 1 EXISTS"
 						token = stream.ReadToken (cancellationToken);
 
 						if (token.Type != ImapTokenType.Atom) {
 							// protocol error
 							Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
-							// FIXME: throw an exception?
+							throw ImapEngine.UnexpectedToken (token, false);
 						}
 
 						atom = (string) token.Value;
@@ -1025,7 +993,7 @@ namespace MailKit.Net.Imap {
 						default:
 							if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 								// the command registered an untagged handler for this atom...
-								handler (this, current, number, token);
+								handler (this, current, number - 1, token);
 							} else {
 								Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
 							}
