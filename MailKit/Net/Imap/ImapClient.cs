@@ -539,7 +539,7 @@ namespace MailKit.Net.Imap {
 		public void Dispose ()
 		{
 			if (!disposed) {
-				engine.Disconnect ();
+				engine.Dispose ();
 				disposed = true;
 			}
 		}

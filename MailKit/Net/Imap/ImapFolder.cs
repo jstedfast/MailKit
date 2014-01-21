@@ -72,6 +72,21 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
+		void CheckState (bool open)
+		{
+			if (Engine.IsDisposed)
+				throw new ObjectDisposedException ("ImapClient");
+
+			if (!Engine.IsConnected)
+				throw new InvalidOperationException ("The ImapClient is not connected.");
+
+			if (Engine.State < ImapEngineState.Authenticated)
+				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+
+			if (open && !IsOpen)
+				throw new InvalidOperationException ("The folder is not currently open.");
+		}
+
 		void ProcessResponseCodes (ImapCommand ic, string paramName)
 		{
 			bool tryCreate = false;
@@ -281,6 +296,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="access"/> is not a valid value.
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -297,6 +318,8 @@ namespace MailKit.Net.Imap {
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
+
+			CheckState (false);
 
 			if (IsOpen && Access == access)
 				return access;
@@ -319,8 +342,15 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -336,8 +366,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Close (bool expunge, CancellationToken cancellationToken)
 		{
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			ImapCommand ic;
 
@@ -376,6 +405,12 @@ namespace MailKit.Net.Imap {
 		/// Subscribes the folder.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -390,6 +425,8 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Subscribe (CancellationToken cancellationToken)
 		{
+			CheckState (false);
+
 			var ic = Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
 
 			Engine.Wait (ic);
@@ -406,6 +443,12 @@ namespace MailKit.Net.Imap {
 		/// Unsubscribes the folder.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -420,6 +463,8 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Unsubscribe (CancellationToken cancellationToken)
 		{
+			CheckState (false);
+
 			var ic = Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
 
 			Engine.Wait (ic);
@@ -438,6 +483,12 @@ namespace MailKit.Net.Imap {
 		/// <returns>The subfolders.</returns>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -452,6 +503,8 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken)
 		{
+			CheckState (false);
+
 			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator + "%" : "%";
 			var command = subscribedOnly ? "LSUB" : "LIST";
 
@@ -475,8 +528,15 @@ namespace MailKit.Net.Imap {
 		/// Forces the server to flush its state for the folder.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -492,8 +552,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Check (CancellationToken cancellationToken)
 		{
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "CHECK\r\n");
 
@@ -509,8 +568,15 @@ namespace MailKit.Net.Imap {
 		/// Expunges the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -526,8 +592,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Expunge (CancellationToken cancellationToken)
 		{
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
 
@@ -550,8 +615,15 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// The list of uids contained one or more invalid values.
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -569,8 +641,7 @@ namespace MailKit.Net.Imap {
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID EXPUNGE %s\r\n", set);
 
@@ -609,6 +680,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -625,6 +702,8 @@ namespace MailKit.Net.Imap {
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
+
+			CheckState (false);
 
 			var ic = QueueAppend (message, flags, null, cancellationToken);
 
@@ -653,6 +732,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -669,6 +754,8 @@ namespace MailKit.Net.Imap {
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
+
+			CheckState (false);
 
 			var ic = QueueAppend (message, flags, date, cancellationToken);
 
@@ -729,6 +816,12 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The number of messages does not match the number of flags.</para>
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -756,6 +849,8 @@ namespace MailKit.Net.Imap {
 
 			if (messages.Length != flags.Length)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
+
+			CheckState (false);
 
 			if (messages.Length == 0)
 				return new string[0];
@@ -810,6 +905,12 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The number of messages, flags, and dates do not match.</para>
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -840,6 +941,8 @@ namespace MailKit.Net.Imap {
 
 			if (messages.Length != flags.Length || messages.Length != dates.Length)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
+
+			CheckState (false);
 
 			if (messages.Length == 0)
 				return new string[0];
@@ -892,8 +995,15 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UIDPLUS extension.
@@ -920,8 +1030,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder))
 				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
@@ -960,8 +1069,15 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UIDPLUS extension.
@@ -995,8 +1111,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder))
 				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
@@ -1034,8 +1149,15 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1059,8 +1181,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder))
 				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "COPY %s %F\r\n", set, destination);
 
@@ -1088,8 +1209,15 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The folder is not currently open.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1119,8 +1247,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder))
 				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
+			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
 
@@ -1219,12 +1346,44 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 		}
 
+		/// <summary>
+		/// Gets the specified message.
+		/// </summary>
+		/// <returns>The message.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uid"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public MimeMessage GetMessage (string uid, CancellationToken cancellationToken)
 		{
 			ValidateUid (uid);
-
-			if (!IsOpen)
-				throw new InvalidOperationException ("The folder is not currently open.");
+			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s BODY.PEEK[]\r\n", uid);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
@@ -1239,13 +1398,43 @@ namespace MailKit.Net.Imap {
 			return (MimeMessage) ic.UserData;
 		}
 
+		/// <summary>
+		/// Gets the specified message.
+		/// </summary>
+		/// <returns>The message.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public MimeMessage GetMessage (int index, CancellationToken cancellationToken)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The folder is not currently open.");
+			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d BODY.PEEK[]\r\n", index + 1);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
@@ -1265,8 +1454,7 @@ namespace MailKit.Net.Imap {
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatUidSet (uids);
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The folder is not currently open.");
+			CheckState (true);
 
 			var format = string.Format ("UID STORE {0} {1} {2}\r\n", set, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format);
@@ -1279,16 +1467,121 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("STORE", ic.Result);
 		}
 
+		/// <summary>
+		/// Adds a set of flags to the specified messages.
+		/// </summary>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void AddFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
 			ModifyFlags (uids, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
+		/// <summary>
+		/// Removes a set of flags from the specified messages.
+		/// </summary>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void RemoveFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
 			ModifyFlags (uids, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
+		/// <summary>
+		/// Sets the flags of the specified messages.
+		/// </summary>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void SetFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
 			ModifyFlags (uids, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
@@ -1299,8 +1592,7 @@ namespace MailKit.Net.Imap {
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatUidSet (indexes);
 
-			if (!IsOpen)
-				throw new InvalidOperationException ("The folder is not currently open.");
+			CheckState (true);
 
 			var format = string.Format ("STORE {0} {1} {2}\r\n", set, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format);
@@ -1313,16 +1605,121 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("STORE", ic.Result);
 		}
 
+		/// <summary>
+		/// Adds a set of flags to the specified messages.
+		/// </summary>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
 			ModifyFlags (indexes, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
+		/// <summary>
+		/// Removes a set of flags from the specified messages.
+		/// </summary>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
 			ModifyFlags (indexes, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
+		/// <summary>
+		/// Sets the flags of the specified messages.
+		/// </summary>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
 			ModifyFlags (indexes, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);

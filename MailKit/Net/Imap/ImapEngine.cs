@@ -83,10 +83,10 @@ namespace MailKit.Net.Imap {
 	/// <summary>
 	/// An IMAP command engine.
 	/// </summary>
-	class ImapEngine
+	class ImapEngine : IDisposable
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
-		static int TagPrefixIndex = 0;
+		static int TagPrefixIndex;
 
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
 		readonly List<ImapCommand> queue;
@@ -94,6 +94,7 @@ namespace MailKit.Net.Imap {
 		ImapCommand current;
 		ImapStream stream;
 		internal int Tag;
+		bool disposed;
 		int nextId;
 
 		public ImapEngine ()
@@ -220,6 +221,14 @@ namespace MailKit.Net.Imap {
 		/// <value>The selected folder.</value>
 		public ImapFolder Selected {
 			get; private set;
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the engine is disposed.
+		/// </summary>
+		/// <value><c>true</c> if the engine is disposed; otherwise, <c>false</c>.</value>
+		public bool IsDisposed {
+			get { return disposed; }
 		}
 
 		#region Special Folders
@@ -1203,6 +1212,19 @@ namespace MailKit.Net.Imap {
 //
 //			if (handler != null)
 //				handler (this, new ImapAlertEventArgs (message));
+		}
+
+		/// <summary>
+		/// Releases all resource used by the <see cref="MailKit.Net.Imap.ImapEngine"/> object.
+		/// </summary>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Imap.ImapEngine"/>. The
+		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.Net.Imap.ImapEngine"/> in an unusable state. After
+		/// calling <see cref="Dispose"/>, you must release all references to the <see cref="MailKit.Net.Imap.ImapEngine"/> so
+		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Imap.ImapEngine"/> was occupying.</remarks>
+		public void Dispose ()
+		{
+			disposed = true;
+			Disconnect ();
 		}
 	}
 }
