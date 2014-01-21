@@ -121,46 +121,107 @@ namespace MailKit.Net.Imap {
 
 		#region IFolder implementation
 
+		/// <summary>
+		/// Gets the parent folder.
+		/// </summary>
+		/// <remarks>
+		/// Root-level folders do not have a parent folder.
+		/// </remarks>
+		/// <value>The parent folder.</value>
 		public IFolder ParentFolder {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the folder attributes.
+		/// </summary>
+		/// <value>The folder attributes.</value>
 		public FolderAttributes Attributes {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the permanent flags.
+		/// </summary>
+		/// <remarks>
+		/// The permanent flags are the message flags that will persist between sessions.
+		/// </remarks>
+		/// <value>The permanent flags.</value>
 		public MessageFlags PermanentFlags {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the accepted flags.
+		/// </summary>
+		/// <remarks>
+		/// The accepted flags are the message flags that will be accepted and persist
+		/// for the current session. For the set of flags that will persist between
+		/// sessions, see the <see cref="PermanentFlags"/> property.
+		/// </remarks>
+		/// <value>The accepted flags.</value>
 		public MessageFlags AcceptedFlags {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the directory separator.
+		/// </summary>
+		/// <value>The directory separator.</value>
 		public char DirectorySeparator { 
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the read/write access of the folder.
+		/// </summary>
+		/// <value>The read/write access.</value>
 		public FolderAccess Access {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the full name of the folder.
+		/// </summary>
+		/// <remarks>
+		/// This is the equivalent of the full path of a file on a file system.
+		/// </remarks>
+		/// <value>The full name of the folder.</value>
 		public string FullName {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the name of the folder.
+		/// </summary>
+		/// <remarks>
+		/// This is the equivalent of the file name of a file on the file system.
+		/// </remarks>
+		/// <value>The name of the folder.</value>
 		public string Name {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the folder is subscribed.
+		/// </summary>
+		/// <value><c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
 		public bool IsSubscribed {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the folder is currently open.
+		/// </summary>
+		/// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
 		public bool IsOpen {
 			get { return Engine.Selected == this; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the folder exists.
+		/// </summary>
+		/// <value><c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
 		public bool Exists {
 			get; internal set;
 		}
@@ -169,33 +230,76 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the UID validity.
+		/// </summary>
+		/// <remarks>
+		/// A UID is only valid so long as the UID validity value remains unchanged.
+		/// </remarks>
+		/// <value>The UID validity.</value>
 		public string UidValidity {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the UID that the next message that is added to the folder will be assigned.
+		/// </summary>
+		/// <value>The next UID.</value>
 		public string UidNext {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the index of the first unread message in the folder.
+		/// </summary>
+		/// <value>The index of the first unread message.</value>
 		public int FirstUnreadIndex {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the number of recently added messages.
+		/// </summary>
+		/// <value>The number of recently added messages.</value>
 		public int Recent {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the total number of messages in the folder.
+		/// </summary>
+		/// <value>The total number of messages.</value>
 		public int Count {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Opens the folder using the requested folder access.
+		/// </summary>
+		/// <param name="access">The requested folder access.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="access"/> is not a valid value.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public FolderAccess Open (FolderAccess access, CancellationToken cancellationToken)
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
 
 			if (IsOpen && Access == access)
-				throw new InvalidOperationException ("The ImapFolder is already open with the specified access.");
+				return access;
 
 			string format;
 			if (access == FolderAccess.ReadOnly)
@@ -204,6 +308,7 @@ namespace MailKit.Net.Imap {
 				format = "SELECT %F\r\n";
 
 			var ic = Engine.QueueCommand (cancellationToken, this, format, this);
+
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -214,6 +319,26 @@ namespace MailKit.Net.Imap {
 			return Access;
 		}
 
+		/// <summary>
+		/// Closes the folder, optionally expunging the messages marked for deletion.
+		/// </summary>
+		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Close (bool expunge, CancellationToken cancellationToken)
 		{
 			if (!IsOpen)
@@ -252,6 +377,22 @@ namespace MailKit.Net.Imap {
 			throw new NotImplementedException ();
 		}
 
+		/// <summary>
+		/// Subscribes the folder.
+		/// </summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Subscribe (CancellationToken cancellationToken)
 		{
 			var ic = Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
@@ -266,6 +407,22 @@ namespace MailKit.Net.Imap {
 			IsSubscribed = true;
 		}
 
+		/// <summary>
+		/// Unsubscribes the folder.
+		/// </summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Unsubscribe (CancellationToken cancellationToken)
 		{
 			var ic = Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
@@ -280,6 +437,24 @@ namespace MailKit.Net.Imap {
 			IsSubscribed = false;
 		}
 
+		/// <summary>
+		/// Gets the subfolders.
+		/// </summary>
+		/// <returns>The subfolders.</returns>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken)
 		{
 			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator + "%" : "%";
@@ -292,6 +467,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = list;
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
@@ -300,6 +476,25 @@ namespace MailKit.Net.Imap {
 			return list;
 		}
 
+		/// <summary>
+		/// Forces the server to flush its state for the folder.
+		/// </summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Check (CancellationToken cancellationToken)
 		{
 			if (!IsOpen)
@@ -308,12 +503,32 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, this, "CHECK\r\n");
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("CHECK", ic.Result);
 		}
 
+		/// <summary>
+		/// Expunges the folder, permanently removing all messages marked for deletion.
+		/// </summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Expunge (CancellationToken cancellationToken)
 		{
 			if (!IsOpen)
@@ -322,12 +537,39 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("EXPUNGE", ic.Result);
 		}
 
+		/// <summary>
+		/// Expunges the specified uids, permanently removing them from the folder.
+		/// </summary>
+		/// <param name="uids">The message uids.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The list of uids contained one or more invalid values.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Expunge (string[] uids, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatUidSet (uids);
@@ -338,6 +580,7 @@ namespace MailKit.Net.Imap {
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID EXPUNGE %s\r\n", set);
 
 			Engine.Wait (ic);
+
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
@@ -381,16 +624,34 @@ namespace MailKit.Net.Imap {
 			format += " " + GetFlagsList (flags & AcceptedFlags);
 			format += " %L\r\n";
 
-			return Engine.QueueCommand (cancellationToken, this, format, this, message);
+			return Engine.QueueCommand (cancellationToken, null, format, this, message);
 		}
 
+		/// <summary>
+		/// Appends the specified message to the folder.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
-
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
 
 			var ic = QueueAppend (message, flags, null, cancellationToken);
 
@@ -409,13 +670,32 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
+		/// <summary>
+		/// Appends the specified message to the folder.
+		/// </summary>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="date">The received date of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
-
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
 
 			var ic = QueueAppend (message, flags, date, cancellationToken);
 
@@ -457,9 +737,37 @@ namespace MailKit.Net.Imap {
 
 			format += "\r\n";
 
-			return Engine.QueueCommand (cancellationToken, this, format, args.ToArray ());
+			return Engine.QueueCommand (cancellationToken, null, format, args.ToArray ());
 		}
 
+		/// <summary>
+		/// Appends the specified messages to the folder.
+		/// </summary>
+		/// <param name="messages">The array of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="messages"/> is null.</para>
+		/// <para>-or-</para>
+		/// <para>The number of messages does not match the number of flags.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken)
 		{
 			if (messages == null)
@@ -475,9 +783,6 @@ namespace MailKit.Net.Imap {
 
 			if (messages.Length != flags.Length)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
-
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
 
 			if (messages.Length == 0)
 				return new string[0];
@@ -513,6 +818,37 @@ namespace MailKit.Net.Imap {
 			return uids != null ? uids.ToArray () : null;
 		}
 
+		/// <summary>
+		/// Appends the specified messages to the folder.
+		/// </summary>
+		/// <param name="messages">The array of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each of the messages.</param>
+		/// <param name="dates">The received dates to use for each of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="dates"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="messages"/> is null.</para>
+		/// <para>-or-</para>
+		/// <para>The number of messages, flags, and dates do not match.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken)
 		{
 			if (messages == null)
@@ -531,9 +867,6 @@ namespace MailKit.Net.Imap {
 
 			if (messages.Length != flags.Length || messages.Length != dates.Length)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
-
-			if (!IsOpen)
-				throw new InvalidOperationException ("The ImapFolder is not currently open.");
 
 			if (messages.Length == 0)
 				return new string[0];
@@ -569,6 +902,41 @@ namespace MailKit.Net.Imap {
 			return uids != null ? uids.ToArray () : null;
 		}
 
+		/// <summary>
+		/// Copies the specified messages to the destination folder.
+		/// </summary>
+		/// <returns>The UIDs of the messages in the destination folder.</returns>
+		/// <param name="uids">The UIDs of the messages to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the UIDPLUS extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string[] CopyTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatUidSet (uids);
@@ -602,6 +970,41 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
+		/// <summary>
+		/// Moves the specified messages to the destination folder.
+		/// </summary>
+		/// <returns>The UIDs of the messages in the destination folder.</returns>
+		/// <param name="uids">The UIDs of the messages to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the UIDPLUS extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string[] MoveTo (string[] uids, IFolder destination, CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
@@ -643,6 +1046,37 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
+		/// <summary>
+		/// Copies the specified messages to the destination folder.
+		/// </summary>
+		/// <param name="indexes">The indexes of the messages to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatUidSet (indexes);
@@ -666,6 +1100,37 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("COPY", ic.Result);
 		}
 
+		/// <summary>
+		/// Moves the specified messages to the destination folder.
+		/// </summary>
+		/// <param name="indexes">The indexes of the messages to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="destination"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
