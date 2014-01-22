@@ -553,7 +553,7 @@ namespace MailKit.Net.Imap {
 				*inptr = (byte) '\n';
 			} while (true);
 
-			if (int.TryParse (builder.ToString (), out literalDataLeft) || literalDataLeft < 0)
+			if (!int.TryParse (builder.ToString (), out literalDataLeft) || literalDataLeft < 0)
 				return new ImapToken (ImapTokenType.Error, ImapTokenType.Literal);
 
 			Mode = ImapStreamMode.Literal;
