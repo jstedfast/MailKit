@@ -87,6 +87,17 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The folder is not currently open.");
 		}
 
+		static void ValidateUid (string uid)
+		{
+			uint value;
+
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
+			if (!uint.TryParse (uid, out value) || value == 0)
+				throw new ArgumentException ("The uid is invalid.");
+		}
+
 		void ProcessResponseCodes (ImapCommand ic, string paramName)
 		{
 			bool tryCreate = false;
@@ -1259,35 +1270,175 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("MOVE", ic.Result);
 		}
 
-		static void ValidateUid (string uid)
+		static void FetchAttributes (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
-			uint value;
+			var token = engine.ReadToken (ic.CancellationToken);
 
-			if (uid == null)
-				throw new ArgumentNullException ("uid");
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
 
-			if (!uint.TryParse (uid, out value) || value == 0)
-				throw new ArgumentException ("The uid is invalid.");
+			var results = (SortedDictionary<int, FetchResult>) ic.UserData;
+			FetchResult result;
+
+			if (!results.TryGetValue (index, out result)) {
+				result = new FetchResult (index);
+				results.Add (index, result);
+			}
+
+			do {
+				token = engine.ReadToken (ic.CancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
+					break;
+
+				if (token.Type != ImapTokenType.Atom)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				var atom = (string) token.Value;
+				uint value;
+
+				switch (atom) {
+				case "INTERNALDATE":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					switch (token.Type) {
+					case ImapTokenType.QString:
+					case ImapTokenType.Atom:
+						result.InternalDate = ImapUtils.ParseInternalDate ((string) token.Value);
+					case ImapTokenType.Nil:
+						result.InternalDate = null;
+						break;
+					default:
+						throw ImapEngine.UnexpectedToken (token, false);
+					}
+					break;
+				case "RFC822.SIZE":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					result.MessageSize = value;
+					break;
+				case "BODYSTRUCTURE":
+					// FIXME:
+					break;
+				case "BODY":
+					// FIXME:
+					break;
+				case "ENVELOPE":
+					result.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
+					break;
+				case "FLAGS":
+					result.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+					break;
+				case "UID":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					result.Uid = value.ToString ();
+					break;
+				default:
+					throw ImapEngine.UnexpectedToken (token, false);
+				}
+			} while (true);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
 		}
 
-		public FetchResult Fetch (string uid, MessageAttributes attributes, CancellationToken cancellationToken)
+		static string FormatAttributeQuery (MessageAttributes attrs)
 		{
-			throw new NotImplementedException ();
+			string query;
+
+			if ((attrs & MessageAttributes.BodyStructure) != 0 && (attrs & MessageAttributes.Body) != 0) {
+				// don't query both the BODY and BODYSTRUCTURE, that's just dumb...
+				attrs &= ~MessageAttributes.Body;
+			}
+
+			// first, eliminate the aliases...
+			if ((attrs & MessageAttributes.Full) == MessageAttributes.Full) {
+				attrs &= ~MessageAttributes.Full;
+				query = "FULL ";
+			} else if ((attrs & MessageAttributes.All) == MessageAttributes.All) {
+				attrs &= ~MessageAttributes.All;
+				query = "ALL ";
+			} else if ((attrs & MessageAttributes.Fast) == MessageAttributes.Fast) {
+				attrs &= ~MessageAttributes.Fast;
+				query = "FAST ";
+			} else {
+				query = string.Empty;
+			}
+
+			// now add on any additional attributes...
+			if ((attrs & MessageAttributes.Uid) != 0)
+				query += "UID ";
+			if ((attrs & MessageAttributes.Flags) != 0)
+				query += "FLAGS ";
+			if ((attrs & MessageAttributes.InternalDate) != 0)
+				query += "INTERNALDATE ";
+			if ((attrs & MessageAttributes.MessageSize) != 0)
+				query += "RFC822.SIZE ";
+			if ((attrs & MessageAttributes.Envelope) != 0)
+				query += "ENVELOPE ";
+			if ((attrs & MessageAttributes.BodyStructure) != 0)
+				query += "BODYSTRUCTURE ";
+			if ((attrs & MessageAttributes.Body) != 0)
+				query += "BODY ";
+
+			return query.TrimEnd ();
 		}
 
 		public IEnumerable<FetchResult> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
-		}
+			var query = FormatAttributeQuery (attributes);
+			var set = ImapUtils.FormatUidSet (uids);
 
-		public FetchResult Fetch (int index, MessageAttributes attributes, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException ();
+			if (attributes == MessageAttributes.None)
+				throw new ArgumentOutOfRangeException ("attributes");
+
+			CheckState (true);
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (%s)\r\n", set, query);
+			var results = new SortedDictionary<int, FetchResult> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
 		}
 
 		public IEnumerable<FetchResult> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var query = FormatAttributeQuery (attributes);
+			var set = ImapUtils.FormatUidSet (indexes);
+
+			if (attributes == MessageAttributes.None)
+				throw new ArgumentOutOfRangeException ("attributes");
+
+			CheckState (true);
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
+			var results = new SortedDictionary<int, FetchResult> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
 		}
 
 		static void FetchMessage (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)

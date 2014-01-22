@@ -25,10 +25,15 @@
 //
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Globalization;
 using System.Collections.Generic;
+
+using MimeKit;
+using MimeKit.Utils;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -36,6 +41,8 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	static class ImapUtils
 	{
+		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+
 		static readonly string[] Months = {
 			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
 			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -46,6 +53,13 @@ namespace MailKit.Net.Imap {
 			return string.Format ("{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6:+00;-00}{7:00}",
 				date.Day, Months[date.Month - 1], date.Year, date.Hour, date.Minute, date.Second,
 				date.Offset.Hours, date.Offset.Minutes);
+		}
+
+		public static DateTimeOffset ParseInternalDate (string atom)
+		{
+			// FIXME: what specifier do we use for the timezone offset that includes minutes!?!?
+			//return DateTimeOffset.ParseExact (atom, "dd-MMM-yyyy HH:mm:ss zz", CultureInfo.InvariantCulture.DateTimeFormat);
+			return DateTimeOffset.Parse (atom, CultureInfo.InvariantCulture.DateTimeFormat);
 		}
 
 		public static bool TryParseUidSet (string atom, out string[] uids)
@@ -272,6 +286,163 @@ namespace MailKit.Net.Imap {
 
 				folder.ParentFolder = parent;
 			}
+		}
+
+		static void AddEnvelopeAddress (InternetAddressList list, ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			string[] values = new string[4];
+			int index = 0;
+
+			if (token.Type == ImapTokenType.Nil)
+				return;
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			do {
+				token = engine.ReadToken (cancellationToken);
+
+				switch (token.Type) {
+				case ImapTokenType.Literal:
+					values[index] = engine.ReadLiteral (cancellationToken);
+					break;
+				case ImapTokenType.QString:
+				case ImapTokenType.Atom:
+					values[index] = (string) token.Value;
+				case ImapTokenType.Nil:
+					break;
+				default:
+					throw ImapEngine.UnexpectedToken (token, false);
+				}
+
+				index++;
+			} while (index < 4);
+
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			string name = null;
+
+			if (values[0] != null) {
+				// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
+				// to convert bytes to unicode, we can undo that here:
+				name = Rfc2047.DecodePhrase (Latin1.GetBytes (values[0]));
+			}
+
+			list.Add (new MailboxAddress (name, values[2] + "@" + values[3]));
+		}
+
+		static InternetAddressList ParseEnvelopeAddressList (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			var list = new InternetAddressList ();
+
+			if (token.Type == ImapTokenType.Nil)
+				return list;
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			do {
+				token = engine.ReadToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				if (token.Type != ImapTokenType.OpenParen)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				AddEnvelopeAddress (list, engine, cancellationToken);
+			} while (true);
+
+			return list;
+		}
+
+		static DateTimeOffset? ParseEnvelopeDate (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			DateTimeOffset date;
+			string value;
+
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				value = engine.ReadLiteral (cancellationToken);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				value = (string) token.Value;
+				break;
+			case ImapTokenType.Nil:
+				return null;
+			default:
+				throw ImapEngine.UnexpectedToken (token, false);
+			}
+
+			if (!DateUtils.TryParseDateTime (value, out date))
+				return null;
+
+			return date;
+		}
+
+		static string ParseEnvelopeNString (ImapEngine engine, bool decode, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			string value;
+
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				value = engine.ReadLiteral (cancellationToken);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				value = (string) token.Value;
+				break;
+			case ImapTokenType.Nil:
+				return null;
+			default:
+				throw ImapEngine.UnexpectedToken (token, false);
+			}
+
+			return decode ? Rfc2047.DecodeText (Latin1.GetBytes (value)) : value;
+		}
+
+		public static Envelope ParseEnvelope (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			var envelope = new Envelope ();
+			string nstring;
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			envelope.Date = ParseEnvelopeDate (engine, cancellationToken);
+			envelope.Subject = ParseEnvelopeNString (engine, true, cancellationToken);
+			envelope.From = ParseEnvelopeAddressList (engine, cancellationToken);
+			envelope.Sender = ParseEnvelopeAddressList (engine, cancellationToken);
+			envelope.ReplyTo = ParseEnvelopeAddressList (engine, cancellationToken);
+			envelope.To = ParseEnvelopeAddressList (engine, cancellationToken);
+			envelope.Cc = ParseEnvelopeAddressList (engine, cancellationToken);
+			envelope.Bcc = ParseEnvelopeAddressList (engine, cancellationToken);
+			envelope.InReplyTo = new MessageIdList ();
+
+			if ((nstring = ParseEnvelopeNString (engine, false, cancellationToken)) != null) {
+				foreach (var msgid in MimeUtils.EnumerateReferences (nstring))
+					envelope.InReplyTo.Add (msgid);
+			}
+
+			if ((nstring = ParseEnvelopeNString (engine, false, cancellationToken)) != null) {
+				envelope.MessageId = MimeUtils.EnumerateReferences (nstring).FirstOrDefault ();
+			}
+
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			return envelope;
 		}
 
 		public static string FormatFlagsList (MessageFlags flags)

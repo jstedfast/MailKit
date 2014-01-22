@@ -34,48 +34,48 @@ namespace MailKit {
 	/// </summary>
 	public class Envelope
 	{
-		public Envelope ()
+		internal Envelope ()
 		{
 		}
 
 		public InternetAddressList From {
-			get; private set;
+			get; internal set;
 		}
 
 		public InternetAddressList Sender {
-			get; private set;
+			get; internal set;
 		}
 
 		public InternetAddressList ReplyTo {
-			get; private set;
+			get; internal set;
 		}
 
 		public InternetAddressList To {
-			get; private set;
+			get; internal set;
 		}
 
 		public InternetAddressList Cc {
-			get; private set;
+			get; internal set;
 		}
 
 		public InternetAddressList Bcc {
-			get; private set;
+			get; internal set;
 		}
 
 		public MessageIdList InReplyTo {
-			get; private set;
+			get; internal set;
 		}
 
 		public DateTimeOffset? Date {
-			get; private set;
+			get; internal set;
 		}
 
 		public string MessageId {
-			get; private set;
+			get; internal set;
 		}
 
 		public string Subject {
-			get; private set;
+			get; internal set;
 		}
 	}
 }

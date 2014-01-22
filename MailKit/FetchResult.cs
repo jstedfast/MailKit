@@ -29,11 +29,35 @@ using System;
 namespace MailKit {
 	public class FetchResult
 	{
+		internal FetchResult (int index)
+		{
+			Index = index;
+		}
+
 		//public BodyStructure BodyStructure;
-		public Envelope Envelope;
-		public MessageFlags? Flags;
-		public DateTimeOffset? InternalDate;
-		public uint? MessageSize;
-		public string Uid;
+
+		public Envelope Envelope {
+			get; internal set;
+		}
+
+		public MessageFlags? Flags {
+			get; internal set;
+		}
+
+		public DateTimeOffset? InternalDate {
+			get; internal set;
+		}
+
+		public uint? MessageSize {
+			get; internal set;
+		}
+
+		public string Uid {
+			get; internal set;
+		}
+
+		public int Index {
+			get; private set;
+		}
 	}
 }

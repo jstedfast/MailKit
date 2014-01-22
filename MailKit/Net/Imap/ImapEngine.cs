@@ -465,7 +465,7 @@ namespace MailKit.Net.Imap {
 				nread = (int) memory.Length;
 				buf = memory.GetBuffer ();
 
-				return Encoding.UTF8.GetString (buf, 0, nread);
+				return Latin1.GetString (buf, 0, nread);
 			}
 		}
 
