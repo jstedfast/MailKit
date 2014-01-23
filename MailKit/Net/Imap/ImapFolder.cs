@@ -1321,8 +1321,6 @@ namespace MailKit.Net.Imap {
 					summary.MessageSize = value;
 					break;
 				case "BODYSTRUCTURE":
-					// FIXME:
-					break;
 				case "BODY":
 					summary.Body = ImapUtils.ParseBody (engine, ic.CancellationToken);
 					break;

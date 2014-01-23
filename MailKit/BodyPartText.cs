@@ -31,10 +31,9 @@ namespace MailKit {
 	/// A textual body part.
 	/// </summary>
 	/// <remarks>
-	/// Represents any MIME part with a media type of "text"
-	/// regardless of the media subtype.
+	/// Represents any body part with a media type of "text".
 	/// </remarks>
-	public class BodyPartText : BodyPart
+	public class BodyPartText : BodyPartBasic
 	{
 		internal BodyPartText ()
 		{

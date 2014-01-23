@@ -1,5 +1,5 @@
 ﻿//
-// BodyPartMultipart.cs
+// BodyPartBasic.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -30,21 +30,56 @@ using MimeKit;
 
 namespace MailKit {
 	/// <summary>
-	/// A multipart body part.
+	/// A basic message body part.
 	/// </summary>
-	public class BodyPartMultipart : BodyPart
+	/// <remarks>
+	/// Represents any message body part that is not a multipart,
+	/// message/rfc822 part, or a text part.
+	/// </remarks>
+	public class BodyPartBasic : BodyPart
 	{
-		internal BodyPartMultipart ()
+		internal BodyPartBasic ()
 		{
-			BodyParts = new BodyPartCollection ();
 		}
 
 		/// <summary>
-		/// Gets the child body parts.
+		/// Gets the Content-Id of the body part, if available.
 		/// </summary>
-		/// <value>The child body parts.</value>
-		public BodyPartCollection BodyParts {
-			get; private set;
+		/// <value>The content identifier.</value>
+		public string ContentId {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the Content-Description of the body part, if available.
+		/// </summary>
+		/// <value>The content description.</value>
+		public string ContentDescription {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the Content-Transfer-Encoding of the body part.
+		/// </summary>
+		/// <value>The content transfer encoding.</value>
+		public string ContentTransferEncoding {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the size of the body part.
+		/// </summary>
+		/// <value>The number of octets.</value>
+		public uint Octets {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the Content-Md5 of the body part, if available.
+		/// </summary>
+		/// <value>The content md5.</value>
+		public string ContentMd5 {
+			get; internal set;
 		}
 
 		/// <summary>

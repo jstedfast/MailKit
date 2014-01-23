@@ -395,6 +395,27 @@ namespace MailKit.Net.Imap {
 			return number;
 		}
 
+		static void ParseParameterList (ParameterList paramList, ImapEngine engine, CancellationToken cancellationToken)
+		{
+			ImapToken token;
+
+			do {
+				token = engine.PeekToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				var name = ReadStringToken (engine, cancellationToken);
+				var value = ReadStringToken (engine, cancellationToken);
+
+				// FIXME: may need to decode params
+				paramList[name] = value;
+			} while (true);
+
+			// read the ')'
+			engine.ReadToken (cancellationToken);
+		}
+
 		static ContentType ParseContentType (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var type = ReadStringToken (engine, cancellationToken);
@@ -408,21 +429,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			do {
-				token = engine.PeekToken (cancellationToken);
-
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
-
-				var name = ReadStringToken (engine, cancellationToken);
-				var value = ReadStringToken (engine, cancellationToken);
-
-				// FIXME: may need to decode params
-				contentType.Parameters[name] = value;
-			} while (true);
-
-			// read the ')'
-			engine.ReadToken (cancellationToken);
+			ParseParameterList (contentType.Parameters, engine, cancellationToken);
 
 			return contentType;
 		}
@@ -440,40 +447,130 @@ namespace MailKit.Net.Imap {
 			var dsp = ReadStringToken (engine, cancellationToken);
 			var disposition = new ContentDisposition (dsp);
 
-			do {
-				token = engine.PeekToken (cancellationToken);
-
-				if (token.Type == ImapTokenType.CloseParen)
-					break;
-
-				var name = ReadStringToken (engine, cancellationToken);
-				var value = ReadStringToken (engine, cancellationToken);
-
-				// FIXME: may need to decode params
-				disposition.Parameters[name] = value;
-			} while (true);
-
-			// read the ')'
-			engine.ReadToken (cancellationToken);
+			ParseParameterList (disposition.Parameters, engine, cancellationToken);
 
 			return disposition;
 		}
 
+		static string[] ParseContentLocation (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			var languages = new List<string> ();
+			string language;
+
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				language = engine.ReadLiteral (cancellationToken);
+				languages.Add (language);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				language = (string) token.Value;
+				languages.Add (language);
+				break;
+			case ImapTokenType.Nil:
+				return null;
+			case ImapTokenType.OpenParen:
+				do {
+					token = engine.PeekToken (cancellationToken);
+
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					language = ReadStringToken (engine, cancellationToken);
+					languages.Add (language);
+				} while (true);
+
+				// read the ')'
+				engine.ReadToken (cancellationToken);
+			default:
+				throw ImapEngine.UnexpectedToken (token, false);
+			}
+
+			return languages.ToArray ();
+		}
+
+		static void SkipBodyExtensions (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+
+			switch (token.Type) {
+			case ImapTokenType.OpenParen:
+				do {
+					token = engine.PeekToken (cancellationToken);
+
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					SkipBodyExtensions (engine, cancellationToken);
+				} while (true);
+
+				// read the ')'
+				engine.ReadToken (cancellationToken);
+				break;
+			case ImapTokenType.Literal:
+				engine.ReadLiteral (cancellationToken);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+			case ImapTokenType.Nil:
+				break;
+			default:
+				throw ImapEngine.UnexpectedToken (token, false);
+			}
+		}
+
 		static BodyPart ParseBodyTypeMultipart (ImapEngine engine, CancellationToken cancellationToken)
 		{
-			var mpart = new BodyPartMultipart ();
+			var body = new BodyPartMultipart ();
 			ImapToken token;
 
 			do {
-				mpart.BodyParts.Add (ParseBody (engine, cancellationToken));
+				body.BodyParts.Add (ParseBody (engine, cancellationToken));
 				token = engine.PeekToken (cancellationToken);
 			} while (token.Type == ImapTokenType.OpenParen);
 
 			var subtype = ReadStringToken (engine, cancellationToken);
 
-			mpart.ContentType = new ContentType ("multipart", subtype);
+			body.ContentType = new ContentType ("multipart", subtype);
 
-			return mpart;
+			token = engine.PeekToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				token = engine.ReadToken (cancellationToken);
+
+				if (token.Type != ImapTokenType.OpenParen)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				ParseParameterList (body.ContentType.Parameters, engine, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentDisposition = ParseContentDisposition (engine, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentLanguage = ParseContentLocation (engine, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentLocation = ReadNStringToken (engine, false, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen)
+				SkipBodyExtensions (engine, cancellationToken);
+
+			// read the ')'
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			return body;
 		}
 
 		public static BodyPart ParseBody (ImapEngine engine, CancellationToken cancellationToken)
@@ -496,7 +593,7 @@ namespace MailKit.Net.Imap {
 			var desc = ReadNStringToken (engine, true, cancellationToken);
 			var enc = ReadStringToken (engine, cancellationToken);
 			var octets = ReadNumber (engine, cancellationToken);
-			BodyPart body;
+			BodyPartBasic body;
 
 			if (type.Matches ("message", "rfc822")) {
 				var mesg = new BodyPartMessage ();
@@ -509,7 +606,7 @@ namespace MailKit.Net.Imap {
 				text.Lines = ReadNumber (engine, cancellationToken);
 				body = text;
 			} else {
-				body = new BodyPart ();
+				body = new BodyPartBasic ();
 			}
 
 			body.ContentTransferEncoding = enc;
@@ -517,6 +614,38 @@ namespace MailKit.Net.Imap {
 			body.ContentType = type;
 			body.ContentId = id;
 			body.Octets = octets;
+
+			// if we are parsing a BODYSTRUCTURE, we may get some more tokens before the ')'
+			token = engine.PeekToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentMd5 = ReadNStringToken (engine, false, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentDisposition = ParseContentDisposition (engine, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentLanguage = ParseContentLocation (engine, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen) {
+				body.ContentLocation = ReadNStringToken (engine, false, cancellationToken);
+				token = engine.PeekToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen)
+				SkipBodyExtensions (engine, cancellationToken);
+
+			// read the ')'
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
 
 			return body;
 		}

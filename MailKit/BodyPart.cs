@@ -24,65 +24,24 @@
 // THE SOFTWARE.
 //
 
-using System;
-
 using MimeKit;
 
 namespace MailKit {
 	/// <summary>
-	/// A body part of a message.
+	/// An abstract body part of a message.
 	/// </summary>
-	public class BodyPart
+	/// <remarks>
+	/// Each body part will actually be a <see cref="BodyPartBasic"/>,
+	/// <see cref="BodyPartText"/>, <see cref="BodyPartMessage"/>, or
+	/// <see cref="BodyPartMultipart"/>.
+	/// </remarks>
+	public abstract class BodyPart
 	{
-		internal BodyPart ()
-		{
-		}
-
 		/// <summary>
 		/// Gets the Content-Type of the body part.
 		/// </summary>
 		/// <value>The content type.</value>
 		public ContentType ContentType {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the Content-Disposition of the body part.
-		/// </summary>
-		/// <value>The content disposition.</value>
-		public ContentDisposition ContentDisposition {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the Content-Transfer-Encoding of the body part.
-		/// </summary>
-		/// <value>The content transfer encoding.</value>
-		public string ContentTransferEncoding {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the Content-Id of the body part.
-		/// </summary>
-		/// <value>The content identifier.</value>
-		public string ContentId {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the Content-Description of the body part.
-		/// </summary>
-		/// <value>The content description.</value>
-		public string ContentDescription {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the size of the body part.
-		/// </summary>
-		/// <value>The number of octets.</value>
-		public uint Octets {
 			get; internal set;
 		}
 	}

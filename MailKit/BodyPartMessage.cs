@@ -30,7 +30,10 @@ namespace MailKit {
 	/// <summary>
 	/// A message/rfc822 body part.
 	/// </summary>
-	public class BodyPartMessage : BodyPart
+	/// <remarks>
+	/// Represents a message/rfc822 body part.
+	/// </remarks>
+	public class BodyPartMessage : BodyPartBasic
 	{
 		internal BodyPartMessage ()
 		{
