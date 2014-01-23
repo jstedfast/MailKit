@@ -447,7 +447,17 @@ namespace MailKit.Net.Imap {
 			var dsp = ReadStringToken (engine, cancellationToken);
 			var disposition = new ContentDisposition (dsp);
 
-			ParseParameterList (disposition.Parameters, engine, cancellationToken);
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type == ImapTokenType.OpenParen)
+				ParseParameterList (disposition.Parameters, engine, cancellationToken);
+			else if (token.Type != ImapTokenType.Nil)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
 
 			return disposition;
 		}
@@ -483,6 +493,7 @@ namespace MailKit.Net.Imap {
 
 				// read the ')'
 				engine.ReadToken (cancellationToken);
+				break;
 			default:
 				throw ImapEngine.UnexpectedToken (token, false);
 			}
@@ -520,7 +531,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static BodyPart ParseBodyTypeMultipart (ImapEngine engine, CancellationToken cancellationToken)
+		static BodyPart ParseMultipart (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var body = new BodyPartMultipart ();
 			ImapToken token;
@@ -586,7 +597,7 @@ namespace MailKit.Net.Imap {
 			token = engine.PeekToken (cancellationToken);
 
 			if (token.Type == ImapTokenType.OpenParen)
-				return ParseBodyTypeMultipart (engine, cancellationToken);
+				return ParseMultipart (engine, cancellationToken);
 
 			var type = ParseContentType (engine, cancellationToken);
 			var id = ReadNStringToken (engine, false, cancellationToken);

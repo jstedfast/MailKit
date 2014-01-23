@@ -35,7 +35,7 @@ using MailKit.Net.Smtp;
 using MailKit;
 using MimeKit;
 
-namespace UnitTests {
+namespace UnitTests.Net.Smtp {
 	[TestFixture]
 	public class SmtpClientTests
 	{

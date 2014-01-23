@@ -48,6 +48,27 @@ namespace MailKit {
 			collection.Add (part);
 		}
 
+		/// <summary>
+		/// Gets the number of body parts in the collection.
+		/// </summary>
+		/// <value>The count.</value>
+		public int Count {
+			get { return collection.Count; }
+		}
+
+		/// <summary>
+		/// Gets the <see cref="MailKit.BodyPart"/> at the specified index.
+		/// </summary>
+		/// <param name="index">The index.</param>
+		public BodyPart this [int index] {
+			get {
+				if (index < 0 || index >= collection.Count)
+					throw new ArgumentOutOfRangeException ("index");
+
+				return collection[index];
+			}
+		}
+
 		#region IEnumerable implementation
 
 		/// <summary>

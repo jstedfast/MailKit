@@ -31,7 +31,7 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-namespace UnitTests {
+namespace UnitTests.Net.Smtp {
 	class SmtpReplayCommand
 	{
 		public string Command { get; private set; }

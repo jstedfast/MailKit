@@ -31,7 +31,7 @@ using NUnit.Framework;
 
 using MailKit.Net.Imap;
 
-namespace UnitTests {
+namespace UnitTests.Net.Imap {
 	[TestFixture]
 	public class ImapEncodingTests
 	{

@@ -35,7 +35,7 @@ using NUnit.Framework;
 using MailKit.Net.Pop3;
 using MimeKit;
 
-namespace UnitTests {
+namespace UnitTests.Net.Pop3 {
 	[TestFixture]
 	public class Pop3ClientTests
 	{

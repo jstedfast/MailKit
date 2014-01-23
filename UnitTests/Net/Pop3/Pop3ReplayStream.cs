@@ -34,7 +34,7 @@ using NUnit.Framework;
 using MimeKit.IO;
 using MimeKit.IO.Filters;
 
-namespace UnitTests {
+namespace UnitTests.Net.Pop3 {
 	class Pop3ReplayCommand
 	{
 		public string Command { get; private set; }
