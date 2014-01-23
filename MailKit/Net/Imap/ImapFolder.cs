@@ -1534,7 +1534,7 @@ namespace MailKit.Net.Imap {
 			ValidateUid (uid);
 			CheckState (true);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s BODY.PEEK[]\r\n", uid);
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (BODY.PEEK[])\r\n", uid);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
 
 			Engine.Wait (ic);
@@ -1585,7 +1585,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d BODY.PEEK[]\r\n", index + 1);
+			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
 
 			Engine.Wait (ic);

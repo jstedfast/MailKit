@@ -27,6 +27,15 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// A summary of a message.
+	/// </summary>
+	/// <remarks>
+	/// A <see cref="MessageSummary"/> is returned by
+	/// <see cref="IFolder.Fetch(string[], MessageAttributes, CancellationToken)"/>.
+	/// The properties of the <see cref="MessageSummary"/> that will be available
+	/// depend on the <see cref="MessageAttributes"/> passed to the aformentioned method.
+	/// </remarks>
 	public class MessageSummary
 	{
 		internal MessageSummary (int index)
@@ -34,30 +43,70 @@ namespace MailKit {
 			Index = index;
 		}
 
+		/// <summary>
+		/// Gets the body structure of the message, if available.
+		/// </summary>
+		/// <remarks>
+		/// The body will be one of <see cref="BodyPartText"/>,
+		/// <see cref="BodyPartMessage"/>, <see cref="BodyPartBasic"/>,
+		/// or <see cref="BodyPartMultipart"/>.
+		/// </remarks>
+		/// <value>The body structure of the message.</value>
 		public BodyPart Body {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the envelope of the message, if available.
+		/// </summary>
+		/// <remarks>
+		/// The envelope of a message contains information such as the
+		/// date the message was sent, the subject of the message,
+		/// the sender of the message, who the message was sent to,
+		/// which message(s) the message may be in reply to,
+		/// and the message id.
+		/// </remarks>
+		/// <value>The envelope of the message.</value>
 		public Envelope Envelope {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the message flags, if available.
+		/// </summary>
+		/// <value>The message flags.</value>
 		public MessageFlags? Flags {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the internal date of the message (i.e. the "received" date), if available.
+		/// </summary>
+		/// <value>The internal date of the message.</value>
 		public DateTimeOffset? InternalDate {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the size of the message, in bytes, if available.
+		/// </summary>
+		/// <value>The size of the message.</value>
 		public uint? MessageSize {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the unique ID of the message, if available.
+		/// </summary>
+		/// <value>The uid of the message.</value>
 		public string Uid {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the index of the message.
+		/// </summary>
+		/// <value>The index of the message.</value>
 		public int Index {
 			get; private set;
 		}
