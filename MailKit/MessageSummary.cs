@@ -27,9 +27,9 @@
 using System;
 
 namespace MailKit {
-	public class FetchResult
+	public class MessageSummary
 	{
-		internal FetchResult (int index)
+		internal MessageSummary (int index)
 		{
 			Index = index;
 		}

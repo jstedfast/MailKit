@@ -1277,12 +1277,12 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			var results = (SortedDictionary<int, FetchResult>) ic.UserData;
-			FetchResult result;
+			var results = (SortedDictionary<int, MessageSummary>) ic.UserData;
+			MessageSummary summary;
 
-			if (!results.TryGetValue (index, out result)) {
-				result = new FetchResult (index);
-				results.Add (index, result);
+			if (!results.TryGetValue (index, out summary)) {
+				summary = new MessageSummary (index);
+				results.Add (index, summary);
 			}
 
 			do {
@@ -1304,9 +1304,9 @@ namespace MailKit.Net.Imap {
 					switch (token.Type) {
 					case ImapTokenType.QString:
 					case ImapTokenType.Atom:
-						result.InternalDate = ImapUtils.ParseInternalDate ((string) token.Value);
+						summary.InternalDate = ImapUtils.ParseInternalDate ((string) token.Value);
 					case ImapTokenType.Nil:
-						result.InternalDate = null;
+						summary.InternalDate = null;
 						break;
 					default:
 						throw ImapEngine.UnexpectedToken (token, false);
@@ -1318,7 +1318,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					result.MessageSize = value;
+					summary.MessageSize = value;
 					break;
 				case "BODYSTRUCTURE":
 					// FIXME:
@@ -1327,10 +1327,10 @@ namespace MailKit.Net.Imap {
 					// FIXME:
 					break;
 				case "ENVELOPE":
-					result.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
+					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
 					break;
 				case "FLAGS":
-					result.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+					summary.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
 					break;
 				case "UID":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -1338,7 +1338,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					result.Uid = value.ToString ();
+					summary.Uid = value.ToString ();
 					break;
 				default:
 					throw ImapEngine.UnexpectedToken (token, false);
@@ -1391,7 +1391,7 @@ namespace MailKit.Net.Imap {
 			return query.TrimEnd ();
 		}
 
-		public IEnumerable<FetchResult> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken)
+		public IEnumerable<MessageSummary> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken)
 		{
 			var query = FormatAttributeQuery (attributes);
 			var set = ImapUtils.FormatUidSet (uids);
@@ -1402,7 +1402,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (%s)\r\n", set, query);
-			var results = new SortedDictionary<int, FetchResult> ();
+			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
 			ic.UserData = results;
 
@@ -1416,7 +1416,7 @@ namespace MailKit.Net.Imap {
 			return results.Values;
 		}
 
-		public IEnumerable<FetchResult> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken)
+		public IEnumerable<MessageSummary> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken)
 		{
 			var query = FormatAttributeQuery (attributes);
 			var set = ImapUtils.FormatUidSet (indexes);
@@ -1427,7 +1427,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
-			var results = new SortedDictionary<int, FetchResult> ();
+			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
 			ic.UserData = results;
 

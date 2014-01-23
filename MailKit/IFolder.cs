@@ -90,8 +90,8 @@ namespace MailKit {
 		void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);
 		void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);
 
-		IEnumerable<FetchResult> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken);
-		IEnumerable<FetchResult> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken);
+		IEnumerable<MessageSummary> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken);
+		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken);
 
 		// TODO: support fetching of individual mime parts and substreams
 		MimeMessage GetMessage (string uid, CancellationToken cancellationToken);

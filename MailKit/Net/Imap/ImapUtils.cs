@@ -48,6 +48,11 @@ namespace MailKit.Net.Imap {
 			"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 		};
 
+		/// <summary>
+		/// Formats a date in a format suitable for use with the APPEND command.
+		/// </summary>
+		/// <returns>The formatted date string.</returns>
+		/// <param name="date">The date.</param>
 		public static string FormatInternalDate (DateTimeOffset date)
 		{
 			return string.Format ("{0:D2}-{1}-{2:D4} {3:D2}:{4:D2}:{5:D2} {6:+00;-00}{7:00}",
@@ -55,13 +60,24 @@ namespace MailKit.Net.Imap {
 				date.Offset.Hours, date.Offset.Minutes);
 		}
 
-		public static DateTimeOffset ParseInternalDate (string atom)
+		/// <summary>
+		/// Parses the internal date string.
+		/// </summary>
+		/// <returns>The date.</returns>
+		/// <param name="text">The text to parse.</param>
+		public static DateTimeOffset ParseInternalDate (string text)
 		{
 			// FIXME: what specifier do we use for the timezone offset that includes minutes!?!?
 			//return DateTimeOffset.ParseExact (atom, "dd-MMM-yyyy HH:mm:ss zz", CultureInfo.InvariantCulture.DateTimeFormat);
-			return DateTimeOffset.Parse (atom, CultureInfo.InvariantCulture.DateTimeFormat);
+			return DateTimeOffset.Parse (text, CultureInfo.InvariantCulture.DateTimeFormat);
 		}
 
+		/// <summary>
+		/// Attempts to parse an atom token as a set of UIDs.
+		/// </summary>
+		/// <returns><c>true</c> if the UIDs were successfully parsed, otherwise <c>false</c>.</returns>
+		/// <param name="atom">The atom string.</param>
+		/// <param name="uids">The UIDs.</param>
 		public static bool TryParseUidSet (string atom, out string[] uids)
 		{
 			var ranges = atom.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -96,6 +112,14 @@ namespace MailKit.Net.Imap {
 			return true;
 		}
 
+		/// <summary>
+		/// Formats the array of UIDs as a string suitable for use with IMAP commands.
+		/// </summary>
+		/// <returns>The UID set.</returns>
+		/// <param name="uids">The UIDs.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
 		public static string FormatUidSet (uint[] uids)
 		{
 			if (uids == null)
@@ -130,6 +154,17 @@ namespace MailKit.Net.Imap {
 			return builder.ToString ();
 		}
 
+		/// <summary>
+		/// Formats the array of indexes as a string suitable for use with IMAP commands.
+		/// </summary>
+		/// <returns>The index set.</returns>
+		/// <param name="indexes">The indexes.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// One or more of the indexes has a negative value.
+		/// </exception>
 		public static string FormatUidSet (int[] indexes)
 		{
 			if (indexes == null)
@@ -139,7 +174,7 @@ namespace MailKit.Net.Imap {
 
 			for (int i = 0; i < indexes.Length; i++) {
 				if (i < 0)
-					throw new ArgumentException ("One or more indexes were negative.", "indexes");
+					throw new ArgumentOutOfRangeException ("indexes", "One or more indexes were negative.");
 
 				uids[i] = (uint) indexes[i] + 1;
 			}
@@ -147,6 +182,17 @@ namespace MailKit.Net.Imap {
 			return FormatUidSet (uids);
 		}
 
+		/// <summary>
+		/// Formats the array of UIDs as a string suitable for use with IMAP commands.
+		/// </summary>
+		/// <returns>The UID set.</returns>
+		/// <param name="uids">The UIDs.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the UIDs is invalid.
+		/// </exception>
 		public static string FormatUidSet (string[] uids)
 		{
 			if (uids == null)
@@ -157,7 +203,7 @@ namespace MailKit.Net.Imap {
 			for (int i = 0; i < uids.Length; i++) {
 				uint uid;
 
-				if (!uint.TryParse (uids[i], out uid))
+				if (!uint.TryParse (uids[i], out uid) || uid == 0)
 					throw new ArgumentException ("One or more uids were invalid.", "uids");
 
 				values[i] = uid;
@@ -166,6 +212,13 @@ namespace MailKit.Net.Imap {
 			return FormatUidSet (values);
 		}
 
+		/// <summary>
+		/// Handles an untagged LIST or LSUB response.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">The index.</param>
+		/// <param name="tok">The token.</param>
 		public static void HandleUntaggedListResponse (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
@@ -250,6 +303,12 @@ namespace MailKit.Net.Imap {
 			list.Add (folder);
 		}
 
+		/// <summary>
+		/// Looks up and sets the <see cref="ImapFolder.ParentFolder"/> property of each of the folders.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="folders">The IMAP folders.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public static void LookupParentFolders (ImapEngine engine, IEnumerable<ImapFolder> folders, CancellationToken cancellationToken)
 		{
 			int index;
@@ -409,6 +468,12 @@ namespace MailKit.Net.Imap {
 			return decode ? Rfc2047.DecodeText (Latin1.GetBytes (value)) : value;
 		}
 
+		/// <summary>
+		/// Parses the ENVELOPE parenthesized list.
+		/// </summary>
+		/// <returns>The envelope.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public static Envelope ParseEnvelope (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
@@ -445,6 +510,11 @@ namespace MailKit.Net.Imap {
 			return envelope;
 		}
 
+		/// <summary>
+		/// Formats a flags list suitable for use with the APPEND command.
+		/// </summary>
+		/// <returns>The flags list string.</returns>
+		/// <param name="flags">The message flags.</param>
 		public static string FormatFlagsList (MessageFlags flags)
 		{
 			var builder = new StringBuilder ();
@@ -467,6 +537,12 @@ namespace MailKit.Net.Imap {
 			return builder.ToString ();
 		}
 
+		/// <summary>
+		/// Parses the flags list.
+		/// </summary>
+		/// <returns>The message flags.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public static MessageFlags ParseFlagsList (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
