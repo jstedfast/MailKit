@@ -67,9 +67,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="text">The text to parse.</param>
 		public static DateTimeOffset ParseInternalDate (string text)
 		{
-			// FIXME: what specifier do we use for the timezone offset that includes minutes!?!?
-			//return DateTimeOffset.ParseExact (atom, "dd-MMM-yyyy HH:mm:ss zz", CultureInfo.InvariantCulture.DateTimeFormat);
-			return DateTimeOffset.Parse (text, CultureInfo.InvariantCulture.DateTimeFormat);
+			return DateTimeOffset.ParseExact (text.Trim (), "d-MMM-yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat);
 		}
 
 		/// <summary>
