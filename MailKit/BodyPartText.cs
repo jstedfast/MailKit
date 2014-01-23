@@ -1,5 +1,5 @@
 ﻿//
-// FetchResult.cs
+// BodyPartText.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -27,39 +27,25 @@
 using System;
 
 namespace MailKit {
-	public class MessageSummary
+	/// <summary>
+	/// A textual body part.
+	/// </summary>
+	/// <remarks>
+	/// Represents any MIME part with a media type of "text"
+	/// regardless of the media subtype.
+	/// </remarks>
+	public class BodyPartText : BodyPart
 	{
-		internal MessageSummary (int index)
+		internal BodyPartText ()
 		{
-			Index = index;
 		}
 
-		public BodyPart Body {
+		/// <summary>
+		/// The length of the text, in lines.
+		/// </summary>
+		/// <value>The number of lines.</value>
+		public uint Lines {
 			get; internal set;
-		}
-
-		public Envelope Envelope {
-			get; internal set;
-		}
-
-		public MessageFlags? Flags {
-			get; internal set;
-		}
-
-		public DateTimeOffset? InternalDate {
-			get; internal set;
-		}
-
-		public uint? MessageSize {
-			get; internal set;
-		}
-
-		public string Uid {
-			get; internal set;
-		}
-
-		public int Index {
-			get; private set;
 		}
 	}
 }

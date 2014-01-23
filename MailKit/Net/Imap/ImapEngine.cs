@@ -434,6 +434,20 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Peeks at the next token.
+		/// </summary>
+		/// <returns>The next token.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapToken PeekToken (CancellationToken cancellationToken)
+		{
+			var token = stream.ReadToken (cancellationToken);
+
+			stream.UngetToken (token);
+
+			return token;
+		}
+
+		/// <summary>
 		/// Reads the literal as a string.
 		/// </summary>
 		/// <returns>The literal.</returns>
@@ -1057,10 +1071,6 @@ namespace MailKit.Net.Imap {
 
 				if (current.Bye)
 					Disconnect ();
-			} catch (ImapProtocolException ex) {
-				// FIXME: not all ImapExceptions are fatal
-				Disconnect ();
-				throw;
 			} catch {
 				Disconnect ();
 				throw;

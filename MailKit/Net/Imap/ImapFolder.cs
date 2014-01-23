@@ -1324,7 +1324,7 @@ namespace MailKit.Net.Imap {
 					// FIXME:
 					break;
 				case "BODY":
-					// FIXME:
+					summary.Body = ImapUtils.ParseBody (engine, ic.CancellationToken);
 					break;
 				case "ENVELOPE":
 					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);

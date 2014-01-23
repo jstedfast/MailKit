@@ -1,5 +1,5 @@
 ﻿//
-// FetchResult.cs
+// BodyPart.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -26,40 +26,64 @@
 
 using System;
 
+using MimeKit;
+
 namespace MailKit {
-	public class MessageSummary
+	/// <summary>
+	/// A body part of a message.
+	/// </summary>
+	public class BodyPart
 	{
-		internal MessageSummary (int index)
+		internal BodyPart ()
 		{
-			Index = index;
 		}
 
-		public BodyPart Body {
+		/// <summary>
+		/// Gets the Content-Type of the body part.
+		/// </summary>
+		/// <value>The content type.</value>
+		public ContentType ContentType {
 			get; internal set;
 		}
 
-		public Envelope Envelope {
+		/// <summary>
+		/// Gets the Content-Disposition of the body part.
+		/// </summary>
+		/// <value>The content disposition.</value>
+		public ContentDisposition ContentDisposition {
 			get; internal set;
 		}
 
-		public MessageFlags? Flags {
+		/// <summary>
+		/// Gets the Content-Transfer-Encoding of the body part.
+		/// </summary>
+		/// <value>The content transfer encoding.</value>
+		public string ContentTransferEncoding {
 			get; internal set;
 		}
 
-		public DateTimeOffset? InternalDate {
+		/// <summary>
+		/// Gets the Content-Id of the body part.
+		/// </summary>
+		/// <value>The content identifier.</value>
+		public string ContentId {
 			get; internal set;
 		}
 
-		public uint? MessageSize {
+		/// <summary>
+		/// Gets the Content-Description of the body part.
+		/// </summary>
+		/// <value>The content description.</value>
+		public string ContentDescription {
 			get; internal set;
 		}
 
-		public string Uid {
+		/// <summary>
+		/// Gets the size of the body part.
+		/// </summary>
+		/// <value>The number of octets.</value>
+		public uint Octets {
 			get; internal set;
-		}
-
-		public int Index {
-			get; private set;
 		}
 	}
 }

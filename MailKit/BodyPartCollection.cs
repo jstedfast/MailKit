@@ -1,5 +1,5 @@
 ﻿//
-// FetchResult.cs
+// BodyPartCollection.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -25,41 +25,53 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace MailKit {
-	public class MessageSummary
+	/// <summary>
+	/// A collection of <see cref="BodyPart"/>.
+	/// </summary>
+	public class BodyPartCollection : IEnumerable<BodyPart>
 	{
-		internal MessageSummary (int index)
+		readonly List<BodyPart> collection = new List<BodyPart> ();
+
+		internal BodyPartCollection ()
 		{
-			Index = index;
 		}
 
-		public BodyPart Body {
-			get; internal set;
+		internal void Add (BodyPart part)
+		{
+			if (part == null)
+				throw new ArgumentNullException ("part");
+
+			collection.Add (part);
 		}
 
-		public Envelope Envelope {
-			get; internal set;
+		#region IEnumerable implementation
+
+		/// <summary>
+		/// Gets the body part enumerator.
+		/// </summary>
+		/// <returns>The enumerator.</returns>
+		public IEnumerator<BodyPart> GetEnumerator ()
+		{
+			return collection.GetEnumerator ();
 		}
 
-		public MessageFlags? Flags {
-			get; internal set;
+		#endregion
+
+		#region IEnumerable implementation
+
+		/// <summary>
+		/// Gets the body part enumerator.
+		/// </summary>
+		/// <returns>The enumerator.</returns>
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 
-		public DateTimeOffset? InternalDate {
-			get; internal set;
-		}
-
-		public uint? MessageSize {
-			get; internal set;
-		}
-
-		public string Uid {
-			get; internal set;
-		}
-
-		public int Index {
-			get; private set;
-		}
+		#endregion
 	}
 }

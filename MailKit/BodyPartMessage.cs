@@ -1,5 +1,5 @@
 ﻿//
-// FetchResult.cs
+// BodyPartMessage.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -27,39 +27,37 @@
 using System;
 
 namespace MailKit {
-	public class MessageSummary
+	/// <summary>
+	/// A message/rfc822 body part.
+	/// </summary>
+	public class BodyPartMessage : BodyPart
 	{
-		internal MessageSummary (int index)
+		internal BodyPartMessage ()
 		{
-			Index = index;
 		}
 
-		public BodyPart Body {
-			get; internal set;
-		}
-
+		/// <summary>
+		/// Gets the envelope of the message.
+		/// </summary>
+		/// <value>The envelope.</value>
 		public Envelope Envelope {
 			get; internal set;
 		}
 
-		public MessageFlags? Flags {
+		/// <summary>
+		/// Gets the body structure of the message.
+		/// </summary>
+		/// <value>The body structure.</value>
+		public BodyPart Body {
 			get; internal set;
 		}
 
-		public DateTimeOffset? InternalDate {
+		/// <summary>
+		/// Gets a value indicating the length of the message, in lines.
+		/// </summary>
+		/// <value>The number of lines.</value>
+		public uint Lines {
 			get; internal set;
-		}
-
-		public uint? MessageSize {
-			get; internal set;
-		}
-
-		public string Uid {
-			get; internal set;
-		}
-
-		public int Index {
-			get; private set;
 		}
 	}
 }

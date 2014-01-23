@@ -1,5 +1,5 @@
 ﻿//
-// FetchResult.cs
+// BodyPartMultipart.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -27,38 +27,21 @@
 using System;
 
 namespace MailKit {
-	public class MessageSummary
+	/// <summary>
+	/// A multipart body part.
+	/// </summary>
+	public class BodyPartMultipart : BodyPart
 	{
-		internal MessageSummary (int index)
+		internal BodyPartMultipart ()
 		{
-			Index = index;
+			BodyParts = new BodyPartCollection ();
 		}
 
-		public BodyPart Body {
-			get; internal set;
-		}
-
-		public Envelope Envelope {
-			get; internal set;
-		}
-
-		public MessageFlags? Flags {
-			get; internal set;
-		}
-
-		public DateTimeOffset? InternalDate {
-			get; internal set;
-		}
-
-		public uint? MessageSize {
-			get; internal set;
-		}
-
-		public string Uid {
-			get; internal set;
-		}
-
-		public int Index {
+		/// <summary>
+		/// Gets the child body parts.
+		/// </summary>
+		/// <value>The child body parts.</value>
+		public BodyPartCollection BodyParts {
 			get; private set;
 		}
 	}

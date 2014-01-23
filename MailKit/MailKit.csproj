@@ -74,6 +74,11 @@
     <Compile Include="Security\SaslMechanismLogin.cs" />
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
+    <Compile Include="BodyPart.cs" />
+    <Compile Include="BodyPartCollection.cs" />
+    <Compile Include="BodyPartMessage.cs" />
+    <Compile Include="BodyPartMultipart.cs" />
+    <Compile Include="BodyPartText.cs" />
     <Compile Include="Envelope.cs" />
     <Compile Include="FlagsChangedEventArgs.cs" />
     <Compile Include="FolderAccess.cs" />
