@@ -652,15 +652,9 @@ namespace MailKit.Net.Imap {
 
 		static void AddEnvelopeAddress (InternetAddressList list, ImapEngine engine, CancellationToken cancellationToken)
 		{
-			var token = engine.ReadToken (cancellationToken);
 			string[] values = new string[4];
+			ImapToken token;
 			int index = 0;
-
-			if (token.Type == ImapTokenType.Nil)
-				return;
-
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
 
 			do {
 				token = engine.ReadToken (cancellationToken);
@@ -694,7 +688,9 @@ namespace MailKit.Net.Imap {
 				name = Rfc2047.DecodePhrase (Latin1.GetBytes (values[0]));
 			}
 
-			list.Add (new MailboxAddress (name, values[2] + "@" + values[3]));
+			string address = values[3] != null ? values[2] + "@" + values[3] : values[2];
+
+			list.Add (new MailboxAddress (name, address));
 		}
 
 		static InternetAddressList ParseEnvelopeAddressList (ImapEngine engine, CancellationToken cancellationToken)

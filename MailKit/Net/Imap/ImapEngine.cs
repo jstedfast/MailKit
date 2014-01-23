@@ -170,7 +170,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the underlying IMAP stream.
 		/// </summary>
-		/// <value>The pop3 stream.</value>
+		/// <value>The IMAP stream.</value>
 		public ImapStream Stream {
 			get { return stream; }
 		}
@@ -309,6 +309,15 @@ namespace MailKit.Net.Imap {
 				message = string.Format ("Unexpected token in IMAP response: {0}", token);
 
 			return new ImapProtocolException (message);
+		}
+
+		/// <summary>
+		/// Sets the stream - this is only here to be used by the unit tests.
+		/// </summary>
+		/// <param name="imap">The IMAP stream.</param>
+		internal void SetStream (ImapStream imap)
+		{
+			stream = imap;
 		}
 
 		/// <summary>
