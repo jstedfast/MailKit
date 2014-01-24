@@ -675,6 +675,7 @@ namespace MailKit.Net.Imap {
 				case ImapTokenType.QString:
 				case ImapTokenType.Atom:
 					values[index] = (string) token.Value;
+					break;
 				case ImapTokenType.Nil:
 					break;
 				default:

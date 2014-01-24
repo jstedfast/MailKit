@@ -1370,6 +1370,7 @@ namespace MailKit.Net.Imap {
 					case ImapTokenType.QString:
 					case ImapTokenType.Atom:
 						summary.InternalDate = ImapUtils.ParseInternalDate ((string) token.Value);
+						break;
 					case ImapTokenType.Nil:
 						summary.InternalDate = null;
 						break;
