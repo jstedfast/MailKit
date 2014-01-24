@@ -180,7 +180,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <value>The engine state.</value>
 		public ImapEngineState State {
-			get; set;
+			get; internal set;
 		}
 
 		/// <summary>
@@ -220,7 +220,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <value>The selected folder.</value>
 		public ImapFolder Selected {
-			get; private set;
+			get; internal set;
 		}
 
 		/// <summary>
@@ -560,7 +560,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (token.Type != sentinel) {
-				Debug.WriteLine ("Expected {0} at the end of the CAPABILITIES, but got: {1}", sentinel, token);
+				Debug.WriteLine ("Expected '{0}' at the end of the CAPABILITIES, but got: {1}", sentinel, token);
 				throw UnexpectedToken (token, false);
 			}
 
@@ -769,6 +769,7 @@ namespace MailKit.Net.Imap {
 
 				return code;
 			case ImapResponseCodeType.PermanentFlags:
+				stream.UngetToken (token);
 				code.Flags = ImapUtils.ParseFlagsList (this, cancellationToken);
 				token = stream.ReadToken (cancellationToken);
 				break;
@@ -922,7 +923,7 @@ namespace MailKit.Net.Imap {
 			var token = stream.ReadToken (cancellationToken);
 			ImapUntaggedHandler handler;
 			ImapFolder folder;
-			int number;
+			uint number;
 
 			if (current != null && current.Folder != null)
 				folder = current.Folder;
@@ -998,10 +999,7 @@ namespace MailKit.Net.Imap {
 					}
 					break;
 				default:
-					if (int.TryParse (atom, out number)) {
-						if (number == 0)
-							throw UnexpectedToken (token, false);
-
+					if (uint.TryParse (atom, out number)) {
 						// we probably have something like "* 1 EXISTS"
 						token = stream.ReadToken (cancellationToken);
 
@@ -1015,18 +1013,21 @@ namespace MailKit.Net.Imap {
 
 						switch (atom) {
 						case "EXISTS":
-							folder.UpdateCount (number);
+							folder.UpdateCount ((int) number);
 							break;
 						case "EXPUNGE":
-							folder.OnExpunged (number);
+							if (number == 0)
+								throw UnexpectedToken (new ImapToken (ImapTokenType.Atom, "0"), false);
+
+							folder.OnExpunged ((int) number - 1);
 							break;
 						case "RECENT":
-							folder.UpdateRecent (number);
+							folder.UpdateRecent ((int) number);
 							break;
 						default:
 							if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 								// the command registered an untagged handler for this atom...
-								handler (this, current, number - 1, token);
+								handler (this, current, (int) number - 1, token);
 							} else {
 								Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
 							}
@@ -1076,8 +1077,6 @@ namespace MailKit.Net.Imap {
 				while (current.Step ()) {
 					// more literal data to send...
 				}
-
-				// TODO: Update selected folder state after a SELECT, EXAMINE, CLOSE, and UNSELECT
 
 				if (current.Bye)
 					Disconnect ();

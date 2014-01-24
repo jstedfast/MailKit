@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 
@@ -345,6 +344,9 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic.Result);
 
+			Engine.State = ImapEngineState.Selected;
+			Engine.Selected = this;
+
 			return Access;
 		}
 
@@ -395,6 +397,9 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException (expunge ? "CLOSE" : "UNSELECT", ic.Result);
+
+			Engine.State = ImapEngineState.Authenticated;
+			Engine.Selected = null;
 		}
 
 		public void Rename (string newName, CancellationToken cancellationToken)
@@ -1401,7 +1406,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+			ic.RegisterUntaggedHandler ("FETCH", FetchAttributes);
 			ic.UserData = results;
 
 			Engine.Wait (ic);
@@ -1426,7 +1431,38 @@ namespace MailKit.Net.Imap {
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+			ic.RegisterUntaggedHandler ("FETCH", FetchAttributes);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
+		}
+
+		public IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageAttributes attributes, CancellationToken cancellationToken)
+		{
+			if (minIndex < 0 || minIndex >= Count)
+				throw new ArgumentOutOfRangeException ("minIndex");
+
+			if ((maxIndex != -1 && maxIndex < minIndex) || maxIndex >= Count)
+				throw new ArgumentOutOfRangeException ("maxIndex");
+
+			if (attributes == MessageAttributes.None)
+				throw new ArgumentOutOfRangeException ("attributes");
+
+			var set = string.Format ("{0}:{1}", minIndex + 1, maxIndex != -1 ? (maxIndex + 1).ToString () : "*");
+			var query = FormatAttributeQuery (attributes);
+
+			CheckState (true);
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
+			var results = new SortedDictionary<int, MessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchAttributes);
 			ic.UserData = results;
 
 			Engine.Wait (ic);
@@ -1459,7 +1495,12 @@ namespace MailKit.Net.Imap {
 				uint uid;
 
 				switch (atom) {
-				case "BODY[":
+				case "BODY":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.OpenBracket)
+						throw ImapEngine.UnexpectedToken (token, false);
+
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.CloseBracket)

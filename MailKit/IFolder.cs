@@ -93,6 +93,8 @@ namespace MailKit {
 		IEnumerable<MessageSummary> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken);
 		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken);
 
+		IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageAttributes attributes, CancellationToken cancellationToken);
+
 		// TODO: support fetching of individual mime parts and substreams
 		MimeMessage GetMessage (string uid, CancellationToken cancellationToken);
 		MimeMessage GetMessage (int index, CancellationToken cancellationToken);

@@ -62,9 +62,9 @@ namespace MailKit.Net.Imap {
 			switch (Type) {
 			case ImapTokenType.NoData:       return "<no data>";
 			case ImapTokenType.Nil:          return "NIL";
-			case ImapTokenType.Atom:         return (string) Value;
-			case ImapTokenType.Flag:         return (string) Value;
-			case ImapTokenType.QString:      return "\"" + (string) Value + "\"";
+			case ImapTokenType.Atom:         return "[atom: " + (string) Value + "]";
+			case ImapTokenType.Flag:         return "[flag: " + (string) Value + "]";
+			case ImapTokenType.QString:      return "[qstring: \"" + (string) Value + "\"]";
 			case ImapTokenType.Literal:      return "{" + (int) Value + "}";
 			case ImapTokenType.Eoln:         return "'\\n'";
 			case ImapTokenType.OpenParen:    return "'('";
@@ -73,7 +73,7 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.Plus:         return "'+'";
 			case ImapTokenType.OpenBracket:  return "'['";
 			case ImapTokenType.CloseBracket: return "']'";
-			default:                         return string.Format ("'{0}'", Value);
+			default:                         return string.Format ("[{0}: '{1}']", Type, Value);
 			}
 		}
 	}

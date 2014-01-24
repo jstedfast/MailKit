@@ -856,7 +856,7 @@ namespace MailKit.Net.Imap {
 				token = engine.ReadToken (cancellationToken);
 			}
 
-			if (token.Type !=  ImapTokenType.CloseParen) {
+			if (token.Type != ImapTokenType.CloseParen) {
 				Debug.WriteLine ("Expected to find a ')' token terminating the flags list, but got: {0}", token);
 				throw ImapEngine.UnexpectedToken (token, false);
 			}

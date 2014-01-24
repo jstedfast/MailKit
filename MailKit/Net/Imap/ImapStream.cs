@@ -358,7 +358,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsAtom (byte c)
 		{
-			return !IsCtrl (c) && !IsWhiteSpace (c) && "()[}*%\\\"\n".IndexOf ((char) c) == -1;
+			return !IsCtrl (c) && !IsWhiteSpace (c) && "()[]*%\\\"\n".IndexOf ((char) c) == -1;
 		}
 
 		static bool IsCtrl (byte c)
@@ -480,7 +480,7 @@ namespace MailKit.Net.Imap {
 			inptr++;
 
 			do {
-				*inptr = (byte) '}';
+				*inend = (byte) '}';
 
 				while (*inptr != (byte) '}' && *inptr != '+')
 					builder.Append ((char) *inptr++);
@@ -553,8 +553,13 @@ namespace MailKit.Net.Imap {
 				*inptr = (byte) '\n';
 			} while (true);
 
+			// skip over the '\n'
+			inptr++;
+
+			inputIndex = (int) (inptr - inbuf);
+
 			if (!int.TryParse (builder.ToString (), out literalDataLeft) || literalDataLeft < 0)
-				return new ImapToken (ImapTokenType.Error, ImapTokenType.Literal);
+				return new ImapToken (ImapTokenType.Error, builder.ToString ());
 
 			Mode = ImapStreamMode.Literal;
 
