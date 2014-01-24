@@ -37,7 +37,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by message stores such as <see cref="MailKit.Net.Imap.ImapClient"/>
 	/// </remarks>
-	public interface IFolder
+	public interface IFolder : IEnumerable<MimeMessage>
 	{
 		IFolder ParentFolder { get; }
 

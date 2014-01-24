@@ -26,6 +26,7 @@
 
 using System;
 using System.Threading;
+using System.Collections;
 using System.Collections.Generic;
 
 using MimeKit;
@@ -2438,6 +2439,28 @@ namespace MailKit.Net.Imap {
 
 			if (handler != null)
 				handler (this, EventArgs.Empty);
+		}
+
+		#endregion
+
+		#region IEnumerable<MimeMessage> implementation
+
+		/// <summary>
+		/// Gets an enumerator for the messages in the folder.
+		/// </summary>
+		/// <returns>The enumerator.</returns>
+		public IEnumerator<MimeMessage> GetEnumerator ()
+		{
+			return new MessageEnumerator (this);
+		}
+
+		/// <summary>
+		/// Gets an enumerator for the messages in the folder.
+		/// </summary>
+		/// <returns>The enumerator.</returns>
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 
 		#endregion

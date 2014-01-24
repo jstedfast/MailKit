@@ -94,6 +94,7 @@
     <Compile Include="IMessageTransport.cs" />
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="MessageAttributes.cs" />
+    <Compile Include="MessageEnumerator.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageSummary.cs" />
