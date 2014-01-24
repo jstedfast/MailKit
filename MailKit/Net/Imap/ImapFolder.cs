@@ -1394,6 +1394,43 @@ namespace MailKit.Net.Imap {
 			return query.TrimEnd ();
 		}
 
+		/// <summary>
+		/// Fetches the message summaries for the specified message UIDs.
+		/// </summary>
+		/// <param name="uids">The UIDs.</param>
+		/// <param name="attributes">The message attributes to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="attributes"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="uids"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public IEnumerable<MessageSummary> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken)
 		{
 			var query = FormatAttributeQuery (attributes);
@@ -1419,6 +1456,43 @@ namespace MailKit.Net.Imap {
 			return results.Values;
 		}
 
+		/// <summary>
+		/// Fetches the message summaries for the specified message indexes.
+		/// </summary>
+		/// <param name="indexes">The indexes.</param>
+		/// <param name="attributes">The message attributes to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="attributes"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="indexes"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public IEnumerable<MessageSummary> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken)
 		{
 			var query = FormatAttributeQuery (attributes);
@@ -1444,6 +1518,42 @@ namespace MailKit.Net.Imap {
 			return results.Values;
 		}
 
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// </summary>
+		/// <param name="minIndex">The minimum index.</param>
+		/// <param name="maxIndex">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="attributes">The message attributes.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="minIndex"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="maxIndex"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="attributes"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageAttributes attributes, CancellationToken cancellationToken)
 		{
 			if (minIndex < 0 || minIndex >= Count)

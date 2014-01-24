@@ -172,7 +172,7 @@ namespace MailKit.Net.Imap {
 
 			for (int i = 0; i < indexes.Length; i++) {
 				if (i < 0)
-					throw new ArgumentOutOfRangeException ("indexes", "One or more indexes were negative.");
+					throw new ArgumentException ("One or more indexes were negative.", "indexes");
 
 				uids[i] = (uint) indexes[i] + 1;
 			}
