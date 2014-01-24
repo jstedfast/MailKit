@@ -65,7 +65,7 @@ namespace MailKit {
 		void Close (bool expunge, CancellationToken cancellationToken);
 
 		IFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken);
-		void Rename (string newName, CancellationToken cancellationToken);
+		void Rename (IFolder parent, string name, CancellationToken cancellationToken);
 		void Delete (CancellationToken cancellationToken);
 
 		void Subscribe (CancellationToken cancellationToken);

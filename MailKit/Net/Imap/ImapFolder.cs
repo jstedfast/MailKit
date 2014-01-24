@@ -443,8 +443,8 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (string.IsNullOrEmpty (name))
-				throw new ArgumentException ("Cannot use an empty string for a folder name.");
+			if (string.IsNullOrEmpty (name) || name.IndexOf (DirectorySeparator) != -1)
+				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			CheckState (false);
 
@@ -480,15 +480,20 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Renames the folder to the given full name.
+		/// Renames the folder to exist with a new name under a new parent folder.
 		/// </summary>
-		/// <param name="newName">The new full name of the folder.</param>
+		/// <param name="parent">The new parent folder.</param>
+		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="newName"/> is <c>null</c>.
+		/// <para><paramref name="parent"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="newName"/> is empty.
+		/// <para><paramref name="parent"/> does not belong to the <see cref="ImapClient"/>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="name"/> is not a legal folder name.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -508,17 +513,23 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Rename (string newName, CancellationToken cancellationToken)
+		public void Rename (IFolder parent, string name, CancellationToken cancellationToken)
 		{
-			if (newName == null)
-				throw new ArgumentNullException ("newName");
+			if (parent == null)
+				throw new ArgumentNullException ("parent");
 
-			if (string.IsNullOrEmpty (newName))
-				throw new ArgumentException ("Cannot use an empty string for a folder name.");
+			if (!(parent is ImapFolder) || ((ImapFolder) parent).Engine != Engine)
+				throw new ArgumentException ("The parent folder does not belong to this ImapClient.", "parent");
+
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (string.IsNullOrEmpty (name) || name.IndexOf (parent.DirectorySeparator) != -1)
+				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			CheckState (false);
 
-			var encodedName = ImapEncoding.Encode (newName);
+			var encodedName = ImapEncoding.Encode (parent.FullName + parent.DirectorySeparator + name);
 			var ic = Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
 
 			Engine.Wait (ic);
@@ -528,9 +539,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("RENAME", ic.Result);
 
-			Name = GetBaseName (newName, DirectorySeparator);
+			Name = GetBaseName (name, parent.DirectorySeparator);
 			EncodedName = encodedName;
-			FullName = newName;
+			ParentFolder = parent;
+			FullName = name;
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
@@ -1235,7 +1247,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1269,8 +1281,8 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			if (!(destination is ImapFolder))
-				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
 			CheckState (true);
 
@@ -1309,7 +1321,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1350,8 +1362,8 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			if (!(destination is ImapFolder))
-				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
 			CheckState (true);
 
@@ -1389,7 +1401,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1420,8 +1432,8 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			if (!(destination is ImapFolder))
-				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
 			CheckState (true);
 
@@ -1449,7 +1461,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
-		/// <para>The destination folder is not an <see cref="ImapFolder"/>.</para>
+		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1486,8 +1498,8 @@ namespace MailKit.Net.Imap {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			if (!(destination is ImapFolder))
-				throw new ArgumentException ("The destination folder is not an ImapFolder.", "destination");
+			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
 			CheckState (true);
 
