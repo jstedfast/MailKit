@@ -680,8 +680,8 @@ namespace MailKit.Net.Imap {
 			case "CAPABILITY":     return ImapResponseCodeType.Capability;
 			case "PARSE":          return ImapResponseCodeType.Parse;
 			case "PERMANENTFLAGS": return ImapResponseCodeType.PermanentFlags;
-			case "READONLY":       return ImapResponseCodeType.ReadOnly;
-			case "READWRITE":      return ImapResponseCodeType.ReadWrite;
+			case "READ-ONLY":      return ImapResponseCodeType.ReadOnly;
+			case "READ-WRITE":     return ImapResponseCodeType.ReadWrite;
 			case "TRYCREATE":      return ImapResponseCodeType.TryCreate;
 			case "UIDNEXT":        return ImapResponseCodeType.UidNext;
 			case "UIDVALIDITY":    return ImapResponseCodeType.UidValidity;
@@ -890,7 +890,7 @@ namespace MailKit.Net.Imap {
 			default:
 				code = new ImapResponseCode (ImapResponseCodeType.Unknown);
 
-				Debug.WriteLine ("Unknown RESP-CODE encountered: {0}", atom);
+				Debug.WriteLine (string.Format ("Unknown RESP-CODE encountered: {0}", atom));
 
 				// extensions are of the form: "[" atom [SPACE 1*<any TEXT_CHAR except "]">] "]"
 
