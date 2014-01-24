@@ -30,6 +30,7 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Collections;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Collections.Generic;
@@ -1409,6 +1410,75 @@ namespace MailKit.Net.Pop3 {
 				throw new UnauthorizedAccessException ();
 
 			SendCommand (cancellationToken, "RSET");
+		}
+
+		#endregion
+
+		#region IEnumerable<MimeMessage> implementation
+
+		/// <summary>
+		/// Gets an enumerator for the messages in the folder.
+		/// </summary>
+		/// <returns>The enumerator.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public IEnumerator<MimeMessage> GetEnumerator ()
+		{
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			int n = GetMessageCount (CancellationToken.None);
+
+			for (int i = 0; i < n; i++)
+				yield return GetMessage (i, CancellationToken.None);
+
+			yield break;
+		}
+
+		/// <summary>
+		/// Gets an enumerator for the messages in the folder.
+		/// </summary>
+		/// <returns>The enumerator.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3Exception">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return GetEnumerator ();
 		}
 
 		#endregion

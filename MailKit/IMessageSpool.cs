@@ -25,6 +25,7 @@
 //
 
 using System.Threading;
+using System.Collections.Generic;
 
 using MimeKit;
 
@@ -35,7 +36,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by <see cref="MailKit.Net.Pop3.Pop3Client"/>.
 	/// </remarks>
-	public interface IMessageSpool : IMessageService
+	public interface IMessageSpool : IMessageService, IEnumerable<MimeMessage>
 	{
 		/// <summary>
 		/// Gets whether or not the service supports referencing messages by UIDs.

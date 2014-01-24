@@ -2449,15 +2449,40 @@ namespace MailKit.Net.Imap {
 		/// Gets an enumerator for the messages in the folder.
 		/// </summary>
 		/// <returns>The enumerator.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
 		public IEnumerator<MimeMessage> GetEnumerator ()
 		{
-			return new MessageEnumerator (this);
+			CheckState (true);
+
+			for (int i = 0; i < Count; i++)
+				yield return GetMessage (i, CancellationToken.None);
+
+			yield break;
 		}
 
 		/// <summary>
 		/// Gets an enumerator for the messages in the folder.
 		/// </summary>
 		/// <returns>The enumerator.</returns>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return GetEnumerator ();
