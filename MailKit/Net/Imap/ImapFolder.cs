@@ -46,13 +46,18 @@ namespace MailKit.Net.Imap {
 		internal ImapFolder (ImapEngine engine, string encodedName, FolderAttributes attrs, char delim)
 		{
 			FullName = ImapEncoding.Decode (encodedName);
+			Name = GetBaseName (FullName, delim);
 			DirectorySeparator = delim;
 			EncodedName = encodedName;
 			Attributes = attrs;
 			Engine = engine;
+		}
 
-			var names = FullName.Split (new [] { delim }, StringSplitOptions.RemoveEmptyEntries);
-			Name = names.Length > 0 ? names[names.Length - 1] : FullName;
+		static string GetBaseName (string fullName, char delim)
+		{
+			var names = fullName.Split (new [] { delim }, StringSplitOptions.RemoveEmptyEntries);
+
+			return names.Length > 0 ? names[names.Length - 1] : fullName;
 		}
 
 		/// <summary>
@@ -402,19 +407,180 @@ namespace MailKit.Net.Imap {
 			Engine.Selected = null;
 		}
 
+		/// <summary>
+		/// Creates a new subfolder with the given name.
+		/// </summary>
+		/// <returns>The created folder.</returns>
+		/// <param name="name">The name of the folder to create.</param>
+		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="name"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public IFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (string.IsNullOrEmpty (name))
+				throw new ArgumentException ("Cannot use an empty string for a folder name.");
+
+			CheckState (false);
+
+			var fullName = FullName + DirectorySeparator + name;
+			var encodedName = ImapEncoding.Encode (fullName);
+			var list = new List<ImapFolder> ();
+			var createName = encodedName;
+
+			if (!isMessageFolder)
+				createName += DirectorySeparator;
+
+			var ic = Engine.QueueCommand (cancellationToken, null, "CREATE %S\r\n", createName);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("CREATE", ic.Result);
+
+			ic = Engine.QueueCommand (cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
+			ic.UserData = list;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("LIST", ic.Result);
+
+			return list.Count > 0 ? list[0] : null;
+		}
+
+		/// <summary>
+		/// Renames the folder to the given full name.
+		/// </summary>
+		/// <param name="newName">The new full name of the folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="newName"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="newName"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Rename (string newName, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			if (newName == null)
+				throw new ArgumentNullException ("newName");
+
+			if (string.IsNullOrEmpty (newName))
+				throw new ArgumentException ("Cannot use an empty string for a folder name.");
+
+			CheckState (false);
+
+			var encodedName = ImapEncoding.Encode (newName);
+			var ic = Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("RENAME", ic.Result);
+
+			Name = GetBaseName (newName, DirectorySeparator);
+			EncodedName = encodedName;
+			FullName = newName;
+
+			if (Engine.Selected == this) {
+				Engine.State = ImapEngineState.Authenticated;
+				Engine.Selected = null;
+			}
+
+			Engine.FolderCache.Remove (EncodedName);
+			Engine.FolderCache[encodedName] = this;
 		}
 
-		public void Create (CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException ();
-		}
-
+		/// <summary>
+		/// Deletes the folder on the IMAP server.
+		/// </summary>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public void Delete (CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException ();
+			var ic = Engine.QueueCommand (cancellationToken, null, "DELETE %F\r\n", this);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("DELETE", ic.Result);
+
+			if (Engine.Selected == this) {
+				Engine.State = ImapEngineState.Authenticated;
+				Engine.Selected = null;
+			}
+
+			Attributes |= FolderAttributes.NonExistent;
+			Exists = false;
 		}
 
 		/// <summary>

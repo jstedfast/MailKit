@@ -64,8 +64,8 @@ namespace MailKit {
 		FolderAccess Open (FolderAccess access, CancellationToken cancellationToken);
 		void Close (bool expunge, CancellationToken cancellationToken);
 
+		IFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken);
 		void Rename (string newName, CancellationToken cancellationToken);
-		void Create (CancellationToken cancellationToken);
 		void Delete (CancellationToken cancellationToken);
 
 		void Subscribe (CancellationToken cancellationToken);
