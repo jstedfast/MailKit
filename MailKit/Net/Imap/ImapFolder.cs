@@ -256,6 +256,13 @@ namespace MailKit.Net.Imap {
 			get; internal set;
 		}
 
+		/// <summary>
+		/// Gets the highest mod-sequence value of all messages in the mailbox.
+		/// </summary>
+		/// <remarks>
+		/// This property is only available if the IMAP server supports the CONDSTORE extension.
+		/// </remarks>
+		/// <value>The highest mod-sequence value.</value>
 		public ulong HighestModSeq {
 			get; private set;
 		}
@@ -264,7 +271,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the UID validity.
 		/// </summary>
 		/// <remarks>
-		/// A UID is only valid so long as the UID validity value remains unchanged.
+		/// UIDs are only valid so long as the UID validity value remains unchanged.
 		/// </remarks>
 		/// <value>The UID validity.</value>
 		public string UidValidity {
@@ -539,6 +546,8 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("RENAME", ic.Result);
 
+			// FIXME: what to do about all child folders? :-(
+
 			Name = GetBaseName (name, parent.DirectorySeparator);
 			EncodedName = encodedName;
 			ParentFolder = parent;
@@ -805,7 +814,13 @@ namespace MailKit.Net.Imap {
 			if ((items & StatusItems.UidValidity) != 0)
 				flags += "UIDVALIDITY ";
 			if ((items & StatusItems.FirstUnread) != 0)
-				flags += "UNSEEN";
+				flags += "UNSEEN ";
+
+			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
+				if ((items & StatusItems.HighestModSeq) != 0)
+					flags += "HIGHESTMODSEQ ";
+			}
+
 			flags = flags.TrimEnd ();
 
 			var ic = Engine.QueueCommand (cancellationToken, null, "STATUS %F (%s)\r\n", this, flags);
@@ -1988,15 +2003,81 @@ namespace MailKit.Net.Imap {
 			return (MimeMessage) ic.UserData;
 		}
 
-		void ModifyFlags (string[] uids, MessageFlags flags, string action, CancellationToken cancellationToken)
+		static void FetchModSeq (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		{
+			var token = engine.ReadToken (ic.CancellationToken);
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			do {
+				token = engine.ReadToken (ic.CancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
+					break;
+
+				if (token.Type != ImapTokenType.Atom)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				var atom = (string) token.Value;
+				ulong modseq;
+				uint uid;
+
+				switch (atom) {
+				case "MODSEQ":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.OpenParen)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.CloseParen)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					break;
+				case "UID":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					break;
+				case "FLAGS":
+					// even though we didn't request this piece of information, the IMAP server
+					// may send it if another client has recently modified the message flags.
+					var flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+
+					ic.Folder.OnFlagsChanged (index, flags);
+					break;
+				default:
+					throw ImapEngine.UnexpectedToken (token, false);
+				}
+			} while (true);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+		}
+
+		void ModifyFlags (string[] uids, MessageFlags flags, string action, ulong? modseq, CancellationToken cancellationToken)
 		{
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatUidSet (uids);
 
 			CheckState (true);
 
-			var format = string.Format ("UID STORE {0} {1} {2}\r\n", set, action, flaglist);
+			string @params = string.Empty;
+			if (modseq.HasValue)
+				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+
+			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format);
+			ic.RegisterUntaggedHandler ("FETCH", FetchModSeq);
 
 			Engine.Wait (ic);
 
@@ -2043,7 +2124,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void AddFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (uids, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
+			ModifyFlags (uids, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", null, cancellationToken);
 		}
 
 		/// <summary>
@@ -2083,7 +2164,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void RemoveFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (uids, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
+			ModifyFlags (uids, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", null, cancellationToken);
 		}
 
 		/// <summary>
@@ -2123,18 +2204,23 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void SetFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (uids, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
+			ModifyFlags (uids, flags, silent ? "FLAGS.SILENT" : "FLAGS", null, cancellationToken);
 		}
 
-		void ModifyFlags (int[] indexes, MessageFlags flags, string action, CancellationToken cancellationToken)
+		void ModifyFlags (int[] indexes, MessageFlags flags, string action, ulong? modseq, CancellationToken cancellationToken)
 		{
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatUidSet (indexes);
 
 			CheckState (true);
 
-			var format = string.Format ("STORE {0} {1} {2}\r\n", set, action, flaglist);
+			string @params = string.Empty;
+			if (modseq.HasValue)
+				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+
+			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format);
+			ic.RegisterUntaggedHandler ("FETCH", FetchModSeq);
 
 			Engine.Wait (ic);
 
@@ -2181,7 +2267,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (indexes, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
+			ModifyFlags (indexes, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", null, cancellationToken);
 		}
 
 		/// <summary>
@@ -2221,7 +2307,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (indexes, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
+			ModifyFlags (indexes, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", null, cancellationToken);
 		}
 
 		/// <summary>
@@ -2261,7 +2347,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (indexes, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
+			ModifyFlags (indexes, flags, silent ? "FLAGS.SILENT" : "FLAGS", null, cancellationToken);
 		}
 
 		public event EventHandler<EventArgs> Deleted;

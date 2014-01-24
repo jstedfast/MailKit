@@ -58,6 +58,11 @@ namespace MailKit {
 		/// <summary>
 		/// Updates <see cref="IFolder.FirstUnread"/>.
 		/// </summary>
-		FirstUnread    = 1 << 4
+		FirstUnread    = 1 << 4,
+
+		/// <summary>
+		/// Updates <see cref="IFolder.HighestModSeq"/>.
+		/// </summary>
+		HighestModSeq  = 1 << 5,
 	}
 }
