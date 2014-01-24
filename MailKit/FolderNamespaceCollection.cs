@@ -111,6 +111,19 @@ namespace MailKit {
 			return collection.Remove (@namespace);
 		}
 
+		/// <summary>
+		/// Gets the <see cref="MailKit.FolderNamespace"/> at the specified index.
+		/// </summary>
+		/// <param name="index">The index.</param>
+		public FolderNamespace this [int index] {
+			get {
+				if (index < 0 || index > collection.Count)
+					throw new ArgumentOutOfRangeException ("index");
+
+				return collection[index];
+			}
+		}
+
 		#endregion
 
 		#region IEnumerable implementation
