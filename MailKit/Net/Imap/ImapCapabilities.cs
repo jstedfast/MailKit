@@ -128,43 +128,48 @@ namespace MailKit.Net.Imap {
 		ESearch        = 1 << 16,
 
 		/// <summary>
+		/// The server supports the SASL-IR extension defined in rfc4959.
+		/// </summary>
+		SaslIR         = 1 << 17,
+
+		/// <summary>
 		/// The server supports the COMPRESS extension defined in rfc4978.
 		/// </summary>
-		Compress       = 1 << 17,
+		Compress       = 1 << 18,
 
 		/// <summary>
 		/// The server supports the ENABLE extension defined in rfc5161.
 		/// </summary>
-		Enable         = 1 << 18,
+		Enable         = 1 << 19,
 
 		/// <summary>
 		/// The server supports the LIST-EXTENDED extension defined in rfc5258.
 		/// </summary>
-		ListExtended   = 1 << 19,
+		ListExtended   = 1 << 20,
 
 		/// <summary>
 		/// The server supports the CONVERT extension defined in rfc5259.
 		/// </summary>
-		Convert        = 1 << 20,
+		Convert        = 1 << 21,
 
 		/// <summary>
 		/// The server supports the METADATA extension defined in rfc5464.
 		/// </summary>
-		MetaData       = 1 << 21,
+		MetaData       = 1 << 22,
 
 		/// <summary>
 		/// The server supports the FILTERS extension defined in rfc5466.
 		/// </summary>
-		Filters        = 1 << 22,
+		Filters        = 1 << 23,
 
 		/// <summary>
 		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse     = 1 << 23,
+		SpecialUse     = 1 << 24,
 
 		/// <summary>
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
-		Move           = 1 << 24,
+		Move           = 1 << 25,
 	}
 }

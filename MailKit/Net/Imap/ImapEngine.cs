@@ -546,6 +546,7 @@ namespace MailKit.Net.Imap {
 					case "CATENATE":      Capabilities |= ImapCapabilities.Catenate; break;
 					case "CONDSTORE":     Capabilities |= ImapCapabilities.CondStore; break;
 					case "ESEARCH":       Capabilities |= ImapCapabilities.ESearch; break;
+					case "SASL-IR":       Capabilities |= ImapCapabilities.SaslIR; break;
 					case "ENABLE":        Capabilities |= ImapCapabilities.Enable; break;
 					case "LIST-EXTENDED": Capabilities |= ImapCapabilities.ListExtended; break;
 					case "CONVERT":       Capabilities |= ImapCapabilities.Convert; break;

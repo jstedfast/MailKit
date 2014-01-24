@@ -27,13 +27,11 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -225,6 +223,8 @@ namespace MailKit.Net.Imap {
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
+				// FIXME: if the server supports SASL-IR (Initial Response), we might be able to send an initial
+				// SASL response rather than wait for a "+" response.
 				ic = engine.QueueCommand (cancellationToken, null, "AUTHENTICATE %s\r\n", sasl.MechanismName);
 				ic.ContinuationHandler = (imap, cmd, text) => {
 					string challenge;
@@ -460,14 +460,35 @@ namespace MailKit.Net.Imap {
 
 		#region IMessageStore implementation
 
+		/// <summary>
+		/// Gets the personal namespaces.
+		/// </summary>
+		/// <remarks>
+		/// The personal folder namespaces contain a user's personal mailbox folders.
+		/// </remarks>
+		/// <value>The personal namespaces.</value>
 		public FolderNamespaceCollection PersonalNamespaces {
 			get { return engine.PersonalNamespaces; }
 		}
 
+		/// <summary>
+		/// Gets the shared namespaces.
+		/// </summary>
+		/// <remarks>
+		/// The shared folder namespaces contain mailbox folders that are shared with the user.
+		/// </remarks>
+		/// <value>The shared namespaces.</value>
 		public FolderNamespaceCollection SharedNamespaces {
 			get { return engine.SharedNamespaces; }
 		}
 
+		/// <summary>
+		/// Gets the other namespaces.
+		/// </summary>
+		/// <remarks>
+		/// The other folder namespaces contain other mailbox folders.
+		/// </remarks>
+		/// <value>The other namespaces.</value>
 		public FolderNamespaceCollection OtherNamespaces {
 			get { return engine.OtherNamespaces; }
 		}
@@ -475,6 +496,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the Inbox folder.
 		/// </summary>
+		/// <remarks>
+		/// The Inbox folder is the default folder and always exists.
+		/// </remarks>
 		/// <value>The Inbox folder.</value>
 		public IFolder Inbox {
 			get { return engine.Inbox; }
@@ -483,6 +507,11 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the specified special folder.
 		/// </summary>
+		/// <remarks>
+		/// Not all IMAP servers support special folders. Only IMAP servers
+		/// supporting the <see cref="ImapCapabilities.SpecialUse"/> capability
+		/// will have special folders.
+		/// </remarks>
 		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
 		/// <param name="folder">The type of special folder.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
