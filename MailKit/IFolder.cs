@@ -57,7 +57,7 @@ namespace MailKit {
 		string UidValidity { get; }
 		string UidNext { get; }
 
-		int FirstUnreadIndex { get; }
+		int FirstUnread { get; }
 		int Recent { get; }
 		int Count { get; }
 
@@ -74,6 +74,7 @@ namespace MailKit {
 		IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken);
 
 		void Check (CancellationToken cancellationToken);
+		void Status (StatusItems items, CancellationToken cancellationToken);
 
 		void Expunge (CancellationToken cancellationToken);
 		void Expunge (string[] uids, CancellationToken cancellationToken);

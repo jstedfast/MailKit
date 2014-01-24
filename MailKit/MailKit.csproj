@@ -101,6 +101,7 @@
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
     <Compile Include="SpecialFolder.cs" />
+    <Compile Include="StatusItems.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />

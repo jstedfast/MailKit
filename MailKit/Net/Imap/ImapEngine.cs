@@ -912,6 +912,79 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
+		void UpdateStatus (CancellationToken cancellationToken)
+		{
+			var token = stream.ReadToken (cancellationToken);
+			ImapFolder folder;
+			string name;
+			uint value;
+
+			switch (token.Type) {
+			case ImapTokenType.Literal:
+				name = ReadLiteral (cancellationToken);
+				break;
+			case ImapTokenType.QString:
+			case ImapTokenType.Atom:
+				name = (string) token.Value;
+				break;
+			default:
+				throw UnexpectedToken (token, false);
+			}
+
+			if (!FolderCache.TryGetValue (name, out folder)) {
+			}
+
+			token = stream.ReadToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw UnexpectedToken (token, false);
+
+			do {
+				token = stream.ReadToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				if (token.Type != ImapTokenType.Atom)
+					throw UnexpectedToken (token, false);
+
+				var atom = (string) token.Value;
+
+				token = stream.ReadToken (cancellationToken);
+
+				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value))
+					throw UnexpectedToken (token, false);
+
+				if (folder != null) {
+					switch (atom) {
+					case "MESSAGES":
+						folder.UpdateCount ((int) value);
+						break;
+					case "RECENT":
+						folder.UpdateRecent ((int) value);
+						break;
+					case "UIDNEXT":
+						folder.UpdateUidNext (value.ToString ());
+						break;
+					case "UIDVALIDITY":
+						folder.UpdateUidValidity (value.ToString ());
+						break;
+					case "UNSEEN":
+						if (value > 0)
+							value--;
+
+						folder.UpdateFirstUnread ((int) value);
+						break;
+					}
+				}
+			} while (true);
+
+			token = stream.ReadToken (cancellationToken);
+
+			if (token.Type != ImapTokenType.Eoln)
+				throw UnexpectedToken (token, false);
+		}
+
 		/// <summary>
 		/// Processes an untagged response.
 		/// </summary>
@@ -968,6 +1041,9 @@ namespace MailKit.Net.Imap {
 					break;
 				case "NAMESPACE":
 					UpdateNamespaces (cancellationToken);
+					break;
+				case "STATUS":
+					UpdateStatus (cancellationToken);
 					break;
 				case "NO": case "BAD":
 					// our command got rejected...

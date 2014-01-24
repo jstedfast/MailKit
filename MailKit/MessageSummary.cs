@@ -1,5 +1,5 @@
 ﻿//
-// FetchResult.cs
+// MessageSummary.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //

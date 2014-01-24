@@ -33,7 +33,7 @@ using System.Collections.Generic;
 
 using MimeKit;
 using MimeKit.IO;
-using MimeKit.IO.Filters;
+using MimeKit.Utils;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -344,10 +344,8 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case ImapStringType.QString:
-				buf = Encoding.UTF8.GetBytes (value);
-				builder.WriteByte ((byte) '"');
+				buf = Encoding.UTF8.GetBytes (MimeUtils.Quote (value));
 				builder.Write (buf, 0, buf.Length);
-				builder.WriteByte ((byte) '"');
 				break;
 			case ImapStringType.Atom:
 				buf = Encoding.UTF8.GetBytes (value);

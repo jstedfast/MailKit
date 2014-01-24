@@ -125,7 +125,7 @@ namespace MailKit.Net.Imap {
 					UidValidity = code.UidValidity.ToString ();
 					break;
 				case ImapResponseCodeType.Unseen:
-					FirstUnreadIndex = code.Index;
+					FirstUnread = code.Index;
 					break;
 				case ImapResponseCodeType.HighestModSeq:
 					HighestModSeq = code.HighestModSeq;
@@ -278,7 +278,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the index of the first unread message in the folder.
 		/// </summary>
 		/// <value>The index of the first unread message.</value>
-		public int FirstUnreadIndex {
+		public int FirstUnread {
 			get; private set;
 		}
 
@@ -578,6 +578,66 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("CHECK", ic.Result);
+		}
+
+		/// <summary>
+		/// Updates the values of the specified items.
+		/// </summary>
+		/// <param name="items">The items to update.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the STATUS command.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public void Status (StatusItems items, CancellationToken cancellationToken)
+		{
+			if ((Engine.Capabilities & ImapCapabilities.Status) != 0)
+				throw new NotSupportedException ();
+
+			CheckState (false);
+
+			string flags = string.Empty;
+			if ((items & StatusItems.Count) != 0)
+				flags += "MESSAGES ";
+			if ((items & StatusItems.Recent) != 0)
+				flags += "RECENT ";
+			if ((items & StatusItems.UidNext) != 0)
+				flags += "UIDNEXT ";
+			if ((items & StatusItems.UidValidity) != 0)
+				flags += "UIDVALIDITY ";
+			if ((items & StatusItems.FirstUnread) != 0)
+				flags += "UNSEEN";
+			flags = flags.TrimEnd ();
+
+			var ic = Engine.QueueCommand (cancellationToken, null, "STATUS %F (%s)\r\n", this, flags);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("STATUS", ic.Result);
 		}
 
 		/// <summary>
@@ -2135,6 +2195,11 @@ namespace MailKit.Net.Imap {
 			Recent = count;
 
 			OnRecentChanged ();
+		}
+
+		internal void UpdateFirstUnread (int index)
+		{
+			FirstUnread = index;
 		}
 
 		internal void UpdateUidNext (string value)
