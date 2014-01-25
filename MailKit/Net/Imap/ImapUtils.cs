@@ -288,9 +288,6 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 			}
 
-			// skip any remaining tokens...
-			engine.SkipLine (ic.CancellationToken);
-
 			if (engine.FolderCache.TryGetValue (encodedName, out folder)) {
 				folder.Attributes = (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked)) | attrs;
 			} else {

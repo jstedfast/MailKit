@@ -29,6 +29,7 @@ using System.Threading;
 using System.Collections.Generic;
 
 using MimeKit;
+using MailKit.Search;
 
 namespace MailKit {
 	/// <summary>
@@ -107,6 +108,9 @@ namespace MailKit {
 		void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 		void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 		void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+
+		string[] Search (string[] uids, SearchQuery query, CancellationToken cancellationToken);
+		string[] Search (SearchQuery query, CancellationToken cancellationToken);
 
 		event EventHandler<EventArgs> Deleted;
 		event EventHandler<FolderRenamedEventArgs> Renamed;

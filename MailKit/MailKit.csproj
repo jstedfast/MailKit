@@ -51,6 +51,7 @@
     <Compile Include="Net\Imap\ImapFolder.cs" />
     <Compile Include="Net\Imap\ImapProtocolException.cs" />
     <Compile Include="Net\Imap\ImapResponseCode.cs" />
+    <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />
     <Compile Include="Net\Imap\ImapStream.cs" />
     <Compile Include="Net\Imap\ImapToken.cs" />
     <Compile Include="Net\Imap\ImapUtils.cs" />
@@ -67,6 +68,15 @@
     <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\BinarySearchQuery.cs" />
+    <Compile Include="Search\DateSearchQuery.cs" />
+    <Compile Include="Search\HeaderSearchQuery.cs" />
+    <Compile Include="Search\ISearchQueryOptimizer.cs" />
+    <Compile Include="Search\NumericSearchQuery.cs" />
+    <Compile Include="Search\SearchQuery.cs" />
+    <Compile Include="Search\SearchTerm.cs" />
+    <Compile Include="Search\TextSearchQuery.cs" />
+    <Compile Include="Search\UnarySearchQuery.cs" />
     <Compile Include="Security\SaslException.cs" />
     <Compile Include="Security\SaslMechanism.cs" />
     <Compile Include="Security\SaslMechanismCramMd5.cs" />
@@ -108,6 +118,7 @@
     <Folder Include="Net\Imap\" />
     <Folder Include="Net\Pop3\" />
     <Folder Include="Net\Smtp\" />
+    <Folder Include="Search\" />
     <Folder Include="Security\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

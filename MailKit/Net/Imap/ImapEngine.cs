@@ -1114,6 +1114,7 @@ namespace MailKit.Net.Imap {
 					} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
 						handler (this, current, -1, token);
+						SkipLine (cancellationToken);
 					} else {
 						// don't know how to handle this... eat it?
 						SkipLine (cancellationToken);

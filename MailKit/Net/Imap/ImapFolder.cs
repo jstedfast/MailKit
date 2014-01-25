@@ -25,11 +25,15 @@
 //
 
 using System;
+using System.Text;
 using System.Threading;
 using System.Collections;
+using System.Globalization;
 using System.Collections.Generic;
 
 using MimeKit;
+using MimeKit.Utils;
+using MailKit.Search;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -2349,6 +2353,275 @@ namespace MailKit.Net.Imap {
 		public void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
 			ModifyFlags (indexes, flags, silent ? "FLAGS.SILENT" : "FLAGS", null, cancellationToken);
+		}
+
+		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args)
+		{
+			NumericSearchQuery numeric;
+			HeaderSearchQuery header;
+			BinarySearchQuery binary;
+			UnarySearchQuery unary;
+			DateSearchQuery date;
+			TextSearchQuery text;
+
+			if (builder.Length > 0)
+				builder.Append (' ');
+
+			switch (query.Term) {
+			case SearchTerm.All:
+				builder.Append ("ALL");
+				break;
+			case SearchTerm.And:
+				binary = (BinarySearchQuery) query;
+				BuildQuery (builder, binary.Left, args);
+				BuildQuery (builder, binary.Right, args);
+				break;
+			case SearchTerm.Answered:
+				builder.Append ("ANSWERED");
+				break;
+			case SearchTerm.BccContains:
+				text = (TextSearchQuery) query;
+				builder.Append ("BCC %S");
+				args.Add (text.Text);
+				break;
+			case SearchTerm.BodyContains:
+				text = (TextSearchQuery) query;
+				builder.Append ("BODY %S");
+				args.Add (text.Text);
+				break;
+			case SearchTerm.CcContains:
+				text = (TextSearchQuery) query;
+				builder.Append ("CC %S");
+				args.Add (text.Text);
+				break;
+			case SearchTerm.Deleted:
+				builder.Append ("DELETED");
+				break;
+			case SearchTerm.DeliveredAfter:
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SINCE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				break;
+			case SearchTerm.DeliveredBefore:
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("BEFORE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				break;
+			case SearchTerm.DeliveredOn:
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("ON {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				break;
+			case SearchTerm.Draft:
+				builder.Append ("DRAFT");
+				break;
+			case SearchTerm.Flagged:
+				builder.Append ("FLAGGED");
+				break;
+			case SearchTerm.FromContains:
+				text = (TextSearchQuery) query;
+				builder.Append ("FROM %S");
+				args.Add (text.Text);
+				break;
+			case SearchTerm.HeaderContains:
+				header = (HeaderSearchQuery) query;
+				builder.AppendFormat ("HEADER {0} %S", header.Field);
+				args.Add (header.Value);
+				break;
+			case SearchTerm.Keyword:
+				break;
+			case SearchTerm.LargerThan:
+				numeric = (NumericSearchQuery) query;
+				builder.AppendFormat ("LARGER {0}", numeric.Value);
+				break;
+			case SearchTerm.MessageContains:
+				text = (TextSearchQuery) query;
+				builder.Append ("TEXT %S");
+				args.Add (text.Text);
+				break;
+			case SearchTerm.New:
+				builder.Append ("NEW");
+				break;
+			case SearchTerm.Not:
+				builder.Append ("NOT");
+				unary = (UnarySearchQuery) query;
+				BuildQuery (builder, unary.Operand, args);
+				break;
+			case SearchTerm.NotAnswered:
+				builder.Append ("UNANSWERED");
+				break;
+			case SearchTerm.NotDeleted:
+				builder.Append ("UNDELETED");
+				break;
+			case SearchTerm.NotDraft:
+				builder.Append ("UNDRAFT");
+				break;
+			case SearchTerm.NotFlagged:
+				builder.Append ("UNFLAGGED");
+				break;
+			case SearchTerm.NotRecent:
+				builder.Append ("OLD");
+				break;
+			case SearchTerm.NotSeen:
+				builder.Append ("UNSEEN");
+				break;
+			case SearchTerm.Or:
+				builder.Append ("OR");
+				binary = (BinarySearchQuery) query;
+				BuildQuery (builder, binary.Left, args);
+				BuildQuery (builder, binary.Right, args);
+				break;
+			case SearchTerm.Recent:
+				builder.Append ("RECENT");
+				break;
+			case SearchTerm.Seen:
+				builder.Append ("SEEN");
+				break;
+			case SearchTerm.SentAfter:
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SENTSINCE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				break;
+			case SearchTerm.SentBefore:
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SENTBEFORE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				break;
+			case SearchTerm.SentOn:
+				date = (DateSearchQuery) query;
+				builder.AppendFormat ("SENTON {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				break;
+			case SearchTerm.SmallerThan:
+				numeric = (NumericSearchQuery) query;
+				builder.AppendFormat ("SMALLER {0}", numeric.Value);
+				break;
+			case SearchTerm.SubjectContains:
+				text = (TextSearchQuery) query;
+				builder.Append ("SUBJECT %S");
+				args.Add (text.Text);
+				break;
+			case SearchTerm.ToContains:
+				text = (TextSearchQuery) query;
+				builder.Append ("TO %S");
+				args.Add (text.Text);
+				break;
+			case SearchTerm.Uid:
+				break;
+			case SearchTerm.Unkeyword:
+				break;
+			default:
+				throw new ArgumentOutOfRangeException ();
+			}
+		}
+
+		string BuildQueryExpression (SearchQuery query, List<string> args)
+		{
+			var builder = new StringBuilder ();
+
+			BuildQuery (builder, query, args);
+
+			return builder.ToString ();
+		}
+
+		static void SearchMatches (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		{
+			var uids = (HashSet<uint>) ic.UserData;
+			ImapToken token;
+			uint uid;
+
+			do {
+				token = engine.PeekToken (ic.CancellationToken);
+
+				if (token.Type == ImapTokenType.Eoln)
+					break;
+
+				token = engine.ReadToken (ic.CancellationToken);
+
+				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				uids.Add (uid);
+			} while (true);
+		}
+
+		public string[] Search (string[] uids, SearchQuery query, CancellationToken cancellationToken)
+		{
+			var set = ImapUtils.FormatUidSet (uids);
+			List<string> args = new List<string> ();
+
+			if (query == null)
+				throw new ArgumentNullException ("query");
+
+			CheckState (true);
+
+			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var expr = BuildQueryExpression (optimized, args);
+			var command = args.Count > 0 ? "UID SEARCH CHARSET UTF-8 " : "UID SEARCH ";
+			var matches = new HashSet<uint> ();
+
+			command += "UID " + set + " " + expr + "\r\n";
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+			ic.UserData = matches;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("SEARCH", ic.Result);
+
+			var array = new uint[matches.Count];
+			int i = 0;
+
+			foreach (var match in matches)
+				array[i++] = match;
+
+			Array.Sort (array);
+
+			var results = new string[array.Length];
+			for (i = 0; i < array.Length; i++)
+				results[i] = array[i].ToString ();
+
+			return results;
+		}
+
+		public string[] Search (SearchQuery query, CancellationToken cancellationToken)
+		{
+			List<string> args = new List<string> ();
+
+			if (query == null)
+				throw new ArgumentNullException ("query");
+
+			CheckState (true);
+
+			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var expr = BuildQueryExpression (optimized, args);
+			var command = args.Count > 0 ? "UID SEARCH CHARSET UTF-8 " : "UID SEARCH ";
+			var matches = new HashSet<uint> ();
+
+			command += expr + "\r\n";
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+			ic.UserData = matches;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("SEARCH", ic.Result);
+
+			var array = new uint[matches.Count];
+			int i = 0;
+
+			foreach (var match in matches)
+				array[i++] = match;
+
+			Array.Sort (array);
+
+			var results = new string[array.Length];
+			for (i = 0; i < array.Length; i++)
+				results[i] = array[i].ToString ();
+
+			return results;
 		}
 
 		public event EventHandler<EventArgs> Deleted;
