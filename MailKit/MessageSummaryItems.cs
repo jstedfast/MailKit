@@ -35,18 +35,65 @@ namespace MailKit {
 	/// </remarks>
 	[Flags]
 	public enum MessageSummaryItems {
+		/// <summary>
+		/// Don't fetch any summary items.
+		/// </summary>
 		None          = 0,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.Body"/>.
+		/// </summary>
 		Body          = 1 << 0,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.Body"/> (but with more details than <see cref="Body"/>).
+		/// </summary>
 		BodyStructure = 1 << 2,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.Envelope"/>.
+		/// </summary>
 		Envelope      = 1 << 3,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.Flags"/>.
+		/// </summary>
 		Flags         = 1 << 4,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.InternalDate"/>.
+		/// </summary>
 		InternalDate  = 1 << 5,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.MessageSize"/>.
+		/// </summary>
 		MessageSize   = 1 << 6,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.Uid"/>.
+		/// </summary>
 		Uid           = 1 << 7,
 
-		// Macros
+		#region Macros
+
+		/// <summary>
+		/// A macro for <see cref="Envelope"/>, <see cref="Flags"/>, <see cref="InternalDate"/>,
+		/// and <see cref="MessageSize"/>.
+		/// </summary>
 		All           = Envelope | Flags | InternalDate | MessageSize,
+
+		/// <summary>
+		/// A macro for <see cref="Flags"/>, <see cref="InternalDate"/>, and <see cref="MessageSize"/>.
+		/// </summary>
 		Fast          = Flags | InternalDate | MessageSize,
-		Full          = Body | Envelope | Flags| InternalDate | MessageSize
+
+		/// <summary>
+		/// A macro for <see cref="Body"/>, <see cref="Envelope"/>, <see cref="Flags"/>,
+		/// <see cref="InternalDate"/>, and <see cref="MessageSize"/>.
+		/// </summary>
+		Full          = Body | Envelope | Flags| InternalDate | MessageSize,
+
+		#endregion
 	}
 }
