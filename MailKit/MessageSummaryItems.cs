@@ -27,8 +27,14 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// A bitfield of <see cref="MessageSummary"/> fields.
+	/// </summary>
+	/// <remarks>
+	/// Combine the <see cref="MessageSummaryItems"/> in <see cref="IFolder.Fetch"/>
+	/// </remarks>
 	[Flags]
-	public enum MessageAttributes {
+	public enum MessageSummaryItems {
 		None          = 0,
 		Body          = 1 << 0,
 		BodyStructure = 1 << 2,

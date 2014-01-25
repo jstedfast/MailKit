@@ -1622,43 +1622,43 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 		}
 
-		static string FormatAttributeQuery (MessageAttributes attrs)
+		static string FormatAttributeQuery (MessageSummaryItems items)
 		{
 			string query;
 
-			if ((attrs & MessageAttributes.BodyStructure) != 0 && (attrs & MessageAttributes.Body) != 0) {
+			if ((items & MessageSummaryItems.BodyStructure) != 0 && (items & MessageSummaryItems.Body) != 0) {
 				// don't query both the BODY and BODYSTRUCTURE, that's just dumb...
-				attrs &= ~MessageAttributes.Body;
+				items &= ~MessageSummaryItems.Body;
 			}
 
 			// first, eliminate the aliases...
-			if ((attrs & MessageAttributes.Full) == MessageAttributes.Full) {
-				attrs &= ~MessageAttributes.Full;
+			if ((items & MessageSummaryItems.Full) == MessageSummaryItems.Full) {
+				items &= ~MessageSummaryItems.Full;
 				query = "FULL ";
-			} else if ((attrs & MessageAttributes.All) == MessageAttributes.All) {
-				attrs &= ~MessageAttributes.All;
+			} else if ((items & MessageSummaryItems.All) == MessageSummaryItems.All) {
+				items &= ~MessageSummaryItems.All;
 				query = "ALL ";
-			} else if ((attrs & MessageAttributes.Fast) == MessageAttributes.Fast) {
-				attrs &= ~MessageAttributes.Fast;
+			} else if ((items & MessageSummaryItems.Fast) == MessageSummaryItems.Fast) {
+				items &= ~MessageSummaryItems.Fast;
 				query = "FAST ";
 			} else {
 				query = string.Empty;
 			}
 
-			// now add on any additional attributes...
-			if ((attrs & MessageAttributes.Uid) != 0)
+			// now add on any additional summary items...
+			if ((items & MessageSummaryItems.Uid) != 0)
 				query += "UID ";
-			if ((attrs & MessageAttributes.Flags) != 0)
+			if ((items & MessageSummaryItems.Flags) != 0)
 				query += "FLAGS ";
-			if ((attrs & MessageAttributes.InternalDate) != 0)
+			if ((items & MessageSummaryItems.InternalDate) != 0)
 				query += "INTERNALDATE ";
-			if ((attrs & MessageAttributes.MessageSize) != 0)
+			if ((items & MessageSummaryItems.MessageSize) != 0)
 				query += "RFC822.SIZE ";
-			if ((attrs & MessageAttributes.Envelope) != 0)
+			if ((items & MessageSummaryItems.Envelope) != 0)
 				query += "ENVELOPE ";
-			if ((attrs & MessageAttributes.BodyStructure) != 0)
+			if ((items & MessageSummaryItems.BodyStructure) != 0)
 				query += "BODYSTRUCTURE ";
-			if ((attrs & MessageAttributes.Body) != 0)
+			if ((items & MessageSummaryItems.Body) != 0)
 				query += "BODY ";
 
 			return query.TrimEnd ();
@@ -1669,13 +1669,13 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
-		/// <param name="attributes">The message attributes to fetch.</param>
+		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="attributes"/> is empty.
+		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="uids"/> is invalid.
@@ -1702,13 +1702,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken)
+		public IEnumerable<MessageSummary> Fetch (string[] uids, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
-			var query = FormatAttributeQuery (attributes);
+			var query = FormatAttributeQuery (items);
 			var set = ImapUtils.FormatUidSet (uids);
 
-			if (attributes == MessageAttributes.None)
-				throw new ArgumentOutOfRangeException ("attributes");
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
 
 			CheckState (true);
 
@@ -1732,13 +1732,13 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
-		/// <param name="attributes">The message attributes to fetch.</param>
+		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="attributes"/> is empty.
+		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the <paramref name="indexes"/> is invalid.
@@ -1765,13 +1765,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken)
+		public IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
-			var query = FormatAttributeQuery (attributes);
 			var set = ImapUtils.FormatUidSet (indexes);
+			var query = FormatAttributeQuery (items);
 
-			if (attributes == MessageAttributes.None)
-				throw new ArgumentOutOfRangeException ("attributes");
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
 
 			CheckState (true);
 
@@ -1796,14 +1796,14 @@ namespace MailKit.Net.Imap {
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="minIndex">The minimum index.</param>
 		/// <param name="maxIndex">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="attributes">The message attributes.</param>
+		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="minIndex"/> is out of range.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="maxIndex"/> is out of range.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="attributes"/> is empty.</para>
+		/// <para><paramref name="items"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1827,7 +1827,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageAttributes attributes, CancellationToken cancellationToken)
+		public IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
 			if (minIndex < 0 || minIndex >= Count)
 				throw new ArgumentOutOfRangeException ("minIndex");
@@ -1835,11 +1835,11 @@ namespace MailKit.Net.Imap {
 			if ((maxIndex != -1 && maxIndex < minIndex) || maxIndex >= Count)
 				throw new ArgumentOutOfRangeException ("maxIndex");
 
-			if (attributes == MessageAttributes.None)
-				throw new ArgumentOutOfRangeException ("attributes");
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
 
 			var set = string.Format ("{0}:{1}", minIndex + 1, maxIndex != -1 ? (maxIndex + 1).ToString () : "*");
-			var query = FormatAttributeQuery (attributes);
+			var query = FormatAttributeQuery (items);
 
 			CheckState (true);
 

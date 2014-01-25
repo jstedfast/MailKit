@@ -103,10 +103,10 @@
     <Compile Include="IMessageStore.cs" />
     <Compile Include="IMessageTransport.cs" />
     <Compile Include="IProtocolLogger.cs" />
-    <Compile Include="MessageAttributes.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageSummary.cs" />
+    <Compile Include="MessageSummaryItems.cs" />
     <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />

@@ -326,18 +326,18 @@ namespace MailKit {
 		/// </summary>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
-		/// <param name="attributes">The message attributes to fetch.</param>
+		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (string[] uids, MessageAttributes attributes, CancellationToken cancellationToken);
+		IEnumerable<MessageSummary> Fetch (string[] uids, MessageSummaryItems items, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes.
 		/// </summary>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
-		/// <param name="attributes">The message attributes to fetch.</param>
+		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageAttributes attributes, CancellationToken cancellationToken);
+		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
@@ -345,9 +345,9 @@ namespace MailKit {
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="minIndex">The minimum index.</param>
 		/// <param name="maxIndex">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="attributes">The message attributes.</param>
+		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageAttributes attributes, CancellationToken cancellationToken);
+		IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageSummaryItems items, CancellationToken cancellationToken);
 
 		// TODO: support fetching of individual mime parts and substreams
 

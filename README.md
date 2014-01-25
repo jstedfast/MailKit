@@ -279,7 +279,7 @@ so that you can display a list of messages in a mail client without having to fi
 messages from the server:
 
 ```csharp
-	foreach (var summary in inbox.Fetch (0, -1, MessageAttributes.Full, cancel.Token)) {
+	foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Token)) {
 		Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
 	}
 ```
@@ -287,7 +287,7 @@ messages from the server:
 You may also be interested in searching...
 
 ```csharp
-	var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12")).And (SearchQuery.SubjectContains ("opaquemail")).And (SearchQuery.Seen);
+	var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12")).And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
 	foreach (var uid in inbox.Search (query, cancel.Token)) {
 		var message = inbox.GetMessage (uid, cancel.Token);
 		Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
