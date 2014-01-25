@@ -29,6 +29,21 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports client SSL/TLS certificates.
   * Supports the UIDL command.
   * All APIs are cancellable.
+* IMAP4 Client
+  * Supports all of the SASL mechanisms listed above.
+  * Supports SSL-wrapped connections via the "imaps" protocol.
+  * Supports client SSL/TLS certificates.
+  * Supports the following extensions:
+    * LITERAL+
+    * NAMESPACE
+    * CHILDREN
+    * LOGINDISABLED
+    * STARTTLS
+    * MULTIAPPEND
+    * UNSELECT
+    * UIDPLUS
+    * SPECIAL-USE
+    * MOVE
 
 ## TODO
 
@@ -46,7 +61,22 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 * POP3 Client
   * PIPELINING
   * Async APIs
-* IMAP Client
+* IMAP4 Client
+  * Extensions:
+    * QUOTA
+    * IDLE
+    * BINARY
+    * CATENATE
+    * CONDSTORE (already partially supported)
+    * ESEARCH
+    * SASL-IR
+    * COMPRESS
+    * ENABLE
+    * LIST-EXTENDED
+    * CONVERT
+    * METADATA
+    * FILTERS
+  * Async APIs
 * Maildir
 * Thunderbird mbox folder trees
 
@@ -195,6 +225,96 @@ namespace TestClient {
 		}
 	}
 }
+```
+
+## Using IMAP
+
+More important than POP3 support is the IMAP support. Here's a simple use-case of retreiving messages from an IMAP server:
+
+```csharp
+using System;
+using System.Net;
+using System.Threading;
+
+using MailKit.Net.Imap;
+using MailKit.Search;
+using MailKit;
+using MimeKit;
+
+namespace TestClient {
+	class Program
+	{
+		public static void Main (string[] args)
+		{
+			using (var client = new ImapClient ()) {
+				var credentials = new NetworkCredential ("joey", "password");
+				var uri = new Uri ("imaps://imap.gmail.com");
+
+				using (var cancel = new CancellationTokenSource ()) {
+					client.Connect (uri, cancel.Token);
+					client.Authenticate (credentials, cancel.Token);
+
+					// The Inbox folder is always available on all IMAP servers...
+					var inbox = client.Inbox;
+					inbox.Open (FolderAccess.ReadOnly, cancel.Token);
+
+					Console.WriteLine ("Total messages: {0}", inbox.Count);
+					Console.WriteLine ("Recent messages: {0}", inbox.Recent);
+
+					for (int i = 0; i < inbox.Count; i++) {
+						var message = inbox.GetMessage (i, cancel.Token);
+						Console.WriteLine ("Subject: {0}", i, message.Subject);
+					}
+
+					client.Disconnect (true, cancel.Token);
+				}
+			}
+		}
+	}
+}
+```
+
+However, you probably want to do more complicated things with IMAP such as fetching summary information
+so that you can display a list of messages in a mail client without having to first download all of the
+messages from the server:
+
+```csharp
+	foreach (var summary in inbox.Fetch (0, -1, MessageAttributes.Full, cancel.Token)) {
+		Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
+	}
+```
+
+You may also be interested in searching...
+
+```csharp
+	var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12")).And (SearchQuery.SubjectContains ("opaquemail")).And (SearchQuery.Seen);
+	foreach (var uid in inbox.Search (query, cancel.Token)) {
+		var message = inbox.GetMessage (uid, cancel.Token);
+		Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
+	}
+```
+
+Of course, instead of downloading the message, you could also fetch the summary information for the matching messages
+or do any of a number of other things with the UIDs that are returned.
+
+How about navigating folders? MailKit can do that, too:
+
+```csharp
+	// Get the first personal namespace and list the toplevel folders under it.
+	var personal = client.GetFolder (client.PersonalNamespaces[0]);
+	foreach (var folder in personal.GetSubfolders (false, cancel.Token))
+		Console.WriteLine ("[folder] {0}", folder.Name);
+```
+
+If the IMAP server supports the SPECIAL-USE extension, you can get ahold of the pre-defined Sent, Trash, Drafts,
+etc folders like this:
+
+```csharp
+	if (client.Capabilities.HasFlag (ImapCapabilities.SpecialUse)) {
+		var drafts = client.GetFolder (SpecialFolder.Drafts);
+	} else {
+		// maybe check the user's preferences for the Drafts folder?
+	}
 ```
 
 ## Contributing
