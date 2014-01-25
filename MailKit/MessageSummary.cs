@@ -34,7 +34,7 @@ namespace MailKit {
 	/// A <see cref="MessageSummary"/> is returned by
 	/// <see cref="IFolder.Fetch(string[], MessageAttributes, CancellationToken)"/>.
 	/// The properties of the <see cref="MessageSummary"/> that will be available
-	/// depend on the <see cref="MessageAttributes"/> passed to the aformentioned method.
+	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.
 	/// </remarks>
 	public class MessageSummary
 	{
@@ -110,5 +110,25 @@ namespace MailKit {
 		public int Index {
 			get; private set;
 		}
+
+		#region GMail extension properties
+
+		/// <summary>
+		/// Gets the GMail message identifier.
+		/// </summary>
+		/// <value>The GMail message identifier.</value>
+		public ulong GMailMessageId {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the GMail thread identifier.
+		/// </summary>
+		/// <value>The GMail thread identifier.</value>
+		public ulong GMailThreadId {
+			get; internal set;
+		}
+
+		#endregion
 	}
 }

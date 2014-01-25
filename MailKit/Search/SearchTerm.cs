@@ -62,5 +62,9 @@ namespace MailKit.Search {
 		ToContains,
 		Uid,
 		Unkeyword,
+
+		// GMail SEARCH extensions
+		GMailMessageId,
+		GMailThreadId,
 	}
 }

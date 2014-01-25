@@ -276,7 +276,7 @@ namespace MailKit.Search {
 			if (octets < 0)
 				throw new ArgumentOutOfRangeException ("octets");
 
-			return new NumericSearchQuery (SearchTerm.LargerThan, octets);
+			return new NumericSearchQuery (SearchTerm.LargerThan, (ulong) octets);
 		}
 
 		/// <summary>
@@ -449,7 +449,7 @@ namespace MailKit.Search {
 			if (octets < 0)
 				throw new ArgumentOutOfRangeException ("octets");
 
-			return new NumericSearchQuery (SearchTerm.SmallerThan, octets);
+			return new NumericSearchQuery (SearchTerm.SmallerThan, (ulong) octets);
 		}
 
 		/// <summary>
@@ -499,6 +499,36 @@ namespace MailKit.Search {
 		// FIXME: UID???
 
 		// FIXME: UNKEYWORD???
+
+		#region GMail extensions
+
+		/// <summary>
+		/// Matches messages that have the specified GMail message identifier.
+		/// </summary>
+		/// <remarks>
+		/// This search term can only be used with GMail.
+		/// </remarks>
+		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
+		/// <param name="id">The GMail message identifier.</param>
+		public static NumericSearchQuery GMailMessageId (ulong id)
+		{
+			return new NumericSearchQuery (SearchTerm.GMailMessageId, id);
+		}
+
+		/// <summary>
+		/// Matches messages belonging to the specified GMail thread.
+		/// </summary>
+		/// <remarks>
+		/// This search term can only be used with GMail.
+		/// </remarks>
+		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
+		/// <param name="thread">The GMail thread.</param>
+		public static NumericSearchQuery GMailThreadId (ulong thread)
+		{
+			return new NumericSearchQuery (SearchTerm.GMailThreadId, thread);
+		}
+
+		#endregion
 
 		internal virtual SearchQuery Optimize (ISearchQueryOptimizer optimizer)
 		{

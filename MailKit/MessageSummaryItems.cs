@@ -38,42 +38,56 @@ namespace MailKit {
 		/// <summary>
 		/// Don't fetch any summary items.
 		/// </summary>
-		None          = 0,
+		None           = 0,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.Body"/>.
 		/// </summary>
-		Body          = 1 << 0,
+		Body           = 1 << 0,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.Body"/> (but with more details than <see cref="Body"/>).
 		/// </summary>
-		BodyStructure = 1 << 2,
+		BodyStructure  = 1 << 2,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.Envelope"/>.
 		/// </summary>
-		Envelope      = 1 << 3,
+		Envelope       = 1 << 3,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.Flags"/>.
 		/// </summary>
-		Flags         = 1 << 4,
+		Flags          = 1 << 4,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.InternalDate"/>.
 		/// </summary>
-		InternalDate  = 1 << 5,
+		InternalDate   = 1 << 5,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.MessageSize"/>.
 		/// </summary>
-		MessageSize   = 1 << 6,
+		MessageSize    = 1 << 6,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.Uid"/>.
 		/// </summary>
-		Uid           = 1 << 7,
+		Uid            = 1 << 7,
+
+		#region GMail extension items
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.GMailMessageId"/>.
+		/// </summary>
+		GMailMessageId = 1 << 8,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.GMailThreadId"/>.
+		/// </summary>
+		GMailThreadId  = 1 << 9,
+
+		#endregion
 
 		#region Macros
 

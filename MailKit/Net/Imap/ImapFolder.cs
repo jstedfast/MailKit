@@ -1544,7 +1544,7 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("MOVE", ic.Result);
 		}
 
-		static void FetchAttributes (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void FetchSummaryItems (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 
@@ -1569,6 +1569,7 @@ namespace MailKit.Net.Imap {
 					throw ImapEngine.UnexpectedToken (token, false);
 
 				var atom = (string) token.Value;
+				ulong value64;
 				uint value;
 
 				switch (atom) {
@@ -1613,6 +1614,22 @@ namespace MailKit.Net.Imap {
 
 					summary.Uid = value.ToString ();
 					break;
+				case "X-GM-MSGID":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					summary.GMailMessageId = value64;
+					break;
+				case "X-GM-THRID":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					summary.GMailThreadId = value64;
+					break;
 				default:
 					throw ImapEngine.UnexpectedToken (token, false);
 				}
@@ -1622,7 +1639,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 		}
 
-		static string FormatAttributeQuery (MessageSummaryItems items)
+		string FormatSummaryItems (MessageSummaryItems items)
 		{
 			string query;
 
@@ -1660,6 +1677,14 @@ namespace MailKit.Net.Imap {
 				query += "BODYSTRUCTURE ";
 			if ((items & MessageSummaryItems.Body) != 0)
 				query += "BODY ";
+
+			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {
+				// now for the GMail extension items
+				if ((items & MessageSummaryItems.GMailMessageId) != 0)
+					query += "X-GM-MSGID ";
+				if ((items & MessageSummaryItems.GMailThreadId) != 0)
+					query += "X-GM-THRID ";
+			}
 
 			return query.TrimEnd ();
 		}
@@ -1704,7 +1729,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public IEnumerable<MessageSummary> Fetch (string[] uids, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
-			var query = FormatAttributeQuery (items);
+			var query = FormatSummaryItems (items);
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (items == MessageSummaryItems.None)
@@ -1714,7 +1739,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
-			ic.RegisterUntaggedHandler ("FETCH", FetchAttributes);
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
 			Engine.Wait (ic);
@@ -1768,7 +1793,7 @@ namespace MailKit.Net.Imap {
 		public IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatUidSet (indexes);
-			var query = FormatAttributeQuery (items);
+			var query = FormatSummaryItems (items);
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
@@ -1777,7 +1802,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
-			ic.RegisterUntaggedHandler ("FETCH", FetchAttributes);
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
 			Engine.Wait (ic);
@@ -1839,13 +1864,13 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException ("items");
 
 			var set = string.Format ("{0}:{1}", minIndex + 1, maxIndex != -1 ? (maxIndex + 1).ToString () : "*");
-			var query = FormatAttributeQuery (items);
+			var query = FormatSummaryItems (items);
 
 			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
-			ic.RegisterUntaggedHandler ("FETCH", FetchAttributes);
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
 			Engine.Wait (ic);
@@ -2518,6 +2543,20 @@ namespace MailKit.Net.Imap {
 				break;
 			case SearchTerm.Unkeyword:
 				break;
+			case SearchTerm.GMailMessageId:
+				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+					throw new NotSupportedException ("The X-GM-MSGID search term is not supported by the IMAP server.");
+
+				numeric = (NumericSearchQuery) query;
+				builder.AppendFormat ("X-GM-MSGID {0}", numeric.Value);
+				break;
+			case SearchTerm.GMailThreadId:
+				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+					throw new NotSupportedException ("The X-GM-THRID search term is not supported by the IMAP server.");
+
+				numeric = (NumericSearchQuery) query;
+				builder.AppendFormat ("X-GM-THRID {0}", numeric.Value);
+				break;
 			default:
 				throw new ArgumentOutOfRangeException ();
 			}
@@ -2570,6 +2609,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uids"/> contains one or more invalid UIDs.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2647,6 +2689,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="query"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.

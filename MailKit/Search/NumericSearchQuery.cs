@@ -27,12 +27,12 @@
 namespace MailKit.Search {
 	public class NumericSearchQuery : SearchQuery
 	{
-		internal NumericSearchQuery (SearchTerm term, int value) : base (term)
+		internal NumericSearchQuery (SearchTerm term, ulong value) : base (term)
 		{
 			Value = value;
 		}
 
-		public int Value {
+		public ulong Value {
 			get; private set;
 		}
 	}
