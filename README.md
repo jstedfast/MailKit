@@ -44,6 +44,8 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * UIDPLUS
     * SPECIAL-USE
     * MOVE
+    * XLIST
+    * X-GM-EXT1 (X-GM-MSGID and X-GM-THRID)
   * All APIs are cancellable.
 
 ## TODO
@@ -78,10 +80,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * METADATA
     * FILTERS
     * GMail Extensions
-      * XLIST
       * X-GM-RAW
-      * X-GM-MSGID
-      * X-GM-THRID
       * X-GM-LABELS
   * Async APIs
 * Maildir
@@ -294,7 +293,9 @@ messages from the server:
 You may also be interested in searching...
 
 ```csharp
-	var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12")).And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
+	var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12"))
+	    .And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
+
 	foreach (var uid in inbox.Search (query, cancel.Token)) {
 		var message = inbox.GetMessage (uid, cancel.Token);
 		Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
@@ -313,11 +314,11 @@ How about navigating folders? MailKit can do that, too:
 		Console.WriteLine ("[folder] {0}", folder.Name);
 ```
 
-If the IMAP server supports the SPECIAL-USE extension, you can get ahold of the pre-defined Sent, Trash, Drafts,
-etc folders like this:
+If the IMAP server supports the SPECIAL-USE or the XLIST (GMail) extension, you can get ahold of
+the pre-defined All, Drafts, Flagged (aka Important), Junk, Sent, Trash, etc folders like this:
 
 ```csharp
-	if (client.Capabilities.HasFlag (ImapCapabilities.SpecialUse)) {
+	if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0) {
 		var drafts = client.GetFolder (SpecialFolder.Drafts);
 	} else {
 		// maybe check the user's preferences for the Drafts folder?
