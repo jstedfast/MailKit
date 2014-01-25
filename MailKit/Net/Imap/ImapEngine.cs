@@ -553,6 +553,8 @@ namespace MailKit.Net.Imap {
 					case "METADATA":      Capabilities |= ImapCapabilities.MetaData; break;
 					case "SPECIAL-USE":   Capabilities |= ImapCapabilities.SpecialUse; break;
 					case "MOVE":          Capabilities |= ImapCapabilities.Move; break;
+					case "XLIST":         Capabilities |= ImapCapabilities.XList; break;
+					case "X-GM-EXT-1":    Capabilities |= ImapCapabilities.GMailExt1; break;
 					}
 				}
 
@@ -1273,6 +1275,35 @@ namespace MailKit.Net.Imap {
 
 				var ic = QueueCommand (cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
+				ic.UserData = list;
+
+				Wait (ic);
+
+				ImapUtils.LookupParentFolders (this, list, cancellationToken);
+
+				for (int i = 0; i < list.Count; i++) {
+					folder = list[i];
+
+					if ((folder.Attributes & FolderAttributes.All) != 0)
+						All = folder;
+					if ((folder.Attributes & FolderAttributes.Archive) != 0)
+						Archive = folder;
+					if ((folder.Attributes & FolderAttributes.Drafts) != 0)
+						Drafts = folder;
+					if ((folder.Attributes & FolderAttributes.Flagged) != 0)
+						Flagged = folder;
+					if ((folder.Attributes & FolderAttributes.Junk) != 0)
+						Junk = folder;
+					if ((folder.Attributes & FolderAttributes.Sent) != 0)
+						Sent = folder;
+					if ((folder.Attributes & FolderAttributes.Trash) != 0)
+						Trash = folder;
+				}
+			} else if ((Capabilities & ImapCapabilities.XList) != 0) {
+				var list = new List<ImapFolder> ();
+
+				var ic = QueueCommand (cancellationToken, null, "XLIST \"\" \"*\"\r\n");
+				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.HandleUntaggedListResponse);
 				ic.UserData = list;
 
 				Wait (ic);

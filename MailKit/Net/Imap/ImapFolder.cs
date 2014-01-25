@@ -2851,6 +2851,15 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.Net.Imap.ImapFolder"/>.
+		/// </summary>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.Net.Imap.ImapFolder"/>.</returns>
+		public override string ToString ()
+		{
+			return FullName;
+		}
+
 		internal void UpdateCount (int count)
 		{
 			if (Count == count)

@@ -171,5 +171,21 @@ namespace MailKit.Net.Imap {
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
 		Move           = 1 << 25,
+
+		#region GMail Extensions
+
+		// These are documented here: https://developers.google.com/gmail/imap_extensions
+
+		/// <summary>
+		/// The server supports the XLIST extension (GMail).
+		/// </summary>
+		XList          = 1 << 26,
+
+		/// <summary>
+		/// The server supports the X-GM-EXT1 extension (GMail).
+		/// </summary>
+		GMailExt1      = 1 << 27
+
+		#endregion
 	}
 }
