@@ -482,11 +482,11 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			if (pop3s) {
-				var ssl = new SslStream (new NetworkStream (socket), false, ValidateRemoteCertificate);
+				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Default, true);
 				stream = ssl;
 			} else {
-				stream = new NetworkStream (socket);
+				stream = new NetworkStream (socket, true);
 			}
 
 			probed = ProbedCapabilities.None;

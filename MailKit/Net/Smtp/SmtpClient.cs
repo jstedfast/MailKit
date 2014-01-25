@@ -626,11 +626,11 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if (smtps) {
-				var ssl = new SslStream (new NetworkStream (socket), false, ValidateRemoteCertificate);
+				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Default, true);
 				stream = ssl;
 			} else {
-				stream = new NetworkStream (socket);
+				stream = new NetworkStream (socket, true);
 			}
 
 			host = uri.Host;
