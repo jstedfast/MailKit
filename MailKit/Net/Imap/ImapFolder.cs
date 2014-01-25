@@ -32,7 +32,6 @@ using System.Globalization;
 using System.Collections.Generic;
 
 using MimeKit;
-using MimeKit.Utils;
 using MailKit.Search;
 
 namespace MailKit.Net.Imap {
@@ -318,6 +317,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Opens the folder using the requested folder access.
 		/// </summary>
+		/// <returns>The <see cref="FolderAccess"/> state of the folder.</returns>
 		/// <param name="access">The requested folder access.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -553,6 +553,8 @@ namespace MailKit.Net.Imap {
 
 			// FIXME: what to do about all child folders? :-(
 
+			var oldFullName = FullName;
+
 			Name = GetBaseName (name, parent.DirectorySeparator);
 			EncodedName = encodedName;
 			ParentFolder = parent;
@@ -565,6 +567,8 @@ namespace MailKit.Net.Imap {
 
 			Engine.FolderCache.Remove (EncodedName);
 			Engine.FolderCache[encodedName] = this;
+
+			OnRenamed (oldFullName, FullName);
 		}
 
 		/// <summary>
@@ -607,6 +611,7 @@ namespace MailKit.Net.Imap {
 
 			Attributes |= FolderAttributes.NonExistent;
 			Exists = false;
+			OnDeleted ();
 		}
 
 		/// <summary>
@@ -645,6 +650,7 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("SUBSCRIBE", ic.Result);
 
 			IsSubscribed = true;
+			OnSubscribed ();
 		}
 
 		/// <summary>
@@ -683,6 +689,7 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("UNSUBSCRIBE", ic.Result);
 
 			IsSubscribed = false;
+			OnUnsubscribed ();
 		}
 
 		/// <summary>
@@ -948,6 +955,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Appends the specified message to the folder.
 		/// </summary>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -999,6 +1007,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Appends the specified message to the folder.
 		/// </summary>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
@@ -1077,6 +1086,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Appends the specified messages to the folder.
 		/// </summary>
+		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1163,6 +1173,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Appends the specified messages to the folder.
 		/// </summary>
+		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
@@ -1255,7 +1266,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
 		/// </summary>
-		/// <returns>The UIDs of the messages in the destination folder.</returns>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1329,7 +1340,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
 		/// </summary>
-		/// <returns>The UIDs of the messages in the destination folder.</returns>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1656,6 +1667,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="attributes">The message attributes to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1718,6 +1730,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes.
 		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="attributes">The message attributes to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1780,6 +1793,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="minIndex">The minimum index.</param>
 		/// <param name="maxIndex">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="attributes">The message attributes.</param>
@@ -2539,6 +2553,46 @@ namespace MailKit.Net.Imap {
 			} while (true);
 		}
 
+		/// <summary>
+		/// Searches the subset of UIDs in the folder for messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of UID strings can be used with <see cref="IFolder.GetMessage(string,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs.</returns>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains one or more invalid UIDs.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string[] Search (string[] uids, SearchQuery query, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatUidSet (uids);
@@ -2582,6 +2636,40 @@ namespace MailKit.Net.Imap {
 			return results;
 		}
 
+		/// <summary>
+		/// Searches the folder for messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of UID strings can be used with <see cref="IFolder.GetMessage(string,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
 		public string[] Search (SearchQuery query, CancellationToken cancellationToken)
 		{
 			List<string> args = new List<string> ();
