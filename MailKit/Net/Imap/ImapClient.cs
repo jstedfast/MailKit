@@ -211,6 +211,7 @@ namespace MailKit.Net.Imap {
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
 
+			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var uri = new Uri ("imap://" + host);
 			NetworkCredential cred;
 			ImapCommand ic;
@@ -223,9 +224,17 @@ namespace MailKit.Net.Imap {
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
-				// FIXME: if the server supports SASL-IR (Initial Response), we might be able to send an initial
-				// SASL response rather than wait for a "+" response.
-				ic = engine.QueueCommand (cancellationToken, null, "AUTHENTICATE %s\r\n", sasl.MechanismName);
+				var command = string.Format ("AUTHENTICATE {0}", sasl.MechanismName);
+				var ir = sasl.Challenge (null);
+
+				if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && ir != null) {
+					command += " " + ir + "\r\n";
+				} else {
+					command += "\r\n";
+					sasl.Reset ();
+				}
+
+				ic = engine.QueueCommand (cancellationToken, null, command);
 				ic.ContinuationHandler = (imap, cmd, text) => {
 					string challenge;
 
@@ -250,7 +259,12 @@ namespace MailKit.Net.Imap {
 					continue;
 
 				engine.State = ImapEngineState.Authenticated;
-				engine.QueryCapabilities (cancellationToken);
+
+				// Query the CAPABILITIES again if the server did not include an
+				// untagged CAPABILITIES response to the AUTHENTICATE command.
+				if (engine.CapabilitiesVersion == capabilitiesVersion)
+					engine.QueryCapabilities (cancellationToken);
+
 				engine.QueryNamespaces (cancellationToken);
 				engine.QuerySpecialFolders (cancellationToken);
 				return;
@@ -270,7 +284,12 @@ namespace MailKit.Net.Imap {
 				throw new AuthenticationException ();
 
 			engine.State = ImapEngineState.Authenticated;
-			engine.QueryCapabilities (cancellationToken);
+
+			// Query the CAPABILITIES again if the server did not include an
+			// untagged CAPABILITIES response to the LOGIN command.
+			if (engine.CapabilitiesVersion == capabilitiesVersion)
+				engine.QueryCapabilities (cancellationToken);
+
 			engine.QueryNamespaces (cancellationToken);
 			engine.QuerySpecialFolders (cancellationToken);
 		}
@@ -367,7 +386,10 @@ namespace MailKit.Net.Imap {
 			logger.LogConnect (uri);
 
 			engine.Connect (new ImapStream (stream, logger), cancellationToken);
-			engine.QueryCapabilities (cancellationToken);
+
+			// Only query the CAPABILITIES if the greeting didn't include them.
+			if (engine.CapabilitiesVersion == 0)
+				engine.QueryCapabilities (cancellationToken);
 
 			if (!imaps && engine.Capabilities.HasFlag (ImapCapabilities.StartTLS)) {
 				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
@@ -379,8 +401,10 @@ namespace MailKit.Net.Imap {
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 					engine.Stream.Stream = tls;
 
-					// requery the capabilities
-					engine.QueryCapabilities (cancellationToken);
+					// Query the CAPABILITIES again if the server did not include an
+					// untagged CAPABILITIES response to the STARTTLS command.
+					if (engine.CapabilitiesVersion == 1)
+						engine.QueryCapabilities (cancellationToken);
 				}
 			}
 		}

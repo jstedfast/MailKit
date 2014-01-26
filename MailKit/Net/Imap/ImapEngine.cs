@@ -152,6 +152,18 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the capabilities version.
+		/// </summary>
+		/// <remarks>
+		/// Every time the engine receives an untagged CAPABILITIES
+		/// response from the server, it increments this value.
+		/// </remarks>
+		/// <value>The capabilities version.</value>
+		public int CapabilitiesVersion {
+			get; private set;
+		}
+
+		/// <summary>
 		/// Gets the IMAP protocol version.
 		/// </summary>
 		/// <value>The IMAP protocol version.</value>
@@ -325,6 +337,15 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="imap">The IMAP stream.</param>
 		/// <param name="cancellationToken">A cancellation token</param>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
 		public void Connect (ImapStream imap, CancellationToken cancellationToken)
 		{
 			if (stream != null)
@@ -334,6 +355,7 @@ namespace MailKit.Net.Imap {
 			Capabilities = ImapCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			State = ImapEngineState.Connected;
+			CapabilitiesVersion = 0;
 			stream = imap;
 			Tag = 0;
 
@@ -437,6 +459,15 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The token.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
 		public ImapToken ReadToken (CancellationToken cancellationToken)
 		{
 			return stream.ReadToken (cancellationToken);
@@ -447,6 +478,15 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The next token.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
 		public ImapToken PeekToken (CancellationToken cancellationToken)
 		{
 			var token = stream.ReadToken (cancellationToken);
@@ -460,6 +500,7 @@ namespace MailKit.Net.Imap {
 		/// Reads the literal as a string.
 		/// </summary>
 		/// <returns>The literal.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="Stream"/> is not in literal mode.
 		/// </exception>
@@ -516,6 +557,7 @@ namespace MailKit.Net.Imap {
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
 			AuthenticationMechanisms.Clear ();
+			CapabilitiesVersion++;
 
 			var token = stream.ReadToken (cancellationToken);
 
