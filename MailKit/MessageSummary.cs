@@ -99,7 +99,7 @@ namespace MailKit {
 		/// Gets the unique ID of the message, if available.
 		/// </summary>
 		/// <value>The uid of the message.</value>
-		public string Uid {
+		public UniqueId Uid {
 			get; internal set;
 		}
 

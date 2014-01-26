@@ -139,13 +139,13 @@ namespace MailKit {
 		/// UIDs are only valid so long as the UID validity value remains unchanged.
 		/// </remarks>
 		/// <value>The UID validity.</value>
-		string UidValidity { get; }
+		UniqueId UidValidity { get; }
 
 		/// <summary>
 		/// Gets the UID that the next message that is added to the folder will be assigned.
 		/// </summary>
 		/// <value>The next UID.</value>
-		string UidNext { get; }
+		UniqueId UidNext { get; }
 
 		/// <summary>
 		/// Gets the index of the first unread message in the folder.
@@ -247,7 +247,7 @@ namespace MailKit {
 		/// </summary>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Expunge (string[] uids, CancellationToken cancellationToken);
+		void Expunge (UniqueId[] uids, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Appends the specified message to the folder.
@@ -256,7 +256,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken);
+		UniqueId Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Appends the specified message to the folder.
@@ -266,7 +266,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken);
+		UniqueId Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Appends the specified messages to the folder.
@@ -275,7 +275,7 @@ namespace MailKit {
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken);
+		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Appends the specified messages to the folder.
@@ -285,7 +285,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken);
+		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
@@ -294,7 +294,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string[] CopyTo (string[] uids, IFolder destination, CancellationToken cancellationToken);
+		UniqueId[] CopyTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
@@ -303,7 +303,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string[] MoveTo (string[] uids, IFolder destination, CancellationToken cancellationToken);
+		UniqueId[] MoveTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
@@ -328,7 +328,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (string[] uids, MessageSummaryItems items, CancellationToken cancellationToken);
+		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes.
@@ -357,7 +357,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeMessage GetMessage (string uid, CancellationToken cancellationToken);
+		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the specified message.
@@ -374,7 +374,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void AddFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+		void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Removes a set of flags from the specified messages.
@@ -383,7 +383,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void RemoveFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+		void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Sets the flags of the specified messages.
@@ -392,7 +392,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetFlags (string[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+		void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Adds a set of flags to the specified messages.
@@ -431,7 +431,7 @@ namespace MailKit {
 		/// <param name="uids">The subset of UIDs</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string[] Search (string[] uids, SearchQuery query, CancellationToken cancellationToken);
+		UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Searches the folder for messages matching the specified query.
@@ -442,7 +442,7 @@ namespace MailKit {
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		string[] Search (SearchQuery query, CancellationToken cancellationToken);
+		UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Occurs when the folder is deleted.

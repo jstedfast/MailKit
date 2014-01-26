@@ -44,7 +44,11 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestFormattingSimpleUidRange ()
 		{
-			string[] uids = "1,2,3,4,5,6,7,8,9".Split (',');
+			UniqueId[] uids = new UniqueId[] {
+				new UniqueId (1), new UniqueId (2), new UniqueId (3),
+				new UniqueId (4), new UniqueId (5), new UniqueId (6),
+				new UniqueId (7), new UniqueId (8), new UniqueId (9)
+			};
 			string expect = "1:9";
 			string actual;
 
@@ -55,7 +59,10 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestFormattingNonSequentialUids ()
 		{
-			string[] uids = "1,3,5,7,9".Split (',');
+			UniqueId[] uids = new UniqueId[] {
+				new UniqueId (1), new UniqueId (3), new UniqueId (5),
+				new UniqueId (7), new UniqueId (9)
+			};
 			string expect = "1,3,5,7,9";
 			string actual;
 
@@ -66,7 +73,12 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestFormattingComplexSetOfUids ()
 		{
-			string[] uids = "1,2,3,5,6,9,10,11,12,15,19,20".Split (',');
+			UniqueId[] uids = new UniqueId[] {
+				new UniqueId (1), new UniqueId (2), new UniqueId (3),
+				new UniqueId (5), new UniqueId (6), new UniqueId (9),
+				new UniqueId (10), new UniqueId (11), new UniqueId (12),
+				new UniqueId (15), new UniqueId (19), new UniqueId (20)
+			};
 			string expect = "1:3,5:6,9:12,15,19:20";
 			string actual;
 

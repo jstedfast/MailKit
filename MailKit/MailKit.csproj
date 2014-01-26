@@ -112,6 +112,7 @@
     <Compile Include="ProtocolLogger.cs" />
     <Compile Include="SpecialFolder.cs" />
     <Compile Include="StatusItems.cs" />
+    <Compile Include="UniqueId.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />

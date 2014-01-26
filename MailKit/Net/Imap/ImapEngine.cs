@@ -826,7 +826,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				code.Uid = n32;
+				code.Uid = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 				break;
@@ -836,7 +836,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				code.UidValidity = n32;
+				code.UidValidity = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 				break;
@@ -883,7 +883,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				code.UidValidity = n32;
+				code.UidValidity = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 
@@ -901,7 +901,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				code.UidValidity = n32;
+				code.UidValidity = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 
@@ -1008,10 +1008,10 @@ namespace MailKit.Net.Imap {
 						folder.UpdateRecent ((int) value);
 						break;
 					case "UIDNEXT":
-						folder.UpdateUidNext (value.ToString ());
+						folder.UpdateUidNext (new UniqueId (value));
 						break;
 					case "UIDVALIDITY":
-						folder.UpdateUidValidity (value.ToString ());
+						folder.UpdateUidValidity (new UniqueId (value));
 						break;
 					case "UNSEEN":
 						if (value > 0)

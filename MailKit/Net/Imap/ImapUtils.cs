@@ -76,10 +76,10 @@ namespace MailKit.Net.Imap {
 		/// <returns><c>true</c> if the UIDs were successfully parsed, otherwise <c>false</c>.</returns>
 		/// <param name="atom">The atom string.</param>
 		/// <param name="uids">The UIDs.</param>
-		public static bool TryParseUidSet (string atom, out string[] uids)
+		public static bool TryParseUidSet (string atom, out UniqueId[] uids)
 		{
-			var ranges = atom.Split (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			var list = new List<string> ();
+			var ranges = atom.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			var list = new List<UniqueId> ();
 
 			uids = null;
 
@@ -97,9 +97,9 @@ namespace MailKit.Net.Imap {
 						return false;
 
 					for (uint uid = min; uid <= max; uid++)
-						list.Add (uid.ToString ());
+						list.Add (new UniqueId (uid));
 				} else if (minmax.Length == 1) {
-					list.Add (minmax[0]);
+					list.Add (new UniqueId (min));
 				} else {
 					return false;
 				}
@@ -108,48 +108,6 @@ namespace MailKit.Net.Imap {
 			uids = list.ToArray ();
 
 			return true;
-		}
-
-		/// <summary>
-		/// Formats the array of UIDs as a string suitable for use with IMAP commands.
-		/// </summary>
-		/// <returns>The UID set.</returns>
-		/// <param name="uids">The UIDs.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		public static string FormatUidSet (uint[] uids)
-		{
-			if (uids == null)
-				throw new ArgumentNullException ("uids");
-
-			var builder = new StringBuilder ();
-			int index = 0;
-
-			while (index < uids.Length) {
-				uint min = uids[index];
-				uint max = min;
-				int i = index;
-
-				while (i < uids.Length) {
-					if (uids[i] > max + 1)
-						break;
-
-					max = uids[i++];
-				}
-
-				if (builder.Length > 0)
-					builder.Append (',');
-
-				if (max > min)
-					builder.AppendFormat ("{0}:{1}", min, max);
-				else
-					builder.Append (min.ToString ());
-
-				index = i;
-			}
-
-			return builder.ToString ();
 		}
 
 		/// <summary>
@@ -168,16 +126,36 @@ namespace MailKit.Net.Imap {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			var uids = new uint[indexes.Length];
+			var builder = new StringBuilder ();
+			int index = 0;
 
-			for (int i = 0; i < indexes.Length; i++) {
-				if (i < 0)
-					throw new ArgumentException ("One or more indexes were negative.", "indexes");
+			while (index < indexes.Length) {
+				if (indexes[index] < 0)
+					throw new ArgumentException ("One or more of the indexes is negative.", "indexes");
 
-				uids[i] = (uint) indexes[i] + 1;
+				int min = indexes[index];
+				int max = min;
+				int i = index;
+
+				while (i < indexes.Length) {
+					if (indexes[i] > max + 1)
+						break;
+
+					max = indexes[i++];
+				}
+
+				if (builder.Length > 0)
+					builder.Append (',');
+
+				if (max > min)
+					builder.AppendFormat ("{0}:{1}", min + 1, max + 1);
+				else
+					builder.Append ((min + 1).ToString ());
+
+				index = i;
 			}
 
-			return FormatUidSet (uids);
+			return builder.ToString ();
 		}
 
 		/// <summary>
@@ -191,23 +169,41 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the UIDs is invalid.
 		/// </exception>
-		public static string FormatUidSet (string[] uids)
+		public static string FormatUidSet (UniqueId[] uids)
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			var values = new uint[uids.Length];
+			var builder = new StringBuilder ();
+			int index = 0;
 
-			for (int i = 0; i < uids.Length; i++) {
-				uint uid;
+			while (index < uids.Length) {
+				if (uids[index] == null)
+					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
 
-				if (!uint.TryParse (uids[i], out uid) || uid == 0)
-					throw new ArgumentException ("One or more uids were invalid.", "uids");
+				uint min = uids[index].Id;
+				uint max = min;
+				int i = index;
 
-				values[i] = uid;
+				while (i < uids.Length) {
+					if (uids[i].Id > max + 1)
+						break;
+
+					max = uids[i++].Id;
+				}
+
+				if (builder.Length > 0)
+					builder.Append (',');
+
+				if (max > min)
+					builder.AppendFormat ("{0}:{1}", min, max);
+				else
+					builder.Append (min.ToString ());
+
+				index = i;
 			}
 
-			return FormatUidSet (values);
+			return builder.ToString ();
 		}
 
 		/// <summary>

@@ -56,13 +56,13 @@ namespace MailKit.Net.Imap {
 	class ImapResponseCode
 	{
 		public readonly ImapResponseCodeType Type;
-		public string[] SrcUidSet, DestUidSet;
+		public UniqueId[] SrcUidSet, DestUidSet;
+		public UniqueId UidValidity;
 		public ulong HighestModSeq;
 		public MessageFlags Flags;
-		public uint UidValidity;
 		public string Message;
+		public UniqueId Uid;
 		public int Index;
-		public uint Uid;
 
 		public ImapResponseCode (ImapResponseCodeType type)
 		{
