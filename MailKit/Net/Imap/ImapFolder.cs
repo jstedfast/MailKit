@@ -460,7 +460,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false);
 
-			var fullName = FullName + DirectorySeparator + name;
+			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
 			var encodedName = ImapEncoding.Encode (fullName);
 			var list = new List<ImapFolder> ();
 			var createName = encodedName;
@@ -938,15 +938,20 @@ namespace MailKit.Net.Imap {
 		{
 			string format = string.Empty;
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
-				format = "UID ";
+			// Note: GMail claims to support UIDPLUS, but does not accept "UID APPEND"
+			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0) {
+				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+					format = "UID ";
+			}
 
 			format += "APPEND %F";
+
+			if (flags != MessageFlags.None)
+				format += " " + ImapUtils.FormatFlagsList (flags);
 
 			if (date.HasValue)
 				format += " \"" + ImapUtils.FormatInternalDate (date.Value) + "\"";
 
-			format += " " + ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			format += " %L\r\n";
 
 			return Engine.QueueCommand (cancellationToken, null, format, this, message);
@@ -1062,17 +1067,22 @@ namespace MailKit.Net.Imap {
 			var args = new List<object> ();
 			string format = string.Empty;
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
-				format = "UID ";
+			// Note: GMail claims to support UIDPLUS, but does not accept "UID APPEND"
+			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0) {
+				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+					format = "UID ";
+			}
 
 			format += "APPEND %F";
 			args.Add (this);
 
 			for (int i = 0; i < messages.Length; i++) {
+				if (flags[i] != MessageFlags.None)
+					format += " " + ImapUtils.FormatFlagsList (flags[i]);
+
 				if (dates != null)
 					format += " \"" + ImapUtils.FormatInternalDate (dates[i]) + "\"";
 
-				format += " " + ImapUtils.FormatFlagsList (flags[i] & AcceptedFlags);
 				format += " %L";
 
 				args.Add (messages[i]);
@@ -1648,16 +1658,21 @@ namespace MailKit.Net.Imap {
 				items &= ~MessageSummaryItems.Body;
 			}
 
-			// first, eliminate the aliases...
-			if ((items & MessageSummaryItems.Full) == MessageSummaryItems.Full) {
-				items &= ~MessageSummaryItems.Full;
-				query = "FULL ";
-			} else if ((items & MessageSummaryItems.All) == MessageSummaryItems.All) {
-				items &= ~MessageSummaryItems.All;
-				query = "ALL ";
-			} else if ((items & MessageSummaryItems.Fast) == MessageSummaryItems.Fast) {
-				items &= ~MessageSummaryItems.Fast;
-				query = "FAST ";
+			// Note: GMail doesn't properly handle aliases (or at least it doesn't handle "FULL")...
+			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0) {
+				// first, eliminate the aliases...
+				if ((items & MessageSummaryItems.Full) == MessageSummaryItems.Full) {
+					items &= ~MessageSummaryItems.Full;
+					query = "FULL ";
+				} else if ((items & MessageSummaryItems.All) == MessageSummaryItems.All) {
+					items &= ~MessageSummaryItems.All;
+					query = "ALL ";
+				} else if ((items & MessageSummaryItems.Fast) == MessageSummaryItems.Fast) {
+					items &= ~MessageSummaryItems.Fast;
+					query = "FAST ";
+				} else {
+					query = string.Empty;
+				}
 			} else {
 				query = string.Empty;
 			}
