@@ -82,10 +82,10 @@
           <paramref name="credentials" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is not connected.
+            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is not connected or is already authenticated.
             </exception>
         <exception cref="T:System.NotSupportedException">
-            The client and server failed to agree on an authentication mechanism to use.
+            The SMTP server does not support authentication.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -141,7 +141,8 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection
-            has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and may change
+            as a side-effect of the <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -216,6 +217,9 @@
         <exception cref="T:MailKit.Net.Smtp.SmtpException">
             An SMTP protocol error occurred.
             </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is already connected.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
@@ -287,7 +291,9 @@
         <value>
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
         <remarks>
-        </remarks>
+            When an <see cref="T:MailKit.Net.Smtp.SmtpException" /> is caught, the connection state of the
+            <see cref="T:MailKit.Net.Smtp.SmtpClient" /> should be checked before continuing.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MaxSize">
@@ -306,9 +312,13 @@
             </summary>
         <value>The maximum message size supported by the server.</value>
         <remarks>
-            The maximum message size will not be known until a successful
-            connect has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
-            </remarks>
+          <para>The maximum message size will not be known until a successful
+            connection has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method
+            and may change as a side-effect of the <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />
+            method.</para>
+          <para>Note: This value is only relevant if the <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" />
+            includes the <see cref="F:MailKit.Net.Smtp.SmtpCapabilities.Size" /> flag.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="NoOp">

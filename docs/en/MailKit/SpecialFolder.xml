@@ -1,0 +1,131 @@
+<Type Name="SpecialFolder" FullName="MailKit.SpecialFolder">
+  <TypeSignature Language="C#" Value="public enum SpecialFolder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SpecialFolder extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>
+            An enumeration of special folders.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="All">
+      <MemberSignature Language="C#" Value="All" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.SpecialFolder All = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The special folder containing an aggregate of all messages.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Archive">
+      <MemberSignature Language="C#" Value="Archive" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.SpecialFolder Archive = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The special folder that contains archived messages.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Drafts">
+      <MemberSignature Language="C#" Value="Drafts" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.SpecialFolder Drafts = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The special folder that contains message drafts.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Flagged">
+      <MemberSignature Language="C#" Value="Flagged" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.SpecialFolder Flagged = int32(3)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The special folder that contains important messages.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Junk">
+      <MemberSignature Language="C#" Value="Junk" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.SpecialFolder Junk = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The special folder that contains spam messages.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Sent">
+      <MemberSignature Language="C#" Value="Sent" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.SpecialFolder Sent = int32(5)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The special folder that contains sent messages.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Trash">
+      <MemberSignature Language="C#" Value="Trash" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.SpecialFolder Trash = int32(6)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.SpecialFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The special folder that contains deleted messages.
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

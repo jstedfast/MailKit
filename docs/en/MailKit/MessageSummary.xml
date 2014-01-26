@@ -1,0 +1,197 @@
+<Type Name="MessageSummary" FullName="MailKit.MessageSummary">
+  <TypeSignature Language="C#" Value="public class MessageSummary" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageSummary extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A summary of a message.
+            </summary>
+    <remarks>
+            A <see cref="T:MailKit.MessageSummary" /> is returned by
+            <see cref="!:IFolder.Fetch(string[], MessageSummaryItems, CancellationToken)" />.
+            The properties of the <see cref="T:MailKit.MessageSummary" /> that will be available
+            depend on the <see cref="T:MailKit.MessageSummaryItems" /> passed to the aformentioned method.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Body">
+      <MemberSignature Language="C#" Value="public MailKit.BodyPart Body { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPart Body" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.BodyPart</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the body structure of the message, if available.
+            </summary>
+        <value>The body structure of the message.</value>
+        <remarks>
+            The body will be one of <see cref="T:MailKit.BodyPartText" />,
+            <see cref="T:MailKit.BodyPartMessage" />, <see cref="T:MailKit.BodyPartBasic" />,
+            or <see cref="T:MailKit.BodyPartMultipart" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Envelope">
+      <MemberSignature Language="C#" Value="public MailKit.Envelope Envelope { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.Envelope Envelope" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Envelope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the envelope of the message, if available.
+            </summary>
+        <value>The envelope of the message.</value>
+        <remarks>
+            The envelope of a message contains information such as the
+            date the message was sent, the subject of the message,
+            the sender of the message, who the message was sent to,
+            which message(s) the message may be in reply to,
+            and the message id.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Flags">
+      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.MessageFlags&gt; Flags { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.MessageFlags&gt; Flags" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;MailKit.MessageFlags&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the message flags, if available.
+            </summary>
+        <value>The message flags.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GMailMessageId">
+      <MemberSignature Language="C#" Value="public ulong GMailMessageId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 GMailMessageId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the GMail message identifier.
+            </summary>
+        <value>The GMail message identifier.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GMailThreadId">
+      <MemberSignature Language="C#" Value="public ulong GMailThreadId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 GMailThreadId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt64</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the GMail thread identifier.
+            </summary>
+        <value>The GMail thread identifier.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Index">
+      <MemberSignature Language="C#" Value="public int Index { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Index" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the index of the message.
+            </summary>
+        <value>The index of the message.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InternalDate">
+      <MemberSignature Language="C#" Value="public Nullable&lt;DateTimeOffset&gt; InternalDate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype System.DateTimeOffset&gt; InternalDate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.DateTimeOffset&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the internal date of the message (i.e. the "received" date), if available.
+            </summary>
+        <value>The internal date of the message.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageSize">
+      <MemberSignature Language="C#" Value="public Nullable&lt;uint&gt; MessageSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; MessageSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the size of the message, in bytes, if available.
+            </summary>
+        <value>The size of the message.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Uid">
+      <MemberSignature Language="C#" Value="public string Uid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Uid" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the unique ID of the message, if available.
+            </summary>
+        <value>The uid of the message.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

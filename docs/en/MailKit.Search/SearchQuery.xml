@@ -1,0 +1,867 @@
+<Type Name="SearchQuery" FullName="MailKit.Search.SearchQuery">
+  <TypeSignature Language="C#" Value="public class SearchQuery" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SearchQuery extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A specialized query for searching messages in a <see cref="T:MailKit.IFolder" />.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="All">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery All;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery All" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches all messages in the folder.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="And">
+      <MemberSignature Language="C#" Value="public MailKit.Search.BinarySearchQuery And (MailKit.Search.SearchQuery expr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class MailKit.Search.BinarySearchQuery And(class MailKit.Search.SearchQuery expr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expr" Type="MailKit.Search.SearchQuery" />
+      </Parameters>
+      <Docs>
+        <param name="expr">An additional query to execute.</param>
+        <summary>
+            Creates a conditional AND operation.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.BinarySearchQuery" /> representing the conditional AND operation.</returns>
+        <remarks>
+            A conditional AND operation only evaluates the second operand if the first operand evaluates to true.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="expr" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="And">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.BinarySearchQuery And (MailKit.Search.SearchQuery left, MailKit.Search.SearchQuery right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.BinarySearchQuery And(class MailKit.Search.SearchQuery left, class MailKit.Search.SearchQuery right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="right" Type="MailKit.Search.SearchQuery" />
+      </Parameters>
+      <Docs>
+        <param name="left">The first operand.</param>
+        <param name="right">The second operand.</param>
+        <summary>
+            Creates a conditional AND operation.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.BinarySearchQuery" /> representing the conditional AND operation.</returns>
+        <remarks>
+            A conditional AND operation only evaluates the second operand if the first operand evaluates to true.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="left" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="right" /> is <c>null</c>.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Answered">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Answered;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Answered" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Answered" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BccContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery BccContains (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery BccContains(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the Bcc header contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="text" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="BodyContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery BodyContains (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery BodyContains(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the message body contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="text" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CcContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery CcContains (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery CcContains(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the Cc header contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="text" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Deleted">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Deleted;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Deleted" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Deleted" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeliveredAfter">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.DateSearchQuery DeliveredAfter (DateTime date);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery DeliveredAfter(valuetype System.DateTime date) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="date" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="date">The date.</param>
+        <summary>
+            Matches messages that were delivered after the specified date.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeliveredBefore">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.DateSearchQuery DeliveredBefore (DateTime date);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery DeliveredBefore(valuetype System.DateTime date) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="date" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="date">The date.</param>
+        <summary>
+            Matches messages that were delivered before the specified date.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeliveredOn">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.DateSearchQuery DeliveredOn (DateTime date);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery DeliveredOn(valuetype System.DateTime date) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="date" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="date">The date.</param>
+        <summary>
+            Matches messages that were delivered on the specified date.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Draft">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Draft;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Draft" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Draft" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Flagged">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Flagged;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Flagged" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Flagged" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery FromContains (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery FromContains(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the From header contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="text" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GMailMessageId">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.NumericSearchQuery GMailMessageId (ulong id);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery GMailMessageId(unsigned int64 id) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="id" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="id">The GMail message identifier.</param>
+        <summary>
+            Matches messages that have the specified GMail message identifier.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.NumericSearchQuery" />.</returns>
+        <remarks>
+            This search term can only be used with GMail.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GMailThreadId">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.NumericSearchQuery GMailThreadId (ulong thread);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery GMailThreadId(unsigned int64 thread) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="thread" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="thread">The GMail thread.</param>
+        <summary>
+            Matches messages belonging to the specified GMail thread.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.NumericSearchQuery" />.</returns>
+        <remarks>
+            This search term can only be used with GMail.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Header">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.HeaderSearchQuery Header (string field, string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.HeaderSearchQuery Header(string field, string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.HeaderSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="System.String" />
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="field">The header field to match against.</param>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the specified header contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.HeaderSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="field" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="text" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="field" /> is empty.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="text" /> is empty.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="LargerThan">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.NumericSearchQuery LargerThan (int octets);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery LargerThan(int32 octets) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="octets" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="octets">The number of octets.</param>
+        <summary>
+            Matches messages that are larger than the specified number of octets.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.NumericSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="octets" /> is a negative value.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery MessageContains (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery MessageContains(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the raw message contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="text" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="New">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery New;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery New" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Recent" /> flag set but not the <see cref="F:MailKit.MessageFlags.Seen" />.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Not">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.UnarySearchQuery Not (MailKit.Search.SearchQuery expr);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.UnarySearchQuery Not(class MailKit.Search.SearchQuery expr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.UnarySearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expr" Type="MailKit.Search.SearchQuery" />
+      </Parameters>
+      <Docs>
+        <param name="expr">The expression</param>
+        <summary>
+            Creates a logical negation of the specified expression.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.UnarySearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="expr" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="NotAnswered">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery NotAnswered;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotAnswered" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Answered" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NotDeleted">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery NotDeleted;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotDeleted" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Deleted" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NotDraft">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery NotDraft;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotDraft" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Draft" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NotFlagged">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery NotFlagged;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotFlagged" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Flagged" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NotRecent">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery NotRecent;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotRecent" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Recent" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NotSeen">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery NotSeen;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotSeen" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Seen" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Or">
+      <MemberSignature Language="C#" Value="public MailKit.Search.BinarySearchQuery Or (MailKit.Search.SearchQuery expr);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class MailKit.Search.BinarySearchQuery Or(class MailKit.Search.SearchQuery expr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="expr" Type="MailKit.Search.SearchQuery" />
+      </Parameters>
+      <Docs>
+        <param name="expr">An additional query to execute.</param>
+        <summary>
+            Creates a conditional OR operation.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.BinarySearchQuery" /> representing the conditional AND operation.</returns>
+        <remarks>
+            A conditional OR operation only evaluates the second operand if the first operand evaluates to true.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="expr" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Or">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.BinarySearchQuery Or (MailKit.Search.SearchQuery left, MailKit.Search.SearchQuery right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.BinarySearchQuery Or(class MailKit.Search.SearchQuery left, class MailKit.Search.SearchQuery right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="left" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="right" Type="MailKit.Search.SearchQuery" />
+      </Parameters>
+      <Docs>
+        <param name="left">The first operand.</param>
+        <param name="right">The second operand.</param>
+        <summary>
+            Creates a conditional OR operation.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.BinarySearchQuery" /> representing the conditional OR operation.</returns>
+        <remarks>
+            A conditional OR operation only evaluates the second operand if the first operand evaluates to false.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="left" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="right" /> is <c>null</c>.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Recent">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Recent;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Recent" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Recent" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Seen">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Seen;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Seen" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Seen" /> flag set.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SentAfter">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.DateSearchQuery SentAfter (DateTime date);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery SentAfter(valuetype System.DateTime date) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="date" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="date">The date.</param>
+        <summary>
+            Matches messages that were sent after the specified date.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SentBefore">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.DateSearchQuery SentBefore (DateTime date);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery SentBefore(valuetype System.DateTime date) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="date" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="date">The date.</param>
+        <summary>
+            Matches messages that were sent before the specified date.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SentOn">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.DateSearchQuery SentOn (DateTime date);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery SentOn(valuetype System.DateTime date) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="date" Type="System.DateTime" />
+      </Parameters>
+      <Docs>
+        <param name="date">The date.</param>
+        <summary>
+            Matches messages that were sent on the specified date.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SmallerThan">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.NumericSearchQuery SmallerThan (int octets);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery SmallerThan(int32 octets) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="octets" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="octets">The number of octets.</param>
+        <summary>
+            Matches messages that are smaller than the specified number of octets.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.NumericSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="octets" /> is a negative value.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SubjectContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery SubjectContains (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery SubjectContains(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the Subject header contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="text" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ToContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery ToContains (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery ToContains(string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the To header contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="text" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -27,13 +27,20 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// Event args used when the state of a message changes.
+	/// </summary>
 	public class MessageEventArgs : EventArgs
 	{
-		public MessageEventArgs (int index)
+		internal MessageEventArgs (int index)
 		{
 			Index = index;
 		}
 
+		/// <summary>
+		/// Gets the index of the message that changed.
+		/// </summary>
+		/// <value>The index of the message.</value>
 		public int Index {
 			get; private set;
 		}

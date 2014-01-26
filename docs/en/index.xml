@@ -48,13 +48,41 @@
   <Copyright>To be added.</Copyright>
   <Types>
     <Namespace Name="MailKit">
+      <Type Name="BodyPart" Kind="Class" />
+      <Type Name="BodyPartBasic" Kind="Class" />
+      <Type Name="BodyPartCollection" Kind="Class" />
+      <Type Name="BodyPartMessage" Kind="Class" />
+      <Type Name="BodyPartMultipart" Kind="Class" />
+      <Type Name="BodyPartText" Kind="Class" />
+      <Type Name="Envelope" Kind="Class" />
+      <Type Name="FlagsChangedEventArgs" Kind="Class" />
+      <Type Name="FolderAccess" Kind="Enumeration" />
+      <Type Name="FolderAttributes" Kind="Enumeration" />
+      <Type Name="FolderNamespace" Kind="Class" />
+      <Type Name="FolderNamespaceCollection" Kind="Class" />
+      <Type Name="FolderRenamedEventArgs" Kind="Class" />
       <Type Name="IFolder" Kind="Interface" />
-      <Type Name="IFolderNamespace" Kind="Interface" />
       <Type Name="IMessageService" Kind="Interface" />
       <Type Name="IMessageSpool" Kind="Interface" />
       <Type Name="IMessageStore" Kind="Interface" />
       <Type Name="IMessageTransport" Kind="Interface" />
+      <Type Name="IProtocolLogger" Kind="Interface" />
+      <Type Name="MessageEventArgs" Kind="Class" />
+      <Type Name="MessageFlags" Kind="Enumeration" />
+      <Type Name="MessageSummary" Kind="Class" />
+      <Type Name="MessageSummaryItems" Kind="Enumeration" />
+      <Type Name="NullProtocolLogger" Kind="Class" />
       <Type Name="ProtocolException" Kind="Class" />
+      <Type Name="ProtocolLogger" Kind="Class" />
+      <Type Name="SpecialFolder" Kind="Enumeration" />
+      <Type Name="StatusItems" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="MailKit.Net.Imap">
+      <Type Name="ImapCapabilities" Kind="Enumeration" />
+      <Type Name="ImapClient" Kind="Class" />
+      <Type Name="ImapCommandException" Kind="Class" />
+      <Type Name="ImapFolder" Kind="Class" />
+      <Type Name="ImapProtocolException" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Net.Pop3">
       <Type Name="Pop3Capabilities" Kind="Enumeration" />
@@ -67,6 +95,16 @@
       <Type Name="SmtpClient" Kind="Class" />
       <Type Name="SmtpErrorCode" Kind="Enumeration" />
       <Type Name="SmtpException" Kind="Class" />
+    </Namespace>
+    <Namespace Name="MailKit.Search">
+      <Type Name="BinarySearchQuery" Kind="Class" />
+      <Type Name="DateSearchQuery" Kind="Class" />
+      <Type Name="HeaderSearchQuery" Kind="Class" />
+      <Type Name="NumericSearchQuery" Kind="Class" />
+      <Type Name="SearchQuery" Kind="Class" />
+      <Type Name="SearchTerm" Kind="Enumeration" />
+      <Type Name="TextSearchQuery" Kind="Class" />
+      <Type Name="UnarySearchQuery" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Security">
       <Type Name="SaslErrorCode" Kind="Enumeration" />

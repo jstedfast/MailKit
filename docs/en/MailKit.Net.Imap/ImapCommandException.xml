@@ -1,0 +1,21 @@
+<Type Name="ImapCommandException" FullName="MailKit.Net.Imap.ImapCommandException">
+  <TypeSignature Language="C#" Value="public class ImapCommandException : MailKit.ProtocolException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapCommandException extends MailKit.ProtocolException" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.ProtocolException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            An exception that is thrown when an IMAP command returns NO or BAD.
+            </summary>
+    <remarks>
+            This exception can be thrown by most of the methods in <see cref="T:MailKit.Net.Imap.ImapFolder" />.
+            </remarks>
+  </Docs>
+  <Members />
+</Type>

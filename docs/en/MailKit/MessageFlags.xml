@@ -1,0 +1,152 @@
+<Type Name="MessageFlags" FullName="MailKit.MessageFlags">
+  <TypeSignature Language="C#" Value="public enum MessageFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MessageFlags extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+            Message flags.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Answered">
+      <MemberSignature Language="C#" Value="Answered" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags Answered = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The message has been answered (replied to).
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Deleted">
+      <MemberSignature Language="C#" Value="Deleted" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags Deleted = int32(8)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The message has been marked for deletion.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Draft">
+      <MemberSignature Language="C#" Value="Draft" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags Draft = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The message is marked as a draft.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Flagged">
+      <MemberSignature Language="C#" Value="Flagged" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags Flagged = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The message has been flagged for importance.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags None = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            No message flags are set.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Recent">
+      <MemberSignature Language="C#" Value="Recent" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags Recent = int32(32)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The message has just recently arrived in the folder.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Seen">
+      <MemberSignature Language="C#" Value="Seen" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags Seen = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The message has been read.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UserDefined">
+      <MemberSignature Language="C#" Value="UserDefined" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageFlags UserDefined = int32(64)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageFlags</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            User-defined flags are allowed by the folder.
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

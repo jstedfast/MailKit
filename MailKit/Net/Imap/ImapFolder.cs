@@ -2757,6 +2757,9 @@ namespace MailKit.Net.Imap {
 			return results;
 		}
 
+		/// <summary>
+		/// Occurs when the folder is deleted.
+		/// </summary>
 		public event EventHandler<EventArgs> Deleted;
 
 		void OnDeleted ()
@@ -2767,6 +2770,9 @@ namespace MailKit.Net.Imap {
 				handler (this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Occurs when the folder is renamed.
+		/// </summary>
 		public event EventHandler<FolderRenamedEventArgs> Renamed;
 
 		void OnRenamed (string oldName, string newName)
@@ -2777,6 +2783,9 @@ namespace MailKit.Net.Imap {
 				handler (this, new FolderRenamedEventArgs (oldName, newName));
 		}
 
+		/// <summary>
+		/// Occurs when the folder is subscribed.
+		/// </summary>
 		public event EventHandler<EventArgs> Subscribed;
 
 		void OnSubscribed ()
@@ -2787,6 +2796,9 @@ namespace MailKit.Net.Imap {
 				handler (this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Occurs when the folder is unsubscribed.
+		/// </summary>
 		public event EventHandler<EventArgs> Unsubscribed;
 
 		void OnUnsubscribed ()
@@ -2797,6 +2809,9 @@ namespace MailKit.Net.Imap {
 				handler (this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Occurs when a message is expunged from the folder.
+		/// </summary>
 		public event EventHandler<MessageEventArgs> Expunged;
 
 		internal void OnExpunged (int index)
@@ -2807,6 +2822,9 @@ namespace MailKit.Net.Imap {
 				handler (this, new MessageEventArgs (index));
 		}
 
+		/// <summary>
+		/// Occurs when flags changed on a message.
+		/// </summary>
 		public event EventHandler<FlagsChangedEventArgs> FlagsChanged;
 
 		internal void OnFlagsChanged (int index, MessageFlags flags)
@@ -2817,6 +2835,9 @@ namespace MailKit.Net.Imap {
 				handler (this, new FlagsChangedEventArgs (index, flags));
 		}
 
+		/// <summary>
+		/// Occurs when the UID validity changes.
+		/// </summary>
 		public event EventHandler<EventArgs> UidValidityChanged;
 
 		void OnUidValidityChanged ()
@@ -2827,6 +2848,9 @@ namespace MailKit.Net.Imap {
 				handler (this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Occurs when the message count changes.
+		/// </summary>
 		public event EventHandler<EventArgs> CountChanged;
 
 		void OnCountChanged ()
@@ -2837,6 +2861,9 @@ namespace MailKit.Net.Imap {
 				handler (this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Occurs when the recent message count changes.
+		/// </summary>
 		public event EventHandler<EventArgs> RecentChanged;
 
 		void OnRecentChanged ()

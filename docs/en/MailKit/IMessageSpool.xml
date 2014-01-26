@@ -1,6 +1,6 @@
 <Type Name="IMessageSpool" FullName="MailKit.IMessageSpool">
-  <TypeSignature Language="C#" Value="public interface IMessageSpool : IDisposable, MailKit.IMessageService" />
-  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageSpool implements class MailKit.IMessageService, class System.IDisposable" />
+  <TypeSignature Language="C#" Value="public interface IMessageSpool : IDisposable, MailKit.IMessageService, System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageSpool implements class MailKit.IMessageService, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -8,6 +8,9 @@
   <Interfaces>
     <Interface>
       <InterfaceName>MailKit.IMessageService</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;</InterfaceName>
     </Interface>
     <Interface>
       <InterfaceName>System.IDisposable</InterfaceName>

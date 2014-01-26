@@ -1,0 +1,38 @@
+<Type Name="UnarySearchQuery" FullName="MailKit.Search.UnarySearchQuery">
+  <TypeSignature Language="C#" Value="public class UnarySearchQuery : MailKit.Search.SearchQuery" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UnarySearchQuery extends MailKit.Search.SearchQuery" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.Search.SearchQuery</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A unary search query such as a NOT expression.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Operand">
+      <MemberSignature Language="C#" Value="public MailKit.Search.SearchQuery Operand { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.Search.SearchQuery Operand" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Tets the inner operand.
+            </summary>
+        <value>The operand.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

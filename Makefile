@@ -1,16 +1,17 @@
-OUTDIR=MailKit/bin/Release/lib/net45
+OUTDIR=MailKit/bin/Release/lib/net40
 ASSEMBLY=$(OUTDIR)/MailKit.dll
 XMLDOCS=$(OUTDIR)/MailKit.xml
+SOLUTION=MailKit.Net40.sln
 
 all:
-	xbuild /target:Build /p:Configuration=Release MailKit.Net45.sln
+	xbuild /target:Build /p:Configuration=Release $(SOLUTION)
 
 debug:
-	xbuild /target:Build /p:Configuration=Debug MailKit.Net45.sln
+	xbuild /target:Build /p:Configuration=Debug $(SOLUTION)
 
 clean:
-	xbuild /target:Clean /p:Configuration=Debug MailKit.Net45.sln
-	xbuild /target:Clean /p:Configuration=Release MailKit.Net45.sln
+	xbuild /target:Clean /p:Configuration=Debug $(SOLUTION)
+	xbuild /target:Clean /p:Configuration=Release $(SOLUTION)
 
 update-docs: $(ASSEMBLY)
 	mdoc update --delete -o docs/en $(ASSEMBLY)

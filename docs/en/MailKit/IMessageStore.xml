@@ -14,13 +14,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+            An interface for retreiving messages from a message store such as IMAP.
+            </summary>
+    <remarks>
+            Implemented by <see cref="T:MailKit.Net.Imap.ImapClient" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="GetFolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (string path);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(string path) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (MailKit.FolderNamespace namespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -29,18 +33,26 @@
         <ReturnType>MailKit.IFolder</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="namespace" Type="MailKit.FolderNamespace" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="namespace">The namespace.</param>
+        <summary>
+            Gets the folder for the specified namespace.
+            </summary>
+        <returns>The folder if available; otherwise <c>null</c>.</returns>
+        <remarks>
+            The main reason to get the toplevel fodler in a namespace is
+            to list its child folders.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="namespace" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetFolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (Uri uri);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(class System.Uri uri) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (MailKit.SpecialFolder folder);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -49,13 +61,21 @@
         <ReturnType>MailKit.IFolder</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="folder" Type="MailKit.SpecialFolder" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <param name="folder">The type of special folder.</param>
+        <summary>
+            Gets the specified special folder.
+            </summary>
+        <returns>The folder if available; otherwise <c>null</c>.</returns>
+        <remarks>
+            Not all message stores support the concept of special folders,
+            so this method may return <c>null</c>.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="folder" /> is out of range.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Inbox">
@@ -69,57 +89,74 @@
         <ReturnType>MailKit.IFolder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the Inbox folder.
+            </summary>
+        <value>The Inbox folder.</value>
+        <remarks>
+            The Inbox folder is the default folder and is typically the folder
+            where all new messages are delivered.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="OtherNamespaces">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IReadOnlyList&lt;MailKit.IFolderNamespace&gt; OtherNamespaces { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IReadOnlyList`1&lt;class MailKit.IFolderNamespace&gt; OtherNamespaces" />
+      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection OtherNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection OtherNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IReadOnlyList&lt;MailKit.IFolderNamespace&gt;</ReturnType>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the other namespaces.
+            </summary>
+        <value>The other namespaces.</value>
+        <remarks>
+            The other folder namespaces contain other mailbox folders.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="PersonalNamespaces">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IReadOnlyList&lt;MailKit.IFolderNamespace&gt; PersonalNamespaces { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IReadOnlyList`1&lt;class MailKit.IFolderNamespace&gt; PersonalNamespaces" />
+      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection PersonalNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection PersonalNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IReadOnlyList&lt;MailKit.IFolderNamespace&gt;</ReturnType>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the personal namespaces.
+            </summary>
+        <value>The personal namespaces.</value>
+        <remarks>
+            The personal folder namespaces contain a user's personal mailbox folders.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SharedNamespaces">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IReadOnlyList&lt;MailKit.IFolderNamespace&gt; SharedNamespaces { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IReadOnlyList`1&lt;class MailKit.IFolderNamespace&gt; SharedNamespaces" />
+      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection SharedNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IReadOnlyList&lt;MailKit.IFolderNamespace&gt;</ReturnType>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the shared namespaces.
+            </summary>
+        <value>The shared namespaces.</value>
+        <remarks>
+            The shared folder namespaces contain mailbox folders that are shared with the user.
+            </remarks>
       </Docs>
     </Member>
   </Members>

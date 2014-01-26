@@ -112,7 +112,7 @@ namespace MailKit.Net.Smtp {
 		/// and may change as a side-effect of the <see cref="Authenticate"/>
 		/// method.</para>
 		/// <para>Note: This value is only relevant if the <see cref="Capabilities"/>
-		/// includes the <see cref="SmtpCapabilties.Size"/> flag.</para>
+		/// includes the <see cref="SmtpCapabilities.Size"/> flag.</para>
 		/// </remarks>
 		/// <value>The maximum message size supported by the server.</value>
 		public uint MaxSize {

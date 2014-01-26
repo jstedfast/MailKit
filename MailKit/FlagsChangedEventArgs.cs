@@ -24,16 +24,21 @@
 // THE SOFTWARE.
 //
 
-using System;
-
 namespace MailKit {
+	/// <summary>
+	/// Event args for the <see cref="IFolder.FlagsChanged"/> event.
+	/// </summary>
 	public class FlagsChangedEventArgs : MessageEventArgs
 	{
-		public FlagsChangedEventArgs (int index, MessageFlags flags) : base (index)
+		internal FlagsChangedEventArgs (int index, MessageFlags flags) : base (index)
 		{
 			Flags = flags;
 		}
 
+		/// <summary>
+		/// Gets the updated message flags.
+		/// </summary>
+		/// <value>The updated message flags.</value>
 		public MessageFlags Flags {
 			get; private set;
 		}

@@ -1,21 +1,26 @@
-<Type Name="IFolder" FullName="MailKit.IFolder">
-  <TypeSignature Language="C#" Value="public interface IFolder : System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;" />
-  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFolder implements class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable" />
+<Type Name="ImapFolder" FullName="MailKit.Net.Imap.ImapFolder">
+  <TypeSignature Language="C#" Value="public class ImapFolder : MailKit.IFolder, System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapFolder extends System.Object implements class MailKit.IFolder, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
   <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.IFolder</InterfaceName>
+    </Interface>
     <Interface>
       <InterfaceName>System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;</InterfaceName>
     </Interface>
   </Interfaces>
   <Docs>
     <summary>
-            An interface for a mailbox folder as used by <see cref="T:MailKit.IMessageStore" />.
+            An IMAP folder.
             </summary>
-    <remarks>
-            Implemented by message stores such as <see cref="T:MailKit.Net.Imap.ImapClient" /></remarks>
+    <remarks>To be added.</remarks>
   </Docs>
   <Members>
     <Member MemberName="AcceptedFlags">
@@ -36,7 +41,7 @@
         <remarks>
             The accepted flags are the message flags that will be accepted and persist
             for the current session. For the set of flags that will persist between
-            sessions, see the <see cref="P:MailKit.IFolder.PermanentFlags" /> property.
+            sessions, see the <see cref="P:MailKit.Net.Imap.ImapFolder.PermanentFlags" /> property.
             </remarks>
       </Docs>
     </Member>
@@ -77,12 +82,40 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="indexes" /> contains at least one invalid index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -104,12 +137,40 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains at least one invalid uid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -136,6 +197,27 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="message" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -162,6 +244,36 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="messages" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="flags" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="messages" /> is null.</para>
+          <para>-or-</para>
+          <para>The number of messages does not match the number of flags.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -190,6 +302,27 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="message" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -218,6 +351,39 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="messages" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="flags" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="dates" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="messages" /> is null.</para>
+          <para>-or-</para>
+          <para>The number of messages, flags, and dates do not match.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -257,6 +423,28 @@
             Forces the server to flush its state for the folder.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Close">
@@ -280,6 +468,28 @@
             Closes the folder, optionally expunging the messages marked for deletion.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -305,6 +515,40 @@
             Copies the specified messages to the destination folder.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="indexes" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="destination" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -331,6 +575,43 @@
             </summary>
         <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="destination" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the UIDPLUS extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -393,6 +674,30 @@
             </summary>
         <returns>The created folder.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="name" /> is empty.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -414,6 +719,24 @@
             Deletes the folder on the IMAP server.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Deleted">
@@ -489,6 +812,28 @@
             Expunges the folder, permanently removing all messages marked for deletion.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Expunge">
@@ -512,6 +857,34 @@
             Expunges the specified uids, permanently removing them from the folder.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The list of uids contained one or more invalid values.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Expunged">
@@ -555,6 +928,37 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="items" /> is empty.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            One or more of the <paramref name="indexes" /> is invalid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -581,6 +985,37 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="items" /> is empty.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            One or more of the <paramref name="uids" /> is invalid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -609,6 +1044,38 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="minIndex" /> is out of range.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="maxIndex" /> is out of range.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="items" /> is empty.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FirstUnread">
@@ -666,6 +1133,35 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Gets an enumerator for the messages in the folder.
+            </summary>
+        <returns>The enumerator.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+      </Docs>
+    </Member>
     <Member MemberName="GetMessage">
       <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -688,6 +1184,31 @@
             </summary>
         <returns>The message.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is out of range.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -712,6 +1233,34 @@
             </summary>
         <returns>The message.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uid" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uid" /> is invalid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">
@@ -736,6 +1285,24 @@
             </summary>
         <returns>The subfolders.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="HighestModSeq">
@@ -819,6 +1386,40 @@
             Moves the specified messages to the destination folder.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="indexes" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="destination" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -845,6 +1446,43 @@
             </summary>
         <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="destination" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the UIDPLUS extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -889,6 +1527,27 @@
             </summary>
         <returns>The <see cref="T:MailKit.FolderAccess" /> state of the folder.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="access" /> is not a valid value.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="ParentFolder">
@@ -985,12 +1644,40 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="indexes" /> contains at least one invalid index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -1012,12 +1699,40 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains at least one invalid uid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Rename">
@@ -1043,6 +1758,38 @@
             Renames the folder to exist with a new name under a new parent folder.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="parent" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="name" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="parent" /> does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="name" /> is not a legal folder name.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Renamed">
@@ -1086,6 +1833,34 @@
         <remarks>
             The returned array of UID strings can be used with <see cref="M:MailKit.IFolder.GetMessage(System.String,System.Threading.CancellationToken)" />.
             </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="query" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            One or more search terms in the <paramref name="query" /> are not supported by the IMAP server.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Search">
@@ -1114,6 +1889,41 @@
         <remarks>
             The returned array of UID strings can be used with <see cref="M:MailKit.IFolder.GetMessage(System.String,System.Threading.CancellationToken)" />.
             </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="query" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains one or more invalid UIDs.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            One or more search terms in the <paramref name="query" /> are not supported by the IMAP server.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -1135,12 +1945,40 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="indexes" /> contains at least one invalid index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -1162,12 +2000,40 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains at least one invalid uid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Status">
@@ -1191,6 +2057,31 @@
             Updates the values of the specified items.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the STATUS command.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Subscribe">
@@ -1212,6 +2103,24 @@
             Subscribes the folder.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Subscribed">
@@ -1228,6 +2137,54 @@
         <summary>
             Occurs when the folder is subscribed.
             </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Gets an enumerator for the messages in the folder.
+            </summary>
+        <returns>The enumerator.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.
+            </summary>
+        <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.</returns>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -1305,6 +2262,24 @@
             Unsubscribes the folder.
             </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Unsubscribed">

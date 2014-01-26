@@ -25,6 +25,9 @@
 //
 
 namespace MailKit.Search {
+	/// <summary>
+	/// A numeric search query.
+	/// </summary>
 	public class NumericSearchQuery : SearchQuery
 	{
 		internal NumericSearchQuery (SearchTerm term, ulong value) : base (term)
@@ -32,6 +35,10 @@ namespace MailKit.Search {
 			Value = value;
 		}
 
+		/// <summary>
+		/// Gets the numeric value to match against.
+		/// </summary>
+		/// <value>The numeric value.</value>
 		public ulong Value {
 			get; private set;
 		}

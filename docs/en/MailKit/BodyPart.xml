@@ -1,0 +1,55 @@
+<Type Name="BodyPart" FullName="MailKit.BodyPart">
+  <TypeSignature Language="C#" Value="public abstract class BodyPart" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit BodyPart extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            An abstract body part of a message.
+            </summary>
+    <remarks>
+            Each body part will actually be a <see cref="T:MailKit.BodyPartBasic" />,
+            <see cref="T:MailKit.BodyPartText" />, <see cref="T:MailKit.BodyPartMessage" />, or
+            <see cref="T:MailKit.BodyPartMultipart" />.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BodyPart ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentType">
+      <MemberSignature Language="C#" Value="public MimeKit.ContentType ContentType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.ContentType ContentType" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.ContentType</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Type of the body part.
+            </summary>
+        <value>The content type.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

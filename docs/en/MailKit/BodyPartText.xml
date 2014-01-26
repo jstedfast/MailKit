@@ -1,0 +1,40 @@
+<Type Name="BodyPartText" FullName="MailKit.BodyPartText">
+  <TypeSignature Language="C#" Value="public class BodyPartText : MailKit.BodyPartBasic" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartText extends MailKit.BodyPartBasic" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.BodyPartBasic</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A textual body part.
+            </summary>
+    <remarks>
+            Represents any body part with a media type of "text".
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Lines">
+      <MemberSignature Language="C#" Value="public uint Lines { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 Lines" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The length of the text, in lines.
+            </summary>
+        <value>The number of lines.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -27,6 +27,9 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// Folder attributes as used by <see cref="IFolder.Attributes"/>.
+	/// </summary>
 	[Flags]
 	public enum FolderAttributes {
 		/// <summary>

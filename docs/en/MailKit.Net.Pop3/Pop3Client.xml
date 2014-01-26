@@ -1,6 +1,6 @@
 <Type Name="Pop3Client" FullName="MailKit.Net.Pop3.Pop3Client">
-  <TypeSignature Language="C#" Value="public class Pop3Client : IDisposable, MailKit.IMessageSpool" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Pop3Client extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageSpool, class System.IDisposable" />
+  <TypeSignature Language="C#" Value="public class Pop3Client : IDisposable, MailKit.IMessageSpool, System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Pop3Client extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageSpool, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -11,6 +11,9 @@
   <Interfaces>
     <Interface>
       <InterfaceName>MailKit.IMessageSpool</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;</InterfaceName>
     </Interface>
     <Interface>
       <InterfaceName>System.IDisposable</InterfaceName>
@@ -43,7 +46,8 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Pop3.Pop3Client" />, you
-            must first call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            must first call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method and authenticate with
+            the <see cref="M:MailKit.Net.Pop3.Pop3Client.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -83,7 +87,7 @@
           <paramref name="credentials" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected or is already authenticated.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -99,6 +103,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             An POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
       </Docs>
     </Member>
@@ -142,7 +149,8 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection
-            has been made via the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            has been made via the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method and may change
+            as a side-effect of the <see cref="M:MailKit.Net.Pop3.Pop3Client.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -216,6 +224,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is already connected.
             </exception>
       </Docs>
     </Member>
@@ -394,6 +405,43 @@
           <para>Values larger than <c>0</c> indicate the minimum number of days that the server will retain
             messages which have been retrieved.</para>
         </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Gets an enumerator for the messages in the folder.
+            </summary>
+        <returns>The enumerator.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -889,7 +937,10 @@
             </summary>
         <value>
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            When a <see cref="T:MailKit.Net.Pop3.Pop3Exception" /> is caught, the connection state of the
+            <see cref="T:MailKit.Net.Pop3.Pop3Client" /> should be checked before continuing.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="LoginDelay">
@@ -1008,6 +1059,43 @@
             If the server does not support UIDs, then all methods that take UID arguments along with
             <see cref="M:MailKit.Net.Pop3.Pop3Client.GetMessageUid(System.Int32,System.Threading.CancellationToken)" /> and <see cref="M:MailKit.Net.Pop3.Pop3Client.GetMessageUids(System.Threading.CancellationToken)" /> will fail.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Gets an enumerator for the messages in the folder.
+            </summary>
+        <returns>The enumerator.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
   </Members>

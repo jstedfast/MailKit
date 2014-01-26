@@ -25,6 +25,9 @@
 //
 
 namespace MailKit.Search {
+	/// <summary>
+	/// A text-based search query.
+	/// </summary>
 	public sealed class TextSearchQuery : SearchQuery
 	{
 		internal TextSearchQuery (SearchTerm term, string text) : base (term)
@@ -32,6 +35,10 @@ namespace MailKit.Search {
 			Text = text;
 		}
 
+		/// <summary>
+		/// Gets the text to match against.
+		/// </summary>
+		/// <value>The text.</value>
 		public string Text {
 			get; private set;
 		}

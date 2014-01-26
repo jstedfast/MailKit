@@ -1,0 +1,92 @@
+<Type Name="BodyPartMultipart" FullName="MailKit.BodyPartMultipart">
+  <TypeSignature Language="C#" Value="public class BodyPartMultipart : MailKit.BodyPart" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartMultipart extends MailKit.BodyPart" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.BodyPart</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A multipart body part.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BodyParts">
+      <MemberSignature Language="C#" Value="public MailKit.BodyPartCollection BodyParts { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPartCollection BodyParts" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.BodyPartCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the child body parts.
+            </summary>
+        <value>The child body parts.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentDisposition">
+      <MemberSignature Language="C#" Value="public MimeKit.ContentDisposition ContentDisposition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.ContentDisposition ContentDisposition" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.ContentDisposition</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Disposition of the body part, if available.
+            </summary>
+        <value>The content disposition.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentLanguage">
+      <MemberSignature Language="C#" Value="public string[] ContentLanguage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] ContentLanguage" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Language of the body part, if available.
+            </summary>
+        <value>The content language.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentLocation">
+      <MemberSignature Language="C#" Value="public string ContentLocation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentLocation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Location of the body part, if available.
+            </summary>
+        <value>The content location.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

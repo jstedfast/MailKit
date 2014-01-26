@@ -27,9 +27,12 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// Event args used when a <see cref="IFolder"/> is renamed.
+	/// </summary>
 	public class FolderRenamedEventArgs : EventArgs
 	{
-		public FolderRenamedEventArgs (string oldName, string newName)
+		internal FolderRenamedEventArgs (string oldName, string newName)
 		{
 			OldName = oldName;
 			NewName = newName;

@@ -25,6 +25,9 @@
 //
 
 namespace MailKit.Search {
+	/// <summary>
+	/// A binary search query such asn an AND or OR expression.
+	/// </summary>
 	public class BinarySearchQuery : SearchQuery
 	{
 		internal BinarySearchQuery (SearchTerm term, SearchQuery left, SearchQuery right) : base (term)
@@ -33,10 +36,18 @@ namespace MailKit.Search {
 			Left = left;
 		}
 
+		/// <summary>
+		/// Gets the left operand of the expression.
+		/// </summary>
+		/// <value>The left operand.</value>
 		public SearchQuery Left {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets the right operand of the expression.
+		/// </summary>
+		/// <value>The right operand.</value>
 		public SearchQuery Right {
 			get; private set;
 		}

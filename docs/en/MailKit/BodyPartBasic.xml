@@ -1,0 +1,167 @@
+<Type Name="BodyPartBasic" FullName="MailKit.BodyPartBasic">
+  <TypeSignature Language="C#" Value="public class BodyPartBasic : MailKit.BodyPart" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartBasic extends MailKit.BodyPart" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.BodyPart</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A basic message body part.
+            </summary>
+    <remarks>
+            Represents any message body part that is not a multipart,
+            message/rfc822 part, or a text part.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ContentDescription">
+      <MemberSignature Language="C#" Value="public string ContentDescription { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentDescription" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Description of the body part, if available.
+            </summary>
+        <value>The content description.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentDisposition">
+      <MemberSignature Language="C#" Value="public MimeKit.ContentDisposition ContentDisposition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.ContentDisposition ContentDisposition" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.ContentDisposition</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Disposition of the body part, if available.
+            </summary>
+        <value>The content disposition.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentId">
+      <MemberSignature Language="C#" Value="public string ContentId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Id of the body part, if available.
+            </summary>
+        <value>The content identifier.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentLanguage">
+      <MemberSignature Language="C#" Value="public string[] ContentLanguage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] ContentLanguage" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String[]</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Language of the body part, if available.
+            </summary>
+        <value>The content language.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentLocation">
+      <MemberSignature Language="C#" Value="public string ContentLocation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentLocation" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Location of the body part, if available.
+            </summary>
+        <value>The content location.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentMd5">
+      <MemberSignature Language="C#" Value="public string ContentMd5 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentMd5" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Md5 of the body part, if available.
+            </summary>
+        <value>The content md5.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContentTransferEncoding">
+      <MemberSignature Language="C#" Value="public string ContentTransferEncoding { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ContentTransferEncoding" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Content-Transfer-Encoding of the body part.
+            </summary>
+        <value>The content transfer encoding.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Octets">
+      <MemberSignature Language="C#" Value="public uint Octets { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 Octets" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the size of the body part.
+            </summary>
+        <value>The number of octets.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

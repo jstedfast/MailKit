@@ -1,0 +1,212 @@
+<Type Name="Envelope" FullName="MailKit.Envelope">
+  <TypeSignature Language="C#" Value="public class Envelope" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Envelope extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A message envelope containing a brief summary of the message.
+            </summary>
+    <remarks>
+            The envelope of a message contains information such as the
+            date the message was sent, the subject of the message,
+            the sender of the message, who the message was sent to,
+            which message(s) the message may be in reply to,
+            and the message id.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Bcc">
+      <MemberSignature Language="C#" Value="public MimeKit.InternetAddressList Bcc { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.InternetAddressList Bcc" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.InternetAddressList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the list of addresses that the message was blind-carbon-copied to.
+            </summary>
+        <value>The address(es) that the message was carbon-copied to.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Cc">
+      <MemberSignature Language="C#" Value="public MimeKit.InternetAddressList Cc { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.InternetAddressList Cc" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.InternetAddressList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gest the list of addresses that the message was carbon-copied to.
+            </summary>
+        <value>The address(es) that the message was carbon-copied to.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Date">
+      <MemberSignature Language="C#" Value="public Nullable&lt;DateTimeOffset&gt; Date { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype System.DateTimeOffset&gt; Date" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.DateTimeOffset&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the date that the message was sent on, if available.
+            </summary>
+        <value>The date the message was sent.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="From">
+      <MemberSignature Language="C#" Value="public MimeKit.InternetAddressList From { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.InternetAddressList From" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.InternetAddressList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the address(es) that the message is from.
+            </summary>
+        <value>The address(es) that the message is from.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InReplyTo">
+      <MemberSignature Language="C#" Value="public MimeKit.MessageIdList InReplyTo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MessageIdList InReplyTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.MessageIdList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The Message-Ids that the message is replying to.
+            </summary>
+        <value>The Message-Ids that the message is replying to.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageId">
+      <MemberSignature Language="C#" Value="public string MessageId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MessageId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the ID of the message.
+            </summary>
+        <value>The message identifier.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReplyTo">
+      <MemberSignature Language="C#" Value="public MimeKit.InternetAddressList ReplyTo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.InternetAddressList ReplyTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.InternetAddressList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the address(es) that replies should be sent to.
+            </summary>
+        <value>The address(es) that replies should be sent to.</value>
+        <remarks>
+            The senders of the message may prefer that replies are sent
+            somewhere other than the address they used to send the message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Sender">
+      <MemberSignature Language="C#" Value="public MimeKit.InternetAddressList Sender { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.InternetAddressList Sender" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.InternetAddressList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the actual sender(s) of the message.
+            </summary>
+        <value>The actual sender(s) of the message.</value>
+        <remarks>
+            The senders may differ from the addresses in <see cref="P:MailKit.Envelope.From" /> if
+            the message was sent by someone on behalf of someone else.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Subject">
+      <MemberSignature Language="C#" Value="public string Subject { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Subject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the subject of the message.
+            </summary>
+        <value>The subject.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="To">
+      <MemberSignature Language="C#" Value="public MimeKit.InternetAddressList To { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.InternetAddressList To" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.InternetAddressList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the list of addresses that the message was sent to.
+            </summary>
+        <value>The address(es) that the message was sent to.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

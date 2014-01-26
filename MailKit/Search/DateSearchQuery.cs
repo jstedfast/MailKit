@@ -27,6 +27,9 @@
 using System;
 
 namespace MailKit.Search {
+	/// <summary>
+	/// A date-based search query.
+	/// </summary>
 	public class DateSearchQuery : SearchQuery
 	{
 		internal DateSearchQuery (SearchTerm term, DateTime date) : base (term)
@@ -34,6 +37,10 @@ namespace MailKit.Search {
 			Date = date;
 		}
 
+		/// <summary>
+		/// Gets the date value of the search query.
+		/// </summary>
+		/// <value>The date.</value>
 		public DateTime Date {
 			get; private set;
 		}

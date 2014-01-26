@@ -1,0 +1,494 @@
+<Type Name="ImapClient" FullName="MailKit.Net.Imap.ImapClient">
+  <TypeSignature Language="C#" Value="public class ImapClient : IDisposable, MailKit.IMessageStore" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapClient extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageStore, class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.IMessageStore</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            An IMAP client that can be used to retrieve messages from a server.
+            </summary>
+    <remarks>
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> class supports both the "imap" and "imaps"
+            protocols. The "imap" protocol makes a clear-text connection to the IMAP
+            server and does not use SSL or TLS unless the IMAP server supports the
+            STARTTLS extension (as defined by rfc3501). The "imaps" protocol,
+            however, connects to the IMAP server using an SSL-wrapped connection.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ImapClient ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapClient" /> class.
+            </summary>
+        <remarks>
+            Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you
+            must first call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and authenticate with
+            the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ImapClient (MailKit.IProtocolLogger logger);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger logger) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="logger" Type="MailKit.IProtocolLogger" />
+      </Parameters>
+      <Docs>
+        <param name="logger">The protocol logger.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapClient" /> class.
+            </summary>
+        <remarks>
+            Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you
+            must first call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and authenticate with
+            the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="logger" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="credentials">The user's credentials.</param>
+        <param name="cancellationToken">A cancellation token.</param>
+        <summary>
+            Authenticates using the supplied credentials.
+            </summary>
+        <remarks>
+          <para>If the server supports one or more SASL authentication mechanisms, then
+            the SASL mechanisms that both the client and server support are tried
+            in order of greatest security to weakest security. Once a SASL
+            authentication mechanism is found that both client and server support,
+            the credentials are used to authenticate.</para>
+          <para>If the server does not support SASL or if no common SASL mechanisms
+            can be found, then LOGIN command is used as a fallback.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="credentials" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected or is already authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.Security.Authentication.AuthenticationException">
+            Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticationMechanisms">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the authentication mechanisms supported by the IMAP server.
+            </summary>
+        <value>The authentication mechanisms.</value>
+        <remarks>
+            The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Capabilities">
+      <MemberSignature Language="C#" Value="public MailKit.Net.Imap.ImapCapabilities Capabilities { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Imap.ImapCapabilities Capabilities" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the capabilities supported by the IMAP server.
+            </summary>
+        <value>The capabilities.</value>
+        <remarks>
+            The capabilities will not be known until a successful connection
+            has been made via the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and may change
+            as a side-effect of the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCertificates">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets or sets the client SSL certificates.
+            </summary>
+        <value>The client SSL certificates.</value>
+        <remarks>
+          <para>Some servers may require the client SSL certificates in order
+            to allow the user to connect.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
+            be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
+        <param name="cancellationToken">A cancellation token.</param>
+        <summary>
+            Establishes a connection to the specified IMAP server.
+            </summary>
+        <remarks>
+          <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
+            in the uri is "imap", a clear-text connection is made and defaults to using
+            port 143 if no port is specified in the URI. However, if the schema in the
+            uri is "imaps", an SSL connection is made using the
+            <see cref="P:MailKit.Net.Imap.ImapClient.ClientCertificates" /> and defaults to port 993 unless a port
+            is specified in the URI.</para>
+          <para>It should be noted that when using a clear-text IMAP connection,
+            if the server advertizes support for the STARTTLS extension, the client
+            will automatically switch into TLS mode before authenticating.</para>
+            If a successful connection is made, the <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" />
+            and <see cref="P:MailKit.Net.Imap.ImapClient.Capabilities" /> properties will be populated.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+            The <paramref name="uri" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Disconnect">
+      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="quit" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="quit">If set to <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.</param>
+        <param name="cancellationToken">A cancellation token.</param>
+        <summary>
+            Disconnect the service.
+            </summary>
+        <remarks>
+            If <paramref name="quit" /> is <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Releases all resource used by the <see cref="T:MailKit.Net.Imap.ImapClient" /> object.
+            </summary>
+        <remarks>Call <see cref="M:MailKit.Net.Imap.ImapClient.Dispose" /> when you are finished using the <see cref="T:MailKit.Net.Imap.ImapClient" />. The
+            <see cref="M:MailKit.Net.Imap.ImapClient.Dispose" /> method leaves the <see cref="T:MailKit.Net.Imap.ImapClient" /> in an unusable state. After
+            calling <see cref="M:MailKit.Net.Imap.ImapClient.Dispose" />, you must release all references to the <see cref="T:MailKit.Net.Imap.ImapClient" /> so
+            the garbage collector can reclaim the memory that the <see cref="T:MailKit.Net.Imap.ImapClient" /> was occupying.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolder">
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (MailKit.FolderNamespace namespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespace" Type="MailKit.FolderNamespace" />
+      </Parameters>
+      <Docs>
+        <param name="namespace">The namespace.</param>
+        <summary>
+            Gets the folder for the specified namespace.
+            </summary>
+        <returns>The folder if available; otherwise <c>null</c>.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="namespace" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolder">
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (MailKit.SpecialFolder folder);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="folder" Type="MailKit.SpecialFolder" />
+      </Parameters>
+      <Docs>
+        <param name="folder">The type of special folder.</param>
+        <summary>
+            Gets the specified special folder.
+            </summary>
+        <returns>The folder if available; otherwise <c>null</c>.</returns>
+        <remarks>
+            Not all IMAP servers support special folders. Only IMAP servers
+            supporting the <see cref="F:MailKit.Net.Imap.ImapCapabilities.SpecialUse" /> capability
+            will have special folders.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="folder" /> is out of range.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Inbox">
+      <MemberSignature Language="C#" Value="public MailKit.IFolder Inbox { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IFolder Inbox" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Inbox folder.
+            </summary>
+        <value>The Inbox folder.</value>
+        <remarks>
+            The Inbox folder is the default folder and always exists.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsConnected">
+      <MemberSignature Language="C#" Value="public bool IsConnected { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets whether or not the client is currently connected to an IMAP server.
+            </summary>
+        <value>
+          <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        <remarks>
+            When an <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> is caught, the connection state of the
+            <see cref="T:MailKit.Net.Imap.ImapClient" /> should be checked before continuing.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NoOp">
+      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">A cancellation token.</param>
+        <summary>
+            Pings the IMAP server to keep the connection alive.
+            </summary>
+        <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected or authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the NOOP command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server responded with an unexpected token.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="OtherNamespaces">
+      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection OtherNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection OtherNamespaces" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the other namespaces.
+            </summary>
+        <value>The other namespaces.</value>
+        <remarks>
+            The other folder namespaces contain other mailbox folders.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PersonalNamespaces">
+      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection PersonalNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection PersonalNamespaces" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the personal namespaces.
+            </summary>
+        <value>The personal namespaces.</value>
+        <remarks>
+            The personal folder namespaces contain a user's personal mailbox folders.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SharedNamespaces">
+      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection SharedNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the shared namespaces.
+            </summary>
+        <value>The shared namespaces.</value>
+        <remarks>
+            The shared folder namespaces contain mailbox folders that are shared with the user.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

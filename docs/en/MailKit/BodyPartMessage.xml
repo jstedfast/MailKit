@@ -1,0 +1,76 @@
+<Type Name="BodyPartMessage" FullName="MailKit.BodyPartMessage">
+  <TypeSignature Language="C#" Value="public class BodyPartMessage : MailKit.BodyPartBasic" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartMessage extends MailKit.BodyPartBasic" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.BodyPartBasic</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A message/rfc822 body part.
+            </summary>
+    <remarks>
+            Represents a message/rfc822 body part.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Body">
+      <MemberSignature Language="C#" Value="public MailKit.BodyPart Body { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPart Body" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.BodyPart</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the body structure of the message.
+            </summary>
+        <value>The body structure.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Envelope">
+      <MemberSignature Language="C#" Value="public MailKit.Envelope Envelope { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.Envelope Envelope" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Envelope</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the envelope of the message.
+            </summary>
+        <value>The envelope.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Lines">
+      <MemberSignature Language="C#" Value="public uint Lines { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 Lines" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets a value indicating the length of the message, in lines.
+            </summary>
+        <value>The number of lines.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
