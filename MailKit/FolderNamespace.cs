@@ -40,7 +40,7 @@ namespace MailKit {
 		/// </summary>
 		public readonly string Path;
 
-		public FolderNamespace (char dirSeparator, string path)
+		internal FolderNamespace (char dirSeparator, string path)
 		{
 			DirectorySeparator = dirSeparator;
 			Path = path;

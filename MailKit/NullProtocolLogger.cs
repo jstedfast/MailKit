@@ -27,6 +27,9 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// A protocol logger that does not log to anywhere.
+	/// </summary>
 	public class NullProtocolLogger : IProtocolLogger
 	{
 		#region IProtocolLogger implementation
@@ -47,6 +50,7 @@ namespace MailKit {
 		/// <param name='count'>The number of bytes to log.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
 		public void LogClient (byte[] buffer, int offset, int count)
 		{
 		}
@@ -59,6 +63,7 @@ namespace MailKit {
 		/// <param name='count'>The number of bytes to log.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
 		public void LogServer (byte[] buffer, int offset, int count)
 		{
 		}
