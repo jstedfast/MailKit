@@ -25,7 +25,7 @@
 //
 
 namespace MailKit.Search {
-	public enum SearchTerm {
+	enum SearchTerm {
 		All,
 		And,
 		Answered,

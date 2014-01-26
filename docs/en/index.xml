@@ -102,7 +102,6 @@
       <Type Name="HeaderSearchQuery" Kind="Class" />
       <Type Name="NumericSearchQuery" Kind="Class" />
       <Type Name="SearchQuery" Kind="Class" />
-      <Type Name="SearchTerm" Kind="Enumeration" />
       <Type Name="TextSearchQuery" Kind="Class" />
       <Type Name="UnarySearchQuery" Kind="Class" />
     </Namespace>
