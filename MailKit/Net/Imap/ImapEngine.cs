@@ -1240,6 +1240,13 @@ namespace MailKit.Net.Imap {
 
 				Wait (ic);
 
+				PersonalNamespaces.Clear ();
+				SharedNamespaces.Clear ();
+				OtherNamespaces.Clear ();
+
+				if (list.Count > 0)
+					PersonalNamespaces.Add (new FolderNamespace (list[0].DirectorySeparator, ""));
+
 				ImapUtils.LookupParentFolders (this, list, cancellationToken);
 			}
 
