@@ -42,6 +42,39 @@ namespace UnitTests.Net.Imap {
 	public class ImapUtilsTests
 	{
 		[Test]
+		public void TestFormattingSimpleUidRange ()
+		{
+			string[] uids = "1,2,3,4,5,6,7,8,9".Split (',');
+			string expect = "1:9";
+			string actual;
+
+			actual = ImapUtils.FormatUidSet (uids);
+			Assert.AreEqual (expect, actual, "Formatting a simple range of uids failed.");
+		}
+
+		[Test]
+		public void TestFormattingNonSequentialUids ()
+		{
+			string[] uids = "1,3,5,7,9".Split (',');
+			string expect = "1,3,5,7,9";
+			string actual;
+
+			actual = ImapUtils.FormatUidSet (uids);
+			Assert.AreEqual (expect, actual, "Formatting a non-sequential list of uids.");
+		}
+
+		[Test]
+		public void TestFormattingComplexSetOfUids ()
+		{
+			string[] uids = "1,2,3,5,6,9,10,11,12,15,19,20".Split (',');
+			string expect = "1:3,5:6,9:12,15,19:20";
+			string actual;
+
+			actual = ImapUtils.FormatUidSet (uids);
+			Assert.AreEqual (expect, actual, "Formatting a complex list of uids.");
+		}
+
+		[Test]
 		public void TestParseExampleBodyRfc3501 ()
 		{
 			const string text = "(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 3028 92)\r\n";

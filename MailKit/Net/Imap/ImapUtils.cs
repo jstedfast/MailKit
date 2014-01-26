@@ -129,7 +129,7 @@ namespace MailKit.Net.Imap {
 			while (index < uids.Length) {
 				uint min = uids[index];
 				uint max = min;
-				int i = 0;
+				int i = index;
 
 				while (i < uids.Length) {
 					if (uids[i] > max + 1)
