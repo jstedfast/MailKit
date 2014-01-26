@@ -1,0 +1,8 @@
+* FLAGS (\Answered \Flagged \Draft \Deleted \Seen $Phishing $NotPhishing)
+* OK [PERMANENTFLAGS (\Answered \Flagged \Draft \Deleted \Seen $Phishing $NotPhishing \*)] Flags permitted.
+* OK [UIDVALIDITY 23] UIDs valid.
+* 0 EXISTS
+* 0 RECENT
+* OK [UIDNEXT 1] Predicted next UID.
+* OK [HIGHESTMODSEQ 25742]
+A00000008 OK [READ-WRITE] UnitTests selected. (Success)

@@ -1,0 +1,54 @@
+Return-Path: <ysato@etl.go.jp>
+Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
+	id <AA02859> for nsb; Tue, 16 Jun 92 04:34:26 EDT
+Received: from etlpost.etl.go.jp by thumper.bellcore.com (4.1/4.7)
+	id <AA17584> for nsb@greenbush; Tue, 16 Jun 92 04:34:20 EDT
+Received: from etlpom.etl.go.jp by etlpost.etl.go.jp (5.67+1.6W/2.7W)
+	id AA19108; Tue, 16 Jun 92 17:34:14 JST
+Received: by etlpom.etl.go.jp (4.1/6.4J.6-ETLpom.MASTER)
+	id AA24551; Tue, 16 Jun 92 17:34:14 JST
+Received: by etlibs.etl.go.jp (4.1/6.4J.6-ETL.SLAVE)
+	id AA12690; Tue, 16 Jun 92 17:34:08 JST
+Date: Tue, 16 Jun 92 17:34:08 JST
+Return-Path: <ysato@etl.go.jp>
+To: nsb@thumper.bellcore.com
+Subject: Re: transparent.el
+From: ysato@etl.go.jp (Yutaka Sato =?ISO-2022-JP?B?GyRAOjRGI0stGyhK?=)
+Content-Type: text/plain; charset=ISO-2022-JP
+Organization: Electrotechnical Laboratory, Tsukuba Science City
+Message-Id: <gFQJR.ysato@etl.go.jp>
+References: <AKAHO.92Jun16162622@etlsu5.etl.go.jp>
+MIME-Version: 1.0
+
+Hi. I forward my coleague's question about MIME.  He asks where he
+could get "transparent.el" which is required to use Metamail in
+emacs.  I tried to find it using ARCHIE, but no record was found.
+Could you tell me where can I get the file?
+
+Thanks in advance.
+--
+Yutaka Sato <ysato@etl.go.jp>
+Information Base Section
+ELECTROTECHNICAL LABORATORY
+1-1-4 Umezono, Tsukuba, Ibaraki, 305 Japan
+
+
+On 06/16/92(16:26) you akaho@etl.go.jp (Shotaro Akaho) wrote
+in <AKAHO.92Jun16162622@etlsu5.etl.go.jp> (etl.post.misc:148/etlss2):
+ |(と)＠数理です.
+ |
+ |emacs 系のメイルシステムで MIME フォーマット対応にするには
+ |transparent.el というのが必要みたいです (RMAIL, MH-e, VM いずれも).
+ |
+ |mime/mailers.txt より抜粋
+ ||3.  Make sure you have the GNU "transparent.el" package installed.  This
+ ||is not part of the standard distribution, but is widely available, and
+ ||should be part of most FTP archives, etc.
+ |
+ |少しばかり探してみましたが, 手に入りませんでした.
+ |どなたか持っていらっしゃる方がおいでになりましたら頂きたいのですが…
+ |どこか共用のディレクトリに置いて下さっても結構です.
+ |あるいはどこどこにあるよという情報でも構いません.
+ |よろしくお願いします.
+ |--
+ |赤穗＠情報数理 akaho@etl.go.jp / 5549 / D-622

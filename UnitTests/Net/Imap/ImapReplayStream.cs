@@ -54,6 +54,8 @@ namespace UnitTests.Net.Imap {
 
 	class ImapReplayStream : Stream
 	{
+		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		readonly MemoryStream sent = new MemoryStream ();
 		readonly IList<ImapReplayCommand> commands;
 		readonly bool testUnixFormat;
 		ImapReplayState state;
@@ -109,8 +111,8 @@ namespace UnitTests.Net.Imap {
 
 			if (stream.Position == stream.Length) {
 				state = ImapReplayState.WaitForCommand;
-				stream.Dispose ();
-				stream = null;
+				//stream.Dispose ();
+				//stream = null;
 				index++;
 			}
 
@@ -141,12 +143,20 @@ namespace UnitTests.Net.Imap {
 
 			Assert.AreEqual (ImapReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
 
-			var command = Encoding.UTF8.GetString (buffer, offset, count);
+			sent.Write (buffer, offset, count);
 
-			Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
+			if (sent.Length >= commands[index].Command.Length) {
+				var command = Latin1.GetString (sent.GetBuffer (), 0, (int) sent.Length);
 
-			stream = GetResourceStream (commands[index].Resource);
-			state = ImapReplayState.SendResponse;
+				Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
+
+				if (stream != null)
+					stream.Dispose ();
+
+				stream = GetResourceStream (commands[index].Resource);
+				state = ImapReplayState.SendResponse;
+				sent.SetLength (0);
+			}
 		}
 
 		public override void Flush ()

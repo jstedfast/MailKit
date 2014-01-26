@@ -1,6 +1,7 @@
 *.csproj eol=crlf
 *.nuspec eol=lf
 *.sln eol=crlf
+*.msg eol=crlf
 *.txt eol=lf
 *.cs eol=lf
 *.md eol=lf
