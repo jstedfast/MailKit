@@ -88,7 +88,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 
 ## License Information
 
-MailKit is Copyright (C) 2013 Jeffrey Stedfast and is licensed under the MIT license:
+MailKit is Copyright (C) 2013, 2014 Jeffrey Stedfast and is licensed under the MIT license:
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -285,21 +285,21 @@ so that you can display a list of messages in a mail client without having to fi
 messages from the server:
 
 ```csharp
-	foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Token)) {
-		Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
-	}
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Token)) {
+	Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
+}
 ```
 
 You may also be interested in searching...
 
 ```csharp
-	var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12"))
-	    .And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
+var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12"))
+    .And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
 
-	foreach (var uid in inbox.Search (query, cancel.Token)) {
-		var message = inbox.GetMessage (uid, cancel.Token);
-		Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
-	}
+foreach (var uid in inbox.Search (query, cancel.Token)) {
+	var message = inbox.GetMessage (uid, cancel.Token);
+	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
+}
 ```
 
 Of course, instead of downloading the message, you could also fetch the summary information for the matching messages
@@ -308,21 +308,21 @@ or do any of a number of other things with the UIDs that are returned.
 How about navigating folders? MailKit can do that, too:
 
 ```csharp
-	// Get the first personal namespace and list the toplevel folders under it.
-	var personal = client.GetFolder (client.PersonalNamespaces[0]);
-	foreach (var folder in personal.GetSubfolders (false, cancel.Token))
-		Console.WriteLine ("[folder] {0}", folder.Name);
+// Get the first personal namespace and list the toplevel folders under it.
+var personal = client.GetFolder (client.PersonalNamespaces[0]);
+foreach (var folder in personal.GetSubfolders (false, cancel.Token))
+	Console.WriteLine ("[folder] {0}", folder.Name);
 ```
 
 If the IMAP server supports the SPECIAL-USE or the XLIST (GMail) extension, you can get ahold of
 the pre-defined All, Drafts, Flagged (aka Important), Junk, Sent, Trash, etc folders like this:
 
 ```csharp
-	if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0) {
-		var drafts = client.GetFolder (SpecialFolder.Drafts);
-	} else {
-		// maybe check the user's preferences for the Drafts folder?
-	}
+if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) != 0) {
+	var drafts = client.GetFolder (SpecialFolder.Drafts);
+} else {
+	// maybe check the user's preferences for the Drafts folder?
+}
 ```
 
 ## Contributing
