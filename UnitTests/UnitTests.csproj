@@ -44,7 +44,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Net\Imap\ImapClientTests.cs" />
     <Compile Include="Net\Imap\ImapEncodingTests.cs" />
+    <Compile Include="Net\Imap\ImapReplayStream.cs" />
     <Compile Include="Net\Imap\ImapUtilsTests.cs" />
     <Compile Include="Net\Pop3\Pop3ClientTests.cs" />
     <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
@@ -52,6 +54,14 @@
     <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-personal.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\logout.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\namespace.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\xlist.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\capa1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\capa2.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\err.txt" />
@@ -78,6 +88,8 @@
   <ItemGroup>
     <Folder Include="Net\" />
     <Folder Include="Net\Imap\" />
+    <Folder Include="Net\Imap\Resources\" />
+    <Folder Include="Net\Imap\Resources\gmail\" />
     <Folder Include="Net\Pop3\" />
     <Folder Include="Net\Pop3\Resources\" />
     <Folder Include="Net\Smtp\" />

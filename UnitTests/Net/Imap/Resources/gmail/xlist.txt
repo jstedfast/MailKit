@@ -1,0 +1,10 @@
+* XLIST (\HasNoChildren \Inbox) "/" "Inbox"
+* XLIST (\Noselect \HasChildren) "/" "[Gmail]"
+* XLIST (\HasNoChildren \AllMail) "/" "[Gmail]/All Mail"
+* XLIST (\HasNoChildren \Drafts) "/" "[Gmail]/Drafts"
+* XLIST (\HasNoChildren \Important) "/" "[Gmail]/Important"
+* XLIST (\HasNoChildren \Sent) "/" "[Gmail]/Sent Mail"
+* XLIST (\HasNoChildren \Spam) "/" "[Gmail]/Spam"
+* XLIST (\HasNoChildren \Starred) "/" "[Gmail]/Starred"
+* XLIST (\HasNoChildren \Trash) "/" "[Gmail]/Trash"
+A00000004 OK Success

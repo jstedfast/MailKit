@@ -1,9 +1,9 @@
 ﻿//
-// Pop3ReplayStream.cs
+// ImapReplayStream.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013 Jeffrey Stedfast
+// Copyright (c) 2014 Jeffrey Stedfast
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,37 +34,37 @@ using NUnit.Framework;
 using MimeKit.IO;
 using MimeKit.IO.Filters;
 
-namespace UnitTests.Net.Pop3 {
-	class Pop3ReplayCommand
+namespace UnitTests.Net.Imap {
+	class ImapReplayCommand
 	{
 		public string Command { get; private set; }
 		public string Resource { get; private set; }
 
-		public Pop3ReplayCommand (string command, string resource)
+		public ImapReplayCommand (string command, string resource)
 		{
 			Command = command;
 			Resource = resource;
 		}
 	}
 
-	enum Pop3ReplayState {
+	enum ImapReplayState {
 		SendResponse,
 		WaitForCommand,
 	}
 
-	class Pop3ReplayStream : Stream
+	class ImapReplayStream : Stream
 	{
-		readonly IList<Pop3ReplayCommand> commands;
+		readonly IList<ImapReplayCommand> commands;
 		readonly bool testUnixFormat;
-		Pop3ReplayState state;
+		ImapReplayState state;
 		Stream stream;
 		bool disposed;
 		int index;
 
-		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands, bool testUnixFormat)
+		public ImapReplayStream (IList<ImapReplayCommand> commands, bool testUnixFormat)
 		{
 			stream = GetResourceStream (commands[0].Resource);
-			state = Pop3ReplayState.SendResponse;
+			state = ImapReplayState.SendResponse;
 			this.testUnixFormat = testUnixFormat;
 			this.commands = commands;
 		}
@@ -72,7 +72,7 @@ namespace UnitTests.Net.Pop3 {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("Pop3ReplayStream");
+				throw new ObjectDisposedException ("ImapReplayStream");
 		}
 
 		#region implemented abstract members of Stream
@@ -102,13 +102,13 @@ namespace UnitTests.Net.Pop3 {
 		{
 			CheckDisposed ();
 
-			Assert.AreEqual (Pop3ReplayState.SendResponse, state, "Trying to read when no command given.");
+			Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read when no command given.");
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
 			int nread = stream.Read (buffer, offset, count);
 
 			if (stream.Position == stream.Length) {
-				state = Pop3ReplayState.WaitForCommand;
+				state = ImapReplayState.WaitForCommand;
 				stream.Dispose ();
 				stream = null;
 				index++;
@@ -119,7 +119,7 @@ namespace UnitTests.Net.Pop3 {
 
 		Stream GetResourceStream (string name)
 		{
-			using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources." + name)) {
+			using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + name)) {
 				var memory = new MemoryBlockStream ();
 
 				using (var filtered = new FilteredStream (memory)) {
@@ -139,14 +139,14 @@ namespace UnitTests.Net.Pop3 {
 		{
 			CheckDisposed ();
 
-			Assert.AreEqual (Pop3ReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
+			Assert.AreEqual (ImapReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
 
 			var command = Encoding.UTF8.GetString (buffer, offset, count);
 
 			Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
 
 			stream = GetResourceStream (commands[index].Resource);
-			state = Pop3ReplayState.SendResponse;
+			state = ImapReplayState.SendResponse;
 		}
 
 		public override void Flush ()
