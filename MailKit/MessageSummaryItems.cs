@@ -31,8 +31,11 @@ namespace MailKit {
 	/// A bitfield of <see cref="MessageSummary"/> fields.
 	/// </summary>
 	/// <remarks>
-	/// Combine the <see cref="MessageSummaryItems"/> in
-	/// <see cref="IFolder.Fetch(string[], MessageSummaryItems, System.Threading.CancellationToken)"/>
+	/// <see cref="MessageSummaryItems"/> are used to specify which properties
+	/// of <see cref="MessageSummary"/> should be populated by calls to
+	/// <see cref="IFolder.Fetch(UniqueId[], MessageSummaryItems, System.Threading.CancellationToken)"/>,
+	/// <see cref="IFolder.Fetch(int[], MessageSummaryItems, System.Threading.CancellationToken)"/>, or
+	/// <see cref="IFolder.Fetch(int, int, MessageSummaryItems, System.Threading.CancellationToken)"/>.
 	/// </remarks>
 	[Flags]
 	public enum MessageSummaryItems {

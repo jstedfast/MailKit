@@ -64,6 +64,61 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
+      <MemberSignature Language="C#" Value="public void AddFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(class MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="flags">The message flags to add.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Adds a set of flags to the specified messages.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains at least one invalid uid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AddFlags">
       <MemberSignature Language="C#" Value="public void AddFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -118,70 +173,15 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public void AddFlags (string[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(string[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
-        <param name="cancellationToken">The cancellation token.</param>
-        <summary>
-            Adds a set of flags to the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uids" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
-        </exception>
-        <exception cref="T:System.OperationCanceledException">
-            The operation was canceled via the cancellation token.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
-            The server's response contained unexpected tokens.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied with a NO or BAD response.
-            </exception>
-      </Docs>
-    </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public string Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String</ReturnType>
+        <ReturnType>MailKit.UniqueId</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="message" Type="MimeKit.MimeMessage" />
@@ -221,14 +221,14 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public string[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="messages" Type="MimeKit.MimeMessage[]" />
@@ -277,14 +277,14 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public string Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, DateTimeOffset date, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.DateTimeOffset date, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, DateTimeOffset date, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.DateTimeOffset date, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String</ReturnType>
+        <ReturnType>MailKit.UniqueId</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="message" Type="MimeKit.MimeMessage" />
@@ -326,14 +326,14 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public string[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, DateTimeOffset[] dates, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.DateTimeOffset[] dates, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, DateTimeOffset[] dates, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.DateTimeOffset[] dates, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="messages" Type="MimeKit.MimeMessage[]" />
@@ -493,6 +493,69 @@
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] CopyTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId[] CopyTo(class MailKit.UniqueId[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="destination" Type="MailKit.IFolder" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages to copy.</param>
+        <param name="destination">The destination folder.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Copies the specified messages to the destination folder.
+            </summary>
+        <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="destination" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the UIDPLUS extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
       <MemberSignature Language="C#" Value="public void CopyTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(int32[] indexes, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -537,69 +600,6 @@
           <para>-or-</para>
           <para>The folder is not currently open.</para>
         </exception>
-        <exception cref="T:System.OperationCanceledException">
-            The operation was canceled via the cancellation token.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
-            The server's response contained unexpected tokens.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied with a NO or BAD response.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public string[] CopyTo (string[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] CopyTo(string[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages to copy.</param>
-        <param name="destination">The destination folder.</param>
-        <param name="cancellationToken">The cancellation token.</param>
-        <summary>
-            Copies the specified messages to the destination folder.
-            </summary>
-        <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <para>
-            <paramref name="uids" /> is <c>null</c>.</para>
-          <para>-or-</para>
-          <para>
-            <paramref name="destination" /> is <c>null</c>.</para>
-        </exception>
-        <exception cref="T:System.ArgumentException">
-          <para>One or more of the <paramref name="uids" /> is invalid.</para>
-          <para>-or-</para>
-          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
-        </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
-        </exception>
-        <exception cref="T:System.NotSupportedException">
-            The IMAP server does not support the UIDPLUS extension.
-            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -837,8 +837,8 @@
       </Docs>
     </Member>
     <Member MemberName="Expunge">
-      <MemberSignature Language="C#" Value="public void Expunge (string[] uids, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge(string[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public void Expunge (MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge(class MailKit.UniqueId[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -847,7 +847,7 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
@@ -905,6 +905,63 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(class MailKit.UniqueId[] uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs.</param>
+        <param name="items">The message summary items to fetch.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Fetches the message summaries for the specified message UIDs.
+            </summary>
+        <returns>An enumeration of summaries for the requested messages.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="items" /> is empty.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            One or more of the <paramref name="uids" /> is invalid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fetch">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -936,63 +993,6 @@
             </exception>
         <exception cref="T:System.ArgumentException">
             One or more of the <paramref name="indexes" /> is invalid.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
-        </exception>
-        <exception cref="T:System.OperationCanceledException">
-            The operation was canceled via the cancellation token.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
-            The server's response contained unexpected tokens.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied with a NO or BAD response.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (string[] uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(string[] uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <param name="cancellationToken">The cancellation token.</param>
-        <summary>
-            Fetches the message summaries for the specified message UIDs.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uids" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="items" /> is empty.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-            One or more of the <paramref name="uids" /> is invalid.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -1163,8 +1163,8 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (MailKit.UniqueId uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(class MailKit.UniqueId uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -1173,19 +1173,22 @@
         <ReturnType>MimeKit.MimeMessage</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="index">The index of the message.</param>
+        <param name="uid">The UID of the message.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="index" /> is out of range.
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uid" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uid" /> is invalid.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -1212,8 +1215,8 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -1222,22 +1225,19 @@
         <ReturnType>MimeKit.MimeMessage</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uid" Type="System.String" />
+        <Parameter Name="index" Type="System.Int32" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uid">The UID of the message.</param>
+        <param name="index">The index of the message.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
         <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uid" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uid" /> is invalid.
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is out of range.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -1364,6 +1364,69 @@
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] MoveTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId[] MoveTo(class MailKit.UniqueId[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="destination" Type="MailKit.IFolder" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages to copy.</param>
+        <param name="destination">The destination folder.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Moves the specified messages to the destination folder.
+            </summary>
+        <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="destination" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the UIDPLUS extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="MoveTo">
       <MemberSignature Language="C#" Value="public void MoveTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MoveTo(int32[] indexes, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -1408,69 +1471,6 @@
           <para>-or-</para>
           <para>The folder is not currently open.</para>
         </exception>
-        <exception cref="T:System.OperationCanceledException">
-            The operation was canceled via the cancellation token.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
-            The server's response contained unexpected tokens.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied with a NO or BAD response.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="MoveTo">
-      <MemberSignature Language="C#" Value="public string[] MoveTo (string[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] MoveTo(string[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages to copy.</param>
-        <param name="destination">The destination folder.</param>
-        <param name="cancellationToken">The cancellation token.</param>
-        <summary>
-            Moves the specified messages to the destination folder.
-            </summary>
-        <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <para>
-            <paramref name="uids" /> is <c>null</c>.</para>
-          <para>-or-</para>
-          <para>
-            <paramref name="destination" /> is <c>null</c>.</para>
-        </exception>
-        <exception cref="T:System.ArgumentException">
-          <para>One or more of the <paramref name="uids" /> is invalid.</para>
-          <para>-or-</para>
-          <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
-        </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
-        </exception>
-        <exception cref="T:System.NotSupportedException">
-            The IMAP server does not support the UIDPLUS extension.
-            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -1626,6 +1626,61 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
+      <MemberSignature Language="C#" Value="public void RemoveFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(class MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="flags">The message flags to remove.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Removes a set of flags from the specified messages.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains at least one invalid uid.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveFlags">
       <MemberSignature Language="C#" Value="public void RemoveFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -1655,61 +1710,6 @@
             </exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
-        </exception>
-        <exception cref="T:System.OperationCanceledException">
-            The operation was canceled via the cancellation token.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
-            The server's response contained unexpected tokens.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied with a NO or BAD response.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public void RemoveFlags (string[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(string[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
-        <param name="cancellationToken">The cancellation token.</param>
-        <summary>
-            Removes a set of flags from the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uids" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -1810,14 +1810,14 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public string[] Search (MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] Search(class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
@@ -1831,7 +1831,7 @@
             </summary>
         <returns>An array of matching UIDs.</returns>
         <remarks>
-            The returned array of UID strings can be used with <see cref="M:MailKit.IFolder.GetMessage(System.String,System.Threading.CancellationToken)" />.
+            The returned array of unique identifiers can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="query" /> is <c>null</c>.
@@ -1864,17 +1864,17 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public string[] Search (string[] uids, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] Search(string[] uids, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.UniqueId[] Search(class MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
         <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -1887,7 +1887,7 @@
             </summary>
         <returns>An array of matching UIDs.</returns>
         <remarks>
-            The returned array of UID strings can be used with <see cref="M:MailKit.IFolder.GetMessage(System.String,System.Threading.CancellationToken)" />.
+            The returned array of unique identifiers can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1901,6 +1901,61 @@
             </exception>
         <exception cref="T:System.NotSupportedException">
             One or more search terms in the <paramref name="query" /> are not supported by the IMAP server.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetFlags">
+      <MemberSignature Language="C#" Value="public void SetFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(class MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="flags">The message flags to set.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Sets the flags of the specified messages.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains at least one invalid uid.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -1956,61 +2011,6 @@
             </exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
-        </exception>
-        <exception cref="T:System.OperationCanceledException">
-            The operation was canceled via the cancellation token.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
-            The server's response contained unexpected tokens.
-            </exception>
-        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied with a NO or BAD response.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public void SetFlags (string[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(string[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="System.String[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.FlagsChanged" /> events will be emitted.</param>
-        <param name="cancellationToken">The cancellation token.</param>
-        <summary>
-            Sets the flags of the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uids" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -2189,14 +2189,14 @@
       </Docs>
     </Member>
     <Member MemberName="UidNext">
-      <MemberSignature Language="C#" Value="public string UidNext { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance string UidNext" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId UidNext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.UniqueId UidNext" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String</ReturnType>
+        <ReturnType>MailKit.UniqueId</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
@@ -2207,14 +2207,14 @@
       </Docs>
     </Member>
     <Member MemberName="UidValidity">
-      <MemberSignature Language="C#" Value="public string UidValidity { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance string UidValidity" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId UidValidity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.UniqueId UidValidity" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String</ReturnType>
+        <ReturnType>MailKit.UniqueId</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>

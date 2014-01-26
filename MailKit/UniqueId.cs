@@ -50,8 +50,8 @@ namespace MailKit {
 		/// </summary>
 		/// <returns>
 		/// A value less than <c>0</c> if this <see cref="UniqueId"/> is less than <paramref name="other"/>,
-		/// a value of <c>0</c> if this <see cref="UniqueId"/> is equal to <paramref name="other">, or
-		/// a value greater than <c>0</c> if this <see cref="UniqueId"/> is greater than <paramref name="other">.
+		/// a value of <c>0</c> if this <see cref="UniqueId"/> is equal to <paramref name="other"/>, or
+		/// a value greater than <c>0</c> if this <see cref="UniqueId"/> is greater than <paramref name="other"/>.
 		/// </returns>
 		/// <param name="other">The other unique identifier.</param>
 		public int CompareTo (UniqueId other)

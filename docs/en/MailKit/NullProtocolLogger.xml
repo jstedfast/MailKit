@@ -17,7 +17,9 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
+    <summary>
+            A protocol logger that does not log to anywhere.
+            </summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
@@ -71,11 +73,16 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="buffer">The buffer to log.</param>
+        <param name="offset">The offset of the first byte to log.</param>
+        <param name="count">The number of bytes to log.</param>
+        <summary>
+            Logs a sequence of bytes sent by the client.
+            </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="LogConnect">
@@ -115,11 +122,16 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
+        <param name="buffer">The buffer to log.</param>
+        <param name="offset">The offset of the first byte to log.</param>
+        <param name="count">The number of bytes to log.</param>
+        <summary>
+            Logs a sequence of bytes sent by the server.
+            </summary>
         <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="buffer" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
   </Members>

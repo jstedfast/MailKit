@@ -341,8 +341,9 @@
         <returns>The folder if available; otherwise <c>null</c>.</returns>
         <remarks>
             Not all IMAP servers support special folders. Only IMAP servers
-            supporting the <see cref="F:MailKit.Net.Imap.ImapCapabilities.SpecialUse" /> capability
-            will have special folders.
+            supporting the <see cref="F:MailKit.Net.Imap.ImapCapabilities.SpecialUse" /> or
+            <see cref="F:MailKit.Net.Imap.ImapCapabilities.XList" /> extensions may have
+            special folders.
             </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="folder" /> is out of range.

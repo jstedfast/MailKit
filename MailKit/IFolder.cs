@@ -425,7 +425,7 @@ namespace MailKit {
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of UID strings can be used with <see cref="IFolder.GetMessage(string,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -437,7 +437,7 @@ namespace MailKit {
 		/// Searches the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of UID strings can be used with <see cref="IFolder.GetMessage(string,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="query">The search query.</param>

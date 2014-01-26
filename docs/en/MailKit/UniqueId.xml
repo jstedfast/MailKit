@@ -1,0 +1,130 @@
+<Type Name="UniqueId" FullName="MailKit.UniqueId">
+  <TypeSignature Language="C#" Value="public class UniqueId : IComparable&lt;MailKit.UniqueId&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UniqueId extends System.Object implements class System.IComparable`1&lt;class MailKit.UniqueId&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IComparable&lt;MailKit.UniqueId&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            A unique identifier.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UniqueId (uint id);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int32 id) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="id" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="id">The unique identifier.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.UniqueId" /> struct.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CompareTo">
+      <MemberSignature Language="C#" Value="public int CompareTo (MailKit.UniqueId other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(class MailKit.UniqueId other) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="other" Type="MailKit.UniqueId" />
+      </Parameters>
+      <Docs>
+        <param name="other">The other unique identifier.</param>
+        <summary>
+            Compares two <see cref="T:MailKit.UniqueId" /> objects.
+            </summary>
+        <returns>
+            A value less than <c>0</c> if this <see cref="T:MailKit.UniqueId" /> is less than <paramref name="other" />,
+            a value of <c>0</c> if this <see cref="T:MailKit.UniqueId" /> is equal to <paramref name="other" />, or
+            a value greater than <c>0</c> if this <see cref="T:MailKit.UniqueId" /> is greater than <paramref name="other" />.
+            </returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="obj" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="obj">The <see cref="T:System.Object" /> to compare with the current <see cref="T:MailKit.UniqueId" />.</param>
+        <summary>
+            Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:MailKit.UniqueId" />.
+            </summary>
+        <returns>
+          <c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:MailKit.UniqueId" />;
+            otherwise, <c>false</c>.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Serves as a hash function for a <see cref="T:MailKit.UniqueId" /> object.
+            </summary>
+        <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a hash table.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.UniqueId" />.
+            </summary>
+        <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.UniqueId" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

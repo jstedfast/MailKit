@@ -15,7 +15,7 @@
             </summary>
     <remarks>
             A <see cref="T:MailKit.MessageSummary" /> is returned by
-            <see cref="!:IFolder.Fetch(string[], MessageSummaryItems, CancellationToken)" />.
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.
             The properties of the <see cref="T:MailKit.MessageSummary" /> that will be available
             depend on the <see cref="T:MailKit.MessageSummaryItems" /> passed to the aformentioned method.
             </remarks>
@@ -176,14 +176,14 @@
       </Docs>
     </Member>
     <Member MemberName="Uid">
-      <MemberSignature Language="C#" Value="public string Uid { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance string Uid" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId Uid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.UniqueId Uid" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String</ReturnType>
+        <ReturnType>MailKit.UniqueId</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>

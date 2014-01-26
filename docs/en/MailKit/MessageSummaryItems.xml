@@ -18,7 +18,12 @@
             A bitfield of <see cref="T:MailKit.MessageSummary" /> fields.
             </summary>
     <remarks>
-            Combine the <see cref="T:MailKit.MessageSummaryItems" /> in <see cref="M:MailKit.IFolder.Fetch(System.String[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" /></remarks>
+      <see cref="T:MailKit.MessageSummaryItems" /> are used to specify which properties
+            of <see cref="T:MailKit.MessageSummary" /> should be populated by calls to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />,
+            <see cref="M:MailKit.IFolder.Fetch(System.Int32[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />, or
+            <see cref="M:MailKit.IFolder.Fetch(System.Int32,System.Int32,MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="All">

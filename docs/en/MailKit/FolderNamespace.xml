@@ -16,24 +16,6 @@
     <remarks>To be added.</remarks>
   </Docs>
   <Members>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public FolderNamespace (char dirSeparator, string path);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(char dirSeparator, string path) cil managed" />
-      <MemberType>Constructor</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Parameters>
-        <Parameter Name="dirSeparator" Type="System.Char" />
-        <Parameter Name="path" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="dirSeparator">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="DirectorySeparator">
       <MemberSignature Language="C#" Value="public readonly char DirectorySeparator;" />
       <MemberSignature Language="ILAsm" Value=".field public initonly char DirectorySeparator" />

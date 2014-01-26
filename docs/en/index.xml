@@ -76,6 +76,7 @@
       <Type Name="ProtocolLogger" Kind="Class" />
       <Type Name="SpecialFolder" Kind="Enumeration" />
       <Type Name="StatusItems" Kind="Enumeration" />
+      <Type Name="UniqueId" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Net.Imap">
       <Type Name="ImapCapabilities" Kind="Enumeration" />

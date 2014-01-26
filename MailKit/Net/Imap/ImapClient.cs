@@ -533,8 +533,9 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Not all IMAP servers support special folders. Only IMAP servers
-		/// supporting the <see cref="ImapCapabilities.SpecialUse"/> capability
-		/// will have special folders.
+		/// supporting the <see cref="ImapCapabilities.SpecialUse"/> or
+		/// <see cref="ImapCapabilities.XList"/> extensions may have
+		/// special folders.
 		/// </remarks>
 		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
 		/// <param name="folder">The type of special folder.</param>

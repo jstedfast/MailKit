@@ -32,7 +32,7 @@ namespace MailKit {
 	/// </summary>
 	/// <remarks>
 	/// A <see cref="MessageSummary"/> is returned by
-	/// <see cref="IFolder.Fetch(string[], MessageSummaryItems, System.Threading.CancellationToken)"/>.
+	/// <see cref="IFolder.Fetch(UniqueId[], MessageSummaryItems, System.Threading.CancellationToken)"/>.
 	/// The properties of the <see cref="MessageSummary"/> that will be available
 	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.
 	/// </remarks>
