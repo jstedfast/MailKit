@@ -2528,6 +2528,9 @@ namespace MailKit.Net.Imap {
 				args.Add (header.Value);
 				break;
 			case SearchTerm.Keyword:
+				text = (TextSearchQuery) query;
+				builder.Append ("KEYWORD %S");
+				args.Add (text.Text);
 				break;
 			case SearchTerm.LargerThan:
 				numeric = (NumericSearchQuery) query;
@@ -2557,6 +2560,11 @@ namespace MailKit.Net.Imap {
 				break;
 			case SearchTerm.NotFlagged:
 				builder.Append ("UNFLAGGED");
+				break;
+			case SearchTerm.NotKeyword:
+				text = (TextSearchQuery) query;
+				builder.Append ("UNKEYWORD %S");
+				args.Add (text.Text);
 				break;
 			case SearchTerm.NotRecent:
 				builder.Append ("OLD");
@@ -2603,8 +2611,6 @@ namespace MailKit.Net.Imap {
 				args.Add (text.Text);
 				break;
 			case SearchTerm.Uid:
-				break;
-			case SearchTerm.Unkeyword:
 				break;
 			case SearchTerm.GMailMessageId:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)

@@ -25,6 +25,8 @@
 //
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MailKit.Search {
 	/// <summary>
@@ -197,6 +199,96 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
+		/// Matches messages that do not have the specified custom flag set.
+		/// </summary>
+		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
+		/// <param name="flag">The custom flag.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="flag"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="flag"/> is empty.
+		/// </exception>
+		public static TextSearchQuery DoesNotHaveCustomFlag (string flag)
+		{
+			if (flag == null)
+				throw new ArgumentNullException ("flag");
+
+			if (flag.Length == 0)
+				throw new ArgumentException ("Cannot search for an empty string.");
+
+			return new TextSearchQuery (SearchTerm.NotKeyword, flag);
+		}
+
+		/// <summary>
+		/// Matches messages that do not have the specified custom flags set.
+		/// </summary>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="flags">The custom flags.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="flags"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="flags"/> is <c>null</c> or empty.</para>
+		/// <para>-or-</para>
+		/// <para>No custom flags were given.</para>
+		/// </exception>
+		public static SearchQuery DoesNotHaveCustomFlags (IEnumerable<string> flags)
+		{
+			if (flags == null)
+				throw new ArgumentNullException ("flags");
+
+			var list = new List<SearchQuery> ();
+
+			foreach (var flag in flags)
+				list.Add (new TextSearchQuery (SearchTerm.NotKeyword, flag));
+
+			if (list.Count == 0)
+				throw new ArgumentException ("No flags specified.", "flags");
+
+			var query = list[0];
+			for (int i = 1; i < list.Count; i++)
+				query = query.And (list[i]);
+
+			return query;
+		}
+
+		/// <summary>
+		/// Matches messages that do not have the specified flags set.
+		/// </summary>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="flags">The message flags.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="flags"/> does not contain any of the valie flag values.
+		/// </exception>
+		public static SearchQuery DoesNotHaveFlags (MessageFlags flags)
+		{
+			var list = new List<SearchQuery> ();
+
+			if ((flags & MessageFlags.Seen) != 0)
+				list.Add (NotSeen);
+			if ((flags & MessageFlags.Answered) != 0)
+				list.Add (NotAnswered);
+			if ((flags & MessageFlags.Flagged) != 0)
+				list.Add (NotFlagged);
+			if ((flags & MessageFlags.Deleted) != 0)
+				list.Add (NotDeleted);
+			if ((flags & MessageFlags.Draft) != 0)
+				list.Add (NotDraft);
+			if ((flags & MessageFlags.Recent) != 0)
+				list.Add (NotRecent);
+
+			if (list.Count == 0)
+				throw new ArgumentException ("No flags specified.", "flags");
+
+			var query = list[0];
+			for (int i = 1; i < list.Count; i++)
+				query = query.And (list[i]);
+
+			return query;
+		}
+
+		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Draft"/> flag set.
 		/// </summary>
 		public static readonly SearchQuery Draft = new SearchQuery (SearchTerm.Draft);
@@ -226,6 +318,96 @@ namespace MailKit.Search {
 				throw new ArgumentException ("Cannot search for an empty string.", "text");
 
 			return new TextSearchQuery (SearchTerm.FromContains, text);
+		}
+
+		/// <summary>
+		/// Matches messages that have the specified custom flag set.
+		/// </summary>
+		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
+		/// <param name="flag">The custom flag.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="flag"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="flag"/> is empty.
+		/// </exception>
+		public static TextSearchQuery HasCustomFlag (string flag)
+		{
+			if (flag == null)
+				throw new ArgumentNullException ("flag");
+
+			if (flag.Length == 0)
+				throw new ArgumentException ("Cannot search for an empty string.");
+
+			return new TextSearchQuery (SearchTerm.Keyword, flag);
+		}
+
+		/// <summary>
+		/// Matches messages that have the specified custom flags set.
+		/// </summary>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="flags">The custom flags.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="flags"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="flags"/> is <c>null</c> or empty.</para>
+		/// <para>-or-</para>
+		/// <para>No custom flags were given.</para>
+		/// </exception>
+		public static SearchQuery HasCustomFlags (IEnumerable<string> flags)
+		{
+			if (flags == null)
+				throw new ArgumentNullException ("flags");
+
+			var list = new List<SearchQuery> ();
+
+			foreach (var flag in flags)
+				list.Add (new TextSearchQuery (SearchTerm.Keyword, flag));
+
+			if (list.Count == 0)
+				throw new ArgumentException ("No flags specified.", "flags");
+
+			var query = list[0];
+			for (int i = 1; i < list.Count; i++)
+				query = query.And (list[i]);
+
+			return query;
+		}
+
+		/// <summary>
+		/// Matches messages that have the specified flags set.
+		/// </summary>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="flags">The message flags.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="flags"/> does not contain any of the valie flag values.
+		/// </exception>
+		public static SearchQuery HasFlags (MessageFlags flags)
+		{
+			var list = new List<SearchQuery> ();
+
+			if ((flags & MessageFlags.Seen) != 0)
+				list.Add (Seen);
+			if ((flags & MessageFlags.Answered) != 0)
+				list.Add (Answered);
+			if ((flags & MessageFlags.Flagged) != 0)
+				list.Add (Flagged);
+			if ((flags & MessageFlags.Deleted) != 0)
+				list.Add (Deleted);
+			if ((flags & MessageFlags.Draft) != 0)
+				list.Add (Draft);
+			if ((flags & MessageFlags.Recent) != 0)
+				list.Add (Recent);
+
+			if (list.Count == 0)
+				throw new ArgumentException ("No flags specified.", "flags");
+
+			var query = list[0];
+			for (int i = 1; i < list.Count; i++)
+				query = query.And (list[i]);
+
+			return query;
 		}
 
 		/// <summary>
@@ -260,8 +442,6 @@ namespace MailKit.Search {
 
 			return new HeaderSearchQuery (field, text);
 		}
-
-		// FIXME: KEYWORD???
 
 		/// <summary>
 		/// Matches messages that are larger than the specified number of octets.
@@ -497,8 +677,6 @@ namespace MailKit.Search {
 		}
 
 		// FIXME: UID???
-
-		// FIXME: UNKEYWORD???
 
 		#region GMail extensions
 

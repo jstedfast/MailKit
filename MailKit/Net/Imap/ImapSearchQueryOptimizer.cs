@@ -24,8 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
-
 using MailKit.Search;
 
 namespace MailKit.Net.Imap {
@@ -55,6 +53,12 @@ namespace MailKit.Net.Imap {
 
 				if (unary.Operand == SearchQuery.Seen)
 					return true;
+
+				if (unary.Operand.Term == SearchTerm.Keyword)
+					return true;
+
+				if (unary.Operand.Term == SearchTerm.NotKeyword)
+					return true;
 			}
 
 			return false;
@@ -82,6 +86,12 @@ namespace MailKit.Net.Imap {
 
 				if (unary.Operand == SearchQuery.Seen)
 					return SearchQuery.NotSeen;
+
+				if (unary.Operand.Term == SearchTerm.Keyword)
+					return new TextSearchQuery (SearchTerm.NotKeyword, ((TextSearchQuery) unary.Operand).Text);
+
+				if (unary.Operand.Term == SearchTerm.NotKeyword)
+					return new TextSearchQuery (SearchTerm.Keyword, ((TextSearchQuery) unary.Operand).Text);
 			}
 
 			return expr;

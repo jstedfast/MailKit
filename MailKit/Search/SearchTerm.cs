@@ -49,6 +49,7 @@ namespace MailKit.Search {
 		NotDeleted,
 		NotDraft,
 		NotFlagged,
+		NotKeyword,
 		NotRecent,
 		NotSeen,
 		Or,
@@ -61,7 +62,6 @@ namespace MailKit.Search {
 		SubjectContains,
 		ToContains,
 		Uid,
-		Unkeyword,
 
 		// GMail SEARCH extensions
 		GMailMessageId,
