@@ -677,6 +677,8 @@ namespace MailKit.Net.Imap {
 							FolderCache.Add (path, folder);
 						}
 
+						folder.IsNamespace = true;
+
 						// read the closing ')'
 						token = stream.ReadToken (cancellationToken);
 
@@ -1286,8 +1288,10 @@ namespace MailKit.Net.Imap {
 				SharedNamespaces.Clear ();
 				OtherNamespaces.Clear ();
 
-				if (list.Count > 0)
+				if (list.Count > 0) {
 					PersonalNamespaces.Add (new FolderNamespace (list[0].DirectorySeparator, ""));
+					list[0].IsNamespace = true;
+				}
 
 				ImapUtils.LookupParentFolders (this, list, cancellationToken);
 			}

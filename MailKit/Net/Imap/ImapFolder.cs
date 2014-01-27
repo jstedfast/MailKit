@@ -230,6 +230,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets whether or not the folder is a namespace folder.
+		/// </summary>
+		/// <value><c>true</c> if the folder is a namespace folder; otherwise, <c>false</c>.</value>
+		public bool IsNamespace {
+			get; internal set;
+		}
+
+		/// <summary>
 		/// Gets the full name of the folder.
 		/// </summary>
 		/// <remarks>
@@ -530,7 +538,9 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder cannot be renamed (it is either a namespace or the Inbox).</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -558,7 +568,7 @@ namespace MailKit.Net.Imap {
 			if (string.IsNullOrEmpty (name) || name.IndexOf (parent.DirectorySeparator) != -1)
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
-			if (string.IsNullOrEmpty (FullName))
+			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
 				throw new InvalidOperationException ("Cannot rename this folder.");
 
 			CheckState (false);
@@ -601,7 +611,9 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder cannot be deleted (it is either a namespace or the Inbox).</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -617,6 +629,11 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Delete (CancellationToken cancellationToken)
 		{
+			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
+				throw new InvalidOperationException ("Cannot rename this folder.");
+
+			CheckState (false);
+
 			var ic = Engine.QueueCommand (cancellationToken, null, "DELETE %F\r\n", this);
 
 			Engine.Wait (ic);

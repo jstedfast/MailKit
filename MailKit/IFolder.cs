@@ -88,6 +88,12 @@ namespace MailKit {
 		FolderAccess Access { get; }
 
 		/// <summary>
+		/// Gets whether or not the folder is a namespace folder.
+		/// </summary>
+		/// <value><c>true</c> if the folder is a namespace folder; otherwise, <c>false</c>.</value>
+		bool IsNamespace { get; }
+
+		/// <summary>
 		/// Gets the full name of the folder.
 		/// </summary>
 		/// <remarks>
