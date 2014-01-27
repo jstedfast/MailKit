@@ -1598,7 +1598,7 @@ namespace MailKit.Net.Imap {
 					break;
 				case "BODYSTRUCTURE":
 				case "BODY":
-					summary.Body = ImapUtils.ParseBody (engine, ic.CancellationToken);
+					summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
 					break;
 				case "ENVELOPE":
 					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);

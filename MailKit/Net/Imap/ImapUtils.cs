@@ -528,19 +528,23 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static BodyPart ParseMultipart (ImapEngine engine, CancellationToken cancellationToken)
+		static BodyPart ParseMultipart (ImapEngine engine, string path, CancellationToken cancellationToken)
 		{
+			var prefix = path.Length > 0 ? path + "." : string.Empty;
 			var body = new BodyPartMultipart ();
 			ImapToken token;
+			int index = 1;
 
 			do {
-				body.BodyParts.Add (ParseBody (engine, cancellationToken));
+				body.BodyParts.Add (ParseBody (engine, prefix + index, cancellationToken));
 				token = engine.PeekToken (cancellationToken);
+				index++;
 			} while (token.Type == ImapTokenType.OpenParen);
 
 			var subtype = ReadStringToken (engine, cancellationToken);
 
 			body.ContentType = new ContentType ("multipart", subtype);
+			body.PartSpecifier = path;
 
 			token = engine.PeekToken (cancellationToken);
 
@@ -581,7 +585,7 @@ namespace MailKit.Net.Imap {
 			return body;
 		}
 
-		public static BodyPart ParseBody (ImapEngine engine, CancellationToken cancellationToken)
+		public static BodyPart ParseBody (ImapEngine engine, string path, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -594,7 +598,7 @@ namespace MailKit.Net.Imap {
 			token = engine.PeekToken (cancellationToken);
 
 			if (token.Type == ImapTokenType.OpenParen)
-				return ParseMultipart (engine, cancellationToken);
+				return ParseMultipart (engine, path, cancellationToken);
 
 			var type = ParseContentType (engine, cancellationToken);
 			var id = ReadNStringToken (engine, false, cancellationToken);
@@ -606,7 +610,7 @@ namespace MailKit.Net.Imap {
 			if (type.Matches ("message", "rfc822")) {
 				var mesg = new BodyPartMessage ();
 				mesg.Envelope = ParseEnvelope (engine, cancellationToken);
-				mesg.Body = ParseBody (engine, cancellationToken);
+				mesg.Body = ParseBody (engine, path, cancellationToken);
 				mesg.Lines = ReadNumber (engine, cancellationToken);
 				body = mesg;
 			} else if (type.Matches ("text", "*")) {
@@ -619,6 +623,7 @@ namespace MailKit.Net.Imap {
 
 			body.ContentTransferEncoding = enc;
 			body.ContentDescription = desc;
+			body.PartSpecifier = path;
 			body.ContentType = type;
 			body.ContentId = id;
 			body.Octets = octets;
@@ -660,7 +665,7 @@ namespace MailKit.Net.Imap {
 
 		static void AddEnvelopeAddress (InternetAddressList list, ImapEngine engine, CancellationToken cancellationToken)
 		{
-			string[] values = new string[4];
+			var values = new string[4];
 			ImapToken token;
 			int index = 0;
 

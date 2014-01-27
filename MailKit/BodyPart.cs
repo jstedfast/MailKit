@@ -44,5 +44,13 @@ namespace MailKit {
 		public ContentType ContentType {
 			get; internal set;
 		}
+
+		/// <summary>
+		/// Gets the part specifier.
+		/// </summary>
+		/// <value>The part specifier.</value>
+		public string PartSpecifier {
+			get; internal set;
+		}
 	}
 }

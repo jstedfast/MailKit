@@ -100,7 +100,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							body = ImapUtils.ParseBody (engine, CancellationToken.None);
+							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing BODY failed: {0}", ex);
 							return;
@@ -189,7 +189,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							body = ImapUtils.ParseBody (engine, CancellationToken.None);
+							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
 							return;
