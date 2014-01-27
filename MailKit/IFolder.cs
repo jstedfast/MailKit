@@ -139,23 +139,32 @@ namespace MailKit {
 		ulong HighestModSeq { get; }
 
 		/// <summary>
-		/// Gets the UID validity.
+		/// Gets the Unique ID validity.
 		/// </summary>
 		/// <remarks>
-		/// UIDs are only valid so long as the UID validity value remains unchanged.
+		/// <para>UIDs are only valid so long as the UID validity value remains unchanged. If and when
+		/// the folder's <see cref="UidValidity"/> is changed, a client MUST discard its cache of UIDs
+		/// along with any summary information that it may have and re-query the folder.</para>
+		/// <para>The <see cref="UidValidity"/> will only be set after the folder has been opened.</para>
 		/// </remarks>
 		/// <value>The UID validity.</value>
-		UniqueId UidValidity { get; }
+		UniqueId? UidValidity { get; }
 
 		/// <summary>
 		/// Gets the UID that the next message that is added to the folder will be assigned.
 		/// </summary>
+		/// <remarks>
+		/// This value will only be set after the folder has been opened.
+		/// </remarks>
 		/// <value>The next UID.</value>
-		UniqueId UidNext { get; }
+		UniqueId? UidNext { get; }
 
 		/// <summary>
 		/// Gets the index of the first unread message in the folder.
 		/// </summary>
+		/// <remarks>
+		/// This value will only be set after the folder has been opened.
+		/// </remarks>
 		/// <value>The index of the first unread message.</value>
 		int FirstUnread { get; }
 
@@ -262,7 +271,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken);
+		UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Appends the specified message to the folder.
@@ -272,7 +281,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken);
+		UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Appends the specified messages to the folder.

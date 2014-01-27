@@ -178,7 +178,7 @@ namespace MailKit.Net.Imap {
 			int index = 0;
 
 			while (index < uids.Length) {
-				if (uids[index] == null)
+				if (uids[index].Id == 0)
 					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
 
 				uint min = uids[index].Id;

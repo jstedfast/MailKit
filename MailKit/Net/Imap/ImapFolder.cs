@@ -298,24 +298,33 @@ namespace MailKit.Net.Imap {
 		/// Gets the UID validity.
 		/// </summary>
 		/// <remarks>
-		/// UIDs are only valid so long as the UID validity value remains unchanged.
+		/// <para>UIDs are only valid so long as the UID validity value remains unchanged. If and when
+		/// the folder's <see cref="UidValidity"/> is changed, a client MUST discard its cache of UIDs
+		/// along with any summary information that it may have and re-query the folder.</para>
+		/// <para>This value will only be set after the folder has been opened.</para>
 		/// </remarks>
 		/// <value>The UID validity.</value>
-		public UniqueId UidValidity {
+		public UniqueId? UidValidity {
 			get; private set;
 		}
 
 		/// <summary>
-		/// Gets the UID that the next message that is added to the folder will be assigned.
+		/// Gets the UID that the folder will assign to the next message that is added.
 		/// </summary>
+		/// <remarks>
+		/// This value will only be set after the folder has been opened.
+		/// </remarks>
 		/// <value>The next UID.</value>
-		public UniqueId UidNext {
+		public UniqueId? UidNext {
 			get; private set;
 		}
 
 		/// <summary>
 		/// Gets the index of the first unread message in the folder.
 		/// </summary>
+		/// <remarks>
+		/// This value will only be set after the folder has been opened.
+		/// </remarks>
 		/// <value>The index of the first unread message.</value>
 		public int FirstUnread {
 			get; private set;
@@ -1025,7 +1034,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken)
+		public UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1078,7 +1087,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken)
+		public UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1211,8 +1220,8 @@ namespace MailKit.Net.Imap {
 
 			for (int i = 0; i < messages.Length; i++) {
 				var uid = Append (messages[i], flags[i], cancellationToken);
-				if (uids != null && uid != null)
-					uids.Add (uid);
+				if (uids != null && uid.HasValue)
+					uids.Add (uid.Value);
 				else
 					uids = null;
 			}
@@ -1304,8 +1313,8 @@ namespace MailKit.Net.Imap {
 
 			for (int i = 0; i < messages.Length; i++) {
 				var uid = Append (messages[i], flags[i], dates[i], cancellationToken);
-				if (uids != null && uid != null)
-					uids.Add (uid);
+				if (uids != null && uid.HasValue)
+					uids.Add (uid.Value);
 				else
 					uids = null;
 			}
@@ -2005,9 +2014,6 @@ namespace MailKit.Net.Imap {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uid"/> is <c>null</c>.
-		/// </exception>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -2035,8 +2041,8 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken)
 		{
-			if (uid == null)
-				throw new ArgumentNullException ("uid");
+			if (uid.Id == 0)
+				throw new ArgumentException ("The uid is invalid.", "uid");
 
 			CheckState (true);
 
@@ -3003,7 +3009,7 @@ namespace MailKit.Net.Imap {
 
 		internal void UpdateUidValidity (UniqueId uid)
 		{
-			if (UidValidity == uid)
+			if (UidValidity.HasValue && UidValidity.Value.Id == uid.Id)
 				return;
 
 			UidValidity = uid;
