@@ -96,6 +96,31 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The folder is not currently open.");
 		}
 
+		void ParentFolderRenamed (object sender, FolderRenamedEventArgs e)
+		{
+			var oldEncodedName = EncodedName;
+			var oldFullName = FullName;
+
+			FullName = ParentFolder.FullName + DirectorySeparator + Name;
+			EncodedName = ImapEncoding.Encode (FullName);
+			Engine.FolderCache.Remove (oldEncodedName);
+			Engine.FolderCache[EncodedName] = this;
+
+			if (Engine.Selected == this) {
+				Engine.State = ImapEngineState.Authenticated;
+				Access = FolderAccess.None;
+				Engine.Selected = null;
+			}
+
+			OnRenamed (oldFullName, FullName);
+		}
+
+		internal void SetParentFolder (IFolder parent)
+		{
+			parent.Renamed += ParentFolderRenamed;
+			ParentFolder = parent;
+		}
+
 		void ProcessResponseCodes (ImapCommand ic, string paramName)
 		{
 			bool tryCreate = false;
@@ -153,7 +178,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The parent folder.</value>
 		public IFolder ParentFolder {
-			get; internal set;
+			get; private set;
 		}
 
 		/// <summary>
@@ -351,6 +376,9 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic.Result);
 
+			if (Engine.Selected != null)
+				Engine.Selected.Access = FolderAccess.None;
+
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
 
@@ -406,6 +434,7 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException (expunge ? "CLOSE" : "UNSELECT", ic.Result);
 
 			Engine.State = ImapEngineState.Authenticated;
+			Access = FolderAccess.None;
 			Engine.Selected = null;
 		}
 
@@ -529,10 +558,14 @@ namespace MailKit.Net.Imap {
 			if (string.IsNullOrEmpty (name) || name.IndexOf (parent.DirectorySeparator) != -1)
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
+			if (string.IsNullOrEmpty (FullName))
+				throw new InvalidOperationException ("Cannot rename this folder.");
+
 			CheckState (false);
 
 			var encodedName = ImapEncoding.Encode (parent.FullName + parent.DirectorySeparator + name);
 			var ic = Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
+			var oldFullName = FullName;
 
 			Engine.Wait (ic);
 
@@ -541,22 +574,21 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("RENAME", ic.Result);
 
-			// FIXME: what to do about all child folders? :-(
+			Engine.FolderCache.Remove (EncodedName);
+			Engine.FolderCache[encodedName] = this;
 
-			var oldFullName = FullName;
+			ParentFolder.Renamed -= ParentFolderRenamed;
+			SetParentFolder (parent);
 
-			Name = GetBaseName (name, parent.DirectorySeparator);
+			FullName = ImapEncoding.Decode (encodedName);
 			EncodedName = encodedName;
-			ParentFolder = parent;
-			FullName = name;
+			Name = name;
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
+				Access = FolderAccess.None;
 				Engine.Selected = null;
 			}
-
-			Engine.FolderCache.Remove (EncodedName);
-			Engine.FolderCache[encodedName] = this;
 
 			OnRenamed (oldFullName, FullName);
 		}
@@ -596,6 +628,7 @@ namespace MailKit.Net.Imap {
 
 			if (Engine.Selected == this) {
 				Engine.State = ImapEngineState.Authenticated;
+				Access = FolderAccess.None;
 				Engine.Selected = null;
 			}
 

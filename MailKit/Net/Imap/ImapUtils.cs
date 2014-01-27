@@ -325,7 +325,7 @@ namespace MailKit.Net.Imap {
 				ImapFolder parent;
 
 				if (engine.FolderCache.TryGetValue (encodedName, out parent)) {
-					folder.ParentFolder = parent;
+					folder.SetParentFolder (parent);
 					continue;
 				}
 
@@ -340,7 +340,7 @@ namespace MailKit.Net.Imap {
 					engine.FolderCache.Add (encodedName, parent);
 				}
 
-				folder.ParentFolder = parent;
+				folder.SetParentFolder (parent);
 			}
 		}
 
