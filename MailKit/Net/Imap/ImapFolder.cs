@@ -973,7 +973,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (uids.Count == 0)
+			if (uids.Length == 0)
 				return;
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID EXPUNGE %s\r\n", set);
@@ -1379,7 +1379,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (uids.Count == 0)
+			if (uids.Length == 0)
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
@@ -1463,7 +1463,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (uids.Count == 0)
+			if (uids.Length == 0)
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
@@ -1536,7 +1536,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (indexes.Count == 0)
+			if (indexes.Length == 0)
 				return;
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "COPY %s %F\r\n", set, destination);
@@ -1605,7 +1605,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (indexes.Count == 0)
+			if (indexes.Length == 0)
 				return;
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
@@ -1816,7 +1816,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (uids.Count == 0)
+			if (uids.Length == 0)
 				return new MessageSummary[0];
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (%s)\r\n", set, query);
@@ -1882,7 +1882,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (indexes.Count == 0)
+			if (indexes.Length == 0)
 				return new MessageSummary[0];
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
@@ -2199,7 +2199,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (uids.Count == 0)
+			if (uids.Length == 0)
 				return;
 
 			string @params = string.Empty;
@@ -2345,7 +2345,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (indexes.Count == 0)
+			if (indexes.Length == 0)
 				return;
 
 			string @params = string.Empty;
@@ -2741,7 +2741,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
-			if (uids.Count == 0)
+			if (uids.Length == 0)
 				return new UniqueId[0];
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
