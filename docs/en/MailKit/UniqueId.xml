@@ -20,7 +20,9 @@
     <summary>
             A unique identifier.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            Represents a unique identifier for messages in a <see cref="T:MailKit.IFolder" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -131,6 +133,23 @@
             Serves as a hash function for a <see cref="T:MailKit.UniqueId" /> object.
             </summary>
         <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a hash table.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Id">
+      <MemberSignature Language="C#" Value="public readonly uint Id;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly unsigned int32 Id" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The identifier.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

@@ -30,9 +30,15 @@ namespace MailKit {
 	/// <summary>
 	/// A unique identifier.
 	/// </summary>
+	/// <remarks>
+	/// Represents a unique identifier for messages in a <see cref="IFolder"/>.
+	/// </remarks>
 	public struct UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>
 	{
-		internal readonly uint Id;
+		/// <summary>
+		/// The identifier.
+		/// </summary>
+		public readonly uint Id;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueId"/> struct.
