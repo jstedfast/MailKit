@@ -86,6 +86,7 @@ namespace MailKit.Net.Imap {
 
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine ();
+			engine.Alert += OnAlert;
 			this.logger = logger;
 		}
 
@@ -578,6 +579,19 @@ namespace MailKit.Net.Imap {
 				return folder;
 
 			return null;
+		}
+
+		/// <summary>
+		/// Occurs when a remote message store receives an alert message from the server.
+		/// </summary>
+		public event EventHandler<AlertEventArgs> Alert;
+
+		void OnAlert (object sender, AlertEventArgs e)
+		{
+			var handler = Alert;
+
+			if (handler != null)
+				handler (this, e);
 		}
 
 		#endregion

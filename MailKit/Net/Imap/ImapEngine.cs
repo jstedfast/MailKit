@@ -1384,14 +1384,14 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		//public event EventHandler<ImapAlertEventArgs> Alert;
+		public event EventHandler<AlertEventArgs> Alert;
 
 		internal void OnAlert (string message)
 		{
-//			var handler = Alert;
-//
-//			if (handler != null)
-//				handler (this, new ImapAlertEventArgs (message));
+			var handler = Alert;
+
+			if (handler != null)
+				handler (this, new AlertEventArgs (message));
 		}
 
 		/// <summary>

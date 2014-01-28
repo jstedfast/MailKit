@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit {
 	/// <summary>
 	/// An interface for retreiving messages from a message store such as IMAP.
@@ -88,7 +90,7 @@ namespace MailKit {
 		/// Gets the folder for the specified namespace.
 		/// </summary>
 		/// <remarks>
-		/// The main reason to get the toplevel fodler in a namespace is
+		/// The main reason to get the toplevel folder in a namespace is
 		/// to list its child folders.
 		/// </remarks>
 		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
@@ -97,5 +99,14 @@ namespace MailKit {
 		/// <paramref name="namespace"/> is <c>null</c>.
 		/// </exception>
 		IFolder GetFolder (FolderNamespace @namespace);
+
+		/// <summary>
+		/// Occurs when a remote message store receives an alert message from the server.
+		/// </summary>
+		/// <remarks>
+		/// Some implementations, such as <see cref="MailKit.Net.Imap.ImapClient"/>,
+		/// will emit Alert events when they receive alert messages from the server.
+		/// </remarks>
+		event EventHandler<AlertEventArgs> Alert;
 	}
 }

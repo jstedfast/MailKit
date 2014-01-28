@@ -22,6 +22,26 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName="Alert">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.AlertEventArgs&gt; Alert;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.AlertEventArgs&gt; Alert" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;MailKit.AlertEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Occurs when a remote message store receives an alert message from the server.
+            </summary>
+        <remarks>
+            Some implementations, such as <see cref="T:MailKit.Net.Imap.ImapClient" />,
+            will emit Alert events when they receive alert messages from the server.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetFolder">
       <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (MailKit.FolderNamespace namespace);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
@@ -42,7 +62,7 @@
             </summary>
         <returns>The folder if available; otherwise <c>null</c>.</returns>
         <remarks>
-            The main reason to get the toplevel fodler in a namespace is
+            The main reason to get the toplevel folder in a namespace is
             to list its child folders.
             </remarks>
         <exception cref="T:System.ArgumentNullException">

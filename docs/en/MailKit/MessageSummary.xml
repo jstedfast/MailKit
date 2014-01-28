@@ -177,7 +177,7 @@
     </Member>
     <Member MemberName="Uid">
       <MemberSignature Language="C#" Value="public MailKit.UniqueId Uid { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.UniqueId Uid" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.UniqueId Uid" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>

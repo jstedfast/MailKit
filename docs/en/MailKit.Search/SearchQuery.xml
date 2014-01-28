@@ -277,6 +277,89 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="DoesNotHaveCustomFlag">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery DoesNotHaveCustomFlag (string flag);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery DoesNotHaveCustomFlag(string flag) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flag" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="flag">The custom flag.</param>
+        <summary>
+            Matches messages that do not have the specified custom flag set.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="flag" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="flag" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DoesNotHaveCustomFlags">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.SearchQuery DoesNotHaveCustomFlags (System.Collections.Generic.IEnumerable&lt;string&gt; flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery DoesNotHaveCustomFlags(class System.Collections.Generic.IEnumerable`1&lt;string&gt; flags) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="flags">The custom flags.</param>
+        <summary>
+            Matches messages that do not have the specified custom flags set.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="flags" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="flags" /> is <c>null</c> or empty.</para>
+          <para>-or-</para>
+          <para>No custom flags were given.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DoesNotHaveFlags">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.SearchQuery DoesNotHaveFlags (MailKit.MessageFlags flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery DoesNotHaveFlags(valuetype MailKit.MessageFlags flags) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+      </Parameters>
+      <Docs>
+        <param name="flags">The message flags.</param>
+        <summary>
+            Matches messages that do not have the specified flags set.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="flags" /> does not contain any of the valie flag values.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Draft">
       <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Draft;" />
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Draft" />
@@ -385,6 +468,89 @@
         <remarks>
             This search term can only be used with GMail.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HasCustomFlag">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.TextSearchQuery HasCustomFlag (string flag);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery HasCustomFlag(string flag) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flag" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="flag">The custom flag.</param>
+        <summary>
+            Matches messages that have the specified custom flag set.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="flag" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="flag" /> is empty.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="HasCustomFlags">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.SearchQuery HasCustomFlags (System.Collections.Generic.IEnumerable&lt;string&gt; flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery HasCustomFlags(class System.Collections.Generic.IEnumerable`1&lt;string&gt; flags) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="flags">The custom flags.</param>
+        <summary>
+            Matches messages that have the specified custom flags set.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="flags" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="flags" /> is <c>null</c> or empty.</para>
+          <para>-or-</para>
+          <para>No custom flags were given.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="HasFlags">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.SearchQuery HasFlags (MailKit.MessageFlags flags);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery HasFlags(valuetype MailKit.MessageFlags flags) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+      </Parameters>
+      <Docs>
+        <param name="flags">The message flags.</param>
+        <summary>
+            Matches messages that have the specified flags set.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="flags" /> does not contain any of the valie flag values.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Header">

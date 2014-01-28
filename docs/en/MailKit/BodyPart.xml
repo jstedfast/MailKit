@@ -51,5 +51,23 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="PartSpecifier">
+      <MemberSignature Language="C#" Value="public string PartSpecifier { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PartSpecifier" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the part specifier.
+            </summary>
+        <value>The part specifier.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
   </Members>
 </Type>

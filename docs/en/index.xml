@@ -48,6 +48,7 @@
   <Copyright>To be added.</Copyright>
   <Types>
     <Namespace Name="MailKit">
+      <Type Name="AlertEventArgs" Kind="Class" />
       <Type Name="BodyPart" Kind="Class" />
       <Type Name="BodyPartBasic" Kind="Class" />
       <Type Name="BodyPartCollection" Kind="Class" />
@@ -76,7 +77,7 @@
       <Type Name="ProtocolLogger" Kind="Class" />
       <Type Name="SpecialFolder" Kind="Enumeration" />
       <Type Name="StatusItems" Kind="Enumeration" />
-      <Type Name="UniqueId" Kind="Class" />
+      <Type Name="UniqueId" Kind="Structure" />
     </Namespace>
     <Namespace Name="MailKit.Net.Imap">
       <Type Name="ImapCapabilities" Kind="Enumeration" />
