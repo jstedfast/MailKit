@@ -619,6 +619,7 @@ namespace MailKit.Net.Smtp {
 				try {
 					socket.Connect (ipAddresses[i], port);
 					localEndPoint = socket.LocalEndPoint;
+					break;
 				} catch {
 					if (i + 1 == ipAddresses.Length)
 						throw;

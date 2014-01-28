@@ -475,6 +475,7 @@ namespace MailKit.Net.Pop3 {
 
 				try {
 					socket.Connect (ipAddresses[i], port);
+					break;
 				} catch (Exception) {
 					if (i + 1 == ipAddresses.Length)
 						throw;

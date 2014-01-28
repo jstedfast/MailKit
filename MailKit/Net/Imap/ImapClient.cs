@@ -367,6 +367,7 @@ namespace MailKit.Net.Imap {
 
 				try {
 					socket.Connect (ipAddresses[i], port);
+					break;
 				} catch (Exception) {
 					if (i + 1 == ipAddresses.Length)
 						throw;
