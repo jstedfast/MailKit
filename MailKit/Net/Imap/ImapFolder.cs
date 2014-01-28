@@ -973,6 +973,9 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
+			if (uids.Count == 0)
+				return;
+
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID EXPUNGE %s\r\n", set);
 
 			Engine.Wait (ic);
@@ -1226,7 +1229,7 @@ namespace MailKit.Net.Imap {
 					uids = null;
 			}
 
-			return uids != null ? uids.ToArray () : null;
+			return uids != null ? uids.ToArray () : new UniqueId[0];
 		}
 
 		/// <summary>
@@ -1319,7 +1322,7 @@ namespace MailKit.Net.Imap {
 					uids = null;
 			}
 
-			return uids != null ? uids.ToArray () : null;
+			return uids != null ? uids.ToArray () : new UniqueId[0];
 		}
 
 		/// <summary>
@@ -1376,6 +1379,9 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
+			if (uids.Count == 0)
+				return new UniqueId[0];
+
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
@@ -1393,7 +1399,7 @@ namespace MailKit.Net.Imap {
 					return code.DestUidSet;
 			}
 
-			return null;
+			return new UniqueId[0];
 		}
 
 		/// <summary>
@@ -1457,6 +1463,9 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
+			if (uids.Count == 0)
+				return new UniqueId[0];
+
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
@@ -1474,7 +1483,7 @@ namespace MailKit.Net.Imap {
 					return code.DestUidSet;
 			}
 
-			return null;
+			return new UniqueId[0];
 		}
 
 		/// <summary>
@@ -1526,6 +1535,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
 			CheckState (true);
+
+			if (indexes.Count == 0)
+				return;
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "COPY %s %F\r\n", set, destination);
 
@@ -1592,6 +1604,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
 			CheckState (true);
+
+			if (indexes.Count == 0)
+				return;
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
 
@@ -1801,6 +1816,9 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
+			if (uids.Count == 0)
+				return new MessageSummary[0];
+
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -1863,6 +1881,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException ("items");
 
 			CheckState (true);
+
+			if (indexes.Count == 0)
+				return new MessageSummary[0];
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
@@ -2178,6 +2199,9 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true);
 
+			if (uids.Count == 0)
+				return;
+
 			string @params = string.Empty;
 			if (modseq.HasValue)
 				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
@@ -2320,6 +2344,9 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (indexes);
 
 			CheckState (true);
+
+			if (indexes.Count == 0)
+				return;
 
 			string @params = string.Empty;
 			if (modseq.HasValue)
@@ -2713,6 +2740,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("query");
 
 			CheckState (true);
+
+			if (uids.Count == 0)
+				return new UniqueId[0];
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args);
