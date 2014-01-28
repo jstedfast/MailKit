@@ -65,6 +65,7 @@ namespace MailKit.Net.Pop3 {
 		// I/O buffering
 		readonly byte[] input = new byte[ReadAheadSize + BlockSize + PadSize];
 		const int inputStart = ReadAheadSize;
+		readonly IProtocolLogger logger;
 		int inputIndex = ReadAheadSize;
 		int inputEnd = ReadAheadSize;
 		bool disposed;
@@ -74,8 +75,10 @@ namespace MailKit.Net.Pop3 {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Stream"/> class.
 		/// </summary>
 		/// <param name="source">The underlying network stream.</param>
-		public Pop3Stream (Stream source)
+		/// <param name="protocolLogger">The protocol logger.</param>
+		public Pop3Stream (Stream source, IProtocolLogger protocolLogger)
 		{
+			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
 		}
@@ -264,8 +267,10 @@ namespace MailKit.Net.Pop3 {
 			end = input.Length - PadSize;
 
 			try {
-				if ((nread = Stream.Read (input, start, end - start)) > 0)
+				if ((nread = Stream.Read (input, start, end - start)) > 0) {
+					logger.LogServer (input, start, nread);
 					inputEnd += nread;
+				}
 			} catch (IOException) {
 				IsConnected = false;
 				throw;
@@ -480,6 +485,7 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				Stream.Write (buffer, offset, count);
+				logger.LogClient (buffer, offset, count);
 			} catch (IOException) {
 				IsConnected = false;
 				throw;

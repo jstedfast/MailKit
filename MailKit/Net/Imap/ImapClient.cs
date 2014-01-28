@@ -75,19 +75,19 @@ namespace MailKit.Net.Imap {
 		/// must first call the <see cref="Connect"/> method and authenticate with
 		/// the <see cref="Authenticate"/> method.
 		/// </remarks>
-		/// <param name="logger">The protocol logger.</param>
+		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="logger"/> is <c>null</c>.
+		/// <paramref name="protocolLogger"/> is <c>null</c>.
 		/// </exception>
-		public ImapClient (IProtocolLogger logger)
+		public ImapClient (IProtocolLogger protocolLogger)
 		{
-			if (logger == null)
-				throw new ArgumentNullException ("logger");
+			if (protocolLogger == null)
+				throw new ArgumentNullException ("protocolLogger");
 
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine ();
 			engine.Alert += OnAlert;
-			this.logger = logger;
+			logger = protocolLogger;
 		}
 
 		/// <summary>

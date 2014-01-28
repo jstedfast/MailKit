@@ -63,6 +63,7 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		readonly Dictionary<string, int> uids = new Dictionary<string, int> ();
+		readonly IProtocolLogger logger;
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
 		bool disposed;
@@ -77,10 +78,30 @@ namespace MailKit.Net.Pop3 {
 		/// must first call the <see cref="Connect"/> method and authenticate with
 		/// the <see cref="Authenticate"/> method.
 		/// </remarks>
-		public Pop3Client ()
+		/// <param name="protocolLogger">The protocol logger.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// </exception>
+		public Pop3Client (IProtocolLogger protocolLogger)
 		{
+			if (protocolLogger == null)
+				throw new ArgumentNullException ("protocolLogger");
+
 			// FIXME: should this take a ParserOptions argument?
 			engine = new Pop3Engine ();
+			logger = protocolLogger;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Client"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you
+		/// must first call the <see cref="Connect"/> method and authenticate with
+		/// the <see cref="Authenticate"/> method.
+		/// </remarks>
+		public Pop3Client () : this (new NullProtocolLogger ())
+		{
 		}
 
 		/// <summary>
@@ -414,7 +435,7 @@ namespace MailKit.Net.Pop3 {
 			probed = ProbedCapabilities.None;
 			host = hostName;
 
-			engine.Connect (new Pop3Stream (replayStream), cancellationToken);
+			engine.Connect (new Pop3Stream (replayStream, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 		}
 
@@ -493,7 +514,9 @@ namespace MailKit.Net.Pop3 {
 			probed = ProbedCapabilities.None;
 			host = uri.Host;
 
-			engine.Connect (new Pop3Stream (stream), cancellationToken);
+			logger.LogConnect (uri);
+
+			engine.Connect (new Pop3Stream (stream, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 
 			if (!pop3s && engine.Capabilities.HasFlag (Pop3Capabilities.StartTLS)) {

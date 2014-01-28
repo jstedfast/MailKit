@@ -72,13 +72,13 @@ namespace MailKit.Net.Imap {
 		bool disposed;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Stream"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
 		/// </summary>
 		/// <param name="source">The underlying network stream.</param>
-		/// <param name="logger">The protocol logger.</param>
-		public ImapStream (Stream source, IProtocolLogger logger)
+		/// <param name="protocolLogger">The protocol logger.</param>
+		public ImapStream (Stream source, IProtocolLogger protocolLogger)
 		{
-			this.logger = logger;
+			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
 		}

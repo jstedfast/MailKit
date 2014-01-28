@@ -254,13 +254,7 @@ namespace MailKit.Net.Pop3 {
 				count = (int) memory.Length;
 				buf = memory.GetBuffer ();
 
-				var line = Latin1.GetString (buf, 0, count);
-
-				#if DEBUG
-				Console.Write ("S: {0}", line);
-				#endif
-
-				return line;
+				return Latin1.GetString (buf, 0, count);
 			}
 		}
 
@@ -300,10 +294,6 @@ namespace MailKit.Net.Pop3 {
 		{
 			string response, text;
 			byte[] buf;
-
-			#if DEBUG
-			Console.WriteLine ("C: {0}", pc.Command);
-			#endif
 
 			buf = Encoding.UTF8.GetBytes (pc.Command + "\r\n");
 			stream.Write (buf, 0, buf.Length);
