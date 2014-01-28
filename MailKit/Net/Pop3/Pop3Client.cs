@@ -1520,6 +1520,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			if (!disposed) {
 				engine.Disconnect ();
+				logger.Dispose ();
 				disposed = true;
 			}
 		}

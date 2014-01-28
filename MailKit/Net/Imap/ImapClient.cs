@@ -609,6 +609,7 @@ namespace MailKit.Net.Imap {
 		{
 			if (!disposed) {
 				engine.Dispose ();
+				logger.Dispose ();
 				disposed = true;
 			}
 		}
