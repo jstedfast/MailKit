@@ -51,6 +51,31 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Pop3Client (MailKit.IProtocolLogger protocolLogger);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
+      </Parameters>
+      <Docs>
+        <param name="protocolLogger">The protocol logger.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> class.
+            </summary>
+        <remarks>
+            Before you can retrieve messages with the <see cref="T:MailKit.Net.Pop3.Pop3Client" />, you
+            must first call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" /> method and authenticate with
+            the <see cref="M:MailKit.Net.Pop3.Pop3Client.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="protocolLogger" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Authenticate">
       <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />

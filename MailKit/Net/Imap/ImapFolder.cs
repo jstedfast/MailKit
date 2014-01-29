@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -33,6 +34,7 @@ using System.Globalization;
 using System.Collections.Generic;
 
 using MimeKit;
+using MimeKit.IO;
 using MailKit.Search;
 
 namespace MailKit.Net.Imap {
@@ -1968,9 +1970,16 @@ namespace MailKit.Net.Imap {
 			return results.Values;
 		}
 
-		static void FetchMessage (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		enum FetchReturnType {
+			MimeMessage,
+			MimeEntity,
+			Stream
+		}
+
+		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
+			var type = FetchReturnType.MimeMessage;
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
@@ -1994,17 +2003,72 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.OpenBracket)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					token = engine.ReadToken (ic.CancellationToken);
+					do {
+						token = engine.ReadToken (ic.CancellationToken);
+
+						if (token.Type == ImapTokenType.CloseBracket)
+							break;
+
+						if (token.Type == ImapTokenType.OpenParen) {
+							type = FetchReturnType.Stream;
+
+							do {
+								token = engine.ReadToken (ic.CancellationToken);
+
+								if (token.Type == ImapTokenType.CloseParen)
+									break;
+
+								if (token.Type != ImapTokenType.Atom)
+									throw ImapEngine.UnexpectedToken (token, false);
+							} while (true);
+						} else if (token.Type != ImapTokenType.Atom) {
+							throw ImapEngine.UnexpectedToken (token, false);
+						} else {
+							type = FetchReturnType.MimeEntity;
+						}
+					} while (true);
 
 					if (token.Type != ImapTokenType.CloseBracket)
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					token = engine.ReadToken (ic.CancellationToken);
 
+					if (token.Type == ImapTokenType.Atom) {
+						var region = (string) token.Value;
+
+						if (region[0] != '<' || region[region.Length - 1] != '>')
+							throw ImapEngine.UnexpectedToken (token, false);
+
+						token = engine.ReadToken (ic.CancellationToken);
+
+						type = FetchReturnType.Stream;
+					}
+
 					if (token.Type != ImapTokenType.Literal)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					ic.UserData = MimeMessage.Load (engine.Stream, ic.CancellationToken);
+					switch (type) {
+					case FetchReturnType.MimeMessage:
+						ic.UserData = MimeMessage.Load (engine.Stream, ic.CancellationToken);
+						break;
+					case FetchReturnType.MimeEntity:
+						ic.UserData = MimeEntity.Load (engine.Stream, ic.CancellationToken);
+						break;
+					default:
+						var stream = new MemoryBlockStream ();
+						var buf = new byte[4096];
+						int nread;
+
+						ic.CancellationToken.ThrowIfCancellationRequested ();
+						while ((nread = engine.Stream.Read (buf, 0, buf.Length)) > 0) {
+							ic.CancellationToken.ThrowIfCancellationRequested ();
+							stream.Write (buf, 0, nread);
+						}
+
+						ic.UserData = stream;
+						break;
+					}
+
 					break;
 				case "UID":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2068,7 +2132,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[])\r\n", uid.Id);
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
 			Engine.Wait (ic);
 
@@ -2119,7 +2183,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessage);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
 			Engine.Wait (ic);
 
@@ -2129,72 +2193,6 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("FETCH", ic.Result);
 
 			return (MimeMessage) ic.UserData;
-		}
-
-		static void FetchBodyPart (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
-		{
-			var token = engine.ReadToken (ic.CancellationToken);
-
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
-
-			do {
-				token = engine.ReadToken (ic.CancellationToken);
-
-				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
-					break;
-
-				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
-
-				var atom = (string) token.Value;
-				uint uid;
-
-				switch (atom) {
-				case "BODY":
-					token = engine.ReadToken (ic.CancellationToken);
-
-					if (token.Type != ImapTokenType.OpenBracket)
-						throw ImapEngine.UnexpectedToken (token, false);
-
-					do {
-						token = engine.ReadToken (ic.CancellationToken);
-
-						if (token.Type == ImapTokenType.CloseBracket)
-							break;
-
-						if (token.Type != ImapTokenType.Atom)
-							throw ImapEngine.UnexpectedToken (token, false);
-					} while (true);
-
-					token = engine.ReadToken (ic.CancellationToken);
-
-					if (token.Type != ImapTokenType.Literal)
-						throw ImapEngine.UnexpectedToken (token, false);
-
-					ic.UserData = MimeEntity.Load (engine.Stream, ic.CancellationToken);
-					break;
-				case "UID":
-					token = engine.ReadToken (ic.CancellationToken);
-
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
-
-					break;
-				case "FLAGS":
-					// even though we didn't request this piece of information, the IMAP server
-					// may send it if another client has recently modified the message flags.
-					var flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
-
-					ic.Folder.OnFlagsChanged (index, flags);
-					break;
-				default:
-					throw ImapEngine.UnexpectedToken (token, false);
-				}
-			} while (true);
-
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (token, false);
 		}
 
 		/// <summary>
@@ -2243,7 +2241,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s])\r\n", uid.Id, part.PartSpecifier);
-			ic.RegisterUntaggedHandler ("FETCH", FetchBodyPart);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
 			Engine.Wait (ic);
 
@@ -2301,7 +2299,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[%s])\r\n", index + 1, part.PartSpecifier);
-			ic.RegisterUntaggedHandler ("FETCH", FetchBodyPart);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
 			Engine.Wait (ic);
 
@@ -2311,6 +2309,310 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("FETCH", ic.Result);
 
 			return (MimeEntity) ic.UserData;
+		}
+
+		/// <summary>
+		/// Gets a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the message. If the starting offset is beyond
+		/// the end of the message, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the message, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="count"/> is negative.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (uid.Id == 0)
+				throw new ArgumentException ("The uid is invalid.", "uid");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckState (true);
+
+			if (count == 0)
+				return new MemoryStream ();
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return (Stream) ic.UserData;
+		}
+
+		/// <summary>
+		/// Gets a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the message. If the starting offset is beyond
+		/// the end of the message, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the message, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="index"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="offset"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="count"/> is negative.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckState (true);
+
+			if (count == 0)
+				return new MemoryStream ();
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return (Stream) ic.UserData;
+		}
+
+		/// <summary>
+		/// Gets a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="part"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="count"/> is negative.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (uid.Id == 0)
+				throw new ArgumentException ("The uid is invalid.", "uid");
+
+			if (part == null)
+				throw new ArgumentNullException ("part");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckState (true);
+
+			if (count == 0)
+				return new MemoryStream ();
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return (Stream) ic.UserData;
+		}
+
+		/// <summary>
+		/// Gets a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="part"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="index"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="offset"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="count"/> is negative.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken)
+		{
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (part == null)
+				throw new ArgumentNullException ("part");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckState (true);
+
+			if (count == 0)
+				return new MemoryStream ();
+
+			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[%s]<%d.%d>)\r\n", index + 1, part.PartSpecifier, offset, count);
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return (Stream) ic.UserData;
 		}
 
 		static void FetchModSeq (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)

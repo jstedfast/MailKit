@@ -49,17 +49,17 @@
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public ImapClient (MailKit.IProtocolLogger logger);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger logger) cil managed" />
+      <MemberSignature Language="C#" Value="public ImapClient (MailKit.IProtocolLogger protocolLogger);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="logger" Type="MailKit.IProtocolLogger" />
+        <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
       </Parameters>
       <Docs>
-        <param name="logger">The protocol logger.</param>
+        <param name="protocolLogger">The protocol logger.</param>
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapClient" /> class.
             </summary>
@@ -69,7 +69,7 @@
             the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-          <paramref name="logger" /> is <c>null</c>.
+          <paramref name="protocolLogger" /> is <c>null</c>.
             </exception>
       </Docs>
     </Member>

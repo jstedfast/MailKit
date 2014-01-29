@@ -365,8 +365,6 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageSummaryItems items, CancellationToken cancellationToken);
 
-		// TODO: support fetching of individual mime parts and substreams
-
 		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
@@ -382,10 +380,6 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		MimeMessage GetMessage (int index, CancellationToken cancellationToken);
-
-		//Stream GetMessageStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken);
-		//
-		//Stream GetMessageStream (int index, int offset, int count, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the specified body part.
@@ -405,9 +399,71 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken);
 
-		//Stream GetBodyPartStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken);
-		//
-		//Stream GetBodyPartStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken);
+		/// <summary>
+		/// Gets a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the message. If the starting offset is beyond
+		/// the end of the message, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the message, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the message. If the starting offset is beyond
+		/// the end of the message, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the message, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Fetches a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Adds a set of flags to the specified messages.

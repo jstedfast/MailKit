@@ -668,6 +668,58 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetBodyPart">
+      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.MimeEntity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="part" Type="MailKit.BodyPart" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uid">The UID of the message.</param>
+        <param name="part">The body part.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets the specified body part.
+            </summary>
+        <returns>The body part.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBodyPart">
+      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.MimeEntity</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="part" Type="MailKit.BodyPart" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the message.</param>
+        <param name="part">The body part.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets the specified body part.
+            </summary>
+        <returns>The body part.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetMessage">
       <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (MailKit.UniqueId uid, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(valuetype MailKit.UniqueId uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -714,6 +766,142 @@
             </summary>
         <returns>The message.</returns>
         <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uid">The UID of the message.</param>
+        <param name="offset">The starting offset of the first desired byte.</param>
+        <param name="count">The number of bytes desired.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets a substream of the specified message.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+            Fetches a substream of the message. If the starting offset is beyond
+            the end of the message, an empty stream is returned. If the number of
+            bytes desired extends beyond the end of the message, a truncated stream
+            will be returned.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the message.</param>
+        <param name="offset">The starting offset of the first desired byte.</param>
+        <param name="count">The number of bytes desired.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets a substream of the specified message.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+            Fetches a substream of the message. If the starting offset is beyond
+            the end of the message, an empty stream is returned. If the number of
+            bytes desired extends beyond the end of the message, a truncated stream
+            will be returned.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="part" Type="MailKit.BodyPart" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uid">The UID of the message.</param>
+        <param name="part">The desired body part.</param>
+        <param name="offset">The starting offset of the first desired byte.</param>
+        <param name="count">The number of bytes desired.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets a substream of the specified body part.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+            Fetches a substream of the body part. If the starting offset is beyond
+            the end of the body part, an empty stream is returned. If the number of
+            bytes desired extends beyond the end of the body part, a truncated stream
+            will be returned.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="part" Type="MailKit.BodyPart" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the message.</param>
+        <param name="part">The desired body part.</param>
+        <param name="offset">The starting offset of the first desired byte.</param>
+        <param name="count">The number of bytes desired.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets a substream of the specified body part.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+            Fetches a substream of the body part. If the starting offset is beyond
+            the end of the body part, an empty stream is returned. If the number of
+            bytes desired extends beyond the end of the body part, a truncated stream
+            will be returned.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">
