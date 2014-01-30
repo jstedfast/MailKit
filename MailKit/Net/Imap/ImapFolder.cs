@@ -2968,7 +2968,7 @@ namespace MailKit.Net.Imap {
 			ModifyFlags (indexes, flags, silent ? "FLAGS.SILENT" : "FLAGS", null, cancellationToken);
 		}
 
-		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args)
+		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens)
 		{
 			NumericSearchQuery numeric;
 			HeaderSearchQuery header;
@@ -2986,8 +2986,12 @@ namespace MailKit.Net.Imap {
 				break;
 			case SearchTerm.And:
 				binary = (BinarySearchQuery) query;
-				BuildQuery (builder, binary.Left, args);
-				BuildQuery (builder, binary.Right, args);
+				if (parens)
+					builder.Append ('(');
+				BuildQuery (builder, binary.Left, args, false);
+				BuildQuery (builder, binary.Right, args, false);
+				if (parens)
+					builder.Append (')');
 				break;
 			case SearchTerm.Answered:
 				builder.Append ("ANSWERED");
@@ -3058,7 +3062,7 @@ namespace MailKit.Net.Imap {
 			case SearchTerm.Not:
 				builder.Append ("NOT");
 				unary = (UnarySearchQuery) query;
-				BuildQuery (builder, unary.Operand, args);
+				BuildQuery (builder, unary.Operand, args, true);
 				break;
 			case SearchTerm.NotAnswered:
 				builder.Append ("UNANSWERED");
@@ -3086,8 +3090,8 @@ namespace MailKit.Net.Imap {
 			case SearchTerm.Or:
 				builder.Append ("OR");
 				binary = (BinarySearchQuery) query;
-				BuildQuery (builder, binary.Left, args);
-				BuildQuery (builder, binary.Right, args);
+				BuildQuery (builder, binary.Left, args, true);
+				BuildQuery (builder, binary.Right, args, true);
 				break;
 			case SearchTerm.Recent:
 				builder.Append ("RECENT");
@@ -3146,7 +3150,7 @@ namespace MailKit.Net.Imap {
 		{
 			var builder = new StringBuilder ();
 
-			BuildQuery (builder, query, args);
+			BuildQuery (builder, query, args, false);
 
 			return builder.ToString ();
 		}
