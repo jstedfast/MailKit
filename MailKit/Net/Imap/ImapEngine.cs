@@ -738,6 +738,7 @@ namespace MailKit.Net.Imap {
 			case "COPYUID":        return ImapResponseCodeType.CopyUid;
 			case "UIDNOTSTICKY":   return ImapResponseCodeType.UidNotSticky;
 			case "HIGHESTMODSEQ":  return ImapResponseCodeType.HighestModSeq;
+			case "MODIFIED":       return ImapResponseCodeType.Modified;
 			case "NOMODSEQ":       return ImapResponseCodeType.NoModSeq;
 			default:               return ImapResponseCodeType.Unknown;
 			}
@@ -930,6 +931,14 @@ namespace MailKit.Net.Imap {
 				}
 
 				code.HighestModSeq = n64;
+
+				token = stream.ReadToken (cancellationToken);
+				break;
+			case ImapResponseCodeType.Modified:
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.DestUidSet)) {
+					Debug.WriteLine ("Expected uid-set as first argument to 'MODIFIED' RESP-CODE, but got: {0}", token);
+					throw UnexpectedToken (token, false);
+				}
 
 				token = stream.ReadToken (cancellationToken);
 				break;

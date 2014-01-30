@@ -337,8 +337,6 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);
 
-		// TODO: We need CHANGEDSINCE <mod-seq> versions of each of the FETCH APIs
-
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
@@ -347,6 +345,37 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="uids">The UIDs.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum UID.</param>
+		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum UID.</param>
+		/// <param name="max">The maximum UID.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes.
@@ -358,14 +387,35 @@ namespace MailKit {
 		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="indexes">The indexes.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="minIndex">The minimum index.</param>
-		/// <param name="maxIndex">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageSummaryItems items, CancellationToken cancellationToken);
+		IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets the specified message.

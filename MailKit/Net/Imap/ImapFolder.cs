@@ -1531,7 +1531,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (indexes);
+			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
@@ -1600,7 +1600,7 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			var set = ImapUtils.FormatUidSet (indexes);
+			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
@@ -1837,7 +1837,214 @@ namespace MailKit.Net.Imap {
 			if (uids.Length == 0)
 				return new MessageSummary[0];
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %s (%s)\r\n", set, query);
+			var command = string.Format ("UID FETCH {0} ({1})\r\n", set, query);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var results = new SortedDictionary<int, MessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="items"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="uids"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken)
+		{
+			var query = FormatSummaryItems (items);
+			var set = ImapUtils.FormatUidSet (uids);
+
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
+
+			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+				throw new NotSupportedException ();
+
+			CheckState (true, false);
+
+			if (uids.Length == 0)
+				return new MessageSummary[0];
+
+			var command = string.Format ("UID FETCH {0} ({1}) (CHANGEDSINCE {2})\r\n", set, query, modseq);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var results = new SortedDictionary<int, MessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum UID.</param>
+		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="min"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="items"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken)
+		{
+			if (min.Id == 0)
+				throw new ArgumentException ("The minimum uid is invalid.", "min");
+
+			var query = FormatSummaryItems (items);
+
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
+
+			CheckState (true, false);
+
+			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
+			var command = string.Format ("UID FETCH {0}:{1} ({2})\r\n", min.Id, maxValue, query);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var results = new SortedDictionary<int, MessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum UID.</param>
+		/// <param name="max">The maximum UID.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="min"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="items"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken)
+		{
+			if (min.Id == 0)
+				throw new ArgumentException ("The minimum uid is invalid.", "min");
+
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
+
+			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+				throw new NotSupportedException ();
+
+			CheckState (true, false);
+
+			var query = FormatSummaryItems (items);
+			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
+			var command = string.Format ("UID FETCH {0}:{1} ({2}) (CHANGEDSINCE {3})\r\n", min.Id, maxValue, query, modseq);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
@@ -1892,7 +2099,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
-			var set = ImapUtils.FormatUidSet (indexes);
+			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (items);
 
 			if (items == MessageSummaryItems.None)
@@ -1903,7 +2110,82 @@ namespace MailKit.Net.Imap {
 			if (indexes.Length == 0)
 				return new MessageSummary[0];
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
+			var command = string.Format ("FETCH {0} ({1})\r\n", set, query);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var results = new SortedDictionary<int, MessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="indexes">The indexes.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="items"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="indexes"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken)
+		{
+			var set = ImapUtils.FormatIndexSet (indexes);
+			var query = FormatSummaryItems (items);
+
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
+
+			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+				throw new NotSupportedException ();
+
+			CheckState (true, false);
+
+			if (indexes.Length == 0)
+				return new MessageSummary[0];
+
+			var command = string.Format ("FETCH {0} ({1}) (CHANGEDSINCE {2})\r\n", set, query, modseq);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
@@ -1922,14 +2204,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="minIndex">The minimum index.</param>
-		/// <param name="maxIndex">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="minIndex"/> is out of range.</para>
+		/// <para><paramref name="min"/> is out of range.</para>
 		/// <para>-or-</para>
-		/// <para><paramref name="maxIndex"/> is out of range.</para>
+		/// <para><paramref name="max"/> is out of range.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="items"/> is empty.</para>
 		/// </exception>
@@ -1955,23 +2237,98 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (int minIndex, int maxIndex, MessageSummaryItems items, CancellationToken cancellationToken)
+		public IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
-			if (minIndex < 0 || minIndex >= Count)
-				throw new ArgumentOutOfRangeException ("minIndex");
+			if (min < 0 || min >= Count)
+				throw new ArgumentOutOfRangeException ("min");
 
-			if ((maxIndex != -1 && maxIndex < minIndex) || maxIndex >= Count)
-				throw new ArgumentOutOfRangeException ("maxIndex");
+			if ((max != -1 && max < min) || max >= Count)
+				throw new ArgumentOutOfRangeException ("max");
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			var set = string.Format ("{0}:{1}", minIndex + 1, maxIndex != -1 ? (maxIndex + 1).ToString () : "*");
+			CheckState (true, false);
+
 			var query = FormatSummaryItems (items);
+			var maxValue = max != -1 ? (max + 1).ToString () : "*";
+			var command = string.Format ("FETCH {0}:{1} ({2})\r\n", min + 1, maxValue, query);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var results = new SortedDictionary<int, MessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("FETCH", ic.Result);
+
+			return results.Values;
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="min"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="max"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="items"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken)
+		{
+			if (min < 0 || min >= Count)
+				throw new ArgumentOutOfRangeException ("min");
+
+			if ((max != -1 && max < min) || max >= Count)
+				throw new ArgumentOutOfRangeException ("max");
+
+			if (items == MessageSummaryItems.None)
+				throw new ArgumentOutOfRangeException ("items");
+
+			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+				throw new NotSupportedException ();
 
 			CheckState (true, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
+			var query = FormatSummaryItems (items);
+			var maxValue = max != -1 ? (max + 1).ToString () : "*";
+			var command = string.Format ("FETCH {0}:{1} ({2}) (CHANGEDSINCE {3})\r\n", min + 1, maxValue, query, modseq);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
@@ -2793,7 +3150,7 @@ namespace MailKit.Net.Imap {
 		void ModifyFlags (int[] indexes, MessageFlags flags, string action, ulong? modseq, CancellationToken cancellationToken)
 		{
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
-			var set = ImapUtils.FormatUidSet (indexes);
+			var set = ImapUtils.FormatIndexSet (indexes);
 
 			CheckState (true, true);
 
@@ -3193,7 +3550,7 @@ namespace MailKit.Net.Imap {
 		public UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatUidSet (uids);
-			List<string> args = new List<string> ();
+			var args = new List<string> ();
 
 			if (query == null)
 				throw new ArgumentNullException ("query");

@@ -48,6 +48,7 @@ namespace MailKit.Net.Imap {
 
 		// RESP-CODES introduced in rfc4551:
 		HighestModSeq,
+		Modified,
 		NoModSeq,
 
 		Unknown       = 255

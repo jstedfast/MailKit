@@ -121,7 +121,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// One or more of the indexes has a negative value.
 		/// </exception>
-		public static string FormatUidSet (int[] indexes)
+		public static string FormatIndexSet (int[] indexes)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
