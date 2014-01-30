@@ -87,6 +87,20 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 * Maildir
 * Thunderbird mbox folder trees
 
+## Goals
+
+The main goal of this project is to optimize for mobile platforms such as Android, iOS, and eventually Windows Phone 8.
+This means that IMAP extensions such as CONDSTORE, QRESYNC, and any other extensions that allow clients to reduce
+network traffic (IDLE? ESEARCH? COMPRESS?) will take priority over any of the other extensions. After that, the most
+common extensions will take precedence over the lesser-used extensions until finally all of the extensions anyone
+actually cares about are implemented.
+
+At some point in the (near?) future, I'd also like to start using async/await. For those who are stuck in .NET 4.0,
+Microsoft has released an
+[Async Targetting Pack](http://blogs.msdn.com/b/bclteam/archive/2013/04/17/microsoft-bcl-async-is-now-stable.aspx)
+on [NuGet](https://nuget.org/packages/Microsoft.Bcl.Async) which allows the use of the async/await keywords on
+pre-.NET 4.5 platforms. If you haven't already, I'd highly recommend installing it.
+
 ## License Information
 
 MailKit is Copyright (C) 2013, 2014 Jeffrey Stedfast and is licensed under the MIT license:
