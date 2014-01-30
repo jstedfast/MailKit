@@ -83,7 +83,7 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
-		void CheckState (bool open)
+		void CheckState (bool open, bool rw)
 		{
 			if (Engine.IsDisposed)
 				throw new ObjectDisposedException ("ImapClient");
@@ -96,6 +96,9 @@ namespace MailKit.Net.Imap {
 
 			if (open && !IsOpen)
 				throw new InvalidOperationException ("The folder is not currently open.");
+
+			if (open && rw && Access != FolderAccess.ReadWrite)
+				throw new InvalidOperationException ("The folder is not currently open in read-write mode.");
 		}
 
 		void ParentFolderRenamed (object sender, FolderRenamedEventArgs e)
@@ -380,7 +383,7 @@ namespace MailKit.Net.Imap {
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			if (IsOpen && Access == access)
 				return access;
@@ -433,7 +436,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Close (bool expunge, CancellationToken cancellationToken)
 		{
-			CheckState (true);
+			CheckState (true, false);
 
 			ImapCommand ic;
 
@@ -496,7 +499,7 @@ namespace MailKit.Net.Imap {
 			if (string.IsNullOrEmpty (name) || name.IndexOf (DirectorySeparator) != -1)
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
 			var encodedName = ImapEncoding.Encode (fullName);
@@ -582,7 +585,7 @@ namespace MailKit.Net.Imap {
 			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
 				throw new InvalidOperationException ("Cannot rename this folder.");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			var encodedName = ImapEncoding.Encode (parent.FullName + parent.DirectorySeparator + name);
 			var ic = Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
@@ -643,7 +646,7 @@ namespace MailKit.Net.Imap {
 			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
 				throw new InvalidOperationException ("Cannot rename this folder.");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, null, "DELETE %F\r\n", this);
 
@@ -689,7 +692,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Subscribe (CancellationToken cancellationToken)
 		{
-			CheckState (false);
+			CheckState (false, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
 
@@ -728,7 +731,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Unsubscribe (CancellationToken cancellationToken)
 		{
-			CheckState (false);
+			CheckState (false, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
 
@@ -769,7 +772,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken)
 		{
-			CheckState (false);
+			CheckState (false, false);
 
 			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator + "%" : "%";
 			var command = subscribedOnly ? "LSUB" : "LIST";
@@ -818,7 +821,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Check (CancellationToken cancellationToken)
 		{
-			CheckState (true);
+			CheckState (true, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "CHECK\r\n");
 
@@ -865,7 +868,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Status) != 0)
 				throw new NotSupportedException ();
 
-			CheckState (false);
+			CheckState (false, false);
 
 			string flags = string.Empty;
 			if ((items & StatusItems.Count) != 0)
@@ -908,7 +911,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -924,7 +927,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Expunge (CancellationToken cancellationToken)
 		{
-			CheckState (true);
+			CheckState (true, true);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
 
@@ -955,7 +958,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -973,7 +976,7 @@ namespace MailKit.Net.Imap {
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
-			CheckState (true);
+			CheckState (true, true);
 
 			if (uids.Length == 0)
 				return;
@@ -1044,7 +1047,7 @@ namespace MailKit.Net.Imap {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			var ic = QueueAppend (message, flags, null, cancellationToken);
 
@@ -1097,7 +1100,7 @@ namespace MailKit.Net.Imap {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			var ic = QueueAppend (message, flags, date, cancellationToken);
 
@@ -1198,7 +1201,7 @@ namespace MailKit.Net.Imap {
 			if (messages.Length != flags.Length)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			if (messages.Length == 0)
 				return new UniqueId[0];
@@ -1291,7 +1294,7 @@ namespace MailKit.Net.Imap {
 			if (messages.Length != flags.Length || messages.Length != dates.Length)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
 
-			CheckState (false);
+			CheckState (false, false);
 
 			if (messages.Length == 0)
 				return new UniqueId[0];
@@ -1379,7 +1382,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (uids.Length == 0)
 				return new UniqueId[0];
@@ -1429,7 +1432,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UIDPLUS extension.
@@ -1463,7 +1466,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
-			CheckState (true);
+			CheckState (true, true);
 
 			if (uids.Length == 0)
 				return new UniqueId[0];
@@ -1536,7 +1539,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (indexes.Length == 0)
 				return;
@@ -1575,7 +1578,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1605,7 +1608,7 @@ namespace MailKit.Net.Imap {
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
 				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
 
-			CheckState (true);
+			CheckState (true, true);
 
 			if (indexes.Length == 0)
 				return;
@@ -1816,7 +1819,7 @@ namespace MailKit.Net.Imap {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (uids.Length == 0)
 				return new MessageSummary[0];
@@ -1882,7 +1885,7 @@ namespace MailKit.Net.Imap {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (indexes.Length == 0)
 				return new MessageSummary[0];
@@ -1953,7 +1956,7 @@ namespace MailKit.Net.Imap {
 			var set = string.Format ("{0}:{1}", minIndex + 1, maxIndex != -1 ? (maxIndex + 1).ToString () : "*");
 			var query = FormatSummaryItems (items);
 
-			CheckState (true);
+			CheckState (true, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %s (%s)\r\n", set, query);
 			var results = new SortedDictionary<int, MessageSummary> ();
@@ -2129,7 +2132,7 @@ namespace MailKit.Net.Imap {
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[])\r\n", uid.Id);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
@@ -2180,7 +2183,7 @@ namespace MailKit.Net.Imap {
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
@@ -2238,7 +2241,7 @@ namespace MailKit.Net.Imap {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s])\r\n", uid.Id, part.PartSpecifier);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
@@ -2296,7 +2299,7 @@ namespace MailKit.Net.Imap {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[%s])\r\n", index + 1, part.PartSpecifier);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
@@ -2366,7 +2369,7 @@ namespace MailKit.Net.Imap {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (count == 0)
 				return new MemoryStream ();
@@ -2438,7 +2441,7 @@ namespace MailKit.Net.Imap {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (count == 0)
 				return new MemoryStream ();
@@ -2518,7 +2521,7 @@ namespace MailKit.Net.Imap {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (count == 0)
 				return new MemoryStream ();
@@ -2597,7 +2600,7 @@ namespace MailKit.Net.Imap {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (count == 0)
 				return new MemoryStream ();
@@ -2681,7 +2684,7 @@ namespace MailKit.Net.Imap {
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatUidSet (uids);
 
-			CheckState (true);
+			CheckState (true, true);
 
 			if (uids.Length == 0)
 				return;
@@ -2723,7 +2726,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2763,7 +2766,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2803,7 +2806,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2827,7 +2830,7 @@ namespace MailKit.Net.Imap {
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatUidSet (indexes);
 
-			CheckState (true);
+			CheckState (true, true);
 
 			if (indexes.Length == 0)
 				return;
@@ -2869,7 +2872,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2909,7 +2912,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2949,7 +2952,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3227,7 +3230,7 @@ namespace MailKit.Net.Imap {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			if (uids.Length == 0)
 				return new UniqueId[0];
@@ -3300,7 +3303,7 @@ namespace MailKit.Net.Imap {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			CheckState (true);
+			CheckState (true, false);
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args);
@@ -3463,7 +3466,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public IEnumerator<MimeMessage> GetEnumerator ()
 		{
-			CheckState (true);
+			CheckState (true, false);
 
 			for (int i = 0; i < Count; i++)
 				yield return GetMessage (i, CancellationToken.None);
