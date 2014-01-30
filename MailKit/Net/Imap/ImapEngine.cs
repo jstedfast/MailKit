@@ -590,6 +590,7 @@ namespace MailKit.Net.Imap {
 					case "ESEARCH":       Capabilities |= ImapCapabilities.ESearch; break;
 					case "SASL-IR":       Capabilities |= ImapCapabilities.SaslIR; break;
 					case "ENABLE":        Capabilities |= ImapCapabilities.Enable; break;
+					case "QRESYNC":       Capabilities |= ImapCapabilities.QuickResync; break;
 					case "LIST-EXTENDED": Capabilities |= ImapCapabilities.ListExtended; break;
 					case "CONVERT":       Capabilities |= ImapCapabilities.Convert; break;
 					case "METADATA":      Capabilities |= ImapCapabilities.MetaData; break;

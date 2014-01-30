@@ -143,34 +143,39 @@ namespace MailKit.Net.Imap {
 		Enable         = 1 << 19,
 
 		/// <summary>
+		/// The server supports the QRESYNC extension defined in rfc5162.
+		/// </summary>
+		QuickResync    = 1 << 20,
+
+		/// <summary>
 		/// The server supports the LIST-EXTENDED extension defined in rfc5258.
 		/// </summary>
-		ListExtended   = 1 << 20,
+		ListExtended   = 1 << 21,
 
 		/// <summary>
 		/// The server supports the CONVERT extension defined in rfc5259.
 		/// </summary>
-		Convert        = 1 << 21,
+		Convert        = 1 << 22,
 
 		/// <summary>
 		/// The server supports the METADATA extension defined in rfc5464.
 		/// </summary>
-		MetaData       = 1 << 22,
+		MetaData       = 1 << 23,
 
 		/// <summary>
 		/// The server supports the FILTERS extension defined in rfc5466.
 		/// </summary>
-		Filters        = 1 << 23,
+		Filters        = 1 << 24,
 
 		/// <summary>
 		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse     = 1 << 24,
+		SpecialUse     = 1 << 25,
 
 		/// <summary>
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
-		Move           = 1 << 25,
+		Move           = 1 << 26,
 
 		#region GMail Extensions
 
@@ -179,12 +184,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the XLIST extension (GMail).
 		/// </summary>
-		XList          = 1 << 26,
+		XList          = 1 << 27,
 
 		/// <summary>
 		/// The server supports the X-GM-EXT1 extension (GMail).
 		/// </summary>
-		GMailExt1      = 1 << 27
+		GMailExt1      = 1 << 28
 
 		#endregion
 	}
