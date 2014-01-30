@@ -1685,6 +1685,14 @@ namespace MailKit.Net.Imap {
 				case "FLAGS":
 					summary.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
 					break;
+				case "MODSEQ":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					summary.ModSeq = value64;
+					break;
 				case "UID":
 					token = engine.ReadToken (ic.CancellationToken);
 
@@ -1761,6 +1769,11 @@ namespace MailKit.Net.Imap {
 				query += "BODYSTRUCTURE ";
 			if ((items & MessageSummaryItems.Body) != 0)
 				query += "BODY ";
+
+			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
+				if ((items & MessageSummaryItems.ModSeq) != 0)
+					query += "MODSEQ ";
+			}
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {
 				// now for the GMail extension items
@@ -1997,6 +2010,7 @@ namespace MailKit.Net.Imap {
 					throw ImapEngine.UnexpectedToken (token, false);
 
 				var atom = (string) token.Value;
+				ulong modseq;
 				uint uid;
 
 				switch (atom) {
@@ -2079,6 +2093,12 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					break;
+				case "MODSEQ":
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
 					break;
 				case "FLAGS":
 					// even though we didn't request this piece of information, the IMAP server
@@ -3058,6 +3078,10 @@ namespace MailKit.Net.Imap {
 				text = (TextSearchQuery) query;
 				builder.Append ("TEXT %S");
 				args.Add (text.Text);
+				break;
+			case SearchTerm.ModSeq:
+				numeric = (NumericSearchQuery) query;
+				builder.AppendFormat ("MODSEQ {0}", numeric.Value);
 				break;
 			case SearchTerm.New:
 				builder.Append ("NEW");

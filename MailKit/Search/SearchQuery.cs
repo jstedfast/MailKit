@@ -164,6 +164,16 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
+		/// Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
+		/// </summary>
+		/// <returns>A <see cref="SearchQuery"/>.</returns>
+		/// <param name="modseq">The mod-sequence value.</param>
+		public static SearchQuery ChangedSince (ulong modseq)
+		{
+			return new NumericSearchQuery (SearchTerm.ModSeq, modseq);
+		}
+
+		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Deleted"/> flag set.
 		/// </summary>
 		public static readonly SearchQuery Deleted = new SearchQuery (SearchTerm.Deleted);

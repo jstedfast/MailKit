@@ -75,21 +75,26 @@ namespace MailKit {
 		MessageSize    = 1 << 6,
 
 		/// <summary>
+		/// Fetch the <see cref="MessageSummary.ModSeq"/>.
+		/// </summary>
+		ModSeq         = 1 << 7,
+
+		/// <summary>
 		/// Fetch the <see cref="MessageSummary.Uid"/>.
 		/// </summary>
-		Uid            = 1 << 7,
+		Uid            = 1 << 8,
 
 		#region GMail extension items
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.GMailMessageId"/>.
 		/// </summary>
-		GMailMessageId = 1 << 8,
+		GMailMessageId = 1 << 10,
 
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.GMailThreadId"/>.
 		/// </summary>
-		GMailThreadId  = 1 << 9,
+		GMailThreadId  = 1 << 11,
 
 		#endregion
 

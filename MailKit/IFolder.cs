@@ -337,6 +337,8 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);
 
+		// TODO: We need CHANGEDSINCE <mod-seq> versions of each of the FETCH APIs
+
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>

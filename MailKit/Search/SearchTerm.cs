@@ -43,6 +43,7 @@ namespace MailKit.Search {
 		Keyword,
 		LargerThan,
 		MessageContains,
+		ModSeq,
 		New,
 		Not,
 		NotAnswered,

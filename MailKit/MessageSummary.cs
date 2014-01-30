@@ -96,6 +96,14 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Gets the mod-sequence value for the message, if available.
+		/// </summary>
+		/// <value>The mod-sequence value.</value>
+		public ulong? ModSeq {
+			get; internal set;
+		}
+
+		/// <summary>
 		/// Gets the unique ID of the message, if available.
 		/// </summary>
 		/// <value>The uid of the message.</value>
