@@ -1995,7 +1995,9 @@ namespace MailKit.Net.Imap {
 		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
+			var args = new FlagsChangedEventArgs (index);
 			var type = FetchReturnType.MimeMessage;
+			bool emit = false;
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
@@ -2093,19 +2095,21 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					args.Uid = new UniqueId (uid);
 					break;
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
+
+					args.ModSeq = modseq;
 					break;
 				case "FLAGS":
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					var flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
-
-					ic.Folder.OnFlagsChanged (index, flags);
+					args.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+					emit = true;
 					break;
 				default:
 					throw ImapEngine.UnexpectedToken (token, false);
@@ -2114,6 +2118,9 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
+
+			if (emit)
+				ic.Folder.OnFlagsChanged (args);
 		}
 
 		/// <summary>
@@ -2638,67 +2645,6 @@ namespace MailKit.Net.Imap {
 			return (Stream) ic.UserData;
 		}
 
-		static void FetchModSeq (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
-		{
-			var token = engine.ReadToken (ic.CancellationToken);
-
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
-
-			do {
-				token = engine.ReadToken (ic.CancellationToken);
-
-				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
-					break;
-
-				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
-
-				var atom = (string) token.Value;
-				ulong modseq;
-				uint uid;
-
-				switch (atom) {
-				case "MODSEQ":
-					token = engine.ReadToken (ic.CancellationToken);
-
-					if (token.Type != ImapTokenType.OpenParen)
-						throw ImapEngine.UnexpectedToken (token, false);
-
-					token = engine.ReadToken (ic.CancellationToken);
-
-					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
-
-					token = engine.ReadToken (ic.CancellationToken);
-
-					if (token.Type != ImapTokenType.CloseParen)
-						throw ImapEngine.UnexpectedToken (token, false);
-
-					break;
-				case "UID":
-					token = engine.ReadToken (ic.CancellationToken);
-
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
-
-					break;
-				case "FLAGS":
-					// even though we didn't request this piece of information, the IMAP server
-					// may send it if another client has recently modified the message flags.
-					var flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
-
-					ic.Folder.OnFlagsChanged (index, flags);
-					break;
-				default:
-					throw ImapEngine.UnexpectedToken (token, false);
-				}
-			} while (true);
-
-			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (token, false);
-		}
-
 		void ModifyFlags (UniqueId[] uids, MessageFlags flags, string action, ulong? modseq, CancellationToken cancellationToken)
 		{
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
@@ -2715,7 +2661,6 @@ namespace MailKit.Net.Imap {
 
 			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format);
-			ic.RegisterUntaggedHandler ("FETCH", FetchModSeq);
 
 			Engine.Wait (ic);
 
@@ -2861,7 +2806,6 @@ namespace MailKit.Net.Imap {
 
 			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = Engine.QueueCommand (cancellationToken, this, format);
-			ic.RegisterUntaggedHandler ("FETCH", FetchModSeq);
 
 			Engine.Wait (ic);
 
@@ -3353,6 +3297,120 @@ namespace MailKit.Net.Imap {
 			return results;
 		}
 
+		#region Untagged response handlers called by ImapEngine
+
+		internal void OnExists (int count)
+		{
+			if (Count == count)
+				return;
+
+			Count = count;
+
+			OnCountChanged ();
+		}
+
+		internal void OnExpunge (int index)
+		{
+			var handler = Expunged;
+
+			if (handler != null)
+				handler (this, new MessageEventArgs (index));
+		}
+
+		internal void OnFetch (ImapEngine engine, int index, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			var args = new FlagsChangedEventArgs (index);
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			do {
+				token = engine.ReadToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
+					break;
+
+				if (token.Type != ImapTokenType.Atom)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				var atom = (string) token.Value;
+				ulong modseq;
+				uint uid;
+
+				switch (atom) {
+				case "MODSEQ":
+					token = engine.ReadToken (cancellationToken);
+
+					if (token.Type != ImapTokenType.OpenParen)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (cancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (cancellationToken);
+
+					if (token.Type != ImapTokenType.CloseParen)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					args.ModSeq = modseq;
+					break;
+				case "UID":
+					token = engine.ReadToken (cancellationToken);
+
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					args.Uid = new UniqueId (uid);
+					break;
+				case "FLAGS":
+					args.Flags = ImapUtils.ParseFlagsList (engine, cancellationToken);
+					break;
+				default:
+					throw ImapEngine.UnexpectedToken (token, false);
+				}
+			} while (true);
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			OnFlagsChanged (args);
+		}
+
+		internal void OnRecent (int count)
+		{
+			if (Recent == count)
+				return;
+
+			Recent = count;
+
+			OnRecentChanged ();
+		}
+
+		internal void UpdateFirstUnread (int index)
+		{
+			FirstUnread = index;
+		}
+
+		internal void UpdateUidNext (UniqueId uid)
+		{
+			UidNext = uid;
+		}
+
+		internal void UpdateUidValidity (UniqueId uid)
+		{
+			if (UidValidity.HasValue && UidValidity.Value.Id == uid.Id)
+				return;
+
+			UidValidity = uid;
+
+			OnUidValidityChanged ();
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Occurs when the folder is deleted.
 		/// </summary>
@@ -3410,25 +3468,17 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		public event EventHandler<MessageEventArgs> Expunged;
 
-		internal void OnExpunged (int index)
-		{
-			var handler = Expunged;
-
-			if (handler != null)
-				handler (this, new MessageEventArgs (index));
-		}
-
 		/// <summary>
 		/// Occurs when flags changed on a message.
 		/// </summary>
 		public event EventHandler<FlagsChangedEventArgs> FlagsChanged;
 
-		internal void OnFlagsChanged (int index, MessageFlags flags)
+		void OnFlagsChanged (FlagsChangedEventArgs args)
 		{
 			var handler = FlagsChanged;
 
 			if (handler != null)
-				handler (this, new FlagsChangedEventArgs (index, flags));
+				handler (this, args);
 		}
 
 		/// <summary>
@@ -3526,46 +3576,6 @@ namespace MailKit.Net.Imap {
 		public override string ToString ()
 		{
 			return FullName;
-		}
-
-		internal void UpdateCount (int count)
-		{
-			if (Count == count)
-				return;
-
-			Count = count;
-
-			OnCountChanged ();
-		}
-
-		internal void UpdateRecent (int count)
-		{
-			if (Recent == count)
-				return;
-
-			Recent = count;
-
-			OnRecentChanged ();
-		}
-
-		internal void UpdateFirstUnread (int index)
-		{
-			FirstUnread = index;
-		}
-
-		internal void UpdateUidNext (UniqueId uid)
-		{
-			UidNext = uid;
-		}
-
-		internal void UpdateUidValidity (UniqueId uid)
-		{
-			if (UidValidity.HasValue && UidValidity.Value.Id == uid.Id)
-				return;
-
-			UidValidity = uid;
-
-			OnUidValidityChanged ();
 		}
 	}
 }

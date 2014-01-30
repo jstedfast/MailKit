@@ -30,9 +30,16 @@ namespace MailKit {
 	/// </summary>
 	public class FlagsChangedEventArgs : MessageEventArgs
 	{
-		internal FlagsChangedEventArgs (int index, MessageFlags flags) : base (index)
+		internal FlagsChangedEventArgs (int index) : base (index)
 		{
-			Flags = flags;
+		}
+
+		/// <summary>
+		/// Gets the unique ID of the message that changed, if available.
+		/// </summary>
+		/// <value>The unique ID of the message.</value>
+		public UniqueId? Uid {
+			get; internal set;
 		}
 
 		/// <summary>
@@ -40,7 +47,15 @@ namespace MailKit {
 		/// </summary>
 		/// <value>The updated message flags.</value>
 		public MessageFlags Flags {
-			get; private set;
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the updated mod-sequence value of the message, if available.
+		/// </summary>
+		/// <value>The mod-sequence value.</value>
+		public ulong? ModSeq {
+			get; internal set;
 		}
 	}
 }

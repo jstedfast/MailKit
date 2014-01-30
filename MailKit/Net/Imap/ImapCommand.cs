@@ -428,7 +428,7 @@ namespace MailKit.Net.Imap {
 						token = Engine.Stream.ReadToken (CancellationToken);
 						if (token.Type == ImapTokenType.OpenBracket) {
 							var code = Engine.ParseResponseCode (CancellationToken);
-							// FIXME: handle the response code?
+							RespCodes.Add (code);
 							break;
 						}
 

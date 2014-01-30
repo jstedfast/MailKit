@@ -1005,10 +1005,10 @@ namespace MailKit.Net.Imap {
 				if (folder != null) {
 					switch (atom) {
 					case "MESSAGES":
-						folder.UpdateCount ((int) value);
+						folder.OnExists ((int) value);
 						break;
 					case "RECENT":
-						folder.UpdateRecent ((int) value);
+						folder.OnRecent ((int) value);
 						break;
 					case "UIDNEXT":
 						folder.UpdateUidNext (new UniqueId (value));
@@ -1134,27 +1134,35 @@ namespace MailKit.Net.Imap {
 
 						atom = (string) token.Value;
 
-						switch (atom) {
-						case "EXISTS":
-							folder.UpdateCount ((int) number);
-							break;
-						case "EXPUNGE":
-							if (number == 0)
-								throw UnexpectedToken (new ImapToken (ImapTokenType.Atom, "0"), false);
+						if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
+							// the command registered an untagged handler for this atom...
+							handler (this, current, (int) number - 1, token);
+						} else if (folder != null) {
+							switch (atom) {
+							case "EXISTS":
+								folder.OnExists ((int) number);
+								break;
+							case "EXPUNGE":
+								if (number == 0)
+									throw UnexpectedToken (new ImapToken (ImapTokenType.Atom, "0"), false);
 
-							folder.OnExpunged ((int) number - 1);
-							break;
-						case "RECENT":
-							folder.UpdateRecent ((int) number);
-							break;
-						default:
-							if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
-								// the command registered an untagged handler for this atom...
-								handler (this, current, (int) number - 1, token);
-							} else {
+								folder.OnExpunge ((int) number - 1);
+								break;
+							case "FETCH":
+								if (number == 0)
+									throw UnexpectedToken (new ImapToken (ImapTokenType.Atom, "0"), false);
+
+								folder.OnFetch (this, (int) number - 1, cancellationToken);
+								break;
+							case "RECENT":
+								folder.OnRecent ((int) number);
+								break;
+							default:
 								Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
+								break;
 							}
-							break;
+						} else {
+							Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
 						}
 
 						SkipLine (cancellationToken);
