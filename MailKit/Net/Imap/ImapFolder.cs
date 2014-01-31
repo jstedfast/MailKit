@@ -4087,6 +4087,37 @@ namespace MailKit.Net.Imap {
 			OnRecentChanged ();
 		}
 
+		internal void OnVanished (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			bool earlier = false;
+			UniqueId[] vanished;
+
+			if (token.Type == ImapTokenType.OpenParen) {
+				do {
+					token = engine.ReadToken (cancellationToken);
+
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					if (token.Type != ImapTokenType.Atom)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					var atom = (string) token.Value;
+
+					if (atom == "EARLIER")
+						earlier = true;
+				} while (true);
+
+				token = engine.ReadToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out vanished))
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			// TODO: emit a Vanished event
+		}
+
 		internal void UpdateFirstUnread (int index)
 		{
 			FirstUnread = index;

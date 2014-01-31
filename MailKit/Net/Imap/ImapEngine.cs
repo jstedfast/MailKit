@@ -1179,6 +1179,9 @@ namespace MailKit.Net.Imap {
 						// the command registered an untagged handler for this atom...
 						handler (this, current, -1, token);
 						SkipLine (cancellationToken);
+					} else if (atom == "VANISHED" && folder != null) {
+						folder.OnVanished (this, cancellationToken);
+						SkipLine (cancellationToken);
 					} else {
 						// don't know how to handle this... eat it?
 						SkipLine (cancellationToken);
