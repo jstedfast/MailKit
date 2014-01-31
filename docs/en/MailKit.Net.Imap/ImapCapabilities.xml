@@ -106,7 +106,7 @@
     </Member>
     <Member MemberName="Convert">
       <MemberSignature Language="C#" Value="Convert" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Convert = int32(2097152)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Convert = int32(4194304)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -154,7 +154,7 @@
     </Member>
     <Member MemberName="Filters">
       <MemberSignature Language="C#" Value="Filters" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Filters = int32(8388608)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Filters = int32(16777216)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -170,7 +170,7 @@
     </Member>
     <Member MemberName="GMailExt1">
       <MemberSignature Language="C#" Value="GMailExt1" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int32(134217728)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int32(268435456)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -234,7 +234,7 @@
     </Member>
     <Member MemberName="ListExtended">
       <MemberSignature Language="C#" Value="ListExtended" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ListExtended = int32(1048576)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ListExtended = int32(2097152)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -282,7 +282,7 @@
     </Member>
     <Member MemberName="MetaData">
       <MemberSignature Language="C#" Value="MetaData" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MetaData = int32(4194304)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MetaData = int32(8388608)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -298,7 +298,7 @@
     </Member>
     <Member MemberName="Move">
       <MemberSignature Language="C#" Value="Move" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Move = int32(33554432)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Move = int32(67108864)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -360,6 +360,22 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="QuickResync">
+      <MemberSignature Language="C#" Value="QuickResync" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities QuickResync = int32(1048576)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the QRESYNC extension defined in rfc5162.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Quota">
       <MemberSignature Language="C#" Value="Quota" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Quota = int32(8)" />
@@ -394,7 +410,7 @@
     </Member>
     <Member MemberName="SpecialUse">
       <MemberSignature Language="C#" Value="SpecialUse" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SpecialUse = int32(16777216)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SpecialUse = int32(33554432)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -474,7 +490,7 @@
     </Member>
     <Member MemberName="XList">
       <MemberSignature Language="C#" Value="XList" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int32(67108864)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int32(134217728)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>

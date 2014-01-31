@@ -294,8 +294,13 @@ namespace MailKit.Net.Imap {
 		/// Gets whether or not the folder supports mod-sequences.
 		/// </summary>
 		/// <remarks>
-		/// If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
-		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.
+		/// <para>If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
+		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.</para>
+		/// <para>There are two reasons that a <see cref="ImapFolder"/> might not support mod-sequences:
+		/// <list type="bullet">
+		/// <item>The IMAP server does not support the CONDSTORE extension (<see cref="ImapCapabilities.CondStore"/>).</item>
+		/// <item>The SELECT or EXAMINE command returned the NOMODSEQ response code.</item>
+		/// </list></para>
 		/// </remarks>
 		/// <value><c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
 		public bool SupportsModSeq {
@@ -858,9 +863,6 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the STATUS command.
-		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -870,6 +872,9 @@ namespace MailKit.Net.Imap {
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// <para>-or-</para>
 		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the STATUS command.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -886,7 +891,7 @@ namespace MailKit.Net.Imap {
 		public void Status (StatusItems items, CancellationToken cancellationToken)
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Status) != 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
 
 			CheckState (false, false);
 
@@ -1907,7 +1912,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1930,7 +1935,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException ("items");
 
 			if (!SupportsModSeq)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
 
@@ -2044,7 +2049,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2067,7 +2072,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException ("items");
 
 			if (!SupportsModSeq)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
 
@@ -2184,7 +2189,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2207,7 +2212,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException ("items");
 
 			if (!SupportsModSeq)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
 
@@ -2325,7 +2330,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2351,7 +2356,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException ("items");
 
 			if (!SupportsModSeq)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
 
@@ -3048,7 +3053,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (modseq.HasValue && !SupportsModSeq)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, true);
 
@@ -3227,7 +3232,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3272,7 +3277,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3317,7 +3322,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3342,7 +3347,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (modseq.HasValue && !SupportsModSeq)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, true);
 
@@ -3524,7 +3529,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3569,7 +3574,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3614,7 +3619,7 @@ namespace MailKit.Net.Imap {
 		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the CONDSTORE extension.
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.

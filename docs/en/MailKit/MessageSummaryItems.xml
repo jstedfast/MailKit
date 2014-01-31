@@ -142,7 +142,7 @@
     </Member>
     <Member MemberName="GMailMessageId">
       <MemberSignature Language="C#" Value="GMailMessageId" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems GMailMessageId = int32(256)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems GMailMessageId = int32(1024)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -158,7 +158,7 @@
     </Member>
     <Member MemberName="GMailThreadId">
       <MemberSignature Language="C#" Value="GMailThreadId" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems GMailThreadId = int32(512)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems GMailThreadId = int32(2048)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -204,6 +204,22 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="ModSeq">
+      <MemberSignature Language="C#" Value="ModSeq" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems ModSeq = int32(128)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageSummaryItems</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Fetch the <see cref="P:MailKit.MessageSummary.ModSeq" />.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems None = int32(0)" />
@@ -222,7 +238,7 @@
     </Member>
     <Member MemberName="Uid">
       <MemberSignature Language="C#" Value="Uid" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems Uid = int32(128)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems Uid = int32(256)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>

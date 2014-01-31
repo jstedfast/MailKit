@@ -194,6 +194,28 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="ChangedSince">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.SearchQuery ChangedSince (ulong modseq);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery ChangedSince(unsigned int64 modseq) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.SearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="modseq" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="modseq">The mod-sequence value.</param>
+        <summary>
+            Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Deleted">
       <MemberSignature Language="C#" Value="public static readonly MailKit.Search.SearchQuery Deleted;" />
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Deleted" />
