@@ -131,6 +131,16 @@ namespace MailKit {
 		bool Exists { get; }
 
 		/// <summary>
+		/// Gets whether or not the folder supports mod-sequences.
+		/// </summary>
+		/// <remarks>
+		/// If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
+		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.
+		/// </remarks>
+		/// <value><c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
+		bool SupportsModSeq { get; }
+
+		/// <summary>
 		/// Gets the highest mod-sequence value of all messages in the mailbox.
 		/// </summary>
 		/// <remarks>
@@ -545,6 +555,39 @@ namespace MailKit {
 		void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Adds a set of flags to the specified messages.
 		/// </summary>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -570,6 +613,39 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.

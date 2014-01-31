@@ -87,7 +87,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests\r\n", "gmail.create-unittests.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "gmail.list-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SELECT UnitTests\r\n", "gmail.select-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt"));
 
 			for (int i = 0; i < 50; i++) {
 				using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {

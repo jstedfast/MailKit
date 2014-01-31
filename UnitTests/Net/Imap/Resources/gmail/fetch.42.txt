@@ -1,4 +1,4 @@
-* 42 FETCH (UID 42 BODY[] {253424}
+* 42 FETCH (UID 42 MODSEQ (29997) BODY[] {253424}
 Return-Path: <raman@cs.cornell.edu>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA24680> for nsb; Wed, 28 Oct 92 11:48:41 EST

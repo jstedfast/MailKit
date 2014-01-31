@@ -1,4 +1,4 @@
-* 29 FETCH (UID 29 BODY[] {109878}
+* 29 FETCH (UID 29 MODSEQ (29767) BODY[] {109878}
 Return-Path: <oester@vnet.ibm.com>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA22720> for nsb; Mon, 8 Jun 92 15:59:26 EDT

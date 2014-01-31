@@ -1,4 +1,4 @@
-* 28 FETCH (UID 28 BODY[] {9606}
+* 28 FETCH (UID 28 MODSEQ (29758) BODY[] {9606}
 Return-Path: <ysato@etl.go.jp>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA21993> for nsb; Mon, 8 Jun 92 14:45:42 EDT

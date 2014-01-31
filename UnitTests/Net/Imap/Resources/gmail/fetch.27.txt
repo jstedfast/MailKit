@@ -1,4 +1,4 @@
-* 27 FETCH (UID 27 BODY[] {42865}
+* 27 FETCH (UID 27 MODSEQ (29724) BODY[] {42865}
 Return-Path: <dag%gorgon.UUCP@cs.wisc.edu>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA17171> for nsb; Sun, 7 Jun 92 16:17:25 EDT

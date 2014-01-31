@@ -1,4 +1,4 @@
-* 8 FETCH (UID 8 BODY[] {165976}
+* 8 FETCH (UID 8 MODSEQ (29378) BODY[] {165976}
 Return-Path: <nsb>
 Date: Fri, 29 Nov 91 07:13:33 EST
 From: Nathaniel S. Borenstein <nsb@thumper.bellcore.com>

@@ -1,4 +1,4 @@
-* 13 FETCH (UID 13 BODY[] {5670}
+* 13 FETCH (UID 13 MODSEQ (29486) BODY[] {5670}
 Return-Path: <rhys@cs.uq.oz.au>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA09077> for nsb; Thu, 6 Feb 92 23:18:13 EST

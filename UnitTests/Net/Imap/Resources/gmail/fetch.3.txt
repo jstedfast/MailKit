@@ -1,4 +1,4 @@
-* 3 FETCH (UID 3 BODY[] {679}
+* 3 FETCH (UID 3 MODSEQ (29268) BODY[] {679}
 Date: Thu,  6 Feb 1992 11:51:37 -0500 (EST)
 From: Nathaniel Borenstein <nsb>
 Reply-To: Nathaniel Borenstein <nsb@thumper.bellcore.com>  (=?iso-8859-8?q?=ED=E5=EC=F9 =EF=E1 =E9=EC=E8=F4=F0?=)

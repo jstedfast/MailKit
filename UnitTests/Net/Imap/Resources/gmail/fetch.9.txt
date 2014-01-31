@@ -1,4 +1,4 @@
-* 9 FETCH (UID 9 BODY[] {348483}
+* 9 FETCH (UID 9 MODSEQ (29395) BODY[] {348483}
 Return-Path: <dbc.mtview.ca.us!mrose@dbc.mtview.ca.us>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA10321> for nsb; Sat, 5 Oct 91 19:14:36 EDT

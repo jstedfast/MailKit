@@ -1,4 +1,4 @@
-* 5 FETCH (UID 5 BODY[] {24391}
+* 5 FETCH (UID 5 MODSEQ (29302) BODY[] {24391}
 Return-Path: <beatty@COSMOS.VLSI.CS.CMU.EDU>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA15292> for nsb; Fri, 28 Aug 92 15:13:14 EDT

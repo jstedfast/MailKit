@@ -1,4 +1,4 @@
-* 31 FETCH (UID 31 BODY[] {264394}
+* 31 FETCH (UID 31 MODSEQ (29801) BODY[] {264394}
 Return-Path: <sau@sleepy.bellcore.com>
 Received: from thumper.bellcore.com (thumper.ARPA) by greenbush.bellcore.com (4.12/4.7)
 	id <AA05576> for nsb; Wed, 15 May 91 15:24:32 edt

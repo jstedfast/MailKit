@@ -1,4 +1,4 @@
-* 50 FETCH (UID 50 BODY[] {91057}
+* 50 FETCH (UID 50 MODSEQ (30145) BODY[] {91057}
 Return-Path: <nsb>
 Received: by greenbush.bellcore.com (4.1/4.7)
 	id <AA19468> for nsb; Tue, 29 Sep 92 10:19:23 EDT

@@ -158,8 +158,10 @@ namespace MailKit.Net.Imap {
 					break;
 				case ImapResponseCodeType.HighestModSeq:
 					HighestModSeq = code.HighestModSeq;
+					SupportsModSeq = true;
 					break;
 				case ImapResponseCodeType.NoModSeq:
+					SupportsModSeq = false;
 					HighestModSeq = 0;
 					break;
 				}
@@ -289,6 +291,18 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets whether or not the folder supports mod-sequences.
+		/// </summary>
+		/// <remarks>
+		/// If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
+		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.
+		/// </remarks>
+		/// <value><c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
+		public bool SupportsModSeq {
+			get; private set;
+		}
+
+		/// <summary>
 		/// Gets the highest mod-sequence value of all messages in the mailbox.
 		/// </summary>
 		/// <remarks>
@@ -351,6 +365,11 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
+		static string SelectOrExamine (FolderAccess access)
+		{
+			return access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT";
+		}
+
 		/// <summary>
 		/// Opens the folder using the requested folder access.
 		/// </summary>
@@ -388,8 +407,9 @@ namespace MailKit.Net.Imap {
 			if (IsOpen && Access == access)
 				return access;
 
-			string format = access == FolderAccess.ReadOnly ? "EXAMINE %F\r\n" : "SELECT %F\r\n";
-			var ic = Engine.QueueCommand (cancellationToken, this, format, this);
+			var condstore = (Engine.Capabilities & ImapCapabilities.CondStore) != 0 ? " (CONDSTORE)" : string.Empty;
+			var command = string.Format ("{0} %F{1}\r\n", SelectOrExamine (access), condstore);
+			var ic = Engine.QueueCommand (cancellationToken, this, command, this);
 
 			Engine.Wait (ic);
 
@@ -1688,7 +1708,17 @@ namespace MailKit.Net.Imap {
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
 
+					if (token.Type != ImapTokenType.OpenParen)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					summary.ModSeq = value64;
@@ -1899,7 +1929,7 @@ namespace MailKit.Net.Imap {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+			if (!SupportsModSeq)
 				throw new NotSupportedException ();
 
 			CheckState (true, false);
@@ -2036,7 +2066,7 @@ namespace MailKit.Net.Imap {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+			if (!SupportsModSeq)
 				throw new NotSupportedException ();
 
 			CheckState (true, false);
@@ -2176,7 +2206,7 @@ namespace MailKit.Net.Imap {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+			if (!SupportsModSeq)
 				throw new NotSupportedException ();
 
 			CheckState (true, false);
@@ -2320,7 +2350,7 @@ namespace MailKit.Net.Imap {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) == 0)
+			if (!SupportsModSeq)
 				throw new NotSupportedException ();
 
 			CheckState (true, false);
@@ -2457,7 +2487,17 @@ namespace MailKit.Net.Imap {
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
 
+					if (token.Type != ImapTokenType.OpenParen)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					args.ModSeq = modseq;
@@ -3002,15 +3042,18 @@ namespace MailKit.Net.Imap {
 			return (Stream) ic.UserData;
 		}
 
-		void ModifyFlags (UniqueId[] uids, MessageFlags flags, string action, ulong? modseq, CancellationToken cancellationToken)
+		UniqueId[] ModifyFlags (UniqueId[] uids, ulong? modseq, MessageFlags flags, string action, CancellationToken cancellationToken)
 		{
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatUidSet (uids);
 
+			if (modseq.HasValue && !SupportsModSeq)
+				throw new NotSupportedException ();
+
 			CheckState (true, true);
 
 			if (uids.Length == 0)
-				return;
+				return new UniqueId[0];
 
 			string @params = string.Empty;
 			if (modseq.HasValue)
@@ -3025,6 +3068,17 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("STORE", ic.Result);
+
+			if (modseq.HasValue) {
+				foreach (var code in ic.RespCodes) {
+					if (code.Type != ImapResponseCodeType.Modified)
+						continue;
+
+					return code.DestUidSet;
+				}
+			}
+
+			return new UniqueId[0];
 		}
 
 		/// <summary>
@@ -3064,7 +3118,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (uids, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", null, cancellationToken);
+			ModifyFlags (uids, null, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
 		/// <summary>
@@ -3104,7 +3158,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (uids, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", null, cancellationToken);
+			ModifyFlags (uids, null, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
 		/// <summary>
@@ -3144,18 +3198,156 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (uids, flags, silent ? "FLAGS.SILENT" : "FLAGS", null, cancellationToken);
+			ModifyFlags (uids, null, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
 
-		void ModifyFlags (int[] indexes, MessageFlags flags, string action, ulong? modseq, CancellationToken cancellationToken)
+		/// <summary>
+		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken)
+		{
+			return ModifyFlags (uids, modseq, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken)
+		{
+			return ModifyFlags (uids, modseq, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken)
+		{
+			return ModifyFlags (uids, modseq, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
+		}
+
+		int[] ModifyFlags (int[] indexes, ulong? modseq, MessageFlags flags, string action, CancellationToken cancellationToken)
 		{
 			var flaglist = ImapUtils.FormatFlagsList (flags & AcceptedFlags);
 			var set = ImapUtils.FormatIndexSet (indexes);
 
+			if (modseq.HasValue && !SupportsModSeq)
+				throw new NotSupportedException ();
+
 			CheckState (true, true);
 
 			if (indexes.Length == 0)
-				return;
+				return new int[0];
 
 			string @params = string.Empty;
 			if (modseq.HasValue)
@@ -3170,6 +3362,21 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("STORE", ic.Result);
+
+			if (modseq.HasValue) {
+				foreach (var code in ic.RespCodes) {
+					if (code.Type != ImapResponseCodeType.Modified)
+						continue;
+
+					var unmodified = new int[code.DestUidSet.Length];
+					for (int i = 0; i < unmodified.Length; i++)
+						unmodified[i] = (int) (code.DestUidSet[i].Id - 1);
+
+					return unmodified;
+				}
+			}
+
+			return new int[0];
 		}
 
 		/// <summary>
@@ -3209,7 +3416,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (indexes, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", null, cancellationToken);
+			ModifyFlags (indexes, null, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
 		/// <summary>
@@ -3249,7 +3456,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (indexes, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", null, cancellationToken);
+			ModifyFlags (indexes, null, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
 		/// <summary>
@@ -3289,7 +3496,141 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken)
 		{
-			ModifyFlags (indexes, flags, silent ? "FLAGS.SILENT" : "FLAGS", null, cancellationToken);
+			ModifyFlags (indexes, null, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken)
+		{
+			return ModifyFlags (indexes, modseq, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken)
+		{
+			return ModifyFlags (indexes, modseq, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="FlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CONDSTORE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken)
+		{
+			return ModifyFlags (indexes, modseq, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
 
 		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens)

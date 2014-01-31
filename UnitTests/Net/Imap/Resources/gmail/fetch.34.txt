@@ -1,4 +1,4 @@
-* 34 FETCH (UID 34 BODY[] {6155}
+* 34 FETCH (UID 34 MODSEQ (29860) BODY[] {6155}
 Return-Path: <bob@sarad.cs.su.oz.au>
 Received: from thumper.bellcore.com by greenbush.bellcore.com (4.1/4.7)
 	id <AA01437> for nsb; Thu, 4 Feb 93 17:27:17 EST
