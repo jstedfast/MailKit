@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-    <metadata>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+    <metadata minClientVersion="2.7">
         <id>MailKit</id>
         <version>0.1.0.0</version>
         <title>MailKit: A cross-platform.NET mail-client library based on MimeKit.</title>
@@ -57,18 +57,19 @@ Features:
   * MOVE
   * XLIST
   * X-GM-EXT1 (X-GM-MSGID and X-GM-THRID)
-  * All APIs are cancellable.
-</description>
+  * All APIs are cancellable.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
         <releaseNotes>* Initial public release.</releaseNotes>
         <copyright>Jeffrey Stedfast</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch</tags>
+        <dependencies>
+            <dependency id="MimeKit" version="0.21.0.0" />
+        </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
             <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
             <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.0" />
-            <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.0" />
             <frameworkAssembly assemblyName="System" targetFramework="MonoAndroid0.0" />
             <frameworkAssembly assemblyName="System.Core" targetFramework="MonoAndroid0.0" />
             <frameworkAssembly assemblyName="System.Data" targetFramework="MonoAndroid0.0" />
@@ -78,17 +79,11 @@ Features:
         </frameworkAssemblies>
     </metadata>
     <files>
-        <file src="..\lib\sqlite3.dll" target="content\net40\sqlite3.dll" />
-        <file src="..\MimeKit\bin\Release\lib\MonoAndroid\BouncyCastle.Android.dll" target="lib\MonoAndroid\BouncyCastle.Android.dll" />
-        <file src="..\MimeKit\bin\Release\lib\MonoAndroid\MimeKit.Android.dll" target="lib\MonoAndroid\MimeKit.Android.dll" />
-        <file src="..\MimeKit\bin\Release\lib\MonoAndroid\MimeKit.Android.xml" target="lib\MonoAndroid\MimeKit.Android.xml" />
-        <file src="..\MimeKit\bin\Release\lib\MonoTouch\BouncyCastle.iOS.dll" target="lib\MonoTouch\BouncyCastle.iOS.dll" />
-        <file src="..\MimeKit\bin\Release\lib\MonoTouch\MimeKit.iOS.dll" target="lib\MonoTouch\MimeKit.iOS.dll" />
-        <file src="..\MimeKit\bin\Release\lib\MonoTouch\MimeKit.iOS.xml" target="lib\MonoTouch\MimeKit.iOS.xml" />
-        <file src="..\MimeKit\bin\Release\lib\net40\BouncyCastle.dll" target="lib\net40\BouncyCastle.dll" />
-        <file src="..\MimeKit\bin\Release\lib\net40\BouncyCastle.xml" target="lib\net40\BouncyCastle.xml" />
-        <file src="..\MimeKit\bin\Release\lib\net40\MimeKit.dll" target="lib\net40\MimeKit.dll" />
-        <file src="..\MimeKit\bin\Release\lib\net40\MimeKit.xml" target="lib\net40\MimeKit.xml" />
-        <file src="..\MimeKit\bin\Release\lib\net40\Mono.Data.Sqlite.dll" target="lib\net40\Mono.Data.Sqlite.dll" />
+        <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.Android.dll" target="lib\MonoAndroid\MailKit.Android.dll" />
+        <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.Android.xml" target="lib\MonoAndroid\MailKit.Android.xml" />
+        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.iOS.dll" target="lib\MonoTouch\MailKit.iOS.dll" />
+        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.iOS.xml" target="lib\MonoTouch\MailKit.iOS.xml" />
+        <file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
     </files>
 </package>
