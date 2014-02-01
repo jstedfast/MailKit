@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
     <metadata minClientVersion="2.7">
         <id>MailKit</id>
         <version>0.1.0.0</version>
-        <title>MailKit: A cross-platform.NET mail-client library based on MimeKit.</title>
+        <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
         <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
@@ -14,50 +14,50 @@
 
 Features:
 * SASL Authentication
-  * DIGEST-MD5
-  * CRAM-MD5
-  * LOGIN
-  * PLAIN
-  * XOAUTH2 (partial support)
+&nbsp;&nbsp;* DIGEST-MD5
+&nbsp;&nbsp;* CRAM-MD5
+&nbsp;&nbsp;* LOGIN
+&nbsp;&nbsp;* PLAIN
+&nbsp;&nbsp;* XOAUTH2 (partial support)
 * SMTP Client
-  * Supports all of the SASL mechanisms listed above.
-  * Supports SSL-wrapped connections via the "smtps" protocol.
-  * Supports the STARTTLS extension.
-  * Supports client SSL/TLS certificates.
-  * Supports the 8BITMIME and BINARYMIME extensions.
-  * Supports the PIPELINING extension.
-  * Parses the SIZE extension value.
-  * All APIs are cancellable.
+&nbsp;&nbsp;* Supports all of the SASL mechanisms listed above.
+&nbsp;&nbsp;* Supports SSL-wrapped connections via the "smtps" protocol.
+&nbsp;&nbsp;* Supports the STARTTLS extension.
+&nbsp;&nbsp;* Supports client SSL/TLS certificates.
+&nbsp;&nbsp;* Supports the 8BITMIME and BINARYMIME extensions.
+&nbsp;&nbsp;* Supports the PIPELINING extension.
+&nbsp;&nbsp;* Parses the SIZE extension value.
+&nbsp;&nbsp;* All APIs are cancellable.
 * POP3 Client
-  * Supports all of the SASL mechanisms listed above.
-  * Also supports authentication via APOP and USER/PASS.
-  * Supports SSL-wrapped connections via the "pop3s" protocol.
-  * Supports the STLS extension.
-  * Supports client SSL/TLS certificates.
-  * Supports the UIDL command.
-  * All APIs are cancellable.
+&nbsp;&nbsp;* Supports all of the SASL mechanisms listed above.
+&nbsp;&nbsp;* Also supports authentication via APOP and USER/PASS.
+&nbsp;&nbsp;* Supports SSL-wrapped connections via the "pop3s" protocol.
+&nbsp;&nbsp;* Supports the STLS extension.
+&nbsp;&nbsp;* Supports client SSL/TLS certificates.
+&nbsp;&nbsp;* Supports the UIDL command.
+&nbsp;&nbsp;* All APIs are cancellable.
 * IMAP4 Client
-  * Optimized for mobile devices (to limit network traffic as much as possible).
-  * Supports all of the SASL mechanisms listed above.
-  * Supports SSL-wrapped connections via the "imaps" protocol.
-  * Supports client SSL/TLS certificates.
-  * Supports the following extensions:
-  * LITERAL+
-  * NAMESPACE
-  * CHILDREN
-  * LOGINDISABLED
-  * STARTTLS
-  * MULTIAPPEND
-  * UNSELECT
-  * UIDPLUS
-  * CONDSTORE
-  * ESEARCH
-  * SASL-IR
-  * SPECIAL-USE
-  * MOVE
-  * XLIST
-  * X-GM-EXT1 (X-GM-MSGID and X-GM-THRID)
-  * All APIs are cancellable.</description>
+&nbsp;&nbsp;* Optimized for mobile devices (to limit network traffic as much as possible).
+&nbsp;&nbsp;* Supports all of the SASL mechanisms listed above.
+&nbsp;&nbsp;* Supports SSL-wrapped connections via the "imaps" protocol.
+&nbsp;&nbsp;* Supports client SSL/TLS certificates.
+&nbsp;&nbsp;* Supports the following extensions:
+&nbsp;&nbsp;* LITERAL+
+&nbsp;&nbsp;* NAMESPACE
+&nbsp;&nbsp;* CHILDREN
+&nbsp;&nbsp;* LOGINDISABLED
+&nbsp;&nbsp;* STARTTLS
+&nbsp;&nbsp;* MULTIAPPEND
+&nbsp;&nbsp;* UNSELECT
+&nbsp;&nbsp;* UIDPLUS
+&nbsp;&nbsp;* CONDSTORE
+&nbsp;&nbsp;* ESEARCH
+&nbsp;&nbsp;* SASL-IR
+&nbsp;&nbsp;* SPECIAL-USE
+&nbsp;&nbsp;* MOVE
+&nbsp;&nbsp;* XLIST
+&nbsp;&nbsp;* X-GM-EXT1 (X-GM-MSGID and X-GM-THRID)
+&nbsp;&nbsp;* All APIs are cancellable.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
         <releaseNotes>* Initial public release.</releaseNotes>
         <copyright>Jeffrey Stedfast</copyright>
