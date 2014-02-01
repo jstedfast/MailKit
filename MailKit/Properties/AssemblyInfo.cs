@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013 Jeffrey Stedfast
+// Copyright (c) 2014 Jeffrey Stedfast
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("MailKit")]
-[assembly: AssemblyCopyright ("Copyright © 2013 Jeffrey Stedfast")]
+[assembly: AssemblyCopyright ("Copyright © 2013, 2014 Jeffrey Stedfast")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
