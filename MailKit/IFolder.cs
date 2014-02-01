@@ -250,6 +250,14 @@ namespace MailKit {
 		IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Gets the specified subfolder.
+		/// </summary>
+		/// <returns>The subfolder.</returns>
+		/// <param name="name">The name of the subfolder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IFolder GetSubfolder (string name, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Forces the server to flush its state for the folder.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
