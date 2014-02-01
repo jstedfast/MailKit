@@ -31,6 +31,7 @@
     <ConsolePause>false</ConsolePause>
     <DefineConstants>__MOBILE__;__IOS__;</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\lib\MonoTouch\MimeKit.iOS.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
