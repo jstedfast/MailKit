@@ -618,6 +618,9 @@ namespace MailKit.Net.Imap {
 			} else if ((Capabilities & ImapCapabilities.IMAP4) != 0) {
 				ProtocolVersion = ImapProtocolVersion.Imap4;
 			}
+
+			if ((Capabilities & ImapCapabilities.QuickResync) != 0)
+				Capabilities |= ImapCapabilities.CondStore;
 		}
 
 		void UpdateNamespaces (CancellationToken cancellationToken)
