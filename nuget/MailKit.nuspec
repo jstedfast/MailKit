@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>MailKit</id>
+        <version>0.1.0.0</version>
+        <title>MailKit: A cross-platform.NET mail-client library based on MimeKit.</title>
+        <authors>Jeffrey Stedfast</authors>
+        <owners>Jeffrey Stedfast</owners>
+        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+        <projectUrl>http://github.com/jstedfast/MailKit</projectUrl>
+        <iconUrl>https://raw.github.com/jstedfast/MailKit/master/nuget/mailkit-50.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit.
+
+Features:
+* SASL Authentication
+  * DIGEST-MD5
+  * CRAM-MD5
+  * LOGIN
+  * PLAIN
+  * XOAUTH2 (partial support)
+* SMTP Client
+  * Supports all of the SASL mechanisms listed above.
+  * Supports SSL-wrapped connections via the "smtps" protocol.
+  * Supports the STARTTLS extension.
+  * Supports client SSL/TLS certificates.
+  * Supports the 8BITMIME and BINARYMIME extensions.
+  * Supports the PIPELINING extension.
+  * Parses the SIZE extension value.
+  * All APIs are cancellable.
+* POP3 Client
+  * Supports all of the SASL mechanisms listed above.
+  * Also supports authentication via APOP and USER/PASS.
+  * Supports SSL-wrapped connections via the "pop3s" protocol.
+  * Supports the STLS extension.
+  * Supports client SSL/TLS certificates.
+  * Supports the UIDL command.
+  * All APIs are cancellable.
+* IMAP4 Client
+  * Optimized for mobile devices (to limit network traffic as much as possible).
+  * Supports all of the SASL mechanisms listed above.
+  * Supports SSL-wrapped connections via the "imaps" protocol.
+  * Supports client SSL/TLS certificates.
+  * Supports the following extensions:
+  * LITERAL+
+  * NAMESPACE
+  * CHILDREN
+  * LOGINDISABLED
+  * STARTTLS
+  * MULTIAPPEND
+  * UNSELECT
+  * UIDPLUS
+  * CONDSTORE
+  * ESEARCH
+  * SASL-IR
+  * SPECIAL-USE
+  * MOVE
+  * XLIST
+  * X-GM-EXT1 (X-GM-MSGID and X-GM-THRID)
+  * All APIs are cancellable.
+</description>
+        <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
+        <releaseNotes>* Initial public release.</releaseNotes>
+        <copyright>Jeffrey Stedfast</copyright>
+        <language>en-US</language>
+        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch</tags>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System.Security" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System" targetFramework="MonoAndroid0.0" />
+            <frameworkAssembly assemblyName="System.Core" targetFramework="MonoAndroid0.0" />
+            <frameworkAssembly assemblyName="System.Data" targetFramework="MonoAndroid0.0" />
+            <frameworkAssembly assemblyName="System" targetFramework="MonoTouch0.0" />
+            <frameworkAssembly assemblyName="System.Core" targetFramework="MonoTouch0.0" />
+            <frameworkAssembly assemblyName="System.Data" targetFramework="MonoTouch0.0" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="..\lib\sqlite3.dll" target="content\net40\sqlite3.dll" />
+        <file src="..\MimeKit\bin\Release\lib\MonoAndroid\BouncyCastle.Android.dll" target="lib\MonoAndroid\BouncyCastle.Android.dll" />
+        <file src="..\MimeKit\bin\Release\lib\MonoAndroid\MimeKit.Android.dll" target="lib\MonoAndroid\MimeKit.Android.dll" />
+        <file src="..\MimeKit\bin\Release\lib\MonoAndroid\MimeKit.Android.xml" target="lib\MonoAndroid\MimeKit.Android.xml" />
+        <file src="..\MimeKit\bin\Release\lib\MonoTouch\BouncyCastle.iOS.dll" target="lib\MonoTouch\BouncyCastle.iOS.dll" />
+        <file src="..\MimeKit\bin\Release\lib\MonoTouch\MimeKit.iOS.dll" target="lib\MonoTouch\MimeKit.iOS.dll" />
+        <file src="..\MimeKit\bin\Release\lib\MonoTouch\MimeKit.iOS.xml" target="lib\MonoTouch\MimeKit.iOS.xml" />
+        <file src="..\MimeKit\bin\Release\lib\net40\BouncyCastle.dll" target="lib\net40\BouncyCastle.dll" />
+        <file src="..\MimeKit\bin\Release\lib\net40\BouncyCastle.xml" target="lib\net40\BouncyCastle.xml" />
+        <file src="..\MimeKit\bin\Release\lib\net40\MimeKit.dll" target="lib\net40\MimeKit.dll" />
+        <file src="..\MimeKit\bin\Release\lib\net40\MimeKit.xml" target="lib\net40\MimeKit.xml" />
+        <file src="..\MimeKit\bin\Release\lib\net40\Mono.Data.Sqlite.dll" target="lib\net40\Mono.Data.Sqlite.dll" />
+    </files>
+</package>
