@@ -1108,6 +1108,30 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetSubfolder">
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetSubfolder (string name, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetSubfolder(string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="name">The name of the subfolder.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets the specified subfolder.
+            </summary>
+        <returns>The subfolder.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="GetSubfolders">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt; GetSubfolders (bool subscribedOnly, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IFolder&gt; GetSubfolders(bool subscribedOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -1562,6 +1586,36 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="orderBy" Type="MailKit.Search.OrderBy[]" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="query">The search query.</param>
+        <param name="orderBy">The sort order.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Searches the folder for messages matching the specified query,
+            returning them in the preferred sort order.
+            </summary>
+        <returns>An array of matching UIDs in the specified sort order.</returns>
+        <remarks>
+            The returned array of unique identifiers will be sorted in the preferred order and
+            can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Search">
       <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -1586,6 +1640,38 @@
         <returns>An array of matching UIDs.</returns>
         <remarks>
             The returned array of unique identifiers can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Search">
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="orderBy" Type="MailKit.Search.OrderBy[]" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The subset of UIDs</param>
+        <param name="query">The search query.</param>
+        <param name="orderBy">The sort order.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Searches the subset of UIDs in the folder for messages matching the specified query,
+            returning them in the preferred sort order.
+            </summary>
+        <returns>An array of matching UIDs in the specified sort order.</returns>
+        <remarks>
+            The returned array of unique identifiers will be sorted in the preferred order and
+            can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
       </Docs>
     </Member>

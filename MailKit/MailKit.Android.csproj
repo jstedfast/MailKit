@@ -84,8 +84,11 @@
     <Compile Include="Search\HeaderSearchQuery.cs" />
     <Compile Include="Search\ISearchQueryOptimizer.cs" />
     <Compile Include="Search\NumericSearchQuery.cs" />
+    <Compile Include="Search\OrderBy.cs" />
+    <Compile Include="Search\OrderByType.cs" />
     <Compile Include="Search\SearchQuery.cs" />
     <Compile Include="Search\SearchTerm.cs" />
+    <Compile Include="Search\SortOrder.cs" />
     <Compile Include="Search\TextSearchQuery.cs" />
     <Compile Include="Search\UnarySearchQuery.cs" />
     <Compile Include="Security\SaslException.cs" />

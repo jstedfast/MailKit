@@ -3892,6 +3892,34 @@ namespace MailKit.Net.Imap {
 			return builder.ToString ();
 		}
 
+		static string BuildSortOrder (OrderBy[] orderBy)
+		{
+			var builder = new StringBuilder ();
+
+			builder.Append ('(');
+			for (int i = 0; i < orderBy.Length; i++) {
+				if (builder.Length > 1)
+					builder.Append (' ');
+
+				if (orderBy[i].Order == SortOrder.Descending)
+					builder.Append ("REVERSE ");
+
+				switch (orderBy [i].Type) {
+				case OrderByType.Arrival: builder.Append ("ARRIVAL"); break;
+				case OrderByType.Cc:      builder.Append ("CC"); break;
+				case OrderByType.Date:    builder.Append ("DATE"); break;
+				case OrderByType.From:    builder.Append ("FROM"); break;
+				case OrderByType.Size:    builder.Append ("SIZE"); break;
+				case OrderByType.Subject: builder.Append ("SUBJECT"); break;
+				case OrderByType.To:      builder.Append ("TO"); break;
+				default: throw new ArgumentOutOfRangeException ();
+				}
+			}
+			builder.Append (')');
+
+			return builder.ToString ();
+		}
+
 		static void SearchMatches (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var matches = new HashSet<UniqueId> ();
@@ -4015,6 +4043,173 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Searches the folder for messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken)
+		{
+			List<string> args = new List<string> ();
+
+			if (query == null)
+				throw new ArgumentNullException ("query");
+
+			CheckState (true, false);
+
+			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var expr = BuildQueryExpression (optimized, args);
+			var command = "UID SEARCH ";
+
+			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+				command += "RETURN () ";
+
+			if (args.Count > 0)
+				command += "CHARSET UTF-8 ";
+
+			command += expr + "\r\n";
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+			else
+				ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("SEARCH", ic.Result);
+
+			return (UniqueId[]) ic.UserData;
+		}
+
+		/// <summary>
+		/// Searches the folder for messages matching the specified query,
+		/// returning them in the preferred sort order.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="orderBy"/> is empty.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the SORT extension.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken)
+		{
+			List<string> args = new List<string> ();
+
+			if (query == null)
+				throw new ArgumentNullException ("query");
+
+			if (orderBy == null)
+				throw new ArgumentNullException ("orderBy");
+
+			if (orderBy.Length == 0)
+				throw new ArgumentException ("No sort order provided.", "orderBy");
+
+			CheckState (true, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
+
+			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var expr = BuildQueryExpression (optimized, args);
+			var order = BuildSortOrder (orderBy);
+			var command = "UID SORT " + order + " ";
+
+			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
+				command += "RETURN () ";
+
+			command += "UTF-8 ";
+
+			command += expr + "\r\n";
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
+				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+			else
+				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("SORT", ic.Result);
+
+			return (UniqueId[]) ic.UserData;
+		}
+
+		/// <summary>
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
@@ -4099,19 +4294,34 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Searches the folder for messages matching the specified query.
+		/// Searches the subset of UIDs in the folder for messages matching the specified query,
+		/// returning them in the preferred sort order.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
+		/// <param name="uids">The subset of UIDs</param>
 		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> contains one or more invalid UIDs.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the SORT extension.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4135,39 +4345,50 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken)
+		public UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken)
 		{
-			List<string> args = new List<string> ();
+			var set = ImapUtils.FormatUidSet (uids);
+			var args = new List<string> ();
 
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
+			if (orderBy == null)
+				throw new ArgumentNullException ("orderBy");
+
+			if (orderBy.Length == 0)
+				throw new ArgumentException ("No sort order provided.", "orderBy");
+
 			CheckState (true, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
+
+			if (uids.Length == 0)
+				return new UniqueId[0];
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args);
-			var command = "UID SEARCH ";
+			var order = BuildSortOrder (orderBy);
+			var command = "UID SORT " + order + " ";
 
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				command += "RETURN () ";
 
-			if (args.Count > 0)
-				command += "CHARSET UTF-8 ";
-
-			command += expr + "\r\n";
+			command += "UTF-8 UID " + set + " " + expr + "\r\n";
 
 			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
-			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
+			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			else
-				ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
 
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				throw new ImapCommandException ("SEARCH", ic.Result);
+				throw new ImapCommandException ("SORT", ic.Result);
 
 			return (UniqueId[]) ic.UserData;
 		}

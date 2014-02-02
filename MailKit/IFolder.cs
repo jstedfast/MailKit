@@ -656,6 +656,31 @@ namespace MailKit {
 		int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Searches the folder for messages matching the specified query.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Searches the folder for messages matching the specified query,
+		/// returning them in the preferred sort order.
+		/// </summary>
+		/// <remarks>
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
@@ -668,15 +693,19 @@ namespace MailKit {
 		UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Searches the folder for messages matching the specified query.
+		/// Searches the subset of UIDs in the folder for messages matching the specified query,
+		/// returning them in the preferred sort order.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers will be sorted in the preferred order and
+		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
+		/// <param name="uids">The subset of UIDs</param>
 		/// <param name="query">The search query.</param>
+		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken);
+		UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Occurs when the folder is deleted.

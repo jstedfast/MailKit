@@ -9,7 +9,7 @@
           <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2013 Jeffrey Stedfast")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2013, 2014 Jeffrey Stedfast")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
@@ -103,6 +103,7 @@
       <Type Name="DateSearchQuery" Kind="Class" />
       <Type Name="HeaderSearchQuery" Kind="Class" />
       <Type Name="NumericSearchQuery" Kind="Class" />
+      <Type Name="OrderBy" Kind="Class" />
       <Type Name="SearchQuery" Kind="Class" />
       <Type Name="TextSearchQuery" Kind="Class" />
       <Type Name="UnarySearchQuery" Kind="Class" />

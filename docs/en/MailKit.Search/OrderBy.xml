@@ -1,0 +1,262 @@
+<Type Name="OrderBy" FullName="MailKit.Search.OrderBy">
+  <TypeSignature Language="C#" Value="public class OrderBy" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit OrderBy extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Specifies a sort order for search results.
+            </summary>
+    <remarks>
+            You can combine multiple <see cref="T:MailKit.Search.OrderBy" /> rules to specify the sort
+            order that <see cref="M:MailKit.IFolder.Search(MailKit.Search.SearchQuery,MailKit.Search.OrderBy[],System.Threading.CancellationToken)" />
+            should return the results in.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Arrival">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy Arrival;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Arrival" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by arrival date in ascending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Cc">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy Cc;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Cc" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the Cc header in ascending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Date">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy Date;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Date" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the sent date in ascending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="From">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy From;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy From" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the From header in ascending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseArrival">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseArrival;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseArrival" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by arrival date in desending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseCc">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseCc;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseCc" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the Cc header in descending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseDate">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseDate;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseDate" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the sent date in descending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseFrom">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseFrom;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseFrom" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the From header in descending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseSize">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseSize;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseSize" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the message size in descending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseSubject">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseSubject;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseSubject" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the Subject header in descending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseTo">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseTo;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseTo" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the To header in descending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Size">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy Size;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Size" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the message size in ascending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Subject">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy Subject;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Subject" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the Subject header in ascending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="To">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy To;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy To" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the To header in ascending order.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

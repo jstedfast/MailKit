@@ -26,7 +26,7 @@
   <Members>
     <Member MemberName="Binary">
       <MemberSignature Language="C#" Value="Binary" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Binary = int32(2048)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Binary = int64(2048)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -42,7 +42,7 @@
     </Member>
     <Member MemberName="Catenate">
       <MemberSignature Language="C#" Value="Catenate" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Catenate = int32(16384)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Catenate = int64(16384)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -58,7 +58,7 @@
     </Member>
     <Member MemberName="Children">
       <MemberSignature Language="C#" Value="Children" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Children = int32(128)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Children = int64(128)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -74,7 +74,7 @@
     </Member>
     <Member MemberName="Compress">
       <MemberSignature Language="C#" Value="Compress" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Compress = int32(262144)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Compress = int64(262144)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -90,7 +90,7 @@
     </Member>
     <Member MemberName="CondStore">
       <MemberSignature Language="C#" Value="CondStore" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities CondStore = int32(32768)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities CondStore = int64(32768)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -104,9 +104,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Context">
+      <MemberSignature Language="C#" Value="Context" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Context = int64(134217728)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the CONTEXT extension defined in rfc5267.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Convert">
       <MemberSignature Language="C#" Value="Convert" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Convert = int32(4194304)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Convert = int64(33554432)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -122,7 +138,7 @@
     </Member>
     <Member MemberName="Enable">
       <MemberSignature Language="C#" Value="Enable" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Enable = int32(524288)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Enable = int64(1048576)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -138,7 +154,7 @@
     </Member>
     <Member MemberName="ESearch">
       <MemberSignature Language="C#" Value="ESearch" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ESearch = int32(65536)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ESearch = int64(65536)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -152,9 +168,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="ESort">
+      <MemberSignature Language="C#" Value="ESort" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ESort = int64(67108864)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the ESORT extension defined in rfc5267.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Filters">
       <MemberSignature Language="C#" Value="Filters" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Filters = int32(16777216)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Filters = int64(1073741824)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -170,7 +202,7 @@
     </Member>
     <Member MemberName="GMailExt1">
       <MemberSignature Language="C#" Value="GMailExt1" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int32(268435456)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int64(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -186,7 +218,7 @@
     </Member>
     <Member MemberName="Idle">
       <MemberSignature Language="C#" Value="Idle" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Idle = int32(32)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Idle = int64(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -202,7 +234,7 @@
     </Member>
     <Member MemberName="IMAP4">
       <MemberSignature Language="C#" Value="IMAP4" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities IMAP4 = int32(1)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities IMAP4 = int64(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -218,7 +250,7 @@
     </Member>
     <Member MemberName="IMAP4rev1">
       <MemberSignature Language="C#" Value="IMAP4rev1" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities IMAP4rev1 = int32(2)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities IMAP4rev1 = int64(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -234,7 +266,7 @@
     </Member>
     <Member MemberName="ListExtended">
       <MemberSignature Language="C#" Value="ListExtended" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ListExtended = int32(2097152)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ListExtended = int64(16777216)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -248,9 +280,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="ListStatus">
+      <MemberSignature Language="C#" Value="ListStatus" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ListStatus = int64(-2147483648)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the LIST-STATUS extension defined in rfc5819.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="LiteralPlus">
       <MemberSignature Language="C#" Value="LiteralPlus" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities LiteralPlus = int32(16)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities LiteralPlus = int64(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -266,7 +314,7 @@
     </Member>
     <Member MemberName="LoginDisabled">
       <MemberSignature Language="C#" Value="LoginDisabled" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities LoginDisabled = int32(256)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities LoginDisabled = int64(256)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -282,7 +330,7 @@
     </Member>
     <Member MemberName="MetaData">
       <MemberSignature Language="C#" Value="MetaData" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MetaData = int32(8388608)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MetaData = int64(268435456)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -298,7 +346,7 @@
     </Member>
     <Member MemberName="Move">
       <MemberSignature Language="C#" Value="Move" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Move = int32(67108864)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Move = int64(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -314,7 +362,7 @@
     </Member>
     <Member MemberName="MultiAppend">
       <MemberSignature Language="C#" Value="MultiAppend" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MultiAppend = int32(1024)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MultiAppend = int64(1024)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -328,9 +376,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="MultiSearch">
+      <MemberSignature Language="C#" Value="MultiSearch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MultiSearch = int64(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the MULTISEARCH extension defined in rfc6237.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Namespace">
       <MemberSignature Language="C#" Value="Namespace" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Namespace = int32(64)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Namespace = int64(64)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -346,7 +410,7 @@
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities None = int32(0)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities None = int64(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -360,9 +424,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Notify">
+      <MemberSignature Language="C#" Value="Notify" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Notify = int64(536870912)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the NOTIFY extension defined in rfc5465.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="QuickResync">
       <MemberSignature Language="C#" Value="QuickResync" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities QuickResync = int32(1048576)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities QuickResync = int64(2097152)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -378,7 +458,7 @@
     </Member>
     <Member MemberName="Quota">
       <MemberSignature Language="C#" Value="Quota" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Quota = int32(8)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Quota = int64(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -394,7 +474,7 @@
     </Member>
     <Member MemberName="SaslIR">
       <MemberSignature Language="C#" Value="SaslIR" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SaslIR = int32(131072)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SaslIR = int64(131072)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -408,9 +488,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Sort">
+      <MemberSignature Language="C#" Value="Sort" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Sort = int64(4194304)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the SORT extension defined in rfc5256.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="SpecialUse">
       <MemberSignature Language="C#" Value="SpecialUse" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SpecialUse = int32(33554432)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SpecialUse = int64(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -426,7 +522,7 @@
     </Member>
     <Member MemberName="StartTLS">
       <MemberSignature Language="C#" Value="StartTLS" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities StartTLS = int32(512)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities StartTLS = int64(512)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -442,7 +538,7 @@
     </Member>
     <Member MemberName="Status">
       <MemberSignature Language="C#" Value="Status" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Status = int32(4)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Status = int64(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -456,9 +552,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Thread">
+      <MemberSignature Language="C#" Value="Thread" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Thread = int64(8388608)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the THREAD extension defined in rfc5256.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="UidPlus">
       <MemberSignature Language="C#" Value="UidPlus" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UidPlus = int32(8192)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UidPlus = int64(8192)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -474,7 +586,7 @@
     </Member>
     <Member MemberName="Unselect">
       <MemberSignature Language="C#" Value="Unselect" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Unselect = int32(4096)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Unselect = int64(4096)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -488,9 +600,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Within">
+      <MemberSignature Language="C#" Value="Within" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Within = int64(524288)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the WITHIN extension defined in rfc5032.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="XList">
       <MemberSignature Language="C#" Value="XList" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int32(134217728)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int64(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
