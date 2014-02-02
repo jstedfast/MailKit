@@ -53,6 +53,7 @@ Features:
 &nbsp;&nbsp;* CONDSTORE
 &nbsp;&nbsp;* ESEARCH
 &nbsp;&nbsp;* SASL-IR
+&nbsp;&nbsp;* SORT
 &nbsp;&nbsp;* SPECIAL-USE
 &nbsp;&nbsp;* MOVE
 &nbsp;&nbsp;* XLIST
