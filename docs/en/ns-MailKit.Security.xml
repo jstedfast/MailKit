@@ -1,6 +1,6 @@
 <Namespace Name="MailKit.Security">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>SASL mechanisms used by the various clients to authenticate with a remote server.</summary>
+    <remarks>SASL mechanisms used by the various clients to authenticate with a remote server.</remarks>
   </Docs>
 </Namespace>

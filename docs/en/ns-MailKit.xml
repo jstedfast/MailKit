@@ -1,6 +1,6 @@
 <Namespace Name="MailKit">
   <Docs>
-    <summary>Mail library.</summary>
+    <summary>A cross-platform mail-client library.</summary>
     <remarks>
       <para>
 	MailKit is a cross-platform mail client library for Mono and .NET built using the MimeKit framework.

@@ -44,8 +44,8 @@
       </Attributes>
     </Assembly>
   </Assemblies>
-  <Remarks>To be added.</Remarks>
-  <Copyright>To be added.</Copyright>
+  <Remarks>MailKit is a cross-platform mail-client library for .NET.</Remarks>
+  <Copyright>Copyright (c) 2013, 2014 Jeffrey Stedfast</Copyright>
   <Types>
     <Namespace Name="MailKit">
       <Type Name="AlertEventArgs" Kind="Class" />
@@ -121,5 +121,5 @@
       <Type Name="SaslMechanismPlain" Kind="Class" />
     </Namespace>
   </Types>
-  <Title>MailKit.iOS</Title>
+  <Title>MailKit</Title>
 </Overview>
