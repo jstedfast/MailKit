@@ -72,11 +72,13 @@
       <Type Name="MessageFlags" Kind="Enumeration" />
       <Type Name="MessageSummary" Kind="Class" />
       <Type Name="MessageSummaryItems" Kind="Enumeration" />
+      <Type Name="MessageThread" Kind="Class" />
       <Type Name="NullProtocolLogger" Kind="Class" />
       <Type Name="ProtocolException" Kind="Class" />
       <Type Name="ProtocolLogger" Kind="Class" />
       <Type Name="SpecialFolder" Kind="Enumeration" />
       <Type Name="StatusItems" Kind="Enumeration" />
+      <Type Name="ThreadingAlgorithm" Kind="Enumeration" />
       <Type Name="UniqueId" Kind="Structure" />
     </Namespace>
     <Namespace Name="MailKit.Net.Imap">

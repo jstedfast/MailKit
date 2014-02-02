@@ -99,10 +99,10 @@ namespace MailKit.Net.Imap {
 
 		public ImapEngine ()
 		{
+			ThreadingAlgorithms = new HashSet<ThreadingAlgorithm> ();
 			FolderCache = new Dictionary<string, ImapFolder> ();
 			AuthenticationMechanisms = new HashSet<string> ();
 			CompressionAlgorithms = new HashSet<string> ();
-			ThreadingAlgorithms = new HashSet<string> ();
 			SupportedContexts = new HashSet<string> ();
 			SupportedCharsets = new HashSet<string> ();
 
@@ -148,7 +148,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="QueryCapabilities"/> method.
 		/// </remarks>
 		/// <value>The threading algorithms.</value>
-		public HashSet<string> ThreadingAlgorithms {
+		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
 			get; private set;
 		}
 
@@ -606,7 +606,16 @@ namespace MailKit.Net.Imap {
 					SupportedContexts.Add (atom.Substring ("CONTEXT=".Length));
 					Capabilities |= ImapCapabilities.Context;
 				} else if (atom.StartsWith ("THREAD=", StringComparison.Ordinal)) {
-					CompressionAlgorithms.Add (atom.Substring ("THREAD=".Length));
+					var algorithm = atom.Substring ("THREAD=".Length);
+					switch (algorithm) {
+					case "ORDEREDSUBJECT":
+						ThreadingAlgorithms.Add (ThreadingAlgorithm.OrderedSubject);
+						break;
+					case "REFERENCES":
+						ThreadingAlgorithms.Add (ThreadingAlgorithm.References);
+						break;
+					}
+
 					Capabilities |= ImapCapabilities.Thread;
 				} else {
 					switch (atom.ToUpperInvariant ()) {

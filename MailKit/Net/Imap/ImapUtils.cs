@@ -868,5 +868,66 @@ namespace MailKit.Net.Imap {
 
 			return flags;
 		}
+
+		static MessageThread ParseThread (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			MessageThread thread, node, child;
+			uint uid;
+
+			if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid))
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			node = thread = new MessageThread (new UniqueId (uid));
+
+			do {
+				token = engine.ReadToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.CloseParen)
+					break;
+
+				if (token.Type == ImapTokenType.OpenParen) {
+					child = ParseThread (engine, cancellationToken);
+					node.Add (child);
+				} else {
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid))
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					child = new MessageThread (new UniqueId (uid));
+					node.Add (child);
+					node = child;
+				}
+			} while (true);
+
+			return thread;
+		}
+
+		/// <summary>
+		/// Parses the threads.
+		/// </summary>
+		/// <returns>The threads.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static MessageThread[] ParseThreads (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var threads = new List<MessageThread> ();
+			ImapToken token;
+
+			do {
+				token = engine.PeekToken (cancellationToken);
+
+				if (token.Type == ImapTokenType.Eoln)
+					break;
+
+				token = engine.ReadToken (cancellationToken);
+
+				if (token.Type != ImapTokenType.OpenParen)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				threads.Add (ParseThread (engine, cancellationToken));
+			} while (true);
+
+			return threads.ToArray ();
+		}
 	}
 }

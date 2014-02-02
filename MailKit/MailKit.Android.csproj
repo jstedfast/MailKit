@@ -122,11 +122,13 @@
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageSummary.cs" />
     <Compile Include="MessageSummaryItems.cs" />
+    <Compile Include="MessageThread.cs" />
     <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
     <Compile Include="SpecialFolder.cs" />
     <Compile Include="StatusItems.cs" />
+    <Compile Include="ThreadingAlgorithm.cs" />
     <Compile Include="UniqueId.cs" />
   </ItemGroup>
   <ItemGroup>

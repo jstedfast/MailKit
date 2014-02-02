@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -209,6 +210,61 @@ namespace UnitTests.Net.Imap {
 						Assert.IsInstanceOfType (typeof (BodyPartMessage), multipart.BodyParts[2], "The type of the third child does not match.");
 
 						// FIXME: assert more stuff?
+					}
+				}
+			}
+		}
+
+		[Test]
+		public void TestParseExampleThreads ()
+		{
+			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine ()) {
+						MessageThread[] threads;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							threads = ImapUtils.ParseThreads (engine, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+
+						Assert.AreEqual (2, threads.Length, "Expected 2 threads.");
+
+						Assert.AreEqual ((uint) 2, threads[0].UniqueId.Value.Id);
+						Assert.AreEqual ((uint) 3, threads[1].UniqueId.Value.Id);
+
+						var branches = threads[1].Children.ToArray ();
+						Assert.AreEqual (1, branches.Length, "Expected 1 child.");
+						Assert.AreEqual ((uint) 6, branches[0].UniqueId.Value.Id);
+
+						branches = branches[0].Children.ToArray ();
+						Assert.AreEqual (2, branches.Length, "Expected 2 branches.");
+
+						Assert.AreEqual ((uint) 4, branches[0].UniqueId.Value.Id);
+						Assert.AreEqual ((uint) 44, branches[1].UniqueId.Value.Id);
+
+						var children = branches[0].Children.ToArray ();
+						Assert.AreEqual (1, children.Length, "Expected 1 child.");
+						Assert.AreEqual ((uint) 23, children[0].UniqueId.Value.Id);
+						Assert.AreEqual (0, children[0].Children.Count (), "Expected no children.");
+
+						children = branches[1].Children.ToArray ();
+						Assert.AreEqual (1, children.Length, "Expected 1 child.");
+						Assert.AreEqual ((uint) 7, children[0].UniqueId.Value.Id);
+
+						children = children[0].Children.ToArray ();
+						Assert.AreEqual (1, children.Length, "Expected 1 child.");
+						Assert.AreEqual ((uint) 96, children[0].UniqueId.Value.Id);
+						Assert.AreEqual (0, children[0].Children.Count (), "Expected no children.");
 					}
 				}
 			}

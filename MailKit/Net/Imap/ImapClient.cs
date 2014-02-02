@@ -142,11 +142,23 @@ namespace MailKit.Net.Imap {
 		/// Gets the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried durring the <see cref="Connect"/> method.
+		/// The authentication mechanisms are queried as part of the <see cref="Connect"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
 			get { return engine.AuthenticationMechanisms; }
+		}
+
+		/// <summary>
+		/// Gets the threading algorithms supported by the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// The threading algorithms are queried as part of the <see cref="Connect"/> and
+		/// <see cref="Authenticate"/> methods.
+		/// </remarks>
+		/// <value>The authentication mechanisms.</value>
+		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
+			get { return engine.ThreadingAlgorithms; }
 		}
 
 		/// <summary>

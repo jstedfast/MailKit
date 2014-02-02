@@ -3459,6 +3459,137 @@
         </exception>
       </Docs>
     </Member>
+    <Member MemberName="Thread">
+      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageThread[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />
+        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="algorithm">The threading algorithm to use.</param>
+        <param name="query">The search query.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Threads the messages in the folder that match the search query using the specified threading algorithm.
+            </summary>
+        <returns>An array of message threads.</returns>
+        <remarks>
+            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="algorithm" /> is not supported.
+            </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="query" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>One or more search terms in the <paramref name="query" /> are not supported by the IMAP server.</para>
+          <para>-or-</para>
+          <para>The server does not support the THREAD extension.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Thread">
+      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.UniqueId[] uids, MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.UniqueId[] uids, valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageThread[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />
+        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The subset of UIDs</param>
+        <param name="algorithm">The threading algorithm to use.</param>
+        <param name="query">The search query.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Threads the messages in the folder that match the search query using the specified threading algorithm.
+            </summary>
+        <returns>An array of message threads.</returns>
+        <remarks>
+            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="algorithm" /> is not supported.
+            </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="query" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uids" /> contains one or more invalid UIDs.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>One or more search terms in the <paramref name="query" /> are not supported by the IMAP server.</para>
+          <para>-or-</para>
+          <para>The server does not support the THREAD extension.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />

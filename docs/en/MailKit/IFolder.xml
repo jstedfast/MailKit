@@ -1872,6 +1872,64 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Thread">
+      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageThread[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />
+        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="algorithm">The threading algorithm to use.</param>
+        <param name="query">The search query.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Threads the messages in the folder that match the search query using the specified threading algorithm.
+            </summary>
+        <returns>An array of message threads.</returns>
+        <remarks>
+            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Thread">
+      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.UniqueId[] uids, MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.UniqueId[] uids, valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageThread[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />
+        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The subset of UIDs</param>
+        <param name="algorithm">The threading algorithm to use.</param>
+        <param name="query">The search query.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Threads the messages in the folder that match the search query using the specified threading algorithm.
+            </summary>
+        <returns>An array of message threads.</returns>
+        <remarks>
+            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="UidNext">
       <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; UidNext { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UidNext" />

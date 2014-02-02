@@ -1,0 +1,62 @@
+<Type Name="MessageThread" FullName="MailKit.MessageThread">
+  <TypeSignature Language="C#" Value="public sealed class MessageThread" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MessageThread extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A message thread.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Children">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageThread&gt; Children { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageThread&gt; Children" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageThread&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the children.
+            </summary>
+        <value>The children.</value>
+        <remarks>
+            Each child represents a reply to the message referenced by <see cref="T:MailKit.UniqueId" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UniqueId">
+      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; UniqueId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UniqueId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the unique identifier for the message.
+            </summary>
+        <value>The unique identifier.</value>
+        <remarks>
+            The unique identifier may be <c>null</c> if the message is missing
+            from the <see cref="T:MailKit.IFolder" /> or did not match the
+            <see cref="T:MailKit.Search.SearchQuery" />.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

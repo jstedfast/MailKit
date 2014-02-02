@@ -708,6 +708,31 @@ namespace MailKit {
 		UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of message threads.</returns>
+		/// <param name="algorithm">The threading algorithm to use.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of message threads.</returns>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="algorithm">The threading algorithm to use.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Occurs when the folder is deleted.
 		/// </summary>
 		event EventHandler<EventArgs> Deleted;

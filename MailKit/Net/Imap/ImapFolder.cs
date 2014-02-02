@@ -4081,7 +4081,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken)
 		{
-			List<string> args = new List<string> ();
+			var args = new List<string> ();
 
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -4165,7 +4165,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken)
 		{
-			List<string> args = new List<string> ();
+			var args = new List<string> ();
 
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -4391,6 +4391,174 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("SORT", ic.Result);
 
 			return (UniqueId[]) ic.UserData;
+		}
+
+		static void ThreadMatches (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		{
+			ic.UserData = ImapUtils.ParseThreads (engine, ic.CancellationToken);
+		}
+
+		/// <summary>
+		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of message threads.</returns>
+		/// <param name="algorithm">The threading algorithm to use.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="algorithm"/> is not supported.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="query"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the THREAD extension.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken)
+		{
+			var method = algorithm.ToString ().ToUpperInvariant ();
+			var args = new List<string> ();
+
+			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
+
+			if (!Engine.ThreadingAlgorithms.Contains (algorithm))
+				throw new ArgumentOutOfRangeException ("algorithm", "The specified threading algorithm is not supported.");
+
+			if (query == null)
+				throw new ArgumentNullException ("query");
+
+			CheckState (true, false);
+
+			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var expr = BuildQueryExpression (optimized, args);
+			var command = "UID THREAD " + method + " UTF-8 ";
+
+			command += expr + "\r\n";
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			ic.RegisterUntaggedHandler ("THREAD", ThreadMatches);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("THREAD", ic.Result);
+
+			return (MessageThread[]) ic.UserData;
+		}
+
+		/// <summary>
+		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// </remarks>
+		/// <returns>An array of message threads.</returns>
+		/// <param name="uids">The subset of UIDs</param>
+		/// <param name="algorithm">The threading algorithm to use.</param>
+		/// <param name="query">The search query.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="algorithm"/> is not supported.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="query"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uids"/> contains one or more invalid UIDs.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The server does not support the THREAD extension.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken)
+		{
+			var method = algorithm.ToString ().ToUpperInvariant ();
+			var set = ImapUtils.FormatUidSet (uids);
+			var args = new List<string> ();
+
+			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
+
+			if (!Engine.ThreadingAlgorithms.Contains (algorithm))
+				throw new ArgumentOutOfRangeException ("algorithm", "The specified threading algorithm is not supported.");
+
+			if (query == null)
+				throw new ArgumentNullException ("query");
+
+			CheckState (true, false);
+
+			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
+			var expr = BuildQueryExpression (optimized, args);
+			var command = "UID THREAD " + method + " UTF-8 ";
+
+			command += "UID " + set + " " + expr + "\r\n";
+
+			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			ic.RegisterUntaggedHandler ("THREAD", ThreadMatches);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("THREAD", ic.Result);
+
+			return (MessageThread[]) ic.UserData;
 		}
 
 		#region Untagged response handlers called by ImapEngine

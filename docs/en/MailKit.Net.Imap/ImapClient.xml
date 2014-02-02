@@ -161,7 +161,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            The authentication mechanisms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -505,6 +505,27 @@
         <value>The shared namespaces.</value>
         <remarks>
             The shared folder namespaces contain mailbox folders that are shared with the user.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ThreadingAlgorithms">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;MailKit.ThreadingAlgorithm&gt; ThreadingAlgorithms { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;valuetype MailKit.ThreadingAlgorithm&gt; ThreadingAlgorithms" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.1.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.HashSet&lt;MailKit.ThreadingAlgorithm&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the threading algorithms supported by the IMAP server.
+            </summary>
+        <value>The authentication mechanisms.</value>
+        <remarks>
+            The threading algorithms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> and
+            <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> methods.
             </remarks>
       </Docs>
     </Member>
