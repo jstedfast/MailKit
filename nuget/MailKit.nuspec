@@ -54,6 +54,7 @@ Features:
 &nbsp;&nbsp;* ESEARCH
 &nbsp;&nbsp;* SASL-IR
 &nbsp;&nbsp;* SORT
+&nbsp;&nbsp;* THREAD
 &nbsp;&nbsp;* SPECIAL-USE
 &nbsp;&nbsp;* MOVE
 &nbsp;&nbsp;* XLIST
