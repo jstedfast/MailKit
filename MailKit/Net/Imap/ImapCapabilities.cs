@@ -205,17 +205,17 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse     = 1 << 31,
+		SpecialUse     = 1 << 32,
 
 		/// <summary>
 		/// The server supports the MULTISEARCH extension defined in rfc6237.
 		/// </summary>
-		MultiSearch    = 1 << 32,
+		MultiSearch    = 1 << 33,
 
 		/// <summary>
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
-		Move           = 1 << 33,
+		Move           = 1 << 34,
 
 		#region GMail Extensions
 
@@ -224,12 +224,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the XLIST extension (GMail).
 		/// </summary>
-		XList          = 1 << 34,
+		XList          = 1 << 35,
 
 		/// <summary>
 		/// The server supports the X-GM-EXT1 extension (GMail).
 		/// </summary>
-		GMailExt1      = 1 << 35
+		GMailExt1      = 1 << 36
 
 		#endregion
 	}
