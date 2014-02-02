@@ -102,8 +102,9 @@ namespace MailKit.Net.Imap {
 			FolderCache = new Dictionary<string, ImapFolder> ();
 			AuthenticationMechanisms = new HashSet<string> ();
 			CompressionAlgorithms = new HashSet<string> ();
+			ThreadingAlgorithms = new HashSet<string> ();
+			SupportedContexts = new HashSet<string> ();
 			SupportedCharsets = new HashSet<string> ();
-			SupportedCharsets.Add ("UTF-8");
 
 			PersonalNamespaces = new FolderNamespaceCollection ();
 			SharedNamespaces = new FolderNamespaceCollection ();
@@ -131,11 +132,23 @@ namespace MailKit.Net.Imap {
 		/// Gets the compression algorithms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The compression algorithms are queried durring the
-		/// <see cref="Connect"/> method.
+		/// The compression algorithms are populated by the
+		/// <see cref="QueryCapabilities"/> method.
 		/// </remarks>
 		/// <value>The compression algorithms.</value>
 		public HashSet<string> CompressionAlgorithms {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the threading algorithms supported by the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// The threading algorithms are populated by the
+		/// <see cref="QueryCapabilities"/> method.
+		/// </remarks>
+		/// <value>The threading algorithms.</value>
+		public HashSet<string> ThreadingAlgorithms {
 			get; private set;
 		}
 
@@ -176,6 +189,14 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <value>The supported charsets.</value>
 		public HashSet<string> SupportedCharsets {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the supported contexts.
+		/// </summary>
+		/// <value>The supported contexts.</value>
+		public HashSet<string> SupportedContexts {
 			get; private set;
 		}
 
@@ -352,9 +373,18 @@ namespace MailKit.Net.Imap {
 				stream.Dispose ();
 
 			TagPrefix = (char) ('A' + (TagPrefixIndex++ % 26));
+			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
 			AuthenticationMechanisms.Clear ();
+			CompressionAlgorithms.Clear ();
+			ThreadingAlgorithms.Clear ();
+			SupportedCharsets.Clear ();
+			SupportedContexts.Clear ();
+
+			// TODO: should we clear the folder cache?
+
 			State = ImapEngineState.Connected;
+			SupportedCharsets.Add ("UTF-8");
 			CapabilitiesVersion = 0;
 			stream = imap;
 			Tag = 0;
@@ -557,6 +587,9 @@ namespace MailKit.Net.Imap {
 			ProtocolVersion = ImapProtocolVersion.Unknown;
 			Capabilities = ImapCapabilities.None;
 			AuthenticationMechanisms.Clear ();
+			CompressionAlgorithms.Clear ();
+			ThreadingAlgorithms.Clear ();
+			SupportedContexts.Clear ();
 			CapabilitiesVersion++;
 
 			var token = stream.ReadToken (cancellationToken);
@@ -569,6 +602,12 @@ namespace MailKit.Net.Imap {
 				} else if (atom.StartsWith ("COMPRESS=", StringComparison.Ordinal)) {
 					CompressionAlgorithms.Add (atom.Substring ("COMPRESS=".Length));
 					Capabilities |= ImapCapabilities.Compress;
+				} else if (atom.StartsWith ("CONTEXT=", StringComparison.Ordinal)) {
+					SupportedContexts.Add (atom.Substring ("CONTEXT=".Length));
+					Capabilities |= ImapCapabilities.Context;
+				} else if (atom.StartsWith ("THREAD=", StringComparison.Ordinal)) {
+					CompressionAlgorithms.Add (atom.Substring ("THREAD=".Length));
+					Capabilities |= ImapCapabilities.Thread;
 				} else {
 					switch (atom.ToUpperInvariant ()) {
 					case "IMAP4":         Capabilities |= ImapCapabilities.IMAP4; break;
@@ -589,12 +628,18 @@ namespace MailKit.Net.Imap {
 					case "CONDSTORE":     Capabilities |= ImapCapabilities.CondStore; break;
 					case "ESEARCH":       Capabilities |= ImapCapabilities.ESearch; break;
 					case "SASL-IR":       Capabilities |= ImapCapabilities.SaslIR; break;
+					case "WITHIN":        Capabilities |= ImapCapabilities.Within; break;
 					case "ENABLE":        Capabilities |= ImapCapabilities.Enable; break;
 					case "QRESYNC":       Capabilities |= ImapCapabilities.QuickResync; break;
+					case "SORT":          Capabilities |= ImapCapabilities.Sort; break;
 					case "LIST-EXTENDED": Capabilities |= ImapCapabilities.ListExtended; break;
 					case "CONVERT":       Capabilities |= ImapCapabilities.Convert; break;
+					case "ESORT":         Capabilities |= ImapCapabilities.ESort; break;
 					case "METADATA":      Capabilities |= ImapCapabilities.MetaData; break;
+					case "NOTIFY":        Capabilities |= ImapCapabilities.Notify; break;
+					case "LIST-STATUS":   Capabilities |= ImapCapabilities.ListStatus; break;
 					case "SPECIAL-USE":   Capabilities |= ImapCapabilities.SpecialUse; break;
+					case "MULTISEARCH":   Capabilities |= ImapCapabilities.MultiSearch; break;
 					case "MOVE":          Capabilities |= ImapCapabilities.Move; break;
 					case "XLIST":         Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":    Capabilities |= ImapCapabilities.GMailExt1; break;

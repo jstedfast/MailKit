@@ -36,7 +36,7 @@ namespace MailKit.Net.Imap {
 	/// <see cref="ImapClient"/>.
 	/// </remarks>
 	[Flags]
-	public enum ImapCapabilities {
+	public enum ImapCapabilities : long {
 		/// <summary>
 		/// The server does not support any additional extensions.
 		/// </summary>
@@ -138,44 +138,84 @@ namespace MailKit.Net.Imap {
 		Compress       = 1 << 18,
 
 		/// <summary>
+		/// The server supports the WITHIN extension defined in rfc5032.
+		/// </summary>
+		Within         = 1 << 19,
+
+		/// <summary>
 		/// The server supports the ENABLE extension defined in rfc5161.
 		/// </summary>
-		Enable         = 1 << 19,
+		Enable         = 1 << 20,
 
 		/// <summary>
 		/// The server supports the QRESYNC extension defined in rfc5162.
 		/// </summary>
-		QuickResync    = 1 << 20,
+		QuickResync    = 1 << 21,
+
+		/// <summary>
+		/// The server supports the SORT extension defined in rfc5256.
+		/// </summary>
+		Sort           = 1 << 22,
+
+		/// <summary>
+		/// The server supports the THREAD extension defined in rfc5256.
+		/// </summary>
+		Thread         = 1 << 23,
 
 		/// <summary>
 		/// The server supports the LIST-EXTENDED extension defined in rfc5258.
 		/// </summary>
-		ListExtended   = 1 << 21,
+		ListExtended   = 1 << 24,
 
 		/// <summary>
 		/// The server supports the CONVERT extension defined in rfc5259.
 		/// </summary>
-		Convert        = 1 << 22,
+		Convert        = 1 << 25,
+
+		/// <summary>
+		/// The server supports the ESORT extension defined in rfc5267.
+		/// </summary>
+		ESort          = 1 << 26,
+
+		/// <summary>
+		/// The server supports the CONTEXT extension defined in rfc5267.
+		/// </summary>
+		Context        = 1 << 27,
 
 		/// <summary>
 		/// The server supports the METADATA extension defined in rfc5464.
 		/// </summary>
-		MetaData       = 1 << 23,
+		MetaData       = 1 << 28,
+
+		/// <summary>
+		/// The server supports the NOTIFY extension defined in rfc5465.
+		/// </summary>
+		Notify         = 1 << 29,
 
 		/// <summary>
 		/// The server supports the FILTERS extension defined in rfc5466.
 		/// </summary>
-		Filters        = 1 << 24,
+		Filters        = 1 << 30,
+
+		/// <summary>
+		/// The server supports the LIST-STATUS extension defined in rfc5819.
+		/// </summary>
+		ListStatus     = 1 << 31,
 
 		/// <summary>
 		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse     = 1 << 25,
+		SpecialUse     = 1 << 31,
+
+		/// <summary>
+		/// The server supports the MULTISEARCH extension defined in rfc6237.
+		/// </summary>
+		MultiSearch    = 1 << 32,
 
 		/// <summary>
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
-		Move           = 1 << 26,
+		Move           = 1 << 33,
 
 		#region GMail Extensions
 
@@ -184,12 +224,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the XLIST extension (GMail).
 		/// </summary>
-		XList          = 1 << 27,
+		XList          = 1 << 34,
 
 		/// <summary>
 		/// The server supports the X-GM-EXT1 extension (GMail).
 		/// </summary>
-		GMailExt1      = 1 << 28
+		GMailExt1      = 1 << 35
 
 		#endregion
 	}

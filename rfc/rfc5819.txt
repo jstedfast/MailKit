@@ -1,0 +1,339 @@
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                       A. Melnikov
+Request for Comments: 5819                                 Isode Limited
+Category: Standards Track                                    T. Sirainen
+ISSN: 2070-1721                                             Unaffiliated
+                                                              March 2010
+
+
+   IMAP4 Extension for Returning STATUS Information in Extended LIST
+
+Abstract
+
+   Many IMAP clients display information about total number of
+   messages / total number of unseen messages in IMAP mailboxes.  In
+   order to do that, they are forced to issue a LIST or LSUB command and
+   to list all available mailboxes, followed by a STATUS command for
+   each mailbox found.  This document provides an extension to LIST
+   command that allows the client to request STATUS information for
+   mailboxes together with other information typically returned by the
+   LIST command.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 5741.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   http://www.rfc-editor.org/info/rfc5819.
+
+Copyright Notice
+
+   Copyright (c) 2010 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+Melnikov & Sirainen          Standards Track                    [Page 1]
+
+RFC 5819                         TITLE*                       March 2010
+
+
+Table of Contents
+
+   1. Introduction ....................................................2
+      1.1. Conventions Used in This Document ..........................2
+   2. STATUS Return Option to LIST Command ............................2
+   3. Examples ........................................................3
+   4. Formal Syntax ...................................................4
+   5. Security Considerations .........................................4
+   6. IANA Considerations .............................................4
+   7. Acknowledgements ................................................5
+   8. Normative References ............................................5
+
+1.  Introduction
+
+   Many IMAP clients display information about the total number of
+   messages / total number of unseen messages in IMAP mailboxes.  In
+   order to do that, they are forced to issue a LIST or LSUB command and
+   to list all available mailboxes, followed by a STATUS command for
+   each mailbox found.  This document provides an extension to LIST
+   command that allows the client to request STATUS information for
+   mailboxes together with other information typically returned by the
+   LIST command.
+
+1.1.  Conventions Used in This Document
+
+   In examples, "C:" indicates lines sent by a client that is connected
+   to a server.  "S:" indicates lines sent by the server to the client.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [Kwds].
+
+2.  STATUS Return Option to LIST Command
+
+   [RFC3501] explicitly disallows mailbox patterns in the STATUS
+   command.  The main reason was to discourage frequent use of the
+   STATUS command by clients, as it might be quite expensive for an IMAP
+   server to perform.  However, this prohibition had resulted in an
+   opposite effect: a new generation of IMAP clients appeared, that
+   issues a STATUS command for each mailbox returned by the LIST
+   command.  This behavior is suboptimal to say at least.  It wastes
+   extra bandwidth and, in the case of a client that doesn't support
+   IMAP pipelining, also degrades performance by using too many round
+   trips.  This document tries to remedy the situation by specifying a
+   single command that can be used by the client to request all the
+   necessary information.  In order to achieve this goal, this document
+   is extending the LIST command with a new return option, STATUS.  This
+   option takes STATUS data items as parameters.  For each selectable
+
+
+
+Melnikov & Sirainen          Standards Track                    [Page 2]
+
+RFC 5819                         TITLE*                       March 2010
+
+
+   mailbox matching the list pattern and selection options, the server
+   MUST return an untagged LIST response followed by an untagged STATUS
+   response containing the information requested in the STATUS return
+   option.
+
+   If an attempted STATUS for a listed mailbox fails because the mailbox
+   can't be selected (e.g., if the "l" ACL right [ACL] is granted to the
+   mailbox and the "r" right is not granted, or due to a race condition
+   between LIST and STATUS changing the mailbox to \NoSelect), the
+   STATUS response MUST NOT be returned and the LIST response MUST
+   include the \NoSelect attribute.  This means the server may have to
+   buffer the LIST reply until it has successfully looked up the
+   necessary STATUS information.
+
+   If the server runs into unexpected problems while trying to look up
+   the STATUS information, it MAY drop the corresponding STATUS reply.
+   In such a situation, the LIST command would still return a tagged OK
+   reply.
+
+3.  Examples
+
+   C: A01 LIST "" % RETURN (STATUS (MESSAGES UNSEEN))
+   S: * LIST () "."  "INBOX"
+   S: * STATUS "INBOX" (MESSAGES 17 UNSEEN 16)
+   S: * LIST () "." "foo"
+   S: * STATUS "foo" (MESSAGES 30 UNSEEN 29)
+   S: * LIST (\NoSelect) "." "bar"
+   S: A01 OK List completed.
+
+   The "bar" mailbox isn't selectable, so it has no STATUS reply.
+
+   C: A02 LIST (SUBSCRIBED RECURSIVEMATCH)"" % RETURN (STATUS
+      (MESSAGES))
+   S: * LIST (\Subscribed) "."  "INBOX"
+   S: * STATUS "INBOX" (MESSAGES 17)
+   S: * LIST () "." "foo" (CHILDINFO ("SUBSCRIBED"))
+   S: A02 OK List completed.
+
+   The LIST reply for "foo" is returned because it has matching
+   children, but no STATUS reply is returned because "foo" itself
+   doesn't match the selection criteria.
+
+
+
+
+
+
+
+
+
+
+Melnikov & Sirainen          Standards Track                    [Page 3]
+
+RFC 5819                         TITLE*                       March 2010
+
+
+4.  Formal Syntax
+
+   The following syntax specification uses the augmented Backus-Naur
+   Form (BNF) as described in [ABNF].  Terms not defined here are taken
+   from [RFC3501] and [LISTEXT].
+
+   return-option =/ status-option
+
+   status-option = "STATUS" SP "(" status-att *(SP status-att) ")"
+                   ;; This ABNF production complies with
+                   ;; <option-extension> syntax.
+
+5.  Security Considerations
+
+   This extension makes it a bit easier for clients to overload the
+   server by requesting STATUS information for a large number of
+   mailboxes.  However, as already noted in the introduction, existing
+   clients already try to do that by generating a large number of STATUS
+   commands for each mailbox in which they are interested.  While
+   performing STATUS information retrieval for big lists of mailboxes, a
+   server implementation needs to make sure that it can still serve
+   other IMAP connections and yield execution to other connections, when
+   necessary.
+
+6.  IANA Considerations
+
+   IMAP4 capabilities are registered by publishing a Standards Track or
+   IESG-approved Experimental RFC.  The "IMAP 4 Capabilities" registry
+   is available from the IANA webiste:
+
+      http://www.iana.org
+
+   This document defines the LIST-STATUS IMAP capability.  IANA has
+   added it to the registry.
+
+   IANA has also added the following new LIST-EXTENDED option to the
+   IANA registry established by [LISTEXT]:
+
+   To: iana@iana.org
+   Subject: Registration of LIST-EXTENDED option STATUS
+
+   LIST-EXTENDED option name: STATUS
+
+   LIST-EXTENDED option type: RETURN
+
+   LIST-EXTENDED option description: Causes the LIST command to return
+   STATUS responses in addition to LIST responses.
+
+
+
+
+Melnikov & Sirainen          Standards Track                    [Page 4]
+
+RFC 5819                         TITLE*                       March 2010
+
+
+   Published specification: RFC 5819
+
+   Security considerations: RFC 5819
+
+   Intended usage: COMMON
+
+   Person and email address to contact for further information:
+   Alexey Melnikov <Alexey.Melnikov@isode.com>
+
+   Owner/Change controller: iesg@ietf.org
+
+7.  Acknowledgements
+
+   Thanks to Philip Van Hoof who pointed out that STATUS and LIST
+   commands should be combined in order to optimize traffic and number
+   of round trips.
+
+8.  Normative References
+
+   [ABNF]     Crocker, D., Ed., and P. Overell, "Augmented BNF for
+              Syntax Specifications: ABNF", STD 68, RFC 5234, January
+              2008.
+
+   [ACL]      Melnikov, A., "IMAP4 Access Control List (ACL) Extension",
+              RFC 4314, December 2005.
+
+   [Kwds]     Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [LISTEXT]  Leiba, B. and A. Melnikov, "Internet Message Access
+              Protocol version 4 - LIST Command Extensions", RFC 5258,
+              June 2008.
+
+   [RFC3501]  Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL - VERSION
+              4rev1", RFC 3501, March 2003.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Melnikov & Sirainen          Standards Track                    [Page 5]
+
+RFC 5819                         TITLE*                       March 2010
+
+
+Authors' Addresses
+
+   Alexey Melnikov
+   Isode Limited
+   5 Castle Business Village
+   36 Station Road
+   Hampton, Middlesex  TW12 2BX
+   UK
+
+   EMail: Alexey.Melnikov@isode.com
+   URI:   http://www.melnikov.ca/
+
+
+   Timo Sirainen
+
+   EMail: tss@iki.fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Melnikov & Sirainen          Standards Track                    [Page 6]
+
