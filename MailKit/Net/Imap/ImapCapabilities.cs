@@ -45,177 +45,177 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server implements the core IMAP4 commands.
 		/// </summary>
-		IMAP4          = 1 << 0,
+		IMAP4          = 1L << 0,
 
 		/// <summary>
 		/// The server implements the core IMAP4rev1 commands.
 		/// </summary>
-		IMAP4rev1      = 1 << 1,
+		IMAP4rev1      = 1L << 1,
 
 		/// <summary>
 		/// The server supports the STATUS command.
 		/// </summary>
-		Status         = 1 << 2,
+		Status         = 1L << 2,
 
 		/// <summary>
 		/// The server supports the QUOTA extension defined in rfc2087.
 		/// </summary>
-		Quota          = 1 << 3,
+		Quota          = 1L << 3,
 
 		/// <summary>
 		/// The server supports the LITERAL+ extension defined in rfc2088.
 		/// </summary>
-		LiteralPlus    = 1 << 4,
+		LiteralPlus    = 1L << 4,
 
 		/// <summary>
 		/// The server supports the IDLE extension defined in rfc2177.
 		/// </summary>
-		Idle           = 1 << 5,
+		Idle           = 1L << 5,
 
 		/// <summary>
 		/// The server supports the NAMESPACE extension defined in rfc2342.
 		/// </summary>
-		Namespace      = 1 << 6,
+		Namespace      = 1L << 6,
 
 		/// <summary>
 		/// The server supports the CHILDREN extension defined in rfc3348.
 		/// </summary>
-		Children       = 1 << 7,
+		Children       = 1L << 7,
 
 		/// <summary>
 		/// The server supports the LOGINDISABLED extension defined in rfc3501.
 		/// </summary>
-		LoginDisabled  = 1 << 8,
+		LoginDisabled  = 1L << 8,
 
 		/// <summary>
 		/// The server supports the StartTLS extension defined in rfc3501.
 		/// </summary>
-		StartTLS       = 1 << 9,
+		StartTLS       = 1L << 9,
 
 		/// <summary>
 		/// The server supports the MULTIAPPEND extension defined in rfc3502.
 		/// </summary>
-		MultiAppend    = 1 << 10,
+		MultiAppend    = 1L << 10,
 
 		/// <summary>
 		/// The server supports the BINARY content extension defined in rfc3516.
 		/// </summary>
-		Binary         = 1 << 11,
+		Binary         = 1L << 11,
 
 		/// <summary>
 		/// The server supports the UNSELECT extension defined in rfc3691.
 		/// </summary>
-		Unselect       = 1 << 12,
+		Unselect       = 1L << 12,
 
 		/// <summary>
 		/// The server supports the UIDPLUS extension defined in rfc4315.
 		/// </summary>
-		UidPlus        = 1 << 13,
+		UidPlus        = 1L << 13,
 
 		/// <summary>
 		/// The server supports the CATENATE extension defined in rfc4469.
 		/// </summary>
-		Catenate       = 1 << 14,
+		Catenate       = 1L << 14,
 
 		/// <summary>
 		/// The server supports the CONDSTORE extension defined in rfc4551.
 		/// </summary>
-		CondStore      = 1 << 15,
+		CondStore      = 1L << 15,
 
 		/// <summary>
 		/// The server supports the ESEARCH extension defined in rfc4731.
 		/// </summary>
-		ESearch        = 1 << 16,
+		ESearch        = 1L << 16,
 
 		/// <summary>
 		/// The server supports the SASL-IR extension defined in rfc4959.
 		/// </summary>
-		SaslIR         = 1 << 17,
+		SaslIR         = 1L << 17,
 
 		/// <summary>
 		/// The server supports the COMPRESS extension defined in rfc4978.
 		/// </summary>
-		Compress       = 1 << 18,
+		Compress       = 1L << 18,
 
 		/// <summary>
 		/// The server supports the WITHIN extension defined in rfc5032.
 		/// </summary>
-		Within         = 1 << 19,
+		Within         = 1L << 19,
 
 		/// <summary>
 		/// The server supports the ENABLE extension defined in rfc5161.
 		/// </summary>
-		Enable         = 1 << 20,
+		Enable         = 1L << 20,
 
 		/// <summary>
 		/// The server supports the QRESYNC extension defined in rfc5162.
 		/// </summary>
-		QuickResync    = 1 << 21,
+		QuickResync    = 1L << 21,
 
 		/// <summary>
 		/// The server supports the SORT extension defined in rfc5256.
 		/// </summary>
-		Sort           = 1 << 22,
+		Sort           = 1L << 22,
 
 		/// <summary>
 		/// The server supports the THREAD extension defined in rfc5256.
 		/// </summary>
-		Thread         = 1 << 23,
+		Thread         = 1L << 23,
 
 		/// <summary>
 		/// The server supports the LIST-EXTENDED extension defined in rfc5258.
 		/// </summary>
-		ListExtended   = 1 << 24,
+		ListExtended   = 1L << 24,
 
 		/// <summary>
 		/// The server supports the CONVERT extension defined in rfc5259.
 		/// </summary>
-		Convert        = 1 << 25,
+		Convert        = 1L << 25,
 
 		/// <summary>
 		/// The server supports the ESORT extension defined in rfc5267.
 		/// </summary>
-		ESort          = 1 << 26,
+		ESort          = 1L << 26,
 
 		/// <summary>
 		/// The server supports the CONTEXT extension defined in rfc5267.
 		/// </summary>
-		Context        = 1 << 27,
+		Context        = 1L << 27,
 
 		/// <summary>
 		/// The server supports the METADATA extension defined in rfc5464.
 		/// </summary>
-		MetaData       = 1 << 28,
+		MetaData       = 1L << 28,
 
 		/// <summary>
 		/// The server supports the NOTIFY extension defined in rfc5465.
 		/// </summary>
-		Notify         = 1 << 29,
+		Notify         = 1L << 29,
 
 		/// <summary>
 		/// The server supports the FILTERS extension defined in rfc5466.
 		/// </summary>
-		Filters        = 1 << 30,
+		Filters        = 1L << 30,
 
 		/// <summary>
 		/// The server supports the LIST-STATUS extension defined in rfc5819.
 		/// </summary>
-		ListStatus     = 1 << 31,
+		ListStatus     = 1L << 31,
 
 		/// <summary>
 		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse     = (long) 1 << 32,
+		SpecialUse     = 1L << 32,
 
 		/// <summary>
 		/// The server supports the MULTISEARCH extension defined in rfc6237.
 		/// </summary>
-		MultiSearch    = (long) 1 << 33,
+		MultiSearch    = 1L << 33,
 
 		/// <summary>
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
-		Move           = (long) 1 << 34,
+		Move           = 1L << 34,
 
 		#region GMail Extensions
 
@@ -224,12 +224,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the XLIST extension (GMail).
 		/// </summary>
-		XList          = (long) 1 << 35,
+		XList          = 1L << 35,
 
 		/// <summary>
 		/// The server supports the X-GM-EXT1 extension (GMail).
 		/// </summary>
-		GMailExt1      = (long) 1 << 36
+		GMailExt1      = 1L << 36
 
 		#endregion
 	}
