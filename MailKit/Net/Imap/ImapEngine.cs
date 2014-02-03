@@ -862,7 +862,9 @@ namespace MailKit.Net.Imap {
 				}
 				break;
 			case ImapResponseCodeType.Capability:
+				Stream.UngetToken (token);
 				UpdateCapabilities (ImapTokenType.CloseBracket, cancellationToken);
+				token = ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Parse:
 				if (token.Type != ImapTokenType.CloseBracket) {

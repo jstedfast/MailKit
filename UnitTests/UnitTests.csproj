@@ -54,6 +54,7 @@
     <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.0.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.1.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.10.msg" />

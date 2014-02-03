@@ -320,7 +320,9 @@ namespace MailKit.Net.Imap {
 			host = hostName;
 
 			engine.Connect (new ImapStream (replayStream, logger), cancellationToken);
-			engine.QueryCapabilities (cancellationToken);
+
+			if (engine.CapabilitiesVersion == 0)
+				engine.QueryCapabilities (cancellationToken);
 		}
 
 		/// <summary>
