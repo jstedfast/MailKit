@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
 [assembly: AssemblyProduct ("MailKit")]
-[assembly: AssemblyCopyright ("Copyright © 2013, 2014 Jeffrey Stedfast")]
+[assembly: AssemblyCopyright ("Copyright © 2014 Jeffrey Stedfast")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -76,6 +76,6 @@ using System.Runtime.InteropServices;
 //
 // If there have only been bug fixes, bump the Micro Version and/or the Build Number
 //    in the AssemblyFileVersion attribute.
-[assembly: AssemblyInformationalVersion ("0.1")]
-[assembly: AssemblyFileVersion ("0.1.0.0")]
-[assembly: AssemblyVersion ("0.1.0.0")]
+[assembly: AssemblyInformationalVersion ("0.2")]
+[assembly: AssemblyFileVersion ("0.2.0.0")]
+[assembly: AssemblyVersion ("0.2.0.0")]
