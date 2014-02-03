@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
     <metadata minClientVersion="2.7">
         <id>MailKit</id>
-        <version>0.1.0.0</version>
+        <version>0.2.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -10,63 +10,21 @@
         <projectUrl>http://github.com/jstedfast/MailKit</projectUrl>
         <iconUrl>https://raw.github.com/jstedfast/MailKit/master/nuget/mailkit-50.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit.
+        <description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.
 
-Features:
-* SASL Authentication
-&nbsp;&nbsp;* DIGEST-MD5
-&nbsp;&nbsp;* CRAM-MD5
-&nbsp;&nbsp;* LOGIN
-&nbsp;&nbsp;* PLAIN
-&nbsp;&nbsp;* XOAUTH2 (partial support)
-* SMTP Client
-&nbsp;&nbsp;* Supports all of the SASL mechanisms listed above.
-&nbsp;&nbsp;* Supports SSL-wrapped connections via the "smtps" protocol.
-&nbsp;&nbsp;* Supports the STARTTLS extension.
-&nbsp;&nbsp;* Supports client SSL/TLS certificates.
-&nbsp;&nbsp;* Supports the 8BITMIME and BINARYMIME extensions.
-&nbsp;&nbsp;* Supports the PIPELINING extension.
-&nbsp;&nbsp;* Parses the SIZE extension value.
-&nbsp;&nbsp;* All APIs are cancellable.
-* POP3 Client
-&nbsp;&nbsp;* Supports all of the SASL mechanisms listed above.
-&nbsp;&nbsp;* Also supports authentication via APOP and USER/PASS.
-&nbsp;&nbsp;* Supports SSL-wrapped connections via the "pop3s" protocol.
-&nbsp;&nbsp;* Supports the STLS extension.
-&nbsp;&nbsp;* Supports client SSL/TLS certificates.
-&nbsp;&nbsp;* Supports the UIDL command.
-&nbsp;&nbsp;* All APIs are cancellable.
-* IMAP4 Client
-&nbsp;&nbsp;* Optimized for mobile devices (to limit network traffic as much as possible).
-&nbsp;&nbsp;* Supports all of the SASL mechanisms listed above.
-&nbsp;&nbsp;* Supports SSL-wrapped connections via the "imaps" protocol.
-&nbsp;&nbsp;* Supports client SSL/TLS certificates.
-&nbsp;&nbsp;* Supports the following extensions:
-&nbsp;&nbsp;* LITERAL+
-&nbsp;&nbsp;* NAMESPACE
-&nbsp;&nbsp;* CHILDREN
-&nbsp;&nbsp;* LOGINDISABLED
-&nbsp;&nbsp;* STARTTLS
-&nbsp;&nbsp;* MULTIAPPEND
-&nbsp;&nbsp;* UNSELECT
-&nbsp;&nbsp;* UIDPLUS
-&nbsp;&nbsp;* CONDSTORE
-&nbsp;&nbsp;* ESEARCH
-&nbsp;&nbsp;* SASL-IR
-&nbsp;&nbsp;* SORT
-&nbsp;&nbsp;* THREAD
-&nbsp;&nbsp;* SPECIAL-USE
-&nbsp;&nbsp;* MOVE
-&nbsp;&nbsp;* XLIST
-&nbsp;&nbsp;* X-GM-EXT1 (X-GM-MSGID and X-GM-THRID)
-&nbsp;&nbsp;* All APIs are cancellable.</description>
+Features include:
+* SASL Authentication via DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
+* A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME and PIPELINING
+* A fully-cancellable Pop3Client with support for STLS, UIDL, and APOP.
+* A fully-cancellable ImapClient with support for LITERAL+, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, SORT, THREAD, SPECIAL-USE, MOVE, XLIST, and X-GM-EXT1.
+</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
         <releaseNotes>* Initial public release.</releaseNotes>
         <copyright>Jeffrey Stedfast</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.21.0.0" />
+            <dependency id="MimeKit" version="0.22.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
