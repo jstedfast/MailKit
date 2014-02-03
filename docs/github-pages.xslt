@@ -14,8 +14,8 @@
           <xsl:value-of select="Title" />
         </title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <meta name="description" content="MimeKit : A C# MIME creation and parser library with support for S/MIME, PGP and Unix mbox spools." />
-        <link rel="stylesheet" type="text/css" media="screen" href="/MimeKit/stylesheets/stylesheet.css"/>
+        <meta name="description" content="MailKit: A cross-platform .NET mail-client library optimized for mobile." />
+        <link rel="stylesheet" type="text/css" media="screen" href="/MailKit/stylesheets/stylesheet.css"/>
         <xsl:call-template name="create-default-style" />
         <xsl:call-template name="create-default-script" />
       </head>
@@ -23,14 +23,14 @@
         <!-- HEADER -->
         <div id="header_wrap" class="outer">
           <header class="inner">
-            <a id="forkme_banner" href="https://github.com/jstedfast/MimeKit">View on GitHub</a>
+            <a id="forkme_banner" href="https://github.com/jstedfast/MailKit">View on GitHub</a>
 
-            <h1 id="project_title">MimeKit</h1>
-            <h2 id="project_tagline">A C# MIME creation and parser library with support for S/MIME, PGP and Unix mbox spools</h2>
+            <h1 id="project_title">MailKit</h1>
+            <h2 id="project_tagline">MailKit: A cross-platform .NET mail-client library optimized for mobile.</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/jstedfast/MimeKit/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/jstedfast/MimeKit/tarball/master">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/jstedfast/MailKit/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/jstedfast/MailKit/tarball/master">Download this project as a tar.gz file</a>
             </section>
           </header>
         </div>
@@ -51,7 +51,7 @@
         <!-- FOOTER  -->
         <div id="footer_wrap" class="outer">
           <footer class="inner">
-            <p class="copyright">MimeKit maintained by <a href="https://github.com/jstedfast">jstedfast</a></p>
+            <p class="copyright">MailKit maintained by <a href="https://github.com/jstedfast">jstedfast</a></p>
             <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
           </footer>
         </div>
