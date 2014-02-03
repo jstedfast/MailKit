@@ -38,7 +38,7 @@
     <ConsolePause>false</ConsolePause>
     <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\Release\lib\MonoAndroid\MimeKit.Android.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\lib\MonoAndroid\MailKit.Android.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
