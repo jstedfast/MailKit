@@ -178,6 +178,10 @@ namespace UnitTests.Net.Imap {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
+
+					// Note: Do not try XOAUTH2
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
 					client.Authenticate (credentials, CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
