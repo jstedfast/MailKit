@@ -80,6 +80,8 @@ namespace MailKit.Security {
 			var buf = new byte[UserEquals.Length + userName.Length + AuthBearer.Length + authToken.Length + 3];
 			for (int i = 0; i < UserEquals.Length; i++)
 				buf[index++] = (byte) UserEquals[i];
+			for (int i = 0; i < userName.Length; i++)
+				buf[index++] = (byte)userName[i];
 			buf[index++] = 1;
 			for (int i = 0; i < AuthBearer.Length; i++)
 				buf[index++] = (byte) AuthBearer[i];
