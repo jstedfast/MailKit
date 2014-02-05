@@ -111,8 +111,6 @@ namespace UnitTests.Net.Imap {
 
 			if (stream.Position == stream.Length) {
 				state = ImapReplayState.WaitForCommand;
-				//stream.Dispose ();
-				//stream = null;
 				index++;
 			}
 
@@ -178,6 +176,9 @@ namespace UnitTests.Net.Imap {
 
 		protected override void Dispose (bool disposing)
 		{
+			if (stream != null)
+				stream.Dispose ();
+
 			base.Dispose (disposing);
 			disposed = true;
 		}

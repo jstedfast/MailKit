@@ -109,8 +109,6 @@ namespace UnitTests.Net.Pop3 {
 
 			if (stream.Position == stream.Length) {
 				state = Pop3ReplayState.WaitForCommand;
-				stream.Dispose ();
-				stream = null;
 				index++;
 			}
 
@@ -145,6 +143,9 @@ namespace UnitTests.Net.Pop3 {
 
 			Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
 
+			if (stream != null)
+				stream.Dispose ();
+
 			stream = GetResourceStream (commands[index].Resource);
 			state = Pop3ReplayState.SendResponse;
 		}
@@ -168,6 +169,9 @@ namespace UnitTests.Net.Pop3 {
 
 		protected override void Dispose (bool disposing)
 		{
+			if (stream != null)
+				stream.Dispose ();
+
 			base.Dispose (disposing);
 			disposed = true;
 		}
