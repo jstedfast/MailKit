@@ -244,7 +244,7 @@ namespace MailKit.Net.Imap {
 
 			// attempt to align the end of the remaining input with ReadAheadSize
 			if (index >= start) {
-				start -= left < ReadAheadSize ? left : ReadAheadSize;
+				start -= Math.Min (ReadAheadSize, left);
 				MemMove (inbuf, index, start, left);
 				index = start;
 				start += left;

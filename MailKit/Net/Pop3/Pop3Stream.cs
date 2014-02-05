@@ -223,12 +223,9 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		unsafe int ReadAhead (byte* inbuf, int atleast)
+		unsafe int ReadAhead (byte* inbuf)
 		{
 			int left = inputEnd - inputIndex;
-
-			if (left >= atleast)
-				return left;
 
 			var network = Stream as NetworkStream;
 			if (network != null) {
@@ -247,7 +244,7 @@ namespace MailKit.Net.Pop3 {
 
 			// attempt to align the end of the remaining input with ReadAheadSize
 			if (index >= start) {
-				start -= left < ReadAheadSize ? left : ReadAheadSize;
+				start -= Math.Min (ReadAheadSize, left);
 				MemMove (inbuf, index, start, left);
 				index = start;
 				start += left;
@@ -342,7 +339,8 @@ namespace MailKit.Net.Pop3 {
 					byte* inptr, inend, outend;
 
 					// we need at least 3 bytes: ".\r\n"
-					ReadAhead (inbuf, 3);
+					if ((inputEnd - inputIndex) < 3)
+						ReadAhead (inbuf);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
@@ -419,8 +417,8 @@ namespace MailKit.Net.Pop3 {
 				fixed (byte* inbuf = input) {
 					byte* start, inptr, inend;
 
-					// we need at least 1 byte: "\n"
-					ReadAhead (inbuf, 1);
+					if (inputIndex == inputEnd)
+						ReadAhead (inbuf);
 
 					offset = inputIndex;
 					buffer = input;
