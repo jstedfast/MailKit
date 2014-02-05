@@ -83,6 +83,28 @@ namespace MailKit {
 		#endregion
 
 		/// <summary>
+		/// Determines whether two unique identifiers are equal.
+		/// </summary>
+		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are equal; otherwise, <c>false</c>.</returns>
+		/// <param name="uid1">The first unique id to compare.</param>
+		/// <param name="uid2">The second unique id to compare.</param>
+		public static bool operator == (UniqueId uid1, UniqueId uid2)
+		{
+			return uid1.Id == uid2.Id;
+		}
+
+		/// <summary>
+		/// Determines whether two unique identifiers are not equal.
+		/// </summary>
+		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are not equal; otherwise, <c>false</c>.</returns>
+		/// <param name="uid1">The first unique id to compare.</param>
+		/// <param name="uid2">The second unique id to compare.</param>
+		public static bool operator != (UniqueId uid1, UniqueId uid2)
+		{
+			return uid1.Id != uid2.Id;
+		}
+
+		/// <summary>
 		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>.
 		/// </summary>
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.UniqueId"/>.</param>
