@@ -644,7 +644,7 @@ namespace MailKit.Net.Imap {
 					case "LIST-EXTENDED": Capabilities |= ImapCapabilities.ListExtended; break;
 					case "CONVERT":       Capabilities |= ImapCapabilities.Convert; break;
 					case "ESORT":         Capabilities |= ImapCapabilities.ESort; break;
-					case "METADATA":      Capabilities |= ImapCapabilities.MetaData; break;
+					case "METADATA":      Capabilities |= ImapCapabilities.Metadata; break;
 					case "NOTIFY":        Capabilities |= ImapCapabilities.Notify; break;
 					case "LIST-STATUS":   Capabilities |= ImapCapabilities.ListStatus; break;
 					case "SPECIAL-USE":   Capabilities |= ImapCapabilities.SpecialUse; break;

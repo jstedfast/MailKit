@@ -118,12 +118,6 @@ namespace MailKit.Net.Imap {
 				throw new ObjectDisposedException ("ImapClient");
 		}
 
-		void CheckConnected ()
-		{
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
-		}
-
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
@@ -375,6 +369,9 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
 			if (IsConnected)
 				throw new InvalidOperationException ("The ImapClient is already connected.");
 
@@ -578,7 +575,7 @@ namespace MailKit.Net.Imap {
 			case SpecialFolder.Sent:    return engine.Sent;
 			case SpecialFolder.Trash:   return engine.Trash;
 			default:
-				throw new ArgumentOutOfRangeException ();
+				throw new ArgumentOutOfRangeException ("folder");
 			}
 		}
 

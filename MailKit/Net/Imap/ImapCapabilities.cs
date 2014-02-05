@@ -185,7 +185,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the METADATA extension defined in rfc5464.
 		/// </summary>
-		MetaData       = 1L << 28,
+		Metadata       = 1L << 28,
 
 		/// <summary>
 		/// The server supports the NOTIFY extension defined in rfc5465.
