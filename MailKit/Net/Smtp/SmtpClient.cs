@@ -90,6 +90,11 @@ namespace MailKit.Net.Smtp {
 		{
 		}
 
+		~SmtpClient ()
+		{
+			Dispose (false);
+		}
+
 		/// <summary>
 		/// Gets the capabilities supported by the SMTP server.
 		/// </summary>
@@ -1071,6 +1076,22 @@ namespace MailKit.Net.Smtp {
 		#region IDisposable
 
 		/// <summary>
+		/// Releases the unmanaged resources used by the <see cref="SmtpClient"/> and
+		/// optionally releases the managed resources.
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+		/// <c>false</c> to release only the unmanaged resources.</param>
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing && !disposed) {
+				if (queue != null)
+					queue.Dispose ();
+				disposed = true;
+				Disconnect ();
+			}
+		}
+
+		/// <summary>
 		/// Releases all resource used by the <see cref="MailKit.Net.Smtp.SmtpClient"/> object.
 		/// </summary>
 		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Smtp.SmtpClient"/>. The
@@ -1079,12 +1100,8 @@ namespace MailKit.Net.Smtp {
 		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Smtp.SmtpClient"/> was occupying.</remarks>
 		public void Dispose ()
 		{
-			if (!disposed) {
-				if (queue != null)
-					queue.Dispose ();
-				disposed = true;
-				Disconnect ();
-			}
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		#endregion

@@ -62,6 +62,11 @@ namespace MailKit {
 			this.stream = stream;
 		}
 
+		~ProtocolLogger ()
+		{
+			Dispose (false);
+		}
+
 		#region IProtocolLogger implementation
 
 		static void ValidateArguments (byte[] buffer, int offset, int count)
@@ -194,6 +199,18 @@ namespace MailKit {
 		#region IDisposable implementation
 
 		/// <summary>
+		/// Releases the unmanaged resources used by the <see cref="ProtocolLogger"/> and
+		/// optionally releases the managed resources.
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+		/// <c>false</c> to release only the unmanaged resources.</param>
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+				stream.Dispose ();
+		}
+
+		/// <summary>
 		/// Releases all resource used by the <see cref="MailKit.ProtocolLogger"/> object.
 		/// </summary>
 		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.ProtocolLogger"/>. The
@@ -202,7 +219,8 @@ namespace MailKit {
 		/// collector can reclaim the memory that the <see cref="MailKit.ProtocolLogger"/> was occupying.</remarks>
 		public void Dispose ()
 		{
-			stream.Dispose ();
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		#endregion

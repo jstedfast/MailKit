@@ -1,6 +1,6 @@
 <Overview>
   <Assemblies>
-    <Assembly Name="MailKit" Version="0.1.0.0">
+    <Assembly Name="MailKit" Version="0.2.0.0">
       <Attributes>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyCompany("")</AttributeName>
@@ -9,16 +9,16 @@
           <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2013, 2014 Jeffrey Stedfast")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2014 Jeffrey Stedfast")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("0.1.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("0.2.0.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.1")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.2")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>

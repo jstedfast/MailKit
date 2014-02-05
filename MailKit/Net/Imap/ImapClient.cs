@@ -90,6 +90,11 @@ namespace MailKit.Net.Imap {
 			logger = protocolLogger;
 		}
 
+		~ImapClient ()
+		{
+			Dispose (false);
+		}
+
 		/// <summary>
 		/// Gets the capabilities supported by the IMAP server.
 		/// </summary>
@@ -613,6 +618,21 @@ namespace MailKit.Net.Imap {
 		#region IDisposable implementation
 
 		/// <summary>
+		/// Releases the unmanaged resources used by the <see cref="ImapClient"/> and
+		/// optionally releases the managed resources.
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+		/// <c>false</c> to release only the unmanaged resources.</param>
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing && !disposed) {
+				engine.Dispose ();
+				logger.Dispose ();
+				disposed = true;
+			}
+		}
+
+		/// <summary>
 		/// Releases all resource used by the <see cref="MailKit.Net.Imap.ImapClient"/> object.
 		/// </summary>
 		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Imap.ImapClient"/>. The
@@ -621,11 +641,8 @@ namespace MailKit.Net.Imap {
 		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Imap.ImapClient"/> was occupying.</remarks>
 		public void Dispose ()
 		{
-			if (!disposed) {
-				engine.Dispose ();
-				logger.Dispose ();
-				disposed = true;
-			}
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		#endregion

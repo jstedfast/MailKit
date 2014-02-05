@@ -104,6 +104,11 @@ namespace MailKit.Net.Pop3 {
 		{
 		}
 
+		~Pop3Client ()
+		{
+			Dispose (false);
+		}
+
 		/// <summary>
 		/// Gets the capabilities supported by the POP3 server.
 		/// </summary>
@@ -1510,6 +1515,21 @@ namespace MailKit.Net.Pop3 {
 		#region IDisposable implementation
 
 		/// <summary>
+		/// Releases the unmanaged resources used by the <see cref="Pop3Client"/> and
+		/// optionally releases the managed resources.
+		/// </summary>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+		/// <c>false</c> to release only the unmanaged resources.</param>
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing && !disposed) {
+				engine.Disconnect ();
+				logger.Dispose ();
+				disposed = true;
+			}
+		}
+
+		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
 		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Pop3.Pop3Client"/>. The
@@ -1518,11 +1538,8 @@ namespace MailKit.Net.Pop3 {
 		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Pop3.Pop3Client"/> was occupying.</remarks>
 		public void Dispose ()
 		{
-			if (!disposed) {
-				engine.Disconnect ();
-				logger.Dispose ();
-				disposed = true;
-			}
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		#endregion
