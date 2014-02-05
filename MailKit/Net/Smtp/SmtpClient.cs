@@ -90,6 +90,10 @@ namespace MailKit.Net.Smtp {
 		{
 		}
 
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="MailKit.Net.Smtp.SmtpClient"/> is reclaimed by garbage collection.
+		/// </summary>
 		~SmtpClient ()
 		{
 			Dispose (false);
@@ -1094,9 +1098,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Releases all resource used by the <see cref="MailKit.Net.Smtp.SmtpClient"/> object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Smtp.SmtpClient"/>. The
-		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.Net.Smtp.SmtpClient"/> in an unusable state. After
-		/// calling <see cref="Dispose"/>, you must release all references to the <see cref="MailKit.Net.Smtp.SmtpClient"/> so
+		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.Net.Smtp.SmtpClient"/>. The
+		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.Net.Smtp.SmtpClient"/> in an unusable state. After
+		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.Net.Smtp.SmtpClient"/> so
 		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Smtp.SmtpClient"/> was occupying.</remarks>
 		public void Dispose ()
 		{

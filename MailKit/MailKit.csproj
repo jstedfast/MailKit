@@ -95,7 +95,6 @@
     <Compile Include="BodyPartMultipart.cs" />
     <Compile Include="BodyPartText.cs" />
     <Compile Include="Envelope.cs" />
-    <Compile Include="FlagsChangedEventArgs.cs" />
     <Compile Include="FolderAccess.cs" />
     <Compile Include="FolderAttributes.cs" />
     <Compile Include="FolderNamespace.cs" />
@@ -109,6 +108,7 @@
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
+    <Compile Include="MessageFlagsChangedEventArgs.cs" />
     <Compile Include="MessageSummary.cs" />
     <Compile Include="MessageSummaryItems.cs" />
     <Compile Include="MessageThread.cs" />

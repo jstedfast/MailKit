@@ -62,6 +62,10 @@ namespace MailKit {
 			this.stream = stream;
 		}
 
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="MailKit.ProtocolLogger"/>
+		/// is reclaimed by garbage collection.
+		/// </summary>
 		~ProtocolLogger ()
 		{
 			Dispose (false);
@@ -213,9 +217,9 @@ namespace MailKit {
 		/// <summary>
 		/// Releases all resource used by the <see cref="MailKit.ProtocolLogger"/> object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.ProtocolLogger"/>. The
-		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.ProtocolLogger"/> in an unusable state. After calling
-		/// <see cref="Dispose"/>, you must release all references to the <see cref="MailKit.ProtocolLogger"/> so the garbage
+		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.ProtocolLogger"/>. The
+		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.ProtocolLogger"/> in an unusable state. After calling
+		/// <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.ProtocolLogger"/> so the garbage
 		/// collector can reclaim the memory that the <see cref="MailKit.ProtocolLogger"/> was occupying.</remarks>
 		public void Dispose ()
 		{

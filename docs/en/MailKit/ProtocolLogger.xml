@@ -78,9 +78,9 @@
         <summary>
             Releases all resource used by the <see cref="T:MailKit.ProtocolLogger" /> object.
             </summary>
-        <remarks>Call <see cref="M:MailKit.ProtocolLogger.Dispose(System.Boolean)" /> when you are finished using the <see cref="T:MailKit.ProtocolLogger" />. The
-            <see cref="M:MailKit.ProtocolLogger.Dispose(System.Boolean)" /> method leaves the <see cref="T:MailKit.ProtocolLogger" /> in an unusable state. After calling
-            <see cref="M:MailKit.ProtocolLogger.Dispose(System.Boolean)" />, you must release all references to the <see cref="T:MailKit.ProtocolLogger" /> so the garbage
+        <remarks>Call <see cref="M:MailKit.ProtocolLogger.Dispose" /> when you are finished using the <see cref="T:MailKit.ProtocolLogger" />. The
+            <see cref="M:MailKit.ProtocolLogger.Dispose" /> method leaves the <see cref="T:MailKit.ProtocolLogger" /> in an unusable state. After calling
+            <see cref="M:MailKit.ProtocolLogger.Dispose" />, you must release all references to the <see cref="T:MailKit.ProtocolLogger" /> so the garbage
             collector can reclaim the memory that the <see cref="T:MailKit.ProtocolLogger" /> was occupying.</remarks>
       </Docs>
     </Member>
@@ -120,7 +120,10 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+            Releases unmanaged resources and performs other cleanup operations before the <see cref="T:MailKit.ProtocolLogger" />
+            is reclaimed by garbage collection.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

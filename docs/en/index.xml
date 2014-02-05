@@ -56,7 +56,6 @@
       <Type Name="BodyPartMultipart" Kind="Class" />
       <Type Name="BodyPartText" Kind="Class" />
       <Type Name="Envelope" Kind="Class" />
-      <Type Name="FlagsChangedEventArgs" Kind="Class" />
       <Type Name="FolderAccess" Kind="Enumeration" />
       <Type Name="FolderAttributes" Kind="Enumeration" />
       <Type Name="FolderNamespace" Kind="Class" />
@@ -70,6 +69,7 @@
       <Type Name="IProtocolLogger" Kind="Interface" />
       <Type Name="MessageEventArgs" Kind="Class" />
       <Type Name="MessageFlags" Kind="Enumeration" />
+      <Type Name="MessageFlagsChangedEventArgs" Kind="Class" />
       <Type Name="MessageSummary" Kind="Class" />
       <Type Name="MessageSummaryItems" Kind="Enumeration" />
       <Type Name="MessageThread" Kind="Class" />

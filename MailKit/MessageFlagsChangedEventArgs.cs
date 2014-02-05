@@ -1,5 +1,5 @@
 ﻿//
-// FlagsChangedEventArgs.cs
+// MessageFlagsChangedEventArgs.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -26,11 +26,11 @@
 
 namespace MailKit {
 	/// <summary>
-	/// Event args for the <see cref="IFolder.FlagsChanged"/> event.
+	/// Event args for the <see cref="IFolder.MessageFlagsChanged"/> event.
 	/// </summary>
-	public class FlagsChangedEventArgs : MessageEventArgs
+	public class MessageFlagsChangedEventArgs : MessageEventArgs
 	{
-		internal FlagsChangedEventArgs (int index) : base (index)
+		internal MessageFlagsChangedEventArgs (int index) : base (index)
 		{
 		}
 

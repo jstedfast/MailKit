@@ -90,6 +90,10 @@ namespace MailKit.Net.Imap {
 			logger = protocolLogger;
 		}
 
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="MailKit.Net.Imap.ImapClient"/> is reclaimed by garbage collection.
+		/// </summary>
 		~ImapClient ()
 		{
 			Dispose (false);
@@ -635,9 +639,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Releases all resource used by the <see cref="MailKit.Net.Imap.ImapClient"/> object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Imap.ImapClient"/>. The
-		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.Net.Imap.ImapClient"/> in an unusable state. After
-		/// calling <see cref="Dispose"/>, you must release all references to the <see cref="MailKit.Net.Imap.ImapClient"/> so
+		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.Net.Imap.ImapClient"/>. The
+		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.Net.Imap.ImapClient"/> in an unusable state. After
+		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.Net.Imap.ImapClient"/> so
 		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Imap.ImapClient"/> was occupying.</remarks>
 		public void Dispose ()
 		{

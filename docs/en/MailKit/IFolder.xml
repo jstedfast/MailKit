@@ -81,7 +81,7 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages.
@@ -109,7 +109,7 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages.
@@ -139,7 +139,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -170,7 +170,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -876,7 +876,6 @@
       <MemberType>Event</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;MailKit.FlagsChangedEventArgs&gt;</ReturnType>
@@ -1284,6 +1283,23 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="MessageFlagsChanged">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessageFlagsChangedEventArgs&gt; MessageFlagsChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessageFlagsChangedEventArgs&gt; MessageFlagsChanged" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;MailKit.MessageFlagsChangedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Occurs when flags changed on a message.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="MoveTo">
       <MemberSignature Language="C#" Value="public MailKit.UniqueId[] MoveTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] MoveTo(valuetype MailKit.UniqueId[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -1482,7 +1498,7 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages.
@@ -1510,7 +1526,7 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages.
@@ -1540,7 +1556,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -1571,7 +1587,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -1764,7 +1780,7 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages.
@@ -1792,7 +1808,7 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages.
@@ -1822,7 +1838,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -1853,7 +1869,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.FlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.

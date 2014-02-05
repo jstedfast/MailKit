@@ -104,6 +104,10 @@ namespace MailKit.Net.Pop3 {
 		{
 		}
 
+		/// <summary>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="MailKit.Net.Pop3.Pop3Client"/> is reclaimed by garbage collection.
+		/// </summary>
 		~Pop3Client ()
 		{
 			Dispose (false);
@@ -1532,9 +1536,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Pop3.Pop3Client"/>. The
-		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.Net.Pop3.Pop3Client"/> in an unusable state. After
-		/// calling <see cref="Dispose"/>, you must release all references to the <see cref="MailKit.Net.Pop3.Pop3Client"/> so
+		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.Net.Pop3.Pop3Client"/>. The
+		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.Net.Pop3.Pop3Client"/> in an unusable state. After
+		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.Net.Pop3.Pop3Client"/> so
 		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Pop3.Pop3Client"/> was occupying.</remarks>
 		public void Dispose ()
 		{
