@@ -32,7 +32,9 @@ namespace MailKit.Net.Imap {
 	/// A IMAP protocol exception.
 	/// </summary>
 	/// <remarks>
-	/// The exception that is thrown when there is an error communicating with a IMAP server.
+	/// The exception that is thrown when there is an error communicating with a IMAP server. A
+	/// <see cref="ImapProtocolException"/> is typically fatal and requires the <see cref="ImapClient"/>
+	/// to be reconnected.
 	/// </remarks>
 	[Serializable]
 	public class ImapProtocolException : ProtocolException

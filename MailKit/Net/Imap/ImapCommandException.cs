@@ -32,7 +32,8 @@ namespace MailKit.Net.Imap {
 	/// An exception that is thrown when an IMAP command returns NO or BAD.
 	/// </summary>
 	/// <remarks>
-	/// This exception can be thrown by most of the methods in <see cref="ImapFolder"/>.
+	/// The exception that is thrown when an IMAP command fails. Unlike a <see cref="ImapProtocolException"/>,
+	/// a <see cref="ImapCommandException"/> does not require the <see cref="ImapClient"/> to be reconnected.
 	/// </remarks>
 	[Serializable]
 	public class ImapCommandException : ProtocolException
