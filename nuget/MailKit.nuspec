@@ -21,7 +21,7 @@ Features include:
 </description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
         <releaseNotes>* Initial public release.</releaseNotes>
-        <copyright>Jeffrey Stedfast</copyright>
+        <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch</tags>
         <dependencies>
