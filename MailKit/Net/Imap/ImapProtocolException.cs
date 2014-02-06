@@ -44,7 +44,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		protected ImapProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		public ImapProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
 
@@ -53,7 +53,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">An inner exception.</param>
-		internal ImapProtocolException (string message, Exception innerException) : base (message, innerException)
+		public ImapProtocolException (string message, Exception innerException) : base (message, innerException)
 		{
 		}
 
@@ -61,7 +61,14 @@ namespace MailKit.Net.Imap {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>
-		internal ImapProtocolException (string message) : base (message)
+		public ImapProtocolException (string message) : base (message)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
+		/// </summary>
+		public ImapProtocolException ()
 		{
 		}
 	}

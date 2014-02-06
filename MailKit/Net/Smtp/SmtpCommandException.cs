@@ -102,7 +102,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="status">The status code.</param>
 		/// <param name="mailbox">The rejected mailbox.</param>
 		/// <param name="message">The error message.</param>
-		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
+		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
 		{
 			StatusCode = (int) status;
 			Mailbox = mailbox;
@@ -115,7 +115,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="code">The error code.</param>
 		/// <param name="status">The status code.</param>>
 		/// <param name="message">The error message.</param>
-		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
+		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
 		{
 			StatusCode = (int) status;
 			ErrorCode = code;

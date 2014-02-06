@@ -43,7 +43,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
+		public ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
 
@@ -54,6 +54,30 @@ namespace MailKit.Net.Imap {
 		/// <param name="result">The command result.</param>
 		internal ImapCommandException (string command, ImapCommandResult result)
 			: base (string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response.", command, result.ToString ().ToUpperInvariant ()))
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
+		/// </summary>
+		/// <param name="message">The error message.</param>
+		/// <param name="innerException">The inner exception.</param>
+		public ImapCommandException (string message, Exception innerException) : base (message, innerException)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
+		/// </summary>
+		/// <param name="message">The error message.</param>
+		public ImapCommandException (string message) : base (message)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
+		/// </summary>
+		public ImapCommandException ()
 		{
 		}
 	}
