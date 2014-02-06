@@ -80,7 +80,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
-		public SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
+		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");

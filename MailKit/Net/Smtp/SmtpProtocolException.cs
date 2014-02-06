@@ -44,7 +44,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		public SmtpProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		protected SmtpProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
 

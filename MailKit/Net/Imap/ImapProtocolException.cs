@@ -44,7 +44,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		public ImapProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		protected ImapProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
 

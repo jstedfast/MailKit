@@ -44,7 +44,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		public Pop3ProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		protected Pop3ProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
 

@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 namespace MailKit.Security {
 	/// <summary>
@@ -63,12 +64,50 @@ namespace MailKit.Security {
 	/// <remarks>
 	/// Typically indicates an error while parsing a server's challenge token.
 	/// </remarks>
+	[Serializable]
 	public class SaslException : ProtocolException
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		protected SaslException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+			ErrorCode = (SaslErrorCode) info.GetInt32 ("ErrorCode");
+			Mechanism = info.GetString ("Mechanism");
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.
+		/// </summary>
+		/// <param name="mechanism">The SASL mechanism.</param>
+		/// <param name="code">The error code.</param>
+		/// <param name="message">The error message.</param>
 		internal SaslException (string mechanism, SaslErrorCode code, string message) : base (message)
 		{
 			Mechanism = mechanism;
 			ErrorCode = code;
+		}
+
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
+		/// with information about the exception.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("ErrorCode", (int) ErrorCode);
+			info.AddValue ("Mechanism", Mechanism);
+
+			base.GetObjectData (info, context);
 		}
 
 		/// <summary>
