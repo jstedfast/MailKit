@@ -115,7 +115,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value><c>true</c> if the end of the data has been reached; otherwise, <c>false</c>.</value>
 		public bool IsEndOfData {
-			get; set;
+			get; private set;
 		}
 
 		/// <summary>
