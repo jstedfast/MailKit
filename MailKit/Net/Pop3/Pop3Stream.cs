@@ -337,12 +337,18 @@ namespace MailKit.Net.Pop3 {
 				fixed (byte* inbuf = input, outbuf = buffer) {
 					byte* outptr = outbuf + offset;
 					byte* outend = outptr + count;
+					bool allowReadAhead = true;
 					byte* inptr, inend;
 
 					do {
 						// we need at least 3 bytes: ".\r\n"
-						if ((inputEnd - inputIndex) < 3)
+						if ((inputEnd - inputIndex) < 3) {
+							if (!allowReadAhead)
+								break;
+
+							allowReadAhead = false;
 							ReadAhead (inbuf);
+						}
 
 						inptr = inbuf + inputIndex;
 						inend = inbuf + inputEnd;
