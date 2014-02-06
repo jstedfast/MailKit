@@ -1,5 +1,5 @@
 //
-// SmtpException.cs
+// SmtpCommandException.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -25,18 +25,14 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 using MimeKit;
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
-	/// An enumeration of the possible error codes that may be reported by a <see cref="SmtpException"/>.
+	/// An enumeration of the possible error codes that may be reported by a <see cref="SmtpCommandException"/>.
 	/// </summary>
-	/// <remarks>
-	/// Other than the <see cref="SmtpErrorCode.ProtocolError"/> error, none of
-	/// the errors require reconnecting to the <see cref="SmtpClient"/> before
-	/// continuing to send more messages.
-	/// </remarks>
 	public enum SmtpErrorCode {
 		/// <summary>
 		/// The message was not accepted for delivery. This may happen if
@@ -46,24 +42,17 @@ namespace MailKit.Net.Smtp {
 
 		/// <summary>
 		/// The sender's mailbox address was not accepted. Check the
-		/// <see cref="SmtpException.Mailbox"/> property for the
+		/// <see cref="SmtpCommandException.Mailbox"/> property for the
 		/// mailbox used as the sender's mailbox address.
 		/// </summary>
 		SenderNotAccepted,
 
 		/// <summary>
 		/// A recipient's mailbox address was not accepted. Check the
-		/// <see cref="SmtpException.Mailbox"/> property for the
+		/// <see cref="SmtpCommandException.Mailbox"/> property for the
 		/// particular recipient mailbox that was not acccepted.
 		/// </summary>
 		RecipientNotAccepted,
-
-		/// <summary>
-		/// A protocol error occurred. Once a protocol error occurs,
-		/// the connection is no longer usable and a new connection
-		/// must be made in order to continue sending messages.
-		/// </summary>
-		ProtocolError,
 
 		/// <summary>
 		/// An unexpected status code was returned by the server.
@@ -77,18 +66,29 @@ namespace MailKit.Net.Smtp {
 	/// An SMTP protocol exception.
 	/// </summary>
 	/// <remarks>
-	/// Indicates an error communicating with an SMTP server.
+	/// The exception that is thrown when an SMTP command fails. Unlike a <see cref="SmtpProtocolException"/>,
+	/// a <see cref="SmtpCommandException"/> does not require the <see cref="SmtpClient"/> to be reconnected.
 	/// </remarks>
-	public class SmtpException : ProtocolException
+	[Serializable]
+	public class SmtpCommandException : ProtocolException
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
 		/// <param name="code">The error code.</param>
 		/// <param name="status">The status code.</param>
 		/// <param name="mailbox">The rejected mailbox.</param>
 		/// <param name="message">The error message.</param>
-		internal SmtpException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
+		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
 		{
 			StatusCode = (int) status;
 			Mailbox = mailbox;
@@ -96,26 +96,15 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
 		/// <param name="code">The error code.</param>
 		/// <param name="status">The status code.</param>>
 		/// <param name="message">The error message.</param>
-		internal SmtpException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
+		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
 		{
 			StatusCode = (int) status;
 			ErrorCode = code;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpException"/> class.
-		/// </summary>
-		/// <param name="code">The error code.</param>
-		/// <param name="message">The error message.</param>
-		internal SmtpException (SmtpErrorCode code, string message) : base (message)
-		{
-			ErrorCode = code;
-			StatusCode = -1;
 		}
 
 		/// <summary>
@@ -149,9 +138,8 @@ namespace MailKit.Net.Smtp {
 		/// Gets the status code returned by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The raw SMTP status code that resulted in the <see cref="SmtpException"/>
-		/// being thrown or <c>-1</c> if the error was a
-		/// <see cref="SmtpErrorCode.ProtocolError"/>.
+		/// The raw SMTP status code that resulted in the <see cref="SmtpCommandException"/>
+		/// being thrown.
 		/// </remarks>
 		/// <value>The status code.</value>
 		public int StatusCode {

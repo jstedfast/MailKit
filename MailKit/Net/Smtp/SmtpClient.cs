@@ -164,7 +164,7 @@ namespace MailKit.Net.Smtp {
 		/// Gets whether or not the client is currently connected to an SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// When an <see cref="SmtpException"/> is caught, the connection state of the
+		/// When a <see cref="SmtpProtocolException"/> is caught, the connection state of the
 		/// <see cref="SmtpClient"/> should be checked before continuing.
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
@@ -215,7 +215,7 @@ namespace MailKit.Net.Smtp {
 						cancellationToken.ThrowIfCancellationRequested ();
 
 						if ((nread = stream.Read (input, inputEnd, input.Length - inputEnd)) == 0)
-							throw new SmtpException (SmtpErrorCode.ProtocolError, "The server replied with an incomplete response.");
+							throw new SmtpProtocolException ("The server replied with an incomplete response.");
 
 						inputEnd += nread;
 					}
@@ -229,7 +229,7 @@ namespace MailKit.Net.Smtp {
 							int value;
 
 							if (!TryParseInt32 (input, ref inputIndex, inputEnd, out value))
-								throw new SmtpException (SmtpErrorCode.ProtocolError, "Unable to parse status code returned by the server.");
+								throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
 
 							if (inputIndex == inputEnd) {
 								inputIndex = startIndex;
@@ -239,7 +239,7 @@ namespace MailKit.Net.Smtp {
 							if (code == 0) {
 								code = value;
 							} else if (value != code) {
-								throw new SmtpException (SmtpErrorCode.ProtocolError, "The status codes returned by the server did not match.");
+								throw new SmtpProtocolException ("The status codes returned by the server did not match.");
 							}
 
 							newLine = false;
@@ -384,7 +384,7 @@ namespace MailKit.Net.Smtp {
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				response = SendEhlo (false, cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
-					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
 				var lines = response.Response.Split ('\n');
 				for (int i = 0; i < lines.Length; i++) {
@@ -466,7 +466,10 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="SmtpException">
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
 		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken)
@@ -510,7 +513,7 @@ namespace MailKit.Net.Smtp {
 
 				while (!sasl.IsAuthenticated) {
 					if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
-						throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					challenge = sasl.Challenge (response.Response);
 					response = SendCommand (challenge, cancellationToken);
@@ -550,7 +553,7 @@ namespace MailKit.Net.Smtp {
 				var response = ReadResponse (cancellationToken);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
 				Ehlo (cancellationToken);
@@ -597,7 +600,10 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="SmtpException">
+		/// <exception cref="SmtpCommandException">
+		/// An SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
 		public void Connect (Uri uri, CancellationToken cancellationToken)
@@ -650,7 +656,7 @@ namespace MailKit.Net.Smtp {
 				response = ReadResponse (cancellationToken);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
 				Ehlo (cancellationToken);
@@ -658,7 +664,7 @@ namespace MailKit.Net.Smtp {
 				if (!smtps & Capabilities.HasFlag (SmtpCapabilities.StartTLS)) {
 					response = SendCommand ("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
-						throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
@@ -698,7 +704,8 @@ namespace MailKit.Net.Smtp {
 				try {
 					SendCommand ("QUIT", cancellationToken);
 				} catch (OperationCanceledException) {
-				} catch (SmtpException) {
+				} catch (SmtpProtocolException) {
+				} catch (SmtpCommandException) {
 				} catch (IOException) {
 				}
 			}
@@ -723,8 +730,11 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="SmtpException">
-		/// The SMTP server returned an unexpected status code.
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
 		/// </exception>
 		public void NoOp (CancellationToken cancellationToken)
 		{
@@ -736,7 +746,7 @@ namespace MailKit.Net.Smtp {
 			var response = SendCommand ("NOOP", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
-				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 		}
 
 		void Disconnect ()
@@ -896,11 +906,11 @@ namespace MailKit.Net.Smtp {
 				break;
 			case SmtpStatusCode.MailboxNameNotAllowed:
 			case SmtpStatusCode.MailboxUnavailable:
-				throw new SmtpException (SmtpErrorCode.SenderNotAccepted, response.StatusCode, mailbox, response.Response);
+				throw new SmtpCommandException (SmtpErrorCode.SenderNotAccepted, response.StatusCode, mailbox, response.Response);
 			case SmtpStatusCode.AuthenticationRequired:
 				throw new UnauthorizedAccessException (response.Response);
 			default:
-				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			}
 		}
 
@@ -926,11 +936,11 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.MailboxNameNotAllowed:
 			case SmtpStatusCode.MailboxUnavailable:
 			case SmtpStatusCode.MailboxBusy:
-				throw new SmtpException (SmtpErrorCode.RecipientNotAccepted, response.StatusCode, mailbox, response.Response);
+				throw new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, response.StatusCode, mailbox, response.Response);
 			case SmtpStatusCode.AuthenticationRequired:
 				throw new UnauthorizedAccessException (response.Response);
 			default:
-				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			}
 		}
 
@@ -951,7 +961,7 @@ namespace MailKit.Net.Smtp {
 			var response = SendCommand ("DATA", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
-				throw new SmtpException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 			var options = FormatOptions.Default.Clone ();
 			options.NewLineFormat = NewLineFormat.Dos;
@@ -972,7 +982,7 @@ namespace MailKit.Net.Smtp {
 
 			switch (response.StatusCode) {
 			default:
-				throw new SmtpException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
+				throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
 			case SmtpStatusCode.AuthenticationRequired:
 				throw new UnauthorizedAccessException (response.Response);
 			case SmtpStatusCode.Ok:
@@ -986,9 +996,8 @@ namespace MailKit.Net.Smtp {
 				var response = SendCommand ("RSET", CancellationToken.None);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					Disconnect (false, CancellationToken.None);
-			} catch (SmtpException ex) {
-				if (ex.ErrorCode == SmtpErrorCode.ProtocolError)
-					Disconnect ();
+			} catch (SmtpCommandException) {
+				// do not disconnect
 			} catch {
 				Disconnect ();
 			}
@@ -1024,7 +1033,10 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="SmtpException">
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
 		public void Send (MimeMessage message, CancellationToken cancellationToken)
@@ -1062,12 +1074,10 @@ namespace MailKit.Net.Smtp {
 
 				Data (message, cancellationToken);
 			} catch (UnauthorizedAccessException) {
+				// do not disconnect
 				throw;
-			} catch (SmtpException ex) {
-				if (ex.ErrorCode == SmtpErrorCode.ProtocolError)
-					Disconnect ();
-				else
-					Reset ();
+			} catch (SmtpCommandException) {
+				// do not disconnect
 				throw;
 			} catch {
 				Disconnect ();

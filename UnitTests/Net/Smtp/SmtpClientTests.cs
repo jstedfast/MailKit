@@ -287,7 +287,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Send (CreateSimpleMessage (), CancellationToken.None);
 					Assert.Fail ("Expected an SmtpException");
-				} catch (SmtpException sex) {
+				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
@@ -350,7 +350,7 @@ namespace UnitTests.Net.Smtp {
 				try {
 					client.Send (CreateSimpleMessage (), CancellationToken.None);
 					Assert.Fail ("Expected an SmtpException");
-				} catch (SmtpException sex) {
+				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
