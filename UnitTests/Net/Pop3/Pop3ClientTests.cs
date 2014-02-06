@@ -48,14 +48,14 @@ namespace UnitTests.Net.Pop3 {
 		public void TestBasicPop3Client ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "stat1.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "quit.txt"));
+			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
 				try {
@@ -112,14 +112,14 @@ namespace UnitTests.Net.Pop3 {
 		public void TestBasicPop3ClientUnixLineEndings ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "stat1.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "quit.txt"));
+			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
+			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
 				try {
@@ -176,11 +176,11 @@ namespace UnitTests.Net.Pop3 {
 		public void TestAuthenticationExceptions ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "err.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "quit.txt"));
+			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
 				try {

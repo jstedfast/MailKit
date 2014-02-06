@@ -195,14 +195,14 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\unselect-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\xlist.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\capa1.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\capa2.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\err.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\greeting.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\ok.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\quit.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\retr1.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\stat1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa2.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\err.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\greeting.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\ok.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\quit.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\retr1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\comcast\stat1.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-required.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-successful.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-auth-plain.txt" />
@@ -228,6 +228,7 @@
     <Folder Include="Net\Pop3\Resources\" />
     <Folder Include="Net\Smtp\" />
     <Folder Include="Net\Smtp\Resources\" />
+    <Folder Include="Net\Pop3\Resources\comcast\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
