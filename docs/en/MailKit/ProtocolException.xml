@@ -1,6 +1,6 @@
 <Type Name="ProtocolException" FullName="MailKit.ProtocolException">
   <TypeSignature Language="C#" Value="public abstract class ProtocolException : Exception" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ProtocolException extends System.Exception" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit ProtocolException extends System.Exception" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
@@ -30,6 +30,26 @@
       </Parameters>
       <Docs>
         <param name="message">The error message.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.ProtocolException" /> class.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ProtocolException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">The serialization info.</param>
+        <param name="context">The streaming context.</param>
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.ProtocolException" /> class.
             </summary>

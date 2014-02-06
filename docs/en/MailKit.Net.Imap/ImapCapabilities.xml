@@ -348,13 +348,28 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Metadata">
+      <MemberSignature Language="C#" Value="Metadata" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Metadata = int64(268435456)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the METADATA extension defined in rfc5464.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="MetaData">
       <MemberSignature Language="C#" Value="MetaData" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MetaData = int64(268435456)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>

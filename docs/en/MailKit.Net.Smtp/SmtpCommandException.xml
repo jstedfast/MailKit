@@ -1,9 +1,8 @@
-<Type Name="SmtpException" FullName="MailKit.Net.Smtp.SmtpException">
-  <TypeSignature Language="C#" Value="public class SmtpException : MailKit.ProtocolException" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SmtpException extends MailKit.ProtocolException" />
+<Type Name="SmtpCommandException" FullName="MailKit.Net.Smtp.SmtpCommandException">
+  <TypeSignature Language="C#" Value="public class SmtpCommandException : MailKit.ProtocolException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit SmtpCommandException extends MailKit.ProtocolException" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -15,16 +14,36 @@
             An SMTP protocol exception.
             </summary>
     <remarks>
-            Indicates an error communicating with an SMTP server.
+            The exception that is thrown when an SMTP command fails. Unlike a <see cref="T:MailKit.Net.Smtp.SmtpProtocolException" />,
+            a <see cref="T:MailKit.Net.Smtp.SmtpCommandException" /> does not require the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> to be reconnected.
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SmtpCommandException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">The serialization info.</param>
+        <param name="context">The streaming context.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Smtp.SmtpCommandException" /> class.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="ErrorCode">
       <MemberSignature Language="C#" Value="public MailKit.Net.Smtp.SmtpErrorCode ErrorCode { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Smtp.SmtpErrorCode ErrorCode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -47,7 +66,6 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MailboxAddress Mailbox" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -59,7 +77,7 @@
             </summary>
         <value>The mailbox.</value>
         <remarks>
-            This property will only be available when the <see cref="P:MailKit.Net.Smtp.SmtpException.ErrorCode" />
+            This property will only be available when the <see cref="P:MailKit.Net.Smtp.SmtpCommandException.ErrorCode" />
             value is either <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.SenderNotAccepted" /> or
             <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.RecipientNotAccepted" /> and may be used
             to help the user decide how to proceed.
@@ -71,7 +89,6 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 StatusCode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -83,9 +100,8 @@
             </summary>
         <value>The status code.</value>
         <remarks>
-            The raw SMTP status code that resulted in the <see cref="T:MailKit.Net.Smtp.SmtpException" />
-            being thrown or <c>-1</c> if the error was a
-            <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.ProtocolError" />.
+            The raw SMTP status code that resulted in the <see cref="T:MailKit.Net.Smtp.SmtpCommandException" />
+            being thrown.
             </remarks>
       </Docs>
     </Member>

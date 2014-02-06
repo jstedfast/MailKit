@@ -11,7 +11,7 @@
   </Base>
   <Docs>
     <summary>
-            An enumeration of the possible error codes that may be reported by a <see cref="T:MailKit.Net.Smtp.SmtpException" />.
+            An enumeration of the possible error codes that may be reported by a <see cref="T:MailKit.Net.Smtp.SmtpCommandException" />.
             </summary>
     <remarks>
             Other than the <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.ProtocolError" /> error, none of
@@ -44,7 +44,6 @@
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Smtp.SmtpErrorCode</ReturnType>
@@ -71,7 +70,7 @@
       <Docs>
         <summary>
             A recipient's mailbox address was not accepted. Check the
-            <see cref="P:MailKit.Net.Smtp.SmtpException.Mailbox" /> property for the
+            <see cref="P:MailKit.Net.Smtp.SmtpCommandException.Mailbox" /> property for the
             particular recipient mailbox that was not acccepted.
             </summary>
       </Docs>
@@ -90,14 +89,14 @@
       <Docs>
         <summary>
             The sender's mailbox address was not accepted. Check the
-            <see cref="P:MailKit.Net.Smtp.SmtpException.Mailbox" /> property for the
+            <see cref="P:MailKit.Net.Smtp.SmtpCommandException.Mailbox" /> property for the
             mailbox used as the sender's mailbox address.
             </summary>
       </Docs>
     </Member>
     <Member MemberName="UnexpectedStatusCode">
       <MemberSignature Language="C#" Value="UnexpectedStatusCode" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpErrorCode UnexpectedStatusCode = int32(4)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpErrorCode UnexpectedStatusCode = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>

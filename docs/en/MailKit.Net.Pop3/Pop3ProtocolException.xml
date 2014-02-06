@@ -1,9 +1,8 @@
-<Type Name="ImapProtocolException" FullName="MailKit.Net.Imap.ImapProtocolException">
-  <TypeSignature Language="C#" Value="public class ImapProtocolException : MailKit.ProtocolException" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ImapProtocolException extends MailKit.ProtocolException" />
+<Type Name="Pop3ProtocolException" FullName="MailKit.Net.Pop3.Pop3ProtocolException">
+  <TypeSignature Language="C#" Value="public class Pop3ProtocolException : MailKit.ProtocolException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Pop3ProtocolException extends MailKit.ProtocolException" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -12,17 +11,17 @@
   <Interfaces />
   <Docs>
     <summary>
-            A IMAP protocol exception.
+            A POP3 protocol exception.
             </summary>
     <remarks>
-            The exception that is thrown when there is an error communicating with an IMAP server. A
-            <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> is typically fatal and requires the <see cref="T:MailKit.Net.Imap.ImapClient" />
+            The exception that is thrown when there is an error communicating with a POP3 server. A
+            <see cref="T:MailKit.Net.Pop3.Pop3ProtocolException" /> is typically fatal and requires the <see cref="T:MailKit.Net.Pop3.Pop3Client" />
             to be reconnected.
             </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected ImapProtocolException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="C#" Value="protected Pop3ProtocolException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
@@ -36,7 +35,7 @@
         <param name="info">The serialization info.</param>
         <param name="context">The streaming context.</param>
         <summary>
-            Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> class.
+            Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3ProtocolException" /> class.
             </summary>
         <remarks>To be added.</remarks>
       </Docs>

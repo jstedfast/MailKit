@@ -136,6 +136,12 @@
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            A POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            An POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
@@ -261,6 +267,12 @@
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is already connected.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            A POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
@@ -309,6 +321,12 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>
@@ -364,6 +382,12 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>
@@ -524,6 +548,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            A POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -569,6 +599,12 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>
@@ -622,6 +658,12 @@
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageCount">
@@ -661,6 +703,12 @@
             An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
       </Docs>
@@ -708,6 +756,12 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>
@@ -761,6 +815,12 @@
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
@@ -806,6 +866,12 @@
             </exception>
         <exception cref="T:System.UnauthorizedAccessException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>
@@ -856,6 +922,12 @@
         <exception cref="T:System.UnauthorizedAccessException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
@@ -896,6 +968,12 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>
@@ -946,6 +1024,12 @@
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
@@ -990,6 +1074,12 @@
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Implementation">
@@ -1032,7 +1122,7 @@
         <value>
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
         <remarks>
-            When a <see cref="T:MailKit.Net.Pop3.Pop3Exception" /> is caught, the connection state of the
+            When a <see cref="T:MailKit.Net.Pop3.Pop3ProtocolException" /> is caught, the connection state of the
             <see cref="T:MailKit.Net.Pop3.Pop3Client" /> should be checked before continuing.
             </remarks>
       </Docs>
@@ -1094,6 +1184,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
             The NOOP command failed.
             </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -1133,6 +1229,12 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>
@@ -1193,6 +1295,12 @@
             An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
+            A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            A POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
       </Docs>

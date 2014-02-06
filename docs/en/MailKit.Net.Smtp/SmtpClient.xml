@@ -105,6 +105,12 @@
         <exception cref="T:MailKit.Net.Smtp.SmtpException">
             An SMTP protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpCommandException">
+            The SMTP command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpProtocolException">
+            An SMTP protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
@@ -227,6 +233,12 @@
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is already connected.
             </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpCommandException">
+            An SMTP command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpProtocolException">
+            An SMTP protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
@@ -344,7 +356,7 @@
         <value>
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
         <remarks>
-            When an <see cref="T:MailKit.Net.Smtp.SmtpException" /> is caught, the connection state of the
+            When a <see cref="T:MailKit.Net.Smtp.SmtpProtocolException" /> is caught, the connection state of the
             <see cref="T:MailKit.Net.Smtp.SmtpClient" /> should be checked before continuing.
             </remarks>
       </Docs>
@@ -410,6 +422,12 @@
         <exception cref="T:MailKit.Net.Smtp.SmtpException">
             The SMTP server returned an unexpected status code.
             </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpCommandException">
+            The SMTP command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpProtocolException">
+            An SMTP protocol error occurred.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -459,6 +477,12 @@
             An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Smtp.SmtpException">
+            An SMTP protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpCommandException">
+            The SMTP command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpProtocolException">
             An SMTP protocol exception occurred.
             </exception>
       </Docs>

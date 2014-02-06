@@ -91,14 +91,16 @@
     <Namespace Name="MailKit.Net.Pop3">
       <Type Name="Pop3Capabilities" Kind="Enumeration" />
       <Type Name="Pop3Client" Kind="Class" />
+      <Type Name="Pop3CommandException" Kind="Class" />
       <Type Name="Pop3ErrorType" Kind="Enumeration" />
-      <Type Name="Pop3Exception" Kind="Class" />
+      <Type Name="Pop3ProtocolException" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Net.Smtp">
       <Type Name="SmtpCapabilities" Kind="Enumeration" />
       <Type Name="SmtpClient" Kind="Class" />
+      <Type Name="SmtpCommandException" Kind="Class" />
       <Type Name="SmtpErrorCode" Kind="Enumeration" />
-      <Type Name="SmtpException" Kind="Class" />
+      <Type Name="SmtpProtocolException" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Search">
       <Type Name="BinarySearchQuery" Kind="Class" />
