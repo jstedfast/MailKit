@@ -5,6 +5,7 @@
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -28,6 +29,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -55,6 +57,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
@@ -77,6 +80,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
@@ -100,6 +104,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -127,6 +132,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -153,6 +159,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -173,6 +180,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>

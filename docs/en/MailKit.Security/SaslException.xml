@@ -1,10 +1,11 @@
 <Type Name="SaslException" FullName="MailKit.Security.SaslException">
   <TypeSignature Language="C#" Value="public class SaslException : MailKit.ProtocolException" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SaslException extends MailKit.ProtocolException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit SaslException extends MailKit.ProtocolException" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.ProtocolException</BaseTypeName>
@@ -19,6 +20,26 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SaslException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">The serialization info.</param>
+        <param name="context">The streaming context.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Security.SaslException" /> class.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="ErrorCode">
       <MemberSignature Language="C#" Value="public MailKit.Security.SaslErrorCode ErrorCode { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Security.SaslErrorCode ErrorCode" />
@@ -26,6 +47,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Security.SaslErrorCode</ReturnType>
@@ -38,6 +60,33 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">The serialization info.</param>
+        <param name="context">The streaming context.</param>
+        <summary>
+            When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" />
+            with information about the exception.
+            </summary>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="info" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Mechanism">
       <MemberSignature Language="C#" Value="public string Mechanism { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string Mechanism" />
@@ -45,6 +94,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

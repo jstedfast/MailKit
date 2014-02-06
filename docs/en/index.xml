@@ -1,24 +1,24 @@
 <Overview>
   <Assemblies>
-    <Assembly Name="MailKit" Version="0.2.0.0">
+    <Assembly Name="MailKit" Version="0.3.0.0">
       <Attributes>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCompany("")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCompany("Xamarin Inc.")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2014 Jeffrey Stedfast")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2014 Xamarin Inc. (www.xamarin.com)")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("0.2.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("0.3.0.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.2")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.3")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
@@ -45,7 +45,7 @@
     </Assembly>
   </Assemblies>
   <Remarks>MailKit is a cross-platform mail-client library for .NET.</Remarks>
-  <Copyright>Copyright (c) 2013, 2014 Jeffrey Stedfast</Copyright>
+  <Copyright>Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)</Copyright>
   <Types>
     <Namespace Name="MailKit">
       <Type Name="AlertEventArgs" Kind="Class" />

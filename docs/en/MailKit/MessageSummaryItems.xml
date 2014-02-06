@@ -5,6 +5,7 @@
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -34,6 +35,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -52,6 +54,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -69,6 +72,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -86,6 +90,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -103,6 +108,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -120,6 +126,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -137,6 +144,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -155,6 +163,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -172,6 +181,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -189,6 +199,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -206,6 +217,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -223,6 +235,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -240,6 +253,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -257,6 +271,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>

@@ -5,6 +5,7 @@
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -29,6 +30,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
@@ -50,6 +52,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -71,6 +74,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -97,6 +101,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -127,6 +132,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Security.SaslMechanism</ReturnType>
@@ -167,6 +173,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentials</ReturnType>
@@ -186,6 +193,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -206,6 +214,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -236,6 +245,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -255,6 +265,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -274,6 +285,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>

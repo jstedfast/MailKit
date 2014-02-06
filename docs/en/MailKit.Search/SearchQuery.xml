@@ -5,6 +5,7 @@
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -24,6 +25,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -42,6 +44,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
@@ -70,6 +73,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
@@ -104,6 +108,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -122,6 +127,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -151,6 +157,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -180,6 +187,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -209,6 +217,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -232,6 +241,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -250,6 +260,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
@@ -273,6 +284,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
@@ -296,6 +308,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
@@ -319,6 +332,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -348,6 +362,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -379,6 +394,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -405,6 +421,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -423,6 +440,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -441,6 +459,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -470,6 +489,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
@@ -495,6 +515,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
@@ -520,6 +541,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -549,6 +571,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -580,6 +603,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -606,6 +630,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.HeaderSearchQuery</ReturnType>
@@ -645,6 +670,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
@@ -671,6 +697,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -700,6 +727,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -718,6 +746,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.UnarySearchQuery</ReturnType>
@@ -744,6 +773,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -762,6 +792,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -780,6 +811,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -798,6 +830,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -816,6 +849,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -834,6 +868,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -852,6 +887,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
@@ -880,6 +916,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.BinarySearchQuery</ReturnType>
@@ -914,6 +951,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -932,6 +970,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.SearchQuery</ReturnType>
@@ -950,6 +989,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
@@ -973,6 +1013,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
@@ -996,6 +1037,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.DateSearchQuery</ReturnType>
@@ -1019,6 +1061,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.NumericSearchQuery</ReturnType>
@@ -1045,6 +1088,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
@@ -1074,6 +1118,7 @@
       <AssemblyInfo>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.TextSearchQuery</ReturnType>
