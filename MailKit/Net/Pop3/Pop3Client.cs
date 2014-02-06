@@ -187,18 +187,20 @@ namespace MailKit.Net.Pop3 {
 			return true;
 		}
 
-		Pop3Exception CreatePop3Exception (Pop3Command pc)
+		ProtocolException CreatePop3Exception (Pop3Command pc)
 		{
-			var type = pc.Status == Pop3CommandStatus.Error ? Pop3ErrorType.CommandError : Pop3ErrorType.ProtocolError;
 			var command = pc.Command.Split (' ')[0].TrimEnd ();
 			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
 
-			return new Pop3Exception (type, message);
+			if (pc.Status == Pop3CommandStatus.Error)
+				return new Pop3CommandException (message);
+
+			return new Pop3ProtocolException (message);
 		}
 
-		Pop3Exception CreatePop3ParseException (string format, params object[] args)
+		ProtocolException CreatePop3ParseException (string format, params object[] args)
 		{
-			return new Pop3Exception (Pop3ErrorType.ParseError, string.Format (format, args));
+			return new Pop3ProtocolException (string.Format (format, args));
 		}
 
 		void SendCommand (CancellationToken token, string command)
@@ -258,7 +260,7 @@ namespace MailKit.Net.Pop3 {
 		/// Gets whether or not the client is currently connected to an POP3 server.
 		/// </summary>
 		/// <remarks>
-		/// When a <see cref="Pop3Exception"/> is caught, the connection state of the
+		/// When a <see cref="Pop3ProtocolException"/> is caught, the connection state of the
 		/// <see cref="Pop3Client"/> should be checked before continuing.
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
@@ -320,7 +322,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// A POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// An POP3 protocol error occurred.
 		/// </exception>
 		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken)
@@ -356,10 +361,8 @@ namespace MailKit.Net.Pop3 {
 
 				try {
 					SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
-				} catch (Pop3Exception ex) {
-					if (ex.ErrorType == Pop3ErrorType.CommandError)
-						throw new AuthenticationException ();
-					throw;
+				} catch (Pop3CommandException) {
+					throw new AuthenticationException ();
 				}
 
 				engine.State = Pop3EngineState.Transaction;
@@ -390,7 +393,7 @@ namespace MailKit.Net.Pop3 {
 
 							cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
 							if (cmd.Status == Pop3CommandStatus.ProtocolError)
-								throw new Pop3Exception (Pop3ErrorType.ProtocolError, string.Format ("Unexpected response from server: {0}", response));
+								throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
 						}
 					};
 
@@ -420,10 +423,8 @@ namespace MailKit.Net.Pop3 {
 			try {
 				SendCommand (cancellationToken, "USER {0}", cred.UserName);
 				SendCommand (cancellationToken, "PASS {0}", cred.Password);
-			} catch (Pop3Exception ex) {
-				if (ex.ErrorType == Pop3ErrorType.CommandError)
-					throw new AuthenticationException ();
-				throw;
+			} catch (Pop3CommandException) {
+				throw new AuthenticationException ();
 			}
 
 			engine.State = Pop3EngineState.Transaction;
@@ -482,12 +483,18 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// A POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public void Connect (Uri uri, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
+
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
 
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
@@ -562,7 +569,8 @@ namespace MailKit.Net.Pop3 {
 				try {
 					SendCommand (cancellationToken, "QUIT");
 				} catch (OperationCanceledException) {
-				} catch (Pop3Exception) {
+				} catch (Pop3ProtocolException) {
+				} catch (Pop3CommandException) {
 				} catch (IOException) {
 				}
 			}
@@ -589,8 +597,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
-		/// The NOOP command failed.
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
 		/// </exception>
 		public void NoOp (CancellationToken cancellationToken)
 		{
@@ -638,7 +649,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public int GetMessageCount (CancellationToken cancellationToken)
@@ -709,7 +723,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public string GetMessageUid (int index, CancellationToken cancellationToken)
@@ -801,7 +818,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public string[] GetMessageUids (CancellationToken cancellationToken)
@@ -941,7 +961,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public int GetMessageSize (string uid, CancellationToken cancellationToken)
@@ -987,7 +1010,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public int GetMessageSize (int index, CancellationToken cancellationToken)
@@ -1024,7 +1050,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public int[] GetMessageSizes (CancellationToken cancellationToken)
@@ -1082,7 +1111,7 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			if (pc.Status != Pop3CommandStatus.Ok)
-				throw new Pop3Exception (Pop3ErrorType.CommandError, "Pop3 server did not respond with a +OK response to the LIST command.");
+				throw CreatePop3Exception (pc);
 
 			if (pc.Exception != null)
 				throw pc.Exception;
@@ -1155,7 +1184,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken)
@@ -1201,7 +1233,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken)
@@ -1248,7 +1283,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public MimeMessage GetMessage (string uid, CancellationToken cancellationToken)
@@ -1294,7 +1332,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public MimeMessage GetMessage (int index, CancellationToken cancellationToken)
@@ -1345,7 +1386,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public void DeleteMessage (string uid, CancellationToken cancellationToken)
@@ -1395,7 +1439,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public void DeleteMessage (int index, CancellationToken cancellationToken)
@@ -1431,7 +1478,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public void Reset (CancellationToken cancellationToken)
@@ -1468,7 +1518,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// A POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		public IEnumerator<MimeMessage> GetEnumerator ()
@@ -1506,7 +1559,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		/// <exception cref="Pop3Exception">
+		/// <exception cref="Pop3CommandException">
+		/// A POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		IEnumerator IEnumerable.GetEnumerator ()
