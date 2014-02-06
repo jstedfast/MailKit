@@ -59,5 +59,12 @@ namespace MailKit {
 		protected ProtocolException (string message) : base (message)
 		{
 		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
+		/// </summary>
+		protected ProtocolException ()
+		{
+		}
 	}
 }

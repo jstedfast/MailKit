@@ -44,7 +44,16 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		protected SmtpProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		public SmtpProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
+		/// </summary>
+		/// <param name="message">The error message.</param>
+		/// <param name="innerException">The inner exception.</param>
+		public SmtpProtocolException (string message, Exception innerException) : base (message, innerException)
 		{
 		}
 
@@ -53,6 +62,13 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <param name="message">The error message.</param>
 		public SmtpProtocolException (string message) : base (message)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
+		/// </summary>
+		public SmtpProtocolException ()
 		{
 		}
 	}

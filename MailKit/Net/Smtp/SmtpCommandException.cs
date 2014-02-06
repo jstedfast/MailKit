@@ -77,8 +77,22 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		public SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			var text = info.GetString ("Mailbox");
+			MailboxAddress mailbox;
+
+			if (!string.IsNullOrEmpty (text) && MailboxAddress.TryParse (text, out mailbox))
+				Mailbox = mailbox;
+
+			ErrorCode = (SmtpErrorCode) info.GetInt32 ("ErrorCode");
+			StatusCode = info.GetInt32 ("StatusCode");
 		}
 
 		/// <summary>
@@ -88,7 +102,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="status">The status code.</param>
 		/// <param name="mailbox">The rejected mailbox.</param>
 		/// <param name="message">The error message.</param>
-		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
+		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
 		{
 			StatusCode = (int) status;
 			Mailbox = mailbox;
@@ -101,10 +115,31 @@ namespace MailKit.Net.Smtp {
 		/// <param name="code">The error code.</param>
 		/// <param name="status">The status code.</param>>
 		/// <param name="message">The error message.</param>
-		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
+		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
 		{
 			StatusCode = (int) status;
 			ErrorCode = code;
+		}
+
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
+		/// with information about the exception.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("ErrorCode", (int) ErrorCode);
+			info.AddValue ("Mailbox", Mailbox.ToString ());
+			info.AddValue ("StatusCode", StatusCode);
+
+			base.GetObjectData (info, context);
 		}
 
 		/// <summary>
