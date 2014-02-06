@@ -990,12 +990,12 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void Reset ()
+		void Reset (CancellationToken cancellationToken)
 		{
 			try {
-				var response = SendCommand ("RSET", CancellationToken.None);
+				var response = SendCommand ("RSET", cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
-					Disconnect (false, CancellationToken.None);
+					Disconnect (false, cancellationToken);
 			} catch (SmtpCommandException) {
 				// do not disconnect
 			} catch {
@@ -1077,7 +1077,7 @@ namespace MailKit.Net.Smtp {
 				// do not disconnect
 				throw;
 			} catch (SmtpCommandException) {
-				// do not disconnect
+				Reset (cancellationToken);
 				throw;
 			} catch {
 				Disconnect ();
