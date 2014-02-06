@@ -109,7 +109,7 @@ pre-.NET 4.5 platforms. If you haven't already, I'd highly recommend installing 
 
 ## License Information
 
-MailKit is Copyright (C) 2013, 2014 Jeffrey Stedfast and is licensed under the MIT license:
+MailKit is Copyright (C) 2013-2014 Xamarin Inc. and is licensed under the MIT license:
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
