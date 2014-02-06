@@ -25,13 +25,24 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 namespace MailKit {
 	/// <summary>
 	/// The exception that is thrown when there is a protocol error.
 	/// </summary>
+	[Serializable]
 	public abstract class ProtocolException : Exception
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		protected ProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>

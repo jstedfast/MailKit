@@ -24,6 +24,9 @@
 // THE SOFTWARE.
 //
 
+using System;
+using System.Runtime.Serialization;
+
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// An exception that is thrown when an IMAP command returns NO or BAD.
@@ -31,8 +34,18 @@ namespace MailKit.Net.Imap {
 	/// <remarks>
 	/// This exception can be thrown by most of the methods in <see cref="ImapFolder"/>.
 	/// </remarks>
+	[Serializable]
 	public class ImapCommandException : ProtocolException
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>

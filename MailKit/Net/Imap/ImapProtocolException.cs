@@ -23,7 +23,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 //
+
 using System;
+using System.Runtime.Serialization;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -32,8 +34,18 @@ namespace MailKit.Net.Imap {
 	/// <remarks>
 	/// The exception that is thrown when there is an error communicating with a IMAP server.
 	/// </remarks>
+	[Serializable]
 	public class ImapProtocolException : ProtocolException
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
+		/// </summary>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		protected ImapProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>
