@@ -30,7 +30,6 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Collections.Generic;
@@ -69,6 +68,7 @@ namespace MailKit.Net.Smtp {
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
 		readonly HashSet<string> authmechs = new HashSet<string> ();
 		readonly byte[] input = new byte[4096];
+		readonly IProtocolLogger logger;
 		int inputIndex, inputEnd;
 		MemoryBlockStream queue;
 		EndPoint localEndPoint;
@@ -86,8 +86,29 @@ namespace MailKit.Net.Smtp {
 		/// server, you may also need to authenticate using the
 		/// <see cref="Authenticate"/> method.
 		/// </remarks>
-		public SmtpClient ()
+		public SmtpClient () : this (new NullProtocolLogger ())
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpClient"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Before you can send messages with the <see cref="SmtpClient"/>, you
+		/// must first call the <see cref="Connect"/> method. Depending on the
+		/// server, you may also need to authenticate using the
+		/// <see cref="Authenticate"/> method.
+		/// </remarks>
+		/// <param name="protocolLogger">The protocol logger.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// </exception>
+		public SmtpClient (IProtocolLogger protocolLogger)
+		{
+			if (protocolLogger == null)
+				throw new ArgumentNullException ("protocolLogger");
+
+			logger = protocolLogger;
 		}
 
 		/// <summary>
@@ -217,6 +238,7 @@ namespace MailKit.Net.Smtp {
 						if ((nread = stream.Read (input, inputEnd, input.Length - inputEnd)) == 0)
 							throw new SmtpProtocolException ("The server replied with an incomplete response.");
 
+						logger.LogServer (input, inputEnd, nread);
 						inputEnd += nread;
 					}
 
@@ -278,22 +300,12 @@ namespace MailKit.Net.Smtp {
 					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 				}
 
-				#if DEBUG
-				var lines = message.Split ('\n');
-				for (int i = 0; i < lines.Length; i++)
-					Console.WriteLine ("S: {0}{1}{2}", code, i + 1 < lines.Length ? '-' : ' ', lines[i]);
-				#endif
-
 				return new SmtpResponse ((SmtpStatusCode) code, message);
 			}
 		}
 
 		void QueueCommand (SmtpCommand type, string command)
 		{
-			#if DEBUG
-			Console.WriteLine ("C: {0}", command);
-			#endif
-
 			if (queue == null)
 				queue = new MemoryBlockStream ();
 
@@ -316,6 +328,7 @@ namespace MailKit.Net.Smtp {
 				while ((nread = queue.Read (input, 0, input.Length)) > 0) {
 					cancellationToken.ThrowIfCancellationRequested ();
 					stream.Write (input, 0, nread);
+					logger.LogClient (input, 0, nread);
 				}
 
 				// Note: we need to read all responses from the server before we can process
@@ -343,12 +356,9 @@ namespace MailKit.Net.Smtp {
 		{
 			cancellationToken.ThrowIfCancellationRequested ();
 
-			#if DEBUG
-			Console.WriteLine ("C: {0}", command);
-			#endif
-
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
 			stream.Write (bytes, 0, bytes.Length);
+			logger.LogClient (bytes, 0, bytes.Length);
 
 			return ReadResponse (cancellationToken);
 		}
@@ -650,6 +660,8 @@ namespace MailKit.Net.Smtp {
 			}
 
 			host = uri.Host;
+
+			logger.LogConnect (uri);
 
 			try {
 				// read the greeting
