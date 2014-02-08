@@ -201,6 +201,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets whether or not the QRESYNC feature has been enabled.
+		/// </summary>
+		/// <value><c>true</c> if the QRESYNC feature has been enabled; otherwise, <c>false</c>.</value>
+		public bool QResyncEnabled {
+			get; internal set;
+		}
+
+		/// <summary>
 		/// Gets the underlying IMAP stream.
 		/// </summary>
 		/// <value>The IMAP stream.</value>
@@ -386,6 +394,7 @@ namespace MailKit.Net.Imap {
 			State = ImapEngineState.Connected;
 			SupportedCharsets.Add ("UTF-8");
 			CapabilitiesVersion = 0;
+			QResyncEnabled = false;
 			stream = imap;
 			Tag = 0;
 
@@ -797,6 +806,7 @@ namespace MailKit.Net.Imap {
 			case "HIGHESTMODSEQ":  return ImapResponseCodeType.HighestModSeq;
 			case "MODIFIED":       return ImapResponseCodeType.Modified;
 			case "NOMODSEQ":       return ImapResponseCodeType.NoModSeq;
+			case "CLOSED":         return ImapResponseCodeType.Closed;
 			default:               return ImapResponseCodeType.Unknown;
 			}
 		}
@@ -1002,6 +1012,7 @@ namespace MailKit.Net.Imap {
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.NoModSeq: break;
+			case ImapResponseCodeType.Closed: break;
 			default:
 				code = new ImapResponseCode (ImapResponseCodeType.Unknown);
 
@@ -1182,7 +1193,7 @@ namespace MailKit.Net.Imap {
 
 					if (token.Type == ImapTokenType.OpenBracket) {
 						var code = ParseResponseCode (cancellationToken);
-						if (current != null)
+						if (current != null && code.Type != ImapResponseCodeType.Closed)
 							current.RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
 						// throw away any remaining text up until the end of the line

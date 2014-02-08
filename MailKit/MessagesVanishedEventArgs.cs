@@ -1,9 +1,9 @@
 ﻿//
-// ImapResponseCode.cs
+// MessagesVanishedEventArgs.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2014 Jeffrey Stedfast
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,51 +26,32 @@
 
 using System;
 
-namespace MailKit.Net.Imap {
-	enum ImapResponseCodeType : byte {
-		Alert,
-		BadCharset,
-		Capability,
-		NewName,
-		Parse,
-		PermanentFlags,
-		ReadOnly,
-		ReadWrite,
-		TryCreate,
-		UidNext,
-		UidValidity,
-		Unseen,
-
-		// RESP-CODES introduced in rfc4315:
-		AppendUid,
-		CopyUid,
-		UidNotSticky,
-
-		// RESP-CODES introduced in rfc4551:
-		HighestModSeq,
-		Modified,
-		NoModSeq,
-
-		// RESP-CODES introduced in rfc5162:
-		Closed,
-
-		Unknown       = 255
-	}
-
-	class ImapResponseCode
+namespace MailKit {
+	/// <summary>
+	/// Event args used when a message vanishes from a folder.
+	/// </summary>
+	public class MessagesVanishedEventArgs : EventArgs
 	{
-		public readonly ImapResponseCodeType Type;
-		public UniqueId[] SrcUidSet, DestUidSet;
-		public UniqueId UidValidity;
-		public ulong HighestModSeq;
-		public MessageFlags Flags;
-		public string Message;
-		public UniqueId Uid;
-		public int Index;
-
-		public ImapResponseCode (ImapResponseCodeType type)
+		internal MessagesVanishedEventArgs (UniqueId[] uids, bool earlier)
 		{
-			Type = type;
+			Earlier = earlier;
+			UniqueIds = uids;
+		}
+
+		/// <summary>
+		/// Gets the unique identifiers of the messages that vanished.
+		/// </summary>
+		/// <value>The unique identifiers.</value>
+		public UniqueId[] UniqueIds {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets whether the messages vanished inthe past as opposed to just now.
+		/// </summary>
+		/// <value><c>true</c> if the messages vanished earlier; otherwise, <c>false</c>.</value>
+		public bool Earlier {
+			get; private set;
 		}
 	}
 }

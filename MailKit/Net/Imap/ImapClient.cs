@@ -127,6 +127,64 @@ namespace MailKit.Net.Imap {
 			return true;
 		}
 
+		/// <summary>
+		/// Enables the QRESYNC feature.
+		/// </summary>
+		/// <remarks>
+		/// <para>The QRESYNC extension improves resynchronization performance of folders by
+		/// querying the IMAP server for a list of changes when the folder is opened using the
+		/// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// method.</para>
+		/// <para>If this feature is enabled, the <see cref="ImapFolder.Expunged"/> event is replaced
+		/// with the <see cref="ImapFolder.Vanished"/> event.</para>
+		/// <para>This method needs to be called immediately after <see cref="Authenticate"/>, before
+		/// the opening any folders.</para>
+		/// </remarks>
+		/// <param name="cancellationToken">Cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the QRESYNC extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void EnableQuickResync (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new InvalidOperationException ("The ImapClient must be connected before you can enable QRESYNC.");
+
+			if (engine.State > ImapEngineState.Authenticated)
+				throw new InvalidOperationException ("QRESYNC needs to be enabled immediately after authenticating.");
+
+			if ((engine.Capabilities & ImapCapabilities.QuickResync) == 0)
+				throw new NotSupportedException ();
+
+			if (engine.QResyncEnabled)
+				return;
+
+			var ic = engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
+
+			engine.Wait (ic);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("ENABLE", ic.Result);
+
+			engine.QResyncEnabled = true;
+		}
+
 		#region IMessageService implementation
 
 		/// <summary>

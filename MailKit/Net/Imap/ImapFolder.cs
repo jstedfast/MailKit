@@ -375,6 +375,99 @@ namespace MailKit.Net.Imap {
 			return access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT";
 		}
 
+		static void QResyncFetch (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		{
+			ic.Folder.OnFetch (engine, index, ic.CancellationToken);
+		}
+
+		/// <summary>
+		/// Opens the folder using the requested folder access.
+		/// </summary>
+		/// <remarks>
+		/// <para>This variant of the <see cref="Open(FolderAccess,System.Threading.CancellationToken)"/>
+		/// method is meant for quick resynchronization of the folder. Before calling this method,
+		/// the <see cref="ImapClient.EnableQuickResync"/> method MUST be called.</para>
+		/// <para>You should also make sure to add listeners to the <see cref="Vanished"/> and
+		/// <see cref="MessageFlagsChanged"/> events to get notifications of changes since
+		/// the last time the folder was opened.</para>
+		/// </remarks>
+		/// <returns>The <see cref="FolderAccess"/> state of the folder.</returns>
+		/// <param name="access">The requested folder access.</param>
+		/// <param name="uidValidity">The last known <see cref="UidValidity"/> value.</param>
+		/// <param name="highestModSeq">The last known <see cref="HighestModSeq"/> value.</param>
+		/// <param name="uids">The last known list of unique message identifiers.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="access"/> is not a valid value.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The QRESYNC feature has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the QRESYNC extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public FolderAccess Open (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, UniqueId[] uids, CancellationToken cancellationToken)
+		{
+			var set = ImapUtils.FormatUidSet (uids);
+
+			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
+				throw new ArgumentOutOfRangeException ("access");
+
+			CheckState (false, false);
+
+			if (IsOpen && Access == access)
+				return access;
+
+			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
+				throw new NotSupportedException ();
+
+			if (!Engine.QResyncEnabled)
+				throw new InvalidOperationException ("The QRESYNC feature is not enabled.");
+
+			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity.Id, highestModSeq);
+
+			if (uids.Length > 0)
+				qresync += " " + set;
+
+			qresync+= "))";
+
+			var command = string.Format ("{0} %F {1}\r\n", SelectOrExamine (access), qresync);
+			var ic = Engine.QueueCommand (cancellationToken, this, command, this);
+			ic.RegisterUntaggedHandler ("FETCH", QResyncFetch);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic.Result);
+
+			if (Engine.Selected != null)
+				Engine.Selected.Access = FolderAccess.None;
+
+			Engine.State = ImapEngineState.Selected;
+			Engine.Selected = this;
+
+			return Access;
+		}
+
 		/// <summary>
 		/// Opens the folder using the requested folder access.
 		/// </summary>
@@ -990,6 +1083,13 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Expunges the folder, permanently removing all messages marked for deletion.
 		/// </summary>
+		/// <remarks>
+		/// <para>Normally, an <see cref="Expunged"/> event will be emitted for each
+		/// message that is expunged. However, if the IMAP server supports the QRESYNC
+		/// extension and it has been enabled via the <see cref="ImapClient.EnableQuickResync"/>
+		/// method, then the <see cref="Vanished"/> event will be emitted rather than the
+		/// <see cref="Expunged"/> event.</para>
+		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1030,6 +1130,13 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Expunges the specified uids, permanently removing them from the folder.
 		/// </summary>
+		/// <remarks>
+		/// <para>Normally, an <see cref="Expunged"/> event will be emitted for each
+		/// message that is expunged. However, if the IMAP server supports the QRESYNC
+		/// extension and it has been enabled via the <see cref="ImapClient.EnableQuickResync"/>
+		/// method, then the <see cref="Vanished"/> event will be emitted rather than the
+		/// <see cref="Expunged"/> event.</para>
+		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1954,6 +2061,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
+		/// <remarks>
+		/// <para>If the IMAP server supports the QRESYNC extension and the application has
+		/// enabled this feature via <see cref="ImapClient.EnableQuickResync"/>, then this
+		/// method will emit <see cref="Vanished"/> events for messages that have vanished
+		/// since the specified mod-sequence value.</para>
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
@@ -2005,7 +2118,8 @@ namespace MailKit.Net.Imap {
 			if (uids.Length == 0)
 				return new MessageSummary[0];
 
-			var command = string.Format ("UID FETCH {0} ({1}) (CHANGEDSINCE {2})\r\n", set, query, modseq);
+			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
+			var command = string.Format ("UID FETCH {0} ({1}) (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = Engine.QueueCommand (cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -2089,6 +2203,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
+		/// <remarks>
+		/// <para>If the IMAP server supports the QRESYNC extension and the application has
+		/// enabled this feature via <see cref="ImapClient.EnableQuickResync"/>, then this
+		/// method will emit <see cref="Vanished"/> events for messages that have vanished
+		/// since the specified mod-sequence value.</para>
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum UID.</param>
 		/// <param name="max">The maximum UID.</param>
@@ -2141,7 +2261,8 @@ namespace MailKit.Net.Imap {
 
 			var query = FormatSummaryItems (items);
 			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
-			var command = string.Format ("UID FETCH {0}:{1} ({2}) (CHANGEDSINCE {3})\r\n", min.Id, maxValue, query, modseq);
+			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
+			var command = string.Format ("UID FETCH {0}:{1} ({2}) (CHANGEDSINCE {3}{4})\r\n", min.Id, maxValue, query, modseq, vanished);
 			var ic = Engine.QueueCommand (cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -4681,7 +4802,10 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out vanished))
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			// TODO: emit a Vanished event
+			var handler = Vanished;
+
+			if (handler != null)
+				handler (this, new MessagesVanishedEventArgs (vanished, earlier));
 		}
 
 		internal void UpdateFirstUnread (int index)
@@ -4762,6 +4886,11 @@ namespace MailKit.Net.Imap {
 		/// Occurs when a message is expunged from the folder.
 		/// </summary>
 		public event EventHandler<MessageEventArgs> Expunged;
+
+		/// <summary>
+		/// Occurs when a message vanishes from the folder.
+		/// </summary>
+		public event EventHandler<MessagesVanishedEventArgs> Vanished;
 
 		/// <summary>
 		/// Occurs when flags changed on a message.

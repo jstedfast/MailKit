@@ -273,12 +273,18 @@ namespace MailKit {
 		/// <summary>
 		/// Expunges the folder, permanently removing all messages marked for deletion.
 		/// </summary>
+		/// <remarks>
+		/// An <see cref="Expunged"/> event will be emitted for each message that is expunged.
+		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Expunge (CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Expunges the specified uids, permanently removing them from the folder.
 		/// </summary>
+		/// <remarks>
+		/// An <see cref="Expunged"/> event will be emitted for each message that is expunged.
+		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Expunge (UniqueId[] uids, CancellationToken cancellationToken);
