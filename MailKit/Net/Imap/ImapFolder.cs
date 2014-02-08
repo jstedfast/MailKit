@@ -621,7 +621,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			if (DirectorySeparator == '\0')
+			if (!string.IsNullOrEmpty (FullName) && DirectorySeparator == '\0')
 				throw new InvalidOperationException ("Cannot create child folders.");
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
