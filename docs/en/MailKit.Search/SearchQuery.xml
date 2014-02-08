@@ -3,8 +3,6 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SearchQuery extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
-    <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.3.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -23,8 +21,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery All" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -42,8 +38,6 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class MailKit.Search.BinarySearchQuery And(class MailKit.Search.SearchQuery expr) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -71,8 +65,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.BinarySearchQuery And(class MailKit.Search.SearchQuery left, class MailKit.Search.SearchQuery right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -106,8 +98,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Answered" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -125,8 +115,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery BccContains(string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -155,8 +143,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery BodyContains(string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -185,8 +171,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery CcContains(string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -215,8 +199,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery ChangedSince(unsigned int64 modseq) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -239,8 +221,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Deleted" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -258,8 +238,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery DeliveredAfter(valuetype System.DateTime date) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -282,8 +260,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery DeliveredBefore(valuetype System.DateTime date) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -306,8 +282,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery DeliveredOn(valuetype System.DateTime date) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -330,8 +304,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery DoesNotHaveCustomFlag(string flag) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -360,8 +332,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery DoesNotHaveCustomFlags(class System.Collections.Generic.IEnumerable`1&lt;string&gt; flags) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -392,8 +362,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery DoesNotHaveFlags(valuetype MailKit.MessageFlags flags) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -419,8 +387,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Draft" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -438,8 +404,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Flagged" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -457,8 +421,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery FromContains(string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -487,8 +449,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery GMailMessageId(unsigned int64 id) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -513,8 +473,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery GMailThreadId(unsigned int64 thread) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -539,8 +497,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery HasCustomFlag(string flag) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -569,8 +525,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery HasCustomFlags(class System.Collections.Generic.IEnumerable`1&lt;string&gt; flags) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -601,8 +555,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.SearchQuery HasFlags(valuetype MailKit.MessageFlags flags) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -628,8 +580,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.HeaderSearchQuery Header(string field, string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -668,8 +618,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery LargerThan(int32 octets) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -695,8 +643,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery MessageContains(string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -725,8 +671,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery New" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -744,8 +688,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.UnarySearchQuery Not(class MailKit.Search.SearchQuery expr) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -771,8 +713,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotAnswered" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -790,8 +730,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotDeleted" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -809,8 +747,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotDraft" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -828,8 +764,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotFlagged" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -847,8 +781,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotRecent" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -866,8 +798,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery NotSeen" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -885,8 +815,6 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class MailKit.Search.BinarySearchQuery Or(class MailKit.Search.SearchQuery expr) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -914,8 +842,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.BinarySearchQuery Or(class MailKit.Search.SearchQuery left, class MailKit.Search.SearchQuery right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -949,8 +875,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Recent" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -968,8 +892,6 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.SearchQuery Seen" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -987,8 +909,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery SentAfter(valuetype System.DateTime date) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -1011,8 +931,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery SentBefore(valuetype System.DateTime date) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -1035,8 +953,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.DateSearchQuery SentOn(valuetype System.DateTime date) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -1059,8 +975,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.NumericSearchQuery SmallerThan(int32 octets) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -1086,8 +1000,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery SubjectContains(string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -1116,8 +1028,6 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.TextSearchQuery ToContains(string text) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.3.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
