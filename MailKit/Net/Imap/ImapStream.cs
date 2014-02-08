@@ -830,12 +830,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Dispose the specified disposing.
+		/// Releases the unmanaged resources used by the <see cref="ImapStream"/> and
+		/// optionally releases the managed resources.
 		/// </summary>
-		/// <param name="disposing">If set to <c>true</c> disposing.</param>
+		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
+		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing) {
+			if (disposing && !disposed) {
 				IsConnected = false;
 				Stream.Dispose ();
 				disposed = true;

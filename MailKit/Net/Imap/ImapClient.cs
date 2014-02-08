@@ -400,8 +400,11 @@ namespace MailKit.Net.Imap {
 		/// <para>It should be noted that when using a clear-text IMAP connection,
 		/// if the server advertizes support for the STARTTLS extension, the client
 		/// will automatically switch into TLS mode before authenticating.</para>
-		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// and <see cref="Capabilities"/> properties will be populated.
+		/// <para>If the non-IMAP/S server does not support the STARTTLS extension but
+		/// advertizes the COMPRESS extension, the client will automatically opt into
+		/// using a compressed data connection to optimize bandwidth usage.</para>
+		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// and <see cref="Capabilities"/> properties will be populated.</para>
 		/// </remarks>
 		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
 		/// be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
@@ -484,6 +487,22 @@ namespace MailKit.Net.Imap {
 
 					// Query the CAPABILITIES again if the server did not include an
 					// untagged CAPABILITIES response to the STARTTLS command.
+					if (engine.CapabilitiesVersion == 1)
+						engine.QueryCapabilities (cancellationToken);
+				}
+			} else if (!imaps && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
+				var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
+
+				engine.Wait (ic);
+
+				if (ic.Result == ImapCommandResult.Ok) {
+					var decompress = new DeflateStream (stream, CompressionMode.Decompress);
+					var compress = new DeflateStream (stream, CompressionMode.Compress);
+
+					engine.Stream.Stream = new DuplexStream (decompress, compress);
+
+					// Query the CAPABILITIES again if the server did not include an
+					// untagged CAPABILITIES response to the COMPRESS command.
 					if (engine.CapabilitiesVersion == 1)
 						engine.QueryCapabilities (cancellationToken);
 				}

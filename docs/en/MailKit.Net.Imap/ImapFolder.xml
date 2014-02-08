@@ -806,8 +806,10 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
-            </exception>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
+          <para>-or-</para>
+          <para>The <see cref="P:MailKit.Net.Imap.ImapFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.</para>
+        </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
