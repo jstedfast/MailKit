@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 using System.Net.Sockets;
 using System.Net.Security;
+using System.IO.Compression;
 using System.Collections.Generic;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
@@ -413,7 +414,7 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
 
-			if (!imaps && engine.Capabilities.HasFlag (ImapCapabilities.StartTLS)) {
+			if (!imaps && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
 				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
 				engine.Wait (ic);

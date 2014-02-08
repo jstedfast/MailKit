@@ -490,7 +490,7 @@ namespace MailKit.Net.Smtp {
 			if (authenticated)
 				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
 
-			if (!Capabilities.HasFlag (SmtpCapabilities.Authentication))
+			if ((Capabilities & SmtpCapabilities.Authentication) == 0)
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
 			if (credentials == null)
@@ -673,7 +673,7 @@ namespace MailKit.Net.Smtp {
 				// Send EHLO and get a list of supported extensions
 				Ehlo (cancellationToken);
 
-				if (!smtps & Capabilities.HasFlag (SmtpCapabilities.StartTLS)) {
+				if (!smtps && (Capabilities & SmtpCapabilities.StartTLS) != 0) {
 					response = SendCommand ("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -902,10 +902,10 @@ namespace MailKit.Net.Smtp {
 
 		static string GetMailFromCommand (MailboxAddress mailbox, SmtpExtension extensions)
 		{
-			if (extensions.HasFlag (SmtpExtension.BinaryMime))
+			if ((extensions & SmtpExtension.BinaryMime) != 0)
 				return string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME", mailbox.Address);
 
-			if (extensions.HasFlag (SmtpExtension.EightBitMime))
+			if ((extensions & SmtpExtension.EightBitMime) != 0)
 				return string.Format ("MAIL FROM:<{0}> BODY=8BITMIME", mailbox.Address);
 
 			return string.Format ("MAIL FROM:<{0}>", mailbox.Address);
@@ -930,7 +930,7 @@ namespace MailKit.Net.Smtp {
 		{
 			var command = GetMailFromCommand (mailbox, extensions);
 
-			if (Capabilities.HasFlag (SmtpCapabilities.Pipelining)) {
+			if ((Capabilities & SmtpCapabilities.Pipelining) != 0) {
 				QueueCommand (SmtpCommand.MailFrom, command);
 				return;
 			}
@@ -960,7 +960,7 @@ namespace MailKit.Net.Smtp {
 		{
 			var command = string.Format ("RCPT TO:<{0}>", mailbox.Address);
 
-			if (Capabilities.HasFlag (SmtpCapabilities.Pipelining)) {
+			if ((Capabilities & SmtpCapabilities.Pipelining) != 0) {
 				QueueCommand (SmtpCommand.RcptTo, command);
 				return;
 			}

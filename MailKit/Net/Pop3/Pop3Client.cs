@@ -270,7 +270,7 @@ namespace MailKit.Net.Pop3 {
 
 		void ProbeCapabilities (CancellationToken cancellationToken)
 		{
-			if (!engine.Capabilities.HasFlag (Pop3Capabilities.UIDL)) {
+			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0) {
 				// first, get the message count...
 				GetMessageCount (cancellationToken);
 
@@ -346,7 +346,7 @@ namespace MailKit.Net.Pop3 {
 			string challenge;
 			Pop3Command pc;
 
-			if (engine.Capabilities.HasFlag (Pop3Capabilities.Apop)) {
+			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
 				cred = credentials.GetCredential (uri, "APOP");
 				challenge = engine.ApopToken + cred.Password;
 				var md5sum = new StringBuilder ();
@@ -371,7 +371,7 @@ namespace MailKit.Net.Pop3 {
 				return;
 			}
 
-			if (engine.Capabilities.HasFlag (Pop3Capabilities.Sasl)) {
+			if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
 				foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 					if (!engine.AuthenticationMechanisms.Contains (authmech))
 						continue;
@@ -535,7 +535,7 @@ namespace MailKit.Net.Pop3 {
 			engine.Connect (new Pop3Stream (stream, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 
-			if (!pop3s && engine.Capabilities.HasFlag (Pop3Capabilities.StartTLS)) {
+			if (!pop3s && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
 				SendCommand (cancellationToken, "STLS");
 
 				var tls = new SslStream (stream, false, ValidateRemoteCertificate);
@@ -626,7 +626,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <value><c>true</c> if supports UIDs; otherwise, <c>false</c>.</value>
 		public bool SupportsUids {
-			get { return engine.Capabilities.HasFlag (Pop3Capabilities.UIDL); }
+			get { return (engine.Capabilities & Pop3Capabilities.UIDL) != 0; }
 		}
 
 		/// <summary>
@@ -737,7 +737,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (!SupportsUids && probed.HasFlag (ProbedCapabilities.UIDL))
+			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
 			if (index < 0 || index >= count)
@@ -832,7 +832,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (!SupportsUids && probed.HasFlag (ProbedCapabilities.UIDL))
+			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
 			var pc = engine.QueueCommand (cancellationToken, "UIDL");
