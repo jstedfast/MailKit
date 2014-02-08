@@ -1117,6 +1117,9 @@
             </summary>
         <returns>The subfolder.</returns>
         <remarks>To be added.</remarks>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The requested folder could not be found.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">

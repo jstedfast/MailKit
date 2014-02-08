@@ -60,6 +60,7 @@
       <Type Name="FolderAttributes" Kind="Enumeration" />
       <Type Name="FolderNamespace" Kind="Class" />
       <Type Name="FolderNamespaceCollection" Kind="Class" />
+      <Type Name="FolderNotFoundException" Kind="Class" />
       <Type Name="FolderRenamedEventArgs" Kind="Class" />
       <Type Name="IFolder" Kind="Interface" />
       <Type Name="IMessageService" Kind="Interface" />

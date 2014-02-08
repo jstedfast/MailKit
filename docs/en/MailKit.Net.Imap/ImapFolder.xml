@@ -2124,6 +2124,9 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The requested folder could not be found.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">

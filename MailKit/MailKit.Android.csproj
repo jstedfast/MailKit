@@ -112,6 +112,7 @@
     <Compile Include="FolderAttributes.cs" />
     <Compile Include="FolderNamespace.cs" />
     <Compile Include="FolderNamespaceCollection.cs" />
+    <Compile Include="FolderNotFoundException.cs" />
     <Compile Include="FolderRenamedEventArgs.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="IMessageService.cs" />

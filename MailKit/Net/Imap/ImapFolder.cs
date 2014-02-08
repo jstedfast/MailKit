@@ -935,6 +935,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The requested folder could not be found.
+		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// The server's response contained unexpected tokens.
 		/// </exception>
@@ -971,7 +974,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("LIST", ic.Result);
 
-			return list.Count > 0 ? list[0] : null;
+			if (list.Count == 0)
+				throw new FolderNotFoundException (fullName);
+
+			return list[0];
 		}
 
 		/// <summary>

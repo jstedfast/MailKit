@@ -255,6 +255,9 @@ namespace MailKit {
 		/// <returns>The subfolder.</returns>
 		/// <param name="name">The name of the subfolder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="FolderNotFoundException">
+		/// The requested folder could not be found.
+		/// </exception>
 		IFolder GetSubfolder (string name, CancellationToken cancellationToken);
 
 		/// <summary>
