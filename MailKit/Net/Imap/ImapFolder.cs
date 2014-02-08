@@ -595,7 +595,9 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="DirectorySeparator"/> is nil, and thus child folders cannot be created.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -618,6 +620,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			CheckState (false, false);
+
+			if (DirectorySeparator == '\0')
+				throw new InvalidOperationException ("Cannot create child folders.");
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
 			var encodedName = ImapEncoding.Encode (fullName);

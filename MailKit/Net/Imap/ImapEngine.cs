@@ -712,8 +712,8 @@ namespace MailKit.Net.Imap {
 						// parse the namespace pair - first token is the path
 						token = stream.ReadToken (cancellationToken);
 
-						if (token.Type != ImapTokenType.QString) {
-							Debug.WriteLine ("Expected qstring token as first element in namespace pair, but got: {0}", token);
+						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom) {
+							Debug.WriteLine ("Expected string token as first element in namespace pair, but got: {0}", token);
 							throw UnexpectedToken (token, false);
 						}
 
@@ -722,12 +722,12 @@ namespace MailKit.Net.Imap {
 						// second token is the directory separator
 						token = stream.ReadToken (cancellationToken);
 
-						if (token.Type != ImapTokenType.QString) {
-							Debug.WriteLine ("Expected qstring token as second element in namespace pair, but got: {0}", token);
+						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Nil) {
+							Debug.WriteLine ("Expected string or nil token as second element in namespace pair, but got: {0}", token);
 							throw UnexpectedToken (token, false);
 						}
 
-						var qstring = (string) token.Value;
+						var qstring = token.Type == ImapTokenType.Nil ? string.Empty : (string) token.Value;
 
 						if (qstring.Length > 0) {
 							delim = qstring[0];
@@ -746,13 +746,32 @@ namespace MailKit.Net.Imap {
 
 						folder.IsNamespace = true;
 
-						// read the closing ')'
-						token = stream.ReadToken (cancellationToken);
+						do {
+							token = stream.ReadToken (cancellationToken);
 
-						if (token.Type != ImapTokenType.CloseParen) {
-							Debug.WriteLine ("Expected ')' to close namespace pair, but got: {0}", token);
-							throw UnexpectedToken (token, false);
-						}
+							if (token.Type == ImapTokenType.CloseParen)
+								break;
+
+							// NAMESPACE extension
+
+							if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom)
+								throw UnexpectedToken (token, false);
+
+							token = stream.ReadToken (cancellationToken);
+
+							if (token.Type != ImapTokenType.OpenParen)
+								throw UnexpectedToken (token, false);
+
+							do {
+								token = stream.ReadToken (cancellationToken);
+
+								if (token.Type == ImapTokenType.CloseParen)
+									break;
+
+								if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom)
+									throw UnexpectedToken (token, false);
+							} while (true);
+						} while (true);
 
 						// read the next token - it should either be '(' or ')'
 						token = stream.ReadToken (cancellationToken);
