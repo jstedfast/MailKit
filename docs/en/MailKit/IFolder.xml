@@ -596,7 +596,9 @@
         <summary>
             Expunges the folder, permanently removing all messages marked for deletion.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            An <see cref="E:MailKit.IFolder.Expunged" /> event will be emitted for each message that is expunged.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Expunge">
@@ -621,7 +623,9 @@
         <summary>
             Expunges the specified uids, permanently removing them from the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            An <see cref="E:MailKit.IFolder.Expunged" /> event will be emitted for each message that is expunged.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Expunged">

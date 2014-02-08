@@ -359,6 +359,54 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="EnableQuickResync">
+      <MemberSignature Language="C#" Value="public void EnableQuickResync (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnableQuickResync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">Cancellation token.</param>
+        <summary>
+            Enables the QRESYNC feature.
+            </summary>
+        <remarks>
+          <para>The QRESYNC extension improves resynchronization performance of folders by
+            querying the IMAP server for a list of changes when the folder is opened using the
+            <see cref="M:MailKit.Net.Imap.ImapFolder.Open(MailKit.FolderAccess,MailKit.UniqueId,System.UInt64,MailKit.UniqueId[],System.Threading.CancellationToken)" />
+            method.</para>
+          <para>If this feature is enabled, the <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event is replaced
+            with the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event.</para>
+          <para>This method needs to be called immediately after <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />, before
+            the opening any folders.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the QRESYNC extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~ImapClient ();" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />

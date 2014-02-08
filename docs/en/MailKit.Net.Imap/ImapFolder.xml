@@ -983,7 +983,13 @@
         <summary>
             Expunges the folder, permanently removing all messages marked for deletion.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Normally, an <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event will be emitted for each
+            message that is expunged. However, if the IMAP server supports the QRESYNC
+            extension and it has been enabled via the <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" />
+            method, then the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event will be emitted rather than the
+            <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event.</para>
+        </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -1030,7 +1036,13 @@
         <summary>
             Expunges the specified uids, permanently removing them from the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Normally, an <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event will be emitted for each
+            message that is expunged. However, if the IMAP server supports the QRESYNC
+            extension and it has been enabled via the <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" />
+            method, then the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event will be emitted rather than the
+            <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -1283,7 +1295,12 @@
             Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>If the IMAP server supports the QRESYNC extension and the application has
+            enabled this feature via <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" />, then this
+            method will emit <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> events for messages that have vanished
+            since the specified mod-sequence value.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -1475,7 +1492,12 @@
             Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>If the IMAP server supports the QRESYNC extension and the application has
+            enabled this feature via <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" />, then this
+            method will emit <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> events for messages that have vanished
+            since the specified mod-sequence value.</para>
+        </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="min" /> is invalid.
             </exception>
@@ -2540,6 +2562,69 @@
             </exception>
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="C#" Value="public MailKit.FolderAccess Open (MailKit.FolderAccess access, MailKit.UniqueId uidValidity, ulong highestModSeq, MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype MailKit.UniqueId uidValidity, unsigned int64 highestModSeq, valuetype MailKit.UniqueId[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderAccess</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="access" Type="MailKit.FolderAccess" />
+        <Parameter Name="uidValidity" Type="MailKit.UniqueId" />
+        <Parameter Name="highestModSeq" Type="System.UInt64" />
+        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="access">The requested folder access.</param>
+        <param name="uidValidity">The last known <see cref="P:MailKit.Net.Imap.ImapFolder.UidValidity" /> value.</param>
+        <param name="highestModSeq">The last known <see cref="P:MailKit.Net.Imap.ImapFolder.HighestModSeq" /> value.</param>
+        <param name="uids">The last known list of unique message identifiers.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Opens the folder using the requested folder access.
+            </summary>
+        <returns>The <see cref="T:MailKit.FolderAccess" /> state of the folder.</returns>
+        <remarks>
+          <para>This variant of the <see cref="M:MailKit.Net.Imap.ImapFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
+            method is meant for quick resynchronization of the folder. Before calling this method,
+            the <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" /> method MUST be called.</para>
+          <para>You should also make sure to add listeners to the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> and
+            <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events to get notifications of changes since
+            the last time the folder was opened.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="access" /> is not a valid value.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
+          <para>-or-</para>
+          <para>The QRESYNC feature has not been enabled.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the QRESYNC extension.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3911,6 +3996,23 @@
       <Docs>
         <summary>
             Occurs when the folder is unsubscribed.
+            </summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Vanished">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessagesVanishedEventArgs&gt; Vanished;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessagesVanishedEventArgs&gt; Vanished" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.3.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;MailKit.MessagesVanishedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Occurs when a message vanishes from the folder.
             </summary>
         <remarks>To be added.</remarks>
       </Docs>

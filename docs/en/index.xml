@@ -72,6 +72,7 @@
       <Type Name="MessageFlagsChangedEventArgs" Kind="Class" />
       <Type Name="MessageSummary" Kind="Class" />
       <Type Name="MessageSummaryItems" Kind="Enumeration" />
+      <Type Name="MessagesVanishedEventArgs" Kind="Class" />
       <Type Name="MessageThread" Kind="Class" />
       <Type Name="NullProtocolLogger" Kind="Class" />
       <Type Name="ProtocolException" Kind="Class" />
