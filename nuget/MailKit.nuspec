@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
     <metadata minClientVersion="2.7">
         <id>MailKit</id>
-        <version>0.3.0.0</version>
+        <version>0.4.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -20,12 +20,15 @@ Features include:
 * S/MIME and PGP support via MimeKit
 </description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Initial public release.</releaseNotes>
+        <releaseNotes>* Implemented IProtocolLogger support for SmtpClient
+* Implemented the QRESYNC and COMPRESS IMAP extensions
+* Fixed IMAP NAMESPACE support for nil directory separators (as used by commercial Yahoo! IMAP accounts)
+* Improved documentation</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.23.0.0" />
+            <dependency id="MimeKit" version="0.24.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
