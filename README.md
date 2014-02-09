@@ -50,10 +50,11 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * QRESYNC
     * SORT
     * THREAD
+    * ESORT (partial)
     * SPECIAL-USE
     * MOVE
     * XLIST
-    * X-GM-EXT1 (X-GM-MSGID and X-GM-THRID)
+    * X-GM-EXT1 (X-GM-MSGID, X-GM-THRID and X-GM-RAW)
   * All APIs are cancellable.
 
 ## TODO
@@ -80,14 +81,12 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * CATENATE
     * LIST-EXTENDED
     * CONVERT
-    * ESORT
     * METADATA
     * NOTIFY
     * FILTERS
     * LIST-STATUS
     * MULTISEARCH
     * GMail Extensions
-      * X-GM-RAW
       * X-GM-LABELS
   * Async APIs
 * Maildir
