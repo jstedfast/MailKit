@@ -226,17 +226,6 @@ namespace MailKit.Net.Pop3 {
 		unsafe int ReadAhead (byte* inbuf)
 		{
 			int left = inputEnd - inputIndex;
-
-			var network = Stream as NetworkStream;
-			if (network != null) {
-				if (!network.DataAvailable)
-					return left;
-			} else if (Stream.CanSeek) {
-				// running the unit tests
-				if (Stream.Position == Stream.Length)
-					return left;
-			}
-
 			int index = inputIndex;
 			int start = inputStart;
 			int end = inputEnd;
