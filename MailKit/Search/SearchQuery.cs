@@ -686,8 +686,6 @@ namespace MailKit.Search {
 			return new TextSearchQuery (SearchTerm.ToContains, text);
 		}
 
-		// FIXME: UID???
-
 		#region GMail extensions
 
 		/// <summary>
@@ -714,6 +712,31 @@ namespace MailKit.Search {
 		public static NumericSearchQuery GMailThreadId (ulong thread)
 		{
 			return new NumericSearchQuery (SearchTerm.GMailThreadId, thread);
+		}
+
+		/// <summary>
+		/// Matches messages using the GMail search expression.
+		/// </summary>
+		/// <remarks>
+		/// This search term can only be used with GMail.
+		/// </remarks>
+		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
+		/// <param name="expression">The raw GMail search text.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="expression"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="expression"/> is empty.
+		/// </exception>
+		public static TextSearchQuery GMailRawSearch (string expression)
+		{
+			if (expression == null)
+				throw new ArgumentNullException ("expression");
+
+			if (expression.Length == 0)
+				throw new ArgumentException ("Cannot search for an empty string.", "expression");
+
+			return new TextSearchQuery (SearchTerm.GMailRaw, expression);
 		}
 
 		#endregion
