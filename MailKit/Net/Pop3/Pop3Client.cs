@@ -187,7 +187,7 @@ namespace MailKit.Net.Pop3 {
 			return true;
 		}
 
-		ProtocolException CreatePop3Exception (Pop3Command pc)
+		static ProtocolException CreatePop3Exception (Pop3Command pc)
 		{
 			var command = pc.Command.Split (' ')[0].TrimEnd ();
 			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
@@ -198,7 +198,7 @@ namespace MailKit.Net.Pop3 {
 			return new Pop3ProtocolException (message);
 		}
 
-		ProtocolException CreatePop3ParseException (string format, params object[] args)
+		static ProtocolException CreatePop3ParseException (string format, params object[] args)
 		{
 			return new Pop3ProtocolException (string.Format (format, args));
 		}
