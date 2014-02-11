@@ -223,16 +223,16 @@
       </Parameters>
       <Docs>
         <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
-            be "pop3" to make a clear-text connection or "pop3s" to make an SSL connection.</param>
+            be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
             Establishes a connection to the specified POP3 server.
             </summary>
         <remarks>
           <para>Establishes a connection to an POP3 or POP3/S server. If the schema
-            in the uri is "pop3", a clear-text connection is made and defaults to using
+            in the uri is "pop", a clear-text connection is made and defaults to using
             port 110 if no port is specified in the URI. However, if the schema in the
-            uri is "pop3s", an SSL connection is made using the
+            uri is "pops", an SSL connection is made using the
             <see cref="P:MailKit.Net.Pop3.Pop3Client.ClientCertificates" /> and defaults to port 995 unless a port
             is specified in the URI.</para>
           <para>It should be noted that when using a clear-text POP3 connection,

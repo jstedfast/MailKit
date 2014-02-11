@@ -453,9 +453,9 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Establishes a connection to an POP3 or POP3/S server. If the schema
-		/// in the uri is "pop3", a clear-text connection is made and defaults to using
+		/// in the uri is "pop", a clear-text connection is made and defaults to using
 		/// port 110 if no port is specified in the URI. However, if the schema in the
-		/// uri is "pop3s", an SSL connection is made using the
+		/// uri is "pops", an SSL connection is made using the
 		/// <see cref="ClientCertificates"/> and defaults to port 995 unless a port
 		/// is specified in the URI.</para>
 		/// <para>It should be noted that when using a clear-text POP3 connection,
@@ -465,7 +465,7 @@ namespace MailKit.Net.Pop3 {
 		/// and <see cref="Capabilities"/> properties will be populated.
 		/// </remarks>
 		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
-		/// be "pop3" to make a clear-text connection or "pop3s" to make an SSL connection.</param>
+		/// be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// The <paramref name="uri"/> is <c>null</c>.
@@ -498,8 +498,9 @@ namespace MailKit.Net.Pop3 {
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
 
-			bool pop3s = uri.Scheme.ToLowerInvariant () == "pop3s";
-			int port = uri.Port > 0 ? uri.Port : (pop3s ? 995 : 110);
+			var scheme = uri.Scheme.ToLowerInvariant ();
+			bool pops = scheme == "pops" || scheme == "pop3s";
+			int port = uri.Port > 0 ? uri.Port : (pops ? 995 : 110);
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
 			Stream stream;
@@ -518,7 +519,7 @@ namespace MailKit.Net.Pop3 {
 				}
 			}
 
-			if (pop3s) {
+			if (pops) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Default, true);
 				stream = ssl;
@@ -534,7 +535,7 @@ namespace MailKit.Net.Pop3 {
 			engine.Connect (new Pop3Stream (stream, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 
-			if (!pop3s && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
+			if (!pops && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
 				SendCommand (cancellationToken, "STLS");
 
 				var tls = new SslStream (stream, false, ValidateRemoteCertificate);

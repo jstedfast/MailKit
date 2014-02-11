@@ -24,7 +24,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 * POP3 Client
   * Supports all of the SASL mechanisms listed above.
   * Also supports authentication via APOP and USER/PASS.
-  * Supports SSL-wrapped connections via the "pop3s" protocol.
+  * Supports SSL-wrapped connections via the "pops" protocol.
   * Supports the STLS extension.
   * Supports client SSL/TLS certificates.
   * Supports the UIDL command.
@@ -241,8 +241,8 @@ namespace TestClient {
 			using (var client = new Pop3Client ()) {
 				var credentials = new NetworkCredential ("joey", "password");
 
-				// Note: if the server requires SSL-on-connect, use the "pop3s" protocol instead
-				var uri = new Uri ("pop3://mail.friends.com");
+				// Note: if the server requires SSL-on-connect, use the "pops" protocol instead
+				var uri = new Uri ("pop://mail.friends.com");
 
 				using (var cancel = new CancellationTokenSource ()) {
 					client.Connect (uri, cancel.Token);
