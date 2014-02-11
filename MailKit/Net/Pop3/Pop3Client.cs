@@ -205,7 +205,7 @@ namespace MailKit.Net.Pop3 {
 
 		void SendCommand (CancellationToken token, string command)
 		{
-			var pc = engine.QueueCommand (token, command);
+			var pc = engine.QueueCommand (token, null, command);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -217,7 +217,7 @@ namespace MailKit.Net.Pop3 {
 
 		void SendCommand (CancellationToken token, string format, params object[] args)
 		{
-			var pc = engine.QueueCommand (token, format, args);
+			var pc = engine.QueueCommand (token, null, format, args);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -380,8 +380,7 @@ namespace MailKit.Net.Pop3 {
 
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					pc = engine.QueueCommand (cancellationToken, "AUTH {0}", authmech);
-					pc.Handler = (pop3, cmd, text) => {
+					pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 						while (!sasl.IsAuthenticated && cmd.Status == Pop3CommandStatus.Continue) {
 							challenge = sasl.Challenge (text);
 							string response;
@@ -395,7 +394,7 @@ namespace MailKit.Net.Pop3 {
 							if (cmd.Status == Pop3CommandStatus.ProtocolError)
 								throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
 						}
-					};
+					}, "AUTH {0}", authmech);
 
 					while (engine.Iterate () < pc.Id) {
 						// continue processing commands
@@ -663,9 +662,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			var pc = engine.QueueCommand (cancellationToken, "STAT");
-
-			pc.Handler = (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -681,7 +678,7 @@ namespace MailKit.Net.Pop3 {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
 					return;
 				}
-			};
+			}, "STAT");
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -743,10 +740,9 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= count)
 				throw new ArgumentOutOfRangeException ("index");
 
-			var pc = engine.QueueCommand (cancellationToken, "UIDL {0}", index + 1);
 			string uid = null;
 
-			pc.Handler = (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -770,7 +766,7 @@ namespace MailKit.Net.Pop3 {
 				}
 
 				uid = tokens[1];
-			};
+			}, "UIDL {0}", index + 1);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -835,10 +831,9 @@ namespace MailKit.Net.Pop3 {
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
-			var pc = engine.QueueCommand (cancellationToken, "UIDL");
 			uids.Clear ();
 
-			pc.Handler = (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -865,7 +860,7 @@ namespace MailKit.Net.Pop3 {
 
 					uids.Add (tokens[1], seqid);
 				} while (true);
-			};
+			}, "UIDL");
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -890,10 +885,9 @@ namespace MailKit.Net.Pop3 {
 
 		int GetMessageSizeForSequenceId (int seqid, CancellationToken cancellationToken)
 		{
-			var pc = engine.QueueCommand (cancellationToken, "LIST {0}", seqid);
 			int size = -1;
 
-			pc.Handler = (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -919,7 +913,7 @@ namespace MailKit.Net.Pop3 {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command.");
 					return;
 				}
-			};
+			}, "LIST {0}", seqid);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -1064,10 +1058,9 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			var pc = engine.QueueCommand (cancellationToken, "LIST");
 			var sizes = new List<int> ();
 
-			pc.Handler = (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -1104,7 +1097,7 @@ namespace MailKit.Net.Pop3 {
 
 					sizes.Add (size);
 				} while (true);
-			};
+			}, "LIST");
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -1124,12 +1117,7 @@ namespace MailKit.Net.Pop3 {
 			MimeMessage message = null;
 			Pop3Command pc;
 
-			if (headersOnly)
-				pc = engine.QueueCommand (cancellationToken, "TOP {0} 0", seqid);
-			else
-				pc = engine.QueueCommand (cancellationToken, "RETR {0}", seqid);
-
-			pc.Handler = (pop3, cmd, text) => {
+			Pop3CommandHandler handler = (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -1140,6 +1128,11 @@ namespace MailKit.Net.Pop3 {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
 			};
+
+			if (headersOnly)
+				pc = engine.QueueCommand (cancellationToken, handler, "TOP {0} 0", seqid);
+			else
+				pc = engine.QueueCommand (cancellationToken, handler, "RETR {0}", seqid);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands

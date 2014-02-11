@@ -350,9 +350,9 @@ namespace MailKit.Net.Pop3 {
 			return pc.Id;
 		}
 
-		public Pop3Command QueueCommand (CancellationToken cancellationToken, string format, params object[] args)
+		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, string format, params object[] args)
 		{
-			var pc = new Pop3Command (cancellationToken, format, args);
+			var pc = new Pop3Command (cancellationToken, handler, format, args);
 			pc.Id = nextId++;
 			queue.Add (pc);
 			return pc;
@@ -446,8 +446,7 @@ namespace MailKit.Net.Pop3 {
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			var pc = QueueCommand (cancellationToken, "CAPA");
-			pc.Handler = CapaHandler;
+			var pc = QueueCommand (cancellationToken, CapaHandler, "CAPA");
 
 			while (Iterate () < pc.Id) {
 				// continue processing commands...
