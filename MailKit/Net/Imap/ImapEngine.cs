@@ -1353,6 +1353,10 @@ namespace MailKit.Net.Imap {
 			return ic;
 		}
 
+		/// <summary>
+		/// Queues the command.
+		/// </summary>
+		/// <param name="ic">The command.</param>
 		public void QueueCommand (ImapCommand ic)
 		{
 			ic.Id = nextId++;
