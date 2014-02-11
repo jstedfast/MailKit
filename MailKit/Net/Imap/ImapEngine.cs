@@ -1349,9 +1349,14 @@ namespace MailKit.Net.Imap {
 		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
 		{
 			var ic = new ImapCommand (this, cancellationToken, folder, format, args);
+			QueueCommand (ic);
+			return ic;
+		}
+
+		public void QueueCommand (ImapCommand ic)
+		{
 			ic.Id = nextId++;
 			queue.Add (ic);
-			return ic;
 		}
 
 		/// <summary>
