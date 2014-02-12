@@ -3833,14 +3833,24 @@ namespace MailKit.Net.Imap {
 			return ModifyFlags (indexes, modseq, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
 
-		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens)
+		static bool IsAscii (string text)
 		{
+			for (int i = 0; i < text.Length; i++) {
+				if (text[i] > 127)
+					return false;
+			}
+
+			return true;
+		}
+
+		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens, ref bool ascii)
+		{
+			TextSearchQuery text = null;
 			NumericSearchQuery numeric;
 			HeaderSearchQuery header;
 			BinarySearchQuery binary;
 			UnarySearchQuery unary;
 			DateSearchQuery date;
-			TextSearchQuery text;
 
 			if (builder.Length > 0)
 				builder.Append (' ');
@@ -3853,8 +3863,8 @@ namespace MailKit.Net.Imap {
 				binary = (BinarySearchQuery) query;
 				if (parens)
 					builder.Append ('(');
-				BuildQuery (builder, binary.Left, args, false);
-				BuildQuery (builder, binary.Right, args, false);
+				BuildQuery (builder, binary.Left, args, false, ref ascii);
+				BuildQuery (builder, binary.Right, args, false, ref ascii);
 				if (parens)
 					builder.Append (')');
 				break;
@@ -3931,7 +3941,7 @@ namespace MailKit.Net.Imap {
 			case SearchTerm.Not:
 				builder.Append ("NOT");
 				unary = (UnarySearchQuery) query;
-				BuildQuery (builder, unary.Operand, args, true);
+				BuildQuery (builder, unary.Operand, args, true, ref ascii);
 				break;
 			case SearchTerm.NotAnswered:
 				builder.Append ("UNANSWERED");
@@ -3959,8 +3969,8 @@ namespace MailKit.Net.Imap {
 			case SearchTerm.Or:
 				builder.Append ("OR");
 				binary = (BinarySearchQuery) query;
-				BuildQuery (builder, binary.Left, args, true);
-				BuildQuery (builder, binary.Right, args, true);
+				BuildQuery (builder, binary.Left, args, true, ref ascii);
+				BuildQuery (builder, binary.Right, args, true, ref ascii);
 				break;
 			case SearchTerm.Recent:
 				builder.Append ("RECENT");
@@ -4021,13 +4031,19 @@ namespace MailKit.Net.Imap {
 			default:
 				throw new ArgumentOutOfRangeException ();
 			}
+
+			if (text != null && !IsAscii (text.Text))
+				ascii = false;
 		}
 
-		string BuildQueryExpression (SearchQuery query, List<string> args)
+		string BuildQueryExpression (SearchQuery query, List<string> args, out string charset)
 		{
 			var builder = new StringBuilder ();
+			bool ascii = true;
 
-			BuildQuery (builder, query, args, false);
+			BuildQuery (builder, query, args, false, ref ascii);
+
+			charset = ascii ? "US-ASCII" : "UTF-8";
 
 			return builder.ToString ();
 		}
@@ -4222,6 +4238,7 @@ namespace MailKit.Net.Imap {
 		public UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken)
 		{
 			var args = new List<string> ();
+			string charset;
 
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -4229,14 +4246,14 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args);
+			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = "UID SEARCH ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				command += "RETURN () ";
 
 			if (args.Count > 0)
-				command += "CHARSET UTF-8 ";
+				command += "CHARSET " + charset + " ";
 
 			command += expr + "\r\n";
 
@@ -4306,6 +4323,7 @@ namespace MailKit.Net.Imap {
 		public UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken)
 		{
 			var args = new List<string> ();
+			string charset;
 
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -4322,14 +4340,14 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args);
+			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
 			var command = "UID SORT " + order + " ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				command += "RETURN () ";
 
-			command += "UTF-8 ";
+			command += charset + " ";
 
 			command += expr + "\r\n";
 
@@ -4396,6 +4414,7 @@ namespace MailKit.Net.Imap {
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 			var args = new List<string> ();
+			string charset;
 
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -4406,14 +4425,14 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args);
+			var expr = BuildQueryExpression (optimized, args, out charset);
 			var command = "UID SEARCH ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				command += "RETURN () ";
 
 			if (args.Count > 0)
-				command += "CHARSET UTF-8 ";
+				command += "CHARSET " + charset + " ";
 
 			command += "UID " + set + " " + expr + "\r\n";
 
@@ -4489,6 +4508,7 @@ namespace MailKit.Net.Imap {
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 			var args = new List<string> ();
+			string charset;
 
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -4508,14 +4528,14 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args);
+			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
 			var command = "UID SORT " + order + " ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				command += "RETURN () ";
 
-			command += "UTF-8 UID " + set + " " + expr + "\r\n";
+			command += charset + " UID " + set + " " + expr + "\r\n";
 
 			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
@@ -4585,6 +4605,7 @@ namespace MailKit.Net.Imap {
 		{
 			var method = algorithm.ToString ().ToUpperInvariant ();
 			var args = new List<string> ();
+			string charset;
 
 			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
@@ -4598,8 +4619,8 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args);
-			var command = "UID THREAD " + method + " UTF-8 ";
+			var expr = BuildQueryExpression (optimized, args, out charset);
+			var command = "UID THREAD " + method + " " + charset + " ";
 
 			command += expr + "\r\n";
 
@@ -4670,6 +4691,7 @@ namespace MailKit.Net.Imap {
 			var method = algorithm.ToString ().ToUpperInvariant ();
 			var set = ImapUtils.FormatUidSet (uids);
 			var args = new List<string> ();
+			string charset;
 
 			if ((Engine.Capabilities & ImapCapabilities.Thread) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
@@ -4683,8 +4705,8 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
-			var expr = BuildQueryExpression (optimized, args);
-			var command = "UID THREAD " + method + " UTF-8 ";
+			var expr = BuildQueryExpression (optimized, args, out charset);
+			var command = "UID THREAD " + method + " " + charset + " ";
 
 			command += "UID " + set + " " + expr + "\r\n";
 
