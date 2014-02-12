@@ -1616,6 +1616,13 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
 		/// </summary>
+		/// <remarks>
+		/// <para>If the IMAP server supports the MOVE command, then the MOVE command will be used. Otherwise,
+		/// the messages will first be copied to the destination folder, then marked as \Deleted in the
+		/// originating folder, and finally expunged. Since the server could disconnect at any point between
+		/// those 3 operations, it may be advisable to implement your own logic for moving messages in this
+		/// case in order to better handle spontanious server disconnects and other error conditions.</para>
+		/// </remarks>
 		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
@@ -1763,6 +1770,13 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
 		/// </summary>
+		/// <remarks>
+		/// <para>If the IMAP server supports the MOVE command, then the MOVE command will be used. Otherwise,
+		/// the messages will first be copied to the destination folder and then marked as \Deleted in the
+		/// originating folder. Since the server could disconnect at any point between those 2 operations, it
+		/// may be advisable to implement your own logic for moving messages in this case in order to better
+		/// handle spontanious server disconnects and other error conditions.</para>
+		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
