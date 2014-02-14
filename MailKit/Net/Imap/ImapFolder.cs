@@ -446,7 +446,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Length > 0)
 				qresync += " " + set;
 
-			qresync+= "))";
+			qresync += "))";
 
 			var command = string.Format ("{0} %F {1}\r\n", SelectOrExamine (access), qresync);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
