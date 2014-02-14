@@ -329,10 +329,11 @@ namespace MailKit.Net.Imap {
 					continue;
 				}
 
-				var ic = engine.QueueCommand (cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+				var ic = new ImapCommand (engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
 				ic.UserData = new List<ImapFolder> ();
 
+				engine.QueueCommand (ic);
 				engine.Wait (ic);
 
 				if (!engine.FolderCache.TryGetValue (encodedName, out parent)) {

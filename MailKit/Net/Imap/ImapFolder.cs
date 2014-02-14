@@ -449,9 +449,10 @@ namespace MailKit.Net.Imap {
 			qresync+= "))";
 
 			var command = string.Format ("{0} %F {1}\r\n", SelectOrExamine (access), qresync);
-			var ic = Engine.QueueCommand (cancellationToken, this, command, this);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
 			ic.RegisterUntaggedHandler ("FETCH", QResyncFetch);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -641,10 +642,11 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("CREATE", ic.Result);
 
-			ic = Engine.QueueCommand (cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
 			ic.UserData = list;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -899,13 +901,13 @@ namespace MailKit.Net.Imap {
 
 			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator + "%" : "%";
 			var command = subscribedOnly ? "LSUB" : "LIST";
-
-			var ic = Engine.QueueCommand (cancellationToken, null, command + " \"\" %S\r\n", pattern);
 			var list = new List<ImapFolder> ();
 
+			var ic = new ImapCommand (Engine, cancellationToken, null, command + " \"\" %S\r\n", pattern);
 			ic.RegisterUntaggedHandler (command, ImapUtils.HandleUntaggedListResponse);
 			ic.UserData = list;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -961,17 +963,17 @@ namespace MailKit.Net.Imap {
 
 			var fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
 			var encodedName = ImapEncoding.Encode (fullName);
+			var list = new List<ImapFolder> ();
 			ImapFolder subfolder;
 
 			if (Engine.FolderCache.TryGetValue (encodedName, out subfolder))
 				return subfolder;
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			var list = new List<ImapFolder> ();
-
+			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
 			ic.UserData = list;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2068,11 +2070,12 @@ namespace MailKit.Net.Imap {
 				return new MessageSummary[0];
 
 			var command = string.Format ("UID FETCH {0} ({1})\r\n", set, query);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2145,11 +2148,12 @@ namespace MailKit.Net.Imap {
 
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} ({1}) (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2210,11 +2214,12 @@ namespace MailKit.Net.Imap {
 
 			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
 			var command = string.Format ("UID FETCH {0}:{1} ({2})\r\n", min.Id, maxValue, query);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2288,11 +2293,12 @@ namespace MailKit.Net.Imap {
 			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0}:{1} ({2}) (CHANGEDSINCE {3}{4})\r\n", min.Id, maxValue, query, modseq, vanished);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2355,11 +2361,12 @@ namespace MailKit.Net.Imap {
 				return new MessageSummary[0];
 
 			var command = string.Format ("FETCH {0} ({1})\r\n", set, query);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2429,11 +2436,12 @@ namespace MailKit.Net.Imap {
 				return new MessageSummary[0];
 
 			var command = string.Format ("FETCH {0} ({1}) (CHANGEDSINCE {2})\r\n", set, query, modseq);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2497,11 +2505,12 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (items);
 			var maxValue = max != -1 ? (max + 1).ToString () : "*";
 			var command = string.Format ("FETCH {0}:{1} ({2})\r\n", min + 1, maxValue, query);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2572,11 +2581,12 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (items);
 			var maxValue = max != -1 ? (max + 1).ToString () : "*";
 			var command = string.Format ("FETCH {0}:{1} ({2}) (CHANGEDSINCE {3})\r\n", min + 1, maxValue, query, modseq);
-			var ic = Engine.QueueCommand (cancellationToken, this, command);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2772,9 +2782,10 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[])\r\n", uid.Id);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[])\r\n", uid.Id);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2823,9 +2834,10 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2881,9 +2893,10 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s])\r\n", uid.Id, part.PartSpecifier);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s])\r\n", uid.Id, part.PartSpecifier);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -2939,9 +2952,10 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[%s])\r\n", index + 1, part.PartSpecifier);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[%s])\r\n", index + 1, part.PartSpecifier);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -3012,9 +3026,10 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -3084,9 +3099,10 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -3164,9 +3180,10 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -3243,9 +3260,10 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "FETCH %d (BODY.PEEK[%s]<%d.%d>)\r\n", index + 1, part.PartSpecifier, offset, count);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[%s]<%d.%d>)\r\n", index + 1, part.PartSpecifier, offset, count);
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -4271,12 +4289,13 @@ namespace MailKit.Net.Imap {
 
 			command += expr + "\r\n";
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			else
 				ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -4365,12 +4384,13 @@ namespace MailKit.Net.Imap {
 
 			command += expr + "\r\n";
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			else
 				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -4450,12 +4470,13 @@ namespace MailKit.Net.Imap {
 
 			command += "UID " + set + " " + expr + "\r\n";
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			else
 				ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -4551,12 +4572,13 @@ namespace MailKit.Net.Imap {
 
 			command += charset + " UID " + set + " " + expr + "\r\n";
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
 			else
 				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -4638,9 +4660,10 @@ namespace MailKit.Net.Imap {
 
 			command += expr + "\r\n";
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("THREAD", ThreadMatches);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
@@ -4724,9 +4747,10 @@ namespace MailKit.Net.Imap {
 
 			command += "UID " + set + " " + expr + "\r\n";
 
-			var ic = Engine.QueueCommand (cancellationToken, this, command, args.ToArray ());
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("THREAD", ThreadMatches);
 
+			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);

@@ -1356,9 +1356,10 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Queues the command.
 		/// </summary>
-		/// <param name="ic">The command.</param>
+		/// <param name="ic">The IMAP command.</param>
 		public void QueueCommand (ImapCommand ic)
 		{
+			ic.Status = ImapCommandStatus.Queued;
 			ic.Id = nextId++;
 			queue.Add (ic);
 		}
@@ -1397,10 +1398,11 @@ namespace MailKit.Net.Imap {
 			} else {
 				var list = new List<ImapFolder> ();
 
-				ic = QueueCommand (cancellationToken, null, "LIST \"\" \"\"\r\n");
+				ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
 				ic.UserData = list;
 
+				QueueCommand (ic);
 				Wait (ic);
 
 				PersonalNamespaces.Clear ();
@@ -1433,10 +1435,11 @@ namespace MailKit.Net.Imap {
 			if (!FolderCache.TryGetValue ("INBOX", out folder)) {
 				var list = new List<ImapFolder> ();
 
-				var ic = QueueCommand (cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
+				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
 				ic.UserData = list;
 
+				QueueCommand (ic);
 				Wait (ic);
 
 				Inbox = list.Count > 0 ? list[0] : null;
@@ -1445,10 +1448,11 @@ namespace MailKit.Net.Imap {
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
 				var list = new List<ImapFolder> ();
 
-				var ic = QueueCommand (cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
+				var ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
 				ic.UserData = list;
 
+				QueueCommand (ic);
 				Wait (ic);
 
 				ImapUtils.LookupParentFolders (this, list, cancellationToken);
@@ -1474,10 +1478,11 @@ namespace MailKit.Net.Imap {
 			} else if ((Capabilities & ImapCapabilities.XList) != 0) {
 				var list = new List<ImapFolder> ();
 
-				var ic = QueueCommand (cancellationToken, null, "XLIST \"\" \"*\"\r\n");
+				var ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
 				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.HandleUntaggedListResponse);
 				ic.UserData = list;
 
+				QueueCommand (ic);
 				Wait (ic);
 
 				ImapUtils.LookupParentFolders (this, list, cancellationToken);

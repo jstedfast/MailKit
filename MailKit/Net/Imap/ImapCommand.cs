@@ -60,6 +60,7 @@ namespace MailKit.Net.Imap {
 	/// IMAP command status.
 	/// </summary>
 	enum ImapCommandStatus {
+		Created,
 		Queued,
 		Active,
 		Complete,
@@ -217,13 +218,21 @@ namespace MailKit.Net.Imap {
 		readonly ImapEngine Engine;
 		int current = 0;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
+		/// </summary>
+		/// <param name="engine">The IMAP engine that will be sending the command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="folder">The IMAP folder that the command operates on.</param>
+		/// <param name="format">The command format.</param>
+		/// <param name="args">The command arguments.</param>
 		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
 		{
 			UntaggedHandlers = new Dictionary<string, ImapUntaggedHandler> ();
 			RespCodes = new List<ImapResponseCode> ();
-			Status = ImapCommandStatus.Queued;
-			Result = ImapCommandResult.None;
 			CancellationToken = cancellationToken;
+			Status = ImapCommandStatus.Created;
+			Result = ImapCommandResult.None;
 			Engine = engine;
 			Folder = folder;
 
@@ -359,6 +368,14 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <param name="atom">The atom token.</param>
 		/// <param name="handler">The handler.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="atom"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="handler"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// Untagged handlers must be registered before the command has been queued.
+		/// </exception>
 		public void RegisterUntaggedHandler (string atom, ImapUntaggedHandler handler)
 		{
 			if (atom == null)
@@ -367,12 +384,24 @@ namespace MailKit.Net.Imap {
 			if (handler == null)
 				throw new ArgumentNullException ("handler");
 
+			if (Status != ImapCommandStatus.Created)
+				throw new InvalidOperationException ("Untagged handlers must be registered before the command has been queued.");
+
 			UntaggedHandlers.Add (atom, handler);
 		}
 
 		/// <summary>
 		/// Sends the next part of the command to the server.
 		/// </summary>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
 		public bool Step ()
 		{
 			var result = ImapCommandResult.None;
