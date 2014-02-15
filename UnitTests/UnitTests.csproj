@@ -52,6 +52,8 @@
     <Compile Include="Net\Pop3\Pop3ReplayStream.cs" />
     <Compile Include="Net\Smtp\SmtpClientTests.cs" />
     <Compile Include="Net\Smtp\SmtpReplayStream.cs" />
+    <Compile Include="MessageSortingTests.cs" />
+    <Compile Include="MessageThreadingTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />

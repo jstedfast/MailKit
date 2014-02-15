@@ -26,6 +26,8 @@
 
 using System;
 
+using MimeKit;
+
 namespace MailKit {
 	/// <summary>
 	/// A summary of a message.
@@ -36,7 +38,7 @@ namespace MailKit {
 	/// The properties of the <see cref="MessageSummary"/> that will be available
 	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.
 	/// </remarks>
-	public class MessageSummary
+	public class MessageSummary : IThreadable, ISortable
 	{
 		internal MessageSummary (int index)
 		{
@@ -135,6 +137,94 @@ namespace MailKit {
 		/// <value>The GMail thread identifier.</value>
 		public ulong GMailThreadId {
 			get; internal set;
+		}
+
+		#endregion
+
+		#region ISortable implementation
+
+		bool ISortable.CanSort {
+			get { return Envelope != null && Envelope.Date.HasValue && MessageSize.HasValue; }
+		}
+
+		int ISortable.SortableIndex {
+			get { return Index; }
+		}
+
+		string ISortable.SortableCc {
+			get { return Envelope.Cc.ToString (); }
+		}
+
+		DateTimeOffset ISortable.SortableDate {
+			get { return Envelope.Date.Value; }
+		}
+
+		string ISortable.SortableFrom {
+			get { return Envelope.From.ToString (); }
+		}
+
+		uint ISortable.SortableSize {
+			get { return MessageSize.Value; }
+		}
+
+		string ISortable.SortableSubject {
+			get { return Envelope.Subject; }
+		}
+
+		string ISortable.SortableTo {
+			get { return Envelope.To.ToString (); }
+		}
+
+		#endregion
+
+		#region IThreadable implementation
+
+		int threadableReplyDepth = -1;
+		string threadableSubject;
+
+		void UpdateThreadableSubject ()
+		{
+			if (threadableSubject != null)
+				return;
+
+			if (Envelope.Subject != null) {
+				threadableSubject = MessageThreader.GetThreadableSubject (Envelope.Subject, out threadableReplyDepth);
+			} else {
+				threadableSubject = string.Empty;
+				threadableReplyDepth = 0;
+			}
+		}
+
+		bool IThreadable.CanThread {
+			get { return Envelope != null; }
+		}
+
+		string IThreadable.ThreadableSubject {
+			get {
+				UpdateThreadableSubject ();
+
+				return threadableSubject;
+			}
+		}
+
+		bool IThreadable.IsThreadableReply {
+			get {
+				UpdateThreadableSubject ();
+
+				return threadableReplyDepth != 0;
+			}
+		}
+
+		string IThreadable.ThreadableMessageId {
+			get { return Envelope.MessageId; }
+		}
+
+		MessageIdList IThreadable.ThreadableReferences {
+			get { return Envelope.InReplyTo; }
+		}
+
+		UniqueId IThreadable.ThreadableUid {
+			get { return Uid; }
 		}
 
 		#endregion

@@ -34,7 +34,7 @@ namespace MailKit {
 	/// </summary>
 	public sealed class MessageThread
 	{
-		readonly List<MessageThread> children;
+		internal readonly List<MessageThread> children;
 
 		internal MessageThread (UniqueId? uid)
 		{
