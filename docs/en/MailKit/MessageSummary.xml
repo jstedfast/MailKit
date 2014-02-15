@@ -1,6 +1,6 @@
 <Type Name="MessageSummary" FullName="MailKit.MessageSummary">
-  <TypeSignature Language="C#" Value="public class MessageSummary" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageSummary extends System.Object" />
+  <TypeSignature Language="C#" Value="public class MessageSummary : MailKit.IThreadable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageSummary extends System.Object implements class MailKit.ISortable, class MailKit.IThreadable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.4.0.0</AssemblyVersion>
@@ -8,7 +8,11 @@
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
-  <Interfaces />
+  <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.IThreadable</InterfaceName>
+    </Interface>
+  </Interfaces>
   <Docs>
     <summary>
             A summary of a message.
@@ -154,6 +158,230 @@
             Gets the internal date of the message (i.e. the "received" date), if available.
             </summary>
         <value>The internal date of the message.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.CanSort">
+      <MemberSignature Language="C#" Value="bool MailKit.ISortable.CanSort { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MailKit.ISortable.CanSort" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.SortableCc">
+      <MemberSignature Language="C#" Value="string MailKit.ISortable.SortableCc { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableCc" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.SortableDate">
+      <MemberSignature Language="C#" Value="DateTimeOffset MailKit.ISortable.SortableDate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTimeOffset MailKit.ISortable.SortableDate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.SortableFrom">
+      <MemberSignature Language="C#" Value="string MailKit.ISortable.SortableFrom { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableFrom" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.SortableIndex">
+      <MemberSignature Language="C#" Value="int MailKit.ISortable.SortableIndex { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 MailKit.ISortable.SortableIndex" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.SortableSize">
+      <MemberSignature Language="C#" Value="uint MailKit.ISortable.SortableSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 MailKit.ISortable.SortableSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.SortableSubject">
+      <MemberSignature Language="C#" Value="string MailKit.ISortable.SortableSubject { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableSubject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.ISortable.SortableTo">
+      <MemberSignature Language="C#" Value="string MailKit.ISortable.SortableTo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.IThreadable.CanThread">
+      <MemberSignature Language="C#" Value="bool MailKit.IThreadable.CanThread { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MailKit.IThreadable.CanThread" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.IThreadable.IsThreadableReply">
+      <MemberSignature Language="C#" Value="bool MailKit.IThreadable.IsThreadableReply { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MailKit.IThreadable.IsThreadableReply" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.IThreadable.ThreadableMessageId">
+      <MemberSignature Language="C#" Value="string MailKit.IThreadable.ThreadableMessageId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MailKit.IThreadable.ThreadableMessageId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.IThreadable.ThreadableReferences">
+      <MemberSignature Language="C#" Value="MimeKit.MessageIdList MailKit.IThreadable.ThreadableReferences { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MessageIdList MailKit.IThreadable.ThreadableReferences" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.MessageIdList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.IThreadable.ThreadableSubject">
+      <MemberSignature Language="C#" Value="string MailKit.IThreadable.ThreadableSubject { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MailKit.IThreadable.ThreadableSubject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MailKit.IThreadable.ThreadableUid">
+      <MemberSignature Language="C#" Value="MailKit.UniqueId MailKit.IThreadable.ThreadableUid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.UniqueId MailKit.IThreadable.ThreadableUid" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

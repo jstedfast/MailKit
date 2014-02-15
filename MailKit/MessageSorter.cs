@@ -91,6 +91,7 @@ namespace MailKit {
 		/// <summary>
 		/// Sortsthe messages by the specified ordering.
 		/// </summary>
+		/// <returns>The sorted messages.</returns>
 		/// <param name="messages">The messages to sort.</param>
 		/// <param name="orderBy">The sort ordering.</param>
 		/// <exception cref="System.ArgumentNullException">

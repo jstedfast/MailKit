@@ -1,0 +1,142 @@
+<Type Name="IThreadable" FullName="MailKit.IThreadable">
+  <TypeSignature Language="C#" Value="public interface IThreadable : MailKit.ISortable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IThreadable implements class MailKit.ISortable" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.4.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.ISortable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            An interface for a threading messages.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CanThread">
+      <MemberSignature Language="C#" Value="public bool CanThread { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanThread" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets a value indicating whether this instance can be threaded.
+            </summary>
+        <value>
+          <c>true</c> if this instance can be threaded; otherwise, <c>false</c>.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsThreadableReply">
+      <MemberSignature Language="C#" Value="public bool IsThreadableReply { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsThreadableReply" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets a value indicating whether this instance is a reply.
+            </summary>
+        <value>
+          <c>true</c> if this instance is a reply; otherwise, <c>false</c>.</value>
+        <remarks>
+            This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ThreadableMessageId">
+      <MemberSignature Language="C#" Value="public string ThreadableMessageId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ThreadableMessageId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the threadable message identifier.
+            </summary>
+        <value>The threadable message identifier.</value>
+        <remarks>
+            This value should be the canonicalized Message-Id header value
+            without the angle brackets.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ThreadableReferences">
+      <MemberSignature Language="C#" Value="public MimeKit.MessageIdList ThreadableReferences { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MessageIdList ThreadableReferences" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.MessageIdList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the threadable references.
+            </summary>
+        <value>The threadable references.</value>
+        <remarks>
+            This value should be the list of canonicalized Message-Ids
+            found in the In-Reply-To and References headers.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ThreadableSubject">
+      <MemberSignature Language="C#" Value="public string ThreadableSubject { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ThreadableSubject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the threadable subject.
+            </summary>
+        <value>The threadable subject.</value>
+        <remarks>
+            A normalized Subject header value where prefixes such as
+            "Re:", "Re[#]:", etc have been pruned.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ThreadableUid">
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId ThreadableUid { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.UniqueId ThreadableUid" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the unique identifier.
+            </summary>
+        <value>The unique identifier.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

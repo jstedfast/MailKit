@@ -1,0 +1,162 @@
+<Type Name="ISortable" FullName="MailKit.ISortable">
+  <TypeSignature Language="C#" Value="public interface ISortable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISortable" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.4.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>
+            An interface for message sorting.
+            </summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CanSort">
+      <MemberSignature Language="C#" Value="public bool CanSort { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanSort" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets a value indicating whether this instance can be sorted.
+            </summary>
+        <value>
+          <c>true</c> if this instance can be sorted; otherwise, <c>false</c>.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SortableCc">
+      <MemberSignature Language="C#" Value="public string SortableCc { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SortableCc" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Cc header value.
+            </summary>
+        <value>The Cc header value.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SortableDate">
+      <MemberSignature Language="C#" Value="public DateTimeOffset SortableDate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTimeOffset SortableDate" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.DateTimeOffset</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Date header value.
+            </summary>
+        <value>The date.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SortableFrom">
+      <MemberSignature Language="C#" Value="public string SortableFrom { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SortableFrom" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the From header value.
+            </summary>
+        <value>The From header value.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SortableIndex">
+      <MemberSignature Language="C#" Value="public int SortableIndex { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 SortableIndex" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the message index in the folder it belongs to.
+            </summary>
+        <value>The index.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SortableSize">
+      <MemberSignature Language="C#" Value="public uint SortableSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 SortableSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the size of the message, in bytes.
+            </summary>
+        <value>The size of the message, in bytes.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SortableSubject">
+      <MemberSignature Language="C#" Value="public string SortableSubject { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SortableSubject" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Subject header value.
+            </summary>
+        <value>The Subject header value.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SortableTo">
+      <MemberSignature Language="C#" Value="public string SortableTo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SortableTo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.4.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the To header value.
+            </summary>
+        <value>The To header value.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

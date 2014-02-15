@@ -376,6 +376,7 @@ namespace MailKit {
 		/// <summary>
 		/// Thread the messages according to the specified threading algorithm.
 		/// </summary>
+		/// <returns>The threaded messages.</returns>
 		/// <param name="algorithm">The threading algorithm.</param>
 		/// <param name="messages">The messages.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -396,6 +397,7 @@ namespace MailKit {
 		/// Threads the messages according to the specified threading algorithm
 		/// and sorts the resulting threads by the specified ordering.
 		/// </summary>
+		/// <returns>The threaded messages.</returns>
 		/// <param name="algorithm">The threading algorithm.</param>
 		/// <param name="messages">The messages.</param>
 		/// <param name="orderBy">The requested sort ordering.</param>

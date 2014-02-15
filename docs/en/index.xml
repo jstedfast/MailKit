@@ -68,13 +68,17 @@
       <Type Name="IMessageStore" Kind="Interface" />
       <Type Name="IMessageTransport" Kind="Interface" />
       <Type Name="IProtocolLogger" Kind="Interface" />
+      <Type Name="ISortable" Kind="Interface" />
+      <Type Name="IThreadable" Kind="Interface" />
       <Type Name="MessageEventArgs" Kind="Class" />
       <Type Name="MessageFlags" Kind="Enumeration" />
       <Type Name="MessageFlagsChangedEventArgs" Kind="Class" />
+      <Type Name="MessageSorter" Kind="Class" />
       <Type Name="MessageSummary" Kind="Class" />
       <Type Name="MessageSummaryItems" Kind="Enumeration" />
       <Type Name="MessagesVanishedEventArgs" Kind="Class" />
       <Type Name="MessageThread" Kind="Class" />
+      <Type Name="MessageThreader" Kind="Class" />
       <Type Name="NullProtocolLogger" Kind="Class" />
       <Type Name="ProtocolException" Kind="Class" />
       <Type Name="ProtocolLogger" Kind="Class" />
