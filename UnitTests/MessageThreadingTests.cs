@@ -77,7 +77,7 @@ namespace UnitTests {
 			DateUtils.TryParseDateTime (date, out value);
 
 			var summary = new MessageSummary (msgIndex++);
-			summary.Uid = new UniqueId ((uint) summary.Index);
+			summary.UniqueId = new UniqueId ((uint) summary.Index);
 			summary.Envelope = new Envelope ();
 			summary.Envelope.InReplyTo = new MessageIdList ();
 			if (refs != null) {

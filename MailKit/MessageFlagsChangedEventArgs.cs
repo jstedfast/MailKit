@@ -38,7 +38,7 @@ namespace MailKit {
 		/// Gets the unique ID of the message that changed, if available.
 		/// </summary>
 		/// <value>The unique ID of the message.</value>
-		public UniqueId? Uid {
+		public UniqueId? UniqueId {
 			get; internal set;
 		}
 

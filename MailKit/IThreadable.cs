@@ -81,6 +81,6 @@ namespace MailKit {
 		/// Gets the unique identifier.
 		/// </summary>
 		/// <value>The unique identifier.</value>
-		UniqueId ThreadableUid { get; }
+		UniqueId ThreadableUniqueId { get; }
 	}
 }

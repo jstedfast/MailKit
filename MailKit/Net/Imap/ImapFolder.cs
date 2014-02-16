@@ -1931,7 +1931,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					summary.Uid = new UniqueId (value);
+					summary.UniqueId = new UniqueId (value);
 					break;
 				case "X-GM-MSGID":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2706,7 +2706,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					args.Uid = new UniqueId (uid);
+					args.UniqueId = new UniqueId (uid);
 					break;
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -4827,7 +4827,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					args.Uid = new UniqueId (uid);
+					args.UniqueId = new UniqueId (uid);
 					break;
 				case "FLAGS":
 					args.Flags = ImapUtils.ParseFlagsList (engine, cancellationToken);

@@ -334,7 +334,7 @@ namespace MailKit {
 				UniqueId? uid = null;
 
 				if (message != null)
-					uid = message.ThreadableUid;
+					uid = message.ThreadableUniqueId;
 
 				var thread = new MessageThread (uid);
 				GetThreads (sorted[i], thread.children, orderBy);

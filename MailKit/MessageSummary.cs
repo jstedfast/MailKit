@@ -109,7 +109,7 @@ namespace MailKit {
 		/// Gets the unique ID of the message, if available.
 		/// </summary>
 		/// <value>The uid of the message.</value>
-		public UniqueId Uid {
+		public UniqueId UniqueId {
 			get; internal set;
 		}
 
@@ -223,8 +223,8 @@ namespace MailKit {
 			get { return Envelope.InReplyTo; }
 		}
 
-		UniqueId IThreadable.ThreadableUid {
-			get { return Uid; }
+		UniqueId IThreadable.ThreadableUniqueId {
+			get { return UniqueId; }
 		}
 
 		#endregion
