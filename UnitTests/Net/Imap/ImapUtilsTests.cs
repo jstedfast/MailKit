@@ -168,7 +168,7 @@ namespace UnitTests.Net.Imap {
 
 						Assert.AreEqual (0, envelope.Bcc.Count, "Bcc counts do not match.");
 
-						Assert.AreEqual (0, envelope.InReplyTo.Count, "In-Reply-To count does not match.");
+						Assert.IsNull (envelope.InReplyTo, "In-Reply-To is not null.");
 
 						Assert.AreEqual ("B27397-0100000@cac.washington.edu", envelope.MessageId, "Message-Id does not match.");
 					}

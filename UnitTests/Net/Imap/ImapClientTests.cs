@@ -226,7 +226,7 @@ namespace UnitTests.Net.Imap {
 				var query = SearchQuery.ToContains ("nsb").Or (SearchQuery.CcContains ("nsb"));
 				var matches = created.Search (query, CancellationToken.None);
 
-				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.Uid;
+				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId;
 				var summaries = created.Fetch (matches, items, CancellationToken.None);
 
 				foreach (var summary in summaries) {

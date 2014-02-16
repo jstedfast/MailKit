@@ -79,10 +79,10 @@ namespace UnitTests {
 			var summary = new MessageSummary (msgIndex++);
 			summary.UniqueId = new UniqueId ((uint) summary.Index);
 			summary.Envelope = new Envelope ();
-			summary.Envelope.InReplyTo = new MessageIdList ();
+			summary.References = new MessageIdList ();
 			if (refs != null) {
 				foreach (var id in refs.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-					summary.Envelope.InReplyTo.Add (id);
+					summary.References.Add (id);
 			}
 			summary.Envelope.MessageId = MimeUtils.EnumerateReferences (msgid).FirstOrDefault ();
 			summary.Envelope.Subject = subject;

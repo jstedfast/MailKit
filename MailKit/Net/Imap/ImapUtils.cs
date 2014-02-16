@@ -783,16 +783,12 @@ namespace MailKit.Net.Imap {
 			envelope.To = ParseEnvelopeAddressList (engine, cancellationToken);
 			envelope.Cc = ParseEnvelopeAddressList (engine, cancellationToken);
 			envelope.Bcc = ParseEnvelopeAddressList (engine, cancellationToken);
-			envelope.InReplyTo = new MessageIdList ();
 
-			if ((nstring = ReadNStringToken (engine, false, cancellationToken)) != null) {
-				foreach (var msgid in MimeUtils.EnumerateReferences (nstring))
-					envelope.InReplyTo.Add (msgid);
-			}
+			if ((nstring = ReadNStringToken (engine, false, cancellationToken)) != null)
+				envelope.InReplyTo = MimeUtils.EnumerateReferences (nstring).FirstOrDefault ();
 
-			if ((nstring = ReadNStringToken (engine, false, cancellationToken)) != null) {
+			if ((nstring = ReadNStringToken (engine, false, cancellationToken)) != null)
 				envelope.MessageId = MimeUtils.EnumerateReferences (nstring).FirstOrDefault ();
-			}
 
 			token = engine.ReadToken (cancellationToken);
 

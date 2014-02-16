@@ -102,10 +102,10 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// The Message-Ids that the message is replying to.
+		/// The Message-Id that the message is replying to.
 		/// </summary>
-		/// <value>The Message-Ids that the message is replying to.</value>
-		public MessageIdList InReplyTo {
+		/// <value>The Message-Id that the message is replying to.</value>
+		public string InReplyTo {
 			get; internal set;
 		}
 

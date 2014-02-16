@@ -106,6 +106,14 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Gets the message-ids that the message references, if available.
+		/// </summary>
+		/// <value>The references.</value>
+		public MessageIdList References {
+			get; internal set;
+		}
+
+		/// <summary>
 		/// Gets the unique ID of the message, if available.
 		/// </summary>
 		/// <value>The uid of the message.</value>
@@ -144,7 +152,7 @@ namespace MailKit {
 		#region ISortable implementation
 
 		bool ISortable.CanSort {
-			get { return Envelope != null && Envelope.Date.HasValue && MessageSize.HasValue; }
+			get { return Envelope != null; }
 		}
 
 		int ISortable.SortableIndex {
@@ -156,7 +164,7 @@ namespace MailKit {
 		}
 
 		DateTimeOffset ISortable.SortableDate {
-			get { return Envelope.Date.Value; }
+			get { return Envelope.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
 		}
 
 		string ISortable.SortableFrom {
@@ -164,7 +172,7 @@ namespace MailKit {
 		}
 
 		uint ISortable.SortableSize {
-			get { return MessageSize.Value; }
+			get { return MessageSize ?? 0; }
 		}
 
 		string ISortable.SortableSubject {
@@ -179,6 +187,7 @@ namespace MailKit {
 
 		#region IThreadable implementation
 
+		MessageIdList threadableReferences;
 		int threadableReplyDepth = -1;
 		string threadableSubject;
 
@@ -220,7 +229,16 @@ namespace MailKit {
 		}
 
 		MessageIdList IThreadable.ThreadableReferences {
-			get { return Envelope.InReplyTo; }
+			get {
+				if (threadableReferences == null) {
+					threadableReferences = References != null ? References.Clone () : new MessageIdList ();
+
+					if (Envelope.InReplyTo != null)
+						threadableReferences.Add (Envelope.InReplyTo);
+				}
+
+				return threadableReferences;
+			}
 		}
 
 		UniqueId IThreadable.ThreadableUniqueId {

@@ -1898,8 +1898,55 @@ namespace MailKit.Net.Imap {
 					summary.MessageSize = value;
 					break;
 				case "BODYSTRUCTURE":
-				case "BODY":
 					summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+					break;
+				case "BODY":
+					token = engine.PeekToken (ic.CancellationToken);
+
+					if (token.Type == ImapTokenType.OpenBracket) {
+						// consume the '['
+						token = engine.ReadToken (ic.CancellationToken);
+
+						if (token.Type != ImapTokenType.OpenBracket)
+							throw ImapEngine.UnexpectedToken (token, false);
+
+						// References were requested...
+
+						do {
+							token = engine.ReadToken (ic.CancellationToken);
+
+							if (token.Type == ImapTokenType.CloseBracket)
+								break;
+
+							if (token.Type == ImapTokenType.OpenParen) {
+								do {
+									token = engine.ReadToken (ic.CancellationToken);
+
+									if (token.Type == ImapTokenType.CloseParen)
+										break;
+
+									if (token.Type != ImapTokenType.Atom)
+										throw ImapEngine.UnexpectedToken (token, false);
+								} while (true);
+							} else if (token.Type != ImapTokenType.Atom) {
+								throw ImapEngine.UnexpectedToken (token, false);
+							}
+						} while (true);
+
+						if (token.Type != ImapTokenType.CloseBracket)
+							throw ImapEngine.UnexpectedToken (token, false);
+
+						token = engine.ReadToken (ic.CancellationToken);
+
+						if (token.Type != ImapTokenType.Literal)
+							throw ImapEngine.UnexpectedToken (token, false);
+
+						var message = MimeMessage.Load (engine.Stream, ic.CancellationToken);
+
+						summary.References = message.References;
+					} else {
+						summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+					}
 					break;
 				case "ENVELOPE":
 					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
@@ -1987,7 +2034,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			// now add on any additional summary items...
-			if ((items & MessageSummaryItems.Uid) != 0)
+			if ((items & MessageSummaryItems.UniqueId) != 0)
 				query += "UID ";
 			if ((items & MessageSummaryItems.Flags) != 0)
 				query += "FLAGS ";
@@ -2014,6 +2061,9 @@ namespace MailKit.Net.Imap {
 				if ((items & MessageSummaryItems.GMailThreadId) != 0)
 					query += "X-GM-THRID ";
 			}
+
+			if ((items & MessageSummaryItems.References) != 0)
+				query += "BODY.PEEK[HEADER.FIELDS (REFERENCES)]";
 
 			return query.TrimEnd ();
 		}

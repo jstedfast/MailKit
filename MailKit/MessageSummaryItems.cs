@@ -80,9 +80,14 @@ namespace MailKit {
 		ModSeq         = 1 << 7,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.Uid"/>.
+		/// Fetch the <see cref="MessageSummary.References"/>.
 		/// </summary>
-		Uid            = 1 << 8,
+		References     = 1 << 8,
+
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.UniqueId"/>.
+		/// </summary>
+		UniqueId       = 1 << 9,
 
 		#region GMail extension items
 
