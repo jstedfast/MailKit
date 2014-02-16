@@ -51,6 +51,15 @@ namespace MailKit {
 				get { return Children.Count > 0; }
 			}
 
+			public string ThreadableSubject {
+				get {
+					if (Message != null)
+						return Message.ThreadableSubject;
+
+					return Children[0].ThreadableSubject;
+				}
+			}
+
 			#region ISortable implementation
 
 			bool ISortable.CanSort {
@@ -212,14 +221,20 @@ namespace MailKit {
 					// this is an empty container with no children, nuke it.
 					root.Children.RemoveAt (i);
 					i--;
-				} else if (node.Message == null && node.HasChildren && (node.HasParent && node.Children.Count == 1)) {
+				} else if (node.Message == null && node.HasChildren && (node.HasParent || node.Children.Count == 1)) {
 					// If the Container has no Message, but does have children, remove this container but promote
 					// its children to this level (that is, splice them in to the current child list.)
 					//
 					// Do not promote the children if doing so would promote them to the root set -- unless there
 					// is only one child, in which case, do.
 					root.Children.RemoveAt (i);
-					root.Children.AddRange (node.Children);
+
+					for (int j = 0; j < node.Children.Count; j++) {
+						node.Children[j].Parent = node.Parent;
+						root.Children.Add (node.Children[j]);
+					}
+
+					node.Children.Clear ();
 					i--;
 				} else if (node.HasChildren) {
 					PruneEmptyContainers (node);
@@ -235,12 +250,7 @@ namespace MailKit {
 
 			for (int i = 0; i < root.Children.Count; i++) {
 				var current = root.Children[i];
-				var message = current.Message;
-
-				if (message == null)
-					message = root.Children[i].Children[0].Message;
-
-				var subject = message.ThreadableSubject;
+				var subject = current.ThreadableSubject;
 
 				// don't thread messages with empty subjects
 				if (string.IsNullOrEmpty (subject))
@@ -260,12 +270,7 @@ namespace MailKit {
 
 			for (int i = 0; i < root.Children.Count; i++) {
 				var current = root.Children[i];
-				var message = current.Message;
-
-				if (message == null)
-					message = root.Children[i].Children[0].Message;
-
-				var subject = message.ThreadableSubject;
+				var subject = current.ThreadableSubject;
 
 				// don't thread messages with empty subjects
 				if (string.IsNullOrEmpty (subject))
@@ -498,7 +503,7 @@ namespace MailKit {
 				index = startIndex;
 
 				if ((left = (endIndex - index)) < 3)
-					continue;
+					break;
 
 				if (left >= 4 && IsForward (subject, index)) {
 					// skip over the "Fwd:" prefix
