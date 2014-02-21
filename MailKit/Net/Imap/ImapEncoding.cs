@@ -46,9 +46,9 @@ namespace MailKit.Net.Imap {
 		{
 			var decoded = new StringBuilder ();
 			bool shifted = false;
-			int i = 0, v = 0;
+			int bits = 0, v = 0;
 			int index = 0;
-			string s;
+			string str;
 			char c;
 
 			while (index < text.Length) {
@@ -58,7 +58,7 @@ namespace MailKit.Net.Imap {
 					if (c == '-') {
 						// shifted back out of modified UTF-7
 						shifted = false;
-						i = v = 0;
+						bits = v = 0;
 					} else if (c > 127) {
 						// invalid UTF-7
 						return text;
@@ -71,12 +71,12 @@ namespace MailKit.Net.Imap {
 						}
 
 						v = (v << 6) | rank;
-						i += 6;
+						bits += 6;
 
-						if (i >= 16) {
-							s = char.ConvertFromUtf32 ((v >> (i - 16)) & 0xffff);
-							decoded.Append (s);
-							i -= 16;
+						if (bits >= 16) {
+							str = char.ConvertFromUtf32 ((v >> (bits - 16)) & 0xffff);
+							decoded.Append (str);
+							bits -= 16;
 						}
 					}
 				} else if (c == '&') {
@@ -95,10 +95,10 @@ namespace MailKit.Net.Imap {
 			return decoded.ToString ();
 		}
 
-		static void Utf7ShiftOut (StringBuilder output, int u, int i)
+		static void Utf7ShiftOut (StringBuilder output, int u, int bits)
 		{
-			if (i > 0) {
-				int x = (u << (6 - i)) & 0x3f;
+			if (bits > 0) {
+				int x = (u << (6 - bits)) & 0x3f;
 				output.Append (utf7_alphabet[x]);
 			}
 
@@ -109,7 +109,7 @@ namespace MailKit.Net.Imap {
 		{
 			var encoded = new StringBuilder ();
 			bool shifted = false;
-			int u = 0, i = 0;
+			int bits = 0, u = 0;
 
 			for (int index = 0; index < text.Length; index++) {
 				int unichar;
@@ -127,9 +127,9 @@ namespace MailKit.Net.Imap {
 					// by the two-octet sequence "&-"
 
 					if (shifted) {
-						Utf7ShiftOut (encoded, u, i);
+						Utf7ShiftOut (encoded, u, bits);
 						shifted = false;
-						i = 0;
+						bits = 0;
 					}
 
 					if (unichar != 0x26)
@@ -144,18 +144,18 @@ namespace MailKit.Net.Imap {
 					}
 
 					u = (u << 16) | (unichar & 0xffff);
-					i += 16;
+					bits += 16;
 
-					while (i >= 6) {
-						int x = (u >> (i - 6)) & 0x3f;
+					while (bits >= 6) {
+						int x = (u >> (bits - 6)) & 0x3f;
 						encoded.Append (utf7_alphabet[x]);
-						i -= 6;
+						bits -= 6;
 					}
 				}
 			}
 
 			if (shifted)
-				Utf7ShiftOut (encoded, u, i);
+				Utf7ShiftOut (encoded, u, bits);
 
 			return encoded.ToString ();
 		}
