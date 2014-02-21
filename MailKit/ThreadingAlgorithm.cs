@@ -39,9 +39,9 @@ namespace MailKit {
 		OrderedSubject,
 
 		/// <summary>
-		/// Threads messages based on their References and Message-Id headers.
-		/// This algorithm is far better than <see cref="OrderedSubject"/> but
-		/// is also more expensive to calculate.
+		/// Threads messages based on their References, In-Reply-To, and Message-Id headers.
+		/// This algorithm is far better than <see cref="OrderedSubject"/> but is also more
+		/// expensive to calculate.
 		/// </summary>
 		References,
 	}

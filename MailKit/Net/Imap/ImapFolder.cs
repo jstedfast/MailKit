@@ -643,7 +643,7 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("CREATE", ic.Result);
 
 			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
@@ -904,7 +904,7 @@ namespace MailKit.Net.Imap {
 			var list = new List<ImapFolder> ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command + " \"\" %S\r\n", pattern);
-			ic.RegisterUntaggedHandler (command, ImapUtils.HandleUntaggedListResponse);
+			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
@@ -970,7 +970,7 @@ namespace MailKit.Net.Imap {
 				return subfolder;
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);

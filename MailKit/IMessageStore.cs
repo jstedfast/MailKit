@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Threading;
 
 namespace MailKit {
 	/// <summary>
@@ -93,12 +94,29 @@ namespace MailKit {
 		/// The main reason to get the toplevel folder in a namespace is
 		/// to list its child folders.
 		/// </remarks>
-		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
+		/// <returns>The folder.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="namespace"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The folder could not be found.
+		/// </exception>
 		IFolder GetFolder (FolderNamespace @namespace);
+
+		/// <summary>
+		/// Gets the folder for the specified path.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="path">The folder path.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="path"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The folder could not be found.
+		/// </exception>
+		IFolder GetFolder (string path, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Occurs when a remote message store receives an alert message from the server.

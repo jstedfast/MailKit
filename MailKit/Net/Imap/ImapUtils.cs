@@ -207,13 +207,13 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Handles an untagged LIST or LSUB response.
+		/// Parses an untagged LIST or LSUB response.
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
 		/// <param name="index">The index.</param>
 		/// <param name="tok">The token.</param>
-		public static void HandleUntaggedListResponse (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		public static void ParseFolderList (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 			var list = (List<ImapFolder>) ic.UserData;
@@ -298,51 +298,6 @@ namespace MailKit.Net.Imap {
 			}
 
 			list.Add (folder);
-		}
-
-		/// <summary>
-		/// Looks up and sets the <see cref="ImapFolder.ParentFolder"/> property of each of the folders.
-		/// </summary>
-		/// <param name="engine">The IMAP engine.</param>
-		/// <param name="folders">The IMAP folders.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public static void LookupParentFolders (ImapEngine engine, IEnumerable<ImapFolder> folders, CancellationToken cancellationToken)
-		{
-			int index;
-
-			foreach (var folder in folders) {
-				if (folder.ParentFolder != null)
-					continue;
-
-				if ((index = folder.FullName.LastIndexOf (folder.DirectorySeparator)) == -1)
-					continue;
-
-				if (index == 0)
-					continue;
-
-				var parentName = folder.FullName.Substring (0, index);
-				var encodedName = ImapEncoding.Encode (parentName);
-				ImapFolder parent;
-
-				if (engine.FolderCache.TryGetValue (encodedName, out parent)) {
-					folder.SetParentFolder (parent);
-					continue;
-				}
-
-				var ic = new ImapCommand (engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.HandleUntaggedListResponse);
-				ic.UserData = new List<ImapFolder> ();
-
-				engine.QueueCommand (ic);
-				engine.Wait (ic);
-
-				if (!engine.FolderCache.TryGetValue (encodedName, out parent)) {
-					parent = new ImapFolder (engine, encodedName, FolderAttributes.NonExistent, folder.DirectorySeparator);
-					engine.FolderCache.Add (encodedName, parent);
-				}
-
-				folder.SetParentFolder (parent);
-			}
 		}
 
 		static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)

@@ -551,7 +551,9 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is not connected or authenticated.
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -569,8 +571,11 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
+			if (!engine.IsConnected)
+				throw new InvalidOperationException ("The ImapClient is not connected.");
+
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("You must be authenticated before you can issue a NOOP command.");
+				throw new InvalidOperationException ("The ImapClient is not authenticated.");
 
 			var ic = engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
 
@@ -642,8 +647,24 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="folder"/> is out of range.
 		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
 		public IFolder GetFolder (SpecialFolder folder)
 		{
+			CheckDisposed ();
+
+			if (!engine.IsConnected)
+				throw new InvalidOperationException ("The ImapClient is not connected.");
+
+			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
+				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+
 			switch (folder) {
 			case SpecialFolder.All:     return engine.All;
 			case SpecialFolder.Archive: return engine.Archive;
@@ -652,23 +673,41 @@ namespace MailKit.Net.Imap {
 			case SpecialFolder.Junk:    return engine.Junk;
 			case SpecialFolder.Sent:    return engine.Sent;
 			case SpecialFolder.Trash:   return engine.Trash;
-			default:
-				throw new ArgumentOutOfRangeException ("folder");
+			default: throw new ArgumentOutOfRangeException ("folder");
 			}
 		}
 
 		/// <summary>
 		/// Gets the folder for the specified namespace.
 		/// </summary>
-		/// <returns>The folder if available; otherwise <c>null</c>.</returns>
+		/// <returns>The folder.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The folder could not be found.
 		/// </exception>
 		public IFolder GetFolder (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException ("namespace");
+
+			CheckDisposed ();
+
+			if (!engine.IsConnected)
+				throw new InvalidOperationException ("The ImapClient is not connected.");
+
+			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
+				throw new InvalidOperationException ("The ImapClient is not authenticated.");
 
 			var encodedName = ImapEncoding.Encode (@namespace.Path);
 			ImapFolder folder;
@@ -676,7 +715,43 @@ namespace MailKit.Net.Imap {
 			if (engine.FolderCache.TryGetValue (encodedName, out folder))
 				return folder;
 
-			return null;
+			throw new FolderNotFoundException (@namespace.Path);
+		}
+
+		/// <summary>
+		/// Gets the folder for the specified path.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="path">The folder path.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="path"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The folder could not be found.
+		/// </exception>
+		public IFolder GetFolder (string path, CancellationToken cancellationToken)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			CheckDisposed ();
+
+			if (!engine.IsConnected)
+				throw new InvalidOperationException ("The ImapClient is not connected.");
+
+			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
+				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+
+			return engine.GetFolder (path, cancellationToken);
 		}
 
 		/// <summary>
