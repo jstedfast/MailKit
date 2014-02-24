@@ -42,6 +42,7 @@ namespace MailKit.Net.Imap {
 	static class ImapUtils
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		const string QuotedSpecials = " \t()<>@,;:\\\"/[]?=";
 
 		static readonly string[] Months = {
 			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -348,7 +349,20 @@ namespace MailKit.Net.Imap {
 			return number;
 		}
 
-		static void ParseParameterList (ParameterList paramList, ImapEngine engine, CancellationToken cancellationToken)
+		static bool NeedsQuoting (string value)
+		{
+			for (int i = 0; i < value.Length; i++) {
+				if (value[i] > 127 || char.IsControl (value[i]))
+					return true;
+
+				if (QuotedSpecials.IndexOf (value[i]) != -1)
+					return true;
+			}
+
+			return false;
+		}
+
+		static void ParseParameterList (StringBuilder builder, ImapEngine engine, CancellationToken cancellationToken)
 		{
 			ImapToken token;
 
@@ -361,8 +375,12 @@ namespace MailKit.Net.Imap {
 				var name = ReadStringToken (engine, cancellationToken);
 				var value = ReadStringToken (engine, cancellationToken);
 
-				// FIXME: may need to decode params
-				paramList[name] = value;
+				builder.Append ("; ").Append (name).Append ('=');
+
+				if (NeedsQuoting (value))
+					builder.Append (MimeUtils.Quote (value));
+				else
+					builder.Append (value);
 			} while (true);
 
 			// read the ')'
@@ -373,16 +391,22 @@ namespace MailKit.Net.Imap {
 		{
 			var type = ReadStringToken (engine, cancellationToken);
 			var subtype = ReadStringToken (engine, cancellationToken);
-			var contentType = new ContentType (type, subtype);
 			var token = engine.ReadToken (cancellationToken);
+			ContentType contentType;
 
 			if (token.Type == ImapTokenType.Nil)
-				return contentType;
+				return new ContentType (type, subtype);
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			ParseParameterList (contentType.Parameters, engine, cancellationToken);
+			var builder = new StringBuilder ();
+			builder.AppendFormat ("{0}/{1}", type, subtype);
+
+			ParseParameterList (builder, engine, cancellationToken);
+
+			if (!ContentType.TryParse (builder.ToString (), out contentType))
+				contentType = new ContentType (type, subtype);
 
 			return contentType;
 		}
@@ -398,12 +422,13 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 
 			var dsp = ReadStringToken (engine, cancellationToken);
-			var disposition = new ContentDisposition (dsp);
+			var builder = new StringBuilder (dsp);
+			ContentDisposition disposition;
 
 			token = engine.ReadToken (cancellationToken);
 
 			if (token.Type == ImapTokenType.OpenParen)
-				ParseParameterList (disposition.Parameters, engine, cancellationToken);
+				ParseParameterList (builder, engine, cancellationToken);
 			else if (token.Type != ImapTokenType.Nil)
 				throw ImapEngine.UnexpectedToken (token, false);
 
@@ -411,6 +436,9 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
+
+			if (!ContentDisposition.TryParse (builder.ToString (), out disposition))
+				disposition = new ContentDisposition (dsp);
 
 			return disposition;
 		}
@@ -510,7 +538,15 @@ namespace MailKit.Net.Imap {
 				if (token.Type != ImapTokenType.OpenParen)
 					throw ImapEngine.UnexpectedToken (token, false);
 
-				ParseParameterList (body.ContentType.Parameters, engine, cancellationToken);
+				var builder = new StringBuilder ();
+				ContentType contentType;
+
+				builder.AppendFormat ("{0}/{1}", body.ContentType.MediaType, body.ContentType.MediaSubtype);
+				ParseParameterList (builder, engine, cancellationToken);
+
+				if (ContentType.TryParse (builder.ToString (), out contentType))
+					body.ContentType = contentType;
+
 				token = engine.PeekToken (cancellationToken);
 			}
 
