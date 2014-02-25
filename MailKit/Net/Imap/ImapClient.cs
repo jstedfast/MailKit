@@ -399,10 +399,13 @@ namespace MailKit.Net.Imap {
 		/// is specified in the URI.</para>
 		/// <para>It should be noted that when using a clear-text IMAP connection,
 		/// if the server advertizes support for the STARTTLS extension, the client
-		/// will automatically switch into TLS mode before authenticating.</para>
-		/// <para>If the non-IMAP/S server does not support the STARTTLS extension but
-		/// advertizes the COMPRESS extension, the client will automatically opt into
-		/// using a compressed data connection to optimize bandwidth usage.</para>
+		/// will automatically switch into TLS mode before authenticating unless the
+		/// <paramref name="uri"/> contains a query string to disable it.</para>
+		/// <para>If the IMAP server advertizes the COMPRESS extension and either does not
+		/// support the STARTTLS extension or the <paramref name="uri"/> explicitly disabled
+		/// the use of the STARTTLS extension, then the client will automatically opt into
+		/// using a compressed data connection to optimize bandwidth usage unless the
+		/// <paramref name="uri"/> contains a query string to explicitly disable it.</para>
 		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
 		/// and <see cref="Capabilities"/> properties will be populated.</para>
 		/// </remarks>
@@ -411,6 +414,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// The <paramref name="uri"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="uri"/> is not an absolute URI.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -434,14 +440,22 @@ namespace MailKit.Net.Imap {
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException ("The uri must be absolute.", "uri");
+
 			if (IsConnected)
 				throw new InvalidOperationException ("The ImapClient is already connected.");
 
 			bool imaps = uri.Scheme.ToLowerInvariant () == "imaps";
 			int port = uri.Port > 0 ? uri.Port : (imaps ? 993 : 143);
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var query = uri.ParsedQuery ();
 			Socket socket = null;
 			Stream stream;
+			string value;
+
+			var starttls = !imaps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+			var compress = !imaps && (!query.TryGetValue ("compress", out value) || Convert.ToBoolean (value));
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -475,7 +489,7 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
 
-			if (!imaps && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
+			if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
 				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
 				engine.Wait (ic);
@@ -490,16 +504,16 @@ namespace MailKit.Net.Imap {
 					if (engine.CapabilitiesVersion == 1)
 						engine.QueryCapabilities (cancellationToken);
 				}
-			} else if (!imaps && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
+			} else if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
 				var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
 
 				engine.Wait (ic);
 
 				if (ic.Result == ImapCommandResult.Ok) {
-					var decompress = new DeflateStream (stream, CompressionMode.Decompress);
-					var compress = new DeflateStream (stream, CompressionMode.Compress);
+					var unzip = new DeflateStream (stream, CompressionMode.Decompress);
+					var zip = new DeflateStream (stream, CompressionMode.Compress);
 
-					engine.Stream.Stream = new DuplexStream (decompress, compress);
+					engine.Stream.Stream = new DuplexStream (unzip, zip);
 
 					// Query the CAPABILITIES again if the server did not include an
 					// untagged CAPABILITIES response to the COMPRESS command.
@@ -659,7 +673,7 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
-			if (!engine.IsConnected)
+			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
 
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
@@ -703,7 +717,7 @@ namespace MailKit.Net.Imap {
 
 			CheckDisposed ();
 
-			if (!engine.IsConnected)
+			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
 
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
@@ -745,7 +759,7 @@ namespace MailKit.Net.Imap {
 
 			CheckDisposed ();
 
-			if (!engine.IsConnected)
+			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
 
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)

@@ -460,7 +460,8 @@ namespace MailKit.Net.Pop3 {
 		/// is specified in the URI.</para>
 		/// <para>It should be noted that when using a clear-text POP3 connection,
 		/// if the server advertizes support for the STLS extension, the client
-		/// will automatically switch into TLS mode before authenticating.</para>
+		/// will automatically switch into TLS mode before authenticating unless
+		/// the <paramref name="uri"/> contains a query string to disable it.</para>
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
 		/// and <see cref="Capabilities"/> properties will be populated.
 		/// </remarks>
@@ -469,6 +470,9 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// The <paramref name="uri"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="uri"/> is not an absolute URI.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -495,6 +499,9 @@ namespace MailKit.Net.Pop3 {
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException ("The uri must be absolute.", "uri");
+
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
 
@@ -502,8 +509,12 @@ namespace MailKit.Net.Pop3 {
 			bool pops = scheme == "pops" || scheme == "pop3s";
 			int port = uri.Port > 0 ? uri.Port : (pops ? 995 : 110);
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var query = uri.ParsedQuery ();
 			Socket socket = null;
 			Stream stream;
+			string value;
+
+			var starttls = !pops && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -535,7 +546,7 @@ namespace MailKit.Net.Pop3 {
 			engine.Connect (new Pop3Stream (stream, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 
-			if (!pops && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
+			if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
 				SendCommand (cancellationToken, "STLS");
 
 				var tls = new SslStream (stream, false, ValidateRemoteCertificate);

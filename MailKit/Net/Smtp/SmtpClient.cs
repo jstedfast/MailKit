@@ -588,7 +588,8 @@ namespace MailKit.Net.Smtp {
 		/// is specified in the URI.</para>
 		/// <para>It should be noted that when using a clear-text SMTP connection,
 		/// if the server advertizes support for the STARTTLS extension, the client
-		/// will automatically switch into TLS mode before authenticating.</para>
+		/// will automatically switch into TLS mode before authenticating unless the
+		/// <paramref name="uri"/> contains a query string to disable it.</para>
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
 		/// and <see cref="Capabilities"/> properties will be populated.
 		/// </remarks>
@@ -597,6 +598,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para>The <paramref name="uri"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="uri"/> is not an absolute URI.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -623,6 +627,9 @@ namespace MailKit.Net.Smtp {
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException ("The uri must be absolute.", "uri");
+
 			if (IsConnected)
 				throw new InvalidOperationException ("The SmtpClient is already connected.");
 
@@ -633,8 +640,12 @@ namespace MailKit.Net.Smtp {
 			bool smtps = uri.Scheme.ToLowerInvariant () == "smtps";
 			int port = uri.Port > 0 ? uri.Port : (smtps ? 465 : 25);
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var query = uri.ParsedQuery ();
 			SmtpResponse response = null;
 			Socket socket = null;
+			string value;
+
+			var starttls = !smtps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -673,7 +684,7 @@ namespace MailKit.Net.Smtp {
 				// Send EHLO and get a list of supported extensions
 				Ehlo (cancellationToken);
 
-				if (!smtps && (Capabilities & SmtpCapabilities.StartTLS) != 0) {
+				if (starttls && (Capabilities & SmtpCapabilities.StartTLS) != 0) {
 					response = SendCommand ("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
