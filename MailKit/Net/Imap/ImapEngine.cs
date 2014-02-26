@@ -807,26 +807,27 @@ namespace MailKit.Net.Imap {
 		static ImapResponseCodeType GetResponseCodeType (string atom)
 		{
 			switch (atom) {
-			case "ALERT":          return ImapResponseCodeType.Alert;
-			case "BADCHARSET":     return ImapResponseCodeType.BadCharset;
-			case "CAPABILITY":     return ImapResponseCodeType.Capability;
-			case "PARSE":          return ImapResponseCodeType.Parse;
-			case "PERMANENTFLAGS": return ImapResponseCodeType.PermanentFlags;
-			case "READ-ONLY":      return ImapResponseCodeType.ReadOnly;
-			case "READ-WRITE":     return ImapResponseCodeType.ReadWrite;
-			case "TRYCREATE":      return ImapResponseCodeType.TryCreate;
-			case "UIDNEXT":        return ImapResponseCodeType.UidNext;
-			case "UIDVALIDITY":    return ImapResponseCodeType.UidValidity;
-			case "UNSEEN":         return ImapResponseCodeType.Unseen;
-			case "NEWNAME":        return ImapResponseCodeType.NewName;
-			case "APPENDUID":      return ImapResponseCodeType.AppendUid;
-			case "COPYUID":        return ImapResponseCodeType.CopyUid;
-			case "UIDNOTSTICKY":   return ImapResponseCodeType.UidNotSticky;
-			case "HIGHESTMODSEQ":  return ImapResponseCodeType.HighestModSeq;
-			case "MODIFIED":       return ImapResponseCodeType.Modified;
-			case "NOMODSEQ":       return ImapResponseCodeType.NoModSeq;
-			case "CLOSED":         return ImapResponseCodeType.Closed;
-			default:               return ImapResponseCodeType.Unknown;
+			case "ALERT":             return ImapResponseCodeType.Alert;
+			case "BADCHARSET":        return ImapResponseCodeType.BadCharset;
+			case "CAPABILITY":        return ImapResponseCodeType.Capability;
+			case "PARSE":             return ImapResponseCodeType.Parse;
+			case "PERMANENTFLAGS":    return ImapResponseCodeType.PermanentFlags;
+			case "READ-ONLY":         return ImapResponseCodeType.ReadOnly;
+			case "READ-WRITE":        return ImapResponseCodeType.ReadWrite;
+			case "TRYCREATE":         return ImapResponseCodeType.TryCreate;
+			case "UIDNEXT":           return ImapResponseCodeType.UidNext;
+			case "UIDVALIDITY":       return ImapResponseCodeType.UidValidity;
+			case "UNSEEN":            return ImapResponseCodeType.Unseen;
+			case "NEWNAME":           return ImapResponseCodeType.NewName;
+			case "APPENDUID":         return ImapResponseCodeType.AppendUid;
+			case "COPYUID":           return ImapResponseCodeType.CopyUid;
+			case "UIDNOTSTICKY":      return ImapResponseCodeType.UidNotSticky;
+			case "HIGHESTMODSEQ":     return ImapResponseCodeType.HighestModSeq;
+			case "MODIFIED":          return ImapResponseCodeType.Modified;
+			case "NOMODSEQ":          return ImapResponseCodeType.NoModSeq;
+			case "COMPRESSIONACTIVE": return ImapResponseCodeType.CompressionActive;
+			case "CLOSED":            return ImapResponseCodeType.Closed;
+			default:                  return ImapResponseCodeType.Unknown;
 			}
 		}
 

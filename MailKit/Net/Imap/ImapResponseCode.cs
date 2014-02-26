@@ -51,6 +51,9 @@ namespace MailKit.Net.Imap {
 		Modified,
 		NoModSeq,
 
+		// RESP-CODES introduced in rfc4978:
+		CompressionActive,
+
 		// RESP-CODES introduced in rfc5162:
 		Closed,
 
