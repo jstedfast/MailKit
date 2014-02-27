@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageStore implements class MailKit.IMessageService, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.5.0.0</AssemblyVersion>
+    <AssemblyVersion>0.6.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -27,7 +27,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.AlertEventArgs&gt; Alert" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.5.0.0</AssemblyVersion>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;MailKit.AlertEventArgs&gt;</ReturnType>
@@ -47,7 +47,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.5.0.0</AssemblyVersion>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IFolder</ReturnType>
@@ -60,13 +60,16 @@
         <summary>
             Gets the folder for the specified namespace.
             </summary>
-        <returns>The folder if available; otherwise <c>null</c>.</returns>
+        <returns>The folder.</returns>
         <remarks>
             The main reason to get the toplevel folder in a namespace is
             to list its child folders.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="namespace" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The folder could not be found.
             </exception>
       </Docs>
     </Member>
@@ -75,7 +78,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.5.0.0</AssemblyVersion>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IFolder</ReturnType>
@@ -98,12 +101,42 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="GetFolder">
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (string path, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="path">The folder path.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets the folder for the specified path.
+            </summary>
+        <returns>The folder.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The folder could not be found.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Inbox">
       <MemberSignature Language="C#" Value="public MailKit.IFolder Inbox { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IFolder Inbox" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.5.0.0</AssemblyVersion>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IFolder</ReturnType>
@@ -124,7 +157,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection OtherNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.5.0.0</AssemblyVersion>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -144,7 +177,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection PersonalNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.5.0.0</AssemblyVersion>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -164,7 +197,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.5.0.0</AssemblyVersion>
+        <AssemblyVersion>0.6.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>

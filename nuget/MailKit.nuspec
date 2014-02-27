@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
     <metadata minClientVersion="2.7">
         <id>MailKit</id>
-        <version>0.5.0.0</version>
+        <version>0.6.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -21,17 +21,16 @@ Features include:
 * S/MIME and PGP support via MimeKit
 </description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Modified the Pop3Client to accept "pop://" and "pops://" URIs as well as the older "pop3://" and "pop3s://" URIs.
-* Fixed ImapFolder.Search() to use the US-ASCII charset instead of UTF-8 if it can (Microsoft Exchange only handles US-ASCII search).
-* Implemented client-side sorting and threading of messages (the Ordinal Subject and Jamie Zawinski threading algorithms are supported).
-* Added MessageSummary.References and MessageSummaryItems.References to facilitate the above feature.
-* Renamed MessageSummary.Uid to MessageSummary.UniqueId.
+        <releaseNotes>* Added an ImapClient.GetFolder() method that takes a folder path for convenience.
+* Added a way to disable use of STARTTLS by passing "starttls=false" as a URI parameter.
+* Added support for the IMAP COMPRESSIONACTIVE RESP-CODE.
+* Modified to handle rfc2231-encoded paremeter values in the BODY and BODYSTRUCTURE IMAP responses.
 * Improved documentation</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.26.0.0" />
+            <dependency id="MimeKit" version="0.27.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
@@ -46,10 +45,10 @@ Features include:
         </frameworkAssemblies>
     </metadata>
     <files>
-        <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.Android.dll" target="lib\MonoAndroid\MailKit.Android.dll" />
-        <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.Android.xml" target="lib\MonoAndroid\MailKit.Android.xml" />
-        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.iOS.dll" target="lib\MonoTouch\MailKit.iOS.dll" />
-        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.iOS.xml" target="lib\MonoTouch\MailKit.iOS.xml" />
+        <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.dll" target="lib\MonoAndroid\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.xml" target="lib\MonoAndroid\MailKit.xml" />
+        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.dll" target="lib\MonoTouch\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.xml" target="lib\MonoTouch\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
     </files>
