@@ -73,14 +73,14 @@ namespace MailKit.Net.Smtp {
 				byte c = input[i];
 
 				if (c == (byte) '.' && bol) {
-					output[index++] = (byte) '.';
-					output[index++] = (byte) '.';
+					OutputBuffer[index++] = (byte) '.';
+					OutputBuffer[index++] = (byte) '.';
 					bol = false;
 				} else if (c == (byte) '\n') {
-					output[index++] = (byte) '\n';
+					OutputBuffer[index++] = (byte) '\n';
 					bol = true;
 				} else {
-					output[index++] = c;
+					OutputBuffer[index++] = c;
 					bol = false;
 				}
 			}
@@ -88,7 +88,7 @@ namespace MailKit.Net.Smtp {
 			outputLength = index;
 			outputIndex = 0;
 
-			return output;
+			return OutputBuffer;
 		}
 
 		/// <summary>
