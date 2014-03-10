@@ -136,7 +136,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
 		public override bool CanSeek {
-			get { return Stream.CanSeek; }
+			get { return false; }
 		}
 
 		/// <summary>
