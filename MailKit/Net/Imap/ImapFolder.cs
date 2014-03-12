@@ -4229,6 +4229,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			do {
+				if (token.Type == ImapTokenType.Eoln) {
+					// unget the eoln token
+					engine.Stream.UngetToken (token);
+					break;
+				}
+
 				if (token.Type != ImapTokenType.Atom)
 					throw ImapEngine.UnexpectedToken (token, false);
 
@@ -4261,12 +4267,6 @@ namespace MailKit.Net.Imap {
 				}
 
 				token = engine.ReadToken (ic.CancellationToken);
-
-				if (token.Type == ImapTokenType.Eoln) {
-					// unget the eoln token
-					engine.Stream.UngetToken (token);
-					break;
-				}
 			} while (true);
 
 			if (!uid && uids != null) {
@@ -4276,7 +4276,7 @@ namespace MailKit.Net.Imap {
 
 				ic.UserData = indexes;
 			} else {
-				ic.UserData = uids;
+				ic.UserData = uids ?? new UniqueId[0];
 			}
 		}
 
