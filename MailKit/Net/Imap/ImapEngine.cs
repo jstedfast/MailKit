@@ -1087,6 +1087,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (!FolderCache.TryGetValue (name, out folder)) {
+				// FIXME: what should we do in this situation?
 			}
 
 			token = stream.ReadToken (cancellationToken);
