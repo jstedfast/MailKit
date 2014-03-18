@@ -464,6 +464,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
 		public string ReadLine (CancellationToken cancellationToken)
 		{
 			if (stream == null)
@@ -507,6 +510,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
 		public ImapToken ReadToken (CancellationToken cancellationToken)
 		{
 			return stream.ReadToken (cancellationToken);
@@ -525,6 +531,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
 		/// </exception>
 		public ImapToken PeekToken (CancellationToken cancellationToken)
 		{

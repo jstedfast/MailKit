@@ -257,6 +257,9 @@ namespace MailKit.Net.Imap {
 				if ((nread = Stream.Read (input, start, end - start)) > 0) {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
+				} else {
+					IsConnected = false;
+					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
 				}
 			} catch (IOException) {
 				IsConnected = false;
