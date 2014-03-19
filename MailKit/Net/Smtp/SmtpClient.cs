@@ -236,7 +236,7 @@ namespace MailKit.Net.Smtp {
 						cancellationToken.ThrowIfCancellationRequested ();
 
 						if ((nread = stream.Read (input, inputEnd, input.Length - inputEnd)) == 0)
-							throw new SmtpProtocolException ("The server replied with an incomplete response.");
+							throw new SmtpProtocolException ("The SMTP server unexpectedly disconnected.");
 
 						logger.LogServer (input, inputEnd, nread);
 						inputEnd += nread;
