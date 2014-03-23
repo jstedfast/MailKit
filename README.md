@@ -140,11 +140,12 @@ simply enter the following command:
 
 ## Building
 
-First, you'll need to clone MailKit, MimeKit and Bouncy Castle from my GitHub repository:
+First, you'll need to clone MailKit, MimeKit, Bouncy Castle, and Portable.Text.Encoding from my GitHub repository:
 
     git clone https://github.com/jstedfast/MailKit.git
     git clone https://github.com/jstedfast/MimeKit.git
     git clone https://github.com/jstedfast/bc-csharp.git
+    git clone https://github.com/jstedfast/Portable.Text.Encoding.git
 
 Currently, MailKit (through its use of MimeKit) depends on the visual-studio-2010 branch of bc-csharp for
 the Visual Studio 2010 project files that I've added (to replace the Visual Studio 2003 project files).
