@@ -35,6 +35,10 @@ using System.Collections.Generic;
 using MimeKit;
 using MimeKit.Utils;
 
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+using Encoding = Portable.Text.Encoding;
+#endif
+
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// IMAP utility functions.

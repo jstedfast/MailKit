@@ -25,15 +25,20 @@
 //
 
 using System;
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 using System.Runtime.Serialization;
+#endif
 
 namespace MailKit {
 	/// <summary>
 	/// The exception that is thrown when there is a protocol error.
 	/// </summary>
-	[Serializable]
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+    [Serializable]
+#endif
 	public abstract class ProtocolException : Exception
-	{
+    {
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>
@@ -43,7 +48,8 @@ namespace MailKit {
 		{
 		}
 
-		/// <summary>
+#endif
+        /// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>

@@ -28,7 +28,9 @@ using System;
 using System.Net;
 using System.Threading;
 using System.Collections.Generic;
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 using System.Security.Cryptography.X509Certificates;
+#endif
 
 namespace MailKit {
 	/// <summary>
@@ -40,7 +42,8 @@ namespace MailKit {
 	/// </remarks>
 	public interface IMessageService : IDisposable
 	{
-		/// <summary>
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+        /// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
 		/// <remarks>
@@ -51,7 +54,8 @@ namespace MailKit {
 		/// <value>The client SSL certificates.</value>
 		X509CertificateCollection ClientCertificates { get; set; }
 
-		/// <summary>
+#endif
+        /// <summary>
 		/// Gets the authentication mechanisms supported by the message service.
 		/// </summary>
 		/// <remarks>

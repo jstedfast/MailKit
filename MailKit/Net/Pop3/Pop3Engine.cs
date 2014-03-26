@@ -30,6 +30,10 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+using Encoding = Portable.Text.Encoding;
+#endif
+
 namespace MailKit.Net.Pop3 {
 	/// <summary>
 	/// The state of the <see cref="Pop3Engine"/>.
@@ -252,7 +256,11 @@ namespace MailKit.Net.Pop3 {
 				memory.Write (buf, offset, count);
 
 				count = (int) memory.Length;
-				buf = memory.GetBuffer ();
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+                buf = memory.GetBuffer ();
+#else
+                buf = memory.ToArray ();
+#endif
 
 				return Latin1.GetString (buf, 0, count);
 			}

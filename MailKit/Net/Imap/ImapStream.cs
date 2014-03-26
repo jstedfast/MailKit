@@ -28,7 +28,11 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Net.Sockets;
+using Buffer = System.Buffer;
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+using Windows.Storage.Streams;
+#endif
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -75,12 +79,21 @@ namespace MailKit.Net.Imap {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
 		/// </summary>
 		/// <param name="source">The underlying network stream.</param>
-		/// <param name="protocolLogger">The protocol logger.</param>
-		public ImapStream (Stream source, IProtocolLogger protocolLogger)
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+        /// <param name="outputStream">The underlying network writer.</param>
+#endif
+        /// <param name="protocolLogger">The protocol logger.</param>
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+        public ImapStream (Stream source, IProtocolLogger protocolLogger)
+#else
+        public ImapStream(Stream source, IOutputStream outputStream, IProtocolLogger protocolLogger)
+#endif
 		{
 			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
+		    WriterStream = outputStream.AsStreamForWrite ();
+		    Writer = new DataWriter (outputStream);
 		}
 
 		/// <summary>
@@ -91,7 +104,25 @@ namespace MailKit.Net.Imap {
 			get; set;
 		}
 
-		/// <summary>
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+        /// <summary>
+		/// Gets or sets the underlying network writer.
+		/// </summary>
+		/// <value>The underlying network writer.</value>
+		public DataWriter Writer {
+			get; set;
+		}
+
+        /// <summary>
+		/// Gets or sets the underlying network writer stream.
+		/// </summary>
+		/// <value>The underlying network writer stream.</value>
+		public Stream WriterStream {
+			get; set;
+		}
+
+#endif
+        /// <summary>
 		/// Gets or sets the mode used for reading.
 		/// </summary>
 		/// <value>The mode.</value>
@@ -405,7 +436,11 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-				var buffer = memory.GetBuffer ();
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+                var buffer = memory.GetBuffer ();
+#else
+                var buffer = memory.ToArray ();
+#endif
 				int length = (int) memory.Length;
 
 				return new ImapToken (ImapTokenType.QString, Encoding.UTF8.GetString (buffer, 0, length));
@@ -744,8 +779,14 @@ namespace MailKit.Net.Imap {
 					}
 
 					if (outputIndex == BlockSize) {
-						// flush the output buffer
+                        // flush the output buffer
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 						Stream.Write (output, 0, BlockSize);
+#else
+                        for (var i = 0; i < BlockSize; i++) {
+					        Writer.WriteByte (output[i]);
+					    }
+#endif
 						logger.LogClient (output, 0, BlockSize);
 						outputIndex = 0;
 					}
@@ -753,7 +794,13 @@ namespace MailKit.Net.Imap {
 					if (outputIndex == 0) {
 						// write blocks of data to the stream without buffering
 						while (left >= BlockSize) {
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 							Stream.Write (buffer, index, BlockSize);
+#else
+                            for (var i = index; i < BlockSize; i++) {
+                                Writer.WriteByte(output[i]);
+                            }
+#endif
 							logger.LogClient (buffer, index, BlockSize);
 							index += BlockSize;
 							left -= BlockSize;
@@ -787,7 +834,13 @@ namespace MailKit.Net.Imap {
 				return;
 
 			try {
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 				Stream.Write (output, 0, outputIndex);
+#else
+                for (var i = 0; i < outputIndex; i++) {
+			        Writer.WriteByte (output[i]);
+			    }
+#endif
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
 			} catch (IOException) {
@@ -833,6 +886,11 @@ namespace MailKit.Net.Imap {
 			if (disposing && !disposed) {
 				IsConnected = false;
 				Stream.Dispose ();
+			    Stream = null;
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+			    Writer.DetachStream();
+			    Writer = null;
+#endif
 				disposed = true;
 			}
 

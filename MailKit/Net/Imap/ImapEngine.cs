@@ -31,6 +31,10 @@ using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
 
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+using Encoding = Portable.Text.Encoding;
+#endif
+
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// The state of the <see cref="ImapEngine"/>.
@@ -486,7 +490,11 @@ namespace MailKit.Net.Imap {
 				memory.Write (buf, offset, count);
 
 				count = (int) memory.Length;
-				buf = memory.GetBuffer ();
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+                buf = memory.GetBuffer ();
+#else
+                buf = memory.ToArray ();
+#endif
 
 				try {
 					return Encoding.UTF8.GetString (buf, 0, count);
@@ -575,7 +583,11 @@ namespace MailKit.Net.Imap {
 				}
 
 				nread = (int) memory.Length;
-				buf = memory.GetBuffer ();
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+                buf = memory.GetBuffer ();
+#else
+                buf = memory.ToArray ();
+#endif
 
 				return Latin1.GetString (buf, 0, nread);
 			}

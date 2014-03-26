@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B778302F-EC62-46B9-AD83-417D045ACE26}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MailKit</RootNamespace>
+    <AssemblyName>MailKit</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.Portable.csproj">
+      <Project>{be542ce1-f773-467e-8ded-d02b89c5040a}</Project>
+      <Name>MimeKit.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Portable.Text.Encoding\Portable.Text.Encoding\Portable.Text.Encoding.csproj">
+      <Project>{eee48c75-11be-4b50-b759-f85b5052d473}</Project>
+      <Name>Portable.Text.Encoding</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AlertEventArgs.cs" />
+    <Compile Include="BodyPart.cs" />
+    <Compile Include="BodyPartBasic.cs" />
+    <Compile Include="BodyPartCollection.cs" />
+    <Compile Include="BodyPartMessage.cs" />
+    <Compile Include="BodyPartMultipart.cs" />
+    <Compile Include="BodyPartText.cs" />
+    <Compile Include="Envelope.cs" />
+    <Compile Include="FolderAccess.cs" />
+    <Compile Include="FolderAttributes.cs" />
+    <Compile Include="FolderNamespace.cs" />
+    <Compile Include="FolderNamespaceCollection.cs" />
+    <Compile Include="FolderNotFoundException.cs" />
+    <Compile Include="FolderRenamedEventArgs.cs" />
+    <Compile Include="IFolder.cs" />
+    <Compile Include="IMessageService.cs" />
+    <Compile Include="IMessageSpool.cs" />
+    <Compile Include="IMessageStore.cs" />
+    <Compile Include="IMessageTransport.cs" />
+    <Compile Include="IProtocolLogger.cs" />
+    <Compile Include="ISortable.cs" />
+    <Compile Include="IThreadable.cs" />
+    <Compile Include="MessageEventArgs.cs" />
+    <Compile Include="MessageFlags.cs" />
+    <Compile Include="MessageFlagsChangedEventArgs.cs" />
+    <Compile Include="MessageSorter.cs" />
+    <Compile Include="MessageSummary.cs" />
+    <Compile Include="MessageSummaryItems.cs" />
+    <Compile Include="MessagesVanishedEventArgs.cs" />
+    <Compile Include="MessageThread.cs" />
+    <Compile Include="MessageThreader.cs" />
+    <Compile Include="Net\Imap\DuplexStream.cs" />
+    <Compile Include="Net\Imap\ImapCapabilities.cs" />
+    <Compile Include="Net\Imap\ImapClient.cs" />
+    <Compile Include="Net\Imap\ImapCommand.cs" />
+    <Compile Include="Net\Imap\ImapCommandException.cs" />
+    <Compile Include="Net\Imap\ImapEncoding.cs" />
+    <Compile Include="Net\Imap\ImapEngine.cs" />
+    <Compile Include="Net\Imap\ImapFolder.cs" />
+    <Compile Include="Net\Imap\ImapProtocolException.cs" />
+    <Compile Include="Net\Imap\ImapResponseCode.cs" />
+    <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />
+    <Compile Include="Net\Imap\ImapStream.cs" />
+    <Compile Include="Net\Imap\ImapToken.cs" />
+    <Compile Include="Net\Imap\ImapUtils.cs" />
+    <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
+    <Compile Include="Net\Pop3\Pop3Client.cs" />
+    <Compile Include="Net\Pop3\Pop3Command.cs" />
+    <Compile Include="Net\Pop3\Pop3CommandException.cs" />
+    <Compile Include="Net\Pop3\Pop3Engine.cs" />
+    <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
+    <Compile Include="Net\Pop3\Pop3Stream.cs" />
+    <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
+    <Compile Include="Net\Smtp\SmtpClient.cs" />
+    <Compile Include="Net\Smtp\SmtpCommandException.cs" />
+    <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
+    <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
+    <Compile Include="Net\Smtp\SmtpResponse.cs" />
+    <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
+    <Compile Include="NullProtocolLogger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProtocolException.cs" />
+    <Compile Include="ProtocolLogger.cs" />
+    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Search\BinarySearchQuery.cs" />
+    <Compile Include="Search\DateSearchQuery.cs" />
+    <Compile Include="Search\HeaderSearchQuery.cs" />
+    <Compile Include="Search\ISearchQueryOptimizer.cs" />
+    <Compile Include="Search\NumericSearchQuery.cs" />
+    <Compile Include="Search\OrderBy.cs" />
+    <Compile Include="Search\OrderByType.cs" />
+    <Compile Include="Search\SearchQuery.cs" />
+    <Compile Include="Search\SearchTerm.cs" />
+    <Compile Include="Search\SortOrder.cs" />
+    <Compile Include="Search\TextSearchQuery.cs" />
+    <Compile Include="Search\UnarySearchQuery.cs" />
+    <Compile Include="SpecialFolder.cs" />
+    <Compile Include="StatusItems.cs" />
+    <Compile Include="ThreadingAlgorithm.cs" />
+    <Compile Include="UniqueId.cs" />
+    <Compile Include="UriExtensions.cs" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
+    <VisualStudioVersion>11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

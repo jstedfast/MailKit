@@ -56,22 +56,22 @@ namespace MailKit {
 						cmp = x.SortableIndex.CompareTo (y.SortableIndex);
 						break;
 					case OrderByType.Cc:
-						cmp = string.Compare (x.SortableCc, y.SortableCc, StringComparison.InvariantCultureIgnoreCase);
+						cmp = string.Compare (x.SortableCc, y.SortableCc, StringComparison.OrdinalIgnoreCase);
 						break;
 					case OrderByType.Date:
 						cmp = x.SortableDate.CompareTo (y.SortableDate);
 						break;
 					case OrderByType.From:
-						cmp = string.Compare (x.SortableFrom, y.SortableFrom, StringComparison.InvariantCultureIgnoreCase);
+						cmp = string.Compare (x.SortableFrom, y.SortableFrom, StringComparison.OrdinalIgnoreCase);
 						break;
 					case OrderByType.Size:
 						cmp = x.SortableSize.CompareTo (y.SortableSize);
 						break;
 					case OrderByType.Subject:
-						cmp = string.Compare (x.SortableSubject, y.SortableSubject, StringComparison.InvariantCultureIgnoreCase);
+						cmp = string.Compare (x.SortableSubject, y.SortableSubject, StringComparison.OrdinalIgnoreCase);
 						break;
 					case OrderByType.To:
-						cmp = string.Compare (x.SortableTo, y.SortableTo, StringComparison.InvariantCultureIgnoreCase);
+						cmp = string.Compare (x.SortableTo, y.SortableTo, StringComparison.OrdinalIgnoreCase);
 						break;
 					}
 
