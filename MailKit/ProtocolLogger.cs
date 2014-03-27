@@ -54,9 +54,9 @@ namespace MailKit {
 		{
 			stream = File.OpenWrite (fileName);
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
 		/// </summary>
 		/// <param name="stream">The stream.</param>
@@ -236,4 +236,3 @@ namespace MailKit {
 		#endregion
 	}
 }
-

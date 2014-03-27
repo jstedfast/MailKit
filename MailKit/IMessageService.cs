@@ -43,7 +43,7 @@ namespace MailKit {
 	public interface IMessageService : IDisposable
 	{
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-        /// <summary>
+		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
 		/// <remarks>
@@ -55,7 +55,7 @@ namespace MailKit {
 		X509CertificateCollection ClientCertificates { get; set; }
 
 #endif
-        /// <summary>
+		/// <summary>
 		/// Gets the authentication mechanisms supported by the message service.
 		/// </summary>
 		/// <remarks>

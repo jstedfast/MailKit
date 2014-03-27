@@ -127,15 +127,15 @@ namespace MailKit.Net.Imap {
 		}
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-        bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
 
 			return true;
 		}
-
 #endif
+
 		/// <summary>
 		/// Enables the QRESYNC feature.
 		/// </summary>
@@ -197,7 +197,7 @@ namespace MailKit.Net.Imap {
 		#region IMessageService implementation
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-        /// <summary>
+		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
 		/// <remarks>
@@ -209,9 +209,9 @@ namespace MailKit.Net.Imap {
 		public X509CertificateCollection ClientCertificates {
 			get; set;
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Gets the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -302,9 +302,9 @@ namespace MailKit.Net.Imap {
 			NetworkCredential cred;
 			ImapCommand ic;
 
-            // (Erik) Is this needed for WinRT?
+			// (Erik) Is this needed for WinRT?
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            foreach (var authmech in SaslMechanism.AuthMechanismRank) {
+			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
 					continue;
 
@@ -565,7 +565,7 @@ namespace MailKit.Net.Imap {
 				}
 			} else if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
 #else
-            if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
+			if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
 #endif
 				var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
 

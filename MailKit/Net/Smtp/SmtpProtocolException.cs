@@ -37,11 +37,11 @@ namespace MailKit.Net.Smtp {
 	/// The exception that is thrown when there is an error communicating with an SMTP server. A
 	/// <see cref="SmtpProtocolException"/> is typically fatal and requires the <see cref="SmtpClient"/>
 	/// to be reconnected.
-    /// </remarks>
+	/// </remarks>
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 	[Serializable]
 #endif
-    public class SmtpProtocolException : ProtocolException
+	public class SmtpProtocolException : ProtocolException
 	{
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
@@ -52,9 +52,9 @@ namespace MailKit.Net.Smtp {
 		protected SmtpProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>

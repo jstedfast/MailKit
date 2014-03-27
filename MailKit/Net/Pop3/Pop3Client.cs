@@ -186,16 +186,16 @@ namespace MailKit.Net.Pop3 {
 		}
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-        bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
 
 			return true;
 		}
-
 #endif
-        static ProtocolException CreatePop3Exception (Pop3Command pc)
+
+		static ProtocolException CreatePop3Exception (Pop3Command pc)
 		{
 			var command = pc.Command.Split (' ')[0].TrimEnd ();
 			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
@@ -250,9 +250,9 @@ namespace MailKit.Net.Pop3 {
 		public X509CertificateCollection ClientCertificates {
 			get; set;
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
@@ -356,7 +356,7 @@ namespace MailKit.Net.Pop3 {
 			string challenge;
 			Pop3Command pc;
 
-            // (Erik) Not sure what to do with these
+			// (Erik) Not sure what to do with these
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
 				cred = credentials.GetCredential (uri, "APOP");
@@ -374,9 +374,9 @@ namespace MailKit.Net.Pop3 {
 				try {
 					SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
 				} catch (Pop3CommandException) {
-                    // (Erik) New exception instead?
-                    throw new Exception ("Not Authorized");
-                }
+					// (Erik) New exception instead?
+					throw new Exception ("Not Authorized");
+				}
 
 				engine.State = Pop3EngineState.Transaction;
 				engine.QueryCapabilities (cancellationToken);
@@ -414,8 +414,8 @@ namespace MailKit.Net.Pop3 {
 					}
 
 					if (pc.Status == Pop3CommandStatus.Error)
-                        // (Erik) New exception instead?
-                        throw new Exception ("Not Authorized");
+						// (Erik) New exception instead?
+						throw new Exception ("Not Authorized");
 
 					if (pc.Status != Pop3CommandStatus.Ok)
 						throw CreatePop3Exception (pc);
@@ -429,18 +429,18 @@ namespace MailKit.Net.Pop3 {
 					return;
 				}
 			}
-
 #endif
-            // fall back to the classic USER & PASS commands...
+
+			// fall back to the classic USER & PASS commands...
 			cred = credentials.GetCredential (uri, "USER");
 
 			try {
 				SendCommand (cancellationToken, "USER {0}", cred.UserName);
 				SendCommand (cancellationToken, "PASS {0}", cred.Password);
 			} catch (Pop3CommandException) {
-                // (Erik) New exception instead?
-                throw new Exception ("Not Authorized");
-            }
+				// (Erik) New exception instead?
+				throw new Exception ("Not Authorized");
+			}
 
 			engine.State = Pop3EngineState.Transaction;
 			engine.QueryCapabilities (cancellationToken);
@@ -526,10 +526,10 @@ namespace MailKit.Net.Pop3 {
 			var port = uri.Port > 0 ? uri.Port : (pops ? 995 : 110);
 			var query = uri.ParsedQuery ();
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
 #endif
-            Stream stream;
+			Stream stream;
 			string value;
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
@@ -557,8 +557,8 @@ namespace MailKit.Net.Pop3 {
 				stream = new NetworkStream (socket, true);
 			}
 #else
-            //TODO: (Erik) Open StreamSocket
-            stream = null;
+			//TODO: (Erik) Open StreamSocket
+			stream = null;
 #endif
 
 			probed = ProbedCapabilities.None;

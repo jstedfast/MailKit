@@ -39,8 +39,8 @@ namespace MailKit {
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 	[Serializable]
 #endif
-    public class FolderNotFoundException : Exception
-    {
+	public class FolderNotFoundException : Exception
+	{
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
@@ -59,7 +59,7 @@ namespace MailKit {
 		}
 
 #endif
-        /// <summary>
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>

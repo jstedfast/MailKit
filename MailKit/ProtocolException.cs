@@ -34,10 +34,10 @@ namespace MailKit {
 	/// The exception that is thrown when there is a protocol error.
 	/// </summary>
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-    [Serializable]
+	[Serializable]
 #endif
 	public abstract class ProtocolException : Exception
-    {
+	{
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.

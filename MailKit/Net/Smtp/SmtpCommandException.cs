@@ -70,11 +70,11 @@ namespace MailKit.Net.Smtp {
 	/// <remarks>
 	/// The exception that is thrown when an SMTP command fails. Unlike a <see cref="SmtpProtocolException"/>,
 	/// a <see cref="SmtpCommandException"/> does not require the <see cref="SmtpClient"/> to be reconnected.
-    /// </remarks>
+	/// </remarks>
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-    [Serializable]
+	[Serializable]
 #endif
-    public class SmtpCommandException : ProtocolException
+	public class SmtpCommandException : ProtocolException
 	{
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
@@ -99,9 +99,9 @@ namespace MailKit.Net.Smtp {
 			ErrorCode = (SmtpErrorCode) info.GetInt32 ("ErrorCode");
 			StatusCode = info.GetInt32 ("StatusCode");
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
 		/// <param name="code">The error code.</param>
@@ -128,7 +128,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-        /// <summary>
+		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.
 		/// </summary>
@@ -148,9 +148,9 @@ namespace MailKit.Net.Smtp {
 
 			base.GetObjectData (info, context);
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Gets the error code which may provide additional information.
 		/// </summary>
 		/// <remarks>

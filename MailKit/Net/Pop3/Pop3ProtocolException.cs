@@ -41,7 +41,7 @@ namespace MailKit.Net.Pop3 {
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 	[Serializable]
 #endif
-    public class Pop3ProtocolException : ProtocolException
+	public class Pop3ProtocolException : ProtocolException
 	{
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
@@ -52,9 +52,9 @@ namespace MailKit.Net.Pop3 {
 		protected Pop3ProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3ProtocolException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>

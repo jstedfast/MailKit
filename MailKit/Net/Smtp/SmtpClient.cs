@@ -77,9 +77,9 @@ namespace MailKit.Net.Smtp {
 		int inputIndex, inputEnd;
 		MemoryBlockStream queue;
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-        EndPoint localEndPoint;
+		EndPoint localEndPoint;
 #endif
-        bool authenticated;
+		bool authenticated;
 		Stream stream;
 		bool disposed;
 		string host;
@@ -177,9 +177,9 @@ namespace MailKit.Net.Smtp {
 		public X509CertificateCollection ClientCertificates {
 			get; set;
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Gets the authentication mechanisms supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
@@ -210,9 +210,9 @@ namespace MailKit.Net.Smtp {
 
 			return true;
 		}
-
 #endif
-        static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
+
+		static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
 		{
 			int startIndex = index;
 
@@ -307,15 +307,15 @@ namespace MailKit.Net.Smtp {
 
 				try {
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-                    message = Encoding.UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+					message = Encoding.UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
-                    message = Encoding.UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
+					message = Encoding.UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				} catch {
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
-                    message = Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
+					message = Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				}
 
@@ -385,7 +385,7 @@ namespace MailKit.Net.Smtp {
 		SmtpResponse SendEhlo (bool ehlo, CancellationToken cancellationToken)
 		{
 			string command = ehlo ? "EHLO " : "HELO ";
-            // (Erik) Not sure what to do with this
+			// (Erik) Not sure what to do with this
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			var ip = localEndPoint as IPEndPoint;
 
@@ -523,9 +523,9 @@ namespace MailKit.Net.Smtp {
 			string challenge;
 			string command;
 
-            // (Erik) Not sure what to do with this
+			// (Erik) Not sure what to do with this
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            foreach (var authmech in SaslMechanism.AuthMechanismRank) {
+			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!AuthenticationMechanisms.Contains (authmech))
 					continue;
 
@@ -559,12 +559,12 @@ namespace MailKit.Net.Smtp {
 					return;
 				}
 
-                // (Erik) New exception instead?
-                throw new Exception ("Not Authorized");
+				// (Erik) New exception instead?
+				throw new Exception ("Not Authorized");
 			}
 
 #endif
-            throw new NotSupportedException ("No compatible authentication mechanisms found.");
+			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
@@ -578,9 +578,9 @@ namespace MailKit.Net.Smtp {
 				throw new ArgumentNullException ("replayStream");
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            localEndPoint = new IPEndPoint (IPAddress.Loopback, 25);
+			localEndPoint = new IPEndPoint (IPAddress.Loopback, 25);
 #endif
-            Capabilities = SmtpCapabilities.None;
+			Capabilities = SmtpCapabilities.None;
 			stream = replayStream;
 			authmechs.Clear ();
 			host = hostName;
@@ -669,14 +669,14 @@ namespace MailKit.Net.Smtp {
 			var port = uri.Port > 0 ? uri.Port : (smtps ? 465 : 25);
 			var query = uri.ParsedQuery ();
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
 #endif
-            SmtpResponse response = null;
+			SmtpResponse response = null;
 			string value;
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            var starttls = !smtps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+			var starttls = !smtps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -700,9 +700,9 @@ namespace MailKit.Net.Smtp {
 			} else {
 				stream = new NetworkStream (socket, true);
 			}
-
 #endif
-            host = uri.Host;
+
+			host = uri.Host;
 
 			logger.LogConnect (uri);
 
@@ -717,7 +717,7 @@ namespace MailKit.Net.Smtp {
 				Ehlo (cancellationToken);
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-                if (starttls && (Capabilities & SmtpCapabilities.StartTLS) != 0) {
+				if (starttls && (Capabilities & SmtpCapabilities.StartTLS) != 0) {
 					response = SendCommand ("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -729,9 +729,9 @@ namespace MailKit.Net.Smtp {
 					// Send EHLO again and get the new list of supported extensions
 					Ehlo (cancellationToken);
 				}
-
 #endif
-                IsConnected = true;
+
+				IsConnected = true;
 			} catch {
 				stream.Dispose ();
 				stream = null;
@@ -810,9 +810,9 @@ namespace MailKit.Net.Smtp {
 		{
 			authenticated = false;
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            localEndPoint = null;
+			localEndPoint = null;
 #endif
-            IsConnected = false;
+			IsConnected = false;
 			host = null;
 
 			if (stream != null) {

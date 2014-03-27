@@ -257,9 +257,9 @@ namespace MailKit.Net.Pop3 {
 
 				count = (int) memory.Length;
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-                buf = memory.GetBuffer ();
+				buf = memory.GetBuffer ();
 #else
-                buf = memory.ToArray ();
+				buf = memory.ToArray ();
 #endif
 
 				return Latin1.GetString (buf, 0, count);
