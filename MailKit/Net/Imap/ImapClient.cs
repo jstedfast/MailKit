@@ -29,14 +29,21 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Net.Sockets;
-using System.Net.Security;
 using System.IO.Compression;
 using System.Collections.Generic;
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+using Windows.Networking;
+using Windows.Networking.Sockets;
+using Windows.Storage.Streams;
+#else
+using System.Net.Sockets;
+using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
 using MailKit.Security;
+#endif
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -119,7 +126,8 @@ namespace MailKit.Net.Imap {
 				throw new ObjectDisposedException ("ImapClient");
 		}
 
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+        bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
@@ -127,6 +135,7 @@ namespace MailKit.Net.Imap {
 			return true;
 		}
 
+#endif
 		/// <summary>
 		/// Enables the QRESYNC feature.
 		/// </summary>
@@ -187,7 +196,8 @@ namespace MailKit.Net.Imap {
 
 		#region IMessageService implementation
 
-		/// <summary>
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+        /// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
 		/// <remarks>
@@ -200,7 +210,8 @@ namespace MailKit.Net.Imap {
 			get; set;
 		}
 
-		/// <summary>
+#endif
+        /// <summary>
 		/// Gets the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -291,7 +302,9 @@ namespace MailKit.Net.Imap {
 			NetworkCredential cred;
 			ImapCommand ic;
 
-			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
+            // (Erik) Is this needed for WinRT?
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+            foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
 					continue;
 
@@ -345,8 +358,10 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
-				throw new AuthenticationException ();
+#endif
+            if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
+                // (Erik) New exception instead?
+				throw new Exception ("Not Authorized");
 
 			// fall back to the classic LOGIN command...
 			cred = credentials.GetCredential (uri, "LOGIN");
@@ -356,7 +371,8 @@ namespace MailKit.Net.Imap {
 			engine.Wait (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				throw new AuthenticationException ();
+                // (Erik) New exception instead?
+                throw new Exception ("Not Authorized");
 
 			engine.State = ImapEngineState.Authenticated;
 
@@ -369,7 +385,11 @@ namespace MailKit.Net.Imap {
 			engine.QuerySpecialFolders (cancellationToken);
 		}
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
+#else
+        internal void ReplayConnect(string hostName, Stream replayStream, IOutputStream replayOutputStream, CancellationToken cancellationToken)
+#endif
 		{
 			CheckDisposed ();
 
@@ -379,9 +399,18 @@ namespace MailKit.Net.Imap {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
-			host = hostName;
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+            if (replayOutputStream == null)
+                throw new ArgumentNullException ("replayOutputStream");
 
+#endif
+            host = hostName;
+
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			engine.Connect (new ImapStream (replayStream, logger), cancellationToken);
+#else
+            engine.Connect (new ImapStream (replayStream, replayOutputStream, logger), cancellationToken);
+#endif
 
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
@@ -446,17 +475,25 @@ namespace MailKit.Net.Imap {
 			if (IsConnected)
 				throw new InvalidOperationException ("The ImapClient is already connected.");
 
-			bool imaps = uri.Scheme.ToLowerInvariant () == "imaps";
-			int port = uri.Port > 0 ? uri.Port : (imaps ? 993 : 143);
-			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var imaps = uri.Scheme.ToLowerInvariant () == "imaps";
+			var port = uri.Port > 0 ? uri.Port : (imaps ? 993 : 143);
 			var query = uri.ParsedQuery ();
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+            var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
+#else
+		    StreamSocket socket;
+		    IOutputStream outputStream;
+#endif
 			Stream stream;
 			string value;
 
-			var starttls = !imaps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+#if !NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+            var starttls = !imaps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+#endif
 			var compress = !imaps && (!query.TryGetValue ("compress", out value) || Convert.ToBoolean (value));
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -479,17 +516,39 @@ namespace MailKit.Net.Imap {
 				stream = new NetworkStream (socket, true);
 			}
 
+#else
+            socket = new StreamSocket ();
+
+            cancellationToken.ThrowIfCancellationRequested ();
+
+#if WINDOWS_APP
+            socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), starttls ? SocketProtectionLevel.Tls10 : imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+#else
+            socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+#endif
+                .AsTask (cancellationToken)
+                .GetAwaiter ()
+                .GetResult ();
+
+            stream = socket.InputStream.AsStreamForRead ();
+            outputStream = socket.OutputStream;
+#endif
 			host = uri.Host;
 
 			logger.LogConnect (uri);
 
-			engine.Connect (new ImapStream (stream, logger), cancellationToken);
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+            engine.Connect (new ImapStream (stream, logger), cancellationToken);
+#else
+            engine.Connect (new ImapStream (stream, outputStream, logger), cancellationToken);
+#endif
 
 			// Only query the CAPABILITIES if the greeting didn't include them.
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
 
-			if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+            if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
 				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
 				engine.Wait (ic);
@@ -505,6 +564,9 @@ namespace MailKit.Net.Imap {
 						engine.QueryCapabilities (cancellationToken);
 				}
 			} else if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
+#else
+            if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
+#endif
 				var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
 
 				engine.Wait (ic);

@@ -31,15 +31,21 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Collections;
+using System.Collections.Generic;
+
+using MimeKit;
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_APP
+using Encoding = Portable.Text.Encoding;
+#else
 using System.Net.Sockets;
 using System.Net.Security;
-using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-using MimeKit;
 using MailKit.Security;
+#endif
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -179,7 +185,8 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ("The Pop3Client is not connected.");
 		}
 
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+        bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
@@ -187,7 +194,8 @@ namespace MailKit.Net.Pop3 {
 			return true;
 		}
 
-		static ProtocolException CreatePop3Exception (Pop3Command pc)
+#endif
+        static ProtocolException CreatePop3Exception (Pop3Command pc)
 		{
 			var command = pc.Command.Split (' ')[0].TrimEnd ();
 			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
@@ -229,6 +237,7 @@ namespace MailKit.Net.Pop3 {
 
 		#region IMessageService implementation
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
@@ -242,7 +251,8 @@ namespace MailKit.Net.Pop3 {
 			get; set;
 		}
 
-		/// <summary>
+#endif
+        /// <summary>
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
@@ -346,6 +356,8 @@ namespace MailKit.Net.Pop3 {
 			string challenge;
 			Pop3Command pc;
 
+            // (Erik) Not sure what to do with these
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
 				cred = credentials.GetCredential (uri, "APOP");
 				challenge = engine.ApopToken + cred.Password;
@@ -362,8 +374,9 @@ namespace MailKit.Net.Pop3 {
 				try {
 					SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
 				} catch (Pop3CommandException) {
-					throw new AuthenticationException ();
-				}
+                    // (Erik) New exception instead?
+                    throw new Exception ("Not Authorized");
+                }
 
 				engine.State = Pop3EngineState.Transaction;
 				engine.QueryCapabilities (cancellationToken);
@@ -401,7 +414,8 @@ namespace MailKit.Net.Pop3 {
 					}
 
 					if (pc.Status == Pop3CommandStatus.Error)
-						throw new AuthenticationException ();
+                        // (Erik) New exception instead?
+                        throw new Exception ("Not Authorized");
 
 					if (pc.Status != Pop3CommandStatus.Ok)
 						throw CreatePop3Exception (pc);
@@ -416,15 +430,17 @@ namespace MailKit.Net.Pop3 {
 				}
 			}
 
-			// fall back to the classic USER & PASS commands...
+#endif
+            // fall back to the classic USER & PASS commands...
 			cred = credentials.GetCredential (uri, "USER");
 
 			try {
 				SendCommand (cancellationToken, "USER {0}", cred.UserName);
 				SendCommand (cancellationToken, "PASS {0}", cred.Password);
 			} catch (Pop3CommandException) {
-				throw new AuthenticationException ();
-			}
+                // (Erik) New exception instead?
+                throw new Exception ("Not Authorized");
+            }
 
 			engine.State = Pop3EngineState.Transaction;
 			engine.QueryCapabilities (cancellationToken);
@@ -506,14 +522,17 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
 
 			var scheme = uri.Scheme.ToLowerInvariant ();
-			bool pops = scheme == "pops" || scheme == "pop3s";
-			int port = uri.Port > 0 ? uri.Port : (pops ? 995 : 110);
-			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var pops = scheme == "pops" || scheme == "pop3s";
+			var port = uri.Port > 0 ? uri.Port : (pops ? 995 : 110);
 			var query = uri.ParsedQuery ();
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+            var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
-			Stream stream;
+#endif
+            Stream stream;
 			string value;
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			var starttls = !pops && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
@@ -537,6 +556,10 @@ namespace MailKit.Net.Pop3 {
 			} else {
 				stream = new NetworkStream (socket, true);
 			}
+#else
+            //TODO: (Erik) Open StreamSocket
+            stream = null;
+#endif
 
 			probed = ProbedCapabilities.None;
 			host = uri.Host;
@@ -546,6 +569,7 @@ namespace MailKit.Net.Pop3 {
 			engine.Connect (new Pop3Stream (stream, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
 				SendCommand (cancellationToken, "STLS");
 
@@ -556,7 +580,8 @@ namespace MailKit.Net.Pop3 {
 				// re-issue a CAPA command
 				engine.QueryCapabilities (cancellationToken);
 			}
-		}
+#endif
+        }
 
 		/// <summary>
 		/// Disconnect the service.

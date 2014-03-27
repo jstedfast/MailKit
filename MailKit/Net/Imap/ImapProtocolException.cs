@@ -25,7 +25,9 @@
 //
 
 using System;
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 using System.Runtime.Serialization;
+#endif
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -35,10 +37,13 @@ namespace MailKit.Net.Imap {
 	/// The exception that is thrown when there is an error communicating with an IMAP server. A
 	/// <see cref="ImapProtocolException"/> is typically fatal and requires the <see cref="ImapClient"/>
 	/// to be reconnected.
-	/// </remarks>
+    /// </remarks>
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 	[Serializable]
-	public class ImapProtocolException : ProtocolException
-	{
+#endif
+    public class ImapProtocolException : ProtocolException
+    {
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>
@@ -48,7 +53,8 @@ namespace MailKit.Net.Imap {
 		{
 		}
 
-		/// <summary>
+#endif
+        /// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>

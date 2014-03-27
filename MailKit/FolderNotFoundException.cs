@@ -25,7 +25,9 @@
 //
 
 using System;
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 using System.Runtime.Serialization;
+#endif
 
 namespace MailKit {
 	/// <summary>
@@ -33,10 +35,13 @@ namespace MailKit {
 	/// </summary>
 	/// <remarks>
 	/// This exception is thrown by <see cref="IFolder.GetSubfolder"/>.
-	/// </remarks>
+    /// </remarks>
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 	[Serializable]
-	public class FolderNotFoundException : Exception
-	{
+#endif
+    public class FolderNotFoundException : Exception
+    {
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
@@ -53,7 +58,8 @@ namespace MailKit {
 			FolderName = info.GetString ("FolderName");
 		}
 
-		/// <summary>
+#endif
+        /// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>

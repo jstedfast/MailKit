@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.Net.Sockets;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
