@@ -357,10 +357,10 @@ namespace MailKit.Net.Imap {
 				engine.QuerySpecialFolders (cancellationToken);
 				return;
 			}
-
 #endif
-            if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
-                // (Erik) New exception instead?
+
+			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
+				// (Erik) New exception instead?
 				throw new Exception ("Not Authorized");
 
 			// fall back to the classic LOGIN command...
@@ -371,8 +371,8 @@ namespace MailKit.Net.Imap {
 			engine.Wait (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
-                // (Erik) New exception instead?
-                throw new Exception ("Not Authorized");
+				// (Erik) New exception instead?
+				throw new Exception ("Not Authorized");
 
 			engine.State = ImapEngineState.Authenticated;
 
@@ -387,9 +387,6 @@ namespace MailKit.Net.Imap {
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
-#else
-        internal void ReplayConnect(string hostName, Stream replayStream, IOutputStream replayOutputStream, CancellationToken cancellationToken)
-#endif
 		{
 			CheckDisposed ();
 
@@ -399,22 +396,14 @@ namespace MailKit.Net.Imap {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-            if (replayOutputStream == null)
-                throw new ArgumentNullException ("replayOutputStream");
+			host = hostName;
 
-#endif
-            host = hostName;
-
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			engine.Connect (new ImapStream (replayStream, logger), cancellationToken);
-#else
-            engine.Connect (new ImapStream (replayStream, replayOutputStream, logger), cancellationToken);
-#endif
 
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
 		}
+#endif
 
 		/// <summary>
 		/// Establishes a connection to the specified IMAP server.
@@ -479,11 +468,11 @@ namespace MailKit.Net.Imap {
 			var port = uri.Port > 0 ? uri.Port : (imaps ? 993 : 143);
 			var query = uri.ParsedQuery ();
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
 #else
-		    StreamSocket socket;
-		    IOutputStream outputStream;
+			IOutputStream outputStream;
+			StreamSocket socket;
 #endif
 			Stream stream;
 			string value;
@@ -502,7 +491,7 @@ namespace MailKit.Net.Imap {
 				try {
 					socket.Connect (ipAddresses[i], port);
 					break;
-				} catch (Exception) {
+				} catch {
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}
@@ -515,7 +504,6 @@ namespace MailKit.Net.Imap {
 			} else {
 				stream = new NetworkStream (socket, true);
 			}
-
 #else
             socket = new StreamSocket ();
 

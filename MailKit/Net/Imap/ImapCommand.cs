@@ -159,7 +159,7 @@ namespace MailKit.Net.Imap {
 			if (Type == ImapLiteralType.String) {
 				var bytes = (byte[]) Literal;
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-                stream.Write (bytes, 0, bytes.Length);
+				stream.Write (bytes, 0, bytes.Length);
 				stream.Flush ();
 #else
                 stream.Writer.WriteBytes(bytes);
