@@ -158,16 +158,8 @@ namespace MailKit.Net.Imap {
 
 			if (Type == ImapLiteralType.String) {
 				var bytes = (byte[]) Literal;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 				stream.Write (bytes, 0, bytes.Length);
 				stream.Flush ();
-#else
-                stream.Writer.WriteBytes(bytes);
-			    stream.Writer.StoreAsync ()
-                    .AsTask (cancellationToken)
-                    .GetAwaiter ()
-                    .GetResult ();
-#endif
 				return;
 			}
 
@@ -177,16 +169,8 @@ namespace MailKit.Net.Imap {
 
 				var message = (MimeMessage) Literal;
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 				message.WriteTo (options, stream, cancellationToken);
 				stream.Flush ();
-#else
-                message.WriteTo (options, stream.WriterStream, cancellationToken);
-			    stream.Writer.StoreAsync ()
-                    .AsTask (cancellationToken)
-                    .GetAwaiter ()
-                    .GetResult ();
-#endif
 				return;
 			}
 
@@ -196,23 +180,10 @@ namespace MailKit.Net.Imap {
 
 			while ((nread = literal.Read (buf, 0, buf.Length)) > 0) {
 				cancellationToken.ThrowIfCancellationRequested ();
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 				stream.Write (buf, 0, nread);
-#else
-                for (var i = 0; i < nread; i++) {
-			        stream.Writer.WriteByte(buf[i]);
-                }
-#endif
-            }
+			}
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			stream.Flush ();
-#else
-            stream.Writer.StoreAsync ()
-                .AsTask (cancellationToken)
-                .GetAwaiter ()
-                .GetResult ();
-#endif
 		}
 	}
 
@@ -447,23 +418,11 @@ namespace MailKit.Net.Imap {
 				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
 				
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-                Engine.Stream.Write (buf, 0, buf.Length);
-#else
-                Engine.Stream.Writer.WriteBytes (buf);
-#endif
-            }
+				Engine.Stream.Write (buf, 0, buf.Length);
+			}
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			Engine.Stream.Write (parts[current].Command, 0, parts[current].Command.Length);
 			Engine.Stream.Flush ();
-#else
-            Engine.Stream.Writer.WriteBytes (parts[current].Command);
-            Engine.Stream.Writer.StoreAsync ()
-                .AsTask (CancellationToken)
-                .GetAwaiter ()
-                .GetResult ();
-#endif
 
 			// now we need to read the response...
 			do {

@@ -477,9 +477,7 @@ namespace MailKit.Net.Imap {
 			Stream stream;
 			string value;
 
-#if !NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-            var starttls = !imaps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
-#endif
+			var starttls = !imaps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 			var compress = !imaps && (!query.TryGetValue ("compress", out value) || Convert.ToBoolean (value));
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
@@ -505,31 +503,21 @@ namespace MailKit.Net.Imap {
 				stream = new NetworkStream (socket, true);
 			}
 #else
-            socket = new StreamSocket ();
+			socket = new StreamSocket ();
 
-            cancellationToken.ThrowIfCancellationRequested ();
+			cancellationToken.ThrowIfCancellationRequested ();
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+				.AsTask (cancellationToken)
+				.GetAwaiter ()
+				.GetResult ();
 
-#if WINDOWS_APP
-            socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), starttls ? SocketProtectionLevel.Tls10 : imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
-#else
-            socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
-#endif
-                .AsTask (cancellationToken)
-                .GetAwaiter ()
-                .GetResult ();
-
-            stream = socket.InputStream.AsStreamForRead ();
-            outputStream = socket.OutputStream;
+			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), Socket.OutputSTream.AsStreamForWrite ());
 #endif
 			host = uri.Host;
 
 			logger.LogConnect (uri);
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-            engine.Connect (new ImapStream (stream, logger), cancellationToken);
-#else
-            engine.Connect (new ImapStream (stream, outputStream, logger), cancellationToken);
-#endif
+			engine.Connect (new ImapStream (stream, logger), cancellationToken);
 
 			// Only query the CAPABILITIES if the greeting didn't include them.
 			if (engine.CapabilitiesVersion == 0)
