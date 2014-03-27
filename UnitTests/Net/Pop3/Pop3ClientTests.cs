@@ -28,11 +28,11 @@ using System;
 using System.Net;
 using System.Threading;
 using System.Collections.Generic;
-using System.Security.Authentication;
 
 using NUnit.Framework;
 
 using MailKit.Net.Pop3;
+using MailKit.Security;
 using MimeKit;
 
 namespace UnitTests.Net.Pop3 {
