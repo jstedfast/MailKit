@@ -33,16 +33,19 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 
-using MimeKit;
-
 #if NETFX_CORE || WINDOWS_APP || WINDOWS_APP
-using Encoding = Portable.Text.Encoding;
+using Windows.Networking;
+using Windows.Networking.Sockets;
+using Windows.Storage.Streams;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using SslProtocols = System.Security.Authentication.SslProtocols;
 #endif
+
+using MimeKit;
 
 using MailKit.Security;
 
@@ -528,9 +531,9 @@ namespace MailKit.Net.Pop3 {
 			Stream stream;
 			string value;
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			var starttls = !pops && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -553,8 +556,15 @@ namespace MailKit.Net.Pop3 {
 				stream = new NetworkStream (socket, true);
 			}
 #else
-			//TODO: (Erik) Open StreamSocket
-			stream = null;
+			var socket = new StreamSocket ();
+
+			cancellationToken.ThrowIfCancellationRequested ();
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+				.AsTask (cancellationToken)
+				.GetAwaiter ()
+				.GetResult ();
+
+			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), Socket.OutputSTream.AsStreamForWrite ());
 #endif
 
 			probed = ProbedCapabilities.None;

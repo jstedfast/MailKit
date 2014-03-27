@@ -36,11 +36,14 @@ using MimeKit;
 using MimeKit.IO;
 
 #if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-using Encoding = Portable.Text.Encoding;
+using Windows.Networking;
+using Windows.Networking.Sockets;
+using Windows.Storage.Streams;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using SslProtocols = System.Security.Authentication.SslProtocols;
 #endif
 
 using MailKit.Security;
@@ -399,7 +402,7 @@ namespace MailKit.Net.Smtp {
 			}
 #endif
 
-            return SendCommand (command, cancellationToken);
+			return SendCommand (command, cancellationToken);
 		}
 
 		void Ehlo (CancellationToken cancellationToken)
@@ -673,9 +676,9 @@ namespace MailKit.Net.Smtp {
 			SmtpResponse response = null;
 			string value;
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			var starttls = !smtps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -698,6 +701,16 @@ namespace MailKit.Net.Smtp {
 			} else {
 				stream = new NetworkStream (socket, true);
 			}
+#else
+			var socket = new StreamSocket ();
+
+			cancellationToken.ThrowIfCancellationRequested ();
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), pops ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+				.AsTask (cancellationToken)
+				.GetAwaiter ()
+				.GetResult ();
+
+			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), Socket.OutputSTream.AsStreamForWrite ());
 #endif
 
 			host = uri.Host;

@@ -40,6 +40,7 @@ using Windows.Storage.Streams;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using SslProtocols = System.Security.Authentication.SslProtocols;
 #endif
 
 using MailKit.Security;
@@ -382,7 +383,6 @@ namespace MailKit.Net.Imap {
 			engine.QuerySpecialFolders (cancellationToken);
 		}
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
@@ -400,7 +400,6 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
 		}
-#endif
 
 		/// <summary>
 		/// Establishes a connection to the specified IMAP server.
@@ -467,9 +466,6 @@ namespace MailKit.Net.Imap {
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
-#else
-			IOutputStream outputStream;
-			StreamSocket socket;
 #endif
 			Stream stream;
 			string value;
@@ -500,10 +496,10 @@ namespace MailKit.Net.Imap {
 				stream = new NetworkStream (socket, true);
 			}
 #else
-			socket = new StreamSocket ();
+			var socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
-			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), pops ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
 				.AsTask (cancellationToken)
 				.GetAwaiter ()
 				.GetResult ();
