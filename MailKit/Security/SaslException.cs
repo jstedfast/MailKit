@@ -65,7 +65,7 @@ namespace MailKit.Security {
 	/// Typically indicates an error while parsing a server's challenge token.
 	/// </remarks>
 	[Serializable]
-	public class SaslException : ProtocolException
+	public class SaslException : AuthenticationException
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.

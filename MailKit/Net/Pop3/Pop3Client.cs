@@ -41,11 +41,10 @@ using Encoding = Portable.Text.Encoding;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+#endif
 
 using MailKit.Security;
-#endif
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -323,7 +322,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
-		/// <exception cref="System.Security.Authentication.AuthenticationException">
+		/// <exception cref="MailKit.Security.AuthenticationException">
 		/// Authentication using the supplied credentials has failed.
 		/// </exception>
 		/// <exception cref="MailKit.Security.SaslException">
@@ -374,8 +373,7 @@ namespace MailKit.Net.Pop3 {
 				try {
 					SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
 				} catch (Pop3CommandException) {
-					// (Erik) New exception instead?
-					throw new Exception ("Not Authorized");
+					throw new AuthenticationException ();
 				}
 
 				engine.State = Pop3EngineState.Transaction;
@@ -414,8 +412,7 @@ namespace MailKit.Net.Pop3 {
 					}
 
 					if (pc.Status == Pop3CommandStatus.Error)
-						// (Erik) New exception instead?
-						throw new Exception ("Not Authorized");
+						throw new AuthenticationException ();
 
 					if (pc.Status != Pop3CommandStatus.Ok)
 						throw CreatePop3Exception (pc);
@@ -438,8 +435,7 @@ namespace MailKit.Net.Pop3 {
 				SendCommand (cancellationToken, "USER {0}", cred.UserName);
 				SendCommand (cancellationToken, "PASS {0}", cred.Password);
 			} catch (Pop3CommandException) {
-				// (Erik) New exception instead?
-				throw new Exception ("Not Authorized");
+				throw new AuthenticationException ();
 			}
 
 			engine.State = Pop3EngineState.Transaction;

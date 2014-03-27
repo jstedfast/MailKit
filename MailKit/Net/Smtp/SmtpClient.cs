@@ -40,11 +40,10 @@ using Encoding = Portable.Text.Encoding;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+#endif
 
 using MailKit.Security;
-#endif
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
@@ -489,7 +488,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
-		/// <exception cref="System.Security.Authentication.AuthenticationException">
+		/// <exception cref="MailKit.Security.AuthenticationException">
 		/// Authentication using the supplied credentials has failed.
 		/// </exception>
 		/// <exception cref="MailKit.Security.SaslException">
@@ -559,8 +558,7 @@ namespace MailKit.Net.Smtp {
 					return;
 				}
 
-				// (Erik) New exception instead?
-				throw new Exception ("Not Authorized");
+				throw new AuthenticationException ();
 			}
 
 #endif

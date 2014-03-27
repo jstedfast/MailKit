@@ -39,11 +39,10 @@ using Windows.Storage.Streams;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+#endif
 
 using MailKit.Security;
-#endif
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -272,7 +271,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
-		/// <exception cref="System.Security.Authentication.AuthenticationException">
+		/// <exception cref="MailKit.Security.AuthenticationException">
 		/// Authentication using the supplied credentials has failed.
 		/// </exception>
 		/// <exception cref="MailKit.Security.SaslException">
@@ -360,8 +359,7 @@ namespace MailKit.Net.Imap {
 #endif
 
 			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
-				// (Erik) New exception instead?
-				throw new Exception ("Not Authorized");
+				throw new AuthenticationException ();
 
 			// fall back to the classic LOGIN command...
 			cred = credentials.GetCredential (uri, "LOGIN");
@@ -371,8 +369,7 @@ namespace MailKit.Net.Imap {
 			engine.Wait (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				// (Erik) New exception instead?
-				throw new Exception ("Not Authorized");
+				throw new AuthenticationException ();
 
 			engine.State = ImapEngineState.Authenticated;
 
