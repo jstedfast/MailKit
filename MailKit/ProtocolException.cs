@@ -47,9 +47,9 @@ namespace MailKit {
 		protected ProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
-
 #endif
-        /// <summary>
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>
 		/// <param name="message">The error message.</param>

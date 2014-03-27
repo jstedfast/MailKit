@@ -35,7 +35,7 @@ namespace MailKit {
 	/// </summary>
 	/// <remarks>
 	/// This exception is thrown by <see cref="IFolder.GetSubfolder"/>.
-    /// </remarks>
+	/// </remarks>
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 	[Serializable]
 #endif
@@ -57,8 +57,8 @@ namespace MailKit {
 
 			FolderName = info.GetString ("FolderName");
 		}
-
 #endif
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
