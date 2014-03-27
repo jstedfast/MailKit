@@ -27,7 +27,7 @@
 using System;
 using System.IO;
 
-namespace MailKit.Net.Imap {
+namespace MailKit {
 	/// <summary>
 	/// A duplex stream.
 	/// </summary>
@@ -36,7 +36,7 @@ namespace MailKit.Net.Imap {
 		bool disposed;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.DuplexStream"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.DuplexStream"/> class.
 		/// </summary>
 		/// <param name="istream">The stream to use for input.</param>
 		/// <param name="ostream">The stream to use for output.</param>
@@ -299,4 +299,3 @@ namespace MailKit.Net.Imap {
 		}
 	}
 }
-

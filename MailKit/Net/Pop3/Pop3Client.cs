@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
+using Encoding = Portable.Text.Encoding;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
