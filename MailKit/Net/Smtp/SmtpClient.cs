@@ -82,6 +82,9 @@ namespace MailKit.Net.Smtp {
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		EndPoint localEndPoint;
 #endif
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+		StreamSocket socket;
+#endif
 		bool authenticated;
 		Stream stream;
 		bool disposed;
@@ -564,8 +567,8 @@ namespace MailKit.Net.Smtp {
 
 				throw new AuthenticationException ();
 			}
-
 #endif
+
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
 
@@ -703,7 +706,7 @@ namespace MailKit.Net.Smtp {
 				stream = new NetworkStream (socket, true);
 			}
 #else
-			var socket = new StreamSocket ();
+			socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
 			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), smtps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
@@ -728,20 +731,25 @@ namespace MailKit.Net.Smtp {
 				// Send EHLO and get a list of supported extensions
 				Ehlo (cancellationToken);
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 				if (starttls && (Capabilities & SmtpCapabilities.StartTLS) != 0) {
 					response = SendCommand ("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 					stream = tls;
+#else
+					socket.UpgradeToSslAsync (SocketProtectionLevel.Ssl, new HostName (uri.DnsSafeHost))
+						.AsTask (cancellationToken)
+						.GetAwaiter ()
+						.GetResult ();
+#endif
 
 					// Send EHLO again and get the new list of supported extensions
 					Ehlo (cancellationToken);
 				}
-#endif
 
 				IsConnected = true;
 			} catch {
@@ -831,6 +839,11 @@ namespace MailKit.Net.Smtp {
 				stream.Dispose ();
 				stream = null;
 			}
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+			socket.Dispose ();
+			socket = null;
+#endif
 		}
 
 		#endregion

@@ -75,6 +75,9 @@ namespace MailKit.Net.Pop3 {
 		readonly IProtocolLogger logger;
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+		StreamSocket socket;
+#endif
 		bool disposed;
 		string host;
 		int count;
@@ -557,7 +560,7 @@ namespace MailKit.Net.Pop3 {
 				stream = new NetworkStream (socket, true);
 			}
 #else
-			var socket = new StreamSocket ();
+			socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
 			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), pops ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
@@ -576,18 +579,23 @@ namespace MailKit.Net.Pop3 {
 			engine.Connect (new Pop3Stream (stream, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
 				SendCommand (cancellationToken, "STLS");
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 				var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 				tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 				engine.Stream.Stream = tls;
+#else
+				socket.UpgradeToSslAsync (SocketProtectionLevel.Ssl, new HostName (uri.DnsSafeHost))
+					.AsTask (cancellationToken)
+					.GetAwaiter ()
+					.GetResult ();
+#endif
 
 				// re-issue a CAPA command
 				engine.QueryCapabilities (cancellationToken);
 			}
-#endif
         }
 
 		/// <summary>
@@ -621,6 +629,11 @@ namespace MailKit.Net.Pop3 {
 			engine.Disconnect ();
 			uids.Clear ();
 			count = 0;
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+			socket.Dispose ();
+			socket = null;
+#endif
 		}
 
 		/// <summary>
@@ -1622,6 +1635,12 @@ namespace MailKit.Net.Pop3 {
 			if (disposing && !disposed) {
 				engine.Disconnect ();
 				logger.Dispose ();
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+				if (socket != null)
+					socket.Dispose ();
+#endif
+
 				disposed = true;
 			}
 		}
