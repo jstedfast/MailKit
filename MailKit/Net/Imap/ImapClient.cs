@@ -61,6 +61,9 @@ namespace MailKit.Net.Imap {
 	{
 		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+		StreamSocket Socket;
+#endif
 		bool disposed;
 		string host;
 
@@ -464,10 +467,6 @@ namespace MailKit.Net.Imap {
 			var imaps = uri.Scheme.ToLowerInvariant () == "imaps";
 			var port = uri.Port > 0 ? uri.Port : (imaps ? 993 : 143);
 			var query = uri.ParsedQuery ();
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
-			Socket socket = null;
-#endif
 			Stream stream;
 			string value;
 
@@ -475,6 +474,9 @@ namespace MailKit.Net.Imap {
 			var compress = !imaps && (!query.TryGetValue ("compress", out value) || Convert.ToBoolean (value));
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			Socket socket = null;
+
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -497,7 +499,7 @@ namespace MailKit.Net.Imap {
 				stream = new NetworkStream (socket, true);
 			}
 #else
-			var socket = new StreamSocket ();
+			socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
 			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
@@ -586,6 +588,11 @@ namespace MailKit.Net.Imap {
 			}
 
 			engine.Disconnect ();
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+			socket.Dispose ();
+			Socket = null;
+#endif
 		}
 
 		/// <summary>
@@ -828,6 +835,12 @@ namespace MailKit.Net.Imap {
 			if (disposing && !disposed) {
 				engine.Dispose ();
 				logger.Dispose ();
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+				if (socket != null)
+					socket.Dispose ();
+#endif
+
 				disposed = true;
 			}
 		}
