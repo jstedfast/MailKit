@@ -519,16 +519,22 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
             if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
 				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
 				engine.Wait (ic);
 
 				if (ic.Result == ImapCommandResult.Ok) {
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 					engine.Stream.Stream = tls;
+#else
+					socket.UpgradeToSslAsync (SocketProtectionLevel.Ssl, new HostName (uri.DnsSafeHost))
+						.AsTask (cancellationToken)
+						.GetAwaiter ()
+						.GetResult ();
+#endif
 
 					// Query the CAPABILITIES again if the server did not include an
 					// untagged CAPABILITIES response to the STARTTLS command.
@@ -536,9 +542,6 @@ namespace MailKit.Net.Imap {
 						engine.QueryCapabilities (cancellationToken);
 				}
 			} else if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
-#else
-			if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
-#endif
 				var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
 
 				engine.Wait (ic);
