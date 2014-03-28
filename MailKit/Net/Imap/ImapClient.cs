@@ -62,7 +62,7 @@ namespace MailKit.Net.Imap {
 		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
 #if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-        StreamSocket socket;
+		StreamSocket socket;
 #endif
 		bool disposed;
 		string host;

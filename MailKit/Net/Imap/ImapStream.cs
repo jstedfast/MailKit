@@ -796,7 +796,7 @@ namespace MailKit.Net.Imap {
 
 			try {
 				Stream.Write (output, 0, outputIndex);
-                Stream.Flush ();
+				Stream.Flush ();
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
 			} catch (IOException) {
