@@ -560,12 +560,12 @@ namespace MailKit.Net.Pop3 {
 			var socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
-			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), pops ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
 				.AsTask (cancellationToken)
 				.GetAwaiter ()
 				.GetResult ();
 
-			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), Socket.OutputSTream.AsStreamForWrite ());
+			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
 #endif
 
 			probed = ProbedCapabilities.None;
