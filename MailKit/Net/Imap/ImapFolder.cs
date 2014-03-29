@@ -2647,18 +2647,16 @@ namespace MailKit.Net.Imap {
 			return results.Values;
 		}
 
-		enum FetchReturnType {
-			MimeMessage,
-			MimeEntity,
-			Stream
-		}
-
 		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
+			var streams = (Dictionary<string, Stream>) ic.UserData;
 			var token = engine.ReadToken (ic.CancellationToken);
 			var args = new MessageFlagsChangedEventArgs (index);
-			var type = FetchReturnType.MimeMessage;
+			var buf = new byte[4096];
 			bool emit = false;
+			string specifier;
+			Stream stream;
+			int nread;
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
@@ -2683,6 +2681,8 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.OpenBracket)
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					specifier = string.Empty;
+
 					do {
 						token = engine.ReadToken (ic.CancellationToken);
 
@@ -2690,7 +2690,7 @@ namespace MailKit.Net.Imap {
 							break;
 
 						if (token.Type == ImapTokenType.OpenParen) {
-							type = FetchReturnType.Stream;
+							specifier += "(";
 
 							do {
 								token = engine.ReadToken (ic.CancellationToken);
@@ -2700,11 +2700,15 @@ namespace MailKit.Net.Imap {
 
 								if (token.Type != ImapTokenType.Atom)
 									throw ImapEngine.UnexpectedToken (token, false);
+
+								specifier += (string) token.Value;
 							} while (true);
+
+							specifier += ")";
 						} else if (token.Type != ImapTokenType.Atom) {
 							throw ImapEngine.UnexpectedToken (token, false);
 						} else {
-							type = FetchReturnType.MimeEntity;
+							specifier += (string) token.Value;
 						}
 					} while (true);
 
@@ -2720,35 +2724,21 @@ namespace MailKit.Net.Imap {
 							throw ImapEngine.UnexpectedToken (token, false);
 
 						token = engine.ReadToken (ic.CancellationToken);
-
-						type = FetchReturnType.Stream;
 					}
 
 					if (token.Type != ImapTokenType.Literal)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					switch (type) {
-					case FetchReturnType.MimeMessage:
-						ic.UserData = MimeMessage.Load (engine.Stream, ic.CancellationToken);
-						break;
-					case FetchReturnType.MimeEntity:
-						ic.UserData = MimeEntity.Load (engine.Stream, ic.CancellationToken);
-						break;
-					default:
-						var stream = new MemoryBlockStream ();
-						var buf = new byte[4096];
-						int nread;
+					stream = new MemoryBlockStream ();
 
+					ic.CancellationToken.ThrowIfCancellationRequested ();
+					while ((nread = engine.Stream.Read (buf, 0, buf.Length)) > 0) {
 						ic.CancellationToken.ThrowIfCancellationRequested ();
-						while ((nread = engine.Stream.Read (buf, 0, buf.Length)) > 0) {
-							ic.CancellationToken.ThrowIfCancellationRequested ();
-							stream.Write (buf, 0, nread);
-						}
-
-						ic.UserData = stream;
-						break;
+						stream.Write (buf, 0, nread);
 					}
 
+					streams[specifier] = stream;
+					stream.Position = 0;
 					break;
 				case "UID":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2833,7 +2823,11 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[])\r\n", uid.Id);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -2843,7 +2837,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (MimeMessage) ic.UserData;
+			if (!streams.TryGetValue (string.Empty, out stream))
+				return null;
+
+			return MimeMessage.Load (stream, cancellationToken);
 		}
 
 		/// <summary>
@@ -2885,7 +2882,11 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -2895,7 +2896,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (MimeMessage) ic.UserData;
+			if (!streams.TryGetValue (string.Empty, out stream))
+				return null;
+
+			return MimeMessage.Load (stream, cancellationToken);
 		}
 
 		/// <summary>
@@ -2943,8 +2947,12 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s])\r\n", uid.Id, part.PartSpecifier);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s.MIME] BODY.PEEK[%s])\r\n", uid.Id, part.PartSpecifier, part.PartSpecifier);
+			var streams = new Dictionary<string, Stream> ();
+			Stream content, mime;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -2954,7 +2962,17 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (MimeEntity) ic.UserData;
+			if (!streams.TryGetValue (part.PartSpecifier, out content))
+				return null;
+
+			if (!streams.TryGetValue (part.PartSpecifier + ".MIME", out mime))
+				return null;
+
+			var chained = new ChainedStream ();
+			chained.Add (mime);
+			chained.Add (content);
+
+			return MimeEntity.Load (chained, cancellationToken);
 		}
 
 		/// <summary>
@@ -3002,8 +3020,12 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[%s])\r\n", index + 1, part.PartSpecifier);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[%s.MIME] BODY.PEEK[%s])\r\n", index + 1, part.PartSpecifier, part.PartSpecifier);
+			var streams = new Dictionary<string, Stream> ();
+			Stream content, mime;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3013,7 +3035,17 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (MimeEntity) ic.UserData;
+			if (!streams.TryGetValue (part.PartSpecifier, out content))
+				return null;
+
+			if (!streams.TryGetValue (part.PartSpecifier + ".MIME", out mime))
+				return null;
+
+			var chained = new ChainedStream ();
+			chained.Add (mime);
+			chained.Add (content);
+
+			return MimeEntity.Load (chained, cancellationToken);
 		}
 
 		/// <summary>
@@ -3077,7 +3109,11 @@ namespace MailKit.Net.Imap {
 				return new MemoryStream ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3087,7 +3123,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (Stream) ic.UserData;
+			if (!streams.TryGetValue (string.Empty, out stream))
+				return null;
+
+			return stream;
 		}
 
 		/// <summary>
@@ -3150,7 +3189,11 @@ namespace MailKit.Net.Imap {
 				return new MemoryStream ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3160,7 +3203,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (Stream) ic.UserData;
+			if (!streams.TryGetValue (string.Empty, out stream))
+				return null;
+
+			return stream;
 		}
 
 		/// <summary>
@@ -3230,8 +3276,12 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
+			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s]<%d.%d>)\r\n", uid.Id, part.PartSpecifier, offset, count);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3241,7 +3291,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (Stream) ic.UserData;
+			if (!streams.TryGetValue (part.PartSpecifier, out stream))
+				return null;
+
+			return stream;
 		}
 
 		/// <summary>
@@ -3311,7 +3364,11 @@ namespace MailKit.Net.Imap {
 				return new MemoryStream ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[%s]<%d.%d>)\r\n", index + 1, part.PartSpecifier, offset, count);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3321,7 +3378,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			return (Stream) ic.UserData;
+			if (!streams.TryGetValue (string.Empty, out stream))
+				return null;
+
+			return stream;
 		}
 
 		UniqueId[] ModifyFlags (UniqueId[] uids, ulong? modseq, MessageFlags flags, string action, CancellationToken cancellationToken)
