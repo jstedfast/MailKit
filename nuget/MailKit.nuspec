@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
-    <metadata minClientVersion="2.7">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
         <id>MailKit</id>
         <version>0.8.0.0</version>
         <title>MailKit</title>
@@ -18,8 +18,7 @@ Features include:
 * A fully-cancellable Pop3Client with support for STLS, UIDL, and APOP.
 * A fully-cancellable ImapClient with support for LITERAL+, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, XLIST, and X-GM-EXT1.
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
-* S/MIME and PGP support via MimeKit
-</description>
+* S/MIME and PGP support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
         <releaseNotes>* Switched to using a new MailKit.Security.AuthenticationException instead of System.Security.Authentication.AuthenticationException in order to make MailKit more portable to non-desktop platforms.
 * Fixed IMAP and POP3 clients to throw an appropriate ProtocolException if we get an unexpected EOF from the server.
