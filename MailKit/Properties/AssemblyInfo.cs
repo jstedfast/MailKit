@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany ("Xamarin Inc.")]
 [assembly: AssemblyProduct ("MailKit")]
 [assembly: AssemblyCopyright ("Copyright © 2014 Xamarin Inc. (www.xamarin.com)")]
-[assembly: AssemblyTrademark ("")]
+[assembly: AssemblyTrademark ("Xamarin Inc.")]
 [assembly: AssemblyCulture ("")]
 
 [assembly: InternalsVisibleTo ("UnitTests")]
@@ -76,6 +76,6 @@ using System.Runtime.InteropServices;
 //
 // If there have only been bug fixes, bump the Micro Version and/or the Build Number
 //    in the AssemblyFileVersion attribute.
-[assembly: AssemblyInformationalVersion ("0.7")]
-[assembly: AssemblyFileVersion ("0.7.0.0")]
-[assembly: AssemblyVersion ("0.7.0.0")]
+[assembly: AssemblyInformationalVersion ("0.8")]
+[assembly: AssemblyFileVersion ("0.8.0.0")]
+[assembly: AssemblyVersion ("0.8.0.0")]
