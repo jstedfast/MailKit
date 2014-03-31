@@ -2690,8 +2690,6 @@ namespace MailKit.Net.Imap {
 							break;
 
 						if (token.Type == ImapTokenType.OpenParen) {
-							specifier += "(";
-
 							do {
 								token = engine.ReadToken (ic.CancellationToken);
 
@@ -2700,11 +2698,7 @@ namespace MailKit.Net.Imap {
 
 								if (token.Type != ImapTokenType.Atom)
 									throw ImapEngine.UnexpectedToken (token, false);
-
-								specifier += (string) token.Value;
 							} while (true);
-
-							specifier += ")";
 						} else if (token.Type != ImapTokenType.Atom) {
 							throw ImapEngine.UnexpectedToken (token, false);
 						} else {
@@ -2947,9 +2941,20 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s.MIME] BODY.PEEK[%s])\r\n", uid.Id, part.PartSpecifier, part.PartSpecifier);
+			var tags = new string[2];
+
+			if (part.PartSpecifier.Length > 0) {
+				tags[0] = part.PartSpecifier + ".MIME";
+				tags[1] = part.PartSpecifier;
+			} else {
+				tags[0] = "HEADER";
+				tags[1] = "TEXT";
+			}
+
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}] BODY.PEEK[{2}])\r\n", uid.Id, tags[0], tags[1]);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
-			Stream content, mime;
+			Stream stream;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 			ic.UserData = streams;
@@ -2962,17 +2967,27 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			if (!streams.TryGetValue (part.PartSpecifier, out content))
-				return null;
-
-			if (!streams.TryGetValue (part.PartSpecifier + ".MIME", out mime))
-				return null;
-
 			var chained = new ChainedStream ();
-			chained.Add (mime);
-			chained.Add (content);
 
-			return MimeEntity.Load (chained, cancellationToken);
+			foreach (var tag in tags) {
+				if (!streams.TryGetValue (tag, out stream))
+					return null;
+
+				chained.Add (stream);
+			}
+
+			var entity = MimeEntity.Load (chained, cancellationToken);
+
+			if (part.PartSpecifier.Length == 0) {
+				for (int i = entity.Headers.Count; i > 0; i--) {
+					var header = entity.Headers[i - 1];
+
+					if (!header.Field.StartsWith ("Content-", StringComparison.OrdinalIgnoreCase))
+						entity.Headers.RemoveAt (i - 1);
+				}
+			}
+
+			return entity;
 		}
 
 		/// <summary>
@@ -3020,9 +3035,20 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[%s.MIME] BODY.PEEK[%s])\r\n", index + 1, part.PartSpecifier, part.PartSpecifier);
+			var tags = new string[2];
+
+			if (part.PartSpecifier.Length > 0) {
+				tags[0] = part.PartSpecifier + ".MIME";
+				tags[1] = part.PartSpecifier;
+			} else {
+				tags[0] = "HEADER";
+				tags[1] = "TEXT";
+			}
+
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}] BODY.PEEK[{2}])\r\n", index + 1, tags[0], tags[1]);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
-			Stream content, mime;
+			Stream stream;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
 			ic.UserData = streams;
@@ -3035,17 +3061,27 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("FETCH", ic.Result);
 
-			if (!streams.TryGetValue (part.PartSpecifier, out content))
-				return null;
-
-			if (!streams.TryGetValue (part.PartSpecifier + ".MIME", out mime))
-				return null;
-
 			var chained = new ChainedStream ();
-			chained.Add (mime);
-			chained.Add (content);
 
-			return MimeEntity.Load (chained, cancellationToken);
+			foreach (var tag in tags) {
+				if (!streams.TryGetValue (tag, out stream))
+					return null;
+
+				chained.Add (stream);
+			}
+
+			var entity = MimeEntity.Load (chained, cancellationToken);
+
+			if (part.PartSpecifier.Length == 0) {
+				for (int i = entity.Headers.Count; i > 0; i--) {
+					var header = entity.Headers[i - 1];
+
+					if (!header.Field.StartsWith ("Content-", StringComparison.OrdinalIgnoreCase))
+						entity.Headers.RemoveAt (i - 1);
+				}
+			}
+
+			return entity;
 		}
 
 		/// <summary>
