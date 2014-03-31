@@ -1,6 +1,6 @@
 <Overview>
   <Assemblies>
-    <Assembly Name="MailKit" Version="0.7.0.0">
+    <Assembly Name="MailKit" Version="0.8.0.0">
       <Attributes>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyCompany("Xamarin Inc.")</AttributeName>
@@ -15,10 +15,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("0.7.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("0.8.0.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.7")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.8")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
@@ -27,7 +27,7 @@
           <AttributeName>System.Reflection.AssemblyTitle("MailKit")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyTrademark("")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyTrademark("Xamarin Inc.")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("UnitTests")</AttributeName>
@@ -118,6 +118,7 @@
       <Type Name="UnarySearchQuery" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Security">
+      <Type Name="AuthenticationException" Kind="Class" />
       <Type Name="SaslErrorCode" Kind="Enumeration" />
       <Type Name="SaslException" Kind="Class" />
       <Type Name="SaslMechanism" Kind="Class" />
