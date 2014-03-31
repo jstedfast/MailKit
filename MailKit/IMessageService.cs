@@ -53,8 +53,8 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		X509CertificateCollection ClientCertificates { get; set; }
-
 #endif
+
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the message service.
 		/// </summary>

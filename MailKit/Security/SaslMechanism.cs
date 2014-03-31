@@ -46,7 +46,7 @@ namespace MailKit.Security {
 		/// Use by the various clients when authenticating via SASL to determine
 		/// which order the SASL mechanisms supported by the server should be tried.
 		/// </remarks>
-		public static readonly string[] AuthMechanismRank = new [] {
+		public static readonly string[] AuthMechanismRank = {
 			"DIGEST-MD5", "CRAM-MD5", "XOAUTH2", "PLAIN", "LOGIN"
 		};
 
