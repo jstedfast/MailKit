@@ -526,6 +526,7 @@ namespace MailKit.Net.Smtp {
 
 			var uri = new Uri ("smtp://" + host);
 			SmtpResponse response;
+			bool tried = false;
 			string challenge;
 			string command;
 
@@ -536,6 +537,7 @@ namespace MailKit.Net.Smtp {
 					continue;
 
 				var sasl = SaslMechanism.Create (authmech, uri, credentials);
+				tried = true;
 
 				cancellationToken.ThrowIfCancellationRequested ();
 
@@ -564,10 +566,11 @@ namespace MailKit.Net.Smtp {
 					authenticated = true;
 					return;
 				}
-
-				throw new AuthenticationException ();
 			}
 #endif
+
+			if (tried)
+				throw new AuthenticationException ();
 
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
