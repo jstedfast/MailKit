@@ -210,7 +210,11 @@ I just wanted to let you know that Monica and I were going to go play some paint
 				using (var cancel = new CancellationTokenSource ()) {
 					client.Connect (uri, cancel.Token);
 
-					// only needed if the SMTP server requires authentication
+					// Note: since we don't have an OAuth2 token, disable
+					// the XOAUTH2 authentication mechanism.
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+					// Note: only needed if the SMTP server requires authentication
 					client.Authenticate (credentials, cancel.Token);
 
 					client.Send (message, cancel.Token);
@@ -248,6 +252,11 @@ namespace TestClient {
 
 				using (var cancel = new CancellationTokenSource ()) {
 					client.Connect (uri, cancel.Token);
+
+					// Note: since we don't have an OAuth2 token, disable
+					// the XOAUTH2 authentication mechanism.
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
 					client.Authenticate (credentials, cancel.Token);
 
 					int count = client.GetMessageCount (cancel.Token);
@@ -289,6 +298,11 @@ namespace TestClient {
 
 				using (var cancel = new CancellationTokenSource ()) {
 					client.Connect (uri, cancel.Token);
+
+					// Note: since we don't have an OAuth2 token, disable
+					// the XOAUTH2 authentication mechanism.
+					client.AuthenticationMechanisms.Remove ("XOAUTH");
+
 					client.Authenticate (credentials, cancel.Token);
 
 					// The Inbox folder is always available on all IMAP servers...
@@ -300,7 +314,7 @@ namespace TestClient {
 
 					for (int i = 0; i < inbox.Count; i++) {
 						var message = inbox.GetMessage (i, cancel.Token);
-						Console.WriteLine ("Subject: {0}", i, message.Subject);
+						Console.WriteLine ("Subject: {0}", message.Subject);
 					}
 
 					client.Disconnect (true, cancel.Token);
