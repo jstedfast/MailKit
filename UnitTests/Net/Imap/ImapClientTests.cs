@@ -31,7 +31,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
-using System.Security.Authentication;
 
 using NUnit.Framework;
 
@@ -241,6 +240,92 @@ namespace UnitTests.Net.Imap {
 				created.Delete (CancellationToken.None);
 
 				client.Disconnect (true, CancellationToken.None);
+			}
+		}
+
+		[Test]
+		public void TestExtractingPrecisePangolinAttachment ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 FETCH 270 (BODY.PEEK[])\r\n", "gmail.precise-pangolin-message.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				try {
+					var credentials = new NetworkCredential ("username", "password");
+
+					// Note: Do not try XOAUTH2
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+					client.Authenticate (credentials, CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
+
+				var inbox = client.Inbox;
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.HasNoChildren, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
+
+				foreach (var special in Enum.GetValues (typeof (SpecialFolder)).OfType<SpecialFolder> ()) {
+					var folder = client.GetFolder (special);
+
+					if (special != SpecialFolder.Archive) {
+						var expected = GetSpecialFolderAttribute (special) | FolderAttributes.HasNoChildren;
+
+						Assert.IsNotNull (folder, "Expected non-null {0} folder.", special);
+						Assert.AreEqual (expected, folder.Attributes, "Expected {0} attributes to be \\HasNoChildren.", special);
+					} else {
+						Assert.IsNull (folder, "Expected null {0} folder.", special);
+					}
+				}
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var folders = personal.GetSubfolders (false, CancellationToken.None).ToList ();
+				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
+				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
+				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
+
+				client.Inbox.Open (FolderAccess.ReadOnly, CancellationToken.None);
+
+				var message = client.Inbox.GetMessage (269, CancellationToken.None);
+
+				foreach (var attachment in message.Attachments) {
+					using (var stream = File.Create ("attachment.txt")) {
+						var options = FormatOptions.Default.Clone ();
+						options.NewLineFormat = NewLineFormat.Dos;
+						attachment.WriteTo (options, stream);
+					}
+					using (var stream = File.Create (attachment.FileName)) {
+						attachment.ContentObject.DecodeTo (stream);
+						stream.Close ();
+					}
+				}
+
+				client.Disconnect (false, CancellationToken.None);
 			}
 		}
 	}

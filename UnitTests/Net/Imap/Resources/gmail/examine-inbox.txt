@@ -1,0 +1,8 @@
+* FLAGS (\Answered \Flagged \Draft \Deleted \Seen $Phishing $NotPhishing)
+* OK [PERMANENTFLAGS ()] Flags permitted.
+* OK [UIDVALIDITY 637172988] UIDs valid.
+* 270 EXISTS
+* 0 RECENT
+* OK [UIDNEXT 280] Predicted next UID.
+* OK [HIGHESTMODSEQ 35312]
+A00000006 OK [READ-ONLY] INBOX selected. (Success)

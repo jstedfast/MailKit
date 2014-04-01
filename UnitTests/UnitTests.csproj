@@ -228,6 +228,8 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mail-from-rcpt-to.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\examine-inbox.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\precise-pangolin-message.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />

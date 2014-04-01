@@ -400,6 +400,7 @@ namespace MailKit.Net.Imap {
 			host = hostName;
 
 			engine.Connect (new ImapStream (replayStream, logger), cancellationToken);
+			engine.TagPrefix = 'A';
 
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
