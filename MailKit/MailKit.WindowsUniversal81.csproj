@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -20,8 +20,9 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS_APP;WINDOWS_PHONE_APP</DefineConstants>
+    <OutputPath>bin\Debug\lib\wpa81</OutputPath>
+    <IntermediateOutputPath>obj\Debug\lib\wpa81</IntermediateOutputPath>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_APP;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -29,7 +30,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin\Release\lib\wpa81</OutputPath>
+    <IntermediateOutputPath>obj\Release\lib\wpa81</IntermediateOutputPath>
+    <DocumentationFile>bin\Release\lib\wpa81\MailKit.xml</DocumentationFile>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,6 +42,57 @@
     <TargetPlatform Include="Windows, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.WindowsUniversal81.csproj">
+      <Project>{d9906b8c-7bbd-4cce-ac7c-e9bca020d20c}</Project>
+      <Name>MimeKit.WindowsUniversal81</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Portable.Text.Encoding\Portable.Text.Encoding\Portable.Text.Encoding.WindowsUniversal81.csproj">
+      <Project>{b76a64f9-b00e-4243-ae89-5d024ca3b436}</Project>
+      <Name>Portable.Text.Encoding.WindowsUniversal81</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Net\Imap\ImapCapabilities.cs" />
+    <Compile Include="Net\Imap\ImapClient.cs" />
+    <Compile Include="Net\Imap\ImapCommand.cs" />
+    <Compile Include="Net\Imap\ImapCommandException.cs" />
+    <Compile Include="Net\Imap\ImapEncoding.cs" />
+    <Compile Include="Net\Imap\ImapEngine.cs" />
+    <Compile Include="Net\Imap\ImapFolder.cs" />
+    <Compile Include="Net\Imap\ImapProtocolException.cs" />
+    <Compile Include="Net\Imap\ImapResponseCode.cs" />
+    <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />
+    <Compile Include="Net\Imap\ImapStream.cs" />
+    <Compile Include="Net\Imap\ImapToken.cs" />
+    <Compile Include="Net\Imap\ImapUtils.cs" />
+    <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
+    <Compile Include="Net\Pop3\Pop3Client.cs" />
+    <Compile Include="Net\Pop3\Pop3Command.cs" />
+    <Compile Include="Net\Pop3\Pop3CommandException.cs" />
+    <Compile Include="Net\Pop3\Pop3Engine.cs" />
+    <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
+    <Compile Include="Net\Pop3\Pop3Stream.cs" />
+    <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
+    <Compile Include="Net\Smtp\SmtpClient.cs" />
+    <Compile Include="Net\Smtp\SmtpCommandException.cs" />
+    <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
+    <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
+    <Compile Include="Net\Smtp\SmtpResponse.cs" />
+    <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\BinarySearchQuery.cs" />
+    <Compile Include="Search\DateSearchQuery.cs" />
+    <Compile Include="Search\HeaderSearchQuery.cs" />
+    <Compile Include="Search\ISearchQueryOptimizer.cs" />
+    <Compile Include="Search\NumericSearchQuery.cs" />
+    <Compile Include="Search\OrderBy.cs" />
+    <Compile Include="Search\OrderByType.cs" />
+    <Compile Include="Search\SearchQuery.cs" />
+    <Compile Include="Search\SearchTerm.cs" />
+    <Compile Include="Search\SortOrder.cs" />
+    <Compile Include="Search\TextSearchQuery.cs" />
+    <Compile Include="Search\UnarySearchQuery.cs" />
+    <Compile Include="Security\AuthenticationException.cs" />
     <Compile Include="AlertEventArgs.cs" />
     <Compile Include="BodyPart.cs" />
     <Compile Include="BodyPartBasic.cs" />
@@ -71,66 +125,22 @@
     <Compile Include="MessagesVanishedEventArgs.cs" />
     <Compile Include="MessageThread.cs" />
     <Compile Include="MessageThreader.cs" />
-    <Compile Include="Net\Imap\ImapCapabilities.cs" />
-    <Compile Include="Net\Imap\ImapClient.cs" />
-    <Compile Include="Net\Imap\ImapCommand.cs" />
-    <Compile Include="Net\Imap\ImapCommandException.cs" />
-    <Compile Include="Net\Imap\ImapEncoding.cs" />
-    <Compile Include="Net\Imap\ImapEngine.cs" />
-    <Compile Include="Net\Imap\ImapFolder.cs" />
-    <Compile Include="Net\Imap\ImapProtocolException.cs" />
-    <Compile Include="Net\Imap\ImapResponseCode.cs" />
-    <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />
-    <Compile Include="Net\Imap\ImapStream.cs" />
-    <Compile Include="Net\Imap\ImapToken.cs" />
-    <Compile Include="Net\Imap\ImapUtils.cs" />
-    <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
-    <Compile Include="Net\Pop3\Pop3Client.cs" />
-    <Compile Include="Net\Pop3\Pop3Command.cs" />
-    <Compile Include="Net\Pop3\Pop3CommandException.cs" />
-    <Compile Include="Net\Pop3\Pop3Engine.cs" />
-    <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
-    <Compile Include="Net\Pop3\Pop3Stream.cs" />
-    <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
-    <Compile Include="Net\Smtp\SmtpClient.cs" />
-    <Compile Include="Net\Smtp\SmtpCommandException.cs" />
-    <Compile Include="Net\Smtp\SmtpDataFilter.cs" />
-    <Compile Include="Net\Smtp\SmtpProtocolException.cs" />
-    <Compile Include="Net\Smtp\SmtpResponse.cs" />
-    <Compile Include="Net\Smtp\SmtpStatusCode.cs" />
     <Compile Include="NullProtocolLogger.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
-    <Compile Include="Resources\Resource.designer.cs" />
-    <Compile Include="Search\BinarySearchQuery.cs" />
-    <Compile Include="Search\DateSearchQuery.cs" />
-    <Compile Include="Search\HeaderSearchQuery.cs" />
-    <Compile Include="Search\ISearchQueryOptimizer.cs" />
-    <Compile Include="Search\NumericSearchQuery.cs" />
-    <Compile Include="Search\OrderBy.cs" />
-    <Compile Include="Search\OrderByType.cs" />
-    <Compile Include="Search\SearchQuery.cs" />
-    <Compile Include="Search\SearchTerm.cs" />
-    <Compile Include="Search\SortOrder.cs" />
-    <Compile Include="Search\TextSearchQuery.cs" />
-    <Compile Include="Search\UnarySearchQuery.cs" />
-    <Compile Include="Security\AuthenticationException.cs" />
     <Compile Include="SpecialFolder.cs" />
     <Compile Include="StatusItems.cs" />
     <Compile Include="ThreadingAlgorithm.cs" />
     <Compile Include="UniqueId.cs" />
     <Compile Include="UriExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.WindowsUniversal81.csproj">
-      <Project>{d9906b8c-7bbd-4cce-ac7c-e9bca020d20c}</Project>
-      <Name>MimeKit.WindowsUniversal81</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Portable.Text.Encoding\Portable.Text.Encoding\Portable.Text.Encoding.WindowsUniversal81.csproj">
-      <Project>{b76a64f9-b00e-4243-ae89-5d024ca3b436}</Project>
-      <Name>Portable.Text.Encoding.WindowsUniversal81</Name>
-    </ProjectReference>
+    <ItemGroup>
+    <Folder Include="Net\" />
+    <Folder Include="Net\Imap\" />
+    <Folder Include="Net\Pop3\" />
+    <Folder Include="Net\Smtp\" />
+    <Folder Include="Search\" />
+    <Folder Include="Security\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -140,4 +150,13 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="PrefixedHierarchical" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>
