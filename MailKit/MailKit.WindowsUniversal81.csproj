@@ -71,45 +71,19 @@
     <Compile Include="MessagesVanishedEventArgs.cs" />
     <Compile Include="MessageThread.cs" />
     <Compile Include="MessageThreader.cs" />
-    <Compile Include="Net\Imap\ImapCapabilities.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapClient.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapCommand.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapCommandException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapEncoding.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapEngine.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapFolder.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapProtocolException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapResponseCode.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapToken.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\Imap\ImapUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Net\Imap\ImapCapabilities.cs" />
+    <Compile Include="Net\Imap\ImapClient.cs" />
+    <Compile Include="Net\Imap\ImapCommand.cs" />
+    <Compile Include="Net\Imap\ImapCommandException.cs" />
+    <Compile Include="Net\Imap\ImapEncoding.cs" />
+    <Compile Include="Net\Imap\ImapEngine.cs" />
+    <Compile Include="Net\Imap\ImapFolder.cs" />
+    <Compile Include="Net\Imap\ImapProtocolException.cs" />
+    <Compile Include="Net\Imap\ImapResponseCode.cs" />
+    <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />
+    <Compile Include="Net\Imap\ImapStream.cs" />
+    <Compile Include="Net\Imap\ImapToken.cs" />
+    <Compile Include="Net\Imap\ImapUtils.cs" />
     <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
     <Compile Include="Net\Pop3\Pop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Command.cs" />
@@ -149,11 +123,11 @@
     <Compile Include="UriExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MimeKit Fork\MimeKit\MimeKit.WindowsUniversal81.csproj">
+    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.WindowsUniversal81.csproj">
       <Project>{d9906b8c-7bbd-4cce-ac7c-e9bca020d20c}</Project>
       <Name>MimeKit.WindowsUniversal81</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Portable.Text.Encoding Fork\Portable.Text.Encoding\Portable.Text.Encoding.WindowsUniversal81.csproj">
+    <ProjectReference Include="..\..\Portable.Text.Encoding\Portable.Text.Encoding\Portable.Text.Encoding.WindowsUniversal81.csproj">
       <Project>{b76a64f9-b00e-4243-ae89-5d024ca3b436}</Project>
       <Name>Portable.Text.Encoding.WindowsUniversal81</Name>
     </ProjectReference>
