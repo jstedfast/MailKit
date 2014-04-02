@@ -165,7 +165,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		public ImapCapabilities Capabilities {
-			get; private set;
+			get; set;
 		}
 
 		/// <summary>

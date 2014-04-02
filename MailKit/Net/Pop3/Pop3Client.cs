@@ -134,8 +134,17 @@ namespace MailKit.Net.Pop3 {
 		/// as a side-effect of the <see cref="Authenticate"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
+		/// <exception cref="System.ArgumentException">
+		/// Capabilities cannot be enabled, they may only be disabled.
+		/// </exception>
 		public Pop3Capabilities Capabilities {
 			get { return engine.Capabilities; }
+			set {
+				if ((engine.Capabilities | value) > engine.Capabilities)
+					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", "value");
+
+				engine.Capabilities = value;
+			}
 		}
 
 		/// <summary>

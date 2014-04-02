@@ -77,6 +77,7 @@ namespace MailKit.Net.Smtp {
 		readonly HashSet<string> authmechs = new HashSet<string> ();
 		readonly byte[] input = new byte[4096];
 		readonly IProtocolLogger logger;
+		SmtpCapabilities capabilities;
 		int inputIndex, inputEnd;
 		MemoryBlockStream queue;
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
@@ -142,8 +143,17 @@ namespace MailKit.Net.Smtp {
 		/// as a side-effect of the <see cref="Authenticate"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
+		/// <exception cref="System.ArgumentException">
+		/// Capabilities cannot be enabled, they may only be disabled.
+		/// </exception>
 		public SmtpCapabilities Capabilities {
-			get; private set;
+			get { return capabilities; }
+			set {
+				if ((capabilities | value) > capabilities)
+					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", "value");
+
+				capabilities = value;
+			}
 		}
 
 		/// <summary>
@@ -414,7 +424,7 @@ namespace MailKit.Net.Smtp {
 			SmtpResponse response;
 
 			// Clear the extensions
-			Capabilities = SmtpCapabilities.None;
+			capabilities = SmtpCapabilities.None;
 			authmechs.Clear ();
 			MaxSize = 0;
 
@@ -431,7 +441,7 @@ namespace MailKit.Net.Smtp {
 					if (capability.StartsWith ("AUTH", StringComparison.Ordinal)) {
 						int index = 4;
 
-						Capabilities |= SmtpCapabilities.Authentication;
+						capabilities |= SmtpCapabilities.Authentication;
 
 						if (index < capability.Length && capability[index] == '=')
 							index++;
@@ -443,7 +453,7 @@ namespace MailKit.Net.Smtp {
 						int index = 4;
 						uint size;
 
-						Capabilities |= SmtpCapabilities.Size;
+						capabilities |= SmtpCapabilities.Size;
 
 						while (index < capability.Length && char.IsWhiteSpace (capability[index]))
 							index++;
@@ -451,19 +461,19 @@ namespace MailKit.Net.Smtp {
 						if (uint.TryParse (capability.Substring (index), out size))
 							MaxSize = size;
 					} else if (capability == "BINARYMIME") {
-						Capabilities |= SmtpCapabilities.BinaryMime;
+						capabilities |= SmtpCapabilities.BinaryMime;
 					} else if (capability == "CHUNKING") {
-						Capabilities |= SmtpCapabilities.Chunking;
+						capabilities |= SmtpCapabilities.Chunking;
 					} else if (capability == "ENHANCEDSTATUSCODES") {
-						Capabilities |= SmtpCapabilities.EnhancedStatusCodes;
+						capabilities |= SmtpCapabilities.EnhancedStatusCodes;
 					} else if (capability == "8BITMIME") {
-						Capabilities |= SmtpCapabilities.EightBitMime;
+						capabilities |= SmtpCapabilities.EightBitMime;
 					} else if (capability == "PIPELINING") {
-						Capabilities |= SmtpCapabilities.Pipelining;
+						capabilities |= SmtpCapabilities.Pipelining;
 					} else if (capability == "STARTTLS") {
-						Capabilities |= SmtpCapabilities.StartTLS;
+						capabilities |= SmtpCapabilities.StartTLS;
 					} else if (capability == "SMTPUTF8") {
-						Capabilities |= SmtpCapabilities.UTF8;
+						capabilities |= SmtpCapabilities.UTF8;
 					}
 				}
 			}
@@ -518,7 +528,7 @@ namespace MailKit.Net.Smtp {
 			if (authenticated)
 				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
 
-			if ((Capabilities & SmtpCapabilities.Authentication) == 0)
+			if ((capabilities & SmtpCapabilities.Authentication) == 0)
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
 
 			if (credentials == null)
@@ -588,7 +598,7 @@ namespace MailKit.Net.Smtp {
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			localEndPoint = new IPEndPoint (IPAddress.Loopback, 25);
 #endif
-			Capabilities = SmtpCapabilities.None;
+			capabilities = SmtpCapabilities.None;
 			stream = replayStream;
 			authmechs.Clear ();
 			host = hostName;
@@ -669,7 +679,7 @@ namespace MailKit.Net.Smtp {
 			if (IsConnected)
 				throw new InvalidOperationException ("The SmtpClient is already connected.");
 
-			Capabilities = SmtpCapabilities.None;
+			capabilities = SmtpCapabilities.None;
 			authmechs.Clear ();
 			MaxSize = 0;
 
@@ -734,7 +744,7 @@ namespace MailKit.Net.Smtp {
 				// Send EHLO and get a list of supported extensions
 				Ehlo (cancellationToken);
 
-				if (starttls && (Capabilities & SmtpCapabilities.StartTLS) != 0) {
+				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
 					response = SendCommand ("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -893,12 +903,12 @@ namespace MailKit.Net.Smtp {
 
 		ContentEncoding GetFinalEncoding (MimePart part)
 		{
-			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0) {
+			if ((capabilities & SmtpCapabilities.BinaryMime) != 0) {
 				// no need to re-encode...
 				return part.ContentTransferEncoding;
 			}
 
-			if ((Capabilities & SmtpCapabilities.EightBitMime) != 0) {
+			if ((capabilities & SmtpCapabilities.EightBitMime) != 0) {
 				switch (part.ContentTransferEncoding) {
 				case ContentEncoding.Default:
 				case ContentEncoding.Binary:
@@ -921,9 +931,9 @@ namespace MailKit.Net.Smtp {
 
 			ContentEncoding encoding;
 
-			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
+			if ((capabilities & SmtpCapabilities.BinaryMime) != 0)
 				encoding = part.GetBestEncoding (EncodingConstraint.None);
-			else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+			else if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
 				encoding = part.GetBestEncoding (EncodingConstraint.EightBit);
 			else
 				encoding = part.GetBestEncoding (EncodingConstraint.SevenBit);
@@ -956,7 +966,7 @@ namespace MailKit.Net.Smtp {
 			switch (GetFinalEncoding ((MimePart) entity)) {
 			case ContentEncoding.EightBit:
 				// if the server supports the 8BITMIME extension, use it...
-				if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+				if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
 					return SmtpExtension.EightBitMime;
 
 				return SmtpExtension.BinaryMime;
@@ -1005,7 +1015,7 @@ namespace MailKit.Net.Smtp {
 		{
 			var command = GetMailFromCommand (mailbox, extensions);
 
-			if ((Capabilities & SmtpCapabilities.Pipelining) != 0) {
+			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
 				QueueCommand (SmtpCommand.MailFrom, command);
 				return;
 			}
@@ -1035,7 +1045,7 @@ namespace MailKit.Net.Smtp {
 		{
 			var command = string.Format ("RCPT TO:<{0}>", mailbox.Address);
 
-			if ((Capabilities & SmtpCapabilities.Pipelining) != 0) {
+			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
 				QueueCommand (SmtpCommand.RcptTo, command);
 				return;
 			}
