@@ -379,14 +379,15 @@ namespace MailKit.Net.Pop3 {
 
 				try {
 					SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
+					engine.State = Pop3EngineState.Transaction;
 				} catch (Pop3CommandException) {
-					throw new AuthenticationException ();
 				}
 
-				engine.State = Pop3EngineState.Transaction;
-				engine.QueryCapabilities (cancellationToken);
-				ProbeCapabilities (cancellationToken);
-				return;
+				if (engine.State == Pop3EngineState.Transaction) {
+					engine.QueryCapabilities (cancellationToken);
+					ProbeCapabilities (cancellationToken);
+					return;
+				}
 			}
 
 			if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
@@ -419,7 +420,7 @@ namespace MailKit.Net.Pop3 {
 					}
 
 					if (pc.Status == Pop3CommandStatus.Error)
-						throw new AuthenticationException ();
+						continue;
 
 					if (pc.Status != Pop3CommandStatus.Ok)
 						throw CreatePop3Exception (pc);
