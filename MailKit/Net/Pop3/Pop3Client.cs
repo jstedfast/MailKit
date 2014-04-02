@@ -419,7 +419,7 @@ namespace MailKit.Net.Pop3 {
 					}
 
 					if (pc.Status == Pop3CommandStatus.Error)
-						throw new AuthenticationException ();
+						continue;
 
 					if (pc.Status != Pop3CommandStatus.Ok)
 						throw CreatePop3Exception (pc);
