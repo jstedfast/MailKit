@@ -722,7 +722,7 @@ namespace MailKit.Net.Smtp {
 			socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
-			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), smtps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), smtps ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
 				.AsTask (cancellationToken)
 				.GetAwaiter ()
 				.GetResult ();
@@ -754,7 +754,7 @@ namespace MailKit.Net.Smtp {
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 					stream = tls;
 #else
-					socket.UpgradeToSslAsync (SocketProtectionLevel.Ssl, new HostName (uri.DnsSafeHost))
+					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (uri.DnsSafeHost))
 						.AsTask (cancellationToken)
 						.GetAwaiter ()
 						.GetResult ();

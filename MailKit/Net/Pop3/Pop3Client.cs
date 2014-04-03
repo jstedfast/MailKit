@@ -573,7 +573,7 @@ namespace MailKit.Net.Pop3 {
 			socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
-			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), pops ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), pops ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
 				.AsTask (cancellationToken)
 				.GetAwaiter ()
 				.GetResult ();
@@ -597,7 +597,7 @@ namespace MailKit.Net.Pop3 {
 				tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 				engine.Stream.Stream = tls;
 #else
-				socket.UpgradeToSslAsync (SocketProtectionLevel.Ssl, new HostName (uri.DnsSafeHost))
+				socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (uri.DnsSafeHost))
 					.AsTask (cancellationToken)
 					.GetAwaiter ()
 					.GetResult ();

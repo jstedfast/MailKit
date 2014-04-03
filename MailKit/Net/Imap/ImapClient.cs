@@ -512,7 +512,7 @@ namespace MailKit.Net.Imap {
 			socket = new StreamSocket ();
 
 			cancellationToken.ThrowIfCancellationRequested ();
-			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket)
+			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
 				.AsTask (cancellationToken)
 				.GetAwaiter ()
 				.GetResult ();
@@ -540,7 +540,7 @@ namespace MailKit.Net.Imap {
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 					engine.Stream.Stream = tls;
 #else
-					socket.UpgradeToSslAsync (SocketProtectionLevel.Ssl, new HostName (uri.DnsSafeHost))
+					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (uri.DnsSafeHost))
 						.AsTask (cancellationToken)
 						.GetAwaiter ()
 						.GetResult ();
