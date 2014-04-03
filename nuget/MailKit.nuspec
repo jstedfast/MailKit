@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.8.0.0</version>
+        <version>0.9.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -20,15 +20,16 @@ Features include:
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
 * S/MIME and PGP support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Switched to using a new MailKit.Security.AuthenticationException instead of System.Security.Authentication.AuthenticationException in order to make MailKit more portable to non-desktop platforms.
-* Fixed IMAP and POP3 clients to throw an appropriate ProtocolException if we get an unexpected EOF from the server.
-* Fixed ImapFolder.GetBodyPart() to properly fetch the requested body part.
+        <releaseNotes>* Fixed SmtpClient.Authenticate() and Pop3Client.Authenticate() to fall back to other SASL mechanisms properly.
+* Added setters for SmtpClient.Capabilities, Pop3Client.Capabilities, and ImapClient.Capabilities allowing developers to disable protocol features at their discretion.
+* Added support for Windows Store and Windows Phone 8.1.
+* Fixed APOP authentication.
 * Improved documentation</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
-        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch</tags>
+        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch win8 wp8 wp81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.29.0.0" />
+            <dependency id="MimeKit" version="0.30.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
@@ -49,5 +50,7 @@ Features include:
         <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.xml" target="lib\MonoTouch\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
+        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\portable-net45+wp81+win8\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\portable-net45+wp81+win8\MailKit.xml" />
     </files>
 </package>
