@@ -203,7 +203,7 @@ namespace MailKit.Net.Pop3 {
 
 			index = text.IndexOf ('>');
 			if (text.Length > 0 && text[0] == '<' && index != -1) {
-				ApopToken = text.Substring (1, index - 1);
+				ApopToken = text.Substring (0, index + 1);
 				Capabilities |= Pop3Capabilities.Apop;
 			}
 
