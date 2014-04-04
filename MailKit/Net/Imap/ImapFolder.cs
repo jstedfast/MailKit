@@ -629,6 +629,7 @@ namespace MailKit.Net.Imap {
 			var encodedName = ImapEncoding.Encode (fullName);
 			var list = new List<ImapFolder> ();
 			var createName = encodedName;
+			ImapFolder folder;
 
 			if (!isMessageFolder)
 				createName += DirectorySeparator;
@@ -654,7 +655,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("LIST", ic.Result);
 
-			return list.Count > 0 ? list[0] : null;
+			folder = list.FirstOrDefault ();
+
+			if (folder != null)
+				folder.ParentFolder = this;
+
+			return folder;
 		}
 
 		/// <summary>
