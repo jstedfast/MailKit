@@ -726,7 +726,8 @@ namespace MailKit.Net.Imap {
 			Engine.FolderCache.Remove (EncodedName);
 			Engine.FolderCache[encodedName] = this;
 
-			ParentFolder.Renamed -= ParentFolderRenamed;
+            if (ParentFolder != null)
+			    ParentFolder.Renamed -= ParentFolderRenamed;
 			SetParentFolder (parent);
 
 			FullName = ImapEncoding.Decode (encodedName);
