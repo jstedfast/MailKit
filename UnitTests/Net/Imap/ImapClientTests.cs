@@ -212,6 +212,9 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
 				var created = personal.Create ("UnitTests", true, CancellationToken.None);
+
+				Assert.IsNotNull (created.ParentFolder, "The ParentFolder property should not be null.");
+
 				created.Open (FolderAccess.ReadWrite, CancellationToken.None);
 
 				for (int i = 0; i < 50; i++) {
