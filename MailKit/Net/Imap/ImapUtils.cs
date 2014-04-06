@@ -605,9 +605,28 @@ namespace MailKit.Net.Imap {
 
 			if (type.Matches ("message", "rfc822")) {
 				var mesg = new BodyPartMessage ();
-				mesg.Envelope = ParseEnvelope (engine, cancellationToken);
-				mesg.Body = ParseBody (engine, path, cancellationToken);
-				mesg.Lines = ReadNumber (engine, cancellationToken);
+
+				if (engine.IsGMail) {
+					// GMail's support for message/rfc822 body parts is broken, see issue #32
+					token = engine.PeekToken (cancellationToken);
+					if (token.Type != ImapTokenType.CloseParen) {
+						mesg.Envelope = ParseEnvelope (engine, cancellationToken);
+						token = engine.PeekToken (cancellationToken);
+					}
+
+					if (token.Type != ImapTokenType.CloseParen) {
+						mesg.Body = ParseBody (engine, path, cancellationToken);
+						token = engine.PeekToken (cancellationToken);
+					}
+
+					if (token.Type != ImapTokenType.CloseParen)
+						mesg.Lines = ReadNumber (engine, cancellationToken);
+				} else {
+					mesg.Envelope = ParseEnvelope (engine, cancellationToken);
+					mesg.Body = ParseBody (engine, path, cancellationToken);
+					mesg.Lines = ReadNumber (engine, cancellationToken);
+				}
+
 				body = mesg;
 			} else if (type.Matches ("text", "*")) {
 				var text = new BodyPartText ();

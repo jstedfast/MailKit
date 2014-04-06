@@ -169,6 +169,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Indicates whether or not the engine is connected to a GMail server (used for various workarounds).
+		/// </summary>
+		/// <value><c>true</c> if the engine is connected to a GMail server; otherwise, <c>false</c>.</value>
+		internal bool IsGMail {
+			get { return (Capabilities & ImapCapabilities.GMailExt1) != 0; }
+		}
+
+		/// <summary>
 		/// Gets the capabilities version.
 		/// </summary>
 		/// <remarks>

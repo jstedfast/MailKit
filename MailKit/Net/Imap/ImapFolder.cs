@@ -1210,7 +1210,7 @@ namespace MailKit.Net.Imap {
 			string format = string.Empty;
 
 			// Note: GMail claims to support UIDPLUS, but does not accept "UID APPEND"
-			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0) {
+			if (!Engine.IsGMail) {
 				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
 					format = "UID ";
 			}
@@ -1339,7 +1339,7 @@ namespace MailKit.Net.Imap {
 			string format = string.Empty;
 
 			// Note: GMail claims to support UIDPLUS, but does not accept "UID APPEND"
-			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0) {
+			if (!Engine.IsGMail) {
 				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
 					format = "UID ";
 			}
@@ -2021,7 +2021,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			// Note: GMail doesn't properly handle aliases (or at least it doesn't handle "FULL")...
-			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0) {
+			if (!Engine.IsGMail) {
 				// first, eliminate the aliases...
 				if ((items & MessageSummaryItems.Full) == MessageSummaryItems.Full) {
 					items &= ~MessageSummaryItems.Full;
