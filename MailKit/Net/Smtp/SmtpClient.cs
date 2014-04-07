@@ -429,11 +429,13 @@ namespace MailKit.Net.Smtp {
 			SmtpResponse response;
 
 			response = SendEhlo (true, cancellationToken);
-			//Some SMTP-Servers doesn't allow senden EHLO/HELO twice, keep capabilities, authmechs and don't treat this as an error
+
+			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
 			if (response.StatusCode == SmtpStatusCode.BadCommandSequence && capabilities != SmtpCapabilities.None)
 				return;
 
 			if (response.StatusCode != SmtpStatusCode.Ok) {
+				// Try sending HELO instead...
 				response = SendEhlo (false, cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
