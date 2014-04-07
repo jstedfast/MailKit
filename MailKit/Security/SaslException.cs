@@ -64,9 +64,12 @@ namespace MailKit.Security {
 	/// <remarks>
 	/// Typically indicates an error while parsing a server's challenge token.
 	/// </remarks>
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 	[Serializable]
+#endif
 	public class SaslException : AuthenticationException
 	{
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.
 		/// </summary>
@@ -77,6 +80,7 @@ namespace MailKit.Security {
 			ErrorCode = (SaslErrorCode) info.GetInt32 ("ErrorCode");
 			Mechanism = info.GetString ("Mechanism");
 		}
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.
@@ -90,6 +94,7 @@ namespace MailKit.Security {
 			ErrorCode = code;
 		}
 
+#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.
@@ -109,6 +114,7 @@ namespace MailKit.Security {
 
 			base.GetObjectData (info, context);
 		}
+#endif
 
 		/// <summary>
 		/// Gets the error code.
