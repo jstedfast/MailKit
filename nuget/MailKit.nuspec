@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.9.0.0</version>
+        <version>0.10.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -20,16 +20,17 @@ Features include:
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
 * S/MIME and PGP support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed SmtpClient.Authenticate() and Pop3Client.Authenticate() to fall back to other SASL mechanisms properly.
-* Added setters for SmtpClient.Capabilities, Pop3Client.Capabilities, and ImapClient.Capabilities allowing developers to disable protocol features at their discretion.
-* Added support for Windows Store and Windows Phone 8.1.
-* Fixed APOP authentication.
+        <releaseNotes>* Fixed ImapFolder.Create() to always set the ParentFolder property.
+* Worked around a GMail IMAP bug in BODY responses with nested message/rfc822 parts.
+* Worked around buggy SMTP servers that do not accept an EHLO after successfully authenticating.
+* Added a new SmtpClient.Send() method that allows developers to specify the sender and recipients of the message (as opposed to having MailKit figure it out by examining the headers).
+* Implemented the missing pieces of SmtpClient, Pop3Client, and ImapClient for the Windows [Phone] 8.x platform.
 * Improved documentation</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
-        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch win8 wp8 wp81</tags>
+        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch win8 wp81 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.30.0.0" />
+            <dependency id="MimeKit" version="0.31.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

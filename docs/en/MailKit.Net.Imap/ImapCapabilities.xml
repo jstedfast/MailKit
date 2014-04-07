@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ImapCapabilities extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.9.0.0</AssemblyVersion>
+    <AssemblyVersion>0.10.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -29,7 +29,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Binary = int64(2048)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -45,7 +45,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Catenate = int64(16384)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -61,7 +61,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Children = int64(128)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -77,7 +77,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Compress = int64(262144)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -93,7 +93,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities CondStore = int64(32768)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -109,7 +109,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Context = int64(134217728)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -125,7 +125,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Convert = int64(33554432)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -141,7 +141,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Enable = int64(1048576)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -157,7 +157,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ESearch = int64(65536)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -173,7 +173,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ESort = int64(67108864)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -189,7 +189,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Filters = int64(1073741824)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -205,7 +205,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int64(68719476736)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -221,7 +221,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Idle = int64(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -237,7 +237,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities IMAP4 = int64(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -253,7 +253,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities IMAP4rev1 = int64(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -269,7 +269,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ListExtended = int64(16777216)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -285,7 +285,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities ListStatus = int64(2147483648)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -301,7 +301,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities LiteralPlus = int64(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -317,7 +317,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities LoginDisabled = int64(256)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -333,7 +333,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Metadata = int64(268435456)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -349,7 +349,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Move = int64(17179869184)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -365,7 +365,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MultiAppend = int64(1024)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -381,7 +381,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MultiSearch = int64(8589934592)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -397,7 +397,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Namespace = int64(64)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -413,7 +413,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities None = int64(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -429,7 +429,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Notify = int64(536870912)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -445,7 +445,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities QuickResync = int64(2097152)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -461,7 +461,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Quota = int64(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -477,7 +477,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SaslIR = int64(131072)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -493,7 +493,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Sort = int64(4194304)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -509,7 +509,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SpecialUse = int64(4294967296)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -525,7 +525,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities StartTLS = int64(512)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -541,7 +541,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Status = int64(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -557,7 +557,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Thread = int64(8388608)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -573,7 +573,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UidPlus = int64(8192)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -589,7 +589,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Unselect = int64(4096)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -605,7 +605,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Within = int64(524288)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -621,7 +621,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int64(34359738368)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>

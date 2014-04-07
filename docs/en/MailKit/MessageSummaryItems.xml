@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MessageSummaryItems extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.9.0.0</AssemblyVersion>
+    <AssemblyVersion>0.10.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -31,7 +31,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems All = int32(120)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -48,7 +48,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems Body = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -64,7 +64,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems BodyStructure = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -80,7 +80,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems Envelope = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -96,7 +96,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems Fast = int32(112)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -112,7 +112,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems Flags = int32(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -128,7 +128,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems Full = int32(121)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -145,7 +145,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems GMailMessageId = int32(1024)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -161,7 +161,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems GMailThreadId = int32(2048)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -177,7 +177,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems InternalDate = int32(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -193,7 +193,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems MessageSize = int32(64)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -209,7 +209,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems ModSeq = int32(128)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -225,7 +225,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -241,7 +241,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems References = int32(256)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
@@ -257,7 +257,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.MessageSummaryItems UniqueId = int32(512)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.9.0.0</AssemblyVersion>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageSummaryItems</ReturnType>
