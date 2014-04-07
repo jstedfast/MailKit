@@ -1100,6 +1100,40 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		void Send (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new InvalidOperationException ("The SmtpClient is not connected.");
+
+			var extensions = PrepareMimeEntity (message);
+
+			try {
+				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
+				// queue their commands instead of sending them immediately.
+				MailFrom (sender, extensions, cancellationToken);
+				foreach (var recipient in recipients)
+					RcptTo (recipient, cancellationToken);
+
+				// Note: if PIPELINING is supported, this will flush all outstanding
+				// MAIL FROM and RCPT TO commands to the server and then process all
+				// of their responses.
+				FlushCommandQueue (sender, recipients, cancellationToken);
+
+				Data (message, cancellationToken);
+			} catch (UnauthorizedAccessException) {
+				// do not disconnect
+				throw;
+			} catch (SmtpCommandException) {
+				Reset (cancellationToken);
+				throw;
+			} catch {
+				Disconnect ();
+				throw;
+			}
+		}
+
 		/// <summary>
 		/// Send the specified message.
 		/// </summary>
@@ -1138,11 +1172,6 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public void Send (MimeMessage message, CancellationToken cancellationToken)
 		{
-			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The SmtpClient is not connected.");
-
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
@@ -1155,31 +1184,68 @@ namespace MailKit.Net.Smtp {
 			if (recipients.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
 
-			var extensions = PrepareMimeEntity (message);
+			Send (message, sender, recipients, cancellationToken);
+		}
 
-			try {
-				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
-				// queue their commands instead of sending them immediately.
-				MailFrom (sender, extensions, cancellationToken);
-				foreach (var recipient in recipients)
-					RcptTo (recipient, cancellationToken);
+		/// <summary>
+		/// Send the specified message using the supplied sender and recipients.
+		/// </summary>
+		/// <remarks>
+		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.
+		/// </remarks>
+		/// <param name="message">The message.</param>
+		/// <param name="sender">The mailbox address to use for sending the message.</param>
+		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="sender"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="recipients"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="SmtpClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>A sender has not been specified.</para>
+		/// <para>-or-</para>
+		/// <para>No recipients have been specified.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// Authentication is required before sending a message.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol exception occurred.
+		/// </exception>
+		public void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken)
+		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
 
-				// Note: if PIPELINING is supported, this will flush all outstanding
-				// MAIL FROM and RCPT TO commands to the server and then process all
-				// of their responses.
-				FlushCommandQueue (sender, recipients, cancellationToken);
+			if (sender == null)
+				throw new ArgumentNullException ("sender");
 
-				Data (message, cancellationToken);
-			} catch (UnauthorizedAccessException) {
-				// do not disconnect
-				throw;
-			} catch (SmtpCommandException) {
-				Reset (cancellationToken);
-				throw;
-			} catch {
-				Disconnect ();
-				throw;
-			}
+			if (recipients == null)
+				throw new ArgumentNullException ("recipients");
+
+			var rcpts = recipients.ToList ();
+
+			if (rcpts.Count == 0)
+				throw new InvalidOperationException ("No recipients have been specified.");
+
+			Send (message, sender, rcpts, cancellationToken);
 		}
 
 		#endregion

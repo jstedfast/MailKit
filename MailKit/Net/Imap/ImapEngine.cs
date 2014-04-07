@@ -717,7 +717,7 @@ namespace MailKit.Net.Imap {
 
 		void UpdateNamespaces (CancellationToken cancellationToken)
 		{
-			var namespaces = new List<FolderNamespaceCollection> () {
+			var namespaces = new List<FolderNamespaceCollection> {
 				PersonalNamespaces, SharedNamespaces, OtherNamespaces
 			};
 			ImapFolder folder;
