@@ -428,17 +428,21 @@ namespace MailKit.Net.Smtp {
 		{
 			SmtpResponse response;
 
-			// Clear the extensions
-			capabilities = SmtpCapabilities.None;
-			authmechs.Clear ();
-			MaxSize = 0;
-
 			response = SendEhlo (true, cancellationToken);
+			//Some SMTP-Servers doesn't allow senden EHLO/HELO twice, keep capabilities, authmechs and don't treat this as an error
+			if (response.StatusCode == SmtpStatusCode.BadCommandSequence && capabilities != SmtpCapabilities.None)
+				return;
+
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				response = SendEhlo (false, cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
+				// Clear the extensions
+				capabilities = SmtpCapabilities.None;
+				authmechs.Clear();
+				MaxSize = 0;
+
 				var lines = response.Response.Split ('\n');
 				for (int i = 0; i < lines.Length; i++) {
 					var capability = lines[i].Trim ();
