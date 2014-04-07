@@ -545,8 +545,6 @@ namespace MailKit.Net.Smtp {
 			string challenge;
 			string command;
 
-			// (Erik) Not sure what to do with this
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!AuthenticationMechanisms.Contains (authmech))
 					continue;
@@ -557,11 +555,10 @@ namespace MailKit.Net.Smtp {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				// send an initial challenge if the mechanism supports it
-				if ((challenge = sasl.Challenge (null)) != null) {
+				if ((challenge = sasl.Challenge (null)) != null)
 					command = string.Format ("AUTH {0} {1}", authmech, challenge);
-				} else {
+				else
 					command = string.Format ("AUTH {0}", authmech);
-				}
 
 				response = SendCommand (command, cancellationToken);
 
@@ -582,7 +579,6 @@ namespace MailKit.Net.Smtp {
 					return;
 				}
 			}
-#endif
 
 			if (tried)
 				throw new AuthenticationException ();

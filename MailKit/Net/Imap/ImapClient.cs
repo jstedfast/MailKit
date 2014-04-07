@@ -315,8 +315,6 @@ namespace MailKit.Net.Imap {
 			NetworkCredential cred;
 			ImapCommand ic;
 
-			// (Erik) Is this needed for WinRT?
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
 					continue;
@@ -370,7 +368,6 @@ namespace MailKit.Net.Imap {
 				engine.QuerySpecialFolders (cancellationToken);
 				return;
 			}
-#endif
 
 			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
 				throw new AuthenticationException ();

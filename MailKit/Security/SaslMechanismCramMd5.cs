@@ -27,7 +27,12 @@
 using System;
 using System.Net;
 using System.Text;
-using System.Security.Cryptography;
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+using MD5 = MimeKit.Cryptography.MD5;
+#else
+using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
+#endif
 
 namespace MailKit.Security {
 	/// <summary>
@@ -38,7 +43,7 @@ namespace MailKit.Security {
 	/// </remarks>
 	public class SaslMechanismCramMd5 : SaslMechanism
 	{
-		static readonly byte[] HexAlphabet = new byte[16] {
+		static readonly byte[] HexAlphabet = {
 			0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, // '0' -> '7'
 			0x38, 0x39, 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, // '8' -> 'F'
 		};
@@ -82,7 +87,7 @@ namespace MailKit.Security {
 			var userName = Encoding.UTF8.GetBytes (cred.UserName);
 			var password = Encoding.UTF8.GetBytes (cred.Password);
 
-			using (var md5 = HashAlgorithm.Create ("MD5")) {
+			using (var md5 = new MD5 ()) {
 				var ipad = new byte[64];
 				var opad = new byte[64];
 				byte[] buffer;

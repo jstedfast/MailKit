@@ -38,12 +38,14 @@ using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Encoding = Portable.Text.Encoding;
+using MD5 = MimeKit.Cryptography.MD5;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using SslProtocols = System.Security.Authentication.SslProtocols;
+using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
 #endif
 
 using MimeKit;
@@ -371,15 +373,13 @@ namespace MailKit.Net.Pop3 {
 			string challenge;
 			Pop3Command pc;
 
-			// (Erik) Not sure what to do with these
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
 				cred = credentials.GetCredential (uri, "APOP");
 				challenge = engine.ApopToken + cred.Password;
 				var md5sum = new StringBuilder ();
 				byte[] digest;
 
-				using (var md5 = HashAlgorithm.Create ("MD5")) {
+				using (var md5 = new MD5 ()) {
 					digest = md5.ComputeHash (Encoding.UTF8.GetBytes (challenge));
 				}
 
@@ -443,7 +443,6 @@ namespace MailKit.Net.Pop3 {
 					return;
 				}
 			}
-#endif
 
 			// fall back to the classic USER & PASS commands...
 			cred = credentials.GetCredential (uri, "USER");

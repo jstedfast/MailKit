@@ -29,7 +29,13 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Collections.Generic;
-using System.Security.Cryptography;
+
+#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+using Encoding = Portable.Text.Encoding;
+using MD5 = MimeKit.Cryptography.MD5;
+#else
+using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
+#endif
 
 namespace MailKit.Security {
 	/// <summary>
@@ -363,7 +369,7 @@ namespace MailKit.Security {
 
 		public string ComputeHash (string password, bool client)
 		{
-			using (var checksum = HashAlgorithm.Create (Algorithm ?? "MD5")) {
+			using (var checksum = new MD5 ()) {
 				byte[] buf, digest;
 				string text, a1, a2;
 
@@ -445,14 +451,14 @@ namespace MailKit.Security {
 
 				buf = Encoding.ASCII.GetBytes ("\",digest-uri=\"");
 				memory.Write (buf, 0, buf.Length);
-				buf = Encoding.ASCII.GetBytes (DigestUri.ToString ());
+				buf = Encoding.ASCII.GetBytes (DigestUri);
 				memory.Write (buf, 0, buf.Length);
 
 				buf = Encoding.ASCII.GetBytes ("\",response=\"");
 				memory.Write (buf, 0, buf.Length);
 				buf = Encoding.ASCII.GetBytes (Response);
 				memory.Write (buf, 0, buf.Length);
-				buf = new byte[] { (byte) '"' };
+				buf = new [] { (byte) '"' };
 				memory.Write (buf, 0, buf.Length);
 
 				if (MaxBuf > 0) {
@@ -467,7 +473,7 @@ namespace MailKit.Security {
 					memory.Write (buf, 0, buf.Length);
 					buf = Encoding.ASCII.GetBytes (Charset);
 					memory.Write (buf, 0, buf.Length);
-					buf = new byte[] { (byte) '"' };
+					buf = new [] { (byte) '"' };
 					memory.Write (buf, 0, buf.Length);
 				}
 
@@ -476,7 +482,7 @@ namespace MailKit.Security {
 					memory.Write (buf, 0, buf.Length);
 					buf = Encoding.ASCII.GetBytes (Algorithm);
 					memory.Write (buf, 0, buf.Length);
-					buf = new byte[] { (byte) '"' };
+					buf = new [] { (byte) '"' };
 					memory.Write (buf, 0, buf.Length);
 				}
 
@@ -485,7 +491,7 @@ namespace MailKit.Security {
 					memory.Write (buf, 0, buf.Length);
 					buf = Encoding.ASCII.GetBytes (Cipher);
 					memory.Write (buf, 0, buf.Length);
-					buf = new byte[] { (byte) '"' };
+					buf = new [] { (byte) '"' };
 					memory.Write (buf, 0, buf.Length);
 				}
 
@@ -494,7 +500,7 @@ namespace MailKit.Security {
 					memory.Write (buf, 0, buf.Length);
 					buf = Encoding.ASCII.GetBytes (AuthZid);
 					memory.Write (buf, 0, buf.Length);
-					buf = new byte[] { (byte) '"' };
+					buf = new [] { (byte) '"' };
 					memory.Write (buf, 0, buf.Length);
 				}
 

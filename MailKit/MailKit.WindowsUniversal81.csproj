@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -94,6 +94,13 @@
     <Compile Include="Search\TextSearchQuery.cs" />
     <Compile Include="Search\UnarySearchQuery.cs" />
     <Compile Include="Security\AuthenticationException.cs" />
+    <Compile Include="Security\SaslException.cs" />
+    <Compile Include="Security\SaslMechanism.cs" />
+    <Compile Include="Security\SaslMechanismCramMd5.cs" />
+    <Compile Include="Security\SaslMechanismDigestMd5.cs" />
+    <Compile Include="Security\SaslMechanismLogin.cs" />
+    <Compile Include="Security\SaslMechanismOAuth2.cs" />
+    <Compile Include="Security\SaslMechanismPlain.cs" />
     <Compile Include="AlertEventArgs.cs" />
     <Compile Include="BodyPart.cs" />
     <Compile Include="BodyPartBasic.cs" />
