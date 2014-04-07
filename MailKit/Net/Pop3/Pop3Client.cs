@@ -538,16 +538,15 @@ namespace MailKit.Net.Pop3 {
 			var pops = scheme == "pops" || scheme == "pop3s";
 			var port = uri.Port > 0 ? uri.Port : (pops ? 995 : 110);
 			var query = uri.ParsedQuery ();
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
-			Socket socket = null;
-#endif
 			Stream stream;
 			string value;
 
 			var starttls = !pops && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			Socket socket = null;
+
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -606,7 +605,7 @@ namespace MailKit.Net.Pop3 {
 				// re-issue a CAPA command
 				engine.QueryCapabilities (cancellationToken);
 			}
-        }
+		}
 
 		/// <summary>
 		/// Disconnect the service.

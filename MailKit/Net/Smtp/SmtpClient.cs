@@ -401,7 +401,7 @@ namespace MailKit.Net.Smtp {
 		SmtpResponse SendEhlo (bool ehlo, CancellationToken cancellationToken)
 		{
 			string command = ehlo ? "EHLO " : "HELO ";
-			// (Erik) Not sure what to do with this
+
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
 			var ip = localEndPoint as IPEndPoint;
 
@@ -414,6 +414,11 @@ namespace MailKit.Net.Smtp {
 			} else {
 				command += ((DnsEndPoint) localEndPoint).Host;
 			}
+#else
+			if (socket.Information.LocalAddress.IPInformation != null)
+				command += "[" + socket.Information.LocalAddress.IPInformation + "]";
+			else
+				command += socket.Information.LocalAddress.CanonicalName;
 #endif
 
 			return SendCommand (command, cancellationToken);
@@ -686,16 +691,15 @@ namespace MailKit.Net.Smtp {
 			var smtps = uri.Scheme.ToLowerInvariant () == "smtps";
 			var port = uri.Port > 0 ? uri.Port : (smtps ? 465 : 25);
 			var query = uri.ParsedQuery ();
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
-			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
-			Socket socket = null;
-#endif
 			SmtpResponse response = null;
 			string value;
 
 			var starttls = !smtps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
 #if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+			Socket socket = null;
+
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -854,8 +858,10 @@ namespace MailKit.Net.Smtp {
 			}
 
 #if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-			socket.Dispose ();
-			socket = null;
+			if (socket != null) {
+				socket.Dispose ();
+				socket = null;
+			}
 #endif
 		}
 
