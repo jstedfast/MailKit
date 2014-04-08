@@ -102,6 +102,34 @@
       </Docs>
     </Member>
     <Member MemberName="GetFolder">
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(string path) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.10.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="path">The folder path.</param>
+        <summary>
+            Gets the folder for the specified path.
+            </summary>
+        <returns>The folder.</returns>
+        <remarks>To be added.</remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The folder could not be found.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolder">
       <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (string path, System.Threading.CancellationToken cancellationToken);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -128,6 +156,9 @@
             </exception>
         <exception cref="T:MailKit.FolderNotFoundException">
             The folder could not be found.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
             </exception>
       </Docs>
     </Member>

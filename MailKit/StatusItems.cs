@@ -31,7 +31,7 @@ namespace MailKit {
 	/// Status items.
 	/// </summary>
 	/// <remarks>
-	/// Used with <see cref="IFolder.Status"/>
+	/// Used with <see cref="IFolder.Status(StatusItems,System.Threading.CancellationToken)"/>
 	/// </remarks>
 	[Flags]
 	public enum StatusItems {

@@ -71,9 +71,9 @@ namespace MailKit.Net.Imap {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you
-		/// must first call the <see cref="Connect"/> method and authenticate with
-		/// the <see cref="Authenticate"/> method.
+		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
+		/// call the <see cref="Connect(Uri,CancellationToken)"/> method and authenticate with
+		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		public ImapClient () : this (new NullProtocolLogger ())
 		{
@@ -83,9 +83,9 @@ namespace MailKit.Net.Imap {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you
-		/// must first call the <see cref="Connect"/> method and authenticate with
-		/// the <see cref="Authenticate"/> method.
+		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
+		/// call the <see cref="Connect(Uri,CancellationToken)"/> method and authenticate with
+		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -115,9 +115,9 @@ namespace MailKit.Net.Imap {
 		/// Gets the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection
-		/// has been made via the <see cref="Connect"/> method and may change
-		/// as a side-effect of the <see cref="Authenticate"/> method.
+		/// The capabilities will not be known until a successful connection has been made via
+		/// the <see cref="Connect(Uri,CancellationToken)"/> method and may change as a side-effect
+		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
@@ -159,8 +159,41 @@ namespace MailKit.Net.Imap {
 		/// method.</para>
 		/// <para>If this feature is enabled, the <see cref="ImapFolder.Expunged"/> event is replaced
 		/// with the <see cref="ImapFolder.Vanished"/> event.</para>
-		/// <para>This method needs to be called immediately after <see cref="Authenticate"/>, before
-		/// the opening any folders.</para>
+		/// <para>This method needs to be called immediately after
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// </remarks>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the QRESYNC extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void EnableQuickResync ()
+		{
+			EnableQuickResync (CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Enables the QRESYNC feature.
+		/// </summary>
+		/// <remarks>
+		/// <para>The QRESYNC extension improves resynchronization performance of folders by
+		/// querying the IMAP server for a list of changes when the folder is opened using the
+		/// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// method.</para>
+		/// <para>If this feature is enabled, the <see cref="ImapFolder.Expunged"/> event is replaced
+		/// with the <see cref="ImapFolder.Vanished"/> event.</para>
+		/// <para>This method needs to be called immediately after
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">Cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -216,7 +249,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
 		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect"/>.</para>
+		/// <para>This property should be set before calling <see cref="Connect(Uri,CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		public X509CertificateCollection ClientCertificates {
@@ -228,7 +261,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried as part of the <see cref="Connect"/> method.
+		/// The authentication mechanisms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
@@ -239,8 +272,8 @@ namespace MailKit.Net.Imap {
 		/// Gets the threading algorithms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The threading algorithms are queried as part of the <see cref="Connect"/> and
-		/// <see cref="Authenticate"/> methods.
+		/// The threading algorithms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> and
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> methods.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
@@ -257,6 +290,45 @@ namespace MailKit.Net.Imap {
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get { return engine.IsConnected; }
+		}
+
+		/// <summary>
+		/// Authenticates using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then LOGIN command is used as a fallback.</para>
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void Authenticate (ICredentials credentials)
+		{
+			Authenticate (credentials, CancellationToken.None);
 		}
 
 		/// <summary>
@@ -436,6 +508,53 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
 		/// be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// The <paramref name="uri"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="uri"/> is not an absolute URI.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void Connect (Uri uri)
+		{
+			Connect (uri, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Establishes a connection to the specified IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
+		/// in the uri is "imap", a clear-text connection is made and defaults to using
+		/// port 143 if no port is specified in the URI. However, if the schema in the
+		/// uri is "imaps", an SSL connection is made using the
+		/// <see cref="ClientCertificates"/> and defaults to port 993 unless a port
+		/// is specified in the URI.</para>
+		/// <para>It should be noted that when using a clear-text IMAP connection,
+		/// if the server advertizes support for the STARTTLS extension, the client
+		/// will automatically switch into TLS mode before authenticating unless the
+		/// <paramref name="uri"/> contains a query string to disable it.</para>
+		/// <para>If the IMAP server advertizes the COMPRESS extension and either does not
+		/// support the STARTTLS extension or the <paramref name="uri"/> explicitly disabled
+		/// the use of the STARTTLS extension, then the client will automatically opt into
+		/// using a compressed data connection to optimize bandwidth usage unless the
+		/// <paramref name="uri"/> contains a query string to explicitly disable it.</para>
+		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// and <see cref="Capabilities"/> properties will be populated.</para>
+		/// </remarks>
+		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
+		/// be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// The <paramref name="uri"/> is <c>null</c>.
@@ -574,6 +693,21 @@ namespace MailKit.Net.Imap {
 		/// If <paramref name="quit"/> is <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		public void Disconnect (bool quit)
+		{
+			Disconnect (quit, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Disconnect the service.
+		/// </summary>
+		/// <remarks>
+		/// If <paramref name="quit"/> is <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.
+		/// </remarks>
+		/// <param name="quit">If set to <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -603,6 +737,32 @@ namespace MailKit.Net.Imap {
 			socket.Dispose ();
 			socket = null;
 #endif
+		}
+
+		/// <summary>
+		/// Pings the IMAP server to keep the connection alive.
+		/// </summary>
+		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the NOOP command with a NO or BAD response.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
+		public void NoOp ()
+		{
+			NoOp (CancellationToken.None);
 		}
 
 		/// <summary>
@@ -786,6 +946,30 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The folder.</returns>
 		/// <param name="path">The folder path.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="path"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The folder could not be found.
+		/// </exception>
+		public IFolder GetFolder (string path)
+		{
+			return GetFolder (path, CancellationToken.None);
+		}
+
+		/// <summary>
+		/// Gets the folder for the specified path.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="path">The folder path.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="path"/> is <c>null</c>.
@@ -797,6 +981,9 @@ namespace MailKit.Net.Imap {
 		/// <para>The <see cref="ImapClient"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.

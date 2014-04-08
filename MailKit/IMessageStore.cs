@@ -109,9 +109,25 @@ namespace MailKit {
 		/// </summary>
 		/// <returns>The folder.</returns>
 		/// <param name="path">The folder path.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="path"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The folder could not be found.
+		/// </exception>
+		IFolder GetFolder (string path);
+
+		/// <summary>
+		/// Gets the folder for the specified path.
+		/// </summary>
+		/// <returns>The folder.</returns>
+		/// <param name="path">The folder path.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="path"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
