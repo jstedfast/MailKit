@@ -704,7 +704,8 @@ namespace MailKit {
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
-		MimeEntity GetBodyPart (UniqueId uid, BodyPart part);
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly = false);
 
 		/// <summary>
 		/// Gets the specified body part.
@@ -719,9 +720,20 @@ namespace MailKit {
 		/// Gets the specified body part.
 		/// </summary>
 		/// <returns>The body part.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The body part.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets the specified body part.
+		/// </summary>
+		/// <returns>The body part.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
-		MimeEntity GetBodyPart (int index, BodyPart part);
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly = false);
 
 		/// <summary>
 		/// Gets the specified body part.
@@ -731,6 +743,16 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Gets the specified body part.
+		/// </summary>
+		/// <returns>The body part.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The body part.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Gets a substream of the specified message.
