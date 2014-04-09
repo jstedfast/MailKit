@@ -24,8 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
-
 using MimeKit;
 
 namespace MailKit {
@@ -104,6 +102,14 @@ namespace MailKit {
 		/// <value>The content location.</value>
 		public string ContentLocation {
 			get; internal set;
+		}
+
+		/// <summary>
+		/// Determines whether or not the body part is an attachment.
+		/// </summary>
+		/// <value><c>true</c> if thie part is an attachment; otherwise, <c>false</c>.</value>
+		public bool IsAttachment {
+			get { return ContentDisposition != null && ContentDisposition.IsAttachment; }
 		}
 	}
 }
