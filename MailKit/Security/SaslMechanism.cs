@@ -47,7 +47,7 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {
-			"DIGEST-MD5", "CRAM-MD5", "XOAUTH2", "PLAIN", "LOGIN"
+			"NTLM", "DIGEST-MD5", "CRAM-MD5", "XOAUTH2", "PLAIN", "LOGIN"
 		};
 
 		/// <summary>
@@ -165,6 +165,7 @@ namespace MailKit.Security {
 			case "XOAUTH2":     return true;
 			case "PLAIN":       return true;
 			case "LOGIN":       return true;
+			case "NTLM":        return true;
 			default:            return false;
 			}
 		}
@@ -206,7 +207,7 @@ namespace MailKit.Security {
 			case "XOAUTH2":     return new SaslMechanismOAuth2 (uri, credentials);
 			case "PLAIN":       return new SaslMechanismPlain (uri, credentials);
 			case "LOGIN":       return new SaslMechanismLogin (uri, credentials);
-			//case "NTLM":        return null;
+			case "NTLM":        return new SaslMechanismNtlm (uri, credentials);
 			default:            return null;
 			}
 		}

@@ -121,7 +121,7 @@ namespace MailKit.Security {
 				IsAuthenticated = true;
 				return new byte[0];
 			default:
-				throw new ArgumentOutOfRangeException ();
+				throw new IndexOutOfRangeException ("state");
 			}
 		}
 

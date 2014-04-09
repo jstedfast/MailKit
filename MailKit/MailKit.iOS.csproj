@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -88,12 +88,24 @@
     <Compile Include="Search\SortOrder.cs" />
     <Compile Include="Search\TextSearchQuery.cs" />
     <Compile Include="Search\UnarySearchQuery.cs" />
+    <Compile Include="Security\Ntlm\BitConverterLE.cs" />
+    <Compile Include="Security\Ntlm\ChallengeResponse.cs" />
+    <Compile Include="Security\Ntlm\ChallengeResponse2.cs" />
+    <Compile Include="Security\Ntlm\MD4.cs" />
+    <Compile Include="Security\Ntlm\MessageBase.cs" />
+    <Compile Include="Security\Ntlm\NtlmAuthLevel.cs" />
+    <Compile Include="Security\Ntlm\NtlmFlags.cs" />
+    <Compile Include="Security\Ntlm\NtlmSettings.cs" />
+    <Compile Include="Security\Ntlm\Type1Message.cs" />
+    <Compile Include="Security\Ntlm\Type2Message.cs" />
+    <Compile Include="Security\Ntlm\Type3Message.cs" />
     <Compile Include="Security\AuthenticationException.cs" />
     <Compile Include="Security\SaslException.cs" />
     <Compile Include="Security\SaslMechanism.cs" />
     <Compile Include="Security\SaslMechanismCramMd5.cs" />
     <Compile Include="Security\SaslMechanismDigestMd5.cs" />
     <Compile Include="Security\SaslMechanismLogin.cs" />
+    <Compile Include="Security\SaslMechanismNtlm.cs" />
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
     <Compile Include="AlertEventArgs.cs" />
@@ -145,6 +157,7 @@
     <Folder Include="Resources\" />
     <Folder Include="Search\" />
     <Folder Include="Security\" />
+    <Folder Include="Security\Ntlm\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
 </Project>

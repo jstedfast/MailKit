@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
+    <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DB3A2478-4742-452B-80C1-F672B64285AD}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -84,12 +84,24 @@
     <Compile Include="Search\SortOrder.cs" />
     <Compile Include="Search\TextSearchQuery.cs" />
     <Compile Include="Search\UnarySearchQuery.cs" />
+    <Compile Include="Security\Ntlm\BitConverterLE.cs" />
+    <Compile Include="Security\Ntlm\ChallengeResponse.cs" />
+    <Compile Include="Security\Ntlm\ChallengeResponse2.cs" />
+    <Compile Include="Security\Ntlm\MD4.cs" />
+    <Compile Include="Security\Ntlm\MessageBase.cs" />
+    <Compile Include="Security\Ntlm\NtlmAuthLevel.cs" />
+    <Compile Include="Security\Ntlm\NtlmFlags.cs" />
+    <Compile Include="Security\Ntlm\NtlmSettings.cs" />
+    <Compile Include="Security\Ntlm\Type1Message.cs" />
+    <Compile Include="Security\Ntlm\Type2Message.cs" />
+    <Compile Include="Security\Ntlm\Type3Message.cs" />
     <Compile Include="Security\AuthenticationException.cs" />
     <Compile Include="Security\SaslException.cs" />
     <Compile Include="Security\SaslMechanism.cs" />
     <Compile Include="Security\SaslMechanismCramMd5.cs" />
     <Compile Include="Security\SaslMechanismDigestMd5.cs" />
     <Compile Include="Security\SaslMechanismLogin.cs" />
+    <Compile Include="Security\SaslMechanismNtlm.cs" />
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
     <Compile Include="AlertEventArgs.cs" />
@@ -140,6 +152,7 @@
     <Folder Include="Net\Smtp\" />
     <Folder Include="Search\" />
     <Folder Include="Security\" />
+    <Folder Include="Security\Ntlm\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

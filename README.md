@@ -7,9 +7,10 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 ## Features
 
 * SASL Authentication
-  * DIGEST-MD5
   * CRAM-MD5
+  * DIGEST-MD5
   * LOGIN
+  * NTLM
   * PLAIN
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * SMTP Client
@@ -64,8 +65,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Improve XOAUTH2
   * ANONYMOUS
   * GSSAPI
-  * KERBEROS_v4
-  * NTLM
+  * SCRAM-SHA-1
   * SCRAM-*
 * SMTP Client
   * CHUNKING (hmmm, doesn't really seem all that useful...)
