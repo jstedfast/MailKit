@@ -3593,10 +3593,10 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
-			if (min < 0 || min >= Count)
+			if (min < 0)
 				throw new ArgumentOutOfRangeException ("min");
 
-			if ((max != -1 && max < min) || max >= Count)
+			if (max != -1 && max < min)
 				throw new ArgumentOutOfRangeException ("max");
 
 			if (items == MessageSummaryItems.None)
@@ -3708,10 +3708,10 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken)
 		{
-			if (min < 0 || min >= Count)
+			if (min < 0)
 				throw new ArgumentOutOfRangeException ("min");
 
-			if ((max != -1 && max < min) || max >= Count)
+			if (max != -1 && max < min)
 				throw new ArgumentOutOfRangeException ("max");
 
 			if (items == MessageSummaryItems.None)
