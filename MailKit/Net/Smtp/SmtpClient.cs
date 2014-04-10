@@ -82,8 +82,7 @@ namespace MailKit.Net.Smtp {
 		MemoryBlockStream queue;
 #if !NETFX_CORE
 		EndPoint localEndPoint;
-#endif
-#if NETFX_CORE
+#else
 		StreamSocket socket;
 #endif
 		bool authenticated;
