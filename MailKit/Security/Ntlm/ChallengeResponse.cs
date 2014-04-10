@@ -37,7 +37,12 @@
 
 using System;
 using System.Text;
+
+#if !NETFX_CORE
 using System.Security.Cryptography;
+#else
+using Encoding = Portable.Text.Encoding;
+#endif
 
 namespace MailKit.Security.Ntlm {
 	class ChallengeResponse : IDisposable
@@ -65,8 +70,7 @@ namespace MailKit.Security.Ntlm {
 
 		~ChallengeResponse () 
 		{
-			if (!disposed)
-				Dispose ();
+			Dispose (false);
 		}
 
 		void CheckDisposed ()
@@ -213,8 +217,6 @@ namespace MailKit.Security.Ntlm {
 
 				if (challenge != null)
 					Array.Clear (challenge, 0, challenge.Length);
-
-				disposed = true;
 			}
 		}
 
@@ -222,6 +224,7 @@ namespace MailKit.Security.Ntlm {
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
+			disposed = true;
 		}
 	}
 }

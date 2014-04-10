@@ -36,7 +36,12 @@
 
 using System;
 using System.Text;
+
+#if !NETFX_CORE
 using System.Security.Cryptography;
+#else
+using Encoding = Portable.Text.Encoding;
+#endif
 
 namespace MailKit.Security.Ntlm {
 	class Type2Message : MessageBase
