@@ -963,12 +963,14 @@ namespace MailKit.Net.Imap {
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Unseen:
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
+				// Note: we allow '0' here because some servers have been known to send "* OK [UNSEEN 0]" when the folder
+				// has no messages. See https://github.com/jstedfast/MailKit/issues/34 for details.
+				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number argument to 'UNSEEN' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
-				code.Index = (int) (n32 - 1);
+				code.Index = n32 > 0 ? (int) (n32 - 1) : 0;
 
 				token = stream.ReadToken (cancellationToken);
 				break;
