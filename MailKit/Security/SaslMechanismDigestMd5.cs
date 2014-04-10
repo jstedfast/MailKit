@@ -30,7 +30,7 @@ using System.Net;
 using System.Text;
 using System.Collections.Generic;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 using MD5 = MimeKit.Cryptography.MD5;
 #else

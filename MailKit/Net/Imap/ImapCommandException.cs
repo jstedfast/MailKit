@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 using System.Runtime.Serialization;
 #endif
 
@@ -37,12 +37,12 @@ namespace MailKit.Net.Imap {
 	/// The exception that is thrown when an IMAP command fails. Unlike a <see cref="ImapProtocolException"/>,
 	/// a <see cref="ImapCommandException"/> does not require the <see cref="ImapClient"/> to be reconnected.
 	/// </remarks>
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 	[Serializable]
 #endif
 	public class ImapCommandException : ProtocolException
 	{
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>

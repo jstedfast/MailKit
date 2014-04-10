@@ -30,7 +30,7 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 #endif
 
@@ -256,7 +256,7 @@ namespace MailKit.Net.Pop3 {
 				memory.Write (buf, offset, count);
 
 				count = (int) memory.Length;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 				buf = memory.GetBuffer ();
 #else
 				buf = memory.ToArray ();

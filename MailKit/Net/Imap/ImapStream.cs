@@ -30,7 +30,7 @@ using System.Text;
 using System.Threading;
 using Buffer = System.Buffer;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Windows.Storage.Streams;
 #endif
 
@@ -409,7 +409,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 				var buffer = memory.GetBuffer ();
 #else
 				var buffer = memory.ToArray ();

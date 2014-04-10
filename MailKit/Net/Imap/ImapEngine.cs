@@ -31,7 +31,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 #endif
 
@@ -498,7 +498,7 @@ namespace MailKit.Net.Imap {
 				memory.Write (buf, offset, count);
 
 				count = (int) memory.Length;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 				buf = memory.GetBuffer ();
 #else
 				buf = memory.ToArray ();
@@ -591,7 +591,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				nread = (int) memory.Length;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 				buf = memory.GetBuffer ();
 #else
 				buf = memory.ToArray ();

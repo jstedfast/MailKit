@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 using System.Runtime.Serialization;
 #endif
 
@@ -38,12 +38,12 @@ namespace MailKit.Net.Imap {
 	/// <see cref="ImapProtocolException"/> is typically fatal and requires the <see cref="ImapClient"/>
 	/// to be reconnected.
 	/// </remarks>
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 	[Serializable]
 #endif
 	public class ImapProtocolException : ProtocolException
 	{
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapProtocolException"/> class.
 		/// </summary>

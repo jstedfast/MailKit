@@ -77,7 +77,7 @@ namespace MailKit.Net.Pop3 {
 		readonly IProtocolLogger logger;
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 		StreamSocket socket;
 #endif
 		bool disposed;
@@ -202,7 +202,7 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ("The Pop3Client is not connected.");
 		}
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
@@ -254,7 +254,7 @@ namespace MailKit.Net.Pop3 {
 
 		#region IMessageService implementation
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
@@ -632,7 +632,7 @@ namespace MailKit.Net.Pop3 {
 
 			var starttls = !pops && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
 
@@ -680,7 +680,7 @@ namespace MailKit.Net.Pop3 {
 			if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
 				SendCommand (cancellationToken, "STLS");
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 				var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 				tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 				engine.Stream.Stream = tls;
@@ -743,7 +743,7 @@ namespace MailKit.Net.Pop3 {
 			uids.Clear ();
 			count = 0;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 			socket.Dispose ();
 			socket = null;
 #endif
@@ -2196,7 +2196,7 @@ namespace MailKit.Net.Pop3 {
 				engine.Disconnect ();
 				logger.Dispose ();
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 				if (socket != null)
 					socket.Dispose ();
 #endif

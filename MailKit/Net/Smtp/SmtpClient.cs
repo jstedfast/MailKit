@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using MimeKit;
 using MimeKit.IO;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
@@ -80,10 +80,10 @@ namespace MailKit.Net.Smtp {
 		SmtpCapabilities capabilities;
 		int inputIndex, inputEnd;
 		MemoryBlockStream queue;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		EndPoint localEndPoint;
 #endif
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 		StreamSocket socket;
 #endif
 		bool authenticated;
@@ -180,7 +180,7 @@ namespace MailKit.Net.Smtp {
 
 		#region IMessageService implementation
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
@@ -218,7 +218,7 @@ namespace MailKit.Net.Smtp {
 			get; private set;
 		}
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
@@ -322,13 +322,13 @@ namespace MailKit.Net.Smtp {
 				string message = null;
 
 				try {
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 					message = Encoding.UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
 					message = Encoding.UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				} catch {
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
 					message = Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
@@ -402,7 +402,7 @@ namespace MailKit.Net.Smtp {
 		{
 			string command = ehlo ? "EHLO " : "HELO ";
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 			var ip = localEndPoint as IPEndPoint;
 
 			if (ip != null) {
@@ -644,7 +644,7 @@ namespace MailKit.Net.Smtp {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 			localEndPoint = new IPEndPoint (IPAddress.Loopback, 25);
 #endif
 			capabilities = SmtpCapabilities.None;
@@ -785,7 +785,7 @@ namespace MailKit.Net.Smtp {
 
 			var starttls = !smtps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
 
@@ -842,7 +842,7 @@ namespace MailKit.Net.Smtp {
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 					stream = tls;
@@ -974,7 +974,7 @@ namespace MailKit.Net.Smtp {
 		void Disconnect ()
 		{
 			authenticated = false;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 			localEndPoint = null;
 #endif
 			IsConnected = false;
@@ -985,7 +985,7 @@ namespace MailKit.Net.Smtp {
 				stream = null;
 			}
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 			if (socket != null) {
 				socket.Dispose ();
 				socket = null;

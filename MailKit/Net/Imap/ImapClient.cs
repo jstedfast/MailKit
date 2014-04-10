@@ -32,7 +32,7 @@ using System.Threading;
 using System.IO.Compression;
 using System.Collections.Generic;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
@@ -61,7 +61,7 @@ namespace MailKit.Net.Imap {
 	{
 		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 		StreamSocket socket;
 #endif
 		bool disposed;
@@ -139,7 +139,7 @@ namespace MailKit.Net.Imap {
 				throw new ObjectDisposedException ("ImapClient");
 		}
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
@@ -242,7 +242,7 @@ namespace MailKit.Net.Imap {
 
 		#region IMessageService implementation
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
@@ -599,7 +599,7 @@ namespace MailKit.Net.Imap {
 			var starttls = !imaps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
 			var compress = !imaps && (!query.TryGetValue ("compress", out value) || Convert.ToBoolean (value));
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
 			Socket socket = null;
 
@@ -651,7 +651,7 @@ namespace MailKit.Net.Imap {
 				engine.Wait (ic);
 
 				if (ic.Result == ImapCommandResult.Ok) {
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
 					engine.Stream.Stream = tls;
@@ -733,7 +733,7 @@ namespace MailKit.Net.Imap {
 
 			engine.Disconnect ();
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 			socket.Dispose ();
 			socket = null;
 #endif
@@ -1033,7 +1033,7 @@ namespace MailKit.Net.Imap {
 				engine.Dispose ();
 				logger.Dispose ();
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 				if (socket != null)
 					socket.Dispose ();
 #endif

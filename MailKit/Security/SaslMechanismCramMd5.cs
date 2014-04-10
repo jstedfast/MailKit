@@ -28,7 +28,7 @@ using System;
 using System.Net;
 using System.Text;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using MD5 = MimeKit.Cryptography.MD5;
 #else
 using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;

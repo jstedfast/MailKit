@@ -28,7 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 #endif
 
@@ -45,7 +45,7 @@ namespace MailKit {
 		bool clientMidline;
 		bool serverMidline;
 
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
 		/// </summary>

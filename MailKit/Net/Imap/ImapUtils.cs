@@ -35,7 +35,7 @@ using System.Collections.Generic;
 using MimeKit;
 using MimeKit.Utils;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
+#if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 #endif
 

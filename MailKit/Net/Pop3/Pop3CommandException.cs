@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 using System.Runtime.Serialization;
 #endif
 
@@ -37,12 +37,12 @@ namespace MailKit.Net.Pop3 {
 	/// The exception that is thrown when a POP3 command fails. Unlike a <see cref="Pop3ProtocolException"/>,
 	/// a <see cref="Pop3CommandException"/> does not require the <see cref="Pop3Client"/> to be reconnected.
 	/// </remarks>
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 	[Serializable]
 #endif
 	public class Pop3CommandException : ProtocolException
 	{
-#if !NETFX_CORE && !WINDOWS_APP && !WINDOWS_PHONE_APP
+#if !NETFX_CORE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
 		/// </summary>
