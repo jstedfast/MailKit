@@ -90,9 +90,7 @@ namespace MailKit.Security {
 			using (var md5 = new MD5 ()) {
 				var ipad = new byte[64];
 				var opad = new byte[64];
-				byte[] buffer;
 				byte[] digest;
-				int offset;
 
 				if (password.Length > 64) {
 					var checksum = md5.ComputeHash (password);
@@ -108,30 +106,16 @@ namespace MailKit.Security {
 					opad[i] ^= 0x5c;
 				}
 
-				buffer = new byte[ipad.Length + length];
-				offset = 0;
+				md5.TransformBlock (ipad, 0, ipad.Length, null, 0);
+				md5.TransformFinalBlock (token, startIndex, length);
+				digest = md5.Hash;
 
-				for (int i = 0; i < ipad.Length; i++)
-					buffer[offset++] = ipad[i];
-				for (int i = 0; i < length; i++)
-					buffer[offset++] = token[startIndex + i];
+				md5.TransformBlock (opad, 0, opad.Length, null, 0);
+				md5.TransformFinalBlock (digest, 0, digest.Length);
+				digest = md5.Hash;
 
-				md5.Initialize ();
-				digest = md5.ComputeHash (buffer);
-
-				buffer = new byte[opad.Length + digest.Length];
-				offset = 0;
-
-				for (int i = 0; i < opad.Length; i++)
-					buffer[offset++] = opad[i];
-				for (int i = 0; i < digest.Length; i++)
-					buffer[offset++] = digest[i];
-
-				md5.Initialize ();
-				digest = md5.ComputeHash (buffer);
-
-				buffer = new byte[userName.Length + 1 + (digest.Length * 2)];
-				offset = 0;
+				var buffer = new byte[userName.Length + 1 + (digest.Length * 2)];
+				int offset = 0;
 
 				for (int i = 0; i < userName.Length; i++)
 					buffer[offset++] = userName[i];
