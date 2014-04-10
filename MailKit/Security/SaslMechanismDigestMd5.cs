@@ -376,12 +376,10 @@ namespace MailKit.Security {
 				// compute A1
 				text = string.Format ("{0}:{1}:{2}", UserName, Realm, password);
 				buf = Encoding.UTF8.GetBytes (text);
-				checksum.Initialize ();
 				digest = checksum.ComputeHash (buf);
 
 				text = string.Format ("{0}:{1}:{2}", HexEncode (digest), Nonce, CNonce);
-				buf = Encoding.UTF8.GetBytes (text);
-				checksum.Initialize ();
+				buf = Encoding.ASCII.GetBytes (text);
 				digest = checksum.ComputeHash (buf);
 				a1 = HexEncode (digest);
 
@@ -393,14 +391,12 @@ namespace MailKit.Security {
 					text += ":00000000000000000000000000000000";
 
 				buf = Encoding.ASCII.GetBytes (text);
-				checksum.Initialize ();
 				digest = checksum.ComputeHash (buf);
 				a2 = HexEncode (digest);
 
 				// compute KD
 				text = string.Format ("{0}:{1}:{2:8X}:{3}:{4}:{5}", a1, Nonce, Nc, CNonce, Qop, a2);
 				buf = Encoding.ASCII.GetBytes (text);
-				checksum.Initialize ();
 				digest = checksum.ComputeHash (buf);
 
 				return HexEncode (digest);
@@ -416,96 +412,27 @@ namespace MailKit.Security {
 			else
 				encoding = Encoding.UTF8;
 
-			using (var memory = new MemoryStream ()) {
-				byte[] buf;
+			var builder = new StringBuilder ();
+			builder.AppendFormat ("username=\"{0}\"", UserName);
+			builder.AppendFormat (",realm=\"{0}\"", Realm);
+			builder.AppendFormat (",nonce=\"{0}\"", Nonce);
+			builder.AppendFormat (",cnonce=\"{0}\"", CNonce);
+			builder.AppendFormat (",nc={0:x8}", Nc);
+			builder.AppendFormat (",qop=\"{0}\"", Qop);
+			builder.AppendFormat (",digest-uri=\"{0}\"", DigestUri);
+			builder.AppendFormat (",response=\"{0}\"", Response);
+			if (MaxBuf > 0)
+				builder.AppendFormat (",maxbuf={0}", MaxBuf);
+			if (!string.IsNullOrEmpty (Charset))
+				builder.AppendFormat (",charset=\"{0}\"", Charset);
+			if (!string.IsNullOrEmpty (Algorithm))
+				builder.AppendFormat (",algorithm=\"{0}\"", Algorithm);
+			if (!string.IsNullOrEmpty (Cipher))
+				builder.AppendFormat (",cipher=\"{0}\"", Cipher);
+			if (!string.IsNullOrEmpty (AuthZid))
+				builder.AppendFormat (",authzid=\"{0}\"", AuthZid);
 
-				buf = Encoding.ASCII.GetBytes ("username=\"");
-				memory.Write (buf, 0, buf.Length);
-				buf = encoding.GetBytes (UserName);
-				memory.Write (buf, 0, buf.Length);
-
-				buf = Encoding.ASCII.GetBytes ("\",realm=\"");
-				memory.Write (buf, 0, buf.Length);
-				buf = encoding.GetBytes (Realm);
-				memory.Write (buf, 0, buf.Length);
-
-				buf = Encoding.ASCII.GetBytes ("\",nonce=\"");
-				memory.Write (buf, 0, buf.Length);
-				buf = encoding.GetBytes (Nonce);
-				memory.Write (buf, 0, buf.Length);
-
-				buf = Encoding.ASCII.GetBytes ("\",cnonce=\"");
-				memory.Write (buf, 0, buf.Length);
-				buf = encoding.GetBytes (CNonce);
-				memory.Write (buf, 0, buf.Length);
-
-				buf = Encoding.ASCII.GetBytes ("\",nc=");
-				memory.Write (buf, 0, buf.Length);
-				buf = Encoding.ASCII.GetBytes (Nc.ToString ("X8"));
-				memory.Write (buf, 0, buf.Length);
-
-				buf = Encoding.ASCII.GetBytes (",qop=\"");
-				memory.Write (buf, 0, buf.Length);
-				buf = Encoding.ASCII.GetBytes (Qop);
-				memory.Write (buf, 0, buf.Length);
-
-				buf = Encoding.ASCII.GetBytes ("\",digest-uri=\"");
-				memory.Write (buf, 0, buf.Length);
-				buf = Encoding.ASCII.GetBytes (DigestUri);
-				memory.Write (buf, 0, buf.Length);
-
-				buf = Encoding.ASCII.GetBytes ("\",response=\"");
-				memory.Write (buf, 0, buf.Length);
-				buf = Encoding.ASCII.GetBytes (Response);
-				memory.Write (buf, 0, buf.Length);
-				buf = new [] { (byte) '"' };
-				memory.Write (buf, 0, buf.Length);
-
-				if (MaxBuf > 0) {
-					buf = Encoding.ASCII.GetBytes (",maxbuf=");
-					memory.Write (buf, 0, buf.Length);
-					buf = Encoding.ASCII.GetBytes (MaxBuf.ToString ());
-					memory.Write (buf, 0, buf.Length);
-				}
-
-				if (!string.IsNullOrEmpty (Charset)) {
-					buf = Encoding.ASCII.GetBytes (",charset=\"");
-					memory.Write (buf, 0, buf.Length);
-					buf = Encoding.ASCII.GetBytes (Charset);
-					memory.Write (buf, 0, buf.Length);
-					buf = new [] { (byte) '"' };
-					memory.Write (buf, 0, buf.Length);
-				}
-
-				if (!string.IsNullOrEmpty (Algorithm)) {
-					buf = Encoding.ASCII.GetBytes (",algorithm=\"");
-					memory.Write (buf, 0, buf.Length);
-					buf = Encoding.ASCII.GetBytes (Algorithm);
-					memory.Write (buf, 0, buf.Length);
-					buf = new [] { (byte) '"' };
-					memory.Write (buf, 0, buf.Length);
-				}
-
-				if (!string.IsNullOrEmpty (Cipher)) {
-					buf = Encoding.ASCII.GetBytes (",cipher=\"");
-					memory.Write (buf, 0, buf.Length);
-					buf = Encoding.ASCII.GetBytes (Cipher);
-					memory.Write (buf, 0, buf.Length);
-					buf = new [] { (byte) '"' };
-					memory.Write (buf, 0, buf.Length);
-				}
-
-				if (!string.IsNullOrEmpty (AuthZid)) {
-					buf = Encoding.ASCII.GetBytes (",authzid=\"");
-					memory.Write (buf, 0, buf.Length);
-					buf = Encoding.ASCII.GetBytes (AuthZid);
-					memory.Write (buf, 0, buf.Length);
-					buf = new [] { (byte) '"' };
-					memory.Write (buf, 0, buf.Length);
-				}
-
-				return memory.ToArray ();
-			}
+			return encoding.GetBytes (builder.ToString ());
 		}
 	}
 }
