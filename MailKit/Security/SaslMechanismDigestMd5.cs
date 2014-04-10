@@ -395,7 +395,7 @@ namespace MailKit.Security {
 				a2 = HexEncode (digest);
 
 				// compute KD
-				text = string.Format ("{0}:{1}:{2:8X}:{3}:{4}:{5}", a1, Nonce, Nc, CNonce, Qop, a2);
+				text = string.Format ("{0}:{1}:{2:x8}:{3}:{4}:{5}", a1, Nonce, Nc, CNonce, Qop, a2);
 				buf = Encoding.ASCII.GetBytes (text);
 				digest = checksum.ComputeHash (buf);
 
