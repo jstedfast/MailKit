@@ -37,10 +37,6 @@
 using System;
 using System.Text;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-using Encoding = Portable.Text.Encoding;
-#endif
-
 namespace MailKit.Security.Ntlm {
 	class Type3Message : MessageBase
 	{
@@ -150,12 +146,12 @@ namespace MailKit.Security.Ntlm {
 
 			int lmLength = BitConverterLE.ToUInt16 (message, startIndex + 12);
 			int lmOffset = BitConverterLE.ToUInt16 (message, startIndex + 16);
-			LM = new byte [lmLength];
+			LM = new byte[lmLength];
 			Buffer.BlockCopy (message, startIndex + lmOffset, LM, 0, lmLength);
 
 			int ntLength = BitConverterLE.ToUInt16 (message, startIndex + 20);
 			int ntOffset = BitConverterLE.ToUInt16 (message, startIndex + 24);
-			NT = new byte [ntLength];
+			NT = new byte[ntLength];
 			Buffer.BlockCopy (message, startIndex + ntOffset, NT, 0, ntLength);
 			
 			int domainLength = BitConverterLE.ToUInt16 (message, startIndex + 28);

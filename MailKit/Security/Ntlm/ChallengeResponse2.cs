@@ -38,15 +38,8 @@
 
 using System;
 using System.Text;
-using System.Globalization;
 using System.Security.Cryptography;
-
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-using Encoding = Portable.Text.Encoding;
-using MD5 = MimeKit.Cryptography.MD5;
-#else
 using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
-#endif
 
 namespace MailKit.Security.Ntlm {
 	static class ChallengeResponse2
@@ -92,11 +85,11 @@ namespace MailKit.Security.Ntlm {
 
 		static byte[] ComputeNtlmPassword (string password)
 		{
-			var buffer = new byte [21];
+			var buffer = new byte[21];
 
 			// create NT password
 			using (var md4 = new MD4 ()) {
-				var data = password == null ? new byte [0] : Encoding.Unicode.GetBytes (password);
+				var data = password == null ? new byte[0] : Encoding.Unicode.GetBytes (password);
 				var hash = md4.ComputeHash (data);
 				Buffer.BlockCopy (hash, 0, buffer, 0, 16);
 
@@ -116,21 +109,21 @@ namespace MailKit.Security.Ntlm {
 
 		static void ComputeNtlmV2Session (string password, byte[] challenge, out byte[] lm, out byte[] ntlm)
 		{
-			var nonce = new byte [8];
+			var nonce = new byte[8];
 
 			using (var rng = RandomNumberGenerator.Create ())
 				rng.GetBytes (nonce);
 
-			var sessionNonce = new byte [challenge.Length + 8];
+			var sessionNonce = new byte[challenge.Length + 8];
 			challenge.CopyTo (sessionNonce, 0);
 			nonce.CopyTo (sessionNonce, challenge.Length);
 
-			lm = new byte [24];
+			lm = new byte[24];
 			nonce.CopyTo (lm, 0);
 
 			using (var md5 = new MD5 ()) {
 				var hash = md5.ComputeHash (sessionNonce);
-				var newChallenge = new byte [8];
+				var newChallenge = new byte[8];
 
 				Array.Copy (hash, newChallenge, 8);
 
@@ -153,7 +146,7 @@ namespace MailKit.Security.Ntlm {
 			var ubytes = Encoding.Unicode.GetBytes (username.ToUpperInvariant ());
 			var tbytes = Encoding.Unicode.GetBytes (domain);
 
-			var bytes = new byte [ubytes.Length + tbytes.Length];
+			var bytes = new byte[ubytes.Length + tbytes.Length];
 			ubytes.CopyTo (bytes, 0);
 			Array.Copy (tbytes, 0, bytes, ubytes.Length, tbytes.Length);
 
@@ -172,7 +165,7 @@ namespace MailKit.Security.Ntlm {
 			using (var rng = RandomNumberGenerator.Create ())
 				rng.GetBytes (nonce);
 			
-			byte[] blob = new byte [28 + type2.TargetInfo.Length];
+			byte[] blob = new byte[28 + type2.TargetInfo.Length];
 			blob[0] = 0x01;
 			blob[1] = 0x01;
 
@@ -183,13 +176,13 @@ namespace MailKit.Security.Ntlm {
 
 			var challenge = type2.Nonce;
 
-			var hashInput = new byte [challenge.Length + blob.Length];
+			var hashInput = new byte[challenge.Length + blob.Length];
 			challenge.CopyTo (hashInput, 0);
 			blob.CopyTo (hashInput, challenge.Length);
 
 			var blobHash = ntlm_v2_md5.ComputeHash (hashInput);
 
-			var response = new byte [blob.Length + blobHash.Length];
+			var response = new byte[blob.Length + blobHash.Length];
 			blobHash.CopyTo (response, 0);
 			blob.CopyTo (response, blobHash.Length);
 

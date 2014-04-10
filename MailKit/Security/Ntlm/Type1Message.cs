@@ -36,11 +36,6 @@
 
 using System;
 using System.Text;
-using System.Globalization;
-
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-using Encoding = Portable.Text.Encoding;
-#endif
 
 namespace MailKit.Security.Ntlm {
 	class Type1Message : MessageBase
@@ -127,10 +122,10 @@ namespace MailKit.Security.Ntlm {
 			data[28] = 0x20;
 			data[29] = 0x00;
 
-			byte[] hostName = Encoding.ASCII.GetBytes (host.ToUpper (CultureInfo.InvariantCulture));
+			byte[] hostName = Encoding.ASCII.GetBytes (host.ToUpperInvariant ());
 			Buffer.BlockCopy (hostName, 0, data, 32, hostName.Length);
 
-			byte[] domainName = Encoding.ASCII.GetBytes (domain.ToUpper (CultureInfo.InvariantCulture));
+			byte[] domainName = Encoding.ASCII.GetBytes (domain.ToUpperInvariant ());
 			Buffer.BlockCopy (domainName, 0, data, offset, domainName.Length);
 
 			return data;

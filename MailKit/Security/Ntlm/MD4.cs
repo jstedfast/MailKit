@@ -319,7 +319,7 @@ namespace MailKit.Security.Ntlm {
 			if (disposed)
 				throw new ObjectDisposedException ("HashAlgorithm");
 
-			var buffer = new byte [4096];
+			var buffer = new byte[4096];
 			int nread;
 
 			do {
@@ -362,7 +362,7 @@ namespace MailKit.Security.Ntlm {
 			if (inputCount < 0)
 				throw new ArgumentOutOfRangeException ("inputCount");
 
-			var outputBuffer = new byte [inputCount];
+			var outputBuffer = new byte[inputCount];
 
 			// note: other exceptions are handled by Buffer.BlockCopy
 			Buffer.BlockCopy (inputBuffer, inputOffset, outputBuffer, 0, inputCount);

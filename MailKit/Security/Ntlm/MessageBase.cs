@@ -58,7 +58,7 @@ namespace MailKit.Security.Ntlm {
 
 		protected byte[] PrepareMessage (int messageSize)
 		{
-			var message = new byte [messageSize];
+			var message = new byte[messageSize];
 
 			Buffer.BlockCopy (header, 0, message, 0, 8);
 			

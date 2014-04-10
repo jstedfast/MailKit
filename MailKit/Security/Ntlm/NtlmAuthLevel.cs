@@ -25,7 +25,6 @@
 // THE SOFTWARE.
 
 namespace MailKit.Security.Ntlm {
-	
 	/*
 	 * On Windows, this is controlled by a registry setting
 	 * (http://msdn.microsoft.com/en-us/library/ms814176.aspx)

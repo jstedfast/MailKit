@@ -37,12 +37,7 @@
 
 using System;
 using System.Text;
-using System.Globalization;
 using System.Security.Cryptography;
-
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_PHONE_APP
-using Encoding = Portable.Text.Encoding;
-#endif
 
 namespace MailKit.Security.Ntlm {
 	class ChallengeResponse : IDisposable
@@ -176,7 +171,7 @@ namespace MailKit.Security.Ntlm {
 			int len = Math.Min (password.Length - position, 7);
 			var key7 = new byte[7];
 
-			Encoding.ASCII.GetBytes (password.ToUpper (CultureInfo.CurrentCulture), position, len, key7, 0);
+			Encoding.ASCII.GetBytes (password.ToUpper (), position, len, key7, 0);
 			var key8 = PrepareDESKey (key7, 0);
 
 			Array.Clear (key7, 0, key7.Length);
