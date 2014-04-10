@@ -44,7 +44,7 @@ using System.Security.Cryptography;
 using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
 #else
 using Encoding = Portable.Text.Encoding;
-using MD5 = MimeKit.Security.MD5;
+using MD5 = MimeKit.Cryptography.MD5;
 #endif
 
 namespace MailKit.Security.Ntlm {
@@ -156,50 +156,50 @@ namespace MailKit.Security.Ntlm {
 			ubytes.CopyTo (bytes, 0);
 			Array.Copy (tbytes, 0, bytes, ubytes.Length, tbytes.Length);
 
-			var md5 = new HMACMD5 (ntlm_hash);
-			var ntlm_v2_hash = md5.ComputeHash (bytes);
+			byte[] ntlm_v2_hash;
+
+			using (var md5 = new HMACMD5 (ntlm_hash))
+				ntlm_v2_hash = md5.ComputeHash (bytes);
 
 			Array.Clear (ntlm_hash, 0, ntlm_hash.Length);
-			md5.Clear ();
 
-			var ntlm_v2_md5 = new HMACMD5 (ntlm_v2_hash);
+			using (var md5 = new HMACMD5 (ntlm_v2_hash)) {
+				var now = DateTime.Now;
+				var timestamp = now.Ticks - 504911232000000000;
+				var nonce = new byte[8];
 
-			var now = DateTime.Now;
-			var timestamp = now.Ticks - 504911232000000000;
-			var nonce = new byte[8];
+				using (var rng = RandomNumberGenerator.Create ())
+					rng.GetBytes (nonce);
 
-			using (var rng = RandomNumberGenerator.Create ())
-				rng.GetBytes (nonce);
-			
-			byte[] blob = new byte[28 + type2.TargetInfo.Length];
-			blob[0] = 0x01;
-			blob[1] = 0x01;
+				var blob = new byte[28 + type2.TargetInfo.Length];
+				blob[0] = 0x01;
+				blob[1] = 0x01;
 
-			Buffer.BlockCopy (BitConverterLE.GetBytes (timestamp), 0, blob, 8, 8);
+				Buffer.BlockCopy (BitConverterLE.GetBytes (timestamp), 0, blob, 8, 8);
 
-			Buffer.BlockCopy (nonce, 0, blob, 16, 8);
-			Buffer.BlockCopy (type2.TargetInfo, 0, blob, 28, type2.TargetInfo.Length);
+				Buffer.BlockCopy (nonce, 0, blob, 16, 8);
+				Buffer.BlockCopy (type2.TargetInfo, 0, blob, 28, type2.TargetInfo.Length);
 
-			var challenge = type2.Nonce;
+				var challenge = type2.Nonce;
 
-			var hashInput = new byte[challenge.Length + blob.Length];
-			challenge.CopyTo (hashInput, 0);
-			blob.CopyTo (hashInput, challenge.Length);
+				var hashInput = new byte[challenge.Length + blob.Length];
+				challenge.CopyTo (hashInput, 0);
+				blob.CopyTo (hashInput, challenge.Length);
 
-			var blobHash = ntlm_v2_md5.ComputeHash (hashInput);
+				var blobHash = md5.ComputeHash (hashInput);
 
-			var response = new byte[blob.Length + blobHash.Length];
-			blobHash.CopyTo (response, 0);
-			blob.CopyTo (response, blobHash.Length);
+				var response = new byte[blob.Length + blobHash.Length];
+				blobHash.CopyTo (response, 0);
+				blob.CopyTo (response, blobHash.Length);
 
-			Array.Clear (ntlm_v2_hash, 0, ntlm_v2_hash.Length);
-			ntlm_v2_md5.Clear ();
-			Array.Clear (nonce, 0, nonce.Length);
-			Array.Clear (blob, 0, blob.Length);
-			Array.Clear (hashInput, 0, hashInput.Length);
-			Array.Clear (blobHash, 0, blobHash.Length);
+				Array.Clear (ntlm_v2_hash, 0, ntlm_v2_hash.Length);
+				Array.Clear (hashInput, 0, hashInput.Length);
+				Array.Clear (blobHash, 0, blobHash.Length);
+				Array.Clear (nonce, 0, nonce.Length);
+				Array.Clear (blob, 0, blob.Length);
 
-			return response;
+				return response;
+			}
 		}
 
 		public static void Compute (Type2Message type2, NtlmAuthLevel level, string username, string password, string domain, out byte[] lm, out byte[] ntlm)

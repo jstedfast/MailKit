@@ -153,6 +153,7 @@
     <Compile Include="Security\Ntlm\ChallengeResponse.cs" />
     <Compile Include="Security\Ntlm\ChallengeResponse2.cs" />
     <Compile Include="Security\Ntlm\DES.cs" />
+    <Compile Include="Security\Ntlm\HMACMD5.cs" />
     <Compile Include="Security\Ntlm\MD4.cs" />
     <Compile Include="Security\Ntlm\MessageBase.cs" />
     <Compile Include="Security\Ntlm\NtlmAuthLevel.cs" />

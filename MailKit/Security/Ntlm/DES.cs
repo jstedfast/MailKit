@@ -69,14 +69,14 @@ namespace MailKit.Security.Ntlm {
 			byte[] input, output;
 
 			input = new byte[inputCount];
-			Buffer.BlockCopy (inputBuffer, inputOffset, input, 0, inputCount);
+			Array.Copy (inputBuffer, inputOffset, input, 0, inputCount);
 			data = CryptographicBuffer.CreateFromByteArray (input);
 
 			encrypted = CryptographicEngine.Encrypt (key, data, iv);
 
 			CryptographicBuffer.CopyToByteArray (encrypted, out output);
 
-			Buffer.BlockCopy (output, 0, outputBuffer, outputOffset, output.Length);
+			Array.Copy (output, 0, outputBuffer, outputOffset, output.Length);
 
 			return output.Length;
 		}
@@ -111,7 +111,7 @@ namespace MailKit.Security.Ntlm {
 		public void Clear ()
 		{
 			if (disposed)
-				throw ObjectDisposedException ("DES");
+				throw new ObjectDisposedException ("DES");
 
 			if (Key != null) {
 				Array.Clear (Key, 0, Key.Length);
@@ -122,7 +122,7 @@ namespace MailKit.Security.Ntlm {
 		public SymmetricKeyEncryptor CreateEncryptor ()
 		{
 			if (disposed)
-				throw ObjectDisposedException ("DES");
+				throw new ObjectDisposedException ("DES");
 
 			var buffer = CryptographicBuffer.CreateFromByteArray (Key);
 			SymmetricKeyAlgorithmProvider algorithm;

@@ -55,17 +55,16 @@ namespace MailKit.Security.Ntlm {
 			type2 = null;
 		}
 
-		public Type3Message (Type2Message type2) : base (3)
+		public Type3Message (Type2Message type2, string userName, string hostName) : base (3)
 		{
 			this.type2 = type2;
 
 			Level = NtlmSettings.DefaultAuthLevel;
 
 			challenge = (byte[]) type2.Nonce.Clone ();
-
-			Username = Environment.UserName;
-			host = Environment.MachineName;
 			domain = type2.TargetName;
+			Username = userName;
+			host = hostName;
 
 			Flags = (NtlmFlags) 0x8200;
 			if ((type2.Flags & NtlmFlags.NegotiateUnicode) != 0)

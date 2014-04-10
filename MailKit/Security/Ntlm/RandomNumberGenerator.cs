@@ -37,12 +37,12 @@ namespace MailKit.Security.Ntlm {
 
 		public void GetBytes (byte[] bytes)
 		{
-			var buffer = CryptographicBuffer.GenerateRandom (bytes.Length);
+			var buffer = CryptographicBuffer.GenerateRandom ((uint) bytes.Length);
 			byte[] rand;
 
 			CryptographicBuffer.CopyToByteArray (buffer, out rand);
 
-			Buffer.BlockCopy (rand, 0, bytes, 0, rand.Length);
+			Array.Copy (rand, 0, bytes, 0, rand.Length);
 		}
 
 		public void Dispose ()

@@ -47,11 +47,11 @@ namespace MailKit.Security.Ntlm {
 		string domain;
 		string host;
 
-		public Type1Message () : base (1)
+		public Type1Message (string hostName, string domainName) : base (1)
 		{
-			domain = Environment.UserDomainName;
-			host = Environment.MachineName;
 			Flags = (NtlmFlags) 0xb207;
+			domain = domainName;
+			host = hostName;
 		}
 
 		public Type1Message (byte[] message, int startIndex, int length) : base (1)
