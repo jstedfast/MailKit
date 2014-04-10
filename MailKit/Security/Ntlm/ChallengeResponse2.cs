@@ -259,7 +259,7 @@ namespace MailKit.Security.Ntlm {
 		static byte[] PrepareDESKey (byte[] key56bits, int position) 
 		{
 			// convert to 8 bytes
-			var key = new byte [8];
+			var key = new byte[8];
 
 			key[0] = key56bits [position];
 			key[1] = (byte) ((key56bits [position] << 7)     | (key56bits [position + 1] >> 1));
@@ -276,9 +276,9 @@ namespace MailKit.Security.Ntlm {
 		static byte[] PasswordToKey (string password, int position) 
 		{
 			int len = Math.Min (password.Length - position, 7);
-			var key7 = new byte [7];
+			var key7 = new byte[7];
 
-			Encoding.ASCII.GetBytes (password.ToUpper (CultureInfo.CurrentCulture), position, len, key7, 0);
+			Encoding.ASCII.GetBytes (password.ToUpper (), position, len, key7, 0);
 			var key8 = PrepareDESKey (key7, 0);
 
 			// cleanup intermediate key material

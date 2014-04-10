@@ -48,7 +48,7 @@ namespace MailKit.Security.Ntlm {
 		public Type2Message () : base (2)
 		{
 			Flags = (NtlmFlags) 0x8201;
-			nonce = new byte [8];
+			nonce = new byte[8];
 
 			using (var rng = RandomNumberGenerator.Create ())
 				rng.GetBytes (nonce);
@@ -56,7 +56,7 @@ namespace MailKit.Security.Ntlm {
 
 		public Type2Message (byte[] message, int startIndex, int length) : base (2)
 		{
-			nonce = new byte [8];
+			nonce = new byte[8];
 			Decode (message, startIndex, length);
 		}
 
