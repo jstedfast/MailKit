@@ -33,7 +33,7 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 
-#if NETFX_CORE || WINDOWS_APP || WINDOWS_APP
+#if NETFX_CORE
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
