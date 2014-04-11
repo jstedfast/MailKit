@@ -49,14 +49,35 @@ namespace MailKit.Security.Ntlm {
 		// This requests that the server send the authentication target with the Type 2 reply.
 		RequestTarget = 0x00000004,
 
+		// Indicates that authenticated communication between the client and server includes a digital signature (message integrity).
+		NegotiateSign = 0x00000010,
+
+		// Indicates that authenticated communication between the client and server should be encrypted.
+		NegotiateSeal = 0x00000020,
+
+		// Indicates that datagram authentication is being used.
+		NegotiateDatagramStyle = 0x00000040,
+
+		// Indicates that the Lan Manager Session Key should be used for signing and sealing authenticated communications.
+		NegotiateLanManagerKey = 0x00000080,
+
+		// This flag's usage has not been identified.
+		NegotiateNetware = 0x00000100,
+
 		// Indicates that NTLM authentication is supported.
 		NegotiateNtlm = 0x00000200,
+
+		/// Sent by the client in the Type 3 message to indicate that an anonymous context has been established. This also affects the response fields.
+		NegotiateAnonymous = 0x00000800,
 
 		// When set, the client will send with the message the name of the domain in which the workstation has membership.
 		NegotiateDomainSupplied = 0x00001000,
 
 		// Indicates that the client is sending its workstation name with the message.  
 		NegotiateWorkstationSupplied = 0x00002000,
+
+		// Indicates that the client and server are on the same machine.
+		NegotiateLocalCall = 0x00004000,
 
 		// Indicates that communication between the client and server after authentication should carry a "dummy" signature.
 		NegotiateAlwaysSign = 0x00008000,
