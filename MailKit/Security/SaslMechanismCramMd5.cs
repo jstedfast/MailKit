@@ -86,51 +86,56 @@ namespace MailKit.Security {
 			var cred = Credentials.GetCredential (Uri, MechanismName);
 			var userName = Encoding.UTF8.GetBytes (cred.UserName);
 			var password = Encoding.UTF8.GetBytes (cred.Password);
+			var ipad = new byte[64];
+			var opad = new byte[64];
+			byte[] digest;
+
+			if (password.Length > 64) {
+				byte[] checksum;
+
+				using (var md5 = new MD5 ())
+					checksum = md5.ComputeHash (password);
+
+				Array.Copy (checksum, ipad, checksum.Length);
+				Array.Copy (checksum, opad, checksum.Length);
+			} else {
+				Array.Copy (password, ipad, password.Length);
+				Array.Copy (password, opad, password.Length);
+			}
+
+			for (int i = 0; i < 64; i++) {
+				ipad[i] ^= 0x36;
+				opad[i] ^= 0x5c;
+			}
 
 			using (var md5 = new MD5 ()) {
-				var ipad = new byte[64];
-				var opad = new byte[64];
-				byte[] digest;
-
-				if (password.Length > 64) {
-					var checksum = md5.ComputeHash (password);
-					Array.Copy (checksum, ipad, checksum.Length);
-					Array.Copy (checksum, opad, checksum.Length);
-				} else {
-					Array.Copy (password, ipad, password.Length);
-					Array.Copy (password, opad, password.Length);
-				}
-
-				for (int i = 0; i < 64; i++) {
-					ipad[i] ^= 0x36;
-					opad[i] ^= 0x5c;
-				}
-
 				md5.TransformBlock (ipad, 0, ipad.Length, null, 0);
 				md5.TransformFinalBlock (token, startIndex, length);
 				digest = md5.Hash;
+			}
 
+			using (var md5 = new MD5 ()) {
 				md5.TransformBlock (opad, 0, opad.Length, null, 0);
 				md5.TransformFinalBlock (digest, 0, digest.Length);
 				digest = md5.Hash;
-
-				var buffer = new byte[userName.Length + 1 + (digest.Length * 2)];
-				int offset = 0;
-
-				for (int i = 0; i < userName.Length; i++)
-					buffer[offset++] = userName[i];
-				buffer[offset++] = 0x20;
-				for (int i = 0; i < digest.Length; i++) {
-					byte c = digest[i];
-
-					buffer[offset++] = HexAlphabet[(c >> 4) & 0x0f];
-					buffer[offset++] = HexAlphabet[c & 0x0f];
-				}
-
-				IsAuthenticated = true;
-
-				return buffer;
 			}
+
+			var buffer = new byte[userName.Length + 1 + (digest.Length * 2)];
+			int offset = 0;
+
+			for (int i = 0; i < userName.Length; i++)
+				buffer[offset++] = userName[i];
+			buffer[offset++] = 0x20;
+			for (int i = 0; i < digest.Length; i++) {
+				byte c = digest[i];
+
+				buffer[offset++] = HexAlphabet[(c >> 4) & 0x0f];
+				buffer[offset++] = HexAlphabet[c & 0x0f];
+			}
+
+			IsAuthenticated = true;
+
+			return buffer;
 		}
 	}
 }

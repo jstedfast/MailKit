@@ -56,6 +56,18 @@ namespace MailKit.Security {
 		DigestChallenge challenge;
 		DigestResponse response;
 		LoginState state;
+		string cnonce;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
+		/// </summary>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="entropy">Random characters to act as the cnonce token.</param>
+		internal SaslMechanismDigestMd5 (Uri uri, ICredentials credentials, string entropy) : base (uri, credentials)
+		{
+			cnonce = entropy;
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
@@ -100,7 +112,14 @@ namespace MailKit.Security {
 					throw new SaslException (MechanismName, SaslErrorCode.ChallengeTooLong, "Server challenge too long.");
 
 				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token));
-				response = new DigestResponse (challenge, Uri.Scheme, Uri.DnsSafeHost, cred.UserName, cred.Password);
+
+				if (string.IsNullOrEmpty (cnonce)) {
+					var entropy = new byte[15];
+					new Random ().NextBytes (entropy);
+					cnonce = Convert.ToBase64String (entropy);
+				}
+
+				response = new DigestResponse (challenge, Uri.Scheme, Uri.DnsSafeHost, cred.UserName, cred.Password, cnonce);
 				state = LoginState.Final;
 				return response.Encode ();
 			case LoginState.Final:
@@ -133,6 +152,7 @@ namespace MailKit.Security {
 			state = LoginState.Auth;
 			challenge = null;
 			response = null;
+			cnonce = null;
 			base.Reset ();
 		}
 	}
@@ -312,6 +332,8 @@ namespace MailKit.Security {
 
 	class DigestResponse
 	{
+		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+
 		public string UserName { get; private set; }
 		public string Realm { get; private set; }
 		public string Nonce { get; private set; }
@@ -326,11 +348,8 @@ namespace MailKit.Security {
 		public string Cipher { get; private set; }
 		public string AuthZid { get; private set; }
 
-		public DigestResponse (DigestChallenge challenge, string protocol, string hostName, string userName, string password)
+		public DigestResponse (DigestChallenge challenge, string protocol, string hostName, string userName, string password, string cnonce)
 		{
-			var cnonce = new byte[15];
-			new Random ().NextBytes (cnonce);
-
 			UserName = userName;
 
 			if (challenge.Realms.Length > 0)
@@ -339,7 +358,7 @@ namespace MailKit.Security {
 				Realm = string.Empty;
 
 			Nonce = challenge.Nonce;
-			CNonce = Convert.ToBase64String (cnonce);
+			CNonce = cnonce;
 			Nc = 1;
 
 			// FIXME: make sure this is supported
@@ -369,40 +388,44 @@ namespace MailKit.Security {
 
 		public string ComputeHash (string password, bool client)
 		{
-			using (var checksum = new MD5 ()) {
-				byte[] buf, digest;
-				string text, a1, a2;
+			string text, a1, a2;
+			byte[] buf, digest;
 
-				// compute A1
-				text = string.Format ("{0}:{1}:{2}", UserName, Realm, password);
-				buf = Encoding.UTF8.GetBytes (text);
-				digest = checksum.ComputeHash (buf);
+			// compute A1
+			text = string.Format ("{0}:{1}:{2}", UserName, Realm, password);
+			buf = Encoding.UTF8.GetBytes (text);
+			using (var md5 = new MD5 ())
+				digest = md5.ComputeHash (buf);
 
-				text = string.Format ("{0}:{1}:{2}", HexEncode (digest), Nonce, CNonce);
+			using (var md5 = new MD5 ()) {
+				md5.TransformBlock (digest, 0, digest.Length, null, 0);
+				text = string.Format (":{0}:{1}", Nonce, CNonce);
 				if (!string.IsNullOrEmpty (AuthZid))
 					text += ":" + AuthZid;
 				buf = Encoding.ASCII.GetBytes (text);
-				digest = checksum.ComputeHash (buf);
-				a1 = HexEncode (digest);
-
-				// compute A2
-				text = client ? "AUTHENTICATE:" : ":";
-				text += DigestUri;
-
-				if (Qop == "auth-int" || Qop == "auth-conf")
-					text += ":00000000000000000000000000000000";
-
-				buf = Encoding.ASCII.GetBytes (text);
-				digest = checksum.ComputeHash (buf);
-				a2 = HexEncode (digest);
-
-				// compute KD
-				text = string.Format ("{0}:{1}:{2:x8}:{3}:{4}:{5}", a1, Nonce, Nc, CNonce, Qop, a2);
-				buf = Encoding.ASCII.GetBytes (text);
-				digest = checksum.ComputeHash (buf);
-
-				return HexEncode (digest);
+				md5.TransformFinalBlock (buf, 0, buf.Length);
+				a1 = HexEncode (md5.Hash);
 			}
+
+			// compute A2
+			text = client ? "AUTHENTICATE:" : ":";
+			text += DigestUri;
+
+			if (Qop == "auth-int" || Qop == "auth-conf")
+				text += ":00000000000000000000000000000000";
+
+			buf = Encoding.ASCII.GetBytes (text);
+			using (var md5 = new MD5 ())
+				digest = md5.ComputeHash (buf);
+			a2 = HexEncode (digest);
+
+			// compute KD
+			text = string.Format ("{0}:{1}:{2:x8}:{3}:{4}:{5}", a1, Nonce, Nc, CNonce, Qop, a2);
+			buf = Encoding.ASCII.GetBytes (text);
+			using (var md5 = new MD5 ())
+				digest = md5.ComputeHash (buf);
+
+			return HexEncode (digest);
 		}
 
 		public byte[] Encode ()
