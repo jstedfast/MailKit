@@ -345,7 +345,7 @@ namespace MailKit.Security {
 			// FIXME: make sure this is supported
 			Qop = "auth";
 
-			DigestUri = string.Format ("{0}://{1}", protocol, hostName);
+			DigestUri = string.Format ("{0}/{1}", protocol, hostName);
 
 			if (!string.IsNullOrEmpty (challenge.Charset))
 				Charset = challenge.Charset;
