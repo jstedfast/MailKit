@@ -35,6 +35,7 @@ using Encoding = Portable.Text.Encoding;
 using MD5 = MimeKit.Cryptography.MD5;
 #else
 using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
+using System.Security.Cryptography;
 #endif
 
 namespace MailKit.Security {
@@ -115,7 +116,10 @@ namespace MailKit.Security {
 
 				if (string.IsNullOrEmpty (cnonce)) {
 					var entropy = new byte[15];
-					new Random ().NextBytes (entropy);
+
+					using (var rng = RandomNumberGenerator.Create ())
+						rng.GetBytes (entropy);
+
 					cnonce = Convert.ToBase64String (entropy);
 				}
 
@@ -332,8 +336,6 @@ namespace MailKit.Security {
 
 	class DigestResponse
 	{
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
-
 		public string UserName { get; private set; }
 		public string Realm { get; private set; }
 		public string Nonce { get; private set; }

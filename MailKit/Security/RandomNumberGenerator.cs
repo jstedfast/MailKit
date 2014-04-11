@@ -27,7 +27,7 @@
 using System;
 using Windows.Security.Cryptography;
 
-namespace MailKit.Security.Ntlm {
+namespace MailKit.Security {
 	class RandomNumberGenerator : IDisposable
 	{
 		public static RandomNumberGenerator Create ()

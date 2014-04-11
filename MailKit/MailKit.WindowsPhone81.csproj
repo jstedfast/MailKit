@@ -159,11 +159,11 @@
     <Compile Include="Security\Ntlm\NtlmAuthLevel.cs" />
     <Compile Include="Security\Ntlm\NtlmFlags.cs" />
     <Compile Include="Security\Ntlm\NtlmSettings.cs" />
-    <Compile Include="Security\Ntlm\RandomNumberGenerator.cs" />
     <Compile Include="Security\Ntlm\Type1Message.cs" />
     <Compile Include="Security\Ntlm\Type2Message.cs" />
     <Compile Include="Security\Ntlm\Type3Message.cs" />
     <Compile Include="Security\AuthenticationException.cs" />
+    <Compile Include="Security\RandomNumberGenerator.cs" />
     <Compile Include="Security\SaslException.cs" />
     <Compile Include="Security\SaslMechanism.cs" />
     <Compile Include="Security\SaslMechanismCramMd5.cs" />
