@@ -49,9 +49,9 @@ namespace MailKit.Security.Ntlm {
 
 		public Type1Message (string hostName, string domainName) : base (1)
 		{
-			Flags = (NtlmFlags) 0xb207;
-			domain = domainName;
-			host = hostName;
+			Flags = NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateUnicode | NtlmFlags.RequestTarget;
+			Domain = domainName;
+			Host = hostName;
 		}
 
 		public Type1Message (byte[] message, int startIndex, int length) : base (1)
