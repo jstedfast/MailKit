@@ -70,14 +70,14 @@ namespace MailKit.Security.Ntlm {
 			return message;
 		}
 
-		protected bool CheckHeader (byte[] message, int startIndex, int length)
+		bool CheckHeader (byte[] message, int startIndex)
 		{
-			for (int i = 0; i < length; i++) {
+			for (int i = 0; i < header.Length; i++) {
 				if (message[startIndex + i] != header[i])
 					return false;
 			}
 
-			return BitConverterLE.ToUInt32 (message, 8) == type;
+			return BitConverterLE.ToUInt32 (message, startIndex + 8) == type;
 		}
 
 		protected void ValidateArguments (byte[] message, int startIndex, int length)
@@ -91,7 +91,7 @@ namespace MailKit.Security.Ntlm {
 			if (length < 12 || startIndex + length > message.Length)
 				throw new ArgumentOutOfRangeException ("length");
 
-			if (!CheckHeader (message, startIndex, length))
+			if (!CheckHeader (message, startIndex))
 				throw new ArgumentException (string.Format ("Invalid Type{0} message.", type), "message");
 		}
 
