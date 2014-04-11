@@ -379,6 +379,8 @@ namespace MailKit.Security {
 				digest = checksum.ComputeHash (buf);
 
 				text = string.Format ("{0}:{1}:{2}", HexEncode (digest), Nonce, CNonce);
+				if (!string.IsNullOrEmpty (AuthZid))
+					text += ":" + AuthZid;
 				buf = Encoding.ASCII.GetBytes (text);
 				digest = checksum.ComputeHash (buf);
 				a1 = HexEncode (digest);
