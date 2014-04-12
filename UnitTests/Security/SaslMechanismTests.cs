@@ -1,5 +1,5 @@
 ﻿//
-// CramMd5Tests.cs
+// SaslMechanismTests.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //

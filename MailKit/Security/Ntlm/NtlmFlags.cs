@@ -1,94 +1,184 @@
 //
-// Mono.Security.Protocol.Ntlm.NtlmFlags
+// NtlmFlags.cs
 //
-// Author:
-//	Sebastien Pouliot <sebastien@ximian.com>
+// Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (c) 2014 Xamarin Inc. (www.xamarin.com)
 //
-// References
-// a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
-//	http://www.innovation.ch/java/ntlm.html
-// b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
-//	http://davenport.sourceforge.net/ntlm.html
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
 //
-
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
 //
 
 using System;
 
 namespace MailKit.Security.Ntlm {
+	/// <summary>
+	/// The NTLM message header flags.
+	/// </summary>
+	/// <remarks>
+	/// More details here: http://davenport.sourceforge.net/ntlm.html#theNtlmMessageHeaderLayout
+	/// </remarks>
 	[Flags]
 	enum NtlmFlags {
-		// The client sets this flag to indicate that it supports Unicode strings.
+		/// <summary>
+		/// Indicates that Unicode strings are supported for use in security buffer data.
+		/// </summary>
 		NegotiateUnicode = 0x00000001,
 
-		// This is set to indicate that the client supports OEM strings.
+		/// <summary>
+		/// Indicates that OEM strings are supported for use in security buffer data.
+		/// </summary>
 		NegotiateOem = 0x00000002,
 
-		// This requests that the server send the authentication target with the Type 2 reply.
+		/// <summary>
+		/// Requests that the server's authentication realm be included in the Type 2 message.
+		/// </summary>
 		RequestTarget = 0x00000004,
 
-		// Indicates that authenticated communication between the client and server includes a digital signature (message integrity).
+		/// <summary>
+		/// Specifies that authenticated communication between the client and server should carry a digital signature (message integrity).
+		/// </summary>
 		NegotiateSign = 0x00000010,
 
-		// Indicates that authenticated communication between the client and server should be encrypted.
+		/// <summary>
+		/// Specifies that authenticated communication between the client and server should be encrypted (message confidentiality).
+		/// </summary>
 		NegotiateSeal = 0x00000020,
 
-		// Indicates that datagram authentication is being used.
+		/// <summary>
+		/// Indicates that datagram authentication is being used.
+		/// </summary>
 		NegotiateDatagramStyle = 0x00000040,
 
-		// Indicates that the Lan Manager Session Key should be used for signing and sealing authenticated communications.
+		/// <summary>
+		/// Indicates that the Lan Manager Session Key should be used for signing
+		/// and sealing authenticated communications.
+		/// </summary>
 		NegotiateLanManagerKey = 0x00000080,
 
-		// This flag's usage has not been identified.
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
 		NegotiateNetware = 0x00000100,
 
-		// Indicates that NTLM authentication is supported.
+		/// <summary>
+		/// Indicates that NTLM authentication is being used.
+		/// </summary>
 		NegotiateNtlm = 0x00000200,
 
-		/// Sent by the client in the Type 3 message to indicate that an anonymous context has been established. This also affects the response fields.
+		/// <summary>
+		/// Sent by the client in the Type 3 message to indicate that an anonymous
+		/// context has been established. This also affects the response fields.
+		/// </summary>
 		NegotiateAnonymous = 0x00000800,
 
-		// When set, the client will send with the message the name of the domain in which the workstation has membership.
+		/// <summary>
+		/// Sent by the client in the Type 1 message to indicate that the name of the
+		/// domain in which the client workstation has membership is included in the
+		/// message. This is used by the server to determine whether the client is
+		/// eligible for local authentication.
+		/// </summary>
 		NegotiateDomainSupplied = 0x00001000,
 
-		// Indicates that the client is sending its workstation name with the message.  
+		/// <summary>
+		/// Sent by the client in the Type 1 message to indicate that the client
+		/// workstation's name is included in the message. This is used by the server
+		/// to determine whether the client is eligible for local authentication.
+		/// </summary>
 		NegotiateWorkstationSupplied = 0x00002000,
 
-		// Indicates that the client and server are on the same machine.
+		/// <summary>
+		/// Sent by the server to indicate that the server and client are on the same
+		/// machine. Implies that the client may use the established local credentials
+		/// for authentication instead of calculating a response to the challenge.
+		/// </summary>
 		NegotiateLocalCall = 0x00004000,
 
-		// Indicates that communication between the client and server after authentication should carry a "dummy" signature.
+		/// <summary>
+		/// Indicates that authenticated communication between the client and server
+		/// should be signed with a "dummy" signature.
+		/// </summary>
 		NegotiateAlwaysSign = 0x00008000,
 
-		// Indicates that this client supports the NTLM2 signing and sealing scheme; if negotiated, this can also affect the response calculations.
+		/// <summary>
+		/// Sent by the server in the Type 2 message to indicate that the target
+		/// authentication realm is a domain.
+		/// </summary>
+		TargetTypeDomain = 0x00010000,
+
+		/// <summary>
+		/// Sent by the server in the Type 2 message to indicate that the target
+		/// authentication realm is a server.
+		/// </summary>
+		TargetTypeServer = 0x00020000,
+
+		/// <summary>
+		/// Sent by the server in the Type 2 message to indicate that the target
+		/// authentication realm is a share. Presumably, this is for share-level
+		/// authentication. Usage is unclear.
+		/// </summary>
+		TargetTypeShare = 0x00040000,
+
+		/// <summary>
+		/// Indicates that the NTLM2 signing and sealing scheme should be used for
+		/// protecting authenticated communications. Note that this refers to a
+		/// particular session security scheme, and is not related to the use of
+		/// NTLMv2 authentication. This flag can, however, have an effect on the
+		/// response calculations.
+		/// </summary>
 		NegotiateNtlm2Key = 0x00080000,
 
-		// Indicates that this client supports strong (128-bit) encryption.
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		RequestInitResponse = 0x00100000,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		RequestAcceptResponse = 0x00200000,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		RequestNonNTSessionKey = 0x00400000,
+
+		/// <summary>
+		/// Sent by the server in the Type 2 message to indicate that it is including
+		/// a Target Information block in the message. The Target Information block
+		/// is used in the calculation of the NTLMv2 response.
+		/// </summary>
+		NegotiateTargetInfo = 0x00800000,
+
+		/// <summary>
+		/// Indicates that 128-bit encryption is supported.
+		/// </summary>
 		Negotiate128 = 0x20000000,
 
-		// Indicates that this client supports medium (56-bit) encryption.
+		/// <summary>
+		/// Indicates that the client will provide an encrypted master key in the
+		/// "Session Key" field of the Type 3 message.
+		/// </summary>
+		NegotiateKeyExchange = 0x40000000,
+
+		/// <summary>
+		/// Indicates that 56-bit encryption is supported.
+		/// </summary>
 		Negotiate56 = (unchecked ((int) 0x80000000))
 	}
 }
