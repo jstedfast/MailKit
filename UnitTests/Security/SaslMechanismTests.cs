@@ -80,5 +80,40 @@ namespace UnitTests.Security {
 			Assert.AreEqual (string.Empty, result, "Second DIGEST-MD5 challenge should be an empty string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "DIGEST-MD5 should be authenticated now.");
 		}
+
+		[Test]
+		public void TestLoginAuth ()
+		{
+			const string expected1 = "dXNlcm5hbWU=";
+			const string expected2 = "cGFzc3dvcmQ=";
+			var credentials = new NetworkCredential ("username", "password");
+			var uri = new Uri ("imap://imap.gmail.com");
+			var sasl = new SaslMechanismLogin (uri, credentials);
+			string challenge;
+
+			challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (expected1, challenge, "LOGIN initial challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "LOGIN should not be authenticated.");
+
+			challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (expected2, challenge, "LOGIN final challenge response does not match the expected string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "LOGIN should be authenticated.");
+		}
+
+		[Test]
+		public void TestPlainAuth ()
+		{
+			const string expected = "AHVzZXJuYW1lAHBhc3N3b3Jk";
+			var credentials = new NetworkCredential ("username", "password");
+			var uri = new Uri ("imap://imap.gmail.com");
+			var sasl = new SaslMechanismPlain (uri, credentials);
+
+			var challenge = sasl.Challenge (string.Empty);
+
+			Assert.AreEqual (expected, challenge, "PLAIN challenge response does not match the expected string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "PLAIN should be authenticated.");
+		}
 	}
 }
