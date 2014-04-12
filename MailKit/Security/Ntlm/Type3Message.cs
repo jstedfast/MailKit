@@ -193,7 +193,7 @@ namespace MailKit.Security.Ntlm {
 			return Encoding.ASCII.GetBytes (text);
 		}
 
-		public override byte[] GetBytes ()
+		public override byte[] Encode ()
 		{
 			var target = EncodeString (domain);
 			var user = EncodeString (Username);

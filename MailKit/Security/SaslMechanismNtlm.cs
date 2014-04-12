@@ -107,7 +107,7 @@ namespace MailKit.Security {
 				throw new IndexOutOfRangeException ("state");
 			}
 
-			return message.GetBytes ();
+			return message.Encode ();
 		}
 
 		static MessageBase GetInitialResponse (string domain)

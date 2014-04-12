@@ -56,9 +56,9 @@ namespace MailKit.Security.Ntlm {
 			get { return type; }
 		}
 
-		protected byte[] PrepareMessage (int messageSize)
+		protected byte[] PrepareMessage (int size)
 		{
-			var message = new byte[messageSize];
+			var message = new byte[size];
 
 			Buffer.BlockCopy (header, 0, message, 0, 8);
 			
@@ -95,6 +95,6 @@ namespace MailKit.Security.Ntlm {
 				throw new ArgumentException (string.Format ("Invalid Type{0} message.", type), "message");
 		}
 
-		public abstract byte[] GetBytes ();
+		public abstract byte[] Encode ();
 	}
 }

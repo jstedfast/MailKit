@@ -122,7 +122,7 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
-		public override byte[] GetBytes ()
+		public override byte[] Encode ()
 		{
 			byte[] data = PrepareMessage (40);
 

@@ -49,7 +49,7 @@ namespace MailKit.Security.Ntlm {
 
 		public Type1Message (string hostName, string domainName) : base (1)
 		{
-			Flags = NtlmFlags.NegotiateAlwaysSign | NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateUnicode | NtlmFlags.RequestTarget;
+			Flags = NtlmFlags.NegotiateNtlm | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateUnicode | NtlmFlags.RequestTarget;
 			Domain = domainName;
 			Host = hostName;
 		}
@@ -87,52 +87,83 @@ namespace MailKit.Security.Ntlm {
 			}
 		}
 
+		public Version OSVersion {
+			get; set;
+		}
+
 		void Decode (byte[] message, int startIndex, int length)
 		{
+			int offset, count;
+
 			ValidateArguments (message, startIndex, length);
 
 			Flags = (NtlmFlags) BitConverterLE.ToUInt32 (message, startIndex + 12);
 
-			int count = BitConverterLE.ToUInt16 (message, startIndex + 16);
-			int offset = BitConverterLE.ToUInt16 (message, startIndex + 20);
+			// decode the domain
+			count = BitConverterLE.ToUInt16 (message, startIndex + 16);
+			offset = BitConverterLE.ToUInt16 (message, startIndex + 20);
 			domain = Encoding.ASCII.GetString (message, startIndex + offset, count);
 
+			// decode the workstation/host
 			count = BitConverterLE.ToUInt16 (message, startIndex + 24);
-			host = Encoding.ASCII.GetString (message, startIndex + 32, count);
+			offset = BitConverterLE.ToUInt16 (message, startIndex + 28);
+			host = Encoding.ASCII.GetString (message, startIndex + offset, count);
+
+			if (offset == 40) {
+				// decode the OS Version
+				int major = message[startIndex + 32];
+				int minor = message[startIndex + 33];
+				int build = BitConverterLE.ToUInt16 (message, startIndex + 34);
+
+				OSVersion = new Version (major, minor, build);
+			}
 		}
 
-		public override byte[] GetBytes ()
+		public override byte[] Encode ()
 		{
-			byte[] data = PrepareMessage (32 + domain.Length + host.Length);
+			int versionLength = OSVersion != null ? 8 : 0;
+			int hostOffset = 32 + versionLength;
+			int domainOffset = hostOffset + host.Length;
 
-			data[12] = (byte) Flags;
-			data[13] = (byte)((uint) Flags >> 8);
-			data[14] = (byte)((uint) Flags >> 16);
-			data[15] = (byte)((uint) Flags >> 24);
+			var message = PrepareMessage (32 + domain.Length + host.Length + versionLength);
 
-			short offset = (short)(32 + host.Length);
+			message[12] = (byte) Flags;
+			message[13] = (byte)((uint) Flags >> 8);
+			message[14] = (byte)((uint) Flags >> 16);
+			message[15] = (byte)((uint) Flags >> 24);
 
-			data[16] = (byte) domain.Length;
-			data[17] = (byte)(domain.Length >> 8);
-			data[18] = data[16];
-			data[19] = data[17];
-			data[20] = (byte) offset;
-			data[21] = (byte)(offset >> 8);
+			message[16] = (byte) domain.Length;
+			message[17] = (byte)(domain.Length >> 8);
+			message[18] = message[16];
+			message[19] = message[17];
+			message[20] = (byte) domainOffset;
+			message[21] = (byte)(domainOffset >> 8);
 
-			data[24] = (byte) host.Length;
-			data[25] = (byte)(host.Length >> 8);
-			data[26] = data[24];
-			data[27] = data[25];
-			data[28] = 0x20;
-			data[29] = 0x00;
+			message[24] = (byte) host.Length;
+			message[25] = (byte)(host.Length >> 8);
+			message[26] = message[24];
+			message[27] = message[25];
+			message[28] = (byte) hostOffset;
+			message[29] = (byte)(hostOffset >> 8);
 
-			byte[] hostName = Encoding.ASCII.GetBytes (host.ToUpperInvariant ());
-			Buffer.BlockCopy (hostName, 0, data, 32, hostName.Length);
+			if (OSVersion != null) {
+				message[32] = (byte) OSVersion.Major;
+				message[33] = (byte) OSVersion.Minor;
+				message[34] = (byte)(OSVersion.Build);
+				message[35] = (byte)(OSVersion.Build >> 8);
+				message[36] = 0x00;
+				message[37] = 0x00;
+				message[38] = 0x00;
+				message[39] = 0x0f;
+			}
 
-			byte[] domainName = Encoding.ASCII.GetBytes (domain.ToUpperInvariant ());
-			Buffer.BlockCopy (domainName, 0, data, offset, domainName.Length);
+			var hostName = Encoding.ASCII.GetBytes (host.ToUpperInvariant ());
+			Buffer.BlockCopy (hostName, 0, message, hostOffset, hostName.Length);
 
-			return data;
+			var domainName = Encoding.ASCII.GetBytes (domain.ToUpperInvariant ());
+			Buffer.BlockCopy (domainName, 0, message, domainOffset, domainName.Length);
+
+			return message;
 		}
 	}
 }

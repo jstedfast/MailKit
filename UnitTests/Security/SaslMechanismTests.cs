@@ -31,6 +31,7 @@ using System.Text;
 using NUnit.Framework;
 
 using MailKit.Security;
+using MailKit.Security.Ntlm;
 
 namespace UnitTests.Security {
 	[TestFixture]
@@ -114,6 +115,37 @@ namespace UnitTests.Security {
 
 			Assert.AreEqual (expected, challenge, "PLAIN challenge response does not match the expected string.");
 			Assert.IsTrue (sasl.IsAuthenticated, "PLAIN should be authenticated.");
+		}
+
+		static string HexEncode (byte[] message)
+		{
+			var builder = new StringBuilder ();
+
+			for (int i = 0; i < message.Length; i++)
+				builder.Append (message[i].ToString ("x2"));
+
+			return builder.ToString ();
+		}
+
+		static readonly byte[] NtlmType1EncodedMessage = {
+			0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x01, 0x00, 0x00, 0x00,
+			0x07, 0x32, 0x00, 0x00, 0x06, 0x00, 0x06, 0x00, 0x33, 0x00, 0x00, 0x00,
+			0x0b, 0x00, 0x0b, 0x00, 0x28, 0x00, 0x00, 0x00, 0x05, 0x00, 0x93, 0x08,
+			0x00, 0x00, 0x00, 0x0f, 0x57, 0x4f, 0x52, 0x4b, 0x53, 0x54, 0x41, 0x54,
+			0x49, 0x4f, 0x4e, 0x44, 0x4f, 0x4d, 0x41, 0x49, 0x4e
+		};
+
+		[Test]
+		public void TestNtlmType1MessageEncoding ()
+		{
+			var type1 = new Type1Message ("Workstation", "Domain") { OSVersion = new Version (5, 0, 2195) };
+			var encoded = type1.Encode ();
+			string actual, expected;
+
+			expected = HexEncode (NtlmType1EncodedMessage);
+			actual = HexEncode (encoded);
+
+			Assert.AreEqual (expected, actual, "The encoded Type1Message did not match the expected result.");
 		}
 	}
 }
