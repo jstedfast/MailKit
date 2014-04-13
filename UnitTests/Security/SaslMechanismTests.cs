@@ -194,5 +194,49 @@ namespace UnitTests.Security {
 			var targetInfo = HexEncode (type2.TargetInfo);
 			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected TargetInfo does not match.");
 		}
+
+		[Test]
+		public void TestNtlmAuthNoDomain ()
+		{
+			const NtlmFlags initialFlags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateNtlm |
+				NtlmFlags.NegotiateNtlm2Key | NtlmFlags.RequestTarget;
+			var credentials = new NetworkCredential ("username", "password");
+			var uri = new Uri ("imap://imap.gmail.com");
+			var sasl = new SaslMechanismNtlm (uri, credentials);
+			string challenge;
+			byte[] decoded;
+
+			challenge = sasl.Challenge (string.Empty);
+			decoded = Convert.FromBase64String (challenge);
+
+			var type1 = new Type1Message (decoded, 0, decoded.Length);
+
+			Assert.AreEqual (initialFlags, type1.Flags, "Expected initial NTLM client challenge flags do not match.");
+			Assert.AreEqual (string.Empty, type1.Domain, "Expected initial NTLM client challenge domain does not match.");
+			Assert.AreEqual (string.Empty, type1.Host, "Expected initial NTLM client challenge host does not match.");
+			Assert.IsFalse (sasl.IsAuthenticated, "NTLM should not be authenticated.");
+		}
+
+		[Test]
+		public void TestNtlmAuthWithDomain ()
+		{
+			const NtlmFlags initialFlags = NtlmFlags.NegotiateUnicode | NtlmFlags.NegotiateOem | NtlmFlags.NegotiateNtlm |
+				NtlmFlags.NegotiateNtlm2Key | NtlmFlags.RequestTarget | NtlmFlags.NegotiateDomainSupplied;
+			var credentials = new NetworkCredential ("domain\\username", "password");
+			var uri = new Uri ("imap://imap.gmail.com");
+			var sasl = new SaslMechanismNtlm (uri, credentials);
+			string challenge;
+			byte[] decoded;
+
+			challenge = sasl.Challenge (string.Empty);
+			decoded = Convert.FromBase64String (challenge);
+
+			var type1 = new Type1Message (decoded, 0, decoded.Length);
+
+			Assert.AreEqual (initialFlags, type1.Flags, "Expected initial NTLM client challenge flags do not match.");
+			Assert.AreEqual ("DOMAIN", type1.Domain, "Expected initial NTLM client challenge domain does not match.");
+			Assert.AreEqual (string.Empty, type1.Host, "Expected initial NTLM client challenge host does not match.");
+			Assert.IsFalse (sasl.IsAuthenticated, "NTLM should not be authenticated.");
+		}
 	}
 }
