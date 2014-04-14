@@ -1,6 +1,6 @@
-<Type Name="SaslMechanismOAuth2" FullName="MailKit.Security.SaslMechanismOAuth2">
-  <TypeSignature Language="C#" Value="public class SaslMechanismOAuth2 : MailKit.Security.SaslMechanism" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SaslMechanismOAuth2 extends MailKit.Security.SaslMechanism" />
+<Type Name="SaslMechanismNtlm" FullName="MailKit.Security.SaslMechanismNtlm">
+  <TypeSignature Language="C#" Value="public class SaslMechanismNtlm : MailKit.Security.SaslMechanism" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SaslMechanismNtlm extends MailKit.Security.SaslMechanism" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.11.0.0</AssemblyVersion>
@@ -11,16 +11,15 @@
   <Interfaces />
   <Docs>
     <summary>
-            The OAuth2 SASL mechanism.
+            The NTLM SASL mechanism.
             </summary>
     <remarks>
-            A SASL mechanism used by Google that makes use of a short-lived
-            OAuth 2.0 access token.
+            A SASL mechanism based on NTLM.
             </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public SaslMechanismOAuth2 (Uri uri, System.Net.ICredentials credentials);" />
+      <MemberSignature Language="C#" Value="public SaslMechanismNtlm (Uri uri, System.Net.ICredentials credentials);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Uri uri, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
@@ -34,7 +33,7 @@
         <param name="uri">The URI of the service.</param>
         <param name="credentials">The user's credentials.</param>
         <summary>
-            Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanismOAuth2" /> class.
+            Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanismNtlm" /> class.
             </summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -83,6 +82,24 @@
             Gets the name of the mechanism.
             </summary>
         <value>The name of the mechanism.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public override void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.11.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Resets the state of the SASL mechanism.
+            </summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
