@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
@@ -13,7 +13,7 @@
         <description>MailKit is an Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.
 
 Features include:
-* SASL Authentication via DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
+* SASL Authentication via NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
 * A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME and PIPELINING
 * A fully-cancellable Pop3Client with support for STLS, UIDL, and APOP.
 * A fully-cancellable ImapClient with support for LITERAL+, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, XLIST, and X-GM-EXT1.
