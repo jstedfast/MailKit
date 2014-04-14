@@ -51,6 +51,11 @@ namespace MailKit.Security.Ntlm {
 		RequestTarget = 0x00000004,
 
 		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		UnknownFlag1 = 0x00000008,
+
+		/// <summary>
 		/// Specifies that authenticated communication between the client and server should carry a digital signature (message integrity).
 		/// </summary>
 		NegotiateSign = 0x00000010,
@@ -80,6 +85,11 @@ namespace MailKit.Security.Ntlm {
 		/// Indicates that NTLM authentication is being used.
 		/// </summary>
 		NegotiateNtlm = 0x00000200,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		UnknownFlag2 = 0x00000400,
 
 		/// <summary>
 		/// Sent by the client in the Type 3 message to indicate that an anonymous
@@ -164,6 +174,31 @@ namespace MailKit.Security.Ntlm {
 		/// is used in the calculation of the NTLMv2 response.
 		/// </summary>
 		NegotiateTargetInfo = 0x00800000,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		UnknownFlag3 = 0x01000000,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		UnknownFlag4 = 0x02000000,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		UnknownFlag5 = 0x04000000,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		UnknownFlag6 = 0x08000000,
+
+		/// <summary>
+		/// This flag's usage has not been identified.
+		/// </summary>
+		UnknownFlag7 = 0x10000000,
 
 		/// <summary>
 		/// Indicates that 128-bit encryption is supported.

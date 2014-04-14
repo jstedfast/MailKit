@@ -171,14 +171,15 @@ namespace MailKit.Security.Ntlm {
 				using (var rng = RandomNumberGenerator.Create ())
 					rng.GetBytes (nonce);
 
-				var blob = new byte[28 + type2.TargetInfo.Length];
+				var targetInfo = type2.TargetInfo;
+				var blob = new byte[28 + targetInfo.Length];
 				blob[0] = 0x01;
 				blob[1] = 0x01;
 
 				Buffer.BlockCopy (BitConverterLE.GetBytes (timestamp), 0, blob, 8, 8);
 
 				Buffer.BlockCopy (nonce, 0, blob, 16, 8);
-				Buffer.BlockCopy (type2.TargetInfo, 0, blob, 28, type2.TargetInfo.Length);
+				Buffer.BlockCopy (targetInfo, 0, blob, 28, targetInfo.Length);
 
 				var challenge = type2.Nonce;
 
@@ -261,13 +262,13 @@ namespace MailKit.Security.Ntlm {
 			var key = new byte[8];
 
 			key[0] = key56bits [position];
-			key[1] = (byte) ((key56bits [position] << 7)     | (key56bits [position + 1] >> 1));
-			key[2] = (byte) ((key56bits [position + 1] << 6) | (key56bits [position + 2] >> 2));
-			key[3] = (byte) ((key56bits [position + 2] << 5) | (key56bits [position + 3] >> 3));
-			key[4] = (byte) ((key56bits [position + 3] << 4) | (key56bits [position + 4] >> 4));
-			key[5] = (byte) ((key56bits [position + 4] << 3) | (key56bits [position + 5] >> 5));
-			key[6] = (byte) ((key56bits [position + 5] << 2) | (key56bits [position + 6] >> 6));
-			key[7] = (byte)  (key56bits [position + 6] << 1);
+			key[1] = (byte) ((key56bits[position] << 7)     | (key56bits[position + 1] >> 1));
+			key[2] = (byte) ((key56bits[position + 1] << 6) | (key56bits[position + 2] >> 2));
+			key[3] = (byte) ((key56bits[position + 2] << 5) | (key56bits[position + 3] >> 3));
+			key[4] = (byte) ((key56bits[position + 3] << 4) | (key56bits[position + 4] >> 4));
+			key[5] = (byte) ((key56bits[position + 4] << 3) | (key56bits[position + 5] >> 5));
+			key[6] = (byte) ((key56bits[position + 5] << 2) | (key56bits[position + 6] >> 6));
+			key[7] = (byte)  (key56bits[position + 6] << 1);
 
 			return key;
 		}
