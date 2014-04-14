@@ -1525,6 +1525,8 @@ namespace MailKit.Net.Imap {
 				Wait (ic);
 
 				Inbox = list.Count > 0 ? list[0] : null;
+			} else {
+				Inbox = folder;
 			}
 
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
