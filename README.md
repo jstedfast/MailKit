@@ -370,6 +370,45 @@ if ((client.Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList
 }
 ```
 
+In cases where the IMAP server does *not* support the SPECIAL-USE or XLIST extensions, you'll have to
+come up with your own heuristics for getting the Sent, Drafts, Trash, etc folders. For example, you
+might use logic similar to this:
+
+```csharp
+static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", /* maybe add some translated names */ };
+
+static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
+{
+    var personal = client.GetFolder (client.PersonalNamespaces[0]);
+
+    foreach (var folder in personal.GetSubfolders (false, cancellationToken)) {
+        foreach (var name in CommonSentFolderNames) {
+            if (folder.Name == commonName)
+                return folder;
+        }
+    }
+
+    return null;
+}
+```
+
+Using LINQ, you could simplify this down to something more like this:
+
+```csharp
+static string[] CommonSentFolderNames = { "Sent Items", "Sent Mail", /* maybe add some translated names */ };
+
+static IFolder GetSentFolder (ImapClient client, CancellationToken cancellationToken)
+{
+    var personal = client.GetFolder (client.PersonalNamespaces[0]);
+    
+    return personal.GetSubfolders (false, cancellationToken).FirstOrDefault (x => CommonSentFolderNames.Contains (x.Name));
+}
+```
+
+Another option might be to allow the user of your application to configure which folder he or she wants to use as their Sent folder, Drafts folder, Trash folder, etc.
+
+How you handle this is up to you.
+
 ## Contributing
 
 The first thing you'll need to do is fork MailKit to your own GitHub repository. Once you do that,
