@@ -2764,6 +2764,7 @@ namespace MailKit.Net.Imap {
 		string FormatSummaryItems (MessageSummaryItems items)
 		{
 			string query;
+			var noParenthesisFlag = false; 
 
 			if ((items & MessageSummaryItems.BodyStructure) != 0 && (items & MessageSummaryItems.Body) != 0) {
 				// don't query both the BODY and BODYSTRUCTURE, that's just dumb...
@@ -2776,12 +2777,15 @@ namespace MailKit.Net.Imap {
 				if ((items & MessageSummaryItems.Full) == MessageSummaryItems.Full) {
 					items &= ~MessageSummaryItems.Full;
 					query = "FULL ";
+					noParenthesisFlag = true;
 				} else if ((items & MessageSummaryItems.All) == MessageSummaryItems.All) {
 					items &= ~MessageSummaryItems.All;
 					query = "ALL ";
+					noParenthesisFlag = true;
 				} else if ((items & MessageSummaryItems.Fast) == MessageSummaryItems.Fast) {
 					items &= ~MessageSummaryItems.Fast;
 					query = "FAST ";
+					noParenthesisFlag = true;
 				} else {
 					query = string.Empty;
 				}
@@ -2821,7 +2825,7 @@ namespace MailKit.Net.Imap {
 			if ((items & MessageSummaryItems.References) != 0)
 				query += "BODY.PEEK[HEADER.FIELDS (REFERENCES)]";
 
-			return query.TrimEnd ();
+			return noParenthesisFlag ? query.TrimEnd () : string.Format ("({0})", query.TrimEnd ());
 		}
 
 		/// <summary>
@@ -2914,7 +2918,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Length == 0)
 				return new MessageSummary[0];
 
-			var command = string.Format ("UID FETCH {0} ({1})\r\n", set, query);
+			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -3045,7 +3049,7 @@ namespace MailKit.Net.Imap {
 				return new MessageSummary[0];
 
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
-			var command = string.Format ("UID FETCH {0} ({1}) (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
+			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -3148,7 +3152,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
-			var command = string.Format ("UID FETCH {0}:{1} ({2})\r\n", min.Id, maxValue, query);
+			var command = string.Format ("UID FETCH {0}:{1} {2}\r\n", min.Id, maxValue, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -3274,7 +3278,7 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (items);
 			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
-			var command = string.Format ("UID FETCH {0}:{1} ({2}) (CHANGEDSINCE {3}{4})\r\n", min.Id, maxValue, query, modseq, vanished);
+			var command = string.Format ("UID FETCH {0}:{1} {2} (CHANGEDSINCE {3}{4})\r\n", min.Id, maxValue, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -3381,7 +3385,7 @@ namespace MailKit.Net.Imap {
 			if (indexes.Length == 0)
 				return new MessageSummary[0];
 
-			var command = string.Format ("FETCH {0} ({1})\r\n", set, query);
+			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -3499,7 +3503,7 @@ namespace MailKit.Net.Imap {
 			if (indexes.Length == 0)
 				return new MessageSummary[0];
 
-			var command = string.Format ("FETCH {0} ({1}) (CHANGEDSINCE {2})\r\n", set, query, modseq);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -3606,7 +3610,7 @@ namespace MailKit.Net.Imap {
 
 			var query = FormatSummaryItems (items);
 			var maxValue = max != -1 ? (max + 1).ToString () : "*";
-			var command = string.Format ("FETCH {0}:{1} ({2})\r\n", min + 1, maxValue, query);
+			var command = string.Format ("FETCH {0}:{1} {2}\r\n", min + 1, maxValue, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -3724,7 +3728,7 @@ namespace MailKit.Net.Imap {
 
 			var query = FormatSummaryItems (items);
 			var maxValue = max != -1 ? (max + 1).ToString () : "*";
-			var command = string.Format ("FETCH {0}:{1} ({2}) (CHANGEDSINCE {3})\r\n", min + 1, maxValue, query, modseq);
+			var command = string.Format ("FETCH {0}:{1} {2} (CHANGEDSINCE {3})\r\n", min + 1, maxValue, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
