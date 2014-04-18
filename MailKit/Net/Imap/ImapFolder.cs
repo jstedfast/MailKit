@@ -2763,69 +2763,59 @@ namespace MailKit.Net.Imap {
 
 		string FormatSummaryItems (MessageSummaryItems items)
 		{
-			string query;
-			var noParenthesisFlag = false; 
-
 			if ((items & MessageSummaryItems.BodyStructure) != 0 && (items & MessageSummaryItems.Body) != 0) {
 				// don't query both the BODY and BODYSTRUCTURE, that's just dumb...
 				items &= ~MessageSummaryItems.Body;
 			}
 
-			// Note: GMail doesn't properly handle aliases (or at least it doesn't handle "FULL")...
-			if (!Engine.IsGMail) {
-				// first, eliminate the aliases...
-				if ((items & MessageSummaryItems.Full) == MessageSummaryItems.Full) {
-					items &= ~MessageSummaryItems.Full;
-					query = "FULL ";
-					noParenthesisFlag = true;
-				} else if ((items & MessageSummaryItems.All) == MessageSummaryItems.All) {
-					items &= ~MessageSummaryItems.All;
-					query = "ALL ";
-					noParenthesisFlag = true;
-				} else if ((items & MessageSummaryItems.Fast) == MessageSummaryItems.Fast) {
-					items &= ~MessageSummaryItems.Fast;
-					query = "FAST ";
-					noParenthesisFlag = true;
-				} else {
-					query = string.Empty;
-				}
-			} else {
-				query = string.Empty;
-			}
+			// first, eliminate the aliases...
+			if (items == MessageSummaryItems.All)
+				return "ALL";
+
+			if (items == MessageSummaryItems.Full)
+				return "FULL";
+
+			if (items == MessageSummaryItems.Fast)
+				return "FAST";
+
+			var tokens = new List<string> ();
 
 			// now add on any additional summary items...
 			if ((items & MessageSummaryItems.UniqueId) != 0)
-				query += "UID ";
+				tokens.Add ("UID");
 			if ((items & MessageSummaryItems.Flags) != 0)
-				query += "FLAGS ";
+				tokens.Add ("FLAGS");
 			if ((items & MessageSummaryItems.InternalDate) != 0)
-				query += "INTERNALDATE ";
+				tokens.Add ("INTERNALDATE");
 			if ((items & MessageSummaryItems.MessageSize) != 0)
-				query += "RFC822.SIZE ";
+				tokens.Add ("RFC822.SIZE");
 			if ((items & MessageSummaryItems.Envelope) != 0)
-				query += "ENVELOPE ";
+				tokens.Add ("ENVELOPE");
 			if ((items & MessageSummaryItems.BodyStructure) != 0)
-				query += "BODYSTRUCTURE ";
+				tokens.Add ("BODYSTRUCTURE");
 			if ((items & MessageSummaryItems.Body) != 0)
-				query += "BODY ";
+				tokens.Add ("BODY");
 
 			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
 				if ((items & MessageSummaryItems.ModSeq) != 0)
-					query += "MODSEQ ";
+					tokens.Add ("MODSEQ");
 			}
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) != 0) {
 				// now for the GMail extension items
 				if ((items & MessageSummaryItems.GMailMessageId) != 0)
-					query += "X-GM-MSGID ";
+					tokens.Add ("X-GM-MSGID");
 				if ((items & MessageSummaryItems.GMailThreadId) != 0)
-					query += "X-GM-THRID ";
+					tokens.Add ("X-GM-THRID");
 			}
 
 			if ((items & MessageSummaryItems.References) != 0)
-				query += "BODY.PEEK[HEADER.FIELDS (REFERENCES)]";
+				tokens.Add ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]");
 
-			return noParenthesisFlag ? query.TrimEnd () : string.Format ("({0})", query.TrimEnd ());
+			if (tokens.Count == 1)
+				return tokens[0];
+
+			return string.Format ("({0})", string.Join (" ", tokens));
 		}
 
 		/// <summary>
