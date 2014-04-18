@@ -232,7 +232,7 @@ namespace UnitTests.Net.Imap {
 				var summaries = created.Fetch (matches, items, CancellationToken.None);
 
 				foreach (var summary in summaries) {
-					var message = created.GetMessage (summary.UniqueId, CancellationToken.None);
+					created.GetMessage (summary.UniqueId, CancellationToken.None);
 				}
 
 				created.SetFlags (matches, MessageFlags.Seen | MessageFlags.Answered, false, CancellationToken.None);

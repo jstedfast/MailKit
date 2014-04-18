@@ -127,6 +127,29 @@ namespace UnitTests.Security {
 			return builder.ToString ();
 		}
 
+		[Test]
+		public void TestNtlmTargetInfoEncode ()
+		{
+			var now = DateTime.Now.Ticks;
+
+			var targetInfo = new TargetInfo {
+				DomainName = "DOMAIN",
+				ServerName = "SERVER",
+				DnsDomainName = "domain.com",
+				DnsServerName = "server.domain.com",
+				Timestamp = now,
+			};
+
+			var encoded = targetInfo.Encode (true);
+			var decoded = new TargetInfo (encoded, 0, encoded.Length, true);
+
+			Assert.AreEqual (targetInfo.DnsDomainName, decoded.DnsDomainName, "DnsDomainName does not match.");
+			Assert.AreEqual (targetInfo.DnsServerName, decoded.DnsServerName, "DnsServerName does not match.");
+			Assert.AreEqual (targetInfo.DomainName, decoded.DomainName, "DomainName does not match.");
+			Assert.AreEqual (targetInfo.ServerName, decoded.ServerName, "ServerName does not match.");
+			Assert.AreEqual (targetInfo.Timestamp, decoded.Timestamp, "Timestamp does not match.");
+		}
+
 		static readonly byte[] NtlmType1EncodedMessage = {
 			0x4e, 0x54, 0x4c, 0x4d, 0x53, 0x53, 0x50, 0x00, 0x01, 0x00, 0x00, 0x00,
 			0x07, 0x32, 0x00, 0x00, 0x06, 0x00, 0x06, 0x00, 0x33, 0x00, 0x00, 0x00,
@@ -191,8 +214,16 @@ namespace UnitTests.Security {
 			var nonce = HexEncode (type2.Nonce);
 			Assert.AreEqual ("0123456789abcdef", nonce, "The expected nonce does not match.");
 
-			var targetInfo = HexEncode (type2.TargetInfo);
+			var targetInfo = HexEncode (type2.EncodedTargetInfo);
 			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected TargetInfo does not match.");
+
+			Assert.AreEqual ("DOMAIN", type2.TargetInfo.DomainName, "The expected TargetInfo domain name does not match.");
+			Assert.AreEqual ("SERVER", type2.TargetInfo.ServerName, "The expected TargetInfo server name does not match.");
+			Assert.AreEqual ("domain.com", type2.TargetInfo.DnsDomainName, "The expected TargetInfo DNS domain name does not match.");
+			Assert.AreEqual ("server.domain.com", type2.TargetInfo.DnsServerName, "The expected TargetInfo DNS server name does not match.");
+
+			targetInfo = HexEncode (type2.TargetInfo.Encode (true));
+			Assert.AreEqual (expectedTargetInfo, targetInfo, "The expected re-encoded TargetInfo does not match.");
 		}
 
 		[Test]

@@ -46,7 +46,6 @@ using Encoding = Portable.Text.Encoding;
 namespace MailKit.Security.Ntlm {
 	class Type2Message : MessageBase
 	{
-		string targetName;
 		byte[] targetInfo;
 		byte[] nonce;
 
@@ -85,10 +84,14 @@ namespace MailKit.Security.Ntlm {
 		}
 
 		public string TargetName {
-			get { return targetName; }
+			get; private set;
 		}
 
-		public byte[] TargetInfo {
+		public TargetInfo TargetInfo {
+			get; private set;
+		}
+
+		public byte[] EncodedTargetInfo {
 			get { return (byte[]) targetInfo.Clone (); }
 		}
 
@@ -105,15 +108,17 @@ namespace MailKit.Security.Ntlm {
 
 			if (targetNameLength > 0) {
 				if ((Flags & NtlmFlags.NegotiateOem) != 0)
-					targetName = Encoding.ASCII.GetString (message, startIndex + targetNameOffset, targetNameLength);
+					TargetName = Encoding.ASCII.GetString (message, startIndex + targetNameOffset, targetNameLength);
 				else
-					targetName = Encoding.Unicode.GetString (message, startIndex + targetNameOffset, targetNameLength);
+					TargetName = Encoding.Unicode.GetString (message, startIndex + targetNameOffset, targetNameLength);
 			}
 			
 			// The Target Info block is optional.
 			if (message.Length >= 48) {
 				var targetInfoLength = BitConverterLE.ToUInt16 (message, startIndex + 40);
 				var targetInfoOffset = BitConverterLE.ToUInt16 (message, startIndex + 44);
+
+				TargetInfo = new TargetInfo (message, targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateUnicode) != 0);
 
 				if (targetInfoLength > 0) {
 					targetInfo = new byte[targetInfoLength];

@@ -171,7 +171,7 @@ namespace MailKit.Security.Ntlm {
 				using (var rng = RandomNumberGenerator.Create ())
 					rng.GetBytes (nonce);
 
-				var targetInfo = type2.TargetInfo;
+				var targetInfo = type2.EncodedTargetInfo;
 				var blob = new byte[28 + targetInfo.Length];
 				blob[0] = 0x01;
 				blob[1] = 0x01;
