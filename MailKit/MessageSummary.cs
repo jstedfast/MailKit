@@ -151,9 +151,8 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the list of GMail labels, if available.
 		/// </summary>
-		/// <value>Gmail labels.</value>
-		public List<IFolder> GMailLabels
-		{
+		/// <value>The GMail labels.</value>
+		public List<IFolder> GMailLabels {
 			get; internal set;
 		}
 

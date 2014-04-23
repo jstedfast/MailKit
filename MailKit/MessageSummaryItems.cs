@@ -104,7 +104,7 @@ namespace MailKit {
 		/// <summary>
 		/// Fetch the <see cref="MessageSummary.GMailLabels"/>.
 		/// </summary>
-		GMailLabels = 1 << 12,
+		GMailLabels    = 1 << 12,
 
 		#endregion
 
