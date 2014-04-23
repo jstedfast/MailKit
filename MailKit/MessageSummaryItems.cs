@@ -101,6 +101,11 @@ namespace MailKit {
 		/// </summary>
 		GMailThreadId  = 1 << 11,
 
+		/// <summary>
+		/// Fetch the <see cref="MessageSummary.GMailLabels"/>.
+		/// </summary>
+		GMailLabels = 1 << 12,
+
 		#endregion
 
 		#region Macros

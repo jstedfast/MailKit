@@ -2752,6 +2752,43 @@ namespace MailKit.Net.Imap {
 
 					summary.GMailThreadId = value64;
 					break;
+				case "X-GM-LABELS":
+					token = engine.ReadToken(ic.CancellationToken);
+					if (token.Type != ImapTokenType.OpenParen)
+						throw ImapEngine.UnexpectedToken(token, false);
+					
+					summary.GMailLabels = new List<IFolder>();
+					token = engine.ReadToken(ic.CancellationToken);
+					while (token.Type == ImapTokenType.QString || token.Type == ImapTokenType.Atom)
+					{
+						ImapFolder folder;
+						var label = (string) token.Value;
+						switch (label)
+						{
+						case "\\Archive": folder = engine.Archive; break;
+						case "\\Drafts": folder = engine.Drafts; break;
+						case "\\Flagged": folder = engine.Flagged; break;
+						case "\\Junk": folder = engine.Junk; break;
+						case "\\Sent": folder = engine.Sent; break;
+						case "\\Trash": folder = engine.Trash; break;
+						// XLIST flags:
+						case "\\Important": folder = engine.Flagged; break;
+						case "\\Inbox": folder = engine.Inbox; break;
+						case "\\Spam": folder = engine.Junk; break;
+						case "\\Starred": folder = engine.Flagged; break;
+						case "\\Draft": folder = engine.Drafts; break;
+
+						default: engine.FolderCache.TryGetValue((string)token.Value, out folder); break;
+						}
+						//TODO: What to do if folder == null?
+						if (folder != null)
+							summary.GMailLabels.Add(folder);
+						
+						token = engine.ReadToken(ic.CancellationToken);
+					}
+					if (token.Type != ImapTokenType.CloseParen)
+						throw ImapEngine.UnexpectedToken(token, false);
+					break;
 				default:
 					throw ImapEngine.UnexpectedToken (token, false);
 				}
@@ -2807,6 +2844,8 @@ namespace MailKit.Net.Imap {
 					tokens.Add ("X-GM-MSGID");
 				if ((items & MessageSummaryItems.GMailThreadId) != 0)
 					tokens.Add ("X-GM-THRID");
+				if ((items & MessageSummaryItems.GMailLabels) != 0)
+					tokens.Add ("X-GM-LABELS");
 			}
 
 			if ((items & MessageSummaryItems.References) != 0)

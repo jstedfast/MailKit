@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 
 using MimeKit;
 
@@ -144,6 +145,15 @@ namespace MailKit {
 		/// </summary>
 		/// <value>The GMail thread identifier.</value>
 		public ulong GMailThreadId {
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the list of GMail labels, if available.
+		/// </summary>
+		/// <value>Gmail labels.</value>
+		public List<IFolder> GMailLabels
+		{
 			get; internal set;
 		}
 
