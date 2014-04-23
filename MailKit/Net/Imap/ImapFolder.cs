@@ -2759,34 +2759,16 @@ namespace MailKit.Net.Imap {
 
 					token = engine.ReadToken (ic.CancellationToken);
 
-					summary.GMailLabels = new List<IFolder> ();
+					summary.GMailLabels = new List<string> ();
 
 					while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
-						var label = (string) token.Value;
-						ImapFolder folder;
-
-						switch (label) {
-						case "\\AllMail":   folder = engine.All; break;
-						case "\\Drafts":    folder = engine.Drafts; break;
-						case "\\Important": folder = engine.Flagged; break;
-						case "\\Inbox":     folder = engine.Inbox; break;
-						case "\\Sent":      folder = engine.Sent; break;
-						case "\\Spam":      folder = engine.Junk; break;
-						case "\\Starred":   folder = engine.Flagged; break;
-						case "\\Trash":     folder = engine.Trash; break;
-						default:
-							engine.FolderCache.TryGetValue (label, out folder);
-							break;
-						}
-
-						if (folder != null)
-							summary.GMailLabels.Add(folder);
+						summary.GMailLabels.Add ((string) token.Value);
 						
 						token = engine.ReadToken (ic.CancellationToken);
 					}
 
 					if (token.Type != ImapTokenType.CloseParen)
-						throw ImapEngine.UnexpectedToken(token, false);
+						throw ImapEngine.UnexpectedToken (token, false);
 
 					break;
 				default:
