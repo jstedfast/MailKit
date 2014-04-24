@@ -2762,7 +2762,9 @@ namespace MailKit.Net.Imap {
 					summary.GMailLabels = new List<string> ();
 
 					while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
-						summary.GMailLabels.Add ((string) token.Value);
+						var label = ImapEncoding.Decode ((string) token.Value);
+
+						summary.GMailLabels.Add (label);
 						
 						token = engine.ReadToken (ic.CancellationToken);
 					}
