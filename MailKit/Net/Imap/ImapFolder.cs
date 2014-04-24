@@ -6189,6 +6189,17 @@ namespace MailKit.Net.Imap {
 				numeric = (NumericSearchQuery) query;
 				builder.AppendFormat ("X-GM-THRID {0}", numeric.Value);
 				break;
+			case SearchTerm.GMailLabels:
+				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
+					throw new NotSupportedException ("The X-GM-LABELS search term is not supported by the IMAP server.");
+
+				text = (TextSearchQuery) query;
+				if (text.Text[0] == '\\')
+					builder.Append ("X-GM-LABELS %s");
+				else
+					builder.Append ("X-GM-LABELS %S");
+				args.Add (text.Text);
+				break;
 			case SearchTerm.GMailRaw:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 					throw new NotSupportedException ("The X-GM-RAW search term is not supported by the IMAP server.");

@@ -67,6 +67,7 @@ namespace MailKit.Search {
 		// GMail SEARCH extensions
 		GMailMessageId,
 		GMailThreadId,
+		GMailLabels,
 		GMailRaw,
 	}
 }

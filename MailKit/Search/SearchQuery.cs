@@ -715,6 +715,31 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
+		/// Matches messages that have the specified GMail label.
+		/// </summary>
+		/// <remarks>
+		/// This search term can only be used with GMail.
+		/// </remarks>
+		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
+		/// <param name="label">The GMail label.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="label"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="label"/> is empty.
+		/// </exception>
+		public static TextSearchQuery HasGMailLabel (string label)
+		{
+			if (label == null)
+				throw new ArgumentNullException ("label");
+
+			if (label.Length == 0)
+				throw new ArgumentException ("Cannot search for an emty string.", "label");
+
+			return new TextSearchQuery (SearchTerm.GMailLabels, label);
+		}
+
+		/// <summary>
 		/// Matches messages using the GMail search expression.
 		/// </summary>
 		/// <remarks>
