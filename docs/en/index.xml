@@ -1,6 +1,6 @@
 <Overview>
   <Assemblies>
-    <Assembly Name="MailKit" Version="0.11.0.0">
+    <Assembly Name="MailKit" Version="0.12.0.0">
       <Attributes>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyCompany("Xamarin Inc.")</AttributeName>
@@ -15,10 +15,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("0.11.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("0.12.0.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.11")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.12")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>

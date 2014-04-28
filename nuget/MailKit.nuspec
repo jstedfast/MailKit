@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.11.0.0</version>
+        <version>0.12.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -20,15 +20,9 @@ Features include:
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
 * S/MIME and PGP support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Implemented the NTLM SASL authentication mechanism.
-* Fixed CRAM-MD5 and DIGEST-MD5 SASL mechanisms to work properly.
-* Modified the DIGEST-MD5 logic to use System.Security.Cryptography.RandomNumberGenerator instead of System.Random for generating the nonce. For the PCL version, it now uses Windows.Security.Cryptography.CryptographicBuffer.GenerateRandom().
-* Modified ImapFolder.Fetch (int min, int max, ...) to work for empty folders. (issue #35)
-* Added a work-around for IMAP servers that send "* OK [UNSEEN 0]". (issue #34)
-* Fixed ImapFolder.GetBodyPart(int ...) to use FETCH instead of UID FETCH.
-* Added a version of IFolder.GetBodyPart() that takes a bool headersOnly parameter.
-* Added a BodyPartBasic.IsAttachment convenience property.
-* Added new wrapper APIs so developers don't need to pass CancellationTokens.
+        <releaseNotes>* Added support for GMail labels (X-GM-LABELS).
+* Fixed ImapFolder.Fetch() to be stricter in what it sends to avoid a BAD response some people were getting.
+* Fixed ImapClient.Inbox to never be null (previously broken for servers that used INBOX as the namespace).
 * Improved documentation</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
