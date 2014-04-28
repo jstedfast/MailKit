@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
@@ -26,7 +26,7 @@ Features include:
 * Improved documentation</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
-        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch win8 wp81 wpa81</tags>
+        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch net40 wpa81</tags>
         <dependencies>
             <dependency id="MimeKit" version="0.32.0.0" />
         </dependencies>
@@ -49,7 +49,7 @@ Features include:
         <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.xml" target="lib\MonoTouch\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
-        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\portable-net45+wp81+win8\MailKit.dll" />
-        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\portable-net45+wp81+win8\MailKit.xml" />
+        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\wpa81\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\wpa81\MailKit.xml" />
     </files>
 </package>
