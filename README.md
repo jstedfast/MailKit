@@ -335,13 +335,51 @@ foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Tok
 }
 ```
 
-You may also be interested in searching...
+The results of a Fetch command can also be used to download individual MIME parts rather
+than downloading the entire message. For example:
 
 ```csharp
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Token)) {
+	var text = summary.Body as BodyPartText;
+
+	if (text == null) {
+		var multipart = summary.Body as BodyPartMultipart;
+
+		if (multipart != null)
+			text = multipart.BodyParts.OfType<BodyPartText> ().FirstOrDefault ();
+	}
+
+	if (text == null)
+		continue;
+
+	// this will download *just* the text part
+	var part = inbox.GetBodyPart (summary.Index, text, cancel.Token);
+}
+```
+
+You may also be interested in sorting and searching...
+
+```csharp
+// let's search for all messages received after Jan 12, 2013 with "MailKit" in the subject...
 var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12"))
     .And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
 
 foreach (var uid in inbox.Search (query, cancel.Token)) {
+	var message = inbox.GetMessage (uid, cancel.Token);
+	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
+}
+
+// let's do the same search, but this time sort them in reverse arrival order
+var orderBy = new [] { OrderBy.ReverseArrival };
+foreach (var uid in inbox.Search (query, orderBy, cancel.Token)) {
+	var message = inbox.GetMessage (uid, cancel.Token);
+	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
+}
+
+// you'll notice that the orderBy argument is an array... this is because you
+// can actually sort the search results based on multiple columns:
+orderBy = new [] { OrderBy.ReverseArrival, OrderBy.Subject };
+foreach (var uid in inbox.Search (query, orderBy, cancel.Token)) {
 	var message = inbox.GetMessage (uid, cancel.Token);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
