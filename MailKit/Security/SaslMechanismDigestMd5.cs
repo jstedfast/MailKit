@@ -354,7 +354,7 @@ namespace MailKit.Security {
 		{
 			UserName = userName;
 
-			if (challenge.Realms.Length > 0)
+			if (challenge.Realms != null && challenge.Realms.Length > 0)
 				Realm = challenge.Realms[0];
 			else
 				Realm = string.Empty;
