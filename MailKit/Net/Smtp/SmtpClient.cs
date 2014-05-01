@@ -502,48 +502,6 @@ namespace MailKit.Net.Smtp {
 		/// this method simply returns without attempting to authenticate.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="SmtpClient"/> is not connected or is already authenticated.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The SMTP server does not support authentication.
-		/// </exception>
-		/// <exception cref="MailKit.Security.AuthenticationException">
-		/// Authentication using the supplied credentials has failed.
-		/// </exception>
-		/// <exception cref="MailKit.Security.SaslException">
-		/// A SASL authentication error occurred.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol error occurred.
-		/// </exception>
-		public void Authenticate (ICredentials credentials)
-		{
-			Authenticate (credentials, CancellationToken.None);
-		}
-
-		/// <summary>
-		/// Authenticates using the supplied credentials.
-		/// </summary>
-		/// <remarks>
-		/// <para>If the SMTP server supports authentication, then the SASL mechanisms
-		/// that both the client and server support are tried in order of greatest
-		/// security to weakest security. Once a SASL authentication mechanism is
-		/// found that both client and server support, the credentials are used to
-		/// authenticate.</para>
-		/// <para>If, on the other hand, authentication is not supported, then
-		/// this method simply returns without attempting to authenticate.</para>
-		/// </remarks>
-		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
@@ -572,7 +530,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken)
+		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient must be connected before you can authenticate.");
@@ -689,51 +647,6 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
 		/// be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para>The <paramref name="uri"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="uri"/> is not an absolute URI.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="SmtpClient"/> is already connected.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// An SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol error occurred.
-		/// </exception>
-		public void Connect (Uri uri)
-		{
-			Connect (uri, CancellationToken.None);
-		}
-
-		/// <summary>
-		/// Establishes a connection to the specified SMTP server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Establishes a connection to an SMTP or SMTP/S server. If the schema
-		/// in the uri is "smtp", a clear-text connection is made and defaults to using
-		/// port 25 if no port is specified in the URI. However, if the schema in the
-		/// uri is "smtps", an SSL connection is made using the
-		/// <see cref="ClientCertificates"/> and defaults to port 465 unless a port
-		/// is specified in the URI.</para>
-		/// <para>It should be noted that when using a clear-text SMTP connection,
-		/// if the server advertizes support for the STARTTLS extension, the client
-		/// will automatically switch into TLS mode before authenticating unless the
-		/// <paramref name="uri"/> contains a query string to disable it.</para>
-		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// and <see cref="Capabilities"/> properties will be populated.
-		/// </remarks>
-		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
-		/// be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para>The <paramref name="uri"/> is <c>null</c>.</para>
@@ -759,7 +672,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, CancellationToken cancellationToken)
+		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -871,26 +784,11 @@ namespace MailKit.Net.Smtp {
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		public void Disconnect (bool quit)
-		{
-			Disconnect (quit, CancellationToken.None);
-		}
-
-		/// <summary>
-		/// Disconnect the service.
-		/// </summary>
-		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
-		/// </remarks>
-		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
-		public void Disconnect (bool quit, CancellationToken cancellationToken)
+		public void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -908,30 +806,6 @@ namespace MailKit.Net.Smtp {
 			}
 
 			Disconnect ();
-		}
-
-		/// <summary>
-		/// Pings the SMTP server to keep the connection alive.
-		/// </summary>
-		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="SmtpClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol error occurred.
-		/// </exception>
-		public void NoOp ()
-		{
-			NoOp (CancellationToken.None);
 		}
 
 		/// <summary>
@@ -957,7 +831,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public void NoOp (CancellationToken cancellationToken)
+		public void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -1274,43 +1148,6 @@ namespace MailKit.Net.Smtp {
 		/// Sends the message by uploading it to an SMTP server.
 		/// </remarks>
 		/// <param name="message">The message.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="SmtpClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>A sender has not been specified.</para>
-		/// <para>-or-</para>
-		/// <para>No recipients have been specified.</para>
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol exception occurred.
-		/// </exception>
-		public void Send (MimeMessage message)
-		{
-			Send (message, CancellationToken.None);
-		}
-
-		/// <summary>
-		/// Send the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Sends the message by uploading it to an SMTP server.
-		/// </remarks>
-		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
@@ -1340,7 +1177,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public void Send (MimeMessage message, CancellationToken cancellationToken)
+		public void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1366,49 +1203,6 @@ namespace MailKit.Net.Smtp {
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="message"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="sender"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="recipients"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="SmtpClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>A sender has not been specified.</para>
-		/// <para>-or-</para>
-		/// <para>No recipients have been specified.</para>
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol exception occurred.
-		/// </exception>
-		public void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients)
-		{
-			Send (message, sender, recipients, CancellationToken.None);
-		}
-
-		/// <summary>
-		/// Send the specified message using the supplied sender and recipients.
-		/// </summary>
-		/// <remarks>
-		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.
-		/// </remarks>
-		/// <param name="message">The message.</param>
-		/// <param name="sender">The mailbox address to use for sending the message.</param>
-		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="message"/> is <c>null</c>.</para>
@@ -1442,7 +1236,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken)
+		public void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");

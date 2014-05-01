@@ -196,36 +196,15 @@ namespace MailKit {
 		/// </summary>
 		/// <returns>The <see cref="FolderAccess"/> state of the folder.</returns>
 		/// <param name="access">The requested folder access.</param>
-		FolderAccess Open (FolderAccess access);
-
-		/// <summary>
-		/// Opens the folder using the requested folder access.
-		/// </summary>
-		/// <returns>The <see cref="FolderAccess"/> state of the folder.</returns>
-		/// <param name="access">The requested folder access.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		FolderAccess Open (FolderAccess access, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Closes the folder, optionally expunging the messages marked for deletion.
-		/// </summary>
-		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
-		void Close (bool expunge);
+		FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Closes the folder, optionally expunging the messages marked for deletion.
 		/// </summary>
 		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Close (bool expunge, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Creates a new subfolder with the given name.
-		/// </summary>
-		/// <returns>The created folder.</returns>
-		/// <param name="name">The name of the folder to create.</param>
-		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
-		IFolder Create (string name, bool isMessageFolder);
+		void Close (bool expunge, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Creates a new subfolder with the given name.
@@ -234,14 +213,7 @@ namespace MailKit {
 		/// <param name="name">The name of the folder to create.</param>
 		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Renames the folder to exist with a new name under a new parent folder.
-		/// </summary>
-		/// <param name="parent">The new parent folder.</param>
-		/// <param name="name">The new name of the folder.</param>
-		void Rename (IFolder parent, string name);
+		IFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Renames the folder to exist with a new name under a new parent folder.
@@ -249,47 +221,25 @@ namespace MailKit {
 		/// <param name="parent">The new parent folder.</param>
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Rename (IFolder parent, string name, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Deletes the folder on the IMAP server.
-		/// </summary>
-		void Delete ();
+		void Rename (IFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Deletes the folder on the IMAP server.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Delete (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Subscribes the folder.
-		/// </summary>
-		void Subscribe ();
+		void Delete (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Subscribes the folder.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Subscribe (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Unsubscribes the folder.
-		/// </summary>
-		void Unsubscribe ();
+		void Subscribe (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Unsubscribes the folder.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Unsubscribe (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the subfolders.
-		/// </summary>
-		/// <returns>The subfolders.</returns>
-		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
-		IEnumerable<IFolder> GetSubfolders (bool subscribedOnly);
+		void Unsubscribe (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the subfolders.
@@ -297,17 +247,7 @@ namespace MailKit {
 		/// <returns>The subfolders.</returns>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the specified subfolder.
-		/// </summary>
-		/// <returns>The subfolder.</returns>
-		/// <param name="name">The name of the subfolder.</param>
-		/// <exception cref="FolderNotFoundException">
-		/// The requested folder could not be found.
-		/// </exception>
-		IFolder GetSubfolder (string name);
+		IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified subfolder.
@@ -318,39 +258,20 @@ namespace MailKit {
 		/// <exception cref="FolderNotFoundException">
 		/// The requested folder could not be found.
 		/// </exception>
-		IFolder GetSubfolder (string name, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Forces the server to flush its state for the folder.
-		/// </summary>
-		void Check ();
+		IFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Forces the server to flush its state for the folder.
 		/// </summary>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Check (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Updates the values of the specified items.
-		/// </summary>
-		/// <param name="items">The items to update.</param>
-		void Status (StatusItems items);
+		void Check (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Updates the values of the specified items.
 		/// </summary>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Status (StatusItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Expunges the folder, permanently removing all messages marked for deletion.
-		/// </summary>
-		/// <remarks>
-		/// An <see cref="Expunged"/> event will be emitted for each message that is expunged.
-		/// </remarks>
-		void Expunge ();
+		void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Expunges the folder, permanently removing all messages marked for deletion.
@@ -359,16 +280,7 @@ namespace MailKit {
 		/// An <see cref="Expunged"/> event will be emitted for each message that is expunged.
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Expunge (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Expunges the specified uids, permanently removing them from the folder.
-		/// </summary>
-		/// <remarks>
-		/// An <see cref="Expunged"/> event will be emitted for each message that is expunged.
-		/// </remarks>
-		/// <param name="uids">The message uids.</param>
-		void Expunge (UniqueId[] uids);
+		void Expunge (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Expunges the specified uids, permanently removing them from the folder.
@@ -378,15 +290,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Expunge (UniqueId[] uids, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Appends the specified message to the folder.
-		/// </summary>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		UniqueId? Append (MimeMessage message, MessageFlags flags);
+		void Expunge (UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Appends the specified message to the folder.
@@ -395,16 +299,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Appends the specified message to the folder.
-		/// </summary>
-		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="message">The message.</param>
-		/// <param name="flags">The message flags.</param>
-		/// <param name="date">The received date of the message.</param>
-		UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date);
+		UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Appends the specified message to the folder.
@@ -414,15 +309,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Appends the specified messages to the folder.
-		/// </summary>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each message.</param>
-		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags);
+		UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Appends the specified messages to the folder.
@@ -431,16 +318,7 @@ namespace MailKit {
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Appends the specified messages to the folder.
-		/// </summary>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="messages">The array of messages to append to the folder.</param>
-		/// <param name="flags">The message flags to use for each of the messages.</param>
-		/// <param name="dates">The received dates to use for each of the messages.</param>
-		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates);
+		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Appends the specified messages to the folder.
@@ -450,15 +328,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Copies the specified messages to the destination folder.
-		/// </summary>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		UniqueId[] CopyTo (UniqueId[] uids, IFolder destination);
+		UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
@@ -467,15 +337,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] CopyTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Moves the specified messages to the destination folder.
-		/// </summary>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="uids">The UIDs of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		UniqueId[] MoveTo (UniqueId[] uids, IFolder destination);
+		UniqueId[] CopyTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
@@ -484,14 +346,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] MoveTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Copies the specified messages to the destination folder.
-		/// </summary>
-		/// <param name="indexes">The indexes of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		void CopyTo (int[] indexes, IFolder destination);
+		UniqueId[] MoveTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
@@ -499,14 +354,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Moves the specified messages to the destination folder.
-		/// </summary>
-		/// <param name="indexes">The indexes of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		void MoveTo (int[] indexes, IFolder destination);
+		void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
@@ -514,15 +362,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the specified message UIDs.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="uids">The UIDs.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items);
+		void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
@@ -531,16 +371,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="uids">The UIDs.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items);
+		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
@@ -550,16 +381,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum UID.</param>
-		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items);
+		IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
@@ -569,17 +391,7 @@ namespace MailKit {
 		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum UID.</param>
-		/// <param name="max">The maximum UID.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items);
+		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
@@ -590,15 +402,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the specified message indexes.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items);
+		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes.
@@ -607,16 +411,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items);
+		IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
@@ -626,16 +421,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the messages between the two indexes, inclusive.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items);
+		IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
@@ -645,17 +431,7 @@ namespace MailKit {
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items);
+		IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
@@ -666,14 +442,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the specified message.
-		/// </summary>
-		/// <returns>The message.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		MimeMessage GetMessage (UniqueId uid);
+		IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified message.
@@ -681,14 +450,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the specified message.
-		/// </summary>
-		/// <returns>The message.</returns>
-		/// <param name="index">The index of the message.</param>
-		MimeMessage GetMessage (int index);
+		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified message.
@@ -696,16 +458,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeMessage GetMessage (int index, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the specified body part.
-		/// </summary>
-		/// <returns>The body part.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly = false);
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified body part.
@@ -714,7 +467,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken);
+		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified body part.
@@ -724,16 +477,7 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the specified body part.
-		/// </summary>
-		/// <returns>The body part.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly = false);
+		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified body part.
@@ -742,7 +486,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken);
+		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified body part.
@@ -752,22 +496,7 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets a substream of the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Fetches a substream of the message. If the starting offset is beyond
-		/// the end of the message, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the message, a truncated stream
-		/// will be returned.
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		Stream GetStream (UniqueId uid, int offset, int count);
+		MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets a substream of the specified message.
@@ -783,22 +512,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets a substream of the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Fetches a substream of the message. If the starting offset is beyond
-		/// the end of the message, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the message, a truncated stream
-		/// will be returned.
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		Stream GetStream (int index, int offset, int count);
+		Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets a substream of the specified message.
@@ -814,23 +528,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets a substream of the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Fetches a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count);
+		Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets a substream of the specified body part.
@@ -847,23 +545,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets a substream of the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Fetches a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		Stream GetStream (int index, BodyPart part, int offset, int count);
+		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets a substream of the specified body part.
@@ -880,15 +562,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Adds a set of flags to the specified messages.
-		/// </summary>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent);
+		Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Adds a set of flags to the specified messages.
@@ -897,15 +571,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Removes a set of flags from the specified messages.
-		/// </summary>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent);
+		void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Removes a set of flags from the specified messages.
@@ -914,15 +580,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Sets the flags of the specified messages.
-		/// </summary>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent);
+		void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sets the flags of the specified messages.
@@ -931,17 +589,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent);
+		void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -952,17 +600,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent);
+		UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -973,17 +611,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent);
+		UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -994,15 +622,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Adds a set of flags to the specified messages.
-		/// </summary>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		void AddFlags (int[] indexes, MessageFlags flags, bool silent);
+		UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Adds a set of flags to the specified messages.
@@ -1011,15 +631,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Removes a set of flags from the specified messages.
-		/// </summary>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		void RemoveFlags (int[] indexes, MessageFlags flags, bool silent);
+		void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Removes a set of flags from the specified messages.
@@ -1028,15 +640,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Sets the flags of the specified messages.
-		/// </summary>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		void SetFlags (int[] indexes, MessageFlags flags, bool silent);
+		void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sets the flags of the specified messages.
@@ -1045,17 +649,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent);
+		void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -1066,17 +660,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent);
+		int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -1087,17 +671,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent);
+		int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -1108,17 +682,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Searches the folder for messages matching the specified query.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
-		/// <param name="query">The search query.</param>
-		UniqueId[] Search (SearchQuery query);
+		int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Searches the folder for messages matching the specified query.
@@ -1129,20 +693,7 @@ namespace MailKit {
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Searches the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs in the specified sort order.</returns>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		UniqueId[] Search (SearchQuery query, OrderBy[] orderBy);
+		UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Searches the folder for messages matching the specified query,
@@ -1156,18 +707,7 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Searches the subset of UIDs in the folder for messages matching the specified query.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="query">The search query.</param>
-		UniqueId[] Search (UniqueId[] uids, SearchQuery query);
+		UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.
@@ -1179,21 +719,7 @@ namespace MailKit {
 		/// <param name="uids">The subset of UIDs</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Searches the subset of UIDs in the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs in the specified sort order.</returns>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy);
+		UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Searches the subset of UIDs in the folder for messages matching the specified query,
@@ -1208,18 +734,7 @@ namespace MailKit {
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
-		/// </remarks>
-		/// <returns>An array of message threads.</returns>
-		/// <param name="algorithm">The threading algorithm to use.</param>
-		/// <param name="query">The search query.</param>
-		MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query);
+		UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
@@ -1231,19 +746,7 @@ namespace MailKit {
 		/// <param name="algorithm">The threading algorithm to use.</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
-		/// </remarks>
-		/// <returns>An array of message threads.</returns>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="algorithm">The threading algorithm to use.</param>
-		/// <param name="query">The search query.</param>
-		MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query);
+		MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
@@ -1256,7 +759,7 @@ namespace MailKit {
 		/// <param name="algorithm">The threading algorithm to use.</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken);
+		MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Occurs when the folder is deleted.

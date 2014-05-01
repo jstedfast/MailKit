@@ -56,25 +56,8 @@ namespace MailKit {
 		/// Gets the number of messages available in the message spool.
 		/// </summary>
 		/// <returns>The number of available messages.</returns>
-		int GetMessageCount ();
-
-		/// <summary>
-		/// Gets the number of messages available in the message spool.
-		/// </summary>
-		/// <returns>The number of available messages.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		int GetMessageCount (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the UID of the message at the specified index.
-		/// </summary>
-		/// <remarks>
-		/// Not all servers support UIDs, so you should first check
-		/// the <see cref="SupportsUids"/> property.
-		/// </remarks>
-		/// <returns>The message UID.</returns>
-		/// <param name="index">The message index.</param>
-		string GetMessageUid (int index);
+		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the UID of the message at the specified index.
@@ -86,17 +69,7 @@ namespace MailKit {
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		string GetMessageUid (int index, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the full list of available message UIDs.
-		/// </summary>
-		/// <remarks>
-		/// Not all servers support UIDs, so you should first check
-		/// the <see cref="SupportsUids"/> property.
-		/// </remarks>
-		/// <returns>The message UIDs.</returns>
-		string[] GetMessageUids ();
+		string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the full list of available message UIDs.
@@ -107,14 +80,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message UIDs.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		string[] GetMessageUids (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the size of the specified message, in bytes.
-		/// </summary>
-		/// <returns>The message size, in bytes.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		int GetMessageSize (string uid);
+		string[] GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the size of the specified message, in bytes.
@@ -122,14 +88,7 @@ namespace MailKit {
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		int GetMessageSize (string uid, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the size of the specified message, in bytes.
-		/// </summary>
-		/// <returns>The message size, in bytes.</returns>
-		/// <param name="index">The index of the message.</param>
-		int GetMessageSize (int index);
+		int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the size of the specified message, in bytes.
@@ -137,27 +96,14 @@ namespace MailKit {
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		int GetMessageSize (int index, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the sizes for all available messages, in bytes.
-		/// </summary>
-		/// <returns>The message sizes, in bytes.</returns>
-		int[] GetMessageSizes ();
+		int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the sizes for all available messages, in bytes.
 		/// </summary>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		int[] GetMessageSizes (CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the headers for the specified message.
-		/// </summary>
-		/// <returns>The message headers.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		HeaderList GetMessageHeaders (string uid);
+		int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the headers for the specified message.
@@ -165,14 +111,7 @@ namespace MailKit {
 		/// <returns>The message headers.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the headers for the specified message.
-		/// </summary>
-		/// <returns>The message headers.</returns>
-		/// <param name="index">The index of the message.</param>
-		HeaderList GetMessageHeaders (int index);
+		HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the headers for the specified message.
@@ -180,14 +119,7 @@ namespace MailKit {
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the specified message.
-		/// </summary>
-		/// <returns>The message.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		MimeMessage GetMessage (string uid);
+		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified message.
@@ -195,14 +127,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		MimeMessage GetMessage (string uid, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Gets the specified message.
-		/// </summary>
-		/// <returns>The message.</returns>
-		/// <param name="index">The index of the message.</param>
-		MimeMessage GetMessage (int index);
+		MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified message.
@@ -210,18 +135,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		MimeMessage GetMessage (int index, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Mark the specified message for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool)"/>).
-		/// </remarks>
-		/// <param name="uid">The UID of the message.</param>
-		void DeleteMessage (string uid);
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Mark the specified message for deletion.
@@ -233,18 +147,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		void DeleteMessage (string uid, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Mark the specified message for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool)"/>).
-		/// </remarks>
-		/// <param name="index">The index of the message.</param>
-		void DeleteMessage (int index);
+		void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Mark the specified message for deletion.
@@ -256,17 +159,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		void DeleteMessage (int index, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Reset the state of all messages marked for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool)"/>).
-		/// </remarks>
-		void Reset ();
+		void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Reset the state of all messages marked for deletion.
@@ -277,6 +170,6 @@ namespace MailKit {
 		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		void Reset (CancellationToken cancellationToken);
+		void Reset (CancellationToken cancellationToken = default (CancellationToken));
 	}
 }

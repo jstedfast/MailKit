@@ -79,28 +79,8 @@ namespace MailKit {
 		/// property will be populated.
 		/// </remarks>
 		/// <param name="uri">The server URI.</param>
-		void Connect (Uri uri);
-
-		/// <summary>
-		/// Establishes a connection to the server specified in the URI.
-		/// </summary>
-		/// <remarks>
-		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// property will be populated.
-		/// </remarks>
-		/// <param name="uri">The server URI.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		void Connect (Uri uri, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Authenticates using the supplied credentials.
-		/// </summary>
-		/// <remarks>
-		/// If the service supports authentication, then the credentials are used
-		/// to authenticate. Otherwise, this method simply returns.
-		/// </remarks>
-		/// <param name="credentials">The user's credentials.</param>
-		void Authenticate (ICredentials credentials);
+		void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Authenticates using the supplied credentials.
@@ -111,16 +91,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		void Authenticate (ICredentials credentials, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Disconnect the service.
-		/// </summary>
-		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
-		/// </remarks>
-		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-		void Disconnect (bool quit);
+		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Disconnect the service.
@@ -130,15 +101,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		void Disconnect (bool quit, CancellationToken cancellationToken);
-
-		/// <summary>
-		/// Pings the message service to keep the connection alive.
-		/// </summary>
-		/// <remarks>
-		/// Mail servers, if left idle for too long, will automatically drop the connection.
-		/// </remarks>
-		void NoOp ();
+		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Pings the message service to keep the connection alive.
@@ -147,6 +110,6 @@ namespace MailKit {
 		/// Mail servers, if left idle for too long, will automatically drop the connection.
 		/// </remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
-		void NoOp (CancellationToken cancellationToken);
+		void NoOp (CancellationToken cancellationToken = default (CancellationToken));
 	}
 }
