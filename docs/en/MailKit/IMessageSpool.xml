@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageSpool implements class MailKit.IMessageService, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.12.0.0</AssemblyVersion>
+    <AssemblyVersion>0.13.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -26,61 +26,11 @@
   </Docs>
   <Members>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Mark the specified message for deletion.
-            </summary>
-        <remarks>
-            Messages marked for deletion are not actually deleted until the session
-            is cleanly disconnected
-            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean)" />).
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Mark the specified message for deletion.
-            </summary>
-        <remarks>
-            Messages marked for deletion are not actually deleted until the session
-            is cleanly disconnected
-            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean)" />).
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -103,11 +53,11 @@
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -130,55 +80,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeMessage</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Gets the specified message.
-            </summary>
-        <returns>The message.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeMessage</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Gets the specified message.
-            </summary>
-        <returns>The message.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -198,11 +104,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -222,30 +128,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageCount">
-      <MemberSignature Language="C#" Value="public int GetMessageCount ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageCount() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets the number of messages available in the message spool.
-            </summary>
-        <returns>The number of available messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageCount">
-      <MemberSignature Language="C#" Value="public int GetMessageCount (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int GetMessageCount (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageCount(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -263,55 +150,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.HeaderList</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Gets the headers for the specified message.
-            </summary>
-        <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.HeaderList</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Gets the headers for the specified message.
-            </summary>
-        <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -331,11 +174,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -355,55 +198,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Gets the size of the specified message, in bytes.
-            </summary>
-        <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Gets the size of the specified message, in bytes.
-            </summary>
-        <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int GetMessageSize (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -423,11 +222,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -447,30 +246,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public int[] GetMessageSizes ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets the sizes for all available messages, in bytes.
-            </summary>
-        <returns>The message sizes, in bytes.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -488,36 +268,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUid">
-      <MemberSignature Language="C#" Value="public string GetMessageUid (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The message index.</param>
-        <summary>
-            Gets the UID of the message at the specified index.
-            </summary>
-        <returns>The message UID.</returns>
-        <remarks>
-            Not all servers support UIDs, so you should first check
-            the <see cref="P:MailKit.IMessageSpool.SupportsUids" /> property.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageUid">
-      <MemberSignature Language="C#" Value="public string GetMessageUid (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public string GetMessageUid (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -540,33 +295,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public string[] GetMessageUids ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets the full list of available message UIDs.
-            </summary>
-        <returns>The message UIDs.</returns>
-        <remarks>
-            Not all servers support UIDs, so you should first check
-            the <see cref="P:MailKit.IMessageSpool.SupportsUids" /> property.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -587,33 +320,11 @@
       </Docs>
     </Member>
     <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Reset the state of all messages marked for deletion.
-            </summary>
-        <remarks>
-            Messages marked for deletion are not actually deleted until the session
-            is cleanly disconnected
-            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean)" />).
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Reset (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -638,7 +349,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool SupportsUids" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>

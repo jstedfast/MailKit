@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.12.0.0</version>
+        <version>0.13.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -18,17 +18,16 @@ Features include:
 * A fully-cancellable Pop3Client with support for STLS, UIDL, and APOP.
 * A fully-cancellable ImapClient with support for LITERAL+, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, XLIST, and X-GM-EXT1.
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
-* S/MIME and PGP support via MimeKit</description>
+* S/MIME and PGP support via MimeKit
+* Microsoft TNEF support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Added support for GMail labels (X-GM-LABELS).
-* Fixed ImapFolder.Fetch() to be stricter in what it sends to avoid a BAD response some people were getting.
-* Fixed ImapClient.Inbox to never be null (previously broken for servers that used INBOX as the namespace).
-* Improved documentation</releaseNotes>
+        <releaseNotes>* Fixed a NullReferenceException in the DIGEST-MD5 SASL mechanism if no realms were specified by the server.
+* Simplified the API a bit by getting rid of the non-CancellationToken methods in favour of making CancellationTokens optional parameters.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
-        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser xamarin android ios monodroid monotouch net40 wpa81</tags>
+        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.32.0.0" />
+            <dependency id="MimeKit" version="0.33.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

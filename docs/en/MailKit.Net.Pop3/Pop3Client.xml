@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Pop3Client extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageSpool, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.12.0.0</AssemblyVersion>
+    <AssemblyVersion>0.13.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -37,7 +37,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -56,7 +56,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
@@ -77,67 +77,11 @@
       </Docs>
     </Member>
     <Member MemberName="Authenticate">
-      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="credentials" Type="System.Net.ICredentials" />
-      </Parameters>
-      <Docs>
-        <param name="credentials">The user's credentials.</param>
-        <summary>
-            Authenticates using the supplied credentials.
-            </summary>
-        <remarks>
-          <para>If the POP3 server supports the APOP authentication mechanism,
-            then APOP is used.</para>
-          <para>If the APOP authentication mechanism is not supported and the
-            server supports one or more SASL authentication mechanisms, then
-            the SASL mechanisms that both the client and server support are tried
-            in order of greatest security to weakest security. Once a SASL
-            authentication mechanism is found that both client and server support,
-            the credentials are used to authenticate.</para>
-          <para>If the server does not support SASL or if no common SASL mechanisms
-            can be found, then the USER and PASS commands are used as a fallback.</para>
-        </remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="credentials" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected or is already authenticated.
-            </exception>
-        <exception cref="T:MailKit.Security.AuthenticationException">
-            Authentication using the supplied credentials has failed.
-            </exception>
-        <exception cref="T:MailKit.Security.SaslException">
-            A SASL authentication error occurred.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            A POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            An POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="Authenticate">
-      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -204,7 +148,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
@@ -227,7 +171,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Pop3.Pop3Capabilities Capabilities" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
@@ -252,7 +196,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
@@ -270,67 +214,11 @@
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
-      </Parameters>
-      <Docs>
-        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
-            be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
-        <summary>
-            Establishes a connection to the specified POP3 server.
-            </summary>
-        <remarks>
-          <para>Establishes a connection to an POP3 or POP3/S server. If the schema
-            in the uri is "pop", a clear-text connection is made and defaults to using
-            port 110 if no port is specified in the URI. However, if the schema in the
-            uri is "pops", an SSL connection is made using the
-            <see cref="P:MailKit.Net.Pop3.Pop3Client.ClientCertificates" /> and defaults to port 995 unless a port
-            is specified in the URI.</para>
-          <para>It should be noted that when using a clear-text POP3 connection,
-            if the server advertizes support for the STLS extension, the client
-            will automatically switch into TLS mode before authenticating unless
-            the <paramref name="uri" /> contains a query string to disable it.</para>
-            If a successful connection is made, the <see cref="P:MailKit.Net.Pop3.Pop3Client.AuthenticationMechanisms" />
-            and <see cref="P:MailKit.Net.Pop3.Pop3Client.Capabilities" /> properties will be populated.
-            </remarks>
-        <exception cref="T:System.ArgumentNullException">
-            The <paramref name="uri" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-            The <paramref name="uri" /> is not an absolute URI.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is already connected.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            A POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -390,107 +278,11 @@
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Mark the specified message for deletion.
-            </summary>
-        <remarks>
-            Messages marked for deletion are not actually deleted until the session
-            is cleanly disconnected (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean)" />).
-            </remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="index" /> is not a valid message index.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Mark the specified message for deletion.
-            </summary>
-        <remarks>
-            Messages marked for deletion are not actually deleted until the session
-            is cleanly disconnected (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean)" />).
-            </remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uid" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uid" /> is not a valid message UID.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.NotSupportedException">
-            The POP3 server does not support the UIDL extension.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -540,11 +332,11 @@
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -600,37 +392,11 @@
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="quit" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-        <summary>
-            Disconnect the service.
-            </summary>
-        <remarks>
-            If <paramref name="quit" /> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
-            </remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -658,7 +424,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -679,7 +445,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -703,7 +469,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 ExpirePolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -729,7 +495,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -748,7 +514,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -787,103 +553,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeMessage</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Gets the specified message.
-            </summary>
-        <returns>The message.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="index" /> is not a valid message index.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeMessage</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Gets the specified message.
-            </summary>
-        <returns>The message.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uid" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uid" /> is not a valid message UID.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.NotSupportedException">
-            The POP3 server does not support the UIDL extension.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -930,11 +604,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -987,48 +661,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageCount">
-      <MemberSignature Language="C#" Value="public int GetMessageCount ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageCount() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets the number of messages available in the message spool.
-            </summary>
-        <returns>The number of available messages.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageCount">
-      <MemberSignature Language="C#" Value="public int GetMessageCount (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int GetMessageCount (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageCount(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1070,103 +707,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.HeaderList</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Gets the headers for the specified message.
-            </summary>
-        <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="index" /> is not a valid message index.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.HeaderList</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Gets the headers for the specified message.
-            </summary>
-        <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uid" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uid" /> is not a valid message UID.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.NotSupportedException">
-            The POP3 server does not support the UIDL extension.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -1213,11 +758,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -1270,100 +815,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Gets the size of the specified message, in bytes.
-            </summary>
-        <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="index" /> is not a valid message index.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Gets the size of the specified message, in bytes.
-            </summary>
-        <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="uid" /> is <c>null</c>.
-            </exception>
-        <exception cref="T:System.ArgumentException">
-          <paramref name="uid" /> is not a valid message UID.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int GetMessageSize (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1410,11 +866,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1464,48 +920,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public int[] GetMessageSizes ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets the sizes for all available messages, in bytes.
-            </summary>
-        <returns>The message sizes, in bytes.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -1547,57 +966,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUid">
-      <MemberSignature Language="C#" Value="public string GetMessageUid (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The message index.</param>
-        <summary>
-            Gets the UID of the message at the specified index.
-            </summary>
-        <returns>The message UID.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ArgumentOutOfRangeException">
-          <paramref name="index" /> is not a valid message index.
-            </exception>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.NotSupportedException">
-            The POP3 server does not support the UIDL extension.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageUid">
-      <MemberSignature Language="C#" Value="public string GetMessageUid (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public string GetMessageUid (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1647,51 +1020,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public string[] GetMessageUids ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets the full list of available message UIDs.
-            </summary>
-        <returns>The message uids.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.NotSupportedException">
-            The POP3 server does not support the UIDL extension.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -1740,7 +1073,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string Implementation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1761,7 +1094,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1783,7 +1116,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 LoginDelay" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1800,44 +1133,11 @@
       </Docs>
     </Member>
     <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Pings the POP3 server to keep the connection alive.
-            </summary>
-        <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected or authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1875,47 +1175,11 @@
       </Docs>
     </Member>
     <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Reset the state of all messages marked for deletion.
-            </summary>
-        <remarks>To be added.</remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            The POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Reset (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1960,7 +1224,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool SupportsUids" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1986,7 +1250,7 @@
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>

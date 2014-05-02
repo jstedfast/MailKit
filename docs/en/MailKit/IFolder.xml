@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IFolder implements class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.12.0.0</AssemblyVersion>
+    <AssemblyVersion>0.13.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -23,7 +23,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.MessageFlags AcceptedFlags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageFlags</ReturnType>
@@ -45,7 +45,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.FolderAccess Access" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderAccess</ReturnType>
@@ -59,61 +59,11 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public void AddFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Adds a set of flags to the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public void AddFlags (int[] indexes, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages.</param>
-        <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Adds a set of flags to the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public void AddFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void AddFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -136,39 +86,11 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] AddFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] AddFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-            </summary>
-        <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public void AddFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void AddFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -191,39 +113,11 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public int[] AddFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] AddFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-            </summary>
-        <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] AddFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] AddFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] AddFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -249,11 +143,11 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public int[] AddFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int[] AddFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] AddFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -279,85 +173,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="message" Type="MimeKit.MimeMessage" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-      </Parameters>
-      <Docs>
-        <param name="message">The message.</param>
-        <param name="flags">The message flags.</param>
-        <summary>
-            Appends the specified message to the folder.
-            </summary>
-        <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="messages" Type="MimeKit.MimeMessage[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags[]" />
-      </Parameters>
-      <Docs>
-        <param name="messages">The array of messages to append to the folder.</param>
-        <param name="flags">The message flags to use for each message.</param>
-        <summary>
-            Appends the specified messages to the folder.
-            </summary>
-        <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, DateTimeOffset date);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.DateTimeOffset date) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="message" Type="MimeKit.MimeMessage" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="date" Type="System.DateTimeOffset" />
-      </Parameters>
-      <Docs>
-        <param name="message">The message.</param>
-        <param name="flags">The message flags.</param>
-        <param name="date">The received date of the message.</param>
-        <summary>
-            Appends the specified message to the folder.
-            </summary>
-        <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -379,37 +199,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, DateTimeOffset[] dates);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.DateTimeOffset[] dates) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="messages" Type="MimeKit.MimeMessage[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags[]" />
-        <Parameter Name="dates" Type="System.DateTimeOffset[]" />
-      </Parameters>
-      <Docs>
-        <param name="messages">The array of messages to append to the folder.</param>
-        <param name="flags">The message flags to use for each of the messages.</param>
-        <param name="dates">The received dates to use for each of the messages.</param>
-        <summary>
-            Appends the specified messages to the folder.
-            </summary>
-        <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -431,11 +225,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, DateTimeOffset date, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, DateTimeOffset date, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.DateTimeOffset date, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -459,11 +253,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, DateTimeOffset[] dates, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, DateTimeOffset[] dates, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.DateTimeOffset[] dates, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -491,7 +285,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.FolderAttributes Attributes" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderAttributes</ReturnType>
@@ -505,29 +299,11 @@
       </Docs>
     </Member>
     <Member MemberName="Check">
-      <MemberSignature Language="C#" Value="public void Check ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Check() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Forces the server to flush its state for the folder.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Check">
-      <MemberSignature Language="C#" Value="public void Check (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Check (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Check(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -544,32 +320,11 @@
       </Docs>
     </Member>
     <Member MemberName="Close">
-      <MemberSignature Language="C#" Value="public void Close (bool expunge);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close(bool expunge) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="expunge" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="expunge">If set to <c>true</c>, expunge.</param>
-        <summary>
-            Closes the folder, optionally expunging the messages marked for deletion.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Close">
-      <MemberSignature Language="C#" Value="public void Close (bool expunge, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Close (bool expunge, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close(bool expunge, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -588,58 +343,11 @@
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] CopyTo (MailKit.UniqueId[] uids, MailKit.IFolder destination);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] CopyTo(valuetype MailKit.UniqueId[] uids, class MailKit.IFolder destination) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages to copy.</param>
-        <param name="destination">The destination folder.</param>
-        <summary>
-            Copies the specified messages to the destination folder.
-            </summary>
-        <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (int[] indexes, MailKit.IFolder destination);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(int32[] indexes, class MailKit.IFolder destination) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages to copy.</param>
-        <param name="destination">The destination folder.</param>
-        <summary>
-            Copies the specified messages to the destination folder.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] CopyTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] CopyTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] CopyTo(valuetype MailKit.UniqueId[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -661,11 +369,11 @@
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void CopyTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(int32[] indexes, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -690,7 +398,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -708,7 +416,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; CountChanged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
@@ -721,36 +429,11 @@
       </Docs>
     </Member>
     <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder Create (string name, bool isMessageFolder);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder Create(string name, bool isMessageFolder) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-        <Parameter Name="isMessageFolder" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="name">The name of the folder to create.</param>
-        <param name="isMessageFolder">
-          <c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
-        <summary>
-            Creates a new subfolder with the given name.
-            </summary>
-        <returns>The created folder.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder Create (string name, bool isMessageFolder, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.IFolder Create (string name, bool isMessageFolder, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder Create(string name, bool isMessageFolder, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IFolder</ReturnType>
@@ -773,29 +456,11 @@
       </Docs>
     </Member>
     <Member MemberName="Delete">
-      <MemberSignature Language="C#" Value="public void Delete ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Delete() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Deletes the folder on the IMAP server.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Delete">
-      <MemberSignature Language="C#" Value="public void Delete (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Delete (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Delete(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -816,7 +481,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; Deleted" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
@@ -833,7 +498,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance char DirectorySeparator" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
@@ -851,7 +516,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool Exists" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -866,54 +531,11 @@
       </Docs>
     </Member>
     <Member MemberName="Expunge">
-      <MemberSignature Language="C#" Value="public void Expunge ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Expunges the folder, permanently removing all messages marked for deletion.
-            </summary>
-        <remarks>
-            An <see cref="E:MailKit.IFolder.Expunged" /> event will be emitted for each message that is expunged.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Expunge">
-      <MemberSignature Language="C#" Value="public void Expunge (MailKit.UniqueId[] uids);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge(valuetype MailKit.UniqueId[] uids) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The message uids.</param>
-        <summary>
-            Expunges the specified uids, permanently removing them from the folder.
-            </summary>
-        <remarks>
-            An <see cref="E:MailKit.IFolder.Expunged" /> event will be emitted for each message that is expunged.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Expunge">
-      <MemberSignature Language="C#" Value="public void Expunge (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Expunge (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -932,11 +554,11 @@
       </Docs>
     </Member>
     <Member MemberName="Expunge">
-      <MemberSignature Language="C#" Value="public void Expunge (MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Expunge (MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge(valuetype MailKit.UniqueId[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -961,7 +583,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessageEventArgs&gt; Expunged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;MailKit.MessageEventArgs&gt;</ReturnType>
@@ -974,85 +596,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the specified message UIDs.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the specified message indexes.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="min" Type="MailKit.UniqueId" />
-        <Parameter Name="max" Type="System.Nullable&lt;MailKit.UniqueId&gt;" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="min">The minimum UID.</param>
-        <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the messages between the two UIDs, inclusive.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1074,63 +622,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="min" Type="System.Int32" />
-        <Parameter Name="max" Type="System.Int32" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="min">The minimum index.</param>
-        <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the messages between the two indexes, inclusive.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1152,37 +648,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, ulong modseq, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1206,39 +676,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="min" Type="MailKit.UniqueId" />
-        <Parameter Name="max" Type="System.Nullable&lt;MailKit.UniqueId&gt;" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="min">The minimum UID.</param>
-        <param name="max">The maximum UID.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1262,11 +704,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1290,39 +732,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="min" Type="System.Int32" />
-        <Parameter Name="max" Type="System.Int32" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
-      </Parameters>
-      <Docs>
-        <param name="min">The minimum index.</param>
-        <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="items">The message summary items to fetch.</param>
-        <summary>
-            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-            </summary>
-        <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1346,11 +760,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1376,11 +790,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1410,7 +824,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 FirstUnread" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1430,7 +844,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1446,38 +860,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, bool headersOnly = false);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, bool headersOnly) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeEntity</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="MailKit.UniqueId" />
-        <Parameter Name="part" Type="MailKit.BodyPart" />
-        <Parameter Name="headersOnly" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <param name="part">The body part.</param>
-        <param name="headersOnly">
-          <c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>&gt;</param>
-        <summary>
-            Gets the specified body part.
-            </summary>
-        <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1499,38 +886,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, bool headersOnly = false);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, bool headersOnly) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeEntity</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="part" Type="MailKit.BodyPart" />
-        <Parameter Name="headersOnly" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <param name="part">The body part.</param>
-        <param name="headersOnly">
-          <c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>&gt;</param>
-        <summary>
-            Gets the specified body part.
-            </summary>
-        <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1552,11 +912,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1581,11 +941,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1610,55 +970,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (MailKit.UniqueId uid);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(valuetype MailKit.UniqueId uid) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeMessage</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="MailKit.UniqueId" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <summary>
-            Gets the specified message.
-            </summary>
-        <returns>The message.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MimeKit.MimeMessage</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <summary>
-            Gets the specified message.
-            </summary>
-        <returns>The message.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (MailKit.UniqueId uid, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (MailKit.UniqueId uid, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(valuetype MailKit.UniqueId uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -1678,11 +994,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -1702,106 +1018,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, int offset, int count);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, int32 offset, int32 count) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.IO.Stream</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="MailKit.UniqueId" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="count" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <param name="offset">The starting offset of the first desired byte.</param>
-        <param name="count">The number of bytes desired.</param>
-        <summary>
-            Gets a substream of the specified message.
-            </summary>
-        <returns>The stream.</returns>
-        <remarks>
-            Fetches a substream of the message. If the starting offset is beyond
-            the end of the message, an empty stream is returned. If the number of
-            bytes desired extends beyond the end of the message, a truncated stream
-            will be returned.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, int offset, int count);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, int32 offset, int32 count) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.IO.Stream</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="count" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <param name="offset">The starting offset of the first desired byte.</param>
-        <param name="count">The number of bytes desired.</param>
-        <summary>
-            Gets a substream of the specified message.
-            </summary>
-        <returns>The stream.</returns>
-        <remarks>
-            Fetches a substream of the message. If the starting offset is beyond
-            the end of the message, an empty stream is returned. If the number of
-            bytes desired extends beyond the end of the message, a truncated stream
-            will be returned.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, MailKit.BodyPart part, int offset, int count);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, int32 offset, int32 count) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.IO.Stream</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uid" Type="MailKit.UniqueId" />
-        <Parameter Name="part" Type="MailKit.BodyPart" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="count" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="uid">The UID of the message.</param>
-        <param name="part">The desired body part.</param>
-        <param name="offset">The starting offset of the first desired byte.</param>
-        <param name="count">The number of bytes desired.</param>
-        <summary>
-            Gets a substream of the specified body part.
-            </summary>
-        <returns>The stream.</returns>
-        <remarks>
-            Fetches a substream of the body part. If the starting offset is beyond
-            the end of the body part, an empty stream is returned. If the number of
-            bytes desired extends beyond the end of the body part, a truncated stream
-            will be returned.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -1830,44 +1051,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, MailKit.BodyPart part, int offset, int count);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, class MailKit.BodyPart part, int32 offset, int32 count) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.IO.Stream</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="part" Type="MailKit.BodyPart" />
-        <Parameter Name="offset" Type="System.Int32" />
-        <Parameter Name="count" Type="System.Int32" />
-      </Parameters>
-      <Docs>
-        <param name="index">The index of the message.</param>
-        <param name="part">The desired body part.</param>
-        <param name="offset">The starting offset of the first desired byte.</param>
-        <param name="count">The number of bytes desired.</param>
-        <summary>
-            Gets a substream of the specified body part.
-            </summary>
-        <returns>The stream.</returns>
-        <remarks>
-            Fetches a substream of the body part. If the starting offset is beyond
-            the end of the body part, an empty stream is returned. If the number of
-            bytes desired extends beyond the end of the body part, a truncated stream
-            will be returned.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -1896,11 +1084,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -1931,11 +1119,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -1966,36 +1154,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetSubfolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetSubfolder (string name);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetSubfolder(string name) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="name" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="name">The name of the subfolder.</param>
-        <summary>
-            Gets the specified subfolder.
-            </summary>
-        <returns>The subfolder.</returns>
-        <remarks>To be added.</remarks>
-        <exception cref="T:MailKit.FolderNotFoundException">
-            The requested folder could not be found.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="GetSubfolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetSubfolder (string name, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.IFolder GetSubfolder (string name, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetSubfolder(string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IFolder</ReturnType>
@@ -2018,33 +1181,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt; GetSubfolders (bool subscribedOnly);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IFolder&gt; GetSubfolders(bool subscribedOnly) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt;</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="subscribedOnly" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
-        <summary>
-            Gets the subfolders.
-            </summary>
-        <returns>The subfolders.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="GetSubfolders">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt; GetSubfolders (bool subscribedOnly, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt; GetSubfolders (bool subscribedOnly, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IFolder&gt; GetSubfolders(bool subscribedOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt;</ReturnType>
@@ -2068,7 +1209,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 HighestModSeq" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
@@ -2088,7 +1229,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsNamespace" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2107,7 +1248,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsOpen" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2126,7 +1267,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsSubscribed" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2145,7 +1286,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessageFlagsChangedEventArgs&gt; MessageFlagsChanged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;MailKit.MessageFlagsChangedEventArgs&gt;</ReturnType>
@@ -2158,58 +1299,11 @@
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] MoveTo (MailKit.UniqueId[] uids, MailKit.IFolder destination);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] MoveTo(valuetype MailKit.UniqueId[] uids, class MailKit.IFolder destination) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages to copy.</param>
-        <param name="destination">The destination folder.</param>
-        <summary>
-            Moves the specified messages to the destination folder.
-            </summary>
-        <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="MoveTo">
-      <MemberSignature Language="C#" Value="public void MoveTo (int[] indexes, MailKit.IFolder destination);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MoveTo(int32[] indexes, class MailKit.IFolder destination) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages to copy.</param>
-        <param name="destination">The destination folder.</param>
-        <summary>
-            Moves the specified messages to the destination folder.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="MoveTo">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] MoveTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] MoveTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] MoveTo(valuetype MailKit.UniqueId[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -2231,11 +1325,11 @@
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
-      <MemberSignature Language="C#" Value="public void MoveTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void MoveTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MoveTo(int32[] indexes, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2260,7 +1354,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -2276,33 +1370,11 @@
       </Docs>
     </Member>
     <Member MemberName="Open">
-      <MemberSignature Language="C#" Value="public MailKit.FolderAccess Open (MailKit.FolderAccess access);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.FolderAccess</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="access" Type="MailKit.FolderAccess" />
-      </Parameters>
-      <Docs>
-        <param name="access">The requested folder access.</param>
-        <summary>
-            Opens the folder using the requested folder access.
-            </summary>
-        <returns>The <see cref="T:MailKit.FolderAccess" /> state of the folder.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="C#" Value="public MailKit.FolderAccess Open (MailKit.FolderAccess access, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.FolderAccess Open (MailKit.FolderAccess access, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderAccess</ReturnType>
@@ -2326,7 +1398,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IFolder ParentFolder" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IFolder</ReturnType>
@@ -2346,7 +1418,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.MessageFlags PermanentFlags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageFlags</ReturnType>
@@ -2366,7 +1438,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 Recent" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2384,7 +1456,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; RecentChanged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
@@ -2397,61 +1469,11 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public void RemoveFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Removes a set of flags from the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public void RemoveFlags (int[] indexes, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages.</param>
-        <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Removes a set of flags from the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public void RemoveFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void RemoveFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2474,39 +1496,11 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] RemoveFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] RemoveFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-            </summary>
-        <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public void RemoveFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void RemoveFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2529,39 +1523,11 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public int[] RemoveFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] RemoveFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-            </summary>
-        <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] RemoveFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] RemoveFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] RemoveFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -2587,11 +1553,11 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public int[] RemoveFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int[] RemoveFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] RemoveFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -2617,34 +1583,11 @@
       </Docs>
     </Member>
     <Member MemberName="Rename">
-      <MemberSignature Language="C#" Value="public void Rename (MailKit.IFolder parent, string name);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Rename(class MailKit.IFolder parent, string name) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="parent" Type="MailKit.IFolder" />
-        <Parameter Name="name" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="parent">The new parent folder.</param>
-        <param name="name">The new name of the folder.</param>
-        <summary>
-            Renames the folder to exist with a new name under a new parent folder.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Rename">
-      <MemberSignature Language="C#" Value="public void Rename (MailKit.IFolder parent, string name, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Rename (MailKit.IFolder parent, string name, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Rename(class MailKit.IFolder parent, string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2669,7 +1612,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.FolderRenamedEventArgs&gt; Renamed" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;MailKit.FolderRenamedEventArgs&gt;</ReturnType>
@@ -2682,63 +1625,11 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
-      </Parameters>
-      <Docs>
-        <param name="query">The search query.</param>
-        <summary>
-            Searches the folder for messages matching the specified query.
-            </summary>
-        <returns>An array of matching UIDs.</returns>
-        <remarks>
-            The returned array of unique identifiers can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
-        <Parameter Name="orderBy" Type="MailKit.Search.OrderBy[]" />
-      </Parameters>
-      <Docs>
-        <param name="query">The search query.</param>
-        <param name="orderBy">The sort order.</param>
-        <summary>
-            Searches the folder for messages matching the specified query,
-            returning them in the preferred sort order.
-            </summary>
-        <returns>An array of matching UIDs in the specified sort order.</returns>
-        <remarks>
-            The returned array of unique identifiers will be sorted in the preferred order and
-            can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -2760,37 +1651,11 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The subset of UIDs</param>
-        <param name="query">The search query.</param>
-        <summary>
-            Searches the subset of UIDs in the folder for messages matching the specified query.
-            </summary>
-        <returns>An array of matching UIDs.</returns>
-        <remarks>
-            The returned array of unique identifiers can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -2816,41 +1681,11 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
-        <Parameter Name="orderBy" Type="MailKit.Search.OrderBy[]" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The subset of UIDs</param>
-        <param name="query">The search query.</param>
-        <param name="orderBy">The sort order.</param>
-        <summary>
-            Searches the subset of UIDs in the folder for messages matching the specified query,
-            returning them in the preferred sort order.
-            </summary>
-        <returns>An array of matching UIDs in the specified sort order.</returns>
-        <remarks>
-            The returned array of unique identifiers will be sorted in the preferred order and
-            can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -2874,11 +1709,11 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -2906,61 +1741,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public void SetFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Sets the flags of the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public void SetFlags (int[] indexes, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages.</param>
-        <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Sets the flags of the specified messages.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public void SetFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void SetFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2983,39 +1768,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] SetFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] SetFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.UniqueId[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The UIDs of the messages.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-            </summary>
-        <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public void SetFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void SetFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3038,39 +1795,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public int[] SetFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] SetFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="modseq" Type="System.UInt64" />
-        <Parameter Name="flags" Type="MailKit.MessageFlags" />
-        <Parameter Name="silent" Type="System.Boolean" />
-      </Parameters>
-      <Docs>
-        <param name="indexes">The indexes of the messages.</param>
-        <param name="modseq">The mod-sequence value.</param>
-        <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> events will be emitted.</param>
-        <summary>
-            Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-            </summary>
-        <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] SetFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] SetFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] SetFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -3096,11 +1825,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public int[] SetFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public int[] SetFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] SetFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -3126,32 +1855,11 @@
       </Docs>
     </Member>
     <Member MemberName="Status">
-      <MemberSignature Language="C#" Value="public void Status (MailKit.StatusItems items);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Status(valuetype MailKit.StatusItems items) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="items" Type="MailKit.StatusItems" />
-      </Parameters>
-      <Docs>
-        <param name="items">The items to update.</param>
-        <summary>
-            Updates the values of the specified items.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Status">
-      <MemberSignature Language="C#" Value="public void Status (MailKit.StatusItems items, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Status (MailKit.StatusItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Status(valuetype MailKit.StatusItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3170,29 +1878,11 @@
       </Docs>
     </Member>
     <Member MemberName="Subscribe">
-      <MemberSignature Language="C#" Value="public void Subscribe ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Subscribe() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Subscribes the folder.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Subscribe">
-      <MemberSignature Language="C#" Value="public void Subscribe (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Subscribe (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Subscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3213,7 +1903,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; Subscribed" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
@@ -3230,7 +1920,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool SupportsModSeq" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -3248,37 +1938,11 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.MessageThread[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />
-        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
-      </Parameters>
-      <Docs>
-        <param name="algorithm">The threading algorithm to use.</param>
-        <param name="query">The search query.</param>
-        <summary>
-            Threads the messages in the folder that match the search query using the specified threading algorithm.
-            </summary>
-        <returns>An array of message threads.</returns>
-        <remarks>
-            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageThread[]</ReturnType>
@@ -3302,39 +1966,11 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.UniqueId[] uids, MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.UniqueId[] uids, valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.MessageThread[]</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />
-        <Parameter Name="query" Type="MailKit.Search.SearchQuery" />
-      </Parameters>
-      <Docs>
-        <param name="uids">The subset of UIDs</param>
-        <param name="algorithm">The threading algorithm to use.</param>
-        <param name="query">The search query.</param>
-        <summary>
-            Threads the messages in the folder that match the search query using the specified threading algorithm.
-            </summary>
-        <returns>An array of message threads.</returns>
-        <remarks>
-            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.UniqueId[] uids, MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.UniqueId[] uids, MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.UniqueId[] uids, valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageThread[]</ReturnType>
@@ -3364,7 +2000,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UidNext" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3384,7 +2020,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UidValidity" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3407,7 +2043,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; UidValidityChanged" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
@@ -3420,29 +2056,11 @@
       </Docs>
     </Member>
     <Member MemberName="Unsubscribe">
-      <MemberSignature Language="C#" Value="public void Unsubscribe ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Unsubscribe() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Unsubscribes the folder.
-            </summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Unsubscribe">
-      <MemberSignature Language="C#" Value="public void Unsubscribe (System.Threading.CancellationToken cancellationToken);" />
+      <MemberSignature Language="C#" Value="public void Unsubscribe (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Unsubscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3463,7 +2081,7 @@
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; Unsubscribed" />
       <MemberType>Event</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.12.0.0</AssemblyVersion>
+        <AssemblyVersion>0.13.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
