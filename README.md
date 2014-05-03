@@ -55,7 +55,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * SPECIAL-USE
     * MOVE
     * XLIST
-    * X-GM-EXT1 (X-GM-MSGID, X-GM-THRID and X-GM-RAW)
+    * X-GM-EXT1 (X-GM-MSGID, X-GM-THRID, X-GM-RAW and X-GM-LABELS)
   * All APIs are cancellable.
 * Client-side sorting and threading of messages.
 
@@ -87,8 +87,6 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * FILTERS
     * LIST-STATUS
     * MULTISEARCH
-    * GMail Extensions
-      * X-GM-LABELS
   * Async APIs
 * Maildir
 * Thunderbird mbox folder trees
