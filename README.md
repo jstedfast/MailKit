@@ -152,7 +152,7 @@ To switch to that branch,
     cd bc-csharp
     git checkout -b visual-studio-2010 origin/visual-studio-2010
 
-In the top-level MailKit source directory, there are three solution files: MailKit.sln, MailKit.Net45.sln and MailKit.Mobile.sln.
+In the top-level MailKit source directory, there are three solution files: MailKit.sln, MailKit.Net40.sln and MailKit.Mobile.sln.
 
 * MailKit.Mobile.sln just includes the Xamarin.iOS and Xamarin.Android projects.
 * MailKit.Net40.sln just includes the .NET Framework 4.0 C# project (MailKit/MailKit.csproj)
