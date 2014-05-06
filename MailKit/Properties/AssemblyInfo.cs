@@ -40,8 +40,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark ("Xamarin Inc.")]
 [assembly: AssemblyCulture ("")]
 
-[assembly: InternalsVisibleTo ("UnitTests")]
-
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
@@ -49,6 +47,11 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid ("2fe79b66-d107-45da-9493-175f59c4a53c")]
+[assembly: InternalsVisibleTo ("UnitTests, PublicKey=002400000480000094000000060200" +
+	"0000240000525341310004000011000000cde209732ce60a8fa70ee643cb32e9bf8149b61018c5" +
+	"b166489b8a5cae44f1f88ca97ab9d9e035421933a6f0d556acc7c2219ae1464e35386ca1e239aa" +
+	"42508b9edbb4164bfa82aa2a0f4cd983d9e5ba2acfe08a10a2093e2b2bf8408eef43114db89b39" +
+	"99c59af1d3dc2c9f0cdbf51074e9a482cf09c9116ae1c5543ce8ff9b")]
 
 // Version information for an assembly consists of the following four values:
 //
