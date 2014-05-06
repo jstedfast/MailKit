@@ -112,7 +112,7 @@ namespace MailKit.Security {
 				if (token.Length > 2048)
 					throw new SaslException (MechanismName, SaslErrorCode.ChallengeTooLong, "Server challenge too long.");
 
-				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token));
+				challenge = DigestChallenge.Parse (Encoding.UTF8.GetString (token, startIndex, length));
 
 				if (string.IsNullOrEmpty (cnonce)) {
 					var entropy = new byte[15];
@@ -130,7 +130,7 @@ namespace MailKit.Security {
 				if (token.Length == 0)
 					throw new SaslException (MechanismName, SaslErrorCode.MissingChallenge, "Server response did not contain any authentication data.");
 
-				var text = Encoding.UTF8.GetString (token);
+				var text = Encoding.UTF8.GetString (token, startIndex, length);
 				string key, value;
 				int index = 0;
 
