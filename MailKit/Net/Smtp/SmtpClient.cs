@@ -545,6 +545,7 @@ namespace MailKit.Net.Smtp {
 				throw new ArgumentNullException ("credentials");
 
 			var uri = new Uri ("smtp://" + host);
+			SaslException authException = null;
 			SmtpResponse response;
 			bool tried = false;
 			string challenge;
@@ -570,12 +571,18 @@ namespace MailKit.Net.Smtp {
 				if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
 					continue;
 
-				while (!sasl.IsAuthenticated) {
-					if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
-						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+				try {
+					while (!sasl.IsAuthenticated) {
+						if (response.StatusCode != SmtpStatusCode.AuthenticationChallenge)
+							throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-					challenge = sasl.Challenge (response.Response);
-					response = SendCommand (challenge, cancellationToken);
+						challenge = sasl.Challenge (response.Response);
+						response = SendCommand (challenge, cancellationToken);
+					}
+				} catch (SaslException ex) {
+					// reset the authentication state
+					response = SendCommand (string.Empty, cancellationToken);
+					authException = ex;
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
@@ -586,7 +593,7 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if (tried)
-				throw new AuthenticationException ();
+				throw authException ?? new AuthenticationException ();
 
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
