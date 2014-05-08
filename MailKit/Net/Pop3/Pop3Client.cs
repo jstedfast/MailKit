@@ -411,12 +411,11 @@ namespace MailKit.Net.Pop3 {
 					pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 						while (!sasl.IsAuthenticated && cmd.Status == Pop3CommandStatus.Continue) {
 							challenge = sasl.Challenge (text);
-							string response;
 
 							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 							pop3.Stream.Write (buf, 0, buf.Length);
 
-							response = pop3.ReadLine (cmd.CancellationToken);
+							var response = pop3.ReadLine (cmd.CancellationToken);
 
 							cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
 							if (cmd.Status == Pop3CommandStatus.ProtocolError)
