@@ -79,6 +79,6 @@ using System.Runtime.InteropServices;
 //
 // If there have only been bug fixes, bump the Micro Version and/or the Build Number
 //    in the AssemblyFileVersion attribute.
-[assembly: AssemblyInformationalVersion ("0.13")]
-[assembly: AssemblyFileVersion ("0.13.0.0")]
-[assembly: AssemblyVersion ("0.13.0.0")]
+[assembly: AssemblyInformationalVersion ("0.14")]
+[assembly: AssemblyFileVersion ("0.14.0.0")]
+[assembly: AssemblyVersion ("0.14.0.0")]
