@@ -93,11 +93,19 @@ namespace MailKit.Security.Ntlm {
 		static int DecodeFlags (byte[] buffer, ref int index)
 		{
 			short nbytes = BitConverterLE.ToInt16 (buffer, index);
-			int value = BitConverterLE.ToInt32 (buffer, index + 2);
+			int flags;
 
-			index += 6;
+			index += 2;
 
-			return value;
+			switch (nbytes) {
+			case 4:  flags = BitConverterLE.ToInt32 (buffer, index); break;
+			case 2:  flags = BitConverterLE.ToInt16 (buffer, index); break;
+			default: flags = 0; break;
+			}
+
+			index += nbytes;
+
+			return flags;
 		}
 
 		static long DecodeTimestamp (byte[] buffer, ref int index)
