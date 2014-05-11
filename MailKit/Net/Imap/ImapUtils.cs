@@ -718,8 +718,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			string address = values[3] != null ? values[2] + "@" + values[3] : values[2];
+			DomainList route;
 
-			list.Add (new MailboxAddress (name, address));
+			if (values[1] != null && DomainList.TryParse (values[1], out route))
+				list.Add (new MailboxAddress (name, route, address));
+			else
+				list.Add (new MailboxAddress (name, address));
 		}
 
 		static InternetAddressList ParseEnvelopeAddressList (ImapEngine engine, CancellationToken cancellationToken)
