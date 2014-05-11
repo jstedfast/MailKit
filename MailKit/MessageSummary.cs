@@ -50,9 +50,12 @@ namespace MailKit {
 		/// Gets the body structure of the message, if available.
 		/// </summary>
 		/// <remarks>
-		/// The body will be one of <see cref="BodyPartText"/>,
+		/// <para>The body will be one of <see cref="BodyPartText"/>,
 		/// <see cref="BodyPartMessage"/>, <see cref="BodyPartBasic"/>,
-		/// or <see cref="BodyPartMultipart"/>.
+		/// or <see cref="BodyPartMultipart"/>.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.Body"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The body structure of the message.</value>
 		public BodyPart Body {
@@ -63,11 +66,14 @@ namespace MailKit {
 		/// Gets the envelope of the message, if available.
 		/// </summary>
 		/// <remarks>
-		/// The envelope of a message contains information such as the
+		/// <para>The envelope of a message contains information such as the
 		/// date the message was sent, the subject of the message,
 		/// the sender of the message, who the message was sent to,
 		/// which message(s) the message may be in reply to,
-		/// and the message id.
+		/// and the message id.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.Envelope"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The envelope of the message.</value>
 		public Envelope Envelope {
@@ -77,6 +83,12 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the message flags, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the message flags, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The message flags.</value>
 		public MessageFlags? Flags {
 			get; internal set;
@@ -85,6 +97,12 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the internal date of the message (i.e. the "received" date), if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the internal date of the message (i.e. the "received" date), if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.InternalDate"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The internal date of the message.</value>
 		public DateTimeOffset? InternalDate {
 			get; internal set;
@@ -93,6 +111,12 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the size of the message, in bytes, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the size of the message, in bytes, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.MessageSize"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The size of the message.</value>
 		public uint? MessageSize {
 			get; internal set;
@@ -101,6 +125,12 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the mod-sequence value for the message, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the mod-sequence value for the message, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.ModSeq"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The mod-sequence value.</value>
 		public ulong? ModSeq {
 			get; internal set;
@@ -109,6 +139,12 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the message-ids that the message references, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the message-ids that the message references, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.References"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The references.</value>
 		public MessageIdList References {
 			get; internal set;
@@ -117,6 +153,12 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the unique ID of the message, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the unique ID of the message, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.UniqueId"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The uid of the message.</value>
 		public UniqueId UniqueId {
 			get; internal set;
@@ -125,6 +167,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the index of the message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the index of the message.
+		/// </remarks>
 		/// <value>The index of the message.</value>
 		public int Index {
 			get; private set;
@@ -133,24 +178,42 @@ namespace MailKit {
 		#region GMail extension properties
 
 		/// <summary>
-		/// Gets the GMail message identifier.
+		/// Gets the GMail message identifier, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the GMail message identifier, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.GMailMessageId"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The GMail message identifier.</value>
-		public ulong GMailMessageId {
+		public ulong? GMailMessageId {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gets the GMail thread identifier.
+		/// Gets the GMail thread identifier, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the GMail thread identifier, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.GMailThreadId"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The GMail thread identifier.</value>
-		public ulong GMailThreadId {
+		public ulong? GMailThreadId {
 			get; internal set;
 		}
 
 		/// <summary>
 		/// Gets the list of GMail labels, if available.
 		/// </summary>
+		/// <remarks>
+		/// <para>Gets the list of GMail labels, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="MessageSummaryItems.GMailLabels"/> flag is passed to
+		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
 		/// <value>The GMail labels.</value>
 		public List<string> GMailLabels {
 			get; internal set;
