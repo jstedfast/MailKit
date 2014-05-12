@@ -62,6 +62,7 @@
     <Compile Include="MessageThreadingTests.cs" />
     <Compile Include="UriExtensionTests.cs" />
     <Compile Include="Security\SaslMechanismTests.cs" />
+    <Compile Include="BodyPartTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />

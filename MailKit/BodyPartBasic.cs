@@ -167,7 +167,6 @@ namespace MailKit {
 			Encode (builder, ContentLanguage);
 			builder.Append (' ');
 			Encode (builder, ContentLocation);
-			builder.Append (' ');
 		}
 	}
 }

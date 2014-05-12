@@ -103,11 +103,9 @@ namespace MailKit {
 				if (i > 0)
 					builder.Append (' ');
 
-				builder.Append ('(');
 				Encode (builder, parameters[i].Name);
 				builder.Append (' ');
 				Encode (builder, parameters[i].Value);
-				builder.Append (')');
 			}
 
 			builder.Append (')');
@@ -229,42 +227,39 @@ namespace MailKit {
 			if (index >= text.Length)
 				return false;
 
-			if (text[index] == '"') {
-				var token = new StringBuilder ();
-				bool escaped = false;
-
-				index++;
-
-				while (index < text.Length) {
-					if (text[index] == '"' && !escaped)
-						break;
-
-					if (escaped || text[index] != '\\') {
-						token.Append (text[index]);
-					} else {
-						escaped = true;
-					}
-
-					index++;
+			if (text[index] != '"') {
+				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+					index += 3;
+					return true;
 				}
 
-				if (index >= text.Length)
-					return false;
+				return false;
+			}
 
-				nstring = token.ToString ();
+			var token = new StringBuilder ();
+			bool escaped = false;
+
+			index++;
+
+			while (index < text.Length) {
+				if (text[index] == '"' && !escaped)
+					break;
+
+				if (escaped || text[index] != '\\') {
+					token.Append (text[index]);
+				} else {
+					escaped = true;
+				}
 
 				index++;
-			} else {
-				int startIndex = index;
-
-				while (index < text.Length && text[index] != ' ')
-					index++;
-
-				nstring = text.Substring (startIndex, index - startIndex);
-
-				if (nstring == "NIL")
-					nstring = null;
 			}
+
+			if (index >= text.Length)
+				return false;
+
+			nstring = token.ToString ();
+
+			index++;
 
 			return true;
 		}
@@ -328,6 +323,7 @@ namespace MailKit {
 
 			if (text[index] != '(') {
 				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+					parameters = new List<Parameter> ();
 					index += 3;
 					return true;
 				}
@@ -346,23 +342,13 @@ namespace MailKit {
 				if (text[index] == ')')
 					break;
 
-				if (text[index] != '(')
-					return false;
-
-				index++;
-
 				if (!TryParse (text, ref index, out name))
 					return false;
 
 				if (!TryParse (text, ref index, out value))
 					return false;
 
-				if (index >= text.Length || text[index] != ')')
-					return false;
-
 				parameters.Add (new Parameter (name, value));
-
-				index++;
 			} while (index < text.Length);
 
 			if (index >= text.Length || text[index] != ')')
@@ -472,11 +458,6 @@ namespace MailKit {
 
 				return false;
 			}
-
-			index++;
-
-			if (index >= text.Length)
-				return false;
 
 			children = new List<BodyPart> ();
 

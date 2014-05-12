@@ -26,6 +26,7 @@
 
 using System;
 using System.Text;
+using System.Linq;
 
 using MimeKit;
 using MimeKit.Utils;
@@ -135,7 +136,7 @@ namespace MailKit {
 			get; internal set;
 		}
 
-		void EncodeMailbox (StringBuilder builder, MailboxAddress mailbox)
+		static void EncodeMailbox (StringBuilder builder, MailboxAddress mailbox)
 		{
 			builder.Append ('(');
 
@@ -163,10 +164,10 @@ namespace MailKit {
 			builder.Append (')');
 		}
 
-		void EncodeAddressList (StringBuilder builder, InternetAddressList list)
+		static void EncodeAddressList (StringBuilder builder, InternetAddressList list)
 		{
 			if (list.Count == 0) {
-				builder.Append ("NIL ");
+				builder.Append ("NIL");
 				return;
 			}
 
@@ -192,35 +193,47 @@ namespace MailKit {
 			else
 				builder.Append ("NIL ");
 
-			if (From.Count > 0)
+			if (From.Count > 0) {
 				EncodeAddressList (builder, From);
-			else
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
-			if (Sender.Count > 0)
+			if (Sender.Count > 0) {
 				EncodeAddressList (builder, Sender);
-			else
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
-			if (ReplyTo.Count > 0)
+			if (ReplyTo.Count > 0) {
 				EncodeAddressList (builder, ReplyTo);
-			else
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
-			if (To.Count > 0)
+			if (To.Count > 0) {
 				EncodeAddressList (builder, To);
-			else
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
-			if (Cc.Count > 0)
+			if (Cc.Count > 0) {
 				EncodeAddressList (builder, Cc);
-			else
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
-			if (Bcc.Count > 0)
+			if (Bcc.Count > 0) {
 				EncodeAddressList (builder, Bcc);
-			else
+				builder.Append (' ');
+			} else {
 				builder.Append ("NIL ");
+			}
 
 			if (InReplyTo != null)
 				builder.AppendFormat ("{0} ", MimeUtils.Quote (InReplyTo));
@@ -261,42 +274,39 @@ namespace MailKit {
 			if (index >= text.Length)
 				return false;
 
-			if (text[index] == '"') {
-				var token = new StringBuilder ();
-				bool escaped = false;
-
-				index++;
-
-				while (index < text.Length) {
-					if (text[index] == '"' && !escaped)
-						break;
-
-					if (escaped || text[index] != '\\') {
-						token.Append (text[index]);
-					} else {
-						escaped = true;
-					}
-
-					index++;
+			if (text[index] != '"') {
+				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+					index += 3;
+					return true;
 				}
 
-				if (index >= text.Length)
-					return false;
+				return false;
+			}
 
-				nstring = token.ToString ();
+			var token = new StringBuilder ();
+			bool escaped = false;
+
+			index++;
+
+			while (index < text.Length) {
+				if (text[index] == '"' && !escaped)
+					break;
+
+				if (escaped || text[index] != '\\') {
+					token.Append (text[index]);
+				} else {
+					escaped = true;
+				}
 
 				index++;
-			} else {
-				int startIndex = index;
-
-				while (index < text.Length && text[index] != ' ')
-					index++;
-
-				nstring = text.Substring (startIndex, index - startIndex);
-
-				if (nstring == "NIL")
-					nstring = null;
 			}
+
+			if (index >= text.Length)
+				return false;
+
+			nstring = token.ToString ();
+
+			index++;
 
 			return true;
 		}
@@ -356,6 +366,7 @@ namespace MailKit {
 
 			if (text[index] != '(') {
 				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+					list = new InternetAddressList ();
 					index += 3;
 					return true;
 				}
@@ -399,8 +410,15 @@ namespace MailKit {
 
 			envelope = null;
 
-			if (index >= text.Length || text[index++] != '(')
+			while (index < text.Length && text[index] == ' ')
+				index++;
+
+			if (index >= text.Length || text[index] != '(')
 				return false;
+
+			var blob = text.Substring (index);
+
+			index++;
 
 			if (!TryParse (text, ref index, out nstring))
 				return false;
@@ -455,8 +473,8 @@ namespace MailKit {
 				To = to,
 				Cc = cc,
 				Bcc = bcc,
-				InReplyTo = inreplyto,
-				MessageId = messageid
+				InReplyTo = inreplyto != null ? MimeUtils.EnumerateReferences (inreplyto).FirstOrDefault () : null,
+				MessageId = messageid != null ? MimeUtils.EnumerateReferences (messageid).FirstOrDefault () : null
 			};
 
 			return true;
