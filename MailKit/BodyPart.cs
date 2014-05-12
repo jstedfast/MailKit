@@ -450,9 +450,11 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out IList<BodyPart> children)
+		static bool TryParse (string text, ref int index, string prefix, out IList<BodyPart> children)
 		{
 			BodyPart part;
+			string path;
+			int id = 1;
 
 			children = null;
 
@@ -482,10 +484,13 @@ namespace MailKit {
 				if (text[index] == ')')
 					break;
 
-				if (!TryParse (text, ref index, out part))
+				path = prefix + id;
+
+				if (!TryParse (text, ref index, path, out part))
 					return false;
 
 				children.Add (part);
+				id++;
 			} while (index < text.Length);
 
 			if (index >= text.Length || text[index] != ')')
@@ -496,7 +501,7 @@ namespace MailKit {
 			return true;
 		}
 
-		static bool TryParse (string text, ref int index, out BodyPart part)
+		static bool TryParse (string text, ref int index, string path, out BodyPart part)
 		{
 			ContentDisposition disposition;
 			ContentType contentType;
@@ -518,12 +523,13 @@ namespace MailKit {
 				return false;
 
 			if (text[index] == '(') {
+				var prefix = path.Length > 0 ? path + "." : string.Empty;
 				var multipart = new BodyPartMultipart ();
 				IList<BodyPart> children;
 
 				index++;
 
-				if (!TryParse (text, ref index, out children))
+				if (!TryParse (text, ref index, prefix, out children))
 					return false;
 
 				foreach (var child in children)
@@ -616,7 +622,7 @@ namespace MailKit {
 
 					message.Envelope = envelope;
 
-					if (!TryParse (text, ref index, out body))
+					if (!TryParse (text, ref index, path, out body))
 						return false;
 
 					message.Body = body;
@@ -634,6 +640,8 @@ namespace MailKit {
 
 				part = basic;
 			}
+
+			part.PartSpecifier = path;
 
 			if (index >= text.Length || text[index] != ')')
 				return false;
@@ -662,7 +670,7 @@ namespace MailKit {
 
 			int index = 0;
 
-			return TryParse (text, ref index, out part) && index == text.Length;
+			return TryParse (text, ref index, string.Empty, out part) && index == text.Length;
 		}
 	}
 }
