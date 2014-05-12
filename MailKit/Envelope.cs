@@ -416,8 +416,6 @@ namespace MailKit {
 			if (index >= text.Length || text[index] != '(')
 				return false;
 
-			var blob = text.Substring (index);
-
 			index++;
 
 			if (!TryParse (text, ref index, out nstring))

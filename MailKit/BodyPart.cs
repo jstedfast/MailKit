@@ -141,16 +141,12 @@ namespace MailKit {
 				return;
 			}
 
-			builder.Append ('(');
-
 			for (int i = 0; i < parts.Count; i++) {
 				if (i > 0)
 					builder.Append (' ');
 
 				Encode (builder, parts[i]);
 			}
-
-			builder.Append (')');
 		}
 
 		internal protected static void Encode (StringBuilder builder, Envelope envelope)
@@ -444,25 +440,13 @@ namespace MailKit {
 
 			children = null;
 
-			while (index < text.Length && text[index] == ' ')
-				index++;
-
 			if (index >= text.Length)
 				return false;
-
-			if (text[index] != '(') {
-				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
-					index += 3;
-					return true;
-				}
-
-				return false;
-			}
 
 			children = new List<BodyPart> ();
 
 			do {
-				if (text[index] == ')')
+				if (text[index] != '(')
 					break;
 
 				path = prefix + id;
@@ -470,14 +454,15 @@ namespace MailKit {
 				if (!TryParse (text, ref index, path, out part))
 					return false;
 
+				while (index < text.Length && text[index] == ' ')
+					index++;
+
 				children.Add (part);
 				id++;
 			} while (index < text.Length);
 
-			if (index >= text.Length || text[index] != ')')
+			if (index >= text.Length)
 				return false;
-
-			index++;
 
 			return true;
 		}
@@ -507,8 +492,6 @@ namespace MailKit {
 				var prefix = path.Length > 0 ? path + "." : string.Empty;
 				var multipart = new BodyPartMultipart ();
 				IList<BodyPart> children;
-
-				index++;
 
 				if (!TryParse (text, ref index, prefix, out children))
 					return false;
