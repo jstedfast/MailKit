@@ -252,7 +252,9 @@ namespace MailKit {
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.Envelope"/>.
 		/// </summary>
 		/// <remarks>
-		/// The returned string can be parsed by <see cref="TryParse(string,out Envelope)"/>.
+		/// <para>The returned string can be parsed by <see cref="TryParse(string,out Envelope)"/>.</para>
+		/// <para>Note: The syntax of the string returned, while similar to IMAP's ENVELOPE syntax,
+		/// is not completely compatible.</para>
 		/// </remarks>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.Envelope"/>.</returns>
 		public override string ToString ()
@@ -482,7 +484,8 @@ namespace MailKit {
 		/// Tries to parse the given text into a new <see cref="MailKit.Envelope"/> instance.
 		/// </summary>
 		/// <remarks>
-		/// Parses an Envelope value from the specified text.
+		/// <para>Parses an Envelope value from the specified text.</para>
+		/// <para>Note: This syntax, while similar to IMAP's ENVELOPE syntax, is not completely compatible.</para>
 		/// </remarks>
 		/// <returns><c>true</c>, if the envelope was successfully parsed, <c>false</c> otherwise.</returns>
 		/// <param name="text">The text to parse.</param>
