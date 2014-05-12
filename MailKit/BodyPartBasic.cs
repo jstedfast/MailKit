@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System.Text;
+
 using MimeKit;
 
 namespace MailKit {
@@ -43,6 +45,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the Content-Id of the body part, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Content-Id of the body part, if available.
+		/// </remarks>
 		/// <value>The content identifier.</value>
 		public string ContentId {
 			get; internal set;
@@ -51,6 +56,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the Content-Description of the body part, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Content-Description of the body part, if available.
+		/// </remarks>
 		/// <value>The content description.</value>
 		public string ContentDescription {
 			get; internal set;
@@ -59,22 +67,31 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the Content-Transfer-Encoding of the body part.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Content-Transfer-Encoding of the body part.
+		/// </remarks>
 		/// <value>The content transfer encoding.</value>
 		public string ContentTransferEncoding {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gets the size of the body part.
+		/// Gets the size of the body part, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the size of the body part, in bytes.
+		/// </remarks>
 		/// <value>The number of octets.</value>
 		public uint Octets {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gets the Content-Md5 of the body part, if available.
+		/// Gets the MD5 hash of the content, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the MD5 hash of the content, if available.
+		/// </remarks>
 		/// <value>The content md5.</value>
 		public string ContentMd5 {
 			get; internal set;
@@ -83,6 +100,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the Content-Disposition of the body part, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Content-Disposition of the body part, if available.
+		/// </remarks>
 		/// <value>The content disposition.</value>
 		public ContentDisposition ContentDisposition {
 			get; internal set;
@@ -91,6 +111,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the Content-Language of the body part, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Content-Language of the body part, if available.
+		/// </remarks>
 		/// <value>The content language.</value>
 		public string[] ContentLanguage {
 			get; internal set;
@@ -99,6 +122,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the Content-Location of the body part, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Content-Location of the body part, if available.
+		/// </remarks>
 		/// <value>The content location.</value>
 		public string ContentLocation {
 			get; internal set;
@@ -107,9 +133,41 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether or not the body part is an attachment.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether or not the body part is an attachment.
+		/// </remarks>
 		/// <value><c>true</c> if thie part is an attachment; otherwise, <c>false</c>.</value>
 		public bool IsAttachment {
 			get { return ContentDisposition != null && ContentDisposition.IsAttachment; }
+		}
+
+		/// <summary>
+		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
+		/// </summary>
+		/// <remarks>
+		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
+		/// </remarks>
+		/// <param name="builder">The string builder.</param>
+		protected override void Encode (StringBuilder builder)
+		{
+			Encode (builder, ContentType);
+			builder.Append (' ');
+			Encode (builder, ContentId);
+			builder.Append (' ');
+			Encode (builder, ContentDescription);
+			builder.Append (' ');
+			Encode (builder, ContentTransferEncoding);
+			builder.Append (' ');
+			Encode (builder, Octets);
+			builder.Append (' ');
+			Encode (builder, ContentMd5);
+			builder.Append (' ');
+			Encode (builder, ContentDisposition);
+			builder.Append (' ');
+			Encode (builder, ContentLanguage);
+			builder.Append (' ');
+			Encode (builder, ContentLocation);
+			builder.Append (' ');
 		}
 	}
 }

@@ -25,8 +25,10 @@
 //
 
 using System;
+using System.Text;
 
 using MimeKit;
+using MimeKit.Utils;
 
 namespace MailKit {
 	/// <summary>
@@ -131,6 +133,355 @@ namespace MailKit {
 		/// <value>The subject.</value>
 		public string Subject {
 			get; internal set;
+		}
+
+		void EncodeMailbox (StringBuilder builder, MailboxAddress mailbox)
+		{
+			builder.Append ('(');
+
+			if (mailbox.Name != null)
+				builder.AppendFormat ("{0} ", MimeUtils.Quote (mailbox.Name));
+			else
+				builder.Append ("NIL ");
+
+			if (mailbox.Route.Count != 0)
+				builder.AppendFormat ("\"{0}\" ", mailbox.Route);
+			else
+				builder.Append ("NIL ");
+
+			int at = mailbox.Address.LastIndexOf ('@');
+
+			if (at >= 0) {
+				var domain = mailbox.Address.Substring (at + 1);
+				var user = mailbox.Address.Substring (0, at);
+
+				builder.AppendFormat ("{0} {1}", MimeUtils.Quote (user), MimeUtils.Quote (domain));
+			} else {
+				builder.AppendFormat ("{0} NIL", MimeUtils.Quote (mailbox.Address));
+			}
+
+			builder.Append (')');
+		}
+
+		void EncodeAddressList (StringBuilder builder, InternetAddressList list)
+		{
+			if (list.Count == 0) {
+				builder.Append ("NIL ");
+				return;
+			}
+
+			builder.Append ('(');
+
+			foreach (var mailbox in list.Mailboxes)
+				EncodeMailbox (builder, mailbox);
+
+			builder.Append (')');
+		}
+
+		internal void Encode (StringBuilder builder)
+		{
+			builder.Append ('(');
+
+			if (Date.HasValue)
+				builder.AppendFormat ("\"{0}\" ", DateUtils.FormatDate (Date.Value));
+			else
+				builder.Append ("NIL ");
+
+			if (Subject != null)
+				builder.AppendFormat ("{0} ", MimeUtils.Quote (Subject));
+			else
+				builder.Append ("NIL ");
+
+			if (From.Count > 0)
+				EncodeAddressList (builder, From);
+			else
+				builder.Append ("NIL ");
+
+			if (Sender.Count > 0)
+				EncodeAddressList (builder, Sender);
+			else
+				builder.Append ("NIL ");
+
+			if (ReplyTo.Count > 0)
+				EncodeAddressList (builder, ReplyTo);
+			else
+				builder.Append ("NIL ");
+
+			if (To.Count > 0)
+				EncodeAddressList (builder, To);
+			else
+				builder.Append ("NIL ");
+
+			if (Cc.Count > 0)
+				EncodeAddressList (builder, Cc);
+			else
+				builder.Append ("NIL ");
+
+			if (Bcc.Count > 0)
+				EncodeAddressList (builder, Bcc);
+			else
+				builder.Append ("NIL ");
+
+			if (InReplyTo != null)
+				builder.AppendFormat ("{0} ", MimeUtils.Quote (InReplyTo));
+			else
+				builder.Append ("NIL ");
+
+			if (MessageId != null)
+				builder.AppendFormat ("{0}", MimeUtils.Quote (MessageId));
+			else
+				builder.Append ("NIL");
+
+			builder.Append (')');
+		}
+
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.Envelope"/>.
+		/// </summary>
+		/// <remarks>
+		/// The returned string can be parsed by <see cref="TryParse(string,out Envelope)"/>.
+		/// </remarks>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.Envelope"/>.</returns>
+		public override string ToString ()
+		{
+			var builder = new StringBuilder ();
+
+			Encode (builder);
+
+			return builder.ToString ();
+		}
+
+		static bool TryParse (string text, ref int index, out string nstring)
+		{
+			nstring = null;
+
+			while (index < text.Length && text[index] == ' ')
+				index++;
+
+			if (index >= text.Length)
+				return false;
+
+			if (text[index] == '"') {
+				var token = new StringBuilder ();
+				bool escaped = false;
+
+				index++;
+
+				while (index < text.Length) {
+					if (text[index] == '"' && !escaped)
+						break;
+
+					if (escaped || text[index] != '\\') {
+						token.Append (text[index]);
+					} else {
+						escaped = true;
+					}
+
+					index++;
+				}
+
+				if (index >= text.Length)
+					return false;
+
+				nstring = token.ToString ();
+
+				index++;
+			} else {
+				int startIndex = index;
+
+				while (index < text.Length && text[index] != ' ')
+					index++;
+
+				nstring = text.Substring (startIndex, index - startIndex);
+
+				if (nstring == "NIL")
+					nstring = null;
+			}
+
+			return true;
+		}
+
+		static bool TryParse (string text, ref int index, out MailboxAddress mailbox)
+		{
+			string name, route, user, domain, address;
+
+			mailbox = null;
+
+			if (text[index] != '(')
+				return false;
+
+			index++;
+
+			if (!TryParse (text, ref index, out name))
+				return false;
+
+			if (!TryParse (text, ref index, out route))
+				return false;
+
+			if (!TryParse (text, ref index, out user))
+				return false;
+
+			if (!TryParse (text, ref index, out domain))
+				return false;
+
+			while (index < text.Length && text[index] == ' ')
+				index++;
+
+			if (index >= text.Length || text[index] != ')')
+				return false;
+
+			index++;
+
+			address = domain != null ? user + "@" + domain : user;
+
+			if (route != null)
+				mailbox = new MailboxAddress (name, route.Split (','), address);
+			else
+				mailbox = new MailboxAddress (name, address);
+
+			return true;
+		}
+
+		static bool TryParse (string text, ref int index, out InternetAddressList list)
+		{
+			MailboxAddress mailbox;
+
+			list = null;
+
+			while (index < text.Length && text[index] == ' ')
+				index++;
+
+			if (index >= text.Length)
+				return false;
+
+			if (text[index] != '(') {
+				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+					index += 3;
+					return true;
+				}
+
+				return false;
+			}
+
+			index++;
+
+			if (index >= text.Length)
+				return false;
+
+			list = new InternetAddressList ();
+
+			do {
+				if (text[index] == ')')
+					break;
+
+				if (!TryParse (text, ref index, out mailbox))
+					return false;
+
+				list.Add (mailbox);
+
+				while (index < text.Length && text[index] == ' ')
+					index++;
+			} while (index < text.Length);
+
+			if (index >= text.Length)
+				return false;
+
+			index++;
+
+			return true;
+		}
+
+		internal static bool TryParse (string text, ref int index, out Envelope envelope)
+		{
+			InternetAddressList from, sender, replyto, to, cc, bcc;
+			string inreplyto, messageid, subject, nstring;
+			DateTimeOffset? date = null;
+
+			envelope = null;
+
+			if (index >= text.Length || text[index++] != '(')
+				return false;
+
+			if (!TryParse (text, ref index, out nstring))
+				return false;
+
+			if (nstring != null) {
+				DateTimeOffset value;
+
+				if (!DateUtils.TryParseDateTime (nstring, out value))
+					return false;
+
+				date = value;
+			}
+
+			if (!TryParse (text, ref index, out subject))
+				return false;
+
+			if (!TryParse (text, ref index, out from))
+				return false;
+
+			if (!TryParse (text, ref index, out sender))
+				return false;
+
+			if (!TryParse (text, ref index, out replyto))
+				return false;
+
+			if (!TryParse (text, ref index, out to))
+				return false;
+
+			if (!TryParse (text, ref index, out cc))
+				return false;
+
+			if (!TryParse (text, ref index, out bcc))
+				return false;
+
+			if (!TryParse (text, ref index, out inreplyto))
+				return false;
+
+			if (!TryParse (text, ref index, out messageid))
+				return false;
+
+			if (index >= text.Length || text[index] != ')')
+				return false;
+
+			index++;
+
+			envelope = new Envelope {
+				Date = date,
+				Subject = subject,
+				From = from,
+				Sender = sender,
+				ReplyTo = replyto,
+				To = to,
+				Cc = cc,
+				Bcc = bcc,
+				InReplyTo = inreplyto,
+				MessageId = messageid
+			};
+
+			return true;
+		}
+
+		/// <summary>
+		/// Tries to parse the given text into a new <see cref="MailKit.Envelope"/> instance.
+		/// </summary>
+		/// <remarks>
+		/// Parses an Envelope value from the specified text.
+		/// </remarks>
+		/// <returns><c>true</c>, if the envelope was successfully parsed, <c>false</c> otherwise.</returns>
+		/// <param name="text">The text to parse.</param>
+		/// <param name="envelope">The parsed envelope.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="text"/> is <c>null</c>.
+		/// </exception>
+		public static bool TryParse (string text, out Envelope envelope)
+		{
+			if (text == null)
+				throw new ArgumentNullException ("text");
+
+			int index = 0;
+
+			return TryParse (text, ref index, out envelope) && index == text.Length;
 		}
 	}
 }

@@ -30,8 +30,11 @@ using System.Collections.Generic;
 
 namespace MailKit {
 	/// <summary>
-	/// A collection of <see cref="BodyPart"/>.
+	/// A <see cref="BodyPart"/> collection.
 	/// </summary>
+	/// <remarks>
+	/// A <see cref="BodyPart"/> collection.
+	/// </remarks>
 	public class BodyPartCollection : IEnumerable<BodyPart>
 	{
 		readonly List<BodyPart> collection = new List<BodyPart> ();
