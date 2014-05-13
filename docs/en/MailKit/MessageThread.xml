@@ -13,7 +13,9 @@
     <summary>
             A message thread.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A message thread.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Children">

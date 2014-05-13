@@ -33,6 +33,10 @@ namespace MailKit {
 	/// <summary>
 	/// The exception that is thrown when there is a protocol error.
 	/// </summary>
+	/// <remarks>
+	/// A <see cref="ProtocolException"/> can be thrown by any of the various client
+	/// methods in MailKit.
+	/// </remarks>
 #if !NETFX_CORE
 	[Serializable]
 #endif
@@ -42,6 +46,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolException"/>.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		protected ProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -52,6 +59,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">An inner exception.</param>
 		protected ProtocolException (string message, Exception innerException) : base (message, innerException)
@@ -61,6 +71,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		protected ProtocolException (string message) : base (message)
 		{
@@ -69,6 +82,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolException"/>.
+		/// </remarks>
 		protected ProtocolException ()
 		{
 		}

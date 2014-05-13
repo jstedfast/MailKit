@@ -13,7 +13,9 @@
     <summary>
             A multipart body part.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A multipart body part.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="BodyParts">
@@ -31,7 +33,9 @@
             Gets the child body parts.
             </summary>
         <value>The child body parts.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the child body parts.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentDisposition">
@@ -49,7 +53,9 @@
             Gets the Content-Disposition of the body part, if available.
             </summary>
         <value>The content disposition.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Disposition of the body part, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentLanguage">
@@ -67,7 +73,9 @@
             Gets the Content-Language of the body part, if available.
             </summary>
         <value>The content language.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Language of the body part, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentLocation">
@@ -85,7 +93,32 @@
             Gets the Content-Location of the body part, if available.
             </summary>
         <value>The content location.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Location of the body part, if available.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encode">
+      <MemberSignature Language="C#" Value="protected override void Encode (System.Text.StringBuilder builder);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Encode(class System.Text.StringBuilder builder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="builder" Type="System.Text.StringBuilder" />
+      </Parameters>
+      <Docs>
+        <param name="builder">The string builder.</param>
+        <summary>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </summary>
+        <remarks>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

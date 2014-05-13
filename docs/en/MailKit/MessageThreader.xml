@@ -13,7 +13,9 @@
     <summary>
             Threads messages according to the algorithms defined in rfc5256.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            Threads messages according to the algorithms defined in rfc5256.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="GetThreadableSubject">
@@ -37,7 +39,9 @@
             Gets the threadable subject.
             </summary>
         <returns>The threadable subject.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the threadable subject.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="subject" /> is <c>null</c>.
             </exception>
@@ -64,7 +68,9 @@
             Thread the messages according to the specified threading algorithm.
             </summary>
         <returns>The threaded messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Thread the messages according to the specified threading algorithm.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="messages" /> is <c>null</c>.
             </exception>
@@ -100,7 +106,10 @@
             and sorts the resulting threads by the specified ordering.
             </summary>
         <returns>The threaded messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Threads the messages according to the specified threading algorithm
+            and sorts the resulting threads by the specified ordering.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="messages" /> is <c>null</c>.</para>

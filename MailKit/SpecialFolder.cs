@@ -28,6 +28,9 @@ namespace MailKit {
 	/// <summary>
 	/// An enumeration of special folders.
 	/// </summary>
+	/// <remarks>
+	/// An enumeration of special folders.
+	/// </remarks>
 	public enum SpecialFolder {
 		/// <summary>
 		/// The special folder containing an aggregate of all messages.

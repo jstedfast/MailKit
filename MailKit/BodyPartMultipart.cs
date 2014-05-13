@@ -32,6 +32,9 @@ namespace MailKit {
 	/// <summary>
 	/// A multipart body part.
 	/// </summary>
+	/// <remarks>
+	/// A multipart body part.
+	/// </remarks>
 	public class BodyPartMultipart : BodyPart
 	{
 		internal BodyPartMultipart ()

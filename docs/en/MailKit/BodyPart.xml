@@ -48,7 +48,32 @@
             Gets the Content-Type of the body part.
             </summary>
         <value>The content type.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Type of the body part.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encode">
+      <MemberSignature Language="C#" Value="protected abstract void Encode (System.Text.StringBuilder builder);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Encode(class System.Text.StringBuilder builder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="builder" Type="System.Text.StringBuilder" />
+      </Parameters>
+      <Docs>
+        <param name="builder">The string builder.</param>
+        <summary>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </summary>
+        <remarks>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="PartSpecifier">
@@ -66,7 +91,63 @@
             Gets the part specifier.
             </summary>
         <value>The part specifier.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the part specifier.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.BodyPart" />.
+            </summary>
+        <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.BodyPart" />.</returns>
+        <remarks>
+          <para>Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.BodyPart" />.</para>
+          <para>Note: The syntax of the string returned, while similar to IMAP's BODYSTRUCTURE syntax,
+            is not completely compatible.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string text, out MailKit.BodyPart part);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string text, class MailKit.BodyPart part) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="part" Type="MailKit.BodyPart&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to parse.</param>
+        <param name="part">The parsed body part.</param>
+        <summary>
+            Tries to parse the given text into a new <see cref="T:MailKit.BodyPart" /> instance.
+            </summary>
+        <returns>
+          <c>true</c>, if the body part was successfully parsed, <c>false</c> otherwise.</returns>
+        <remarks>
+          <para>Parses a body part from the specified text.</para>
+          <para>Note: This syntax, while similar to IMAP's BODYSTRUCTURE syntax, is not completely compatible.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
   </Members>

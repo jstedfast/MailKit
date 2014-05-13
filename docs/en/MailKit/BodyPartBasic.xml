@@ -34,7 +34,9 @@
             Gets the Content-Description of the body part, if available.
             </summary>
         <value>The content description.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Description of the body part, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentDisposition">
@@ -52,7 +54,9 @@
             Gets the Content-Disposition of the body part, if available.
             </summary>
         <value>The content disposition.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Disposition of the body part, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentId">
@@ -70,7 +74,9 @@
             Gets the Content-Id of the body part, if available.
             </summary>
         <value>The content identifier.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Id of the body part, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentLanguage">
@@ -88,7 +94,9 @@
             Gets the Content-Language of the body part, if available.
             </summary>
         <value>The content language.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Language of the body part, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentLocation">
@@ -106,7 +114,9 @@
             Gets the Content-Location of the body part, if available.
             </summary>
         <value>The content location.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Location of the body part, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentMd5">
@@ -121,10 +131,12 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the Content-Md5 of the body part, if available.
+            Gets the MD5 hash of the content, if available.
             </summary>
         <value>The content md5.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the MD5 hash of the content, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentTransferEncoding">
@@ -142,7 +154,32 @@
             Gets the Content-Transfer-Encoding of the body part.
             </summary>
         <value>The content transfer encoding.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Content-Transfer-Encoding of the body part.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encode">
+      <MemberSignature Language="C#" Value="protected override void Encode (System.Text.StringBuilder builder);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Encode(class System.Text.StringBuilder builder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="builder" Type="System.Text.StringBuilder" />
+      </Parameters>
+      <Docs>
+        <param name="builder">The string builder.</param>
+        <summary>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </summary>
+        <remarks>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsAttachment">
@@ -161,7 +198,9 @@
             </summary>
         <value>
           <c>true</c> if thie part is an attachment; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether or not the body part is an attachment.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Octets">
@@ -176,10 +215,12 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the size of the body part.
+            Gets the size of the body part, in bytes.
             </summary>
         <value>The number of octets.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the size of the body part, in bytes.
+            </remarks>
       </Docs>
     </Member>
   </Members>

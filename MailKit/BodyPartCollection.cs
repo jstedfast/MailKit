@@ -54,6 +54,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the number of body parts in the collection.
 		/// </summary>
+		/// <remarks>
+		/// Gets the number of body parts in the collection.
+		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
 			get { return collection.Count; }
@@ -62,6 +65,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the <see cref="MailKit.BodyPart"/> at the specified index.
 		/// </summary>
+		/// <remarks>
+		/// Gets the <see cref="MailKit.BodyPart"/> at the specified index.
+		/// </remarks>
 		/// <param name="index">The index.</param>
 		public BodyPart this [int index] {
 			get {
@@ -77,6 +83,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the body part enumerator.
 		/// </summary>
+		/// <remarks>
+		/// Gets the body part enumerator.
+		/// </remarks>
 		/// <returns>The enumerator.</returns>
 		public IEnumerator<BodyPart> GetEnumerator ()
 		{
@@ -90,6 +99,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the body part enumerator.
 		/// </summary>
+		/// <remarks>
+		/// Gets the body part enumerator.
+		/// </remarks>
 		/// <returns>The enumerator.</returns>
 		IEnumerator IEnumerable.GetEnumerator ()
 		{

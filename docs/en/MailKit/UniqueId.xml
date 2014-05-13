@@ -40,7 +40,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.UniqueId" /> struct.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.UniqueId" /> with the specified value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="CompareTo">
@@ -66,7 +68,9 @@
             a value of <c>0</c> if this <see cref="T:MailKit.UniqueId" /> is equal to <paramref name="other" />, or
             a value greater than <c>0</c> if this <see cref="T:MailKit.UniqueId" /> is greater than <paramref name="other" />.
             </returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Compares two <see cref="T:MailKit.UniqueId" /> objects.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -90,7 +94,9 @@
         <returns>
           <c>true</c> if the specified <see cref="T:MailKit.UniqueId" /> is equal to the current
             <see cref="T:MailKit.UniqueId" />; otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether the specified <see cref="T:MailKit.UniqueId" /> is equal to the current <see cref="T:MailKit.UniqueId" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -114,7 +120,9 @@
         <returns>
           <c>true</c> if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:MailKit.UniqueId" />;
             otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:MailKit.UniqueId" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -133,7 +141,9 @@
             Serves as a hash function for a <see cref="T:MailKit.UniqueId" /> object.
             </summary>
         <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a hash table.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Serves as a hash function for a <see cref="T:MailKit.UniqueId" /> object.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -150,7 +160,9 @@
         <summary>
             The identifier.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The identifier.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -175,7 +187,9 @@
             </summary>
         <returns>
           <c>true</c> if <paramref name="uid1" /> and <paramref name="uid2" /> are equal; otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether two unique identifiers are equal.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="op_GreaterThan">
@@ -200,7 +214,9 @@
             </summary>
         <returns>
           <c>true</c> if <paramref name="uid1" /> is greater than <paramref name="uid2" />; otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether one unique identifier is greater than another unique identifier.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="op_GreaterThanOrEqual">
@@ -225,7 +241,9 @@
             </summary>
         <returns>
           <c>true</c> if <paramref name="uid1" /> is greater than or equal to <paramref name="uid2" />; otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether one unique identifier is greater than or equal to another unique identifier.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -250,7 +268,9 @@
             </summary>
         <returns>
           <c>true</c> if <paramref name="uid1" /> and <paramref name="uid2" /> are not equal; otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether two unique identifiers are not equal.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="op_LessThan">
@@ -275,7 +295,9 @@
             </summary>
         <returns>
           <c>true</c> if <paramref name="uid1" /> is less than <paramref name="uid2" />; otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether one unique identifier is less than another unique identifier.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="op_LessThanOrEqual">
@@ -300,7 +322,9 @@
             </summary>
         <returns>
           <c>true</c> if <paramref name="uid1" /> is less than or equal to <paramref name="uid2" />; otherwise, <c>false</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Determines whether one unique identifier is less than or equal to another unique identifier.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -319,7 +343,9 @@
             Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.UniqueId" />.
             </summary>
         <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.UniqueId" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.UniqueId" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

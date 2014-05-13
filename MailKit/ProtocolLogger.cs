@@ -49,6 +49,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolLogger"/> to log to a specified file.
+		/// </remarks>
 		/// <param name="fileName">The file name.</param>
 		public ProtocolLogger (string fileName)
 		{
@@ -59,6 +62,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolLogger"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ProtocolLogger"/> to log to a specified stream.
+		/// </remarks>
 		/// <param name="stream">The stream.</param>
 		public ProtocolLogger (Stream stream)
 		{
@@ -72,6 +78,10 @@ namespace MailKit {
 		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="MailKit.ProtocolLogger"/>
 		/// is reclaimed by garbage collection.
 		/// </summary>
+		/// <remarks>
+		/// Releases unmanaged resources and performs other cleanup operations before the <see cref="MailKit.ProtocolLogger"/>
+		/// is reclaimed by garbage collection.
+		/// </remarks>
 		~ProtocolLogger ()
 		{
 			Dispose (false);
@@ -120,6 +130,9 @@ namespace MailKit {
 		/// <summary>
 		/// Logs a connection to the specified URI.
 		/// </summary>
+		/// <remarks>
+		/// Logs a connection to the specified URI.
+		/// </remarks>
 		/// <param name="uri">The URI.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uri"/> is <c>null</c>.
@@ -151,6 +164,9 @@ namespace MailKit {
 		/// <summary>
 		/// Logs a sequence of bytes sent by the client.
 		/// </summary>
+		/// <remarks>
+		/// Logs a sequence of bytes sent by the client.
+		/// </remarks>
 		/// <param name='buffer'>The buffer to log.</param>
 		/// <param name='offset'>The offset of the first byte to log.</param>
 		/// <param name='count'>The number of bytes to log.</param>
@@ -179,6 +195,9 @@ namespace MailKit {
 		/// <summary>
 		/// Logs a sequence of bytes sent by the server.
 		/// </summary>
+		/// <remarks>
+		/// Logs a sequence of bytes sent by the server.
+		/// </remarks>
 		/// <param name='buffer'>The buffer to log.</param>
 		/// <param name='offset'>The offset of the first byte to log.</param>
 		/// <param name='count'>The number of bytes to log.</param>
@@ -212,6 +231,10 @@ namespace MailKit {
 		/// Releases the unmanaged resources used by the <see cref="ProtocolLogger"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
+		/// <remarks>
+		/// Releases the unmanaged resources used by the <see cref="ProtocolLogger"/> and
+		/// optionally releases the managed resources.
+		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)

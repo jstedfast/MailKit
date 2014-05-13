@@ -33,7 +33,32 @@
             Gets the body structure of the message.
             </summary>
         <value>The body structure.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the body structure of the message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encode">
+      <MemberSignature Language="C#" Value="protected override void Encode (System.Text.StringBuilder builder);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Encode(class System.Text.StringBuilder builder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="builder" Type="System.Text.StringBuilder" />
+      </Parameters>
+      <Docs>
+        <param name="builder">The string builder.</param>
+        <summary>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </summary>
+        <remarks>
+            Encodes the <see cref="T:MailKit.BodyPart" /> into the <see cref="T:System.Text.StringBuilder" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Envelope">
@@ -48,10 +73,12 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the envelope of the message.
+            Gets the envelope of the message, if available.
             </summary>
         <value>The envelope.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the envelope of the message, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Lines">
@@ -66,10 +93,12 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets a value indicating the length of the message, in lines.
+            Gets the length of the message, in lines.
             </summary>
         <value>The number of lines.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the length of the message, in lines.
+            </remarks>
       </Docs>
     </Member>
   </Members>

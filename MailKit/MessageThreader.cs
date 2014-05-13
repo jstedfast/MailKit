@@ -35,6 +35,9 @@ namespace MailKit {
 	/// <summary>
 	/// Threads messages according to the algorithms defined in rfc5256.
 	/// </summary>
+	/// <remarks>
+	/// Threads messages according to the algorithms defined in rfc5256.
+	/// </remarks>
 	public static class MessageThreader
 	{
 		class ThreadableNode : ISortable
@@ -381,6 +384,9 @@ namespace MailKit {
 		/// <summary>
 		/// Thread the messages according to the specified threading algorithm.
 		/// </summary>
+		/// <remarks>
+		/// Thread the messages according to the specified threading algorithm.
+		/// </remarks>
 		/// <returns>The threaded messages.</returns>
 		/// <param name="algorithm">The threading algorithm.</param>
 		/// <param name="messages">The messages.</param>
@@ -402,6 +408,10 @@ namespace MailKit {
 		/// Threads the messages according to the specified threading algorithm
 		/// and sorts the resulting threads by the specified ordering.
 		/// </summary>
+		/// <remarks>
+		/// Threads the messages according to the specified threading algorithm
+		/// and sorts the resulting threads by the specified ordering.
+		/// </remarks>
 		/// <returns>The threaded messages.</returns>
 		/// <param name="algorithm">The threading algorithm.</param>
 		/// <param name="messages">The messages.</param>
@@ -480,6 +490,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the threadable subject.
 		/// </summary>
+		/// <remarks>
+		/// Gets the threadable subject.
+		/// </remarks>
 		/// <returns>The threadable subject.</returns>
 		/// <param name="subject">The Subject header value.</param>
 		/// <param name="replyDepth">The reply depth.</param>

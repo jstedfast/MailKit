@@ -45,6 +45,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the Content-Type of the body part.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Content-Type of the body part.
+		/// </remarks>
 		/// <value>The content type.</value>
 		public ContentType ContentType {
 			get; internal set;
@@ -53,17 +56,20 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the part specifier.
 		/// </summary>
+		/// <remarks>
+		/// Gets the part specifier.
+		/// </remarks>
 		/// <value>The part specifier.</value>
 		public string PartSpecifier {
 			get; internal set;
 		}
 
-		internal protected static void Encode (StringBuilder builder, uint value)
+		internal static void Encode (StringBuilder builder, uint value)
 		{
 			builder.Append (value.ToString ());
 		}
 
-		internal protected static void Encode (StringBuilder builder, string value)
+		internal static void Encode (StringBuilder builder, string value)
 		{
 			if (value != null)
 				builder.Append (MimeUtils.Quote (value));
@@ -71,7 +77,7 @@ namespace MailKit {
 				builder.Append ("NIL");
 		}
 
-		internal protected static void Encode (StringBuilder builder, string[] values)
+		internal static void Encode (StringBuilder builder, string[] values)
 		{
 			if (values == null || values.Length == 0) {
 				builder.Append ("NIL");
@@ -90,7 +96,7 @@ namespace MailKit {
 			builder.Append (')');
 		}
 
-		internal protected static void Encode (StringBuilder builder, ParameterList parameters)
+		internal static void Encode (StringBuilder builder, ParameterList parameters)
 		{
 			if (parameters == null || parameters.Count == 0) {
 				builder.Append ("NIL");
@@ -111,7 +117,7 @@ namespace MailKit {
 			builder.Append (')');
 		}
 
-		internal protected static void Encode (StringBuilder builder, ContentDisposition disposition)
+		internal static void Encode (StringBuilder builder, ContentDisposition disposition)
 		{
 			if (disposition == null) {
 				builder.Append ("NIL");
@@ -125,7 +131,7 @@ namespace MailKit {
 			builder.Append (')');
 		}
 
-		internal protected static void Encode (StringBuilder builder, ContentType contentType)
+		internal static void Encode (StringBuilder builder, ContentType contentType)
 		{
 			Encode (builder, contentType.MediaType);
 			builder.Append (' ');
@@ -134,7 +140,7 @@ namespace MailKit {
 			Encode (builder, contentType.Parameters);
 		}
 
-		internal protected static void Encode (StringBuilder builder, BodyPartCollection parts)
+		internal static void Encode (StringBuilder builder, BodyPartCollection parts)
 		{
 			if (parts == null || parts.Count == 0) {
 				builder.Append ("NIL");
@@ -149,7 +155,7 @@ namespace MailKit {
 			}
 		}
 
-		internal protected static void Encode (StringBuilder builder, Envelope envelope)
+		internal static void Encode (StringBuilder builder, Envelope envelope)
 		{
 			if (envelope == null) {
 				builder.Append ("NIL");
@@ -159,7 +165,7 @@ namespace MailKit {
 			envelope.Encode (builder);
 		}
 
-		internal protected static void Encode (StringBuilder builder, BodyPart body)
+		internal static void Encode (StringBuilder builder, BodyPart body)
 		{
 			if (body == null) {
 				builder.Append ("NIL");

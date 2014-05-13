@@ -12,7 +12,9 @@
     <summary>
             An enumeration of special folders.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            An enumeration of special folders.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="All">

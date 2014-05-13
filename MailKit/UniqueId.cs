@@ -38,11 +38,17 @@ namespace MailKit {
 		/// <summary>
 		/// The identifier.
 		/// </summary>
+		/// <remarks>
+		/// The identifier.
+		/// </remarks>
 		public readonly uint Id;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueId"/> struct.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="UniqueId"/> with the specified value.
+		/// </remarks>
 		/// <param name="id">The unique identifier.</param>
 		public UniqueId (uint id)
 		{
@@ -54,6 +60,9 @@ namespace MailKit {
 		/// <summary>
 		/// Compares two <see cref="UniqueId"/> objects.
 		/// </summary>
+		/// <remarks>
+		/// Compares two <see cref="UniqueId"/> objects.
+		/// </remarks>
 		/// <returns>
 		/// A value less than <c>0</c> if this <see cref="UniqueId"/> is less than <paramref name="other"/>,
 		/// a value of <c>0</c> if this <see cref="UniqueId"/> is equal to <paramref name="other"/>, or
@@ -72,6 +81,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether the specified <see cref="MailKit.UniqueId"/> is equal to the current <see cref="MailKit.UniqueId"/>.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether the specified <see cref="MailKit.UniqueId"/> is equal to the current <see cref="MailKit.UniqueId"/>.
+		/// </remarks>
 		/// <param name="other">The <see cref="MailKit.UniqueId"/> to compare with the current <see cref="MailKit.UniqueId"/>.</param>
 		/// <returns><c>true</c> if the specified <see cref="MailKit.UniqueId"/> is equal to the current
 		/// <see cref="MailKit.UniqueId"/>; otherwise, <c>false</c>.</returns>
@@ -85,6 +97,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether two unique identifiers are equal.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether two unique identifiers are equal.
+		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are equal; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
@@ -96,6 +111,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether one unique identifier is greater than another unique identifier.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether one unique identifier is greater than another unique identifier.
+		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is greater than <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
@@ -107,6 +125,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether one unique identifier is greater than or equal to another unique identifier.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether one unique identifier is greater than or equal to another unique identifier.
+		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is greater than or equal to <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
@@ -118,6 +139,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether two unique identifiers are not equal.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether two unique identifiers are not equal.
+		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> and <paramref name="uid2"/> are not equal; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
@@ -129,6 +153,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether one unique identifier is less than another unique identifier.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether one unique identifier is less than another unique identifier.
+		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is less than <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
@@ -140,6 +167,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether one unique identifier is less than or equal to another unique identifier.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether one unique identifier is less than or equal to another unique identifier.
+		/// </remarks>
 		/// <returns><c>true</c> if <paramref name="uid1"/> is less than or equal to <paramref name="uid2"/>; otherwise, <c>false</c>.</returns>
 		/// <param name="uid1">The first unique id to compare.</param>
 		/// <param name="uid2">The second unique id to compare.</param>
@@ -151,6 +181,9 @@ namespace MailKit {
 		/// <summary>
 		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>.
 		/// </summary>
+		/// <remarks>
+		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>.
+		/// </remarks>
 		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.UniqueId"/>.</param>
 		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.UniqueId"/>;
 		/// otherwise, <c>false</c>.</returns>
@@ -162,6 +195,9 @@ namespace MailKit {
 		/// <summary>
 		/// Serves as a hash function for a <see cref="MailKit.UniqueId"/> object.
 		/// </summary>
+		/// <remarks>
+		/// Serves as a hash function for a <see cref="MailKit.UniqueId"/> object.
+		/// </remarks>
 		/// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a hash table.</returns>
 		public override int GetHashCode ()
 		{
@@ -171,6 +207,9 @@ namespace MailKit {
 		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.
 		/// </summary>
+		/// <remarks>
+		///  Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.
+		/// </remarks>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.</returns>
 		public override string ToString ()
 		{

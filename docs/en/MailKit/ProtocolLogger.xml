@@ -38,7 +38,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.ProtocolLogger" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ProtocolLogger" /> to log to a specified stream.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -56,7 +58,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.ProtocolLogger" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ProtocolLogger" /> to log to a specified file.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -101,7 +105,10 @@
             Releases the unmanaged resources used by the <see cref="T:MailKit.ProtocolLogger" /> and
             optionally releases the managed resources.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Releases the unmanaged resources used by the <see cref="T:MailKit.ProtocolLogger" /> and
+            optionally releases the managed resources.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Finalize">
@@ -120,7 +127,10 @@
             Releases unmanaged resources and performs other cleanup operations before the <see cref="T:MailKit.ProtocolLogger" />
             is reclaimed by garbage collection.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Releases unmanaged resources and performs other cleanup operations before the <see cref="T:MailKit.ProtocolLogger" />
+            is reclaimed by garbage collection.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="LogClient">
@@ -145,7 +155,9 @@
         <summary>
             Logs a sequence of bytes sent by the client.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Logs a sequence of bytes sent by the client.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <c>null</c>.
             </exception>
@@ -182,7 +194,9 @@
         <summary>
             Logs a connection to the specified URI.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Logs a connection to the specified URI.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uri" /> is <c>null</c>.
             </exception>
@@ -216,7 +230,9 @@
         <summary>
             Logs a sequence of bytes sent by the server.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Logs a sequence of bytes sent by the server.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <c>null</c>.
             </exception>

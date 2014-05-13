@@ -208,5 +208,59 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Envelope" />.
+            </summary>
+        <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Envelope" />.</returns>
+        <remarks>
+          <para>The returned string can be parsed by <see cref="M:MailKit.Envelope.TryParse(System.String,MailKit.Envelope@)" />.</para>
+          <para>Note: The syntax of the string returned, while similar to IMAP's ENVELOPE syntax,
+            is not completely compatible.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TryParse">
+      <MemberSignature Language="C#" Value="public static bool TryParse (string text, out MailKit.Envelope envelope);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string text, class MailKit.Envelope envelope) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.14.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="text" Type="System.String" />
+        <Parameter Name="envelope" Type="MailKit.Envelope&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="text">The text to parse.</param>
+        <param name="envelope">The parsed envelope.</param>
+        <summary>
+            Tries to parse the given text into a new <see cref="T:MailKit.Envelope" /> instance.
+            </summary>
+        <returns>
+          <c>true</c>, if the envelope was successfully parsed, <c>false</c> otherwise.</returns>
+        <remarks>
+          <para>Parses an Envelope value from the specified text.</para>
+          <para>Note: This syntax, while similar to IMAP's ENVELOPE syntax, is not completely compatible.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="text" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
   </Members>
 </Type>

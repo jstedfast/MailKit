@@ -15,9 +15,11 @@
   </Interfaces>
   <Docs>
     <summary>
-            A collection of <see cref="T:MailKit.BodyPart" />.
+            A <see cref="T:MailKit.BodyPart" /> collection.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A <see cref="T:MailKit.BodyPart" /> collection.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Count">
@@ -35,7 +37,9 @@
             Gets the number of body parts in the collection.
             </summary>
         <value>The count.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the number of body parts in the collection.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -54,7 +58,9 @@
             Gets the body part enumerator.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the body part enumerator.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -76,7 +82,9 @@
             Gets the <see cref="T:MailKit.BodyPart" /> at the specified index.
             </summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the <see cref="T:MailKit.BodyPart" /> at the specified index.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -95,7 +103,9 @@
             Gets the body part enumerator.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the body part enumerator.
+            </remarks>
       </Docs>
     </Member>
   </Members>

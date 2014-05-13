@@ -41,10 +41,13 @@
             </summary>
         <value>The body structure of the message.</value>
         <remarks>
-            The body will be one of <see cref="T:MailKit.BodyPartText" />,
+          <para>The body will be one of <see cref="T:MailKit.BodyPartText" />,
             <see cref="T:MailKit.BodyPartMessage" />, <see cref="T:MailKit.BodyPartBasic" />,
-            or <see cref="T:MailKit.BodyPartMultipart" />.
-            </remarks>
+            or <see cref="T:MailKit.BodyPartMultipart" />.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.Body" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Envelope">
@@ -63,12 +66,15 @@
             </summary>
         <value>The envelope of the message.</value>
         <remarks>
-            The envelope of a message contains information such as the
+          <para>The envelope of a message contains information such as the
             date the message was sent, the subject of the message,
             the sender of the message, who the message was sent to,
             which message(s) the message may be in reply to,
-            and the message id.
-            </remarks>
+            and the message id.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.Envelope" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Flags">
@@ -86,7 +92,12 @@
             Gets the message flags, if available.
             </summary>
         <value>The message flags.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the message flags, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.Flags" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="GMailLabels">
@@ -104,43 +115,58 @@
             Gets the list of GMail labels, if available.
             </summary>
         <value>The GMail labels.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the list of GMail labels, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.GMailLabels" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="GMailMessageId">
-      <MemberSignature Language="C#" Value="public ulong GMailMessageId { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 GMailMessageId" />
+      <MemberSignature Language="C#" Value="public Nullable&lt;ulong&gt; GMailMessageId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; GMailMessageId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.14.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.UInt64</ReturnType>
+        <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the GMail message identifier.
+            Gets the GMail message identifier, if available.
             </summary>
         <value>The GMail message identifier.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the GMail message identifier, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.GMailMessageId" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="GMailThreadId">
-      <MemberSignature Language="C#" Value="public ulong GMailThreadId { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 GMailThreadId" />
+      <MemberSignature Language="C#" Value="public Nullable&lt;ulong&gt; GMailThreadId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; GMailThreadId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.14.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.UInt64</ReturnType>
+        <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the GMail thread identifier.
+            Gets the GMail thread identifier, if available.
             </summary>
         <value>The GMail thread identifier.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the GMail thread identifier, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.GMailThreadId" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Index">
@@ -158,7 +184,9 @@
             Gets the index of the message.
             </summary>
         <value>The index of the message.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the index of the message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="InternalDate">
@@ -176,7 +204,12 @@
             Gets the internal date of the message (i.e. the "received" date), if available.
             </summary>
         <value>The internal date of the message.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the internal date of the message (i.e. the "received" date), if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.InternalDate" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.CanSort">
@@ -418,7 +451,12 @@
             Gets the size of the message, in bytes, if available.
             </summary>
         <value>The size of the message.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the size of the message, in bytes, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.MessageSize" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="ModSeq">
@@ -436,7 +474,12 @@
             Gets the mod-sequence value for the message, if available.
             </summary>
         <value>The mod-sequence value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the mod-sequence value for the message, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.ModSeq" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="References">
@@ -454,7 +497,12 @@
             Gets the message-ids that the message references, if available.
             </summary>
         <value>The references.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the message-ids that the message references, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.References" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="UniqueId">
@@ -472,7 +520,12 @@
             Gets the unique ID of the message, if available.
             </summary>
         <value>The uid of the message.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <para>Gets the unique ID of the message, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.UniqueId" /> flag is passed to
+            <see cref="M:MailKit.IFolder.Fetch(MailKit.UniqueId[],MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
   </Members>

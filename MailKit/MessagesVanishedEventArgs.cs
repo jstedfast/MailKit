@@ -30,7 +30,10 @@ namespace MailKit {
 	/// <summary>
 	/// Event args used when a message vanishes from a folder.
 	/// </summary>
-	public class MessagesVanishedEventArgs : EventArgs
+	/// <remarks>
+	/// Event args used when a message vanishes from a folder.
+	/// </remarks>
+	public sealed class MessagesVanishedEventArgs : EventArgs
 	{
 		internal MessagesVanishedEventArgs (UniqueId[] uids, bool earlier)
 		{
@@ -41,6 +44,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the unique identifiers of the messages that vanished.
 		/// </summary>
+		/// <remarks>
+		/// Gets the unique identifiers of the messages that vanished.
+		/// </remarks>
 		/// <value>The unique identifiers.</value>
 		public UniqueId[] UniqueIds {
 			get; private set;
@@ -49,6 +55,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets whether the messages vanished inthe past as opposed to just now.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether the messages vanished inthe past as opposed to just now.
+		/// </remarks>
 		/// <value><c>true</c> if the messages vanished earlier; otherwise, <c>false</c>.</value>
 		public bool Earlier {
 			get; private set;

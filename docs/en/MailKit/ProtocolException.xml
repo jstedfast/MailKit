@@ -13,7 +13,10 @@
     <summary>
             The exception that is thrown when there is a protocol error.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A <see cref="T:MailKit.ProtocolException" /> can be thrown by any of the various client
+            methods in MailKit.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,7 +31,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.ProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ProtocolException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,7 +51,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.ProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ProtocolException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -66,7 +73,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.ProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ProtocolException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -86,7 +95,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.ProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ProtocolException" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

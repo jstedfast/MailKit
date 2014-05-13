@@ -24,14 +24,15 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace MailKit {
 	/// <summary>
 	/// A message thread.
 	/// </summary>
+	/// <remarks>
+	/// A message thread.
+	/// </remarks>
 	public sealed class MessageThread
 	{
 		internal readonly List<MessageThread> children;
