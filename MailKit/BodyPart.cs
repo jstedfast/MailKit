@@ -96,7 +96,7 @@ namespace MailKit {
 			builder.Append (')');
 		}
 
-		internal static void Encode (StringBuilder builder, ParameterList parameters)
+		internal static void Encode (StringBuilder builder, IList<Parameter> parameters)
 		{
 			if (parameters == null || parameters.Count == 0) {
 				builder.Append ("NIL");
@@ -469,10 +469,7 @@ namespace MailKit {
 				id++;
 			} while (index < text.Length);
 
-			if (index >= text.Length)
-				return false;
-
-			return true;
+			return index < text.Length;
 		}
 
 		static bool TryParse (string text, ref int index, string path, out BodyPart part)
