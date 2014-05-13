@@ -53,6 +53,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the folder attributes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the folder attributes.
+		/// </remarks>
 		/// <value>The folder attributes.</value>
 		FolderAttributes Attributes { get; }
 
@@ -79,18 +82,27 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the directory separator.
 		/// </summary>
+		/// <remarks>
+		/// Gets the directory separator.
+		/// </remarks>
 		/// <value>The directory separator.</value>
 		char DirectorySeparator { get; }
 
 		/// <summary>
 		/// Gets the read/write access of the folder.
 		/// </summary>
+		/// <remarks>
+		/// Gets the read/write access of the folder.
+		/// </remarks>
 		/// <value>The read/write access.</value>
 		FolderAccess Access { get; }
 
 		/// <summary>
 		/// Gets whether or not the folder is a namespace folder.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the folder is a namespace folder.
+		/// </remarks>
 		/// <value><c>true</c> if the folder is a namespace folder; otherwise, <c>false</c>.</value>
 		bool IsNamespace { get; }
 
@@ -113,20 +125,29 @@ namespace MailKit {
 		string Name { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether the folder is subscribed.
+		/// Gets whether or not the folder is subscribed.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the folder is subscribed.
+		/// </remarks>
 		/// <value><c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
 		bool IsSubscribed { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether the folder is currently open.
+		/// Gets whether or not the folder is currently open.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the folder is currently open.
+		/// </remarks>
 		/// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
 		bool IsOpen { get; }
 
 		/// <summary>
-		/// Gets a value indicating whether the folder exists.
+		/// Gets whether or not the folder exists.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the folder exists.
+		/// </remarks>
 		/// <value><c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
 		bool Exists { get; }
 
@@ -180,20 +201,29 @@ namespace MailKit {
 		int FirstUnread { get; }
 
 		/// <summary>
-		/// Gets the number of recently added messages.
+		/// Gets the number of recently delivered messages.
 		/// </summary>
-		/// <value>The number of recently added messages.</value>
+		/// <remarks>
+		/// Gets the number of recently delivered messages.
+		/// </remarks>
+		/// <value>The number of recently delivered messages.</value>
 		int Recent { get; }
 
 		/// <summary>
 		/// Gets the total number of messages in the folder.
 		/// </summary>
+		/// <remarks>
+		/// Gets the total number of messages in the folder.
+		/// </remarks>
 		/// <value>The total number of messages.</value>
 		int Count { get; }
 
 		/// <summary>
 		/// Opens the folder using the requested folder access.
 		/// </summary>
+		/// <remarks>
+		/// Opens the folder using the requested folder access.
+		/// </remarks>
 		/// <returns>The <see cref="FolderAccess"/> state of the folder.</returns>
 		/// <param name="access">The requested folder access.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -202,6 +232,9 @@ namespace MailKit {
 		/// <summary>
 		/// Closes the folder, optionally expunging the messages marked for deletion.
 		/// </summary>
+		/// <remarks>
+		/// Closes the folder, optionally expunging the messages marked for deletion.
+		/// </remarks>
 		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Close (bool expunge, CancellationToken cancellationToken = default (CancellationToken));
@@ -209,6 +242,9 @@ namespace MailKit {
 		/// <summary>
 		/// Creates a new subfolder with the given name.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new subfolder with the given name.
+		/// </remarks>
 		/// <returns>The created folder.</returns>
 		/// <param name="name">The name of the folder to create.</param>
 		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
@@ -218,6 +254,9 @@ namespace MailKit {
 		/// <summary>
 		/// Renames the folder to exist with a new name under a new parent folder.
 		/// </summary>
+		/// <remarks>
+		/// Renames the folder to exist with a new name under a new parent folder.
+		/// </remarks>
 		/// <param name="parent">The new parent folder.</param>
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -226,24 +265,36 @@ namespace MailKit {
 		/// <summary>
 		/// Deletes the folder on the IMAP server.
 		/// </summary>
+		/// <remarks>
+		/// Deletes the folder on the IMAP server.
+		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Delete (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Subscribes the folder.
 		/// </summary>
+		/// <remarks>
+		/// Subscribes the folder.
+		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Subscribe (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Unsubscribes the folder.
 		/// </summary>
+		/// <remarks>
+		/// Unsubscribes the folder.
+		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Unsubscribe (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the subfolders.
 		/// </summary>
+		/// <remarks>
+		/// Gets the subfolders.
+		/// </remarks>
 		/// <returns>The subfolders.</returns>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -252,6 +303,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified subfolder.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified subfolder.
+		/// </remarks>
 		/// <returns>The subfolder.</returns>
 		/// <param name="name">The name of the subfolder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -263,12 +317,18 @@ namespace MailKit {
 		/// <summary>
 		/// Forces the server to flush its state for the folder.
 		/// </summary>
+		/// <remarks>
+		/// Forces the server to flush its state for the folder.
+		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Check (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Updates the values of the specified items.
 		/// </summary>
+		/// <remarks>
+		/// Updates the values of the specified items.
+		/// </remarks>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
@@ -295,6 +355,9 @@ namespace MailKit {
 		/// <summary>
 		/// Appends the specified message to the folder.
 		/// </summary>
+		/// <remarks>
+		/// Appends the specified message to the folder.
+		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
@@ -304,6 +367,9 @@ namespace MailKit {
 		/// <summary>
 		/// Appends the specified message to the folder.
 		/// </summary>
+		/// <remarks>
+		/// Appends the specified message to the folder.
+		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
@@ -314,6 +380,9 @@ namespace MailKit {
 		/// <summary>
 		/// Appends the specified messages to the folder.
 		/// </summary>
+		/// <remarks>
+		/// Appends the specified messages to the folder.
+		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
@@ -323,6 +392,9 @@ namespace MailKit {
 		/// <summary>
 		/// Appends the specified messages to the folder.
 		/// </summary>
+		/// <remarks>
+		/// Appends the specified messages to the folder.
+		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each of the messages.</param>
@@ -333,6 +405,9 @@ namespace MailKit {
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
 		/// </summary>
+		/// <remarks>
+		/// Copies the specified messages to the destination folder.
+		/// </remarks>
 		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
@@ -342,6 +417,9 @@ namespace MailKit {
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
 		/// </summary>
+		/// <remarks>
+		/// Moves the specified messages to the destination folder.
+		/// </remarks>
 		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
@@ -351,6 +429,9 @@ namespace MailKit {
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
 		/// </summary>
+		/// <remarks>
+		/// Copies the specified messages to the destination folder.
+		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -359,6 +440,9 @@ namespace MailKit {
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
 		/// </summary>
+		/// <remarks>
+		/// Moves the specified messages to the destination folder.
+		/// </remarks>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -367,6 +451,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the specified message UIDs.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
@@ -376,6 +463,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -386,6 +476,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum UID.</param>
 		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
@@ -396,6 +489,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum UID.</param>
 		/// <param name="max">The maximum UID.</param>
@@ -407,6 +503,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the specified message indexes.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
@@ -416,6 +515,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -426,6 +528,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
@@ -436,6 +541,9 @@ namespace MailKit {
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
@@ -447,6 +555,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified message.
+		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -455,6 +566,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified message.
+		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -463,6 +577,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified body part.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
@@ -472,6 +589,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified body part.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
@@ -482,6 +602,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified body part.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
@@ -491,6 +614,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified body part.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
 		/// <returns>The body part.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
@@ -567,6 +693,9 @@ namespace MailKit {
 		/// <summary>
 		/// Adds a set of flags to the specified messages.
 		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified messages.
+		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -576,6 +705,9 @@ namespace MailKit {
 		/// <summary>
 		/// Removes a set of flags from the specified messages.
 		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified messages.
+		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -585,6 +717,9 @@ namespace MailKit {
 		/// <summary>
 		/// Sets the flags of the specified messages.
 		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified messages.
+		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -594,6 +729,9 @@ namespace MailKit {
 		/// <summary>
 		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
 		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
 		/// <returns>The unique IDs of the messages that were not updated.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -605,6 +743,9 @@ namespace MailKit {
 		/// <summary>
 		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
 		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
 		/// <returns>The unique IDs of the messages that were not updated.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -616,6 +757,9 @@ namespace MailKit {
 		/// <summary>
 		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
 		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
 		/// <returns>The unique IDs of the messages that were not updated.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -627,6 +771,9 @@ namespace MailKit {
 		/// <summary>
 		/// Adds a set of flags to the specified messages.
 		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified messages.
+		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -636,6 +783,9 @@ namespace MailKit {
 		/// <summary>
 		/// Removes a set of flags from the specified messages.
 		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified messages.
+		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -645,6 +795,9 @@ namespace MailKit {
 		/// <summary>
 		/// Sets the flags of the specified messages.
 		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified messages.
+		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -654,6 +807,9 @@ namespace MailKit {
 		/// <summary>
 		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
 		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
 		/// <returns>The indexes of the messages that were not updated.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -665,6 +821,9 @@ namespace MailKit {
 		/// <summary>
 		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
 		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
 		/// <returns>The indexes of the messages that were not updated.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -676,6 +835,9 @@ namespace MailKit {
 		/// <summary>
 		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
 		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
 		/// <returns>The indexes of the messages that were not updated.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
@@ -764,46 +926,73 @@ namespace MailKit {
 		/// <summary>
 		/// Occurs when the folder is deleted.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when the folder is deleted.
+		/// </remarks>
 		event EventHandler<EventArgs> Deleted;
 
 		/// <summary>
 		/// Occurs when the folder is renamed.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when the folder is renamed.
+		/// </remarks>
 		event EventHandler<FolderRenamedEventArgs> Renamed;
 
 		/// <summary>
 		/// Occurs when the folder is subscribed.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when the folder is subscribed.
+		/// </remarks>
 		event EventHandler<EventArgs> Subscribed;
 
 		/// <summary>
 		/// Occurs when the folder is unsubscribed.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when the folder is unsubscribed.
+		/// </remarks>
 		event EventHandler<EventArgs> Unsubscribed;
 
 		/// <summary>
 		/// Occurs when a message is expunged from the folder.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when a message is expunged from the folder.
+		/// </remarks>
 		event EventHandler<MessageEventArgs> Expunged;
 
 		/// <summary>
 		/// Occurs when flags changed on a message.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when flags changed on a message.
+		/// </remarks>
 		event EventHandler<MessageFlagsChangedEventArgs> MessageFlagsChanged;
 
 		/// <summary>
 		/// Occurs when the UID validity changes.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when the UID validity changes.
+		/// </remarks>
 		event EventHandler<EventArgs> UidValidityChanged;
 
 		/// <summary>
 		/// Occurs when the message count changes.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when the message count changes.
+		/// </remarks>
 		event EventHandler<EventArgs> CountChanged;
 
 		/// <summary>
 		/// Occurs when the recent message count changes.
 		/// </summary>
+		/// <remarks>
+		/// Emitted when the recent message count changes.
+		/// </remarks>
 		event EventHandler<EventArgs> RecentChanged;
 	}
 }

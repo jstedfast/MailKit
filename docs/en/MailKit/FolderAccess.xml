@@ -12,7 +12,9 @@
     <summary>
             A folder access mode.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A folder access mode.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="None">

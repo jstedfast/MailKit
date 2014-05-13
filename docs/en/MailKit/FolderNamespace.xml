@@ -13,7 +13,9 @@
     <summary>
             A folder namespace.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A folder namespace.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="DirectorySeparator">
@@ -30,7 +32,9 @@
         <summary>
             The directory separator for this folder namespace.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The directory separator for this folder namespace.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Path">
@@ -47,7 +51,9 @@
         <summary>
             The base path for this folder namespace.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The base path for this folder namespace.
+            </remarks>
       </Docs>
     </Member>
   </Members>

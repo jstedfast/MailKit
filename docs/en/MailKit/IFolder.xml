@@ -55,7 +55,9 @@
             Gets the read/write access of the folder.
             </summary>
         <value>The read/write access.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the read/write access of the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -82,7 +84,9 @@
         <summary>
             Adds a set of flags to the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Adds a set of flags to the specified messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -109,7 +113,9 @@
         <summary>
             Adds a set of flags to the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Adds a set of flags to the specified messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -139,7 +145,9 @@
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -169,7 +177,9 @@
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -195,7 +205,9 @@
             Appends the specified message to the folder.
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified message to the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -221,7 +233,9 @@
             Appends the specified messages to the folder.
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified messages to the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -249,7 +263,9 @@
             Appends the specified message to the folder.
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified message to the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -277,7 +293,9 @@
             Appends the specified messages to the folder.
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified messages to the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -295,7 +313,9 @@
             Gets the folder attributes.
             </summary>
         <value>The folder attributes.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the folder attributes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Check">
@@ -316,7 +336,9 @@
         <summary>
             Forces the server to flush its state for the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Forces the server to flush its state for the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Close">
@@ -339,7 +361,9 @@
         <summary>
             Closes the folder, optionally expunging the messages marked for deletion.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Closes the folder, optionally expunging the messages marked for deletion.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -365,7 +389,9 @@
             Copies the specified messages to the destination folder.
             </summary>
         <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Copies the specified messages to the destination folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -390,7 +416,9 @@
         <summary>
             Copies the specified messages to the destination folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Copies the specified messages to the destination folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -408,7 +436,9 @@
             Gets the total number of messages in the folder.
             </summary>
         <value>The total number of messages.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the total number of messages in the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="CountChanged">
@@ -425,7 +455,9 @@
         <summary>
             Occurs when the message count changes.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when the message count changes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -452,7 +484,9 @@
             Creates a new subfolder with the given name.
             </summary>
         <returns>The created folder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new subfolder with the given name.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -473,7 +507,9 @@
         <summary>
             Deletes the folder on the IMAP server.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Deletes the folder on the IMAP server.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Deleted">
@@ -490,7 +526,9 @@
         <summary>
             Occurs when the folder is deleted.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when the folder is deleted.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="DirectorySeparator">
@@ -508,7 +546,9 @@
             Gets the directory separator.
             </summary>
         <value>The directory separator.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the directory separator.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Exists">
@@ -523,11 +563,13 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets a value indicating whether the folder exists.
+            Gets whether or not the folder exists.
             </summary>
         <value>
           <c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets whether or not the folder exists.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Expunge">
@@ -592,7 +634,9 @@
         <summary>
             Occurs when a message is expunged from the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when a message is expunged from the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -618,7 +662,9 @@
             Fetches the message summaries for the specified message UIDs.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the specified message UIDs.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -644,7 +690,9 @@
             Fetches the message summaries for the specified message indexes.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the specified message indexes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -672,7 +720,9 @@
             Fetches the message summaries for the messages between the two UIDs, inclusive.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the messages between the two UIDs, inclusive.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -700,7 +750,9 @@
             Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -728,7 +780,9 @@
             Fetches the message summaries for the messages between the two indexes, inclusive.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the messages between the two indexes, inclusive.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -756,7 +810,9 @@
             Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -786,7 +842,9 @@
             Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -816,7 +874,9 @@
             Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="FirstUnread">
@@ -882,7 +942,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
@@ -908,7 +970,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
@@ -937,7 +1001,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
@@ -966,7 +1032,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -990,7 +1058,9 @@
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -1014,7 +1084,9 @@
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetStream">
@@ -1174,7 +1246,9 @@
             Gets the specified subfolder.
             </summary>
         <returns>The subfolder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified subfolder.
+            </remarks>
         <exception cref="T:MailKit.FolderNotFoundException">
             The requested folder could not be found.
             </exception>
@@ -1201,7 +1275,9 @@
             Gets the subfolders.
             </summary>
         <returns>The subfolders.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the subfolders.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="HighestModSeq">
@@ -1240,7 +1316,9 @@
             </summary>
         <value>
           <c>true</c> if the folder is a namespace folder; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets whether or not the folder is a namespace folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsOpen">
@@ -1255,11 +1333,13 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets a value indicating whether the folder is currently open.
+            Gets whether or not the folder is currently open.
             </summary>
         <value>
           <c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets whether or not the folder is currently open.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsSubscribed">
@@ -1274,11 +1354,13 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets a value indicating whether the folder is subscribed.
+            Gets whether or not the folder is subscribed.
             </summary>
         <value>
           <c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets whether or not the folder is subscribed.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MessageFlagsChanged">
@@ -1295,7 +1377,9 @@
         <summary>
             Occurs when flags changed on a message.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when flags changed on a message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -1321,7 +1405,9 @@
             Moves the specified messages to the destination folder.
             </summary>
         <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Moves the specified messages to the destination folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -1346,7 +1432,9 @@
         <summary>
             Moves the specified messages to the destination folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Moves the specified messages to the destination folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -1390,7 +1478,9 @@
             Opens the folder using the requested folder access.
             </summary>
         <returns>The <see cref="T:MailKit.FolderAccess" /> state of the folder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Opens the folder using the requested folder access.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ParentFolder">
@@ -1445,10 +1535,12 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the number of recently added messages.
+            Gets the number of recently delivered messages.
             </summary>
-        <value>The number of recently added messages.</value>
-        <remarks>To be added.</remarks>
+        <value>The number of recently delivered messages.</value>
+        <remarks>
+            Gets the number of recently delivered messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="RecentChanged">
@@ -1465,7 +1557,9 @@
         <summary>
             Occurs when the recent message count changes.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when the recent message count changes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -1492,7 +1586,9 @@
         <summary>
             Removes a set of flags from the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -1519,7 +1615,9 @@
         <summary>
             Removes a set of flags from the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -1549,7 +1647,9 @@
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -1579,7 +1679,9 @@
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Rename">
@@ -1604,7 +1706,9 @@
         <summary>
             Renames the folder to exist with a new name under a new parent folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Renames the folder to exist with a new name under a new parent folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Renamed">
@@ -1621,7 +1725,9 @@
         <summary>
             Occurs when the folder is renamed.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when the folder is renamed.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Search">
@@ -1764,7 +1870,9 @@
         <summary>
             Sets the flags of the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -1791,7 +1899,9 @@
         <summary>
             Sets the flags of the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -1821,7 +1931,9 @@
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -1851,7 +1963,9 @@
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Status">
@@ -1874,7 +1988,9 @@
         <summary>
             Updates the values of the specified items.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Updates the values of the specified items.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Subscribe">
@@ -1895,7 +2011,9 @@
         <summary>
             Subscribes the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Subscribes the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Subscribed">
@@ -1912,7 +2030,9 @@
         <summary>
             Occurs when the folder is subscribed.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when the folder is subscribed.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SupportsModSeq">
@@ -2052,7 +2172,9 @@
         <summary>
             Occurs when the UID validity changes.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when the UID validity changes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Unsubscribe">
@@ -2073,7 +2195,9 @@
         <summary>
             Unsubscribes the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Unsubscribes the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Unsubscribed">
@@ -2090,7 +2214,9 @@
         <summary>
             Occurs when the folder is unsubscribed.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Emitted when the folder is unsubscribed.
+            </remarks>
       </Docs>
     </Member>
   </Members>

@@ -37,7 +37,9 @@
             Gets the list of addresses that the message was blind-carbon-copied to.
             </summary>
         <value>The address(es) that the message was carbon-copied to.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the list of addresses that the message was blind-carbon-copied to.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Cc">
@@ -52,7 +54,7 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gest the list of addresses that the message was carbon-copied to.
+            Gets the list of addresses that the message was carbon-copied to.
             </summary>
         <value>The address(es) that the message was carbon-copied to.</value>
         <remarks>To be added.</remarks>
@@ -73,7 +75,9 @@
             Gets the date that the message was sent on, if available.
             </summary>
         <value>The date the message was sent.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the date that the message was sent on, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="From">
@@ -91,7 +95,9 @@
             Gets the address(es) that the message is from.
             </summary>
         <value>The address(es) that the message is from.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the address(es) that the message is from.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="InReplyTo">
@@ -109,7 +115,9 @@
             The Message-Id that the message is replying to.
             </summary>
         <value>The Message-Id that the message is replying to.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The Message-Id that the message is replying to.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MessageId">
@@ -124,10 +132,12 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the ID of the message.
+            Gets the ID of the message, if available.
             </summary>
         <value>The message identifier.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the ID of the message, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReplyTo">
@@ -187,7 +197,9 @@
             Gets the subject of the message.
             </summary>
         <value>The subject.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the subject of the message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="To">
@@ -205,7 +217,9 @@
             Gets the list of addresses that the message was sent to.
             </summary>
         <value>The address(es) that the message was sent to.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the list of addresses that the message was sent to.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ToString">

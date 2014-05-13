@@ -45,6 +45,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Deserializes a <see cref="FolderNotFoundException"/>.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -62,6 +65,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="FolderNotFoundException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="folderName">The name of the folder.</param>
 		/// <param name="innerException">The inner exception.</param>
@@ -79,6 +85,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="FolderNotFoundException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="folderName">The name of the folder.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -95,6 +104,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="FolderNotFoundException"/>.
+		/// </remarks>
 		/// <param name="folderName">The name of the folder.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="folderName"/> is <c>null</c>.
@@ -110,6 +122,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the name of the folder that could not be found.
 		/// </summary>
+		/// <remarks>
+		/// Gets the name of the folder that could not be found.
+		/// </remarks>
 		/// <value>The name of the folder.</value>
 		public string FolderName {
 			get; private set;

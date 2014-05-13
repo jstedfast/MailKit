@@ -13,7 +13,9 @@
     <summary>
             Event args used when a <see cref="T:MailKit.IFolder" /> is renamed.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            Event args used when a <see cref="T:MailKit.IFolder" /> is renamed.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="NewName">
@@ -31,7 +33,9 @@
             The new name of the folder.
             </summary>
         <value>The new name.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The new name of the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="OldName">
@@ -49,7 +53,9 @@
             The old name of the folder.
             </summary>
         <value>The old name.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The old name of the folder.
+            </remarks>
       </Docs>
     </Member>
   </Members>

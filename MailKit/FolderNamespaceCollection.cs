@@ -32,6 +32,9 @@ namespace MailKit {
 	/// <summary>
 	/// A read-only collection of folder namespaces.
 	/// </summary>
+	/// <remarks>
+	/// A read-only collection of folder namespaces.
+	/// </remarks>
 	public class FolderNamespaceCollection : IEnumerable<FolderNamespace>
 	{
 		readonly List<FolderNamespace> collection;
@@ -39,6 +42,9 @@ namespace MailKit {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNamespaceCollection"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="FolderNamespaceCollection"/>.
+		/// </remarks>
 		internal FolderNamespaceCollection ()
 		{
 			collection = new List<FolderNamespace> ();
@@ -49,6 +55,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the number of folder namespaces contained in the collection.
 		/// </summary>
+		/// <remarks>
+		/// Gets the number of folder namespaces contained in the collection.
+		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
 			get { return collection.Count; }
@@ -57,6 +66,9 @@ namespace MailKit {
 		/// <summary>
 		/// Adds the specified namespace.
 		/// </summary>
+		/// <remarks>
+		/// Adds the specified namespace.
+		/// </remarks>
 		/// <param name="namespace">The namespace to add.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="namespace"/> is <c>null</c>.
@@ -72,6 +84,9 @@ namespace MailKit {
 		/// <summary>
 		/// Removes all namespaces from the collection.
 		/// </summary>
+		/// <remarks>
+		/// Removes all namespaces from the collection.
+		/// </remarks>
 		internal void Clear ()
 		{
 			collection.Clear ();
@@ -80,6 +95,9 @@ namespace MailKit {
 		/// <summary>
 		/// Checks if the collection contains the specified namespace.
 		/// </summary>
+		/// <remarks>
+		/// Checks if the collection contains the specified namespace.
+		/// </remarks>
 		/// <returns><value>true</value> if the specified namespace exists;
 		/// otherwise <value>false</value>.</returns>
 		/// <param name="namespace">The namespace.</param>
@@ -97,6 +115,9 @@ namespace MailKit {
 		/// <summary>
 		/// Removes the first occurance of the specified namespace.
 		/// </summary>
+		/// <remarks>
+		/// Removes the first occurance of the specified namespace.
+		/// </remarks>
 		/// <returns><value>true</value> if the frst occurance of the specified
 		/// namespace was removed; otherwise <value>false</value>.</returns>
 		/// <param name="namespace">The namespace.</param>
@@ -114,6 +135,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the <see cref="MailKit.FolderNamespace"/> at the specified index.
 		/// </summary>
+		/// <remarks>
+		/// Gets the <see cref="MailKit.FolderNamespace"/> at the specified index.
+		/// </remarks>
 		/// <param name="index">The index.</param>
 		public FolderNamespace this [int index] {
 			get {
@@ -131,6 +155,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the enumerator.
 		/// </summary>
+		/// <remarks>
+		/// Gets the enumerator.
+		/// </remarks>
 		/// <returns>The enumerator.</returns>
 		public IEnumerator<FolderNamespace> GetEnumerator ()
 		{
@@ -144,7 +171,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the enumerator.
 		/// </summary>
-		/// 
+		/// <remarks>
+		/// Gets the enumerator.
+		/// </remarks>
 		/// <returns>The enumerator.</returns>
 		IEnumerator IEnumerable.GetEnumerator ()
 		{

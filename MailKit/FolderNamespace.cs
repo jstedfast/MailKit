@@ -28,16 +28,25 @@ namespace MailKit {
 	/// <summary>
 	/// A folder namespace.
 	/// </summary>
+	/// <remarks>
+	/// A folder namespace.
+	/// </remarks>
 	public class FolderNamespace
 	{
 		/// <summary>
 		/// The directory separator for this folder namespace.
 		/// </summary>
+		/// <remarks>
+		/// The directory separator for this folder namespace.
+		/// </remarks>
 		public readonly char DirectorySeparator;
 
 		/// <summary>
 		/// The base path for this folder namespace.
 		/// </summary>
+		/// <remarks>
+		/// The base path for this folder namespace.
+		/// </remarks>
 		public readonly string Path;
 
 		internal FolderNamespace (char dirSeparator, string path)

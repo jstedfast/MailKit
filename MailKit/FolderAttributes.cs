@@ -30,6 +30,9 @@ namespace MailKit {
 	/// <summary>
 	/// Folder attributes as used by <see cref="IFolder.Attributes"/>.
 	/// </summary>
+	/// <remarks>
+	/// Folder attributes as used by <see cref="IFolder.Attributes"/>.
+	/// </remarks>
 	[Flags]
 	public enum FolderAttributes {
 		/// <summary>

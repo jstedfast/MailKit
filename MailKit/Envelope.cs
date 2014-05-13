@@ -51,6 +51,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the address(es) that the message is from.
 		/// </summary>
+		/// <remarks>
+		/// Gets the address(es) that the message is from.
+		/// </remarks>
 		/// <value>The address(es) that the message is from.</value>
 		public InternetAddressList From {
 			get; internal set;
@@ -83,14 +86,18 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the list of addresses that the message was sent to.
 		/// </summary>
+		/// <remarks>
+		/// Gets the list of addresses that the message was sent to.
+		/// </remarks>
 		/// <value>The address(es) that the message was sent to.</value>
 		public InternetAddressList To {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gest the list of addresses that the message was carbon-copied to.
+		/// Gets the list of addresses that the message was carbon-copied to.
 		/// </summary>
+		/// Gets the list of addresses that the message was carbon-copied to.
 		/// <value>The address(es) that the message was carbon-copied to.</value>
 		public InternetAddressList Cc {
 			get; internal set;
@@ -99,6 +106,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the list of addresses that the message was blind-carbon-copied to.
 		/// </summary>
+		/// <remarks>
+		/// Gets the list of addresses that the message was blind-carbon-copied to.
+		/// </remarks>
 		/// <value>The address(es) that the message was carbon-copied to.</value>
 		public InternetAddressList Bcc {
 			get; internal set;
@@ -107,6 +117,9 @@ namespace MailKit {
 		/// <summary>
 		/// The Message-Id that the message is replying to.
 		/// </summary>
+		/// <remarks>
+		/// The Message-Id that the message is replying to.
+		/// </remarks>
 		/// <value>The Message-Id that the message is replying to.</value>
 		public string InReplyTo {
 			get; internal set;
@@ -115,14 +128,20 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the date that the message was sent on, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the date that the message was sent on, if available.
+		/// </remarks>
 		/// <value>The date the message was sent.</value>
 		public DateTimeOffset? Date {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gets the ID of the message.
+		/// Gets the ID of the message, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the ID of the message, if available.
+		/// </remarks>
 		/// <value>The message identifier.</value>
 		public string MessageId {
 			get; internal set;
@@ -131,6 +150,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the subject of the message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the subject of the message.
+		/// </remarks>
 		/// <value>The subject.</value>
 		public string Subject {
 			get; internal set;

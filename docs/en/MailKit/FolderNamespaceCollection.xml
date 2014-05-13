@@ -17,7 +17,9 @@
     <summary>
             A read-only collection of folder namespaces.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A read-only collection of folder namespaces.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Contains">
@@ -41,7 +43,9 @@
         <returns>
           <value>true</value> if the specified namespace exists;
             otherwise <value>false</value>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Checks if the collection contains the specified namespace.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="namespace" /> is <c>null</c>.
             </exception>
@@ -62,7 +66,9 @@
             Gets the number of folder namespaces contained in the collection.
             </summary>
         <value>The count.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the number of folder namespaces contained in the collection.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -81,7 +87,9 @@
             Gets the enumerator.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the enumerator.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -103,7 +111,9 @@
             Gets the <see cref="T:MailKit.FolderNamespace" /> at the specified index.
             </summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the <see cref="T:MailKit.FolderNamespace" /> at the specified index.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -122,7 +132,9 @@
             Gets the enumerator.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the enumerator.
+            </remarks>
       </Docs>
     </Member>
   </Members>

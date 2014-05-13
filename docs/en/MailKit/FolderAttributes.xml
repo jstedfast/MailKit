@@ -17,7 +17,9 @@
     <summary>
             Folder attributes as used by <see cref="P:MailKit.IFolder.Attributes" />.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            Folder attributes as used by <see cref="P:MailKit.IFolder.Attributes" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="All">

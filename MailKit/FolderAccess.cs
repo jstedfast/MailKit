@@ -24,12 +24,13 @@
 // THE SOFTWARE.
 //
 
-using System;
-
 namespace MailKit {
 	/// <summary>
 	/// A folder access mode.
 	/// </summary>
+	/// <remarks>
+	/// A folder access mode.
+	/// </remarks>
 	public enum FolderAccess {
 		/// <summary>
 		/// The folder is not open.
