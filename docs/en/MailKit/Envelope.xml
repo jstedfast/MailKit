@@ -57,7 +57,9 @@
             Gets the list of addresses that the message was carbon-copied to.
             </summary>
         <value>The address(es) that the message was carbon-copied to.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the list of addresses that the message was carbon-copied to.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Date">

@@ -39,10 +39,23 @@ namespace MailKit {
 	{
 		readonly List<BodyPart> collection = new List<BodyPart> ();
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartCollection"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.BodyPartCollection"/>.
+		/// </remarks>
 		internal BodyPartCollection ()
 		{
 		}
 
+		/// <summary>
+		/// Adds the specified body part to the collection.
+		/// </summary>
+		/// <remarks>
+		/// Adds the specified body part to the collection.
+		/// </remarks>
+		/// <param name="part">The body part.</param>
 		internal void Add (BodyPart part)
 		{
 			if (part == null)
@@ -68,6 +81,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the <see cref="MailKit.BodyPart"/> at the specified index.
 		/// </remarks>
+		/// <value>THe body part at the specified index.</value>
 		/// <param name="index">The index.</param>
 		public BodyPart this [int index] {
 			get {

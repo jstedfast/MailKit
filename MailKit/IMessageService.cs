@@ -68,6 +68,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets whether or not the service is currently connected.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the service is currently connected.
+		/// </remarks>
 		/// <value><c>true</c> if the service connected; otherwise, <c>false</c>.</value>
 		bool IsConnected { get; }
 

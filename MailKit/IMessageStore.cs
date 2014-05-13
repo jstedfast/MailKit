@@ -107,6 +107,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the folder for the specified path.
 		/// </summary>
+		/// <remarks>
+		/// Gets the folder for the specified path.
+		/// </remarks>
 		/// <returns>The folder.</returns>
 		/// <param name="path">The folder path.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

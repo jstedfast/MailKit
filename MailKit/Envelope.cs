@@ -97,7 +97,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the list of addresses that the message was carbon-copied to.
 		/// </summary>
+		/// <remarks>
 		/// Gets the list of addresses that the message was carbon-copied to.
+		/// </remarks>
 		/// <value>The address(es) that the message was carbon-copied to.</value>
 		public InternetAddressList Cc {
 			get; internal set;

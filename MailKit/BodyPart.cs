@@ -43,6 +43,16 @@ namespace MailKit {
 	public abstract class BodyPart
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPart"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.BodyPart"/>.
+		/// </remarks>
+		protected BodyPart ()
+		{
+		}
+
+		/// <summary>
 		/// Gets the Content-Type of the body part.
 		/// </summary>
 		/// <remarks>

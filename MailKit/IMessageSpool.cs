@@ -55,6 +55,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the number of messages available in the message spool.
 		/// </summary>
+		/// <remarks>
+		/// Gets the number of messages available in the message spool.
+		/// </remarks>
 		/// <returns>The number of available messages.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
@@ -85,6 +88,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the size of the specified message, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the size of the specified message, in bytes.
+		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -93,6 +99,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the size of the specified message, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the size of the specified message, in bytes.
+		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -101,6 +110,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the sizes for all available messages, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the sizes for all available messages, in bytes.
+		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
@@ -108,6 +120,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the headers for the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified message.
+		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -116,6 +131,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the headers for the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified message.
+		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -124,6 +142,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified message.
+		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -132,6 +153,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the specified message.
+		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>

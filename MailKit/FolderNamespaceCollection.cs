@@ -138,6 +138,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the <see cref="MailKit.FolderNamespace"/> at the specified index.
 		/// </remarks>
+		/// <value>The folder namespace at the specified index.</value>
 		/// <param name="index">The index.</param>
 		public FolderNamespace this [int index] {
 			get {

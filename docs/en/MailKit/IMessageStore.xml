@@ -122,7 +122,9 @@
             Gets the folder for the specified path.
             </summary>
         <returns>The folder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the folder for the specified path.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="path" /> is <c>null</c>.
             </exception>

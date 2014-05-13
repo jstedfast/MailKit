@@ -81,7 +81,7 @@
         <summary>
             Gets the <see cref="T:MailKit.BodyPart" /> at the specified index.
             </summary>
-        <value>To be added.</value>
+        <value>THe body part at the specified index.</value>
         <remarks>
             Gets the <see cref="T:MailKit.BodyPart" /> at the specified index.
             </remarks>

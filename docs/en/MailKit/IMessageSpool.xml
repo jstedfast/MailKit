@@ -100,7 +100,9 @@
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -124,7 +126,9 @@
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageCount">
@@ -146,7 +150,9 @@
             Gets the number of messages available in the message spool.
             </summary>
         <returns>The number of available messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the number of messages available in the message spool.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -170,7 +176,9 @@
             Gets the headers for the specified message.
             </summary>
         <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the headers for the specified message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -194,7 +202,9 @@
             Gets the headers for the specified message.
             </summary>
         <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the headers for the specified message.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
@@ -218,7 +228,9 @@
             Gets the size of the specified message, in bytes.
             </summary>
         <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the size of the specified message, in bytes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
@@ -242,7 +254,9 @@
             Gets the size of the specified message, in bytes.
             </summary>
         <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the size of the specified message, in bytes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
@@ -264,7 +278,9 @@
             Gets the sizes for all available messages, in bytes.
             </summary>
         <returns>The message sizes, in bytes.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the sizes for all available messages, in bytes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUid">
