@@ -30,12 +30,18 @@ namespace MailKit {
 	/// <summary>
 	/// An interface for a threading messages.
 	/// </summary>
+	/// <remarks>
+	/// An interface for a threading messages.
+	/// </remarks>
 	public interface IThreadable : ISortable
 	{
 		/// <summary>
-		/// Gets a value indicating whether this instance can be threaded.
+		/// Gets whether the message can be threaded.
 		/// </summary>
-		/// <value><c>true</c> if this instance can be threaded; otherwise, <c>false</c>.</value>
+		/// <remarks>
+		/// Gets whether the message can be threaded.
+		/// </remarks>
+		/// <value><c>true</c> if the message can be threaded; otherwise, <c>false</c>.</value>
 		bool CanThread { get; }
 
 		/// <summary>
@@ -80,6 +86,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the unique identifier.
 		/// </summary>
+		/// <remarks>
+		/// Gets the unique identifier.
+		/// </remarks>
 		/// <value>The unique identifier.</value>
 		UniqueId ThreadableUniqueId { get; }
 	}

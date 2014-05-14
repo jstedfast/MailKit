@@ -20,7 +20,9 @@
     <summary>
             A protocol logger.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A protocol logger.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">

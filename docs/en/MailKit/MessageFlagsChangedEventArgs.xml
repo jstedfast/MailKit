@@ -13,7 +13,9 @@
     <summary>
             Event args for the <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> event.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            Event args for the <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> event.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Flags">
@@ -31,7 +33,9 @@
             Gets the updated message flags.
             </summary>
         <value>The updated message flags.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the updated message flags.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ModSeq">
@@ -49,7 +53,9 @@
             Gets the updated mod-sequence value of the message, if available.
             </summary>
         <value>The mod-sequence value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the updated mod-sequence value of the message, if available.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="UniqueId">
@@ -67,7 +73,9 @@
             Gets the unique ID of the message that changed, if available.
             </summary>
         <value>The unique ID of the message.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the unique ID of the message that changed, if available.
+            </remarks>
       </Docs>
     </Member>
   </Members>

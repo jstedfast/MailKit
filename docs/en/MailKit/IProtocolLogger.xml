@@ -14,7 +14,9 @@
     <summary>
             An interface for logging protocols.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            An interface for logging protocols.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="LogClient">
@@ -39,7 +41,9 @@
         <summary>
             Logs a sequence of bytes sent by the client.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Logs a sequence of bytes sent by the client.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <c>null</c>.
             </exception>
@@ -76,7 +80,9 @@
         <summary>
             Logs a connection to the specified URI.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Logs a connection to the specified URI.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uri" /> is <c>null</c>.
             </exception>
@@ -110,7 +116,9 @@
         <summary>
             Logs a sequence of bytes sent by the server.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Logs a sequence of bytes sent by the server.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <c>null</c>.
             </exception>

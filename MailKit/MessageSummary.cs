@@ -223,34 +223,90 @@ namespace MailKit {
 
 		#region ISortable implementation
 
+		/// <summary>
+		/// Gets whether or not the messages can be sorted.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the messages can be sorted.
+		/// </remarks>
+		/// <value><c>true</c> if the messages can be sorted; otherwise, <c>false</c>.</value>
 		bool ISortable.CanSort {
 			get { return Envelope != null; }
 		}
 
+		/// <summary>
+		/// Gets the message index in the folder it belongs to.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message index in the folder it belongs to.
+		/// </remarks>
+		/// <value>The index.</value>
 		int ISortable.SortableIndex {
 			get { return Index; }
 		}
 
+		/// <summary>
+		/// Gets the Cc header value.
+		/// </summary>
+		/// <remarks>
+		/// Gets the Cc header value.
+		/// </remarks>
+		/// <value>The Cc header value.</value>
 		string ISortable.SortableCc {
 			get { return Envelope.Cc.ToString (); }
 		}
 
+		/// <summary>
+		/// Gets the Date header value.
+		/// </summary>
+		/// <remarks>
+		/// Gets the Date header value.
+		/// </remarks>
+		/// <value>The date.</value>
 		DateTimeOffset ISortable.SortableDate {
 			get { return Envelope.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
 		}
 
+		/// <summary>
+		/// Gets the From header value.
+		/// </summary>
+		/// <remarks>
+		/// Gets the From header value.
+		/// </remarks>
+		/// <value>The From header value.</value>
 		string ISortable.SortableFrom {
 			get { return Envelope.From.ToString (); }
 		}
 
+		/// <summary>
+		/// Gets the size of the message, in bytes.
+		/// </summary>
+		/// <remarks>
+		/// Gets the size of the message, in bytes.
+		/// </remarks>
+		/// <value>The size of the message, in bytes.</value>
 		uint ISortable.SortableSize {
 			get { return MessageSize ?? 0; }
 		}
 
+		/// <summary>
+		/// Gets the Subject header value.
+		/// </summary>
+		/// <remarks>
+		/// Gets the Subject header value.
+		/// </remarks>
+		/// <value>The Subject header value.</value>
 		string ISortable.SortableSubject {
 			get { return Envelope.Subject; }
 		}
 
+		/// <summary>
+		/// Gets the To header value.
+		/// </summary>
+		/// <remarks>
+		/// Gets the To header value.
+		/// </remarks>
+		/// <value>The To header value.</value>
 		string ISortable.SortableTo {
 			get { return Envelope.To.ToString (); }
 		}
@@ -276,10 +332,25 @@ namespace MailKit {
 			}
 		}
 
+		/// <summary>
+		/// Gets whether the message can be threaded.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether the message can be threaded.
+		/// </remarks>
+		/// <value><c>true</c> if the messages can be threaded; otherwise, <c>false</c>.</value>
 		bool IThreadable.CanThread {
 			get { return Envelope != null; }
 		}
 
+		/// <summary>
+		/// Gets the threadable subject.
+		/// </summary>
+		/// <remarks>
+		/// A normalized Subject header value where prefixes such as
+		/// "Re:", "Re[#]:", etc have been pruned.
+		/// </remarks>
+		/// <value>The threadable subject.</value>
 		string IThreadable.ThreadableSubject {
 			get {
 				UpdateThreadableSubject ();
@@ -288,6 +359,13 @@ namespace MailKit {
 			}
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this instance is a reply.
+		/// </summary>
+		/// <remarks>
+		/// This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
+		/// </remarks>
+		/// <value><c>true</c> if this instance is a reply; otherwise, <c>false</c>.</value>
 		bool IThreadable.IsThreadableReply {
 			get {
 				UpdateThreadableSubject ();
@@ -296,10 +374,26 @@ namespace MailKit {
 			}
 		}
 
+		/// <summary>
+		/// Gets the threadable message identifier.
+		/// </summary>
+		/// <remarks>
+		/// This value should be the canonicalized Message-Id header value
+		/// without the angle brackets.
+		/// </remarks>
+		/// <value>The threadable message identifier.</value>
 		string IThreadable.ThreadableMessageId {
 			get { return Envelope.MessageId; }
 		}
 
+		/// <summary>
+		/// Gets the threadable references.
+		/// </summary>
+		/// <remarks>
+		/// This value should be the list of canonicalized Message-Ids
+		/// found in the In-Reply-To and References headers.
+		/// </remarks>
+		/// <value>The threadable references.</value>
 		MessageIdList IThreadable.ThreadableReferences {
 			get {
 				if (threadableReferences == null) {
@@ -313,6 +407,13 @@ namespace MailKit {
 			}
 		}
 
+		/// <summary>
+		/// Gets the unique identifier.
+		/// </summary>
+		/// <remarks>
+		/// Gets the unique identifier.
+		/// </remarks>
+		/// <value>The unique identifier.</value>
 		UniqueId IThreadable.ThreadableUniqueId {
 			get { return UniqueId; }
 		}

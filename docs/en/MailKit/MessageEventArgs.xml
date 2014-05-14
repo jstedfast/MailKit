@@ -13,7 +13,9 @@
     <summary>
             Event args used when the state of a message changes.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            Event args used when the state of a message changes.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Index">
@@ -31,7 +33,9 @@
             Gets the index of the message that changed.
             </summary>
         <value>The index of the message.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the index of the message that changed.
+            </remarks>
       </Docs>
     </Member>
   </Members>

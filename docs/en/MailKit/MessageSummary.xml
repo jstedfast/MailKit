@@ -223,9 +223,14 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets whether or not the messages can be sorted.
+            </summary>
+        <value>
+          <c>true</c> if the messages can be sorted; otherwise, <c>false</c>.</value>
+        <remarks>
+            Gets whether or not the messages can be sorted.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.SortableCc">
@@ -239,9 +244,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the Cc header value.
+            </summary>
+        <value>The Cc header value.</value>
+        <remarks>
+            Gets the Cc header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.SortableDate">
@@ -255,9 +264,13 @@
         <ReturnType>System.DateTimeOffset</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the Date header value.
+            </summary>
+        <value>The date.</value>
+        <remarks>
+            Gets the Date header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.SortableFrom">
@@ -271,9 +284,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the From header value.
+            </summary>
+        <value>The From header value.</value>
+        <remarks>
+            Gets the From header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.SortableIndex">
@@ -287,9 +304,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the message index in the folder it belongs to.
+            </summary>
+        <value>The index.</value>
+        <remarks>
+            Gets the message index in the folder it belongs to.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.SortableSize">
@@ -303,9 +324,13 @@
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the size of the message, in bytes.
+            </summary>
+        <value>The size of the message, in bytes.</value>
+        <remarks>
+            Gets the size of the message, in bytes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.SortableSubject">
@@ -319,9 +344,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the Subject header value.
+            </summary>
+        <value>The Subject header value.</value>
+        <remarks>
+            Gets the Subject header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.ISortable.SortableTo">
@@ -335,9 +364,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the To header value.
+            </summary>
+        <value>The To header value.</value>
+        <remarks>
+            Gets the To header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.IThreadable.CanThread">
@@ -351,9 +384,14 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets whether the message can be threaded.
+            </summary>
+        <value>
+          <c>true</c> if the messages can be threaded; otherwise, <c>false</c>.</value>
+        <remarks>
+            Gets whether the message can be threaded.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.IThreadable.IsThreadableReply">
@@ -367,9 +405,14 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets a value indicating whether this instance is a reply.
+            </summary>
+        <value>
+          <c>true</c> if this instance is a reply; otherwise, <c>false</c>.</value>
+        <remarks>
+            This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.IThreadable.ThreadableMessageId">
@@ -383,9 +426,14 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the threadable message identifier.
+            </summary>
+        <value>The threadable message identifier.</value>
+        <remarks>
+            This value should be the canonicalized Message-Id header value
+            without the angle brackets.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.IThreadable.ThreadableReferences">
@@ -399,9 +447,14 @@
         <ReturnType>MimeKit.MessageIdList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the threadable references.
+            </summary>
+        <value>The threadable references.</value>
+        <remarks>
+            This value should be the list of canonicalized Message-Ids
+            found in the In-Reply-To and References headers.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.IThreadable.ThreadableSubject">
@@ -415,9 +468,14 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the threadable subject.
+            </summary>
+        <value>The threadable subject.</value>
+        <remarks>
+            A normalized Subject header value where prefixes such as
+            "Re:", "Re[#]:", etc have been pruned.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MailKit.IThreadable.ThreadableUniqueId">
@@ -431,9 +489,13 @@
         <ReturnType>MailKit.UniqueId</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <summary>
+            Gets the unique identifier.
+            </summary>
+        <value>The unique identifier.</value>
+        <remarks>
+            Gets the unique identifier.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MessageSize">

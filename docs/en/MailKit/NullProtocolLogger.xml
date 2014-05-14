@@ -37,8 +37,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.NullProtocolLogger" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.NullProtocolLogger" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Dispose">

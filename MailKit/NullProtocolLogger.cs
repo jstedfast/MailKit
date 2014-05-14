@@ -38,6 +38,16 @@ namespace MailKit {
 	/// </remarks>
 	public sealed class NullProtocolLogger : IProtocolLogger
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.NullProtocolLogger"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="NullProtocolLogger"/>.
+		/// </remarks>
+		public NullProtocolLogger ()
+		{
+		}
+
 		#region IProtocolLogger implementation
 
 		/// <summary>

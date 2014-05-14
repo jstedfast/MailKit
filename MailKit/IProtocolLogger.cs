@@ -30,11 +30,17 @@ namespace MailKit {
 	/// <summary>
 	/// An interface for logging protocols.
 	/// </summary>
+	/// <remarks>
+	/// An interface for logging protocols.
+	/// </remarks>
 	public interface IProtocolLogger : IDisposable
 	{
 		/// <summary>
 		/// Logs a connection to the specified URI.
 		/// </summary>
+		/// <remarks>
+		/// Logs a connection to the specified URI.
+		/// </remarks>
 		/// <param name="uri">The URI.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uri"/> is <c>null</c>.
@@ -50,6 +56,9 @@ namespace MailKit {
 		/// <summary>
 		/// Logs a sequence of bytes sent by the client.
 		/// </summary>
+		/// <remarks>
+		/// Logs a sequence of bytes sent by the client.
+		/// </remarks>
 		/// <param name='buffer'>The buffer to log.</param>
 		/// <param name='offset'>The offset of the first byte to log.</param>
 		/// <param name='count'>The number of bytes to log.</param>
@@ -73,6 +82,9 @@ namespace MailKit {
 		/// <summary>
 		/// Logs a sequence of bytes sent by the server.
 		/// </summary>
+		/// <remarks>
+		/// Logs a sequence of bytes sent by the server.
+		/// </remarks>
 		/// <param name='buffer'>The buffer to log.</param>
 		/// <param name='offset'>The offset of the first byte to log.</param>
 		/// <param name='count'>The number of bytes to log.</param>

@@ -30,53 +30,80 @@ namespace MailKit {
 	/// <summary>
 	/// An interface for message sorting.
 	/// </summary>
+	/// <remarks>
+	/// An interface for message sorting.
+	/// </remarks>
 	public interface ISortable
 	{
 		/// <summary>
-		/// Gets a value indicating whether this instance can be sorted.
+		/// Gets whether or not the message can be sorted.
 		/// </summary>
-		/// <value><c>true</c> if this instance can be sorted; otherwise, <c>false</c>.</value>
+		/// <remarks>
+		/// Gets whether or not the message can be sorted.
+		/// </remarks>
+		/// <value><c>true</c> if the message can be sorted; otherwise, <c>false</c>.</value>
 		bool CanSort { get; }
 
 		/// <summary>
 		/// Gets the message index in the folder it belongs to.
 		/// </summary>
+		/// <remarks>
+		/// Gets the message index in the folder it belongs to.
+		/// </remarks>
 		/// <value>The index.</value>
 		int SortableIndex { get; }
 
 		/// <summary>
 		/// Gets the Cc header value.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Cc header value.
+		/// </remarks>
 		/// <value>The Cc header value.</value>
 		string SortableCc { get; }
 
 		/// <summary>
 		/// Gets the Date header value.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Date header value.
+		/// </remarks>
 		/// <value>The date.</value>
 		DateTimeOffset SortableDate { get; }
 
 		/// <summary>
 		/// Gets the From header value.
 		/// </summary>
+		/// <remarks>
+		/// Gets the From header value.
+		/// </remarks>
 		/// <value>The From header value.</value>
 		string SortableFrom { get; }
 
 		/// <summary>
 		/// Gets the size of the message, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the size of the message, in bytes.
+		/// </remarks>
 		/// <value>The size of the message, in bytes.</value>
 		uint SortableSize { get; }
 
 		/// <summary>
 		/// Gets the Subject header value.
 		/// </summary>
+		/// <remarks>
+		/// Gets the Subject header value.
+		/// </remarks>
 		/// <value>The Subject header value.</value>
 		string SortableSubject { get; }
 
 		/// <summary>
 		/// Gets the To header value.
 		/// </summary>
+		/// <remarks>
+		/// Gets the To header value.
+		/// </remarks>
 		/// <value>The To header value.</value>
 		string SortableTo { get; }
 	}

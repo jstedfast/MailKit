@@ -15,9 +15,11 @@
   </Attributes>
   <Docs>
     <summary>
-            Message flags.
+            An enumeration of message flags.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            An enumeration of message flags.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Answered">

@@ -31,8 +31,11 @@ using MailKit.Search;
 
 namespace MailKit {
 	/// <summary>
-	/// Sorts messages.
+	/// Routines for sorting messages.
 	/// </summary>
+	/// <remarks>
+	/// Routines for sorting messages.
+	/// </remarks>
 	public static class MessageSorter
 	{
 		class MessageComparer<T> : IComparer<T> where T : ISortable
@@ -88,9 +91,13 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Sortsthe messages by the specified ordering.
+		/// Sorts the messages by the specified ordering.
 		/// </summary>
+		/// <remarks>
+		/// Sorts the messages by the specified ordering.
+		/// </remarks>
 		/// <returns>The sorted messages.</returns>
+		/// <typeparam name="T">The message items must implement the <see cref="ISortable"/> interface.</typeparam>
 		/// <param name="messages">The messages to sort.</param>
 		/// <param name="orderBy">The sort ordering.</param>
 		/// <exception cref="System.ArgumentNullException">

@@ -28,8 +28,11 @@ using System;
 
 namespace MailKit {
 	/// <summary>
-	/// Message flags.
+	/// An enumeration of message flags.
 	/// </summary>
+	/// <remarks>
+	/// An enumeration of message flags.
+	/// </remarks>
 	[Flags]
 	public enum MessageFlags {
 		/// <summary>

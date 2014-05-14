@@ -30,6 +30,9 @@ namespace MailKit {
 	/// <summary>
 	/// Event args used when the state of a message changes.
 	/// </summary>
+	/// <remarks>
+	/// Event args used when the state of a message changes.
+	/// </remarks>
 	public class MessageEventArgs : EventArgs
 	{
 		internal MessageEventArgs (int index)
@@ -40,6 +43,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the index of the message that changed.
 		/// </summary>
+		/// <remarks>
+		/// Gets the index of the message that changed.
+		/// </remarks>
 		/// <value>The index of the message.</value>
 		public int Index {
 			get; private set;

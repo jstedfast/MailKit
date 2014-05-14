@@ -28,6 +28,9 @@ namespace MailKit {
 	/// <summary>
 	/// Event args for the <see cref="IFolder.MessageFlagsChanged"/> event.
 	/// </summary>
+	/// <remarks>
+	/// Event args for the <see cref="IFolder.MessageFlagsChanged"/> event.
+	/// </remarks>
 	public class MessageFlagsChangedEventArgs : MessageEventArgs
 	{
 		internal MessageFlagsChangedEventArgs (int index) : base (index)
@@ -37,6 +40,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the unique ID of the message that changed, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the unique ID of the message that changed, if available.
+		/// </remarks>
 		/// <value>The unique ID of the message.</value>
 		public UniqueId? UniqueId {
 			get; internal set;
@@ -45,6 +51,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the updated message flags.
 		/// </summary>
+		/// <remarks>
+		/// Gets the updated message flags.
+		/// </remarks>
 		/// <value>The updated message flags.</value>
 		public MessageFlags Flags {
 			get; internal set;
@@ -53,6 +62,9 @@ namespace MailKit {
 		/// <summary>
 		/// Gets the updated mod-sequence value of the message, if available.
 		/// </summary>
+		/// <remarks>
+		/// Gets the updated mod-sequence value of the message, if available.
+		/// </remarks>
 		/// <value>The mod-sequence value.</value>
 		public ulong? ModSeq {
 			get; internal set;

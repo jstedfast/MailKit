@@ -36,6 +36,9 @@ namespace MailKit {
 	/// <summary>
 	/// A protocol logger.
 	/// </summary>
+	/// <remarks>
+	/// A protocol logger.
+	/// </remarks>
 	public class ProtocolLogger : IProtocolLogger
 	{
 		static readonly byte[] ClientPrefix = Encoding.ASCII.GetBytes ("C: ");

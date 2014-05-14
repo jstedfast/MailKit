@@ -10,7 +10,9 @@
     <summary>
             An interface for message sorting.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            An interface for message sorting.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="CanSort">
@@ -25,11 +27,13 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets a value indicating whether this instance can be sorted.
+            Gets whether or not the message can be sorted.
             </summary>
         <value>
-          <c>true</c> if this instance can be sorted; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+          <c>true</c> if the message can be sorted; otherwise, <c>false</c>.</value>
+        <remarks>
+            Gets whether or not the message can be sorted.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SortableCc">
@@ -47,7 +51,9 @@
             Gets the Cc header value.
             </summary>
         <value>The Cc header value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Cc header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SortableDate">
@@ -65,7 +71,9 @@
             Gets the Date header value.
             </summary>
         <value>The date.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Date header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SortableFrom">
@@ -83,7 +91,9 @@
             Gets the From header value.
             </summary>
         <value>The From header value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the From header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SortableIndex">
@@ -101,7 +111,9 @@
             Gets the message index in the folder it belongs to.
             </summary>
         <value>The index.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the message index in the folder it belongs to.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SortableSize">
@@ -119,7 +131,9 @@
             Gets the size of the message, in bytes.
             </summary>
         <value>The size of the message, in bytes.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the size of the message, in bytes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SortableSubject">
@@ -137,7 +151,9 @@
             Gets the Subject header value.
             </summary>
         <value>The Subject header value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the Subject header value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SortableTo">
@@ -155,7 +171,9 @@
             Gets the To header value.
             </summary>
         <value>The To header value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the To header value.
+            </remarks>
       </Docs>
     </Member>
   </Members>
