@@ -121,7 +121,7 @@ namespace MailKit.Net.Imap {
 					unichar = (int) text[index];
 				}
 
-				if (unichar >= 0x20 && unichar <= 0x7f) {
+				if (unichar >= 0x20 && unichar < 0x7f) {
 					// characters with octet values 0x20-0x25 and 0x27-0x7e
 					// represent themselves while 0x26 ("&") is represented
 					// by the two-octet sequence "&-"
