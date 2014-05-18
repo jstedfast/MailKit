@@ -58,5 +58,31 @@ namespace UnitTests.Net.Imap {
 			var decoded = ImapEncoding.Decode (encoded);
 			Assert.AreEqual (japanese, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
 		}
+
+		[Test]
+		public void TestSurrogatePairs ()
+		{
+			// Example taken from: http://stackoverflow.com/questions/14347799/how-do-i-create-a-string-with-a-surrogate-pair-inside-of-it
+			// which is in turn taken from: http://msmvps.com/blogs/jon_skeet/archive/2009/11/02/omg-ponies-aka-humanity-epic-fail.aspx
+			var text = "Les Mise" + char.ConvertFromUtf32 (0x301) + "rables";
+
+			var encoded = ImapEncoding.Encode (text);
+			Assert.AreEqual ("Les Mise&AwE-rables", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+
+			var decoded = ImapEncoding.Decode (encoded);
+			Assert.AreEqual (text, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+		}
+
+		[Test]
+		public void TestChineseSurrogatePairs ()
+		{
+			const string chinese = "‎中國哲學書電子化計劃";
+
+			var encoded = ImapEncoding.Encode (chinese);
+			Assert.AreEqual ("&IA5OLVcLVPJbeGb4lvtbUFMWighSgw-", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+
+			var decoded = ImapEncoding.Decode (encoded);
+			Assert.AreEqual (chinese, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+		}
 	}
 }
