@@ -75,6 +75,16 @@ namespace MailKit {
 		bool IsConnected { get; }
 
 		/// <summary>
+		/// Gets or sets the timeout for network streaming operations, in milliseconds.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
+		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
+		/// </remarks>
+		/// <value>The timeout in milliseconds.</value>
+		int Timeout { get; set; }
+
+		/// <summary>
 		/// Establishes a connection to the server specified in the URI.
 		/// </summary>
 		/// <remarks>

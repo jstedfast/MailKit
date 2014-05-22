@@ -64,6 +64,7 @@ namespace MailKit.Net.Imap {
 #if NETFX_CORE
 		StreamSocket socket;
 #endif
+		int timeout = 100000;
 		bool disposed;
 		string host;
 
@@ -245,6 +246,26 @@ namespace MailKit.Net.Imap {
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
 			get { return engine.ThreadingAlgorithms; }
+		}
+
+		/// <summary>
+		/// Gets or sets the timeout for network streaming operations, in milliseconds.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
+		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
+		/// </remarks>
+		/// <value>The timeout in milliseconds.</value>
+		public int Timeout {
+			get { return timeout; }
+			set {
+				if (IsConnected) {
+					engine.Stream.WriteTimeout = value;
+					engine.Stream.ReadTimeout = value;
+				}
+
+				timeout = value;
+			}
 		}
 
 		/// <summary>
@@ -516,6 +537,9 @@ namespace MailKit.Net.Imap {
 
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
 #endif
+
+			stream.WriteTimeout = timeout;
+			stream.ReadTimeout = timeout;
 			host = uri.Host;
 
 			logger.LogConnect (uri);

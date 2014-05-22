@@ -80,6 +80,7 @@ namespace MailKit.Net.Pop3 {
 #if NETFX_CORE
 		StreamSocket socket;
 #endif
+		int timeout = 100000;
 		bool disposed;
 		string host;
 		int count;
@@ -281,6 +282,26 @@ namespace MailKit.Net.Pop3 {
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
 			get { return engine.AuthenticationMechanisms; }
+		}
+
+		/// <summary>
+		/// Gets or sets the timeout for network streaming operations, in milliseconds.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
+		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
+		/// </remarks>
+		/// <value>The timeout in milliseconds.</value>
+		public int Timeout {
+			get { return timeout; }
+			set {
+				if (IsConnected) {
+					engine.Stream.WriteTimeout = value;
+					engine.Stream.ReadTimeout = value;
+				}
+
+				timeout = value;
+			}
 		}
 
 		/// <summary>
@@ -579,6 +600,8 @@ namespace MailKit.Net.Pop3 {
 #endif
 
 			probed = ProbedCapabilities.None;
+			stream.WriteTimeout = timeout;
+			stream.ReadTimeout = timeout;
 			host = uri.Host;
 
 			logger.LogConnect (uri);

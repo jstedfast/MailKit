@@ -85,6 +85,7 @@ namespace MailKit.Net.Smtp {
 #else
 		StreamSocket socket;
 #endif
+		int timeout = 100000;
 		bool authenticated;
 		Stream stream;
 		bool disposed;
@@ -203,6 +204,26 @@ namespace MailKit.Net.Smtp {
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<string> AuthenticationMechanisms {
 			get { return authmechs; }
+		}
+
+		/// <summary>
+		/// Gets or sets the timeout for network streaming operations, in milliseconds.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
+		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
+		/// </remarks>
+		/// <value>The timeout in milliseconds.</value>
+		public int Timeout {
+			get { return timeout; }
+			set {
+				if (IsConnected) {
+					stream.WriteTimeout = value;
+					stream.ReadTimeout = value;
+				}
+
+				timeout = value;
+			}
 		}
 
 		/// <summary>
@@ -742,6 +763,8 @@ namespace MailKit.Net.Smtp {
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
 #endif
 
+			stream.WriteTimeout = timeout;
+			stream.ReadTimeout = timeout;
 			host = uri.Host;
 
 			logger.LogConnect (uri);
