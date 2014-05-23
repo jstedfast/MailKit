@@ -45,7 +45,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestFormattingSimpleUidRange ()
 		{
-			UniqueId[] uids = new UniqueId[] {
+			UniqueId[] uids = {
 				new UniqueId (1), new UniqueId (2), new UniqueId (3),
 				new UniqueId (4), new UniqueId (5), new UniqueId (6),
 				new UniqueId (7), new UniqueId (8), new UniqueId (9)
@@ -60,7 +60,7 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestFormattingNonSequentialUids ()
 		{
-			UniqueId[] uids = new UniqueId[] {
+			UniqueId[] uids = {
 				new UniqueId (1), new UniqueId (3), new UniqueId (5),
 				new UniqueId (7), new UniqueId (9)
 			};
@@ -74,13 +74,29 @@ namespace UnitTests.Net.Imap {
 		[Test]
 		public void TestFormattingComplexSetOfUids ()
 		{
-			UniqueId[] uids = new UniqueId[] {
+			UniqueId[] uids = {
 				new UniqueId (1), new UniqueId (2), new UniqueId (3),
 				new UniqueId (5), new UniqueId (6), new UniqueId (9),
 				new UniqueId (10), new UniqueId (11), new UniqueId (12),
 				new UniqueId (15), new UniqueId (19), new UniqueId (20)
 			};
 			string expect = "1:3,5:6,9:12,15,19:20";
+			string actual;
+
+			actual = ImapUtils.FormatUidSet (uids);
+			Assert.AreEqual (expect, actual, "Formatting a complex list of uids.");
+		}
+
+		[Test]
+		public void TestFormattingReversedUids ()
+		{
+			UniqueId[] uids = {
+				new UniqueId (20), new UniqueId (19), new UniqueId (15),
+				new UniqueId (12), new UniqueId (11), new UniqueId (10),
+				new UniqueId (9), new UniqueId (6), new UniqueId (5),
+				new UniqueId (3), new UniqueId (2), new UniqueId (1)
+			};
+			string expect = "20:19,15,12:9,6:5,3:1";
 			string actual;
 
 			actual = ImapUtils.FormatUidSet (uids);

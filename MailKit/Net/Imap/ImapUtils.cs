@@ -138,24 +138,35 @@ namespace MailKit.Net.Imap {
 				if (indexes[index] < 0)
 					throw new ArgumentException ("One or more of the indexes is negative.", "indexes");
 
-				int min = indexes[index];
-				int max = min;
-				int i = index;
+				int begin = indexes[index];
+				int end = indexes[index];
+				int i = index + 1;
 
-				while (i < indexes.Length) {
-					if (indexes[i] > max + 1)
-						break;
+				if (i < indexes.Length) {
+					if (indexes[i] == end + 1) {
+						end = indexes[i++];
 
-					max = indexes[i++];
+						while (i < indexes.Length && indexes[i] == end + 1) {
+							end++;
+							i++;
+						}
+					} else if (indexes[i] == end - 1) {
+						end = indexes[i++];
+
+						while (i < indexes.Length && indexes[i] == end - 1) {
+							end--;
+							i++;
+						}
+					}
 				}
 
 				if (builder.Length > 0)
 					builder.Append (',');
 
-				if (max > min)
-					builder.AppendFormat ("{0}:{1}", min + 1, max + 1);
+				if (begin != end)
+					builder.AppendFormat ("{0}:{1}", begin + 1, end + 1);
 				else
-					builder.Append ((min + 1).ToString ());
+					builder.Append ((begin + 1).ToString ());
 
 				index = i;
 			}
@@ -186,24 +197,35 @@ namespace MailKit.Net.Imap {
 				if (uids[index].Id == 0)
 					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
 
-				uint min = uids[index].Id;
-				uint max = min;
-				int i = index;
+				uint begin = uids[index].Id;
+				uint end = uids[index].Id;
+				int i = index + 1;
 
-				while (i < uids.Length) {
-					if (uids[i].Id > max + 1)
-						break;
+				if (i < uids.Length) {
+					if (uids[i].Id == end + 1) {
+						end = uids[i++].Id;
 
-					max = uids[i++].Id;
+						while (i < uids.Length && uids[i].Id == end + 1) {
+							end++;
+							i++;
+						}
+					} else if (uids[i].Id == end - 1) {
+						end = uids[i++].Id;
+
+						while (i < uids.Length && uids[i].Id == end - 1) {
+							end--;
+							i++;
+						}
+					}
 				}
 
 				if (builder.Length > 0)
 					builder.Append (',');
 
-				if (max > min)
-					builder.AppendFormat ("{0}:{1}", min, max);
+				if (begin != end)
+					builder.AppendFormat ("{0}:{1}", begin, end);
 				else
-					builder.Append (min.ToString ());
+					builder.Append (begin.ToString ());
 
 				index = i;
 			}
