@@ -57,6 +57,7 @@ namespace MailKit.Net.Imap {
 
 	class ImapStream : Stream
 	{
+		const string AtomSpecials = "()[]{%*\\\"\n";
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
 		const int PadSize = 4;
@@ -355,7 +356,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsAtom (byte c)
 		{
-			return !IsCtrl (c) && !IsWhiteSpace (c) && "()[]*%\\\"\n".IndexOf ((char) c) == -1;
+			return !IsCtrl (c) && !IsWhiteSpace (c) && AtomSpecials.IndexOf ((char) c) == -1;
 		}
 
 		static bool IsCtrl (byte c)
@@ -365,7 +366,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsWhiteSpace (byte c)
 		{
-			return c == ' ' || c == (byte) '\t' || c == (byte) '\r';
+			return c == (byte) ' ' || c == (byte) '\t' || c == (byte) '\r';
 		}
 
 		unsafe ImapToken ReadQuotedStringToken (byte* inbuf, CancellationToken cancellationToken)
