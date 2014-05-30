@@ -1900,7 +1900,7 @@ namespace MailKit.Net.Imap {
 				case "RFC822.SIZE":
 					token = engine.ReadToken (ic.CancellationToken);
 
-					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
+					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value))
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					summary.MessageSize = value;
