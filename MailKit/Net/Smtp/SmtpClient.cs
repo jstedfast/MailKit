@@ -217,7 +217,7 @@ namespace MailKit.Net.Smtp {
 		public int Timeout {
 			get { return timeout; }
 			set {
-				if (IsConnected) {
+				if (IsConnected && stream.CanTimeout) {
 					stream.WriteTimeout = value;
 					stream.ReadTimeout = value;
 				}
@@ -763,8 +763,10 @@ namespace MailKit.Net.Smtp {
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
 #endif
 
-			stream.WriteTimeout = timeout;
-			stream.ReadTimeout = timeout;
+			if (stream.CanTimeout) {
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
+			}
 			host = uri.Host;
 
 			logger.LogConnect (uri);

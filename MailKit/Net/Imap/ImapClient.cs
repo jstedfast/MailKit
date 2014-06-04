@@ -259,7 +259,7 @@ namespace MailKit.Net.Imap {
 		public int Timeout {
 			get { return timeout; }
 			set {
-				if (IsConnected) {
+				if (IsConnected && engine.Stream.CanTimeout) {
 					engine.Stream.WriteTimeout = value;
 					engine.Stream.ReadTimeout = value;
 				}
@@ -538,8 +538,10 @@ namespace MailKit.Net.Imap {
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
 #endif
 
-			stream.WriteTimeout = timeout;
-			stream.ReadTimeout = timeout;
+			if (stream.CanTimeout) {
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
+			}
 			host = uri.Host;
 
 			logger.LogConnect (uri);
