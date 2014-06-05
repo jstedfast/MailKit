@@ -129,7 +129,7 @@ MailKit is Copyright (C) 2013-2014 Xamarin Inc. and is licensed under the MIT li
 
 ## Installing via NuGet
 
-The easiest way to install MimeKit is via [NuGet](https://www.nuget.org/packages/MailKit/).
+The easiest way to install MailKit is via [NuGet](https://www.nuget.org/packages/MailKit/).
 
 In Visual Studio's [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console),
 simply enter the following command:
