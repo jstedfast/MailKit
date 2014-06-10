@@ -2243,6 +2243,16 @@ namespace MailKit.Net.Imap {
 			return results.Values;
 		}
 
+		static string GetFetchRange (UniqueId min, UniqueId? max)
+		{
+			if (max.HasValue && max.Value.Id == min.Id)
+				return min.ToString ();
+
+			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
+
+			return string.Format ("{0}:{1}", min.Id, maxValue);
+		}
+
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
 		/// </summary>
@@ -2291,8 +2301,7 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
-			var command = string.Format ("UID FETCH {0}:{1} {2}\r\n", min.Id, maxValue, query);
+			var command = string.Format ("UID FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -2369,9 +2378,8 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var query = FormatSummaryItems (items);
-			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
-			var command = string.Format ("UID FETCH {0}:{1} {2} (CHANGEDSINCE {3}{4})\r\n", min.Id, maxValue, query, modseq, vanished);
+			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", GetFetchRange (min, max), query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -2531,6 +2539,16 @@ namespace MailKit.Net.Imap {
 			return results.Values;
 		}
 
+		static string GetFetchRange (int min, int max)
+		{
+			if (min == max)
+				return (min + 1).ToString ();
+
+			var maxValue = max != -1 ? (max + 1).ToString () : "*";
+
+			return string.Format ("{0}:{1}", min + 1, maxValue);
+		}
+
 		/// <summary>
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
@@ -2582,8 +2600,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var query = FormatSummaryItems (items);
-			var maxValue = max != -1 ? (max + 1).ToString () : "*";
-			var command = string.Format ("FETCH {0}:{1} {2}\r\n", min + 1, maxValue, query);
+			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -2658,8 +2675,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var query = FormatSummaryItems (items);
-			var maxValue = max != -1 ? (max + 1).ToString () : "*";
-			var command = string.Format ("FETCH {0}:{1} {2} (CHANGEDSINCE {3})\r\n", min + 1, maxValue, query, modseq);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, MessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
