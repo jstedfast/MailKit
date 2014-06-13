@@ -461,7 +461,10 @@
             Releases the unmanaged resources used by the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> and
             optionally releases the managed resources.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Releases the unmanaged resources used by the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> and
+            optionally releases the managed resources.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ExpirePolicy">
@@ -506,7 +509,10 @@
             Releases unmanaged resources and performs other cleanup operations before the
             <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is reclaimed by garbage collection.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Releases unmanaged resources and performs other cleanup operations before the
+            <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is reclaimed by garbage collection.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">

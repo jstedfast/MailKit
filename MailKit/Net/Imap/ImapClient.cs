@@ -107,6 +107,10 @@ namespace MailKit.Net.Imap {
 		/// Releases unmanaged resources and performs other cleanup operations before the
 		/// <see cref="MailKit.Net.Imap.ImapClient"/> is reclaimed by garbage collection.
 		/// </summary>
+		/// <remarks>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="MailKit.Net.Imap.ImapClient"/> is reclaimed by garbage collection.
+		/// </remarks>
 		~ImapClient ()
 		{
 			Dispose (false);
@@ -867,6 +871,10 @@ namespace MailKit.Net.Imap {
 		/// Releases the unmanaged resources used by the <see cref="ImapClient"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
+		/// <remarks>
+		/// Releases the unmanaged resources used by the <see cref="ImapClient"/> and
+		/// optionally releases the managed resources.
+		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)

@@ -123,6 +123,10 @@ namespace MailKit.Net.Pop3 {
 		/// Releases unmanaged resources and performs other cleanup operations before the
 		/// <see cref="MailKit.Net.Pop3.Pop3Client"/> is reclaimed by garbage collection.
 		/// </summary>
+		/// <remarks>
+		/// Releases unmanaged resources and performs other cleanup operations before the
+		/// <see cref="MailKit.Net.Pop3.Pop3Client"/> is reclaimed by garbage collection.
+		/// </remarks>
 		~Pop3Client ()
 		{
 			Dispose (false);
@@ -1664,6 +1668,10 @@ namespace MailKit.Net.Pop3 {
 		/// Releases the unmanaged resources used by the <see cref="Pop3Client"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
+		/// <remarks>
+		/// Releases the unmanaged resources used by the <see cref="Pop3Client"/> and
+		/// optionally releases the managed resources.
+		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)
