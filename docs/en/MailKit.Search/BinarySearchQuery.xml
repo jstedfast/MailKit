@@ -11,9 +11,11 @@
   <Interfaces />
   <Docs>
     <summary>
-            A binary search query such asn an AND or OR expression.
+            A binary search query such as an AND or OR expression.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A binary search query such as an AND or OR expression.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Left">
@@ -31,7 +33,9 @@
             Gets the left operand of the expression.
             </summary>
         <value>The left operand.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the left operand of the expression.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Right">
@@ -49,7 +53,9 @@
             Gets the right operand of the expression.
             </summary>
         <value>The right operand.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the right operand of the expression.
+            </remarks>
       </Docs>
     </Member>
   </Members>

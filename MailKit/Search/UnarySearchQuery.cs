@@ -28,6 +28,9 @@ namespace MailKit.Search {
 	/// <summary>
 	/// A unary search query such as a NOT expression.
 	/// </summary>
+	/// <remarks>
+	/// A unary search query such as a NOT expression.
+	/// </remarks>
 	public class UnarySearchQuery : SearchQuery
 	{
 		internal UnarySearchQuery (SearchTerm term, SearchQuery operand) : base (term)
@@ -36,8 +39,11 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
-		/// Tets the inner operand.
+		/// Gets the inner operand.
 		/// </summary>
+		/// <remarks>
+		/// Gets the inner operand.
+		/// </remarks>
 		/// <value>The operand.</value>
 		public SearchQuery Operand {
 			get; private set;

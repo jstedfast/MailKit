@@ -34,7 +34,9 @@
         <summary>
             Sort results by arrival date in ascending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by arrival date in ascending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Cc">
@@ -51,7 +53,9 @@
         <summary>
             Sort results by the Cc header in ascending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the Cc header in ascending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Date">
@@ -68,7 +72,9 @@
         <summary>
             Sort results by the sent date in ascending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the sent date in ascending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="From">
@@ -85,7 +91,9 @@
         <summary>
             Sort results by the From header in ascending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the From header in ascending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReverseArrival">
@@ -102,7 +110,9 @@
         <summary>
             Sort results by arrival date in desending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by arrival date in desending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReverseCc">
@@ -119,7 +129,9 @@
         <summary>
             Sort results by the Cc header in descending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the Cc header in descending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReverseDate">
@@ -136,7 +148,9 @@
         <summary>
             Sort results by the sent date in descending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the sent date in descending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReverseFrom">
@@ -153,7 +167,9 @@
         <summary>
             Sort results by the From header in descending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the From header in descending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReverseSize">
@@ -170,7 +186,9 @@
         <summary>
             Sort results by the message size in descending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the message size in descending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReverseSubject">
@@ -187,7 +205,9 @@
         <summary>
             Sort results by the Subject header in descending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the Subject header in descending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ReverseTo">
@@ -204,7 +224,9 @@
         <summary>
             Sort results by the To header in descending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the To header in descending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -221,7 +243,9 @@
         <summary>
             Sort results by the message size in ascending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the message size in ascending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Subject">
@@ -238,7 +262,9 @@
         <summary>
             Sort results by the Subject header in ascending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the Subject header in ascending order.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="To">
@@ -255,7 +281,9 @@
         <summary>
             Sort results by the To header in ascending order.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sort results by the To header in ascending order.
+            </remarks>
       </Docs>
     </Member>
   </Members>

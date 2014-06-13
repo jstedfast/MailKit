@@ -13,7 +13,9 @@
     <summary>
             A header-based search query.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A header-based search query.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Field">
@@ -31,7 +33,9 @@
             Gets the header field name.
             </summary>
         <value>The header field.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the header field name.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -49,7 +53,9 @@
             Gets the value to match against.
             </summary>
         <value>The value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the value to match against.
+            </remarks>
       </Docs>
     </Member>
   </Members>

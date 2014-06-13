@@ -13,7 +13,9 @@
     <summary>
             A date-based search query.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A date-based search query.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Date">
@@ -31,7 +33,9 @@
             Gets the date value of the search query.
             </summary>
         <value>The date.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the date value of the search query.
+            </remarks>
       </Docs>
     </Member>
   </Members>

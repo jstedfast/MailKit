@@ -28,6 +28,9 @@ namespace MailKit.Search {
 	/// <summary>
 	/// An enumeration of sort orders.
 	/// </summary>
+	/// <remarks>
+	/// An enumeration of sort orders.
+	/// </remarks>
 	enum SortOrder {
 		/// <summary>
 		/// Sort in ascending order.

@@ -28,6 +28,9 @@ namespace MailKit.Search {
 	/// <summary>
 	/// A header-based search query.
 	/// </summary>
+	/// <remarks>
+	/// A header-based search query.
+	/// </remarks>
 	public class HeaderSearchQuery : SearchQuery
 	{
 		internal HeaderSearchQuery (string field, string value) : base (SearchTerm.HeaderContains)
@@ -39,6 +42,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Gets the header field name.
 		/// </summary>
+		/// <remarks>
+		/// Gets the header field name.
+		/// </remarks>
 		/// <value>The header field.</value>
 		public string Field {
 			get; private set;
@@ -47,6 +53,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Gets the value to match against.
 		/// </summary>
+		/// <remarks>
+		/// Gets the value to match against.
+		/// </remarks>
 		/// <value>The value.</value>
 		public string Value {
 			get; private set;

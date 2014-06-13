@@ -52,71 +52,113 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Sort results by arrival date in ascending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by arrival date in ascending order.
+		/// </remarks>
 		public static readonly OrderBy Arrival = new OrderBy (OrderByType.Arrival, SortOrder.Ascending);
 
 		/// <summary>
 		/// Sort results by arrival date in desending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by arrival date in desending order.
+		/// </remarks>
 		public static readonly OrderBy ReverseArrival = new OrderBy (OrderByType.Arrival, SortOrder.Descending);
 
 		/// <summary>
 		/// Sort results by the Cc header in ascending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the Cc header in ascending order.
+		/// </remarks>
 		public static readonly OrderBy Cc = new OrderBy (OrderByType.Cc, SortOrder.Ascending);
 
 		/// <summary>
 		/// Sort results by the Cc header in descending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the Cc header in descending order.
+		/// </remarks>
 		public static readonly OrderBy ReverseCc = new OrderBy (OrderByType.Cc, SortOrder.Descending);
 
 		/// <summary>
 		/// Sort results by the sent date in ascending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the sent date in ascending order.
+		/// </remarks>
 		public static readonly OrderBy Date = new OrderBy (OrderByType.Date, SortOrder.Ascending);
 
 		/// <summary>
 		/// Sort results by the sent date in descending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the sent date in descending order.
+		/// </remarks>
 		public static readonly OrderBy ReverseDate = new OrderBy (OrderByType.Date, SortOrder.Descending);
 
 		/// <summary>
 		/// Sort results by the From header in ascending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the From header in ascending order.
+		/// </remarks>
 		public static readonly OrderBy From = new OrderBy (OrderByType.From, SortOrder.Ascending);
 
 		/// <summary>
 		/// Sort results by the From header in descending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the From header in descending order.
+		/// </remarks>
 		public static readonly OrderBy ReverseFrom = new OrderBy (OrderByType.From, SortOrder.Descending);
 
 		/// <summary>
 		/// Sort results by the message size in ascending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the message size in ascending order.
+		/// </remarks>
 		public static readonly OrderBy Size = new OrderBy (OrderByType.Size, SortOrder.Ascending);
 
 		/// <summary>
 		/// Sort results by the message size in descending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the message size in descending order.
+		/// </remarks>
 		public static readonly OrderBy ReverseSize = new OrderBy (OrderByType.Size, SortOrder.Descending);
 
 		/// <summary>
 		/// Sort results by the Subject header in ascending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the Subject header in ascending order.
+		/// </remarks>
 		public static readonly OrderBy Subject = new OrderBy (OrderByType.Subject, SortOrder.Ascending);
 
 		/// <summary>
 		/// Sort results by the Subject header in descending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the Subject header in descending order.
+		/// </remarks>
 		public static readonly OrderBy ReverseSubject = new OrderBy (OrderByType.Subject, SortOrder.Descending);
 
 		/// <summary>
 		/// Sort results by the To header in ascending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the To header in ascending order.
+		/// </remarks>
 		public static readonly OrderBy To = new OrderBy (OrderByType.To, SortOrder.Ascending);
 
 		/// <summary>
 		/// Sort results by the To header in descending order.
 		/// </summary>
+		/// <remarks>
+		/// Sort results by the To header in descending order.
+		/// </remarks>
 		public static readonly OrderBy ReverseTo = new OrderBy (OrderByType.To, SortOrder.Descending);
 	}
 }

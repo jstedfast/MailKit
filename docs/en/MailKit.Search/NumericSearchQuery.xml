@@ -13,7 +13,9 @@
     <summary>
             A numeric search query.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A numeric search query.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Value">
@@ -31,7 +33,9 @@
             Gets the numeric value to match against.
             </summary>
         <value>The numeric value.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the numeric value to match against.
+            </remarks>
       </Docs>
     </Member>
   </Members>

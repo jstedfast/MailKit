@@ -13,7 +13,9 @@
     <summary>
             The exception that is thrown when there is an authentication error.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            The exception that is thrown when there is an authentication error.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,7 +30,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Security.AuthenticationException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Security.AuthenticationException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,7 +50,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Security.AuthenticationException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Security.AuthenticationException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -66,7 +72,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Security.AuthenticationException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Security.AuthenticationException" /> from the seriaized data.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -86,7 +94,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Security.AuthenticationException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Security.AuthenticationException" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

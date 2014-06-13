@@ -20,7 +20,9 @@
     <summary>
             An IMAP folder.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            An IMAP folder.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="AcceptedFlags">
@@ -60,7 +62,9 @@
             Gets the read/write access of the folder.
             </summary>
         <value>The read/write access.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the read/write access of the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -87,7 +91,9 @@
         <summary>
             Adds a set of flags to the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Adds a set of flags to the specified messages.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -142,7 +148,9 @@
         <summary>
             Adds a set of flags to the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Adds a set of flags to the specified messages.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -200,7 +208,9 @@
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -260,8 +270,10 @@
         <summary>
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -318,7 +330,9 @@
             Appends the specified message to the folder.
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified message to the folder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="message" /> is <c>null</c>.
             </exception>
@@ -365,7 +379,9 @@
             Appends the specified messages to the folder.
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified messages to the folder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="messages" /> is <c>null</c>.</para>
@@ -423,7 +439,9 @@
             Appends the specified message to the folder.
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified message to the folder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="message" /> is <c>null</c>.
             </exception>
@@ -472,7 +490,9 @@
             Appends the specified messages to the folder.
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Appends the specified messages to the folder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="messages" /> is <c>null</c>.</para>
@@ -523,7 +543,9 @@
             Gets the folder attributes.
             </summary>
         <value>The folder attributes.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the folder attributes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Check">
@@ -544,7 +566,9 @@
         <summary>
             Forces the server to flush its state for the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Forces the server to flush its state for the folder.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -589,7 +613,9 @@
         <summary>
             Closes the folder, optionally expunging the messages marked for deletion.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Closes the folder, optionally expunging the messages marked for deletion.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -637,7 +663,9 @@
             Copies the specified messages to the destination folder.
             </summary>
         <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Copies the specified messages to the destination folder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="uids" /> is <c>null</c>.</para>
@@ -699,7 +727,9 @@
         <summary>
             Copies the specified messages to the destination folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Copies the specified messages to the destination folder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -751,7 +781,9 @@
             Gets the total number of messages in the folder.
             </summary>
         <value>The total number of messages.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the total number of messages in the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="CountChanged">
@@ -768,7 +800,9 @@
         <summary>
             Occurs when the message count changes.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.CountChanged" /> event is emitted whenever the <see cref="P:MailKit.Net.Imap.ImapFolder.Count" /> value changes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -795,7 +829,9 @@
             Creates a new subfolder with the given name.
             </summary>
         <returns>The created folder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new subfolder with the given name.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <c>null</c>.
             </exception>
@@ -842,7 +878,9 @@
         <summary>
             Deletes the folder on the IMAP server.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Deletes the folder on the IMAP server.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -879,7 +917,9 @@
         <summary>
             Occurs when the folder is deleted.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.Deleted" /> event is emitted when the folder is deleted.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="DirectorySeparator">
@@ -897,7 +937,9 @@
             Gets the directory separator.
             </summary>
         <value>The directory separator.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the directory separator.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Exists">
@@ -916,7 +958,9 @@
             </summary>
         <value>
           <c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets a value indicating whether the folder exists.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Expunge">
@@ -1041,7 +1085,9 @@
         <summary>
             Occurs when a message is expunged from the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event is emitted when the IMAP server sends an untagged EXPUNGE response.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -1067,7 +1113,9 @@
             Fetches the message summaries for the specified message UIDs.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the specified message UIDs.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -1124,7 +1172,9 @@
             Fetches the message summaries for the specified message indexes.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the specified message indexes.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -1183,7 +1233,9 @@
             Fetches the message summaries for the messages between the two UIDs, inclusive.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the messages between the two UIDs, inclusive.
+            </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="min" /> is invalid.
             </exception>
@@ -1306,7 +1358,9 @@
             Fetches the message summaries for the messages between the two indexes, inclusive.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the messages between the two indexes, inclusive.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -1366,7 +1420,9 @@
             Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -1496,7 +1552,9 @@
             Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -1597,7 +1655,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="part" /> is <c>null</c>.
             </exception>
@@ -1651,7 +1711,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="part" /> is <c>null</c>.
             </exception>
@@ -1708,7 +1770,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="part" /> is <c>null</c>.
             </exception>
@@ -1765,7 +1829,9 @@
             Gets the specified body part.
             </summary>
         <returns>The body part.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified body part.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="part" /> is <c>null</c>.
             </exception>
@@ -1812,7 +1878,9 @@
             Gets an enumerator for the messages in the folder.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets an enumerator for the messages in the folder.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -1846,7 +1914,9 @@
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified message.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uid" /> is <c>null</c>.
             </exception>
@@ -1898,7 +1968,9 @@
             Gets the specified message.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified message.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is out of range.
             </exception>
@@ -2217,7 +2289,9 @@
             Gets the specified subfolder.
             </summary>
         <returns>The subfolder, if available; otherwise, <c>null</c>.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the specified subfolder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="name" /> is <c>null</c>.
             </exception>
@@ -2268,7 +2342,9 @@
             Gets the subfolders.
             </summary>
         <returns>The subfolders.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the subfolders.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -2325,7 +2401,9 @@
             </summary>
         <value>
           <c>true</c> if the folder is a namespace folder; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets whether or not the folder is a namespace folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsOpen">
@@ -2344,7 +2422,9 @@
             </summary>
         <value>
           <c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets a value indicating whether the folder is currently open.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsSubscribed">
@@ -2363,7 +2443,9 @@
             </summary>
         <value>
           <c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets a value indicating whether the folder is subscribed.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MessageFlagsChanged">
@@ -2380,7 +2462,9 @@
         <summary>
             Occurs when flags changed on a message.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> event is emitted when the IMAP server sends an untagged FETCH response containing FLAGS.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -2558,7 +2642,9 @@
             Opens the folder using the requested folder access.
             </summary>
         <returns>The <see cref="T:MailKit.FolderAccess" /> state of the folder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Opens the folder using the requested folder access.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="access" /> is not a valid value.
             </exception>
@@ -2700,7 +2786,9 @@
             Gets the number of recently added messages.
             </summary>
         <value>The number of recently added messages.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the number of recently added messages.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="RecentChanged">
@@ -2717,7 +2805,9 @@
         <summary>
             Occurs when the recent message count changes.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.RecentChanged" /> event is emitted whenever the <see cref="P:MailKit.Net.Imap.ImapFolder.Recent" /> value changes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -2744,7 +2834,9 @@
         <summary>
             Removes a set of flags from the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -2799,7 +2891,9 @@
         <summary>
             Removes a set of flags from the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -2857,7 +2951,9 @@
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -2918,7 +3014,9 @@
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -2974,7 +3072,9 @@
         <summary>
             Renames the folder to exist with a new name under a new parent folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Renames the folder to exist with a new name under a new parent folder.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="parent" /> is <c>null</c>.</para>
@@ -3025,7 +3125,9 @@
         <summary>
             Occurs when the folder is renamed.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.Renamed" /> event is emitted when the folder is renamed.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Search">
@@ -3312,7 +3414,9 @@
         <summary>
             Sets the flags of the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -3367,7 +3471,9 @@
         <summary>
             Sets the flags of the specified messages.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -3425,7 +3531,9 @@
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The unique IDs of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -3486,7 +3594,9 @@
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
             </summary>
         <returns>The indexes of the messages that were not updated.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -3540,7 +3650,9 @@
         <summary>
             Updates the values of the specified items.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Updates the values of the specified items.
+            </remarks>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the STATUS command.
             </exception>
@@ -3586,7 +3698,9 @@
         <summary>
             Subscribes the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Subscribes the folder.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3621,7 +3735,9 @@
         <summary>
             Occurs when the folder is subscribed.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.Subscribed" /> event is emitted when the folder is subscribed.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SupportsModSeq">
@@ -3664,7 +3780,9 @@
             Gets an enumerator for the messages in the folder.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets an enumerator for the messages in the folder.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3824,7 +3942,9 @@
             Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.
             </summary>
         <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="UidNext">
@@ -3884,7 +4004,9 @@
         <summary>
             Occurs when the UID validity changes.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.UidValidityChanged" /> event is emitted whenever the <see cref="P:MailKit.Net.Imap.ImapFolder.UidValidity" /> value changes.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Unsubscribe">
@@ -3905,7 +4027,9 @@
         <summary>
             Unsubscribes the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Unsubscribes the folder.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3940,7 +4064,9 @@
         <summary>
             Occurs when the folder is unsubscribed.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.Unsubscribed" /> event is emitted when the folder is unsubscribed.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Vanished">
@@ -3957,7 +4083,9 @@
         <summary>
             Occurs when a message vanishes from the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event is emitted when the IMAP server sends an untagged VANISHED response.
+            </remarks>
       </Docs>
     </Member>
   </Members>

@@ -32,6 +32,9 @@ namespace MailKit.Search {
 	/// <summary>
 	/// A specialized query for searching messages in a <see cref="IFolder"/>.
 	/// </summary>
+	/// <remarks>
+	/// A specialized query for searching messages in a <see cref="IFolder"/>.
+	/// </remarks>
 	public class SearchQuery
 	{
 		internal SearchQuery (SearchTerm term)
@@ -46,6 +49,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches all messages in the folder.
 		/// </summary>
+		/// <remarks>
+		/// Matches all messages in the folder.
+		/// </remarks>
 		public static readonly SearchQuery All = new SearchQuery (SearchTerm.All);
 
 		/// <summary>
@@ -95,11 +101,17 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Answered"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages with the <see cref="MessageFlags.Answered"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery Answered = new SearchQuery (SearchTerm.Answered);
 
 		/// <summary>
 		/// Matches messages where the Bcc header contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the Bcc header contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -122,6 +134,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages where the message body contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the message body contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -144,6 +159,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages where the Cc header contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the Cc header contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -166,6 +184,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
 		/// </summary>
+		/// <remarks>
+		///  Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
+		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="modseq">The mod-sequence value.</param>
 		public static SearchQuery ChangedSince (ulong modseq)
@@ -176,11 +197,17 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Deleted"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages with the <see cref="MessageFlags.Deleted"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery Deleted = new SearchQuery (SearchTerm.Deleted);
 
 		/// <summary>
 		/// Matches messages that were delivered after the specified date.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that were delivered after the specified date.
+		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
 		public static DateSearchQuery DeliveredAfter (DateTime date)
@@ -191,6 +218,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that were delivered before the specified date.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that were delivered before the specified date.
+		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
 		public static DateSearchQuery DeliveredBefore (DateTime date)
@@ -201,6 +231,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that were delivered on the specified date.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that were delivered on the specified date.
+		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
 		public static DateSearchQuery DeliveredOn (DateTime date)
@@ -211,6 +244,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that do not have the specified custom flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the specified custom flag set.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="flag">The custom flag.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -233,6 +269,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that do not have the specified custom flags set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the specified custom flags set.
+		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The custom flags.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -266,6 +305,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that do not have the specified flags set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the specified flags set.
+		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The message flags.</param>
 		/// <exception cref="System.ArgumentException">
@@ -301,16 +343,25 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Draft"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages with the <see cref="MessageFlags.Draft"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery Draft = new SearchQuery (SearchTerm.Draft);
 
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages with the <see cref="MessageFlags.Flagged"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery Flagged = new SearchQuery (SearchTerm.Flagged);
 
 		/// <summary>
 		/// Matches messages where the From header contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the From header contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -333,6 +384,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that have the specified custom flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that have the specified custom flag set.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="flag">The custom flag.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -355,6 +409,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that have the specified custom flags set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that have the specified custom flags set.
+		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The custom flags.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -388,6 +445,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that have the specified flags set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that have the specified flags set.
+		/// </remarks>
 		/// <returns>A <see cref="SearchQuery"/>.</returns>
 		/// <param name="flags">The message flags.</param>
 		/// <exception cref="System.ArgumentException">
@@ -423,6 +483,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages where the specified header contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the specified header contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="HeaderSearchQuery"/>.</returns>
 		/// <param name="field">The header field to match against.</param>
 		/// <param name="text">The text to match against.</param>
@@ -456,6 +519,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that are larger than the specified number of octets.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that are larger than the specified number of octets.
+		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="octets">The number of octets.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -472,6 +538,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages where the raw message contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the raw message contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -494,11 +563,17 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set but not the <see cref="MessageFlags.Seen"/>.
+		/// </remarks>
 		public static readonly SearchQuery New = new SearchQuery (SearchTerm.New);
 
 		/// <summary>
 		/// Creates a logical negation of the specified expression.
 		/// </summary>
+		/// <remarks>
+		/// Creates a logical negation of the specified expression.
+		/// </remarks>
 		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
 		/// <param name="expr">The expression</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -515,31 +590,49 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that do not have the <see cref="MessageFlags.Answered"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the <see cref="MessageFlags.Answered"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery NotAnswered = new SearchQuery (SearchTerm.NotAnswered);
 
 		/// <summary>
 		/// Matches messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the <see cref="MessageFlags.Deleted"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery NotDeleted = new SearchQuery (SearchTerm.NotDeleted);
 
 		/// <summary>
 		/// Matches messages that do not have the <see cref="MessageFlags.Draft"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the <see cref="MessageFlags.Draft"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery NotDraft = new SearchQuery (SearchTerm.NotDraft);
 
 		/// <summary>
 		/// Matches messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the <see cref="MessageFlags.Flagged"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery NotFlagged = new SearchQuery (SearchTerm.NotFlagged);
 
 		/// <summary>
 		/// Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the <see cref="MessageFlags.Recent"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery NotRecent = new SearchQuery (SearchTerm.NotRecent);
 
 		/// <summary>
 		/// Matches messages that do not have the <see cref="MessageFlags.Seen"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that do not have the <see cref="MessageFlags.Seen"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery NotSeen = new SearchQuery (SearchTerm.NotSeen);
 
 		/// <summary>
@@ -589,16 +682,25 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages with the <see cref="MessageFlags.Recent"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery Recent = new SearchQuery (SearchTerm.Recent);
 
 		/// <summary>
 		/// Matches messages with the <see cref="MessageFlags.Seen"/> flag set.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages with the <see cref="MessageFlags.Seen"/> flag set.
+		/// </remarks>
 		public static readonly SearchQuery Seen = new SearchQuery (SearchTerm.Seen);
 
 		/// <summary>
 		/// Matches messages that were sent after the specified date.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that were sent after the specified date.
+		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
 		public static DateSearchQuery SentAfter (DateTime date)
@@ -609,6 +711,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that were sent before the specified date.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that were sent before the specified date.
+		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
 		public static DateSearchQuery SentBefore (DateTime date)
@@ -619,6 +724,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that were sent on the specified date.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that were sent on the specified date.
+		/// </remarks>
 		/// <returns>A <see cref="DateSearchQuery"/>.</returns>
 		/// <param name="date">The date.</param>
 		public static DateSearchQuery SentOn (DateTime date)
@@ -629,6 +737,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages that are smaller than the specified number of octets.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages that are smaller than the specified number of octets.
+		/// </remarks>
 		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
 		/// <param name="octets">The number of octets.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -645,6 +756,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages where the Subject header contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the Subject header contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -667,6 +781,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Matches messages where the To header contains the specified text.
 		/// </summary>
+		/// <remarks>
+		/// Matches messages where the To header contains the specified text.
+		/// </remarks>
 		/// <returns>A <see cref="TextSearchQuery"/>.</returns>
 		/// <param name="text">The text to match against.</param>
 		/// <exception cref="System.ArgumentNullException">

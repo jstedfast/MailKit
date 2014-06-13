@@ -28,6 +28,9 @@ namespace MailKit.Search {
 	/// <summary>
 	/// A text-based search query.
 	/// </summary>
+	/// <remarks>
+	/// A text-based search query.
+	/// </remarks>
 	public sealed class TextSearchQuery : SearchQuery
 	{
 		internal TextSearchQuery (SearchTerm term, string text) : base (term)
@@ -38,6 +41,9 @@ namespace MailKit.Search {
 		/// <summary>
 		/// Gets the text to match against.
 		/// </summary>
+		/// <remarks>
+		/// Gets the text to match against.
+		/// </remarks>
 		/// <value>The text.</value>
 		public string Text {
 			get; private set;

@@ -13,7 +13,9 @@
     <summary>
             A text-based search query.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A text-based search query.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="Text">
@@ -31,7 +33,9 @@
             Gets the text to match against.
             </summary>
         <value>The text.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the text to match against.
+            </remarks>
       </Docs>
     </Member>
   </Members>

@@ -13,7 +13,9 @@
     <summary>
             A specialized query for searching messages in a <see cref="T:MailKit.IFolder" />.
             </summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+            A specialized query for searching messages in a <see cref="T:MailKit.IFolder" />.
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -30,7 +32,9 @@
         <summary>
             Matches all messages in the folder.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches all messages in the folder.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="And">
@@ -107,7 +111,9 @@
         <summary>
             Matches messages with the <see cref="F:MailKit.MessageFlags.Answered" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Answered" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="BccContains">
@@ -129,7 +135,9 @@
             Matches messages where the Bcc header contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the Bcc header contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="text" /> is <c>null</c>.
             </exception>
@@ -157,7 +165,9 @@
             Matches messages where the message body contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the message body contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="text" /> is <c>null</c>.
             </exception>
@@ -185,7 +195,9 @@
             Matches messages where the Cc header contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the Cc header contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="text" /> is <c>null</c>.
             </exception>
@@ -213,7 +225,9 @@
             Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
             </summary>
         <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that have mod-sequence values greater than or equal to the specified mod-sequence value.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Deleted">
@@ -230,7 +244,9 @@
         <summary>
             Matches messages with the <see cref="F:MailKit.MessageFlags.Deleted" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Deleted" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="DeliveredAfter">
@@ -252,7 +268,9 @@
             Matches messages that were delivered after the specified date.
             </summary>
         <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that were delivered after the specified date.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="DeliveredBefore">
@@ -274,7 +292,9 @@
             Matches messages that were delivered before the specified date.
             </summary>
         <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that were delivered before the specified date.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="DeliveredOn">
@@ -296,7 +316,9 @@
             Matches messages that were delivered on the specified date.
             </summary>
         <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that were delivered on the specified date.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="DoesNotHaveCustomFlag">
@@ -318,7 +340,9 @@
             Matches messages that do not have the specified custom flag set.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the specified custom flag set.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="flag" /> is <c>null</c>.
             </exception>
@@ -346,7 +370,9 @@
             Matches messages that do not have the specified custom flags set.
             </summary>
         <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the specified custom flags set.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="flags" /> is <c>null</c>.
             </exception>
@@ -376,7 +402,9 @@
             Matches messages that do not have the specified flags set.
             </summary>
         <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the specified flags set.
+            </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="flags" /> does not contain any of the valie flag values.
             </exception>
@@ -396,7 +424,9 @@
         <summary>
             Matches messages with the <see cref="F:MailKit.MessageFlags.Draft" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Draft" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Flagged">
@@ -413,7 +443,9 @@
         <summary>
             Matches messages with the <see cref="F:MailKit.MessageFlags.Flagged" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Flagged" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="FromContains">
@@ -435,7 +467,9 @@
             Matches messages where the From header contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the From header contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="text" /> is <c>null</c>.
             </exception>
@@ -541,7 +575,9 @@
             Matches messages that have the specified custom flag set.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that have the specified custom flag set.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="flag" /> is <c>null</c>.
             </exception>
@@ -569,7 +605,9 @@
             Matches messages that have the specified custom flags set.
             </summary>
         <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that have the specified custom flags set.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="flags" /> is <c>null</c>.
             </exception>
@@ -599,7 +637,9 @@
             Matches messages that have the specified flags set.
             </summary>
         <returns>A <see cref="T:MailKit.Search.SearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that have the specified flags set.
+            </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="flags" /> does not contain any of the valie flag values.
             </exception>
@@ -656,7 +696,9 @@
             Matches messages where the specified header contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.HeaderSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the specified header contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="field" /> is <c>null</c>.</para>
@@ -692,7 +734,9 @@
             Matches messages that are larger than the specified number of octets.
             </summary>
         <returns>A <see cref="T:MailKit.Search.NumericSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that are larger than the specified number of octets.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="octets" /> is a negative value.
             </exception>
@@ -717,7 +761,9 @@
             Matches messages where the raw message contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the raw message contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="text" /> is <c>null</c>.
             </exception>
@@ -740,7 +786,9 @@
         <summary>
             Matches messages with the <see cref="F:MailKit.MessageFlags.Recent" /> flag set but not the <see cref="F:MailKit.MessageFlags.Seen" />.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Recent" /> flag set but not the <see cref="F:MailKit.MessageFlags.Seen" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Not">
@@ -762,7 +810,9 @@
             Creates a logical negation of the specified expression.
             </summary>
         <returns>A <see cref="T:MailKit.Search.UnarySearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a logical negation of the specified expression.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="expr" /> is <c>null</c>.
             </exception>
@@ -782,7 +832,9 @@
         <summary>
             Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Answered" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Answered" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="NotDeleted">
@@ -799,7 +851,9 @@
         <summary>
             Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Deleted" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Deleted" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="NotDraft">
@@ -816,7 +870,9 @@
         <summary>
             Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Draft" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Draft" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="NotFlagged">
@@ -833,7 +889,9 @@
         <summary>
             Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Flagged" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Flagged" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="NotRecent">
@@ -850,7 +908,9 @@
         <summary>
             Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Recent" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Recent" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="NotSeen">
@@ -867,7 +927,9 @@
         <summary>
             Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Seen" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that do not have the <see cref="F:MailKit.MessageFlags.Seen" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Or">
@@ -944,7 +1006,9 @@
         <summary>
             Matches messages with the <see cref="F:MailKit.MessageFlags.Recent" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Recent" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Seen">
@@ -961,7 +1025,9 @@
         <summary>
             Matches messages with the <see cref="F:MailKit.MessageFlags.Seen" /> flag set.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages with the <see cref="F:MailKit.MessageFlags.Seen" /> flag set.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SentAfter">
@@ -983,7 +1049,9 @@
             Matches messages that were sent after the specified date.
             </summary>
         <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that were sent after the specified date.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SentBefore">
@@ -1005,7 +1073,9 @@
             Matches messages that were sent before the specified date.
             </summary>
         <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that were sent before the specified date.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SentOn">
@@ -1027,7 +1097,9 @@
             Matches messages that were sent on the specified date.
             </summary>
         <returns>A <see cref="T:MailKit.Search.DateSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that were sent on the specified date.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="SmallerThan">
@@ -1049,7 +1121,9 @@
             Matches messages that are smaller than the specified number of octets.
             </summary>
         <returns>A <see cref="T:MailKit.Search.NumericSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages that are smaller than the specified number of octets.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="octets" /> is a negative value.
             </exception>
@@ -1074,7 +1148,9 @@
             Matches messages where the Subject header contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the Subject header contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="text" /> is <c>null</c>.
             </exception>
@@ -1102,7 +1178,9 @@
             Matches messages where the To header contains the specified text.
             </summary>
         <returns>A <see cref="T:MailKit.Search.TextSearchQuery" />.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Matches messages where the To header contains the specified text.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="text" /> is <c>null</c>.
             </exception>

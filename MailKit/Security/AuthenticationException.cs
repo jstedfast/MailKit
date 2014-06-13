@@ -33,6 +33,9 @@ namespace MailKit.Security {
 	/// <summary>
 	/// The exception that is thrown when there is an authentication error.
 	/// </summary>
+	/// <remarks>
+	/// The exception that is thrown when there is an authentication error.
+	/// </remarks>
 #if !NETFX_CORE
 	[Serializable]
 #endif
@@ -42,6 +45,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="AuthenticationException"/> from the seriaized data.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		protected AuthenticationException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -52,6 +58,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="AuthenticationException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">An inner exception.</param>
 		public AuthenticationException (string message, Exception innerException) : base (message, innerException)
@@ -61,6 +70,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="AuthenticationException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		public AuthenticationException (string message) : base (message)
 		{
@@ -69,6 +81,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="AuthenticationException"/>.
+		/// </remarks>
 		public AuthenticationException () : base ("Authentication failed.")
 		{
 		}
