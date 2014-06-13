@@ -35,6 +35,9 @@ namespace MailKit.Net.Smtp {
 	/// <summary>
 	/// An enumeration of the possible error codes that may be reported by a <see cref="SmtpCommandException"/>.
 	/// </summary>
+	/// <remarks>
+	/// An enumeration of the possible error codes that may be reported by a <see cref="SmtpCommandException"/>.
+	/// </remarks>
 	public enum SmtpErrorCode {
 		/// <summary>
 		/// The message was not accepted for delivery. This may happen if
@@ -80,6 +83,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpCommandException"/> from the serialized data.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -104,6 +110,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpCommandException"/>.
+		/// </remarks>
 		/// <param name="code">The error code.</param>
 		/// <param name="status">The status code.</param>
 		/// <param name="mailbox">The rejected mailbox.</param>
@@ -118,6 +127,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpCommandException"/>.
+		/// </remarks>
 		/// <param name="code">The error code.</param>
 		/// <param name="status">The status code.</param>>
 		/// <param name="message">The error message.</param>
@@ -132,6 +144,9 @@ namespace MailKit.Net.Smtp {
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.
 		/// </summary>
+		/// <remarks>
+		/// Serializes the state of the <see cref="SmtpCommandException"/>.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">

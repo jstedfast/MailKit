@@ -46,6 +46,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ImapCommandException"/> from the serialized data.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -56,6 +59,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ImapCommandException"/>.
+		/// </remarks>
 		/// <param name="command">The command.</param>
 		/// <param name="result">The command result.</param>
 		internal ImapCommandException (string command, ImapCommandResult result)
@@ -66,6 +72,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ImapCommandException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">The inner exception.</param>
 		public ImapCommandException (string message, Exception innerException) : base (message, innerException)
@@ -75,6 +84,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ImapCommandException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		public ImapCommandException (string message) : base (message)
 		{
@@ -83,6 +95,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ImapCommandException"/>.
+		/// </remarks>
 		public ImapCommandException ()
 		{
 		}

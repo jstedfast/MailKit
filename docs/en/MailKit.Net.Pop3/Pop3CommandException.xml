@@ -31,7 +31,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3CommandException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Pop3.Pop3CommandException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -49,7 +51,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3CommandException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Pop3.Pop3CommandException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -69,7 +73,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3CommandException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Pop3.Pop3CommandException" /> from the serialized data.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -89,7 +95,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3CommandException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Pop3.Pop3CommandException" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

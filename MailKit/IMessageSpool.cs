@@ -53,7 +53,7 @@ namespace MailKit {
 		bool SupportsUids { get; }
 
 		/// <summary>
-		/// Gets the number of messages available in the message spool.
+		/// Get the number of messages available in the message spool.
 		/// </summary>
 		/// <remarks>
 		/// Gets the number of messages available in the message spool.
@@ -63,7 +63,7 @@ namespace MailKit {
 		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the UID of the message at the specified index.
+		/// Get the UID of the message at the specified index.
 		/// </summary>
 		/// <remarks>
 		/// Not all servers support UIDs, so you should first check
@@ -75,7 +75,7 @@ namespace MailKit {
 		string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the full list of available message UIDs.
+		/// Get the full list of available message UIDs.
 		/// </summary>
 		/// <remarks>
 		/// Not all servers support UIDs, so you should first check
@@ -86,7 +86,7 @@ namespace MailKit {
 		string[] GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the size of the specified message, in bytes.
+		/// Get the size of the specified message, in bytes.
 		/// </summary>
 		/// <remarks>
 		/// Gets the size of the specified message, in bytes.
@@ -97,7 +97,7 @@ namespace MailKit {
 		int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the size of the specified message, in bytes.
+		/// Get the size of the specified message, in bytes.
 		/// </summary>
 		/// <remarks>
 		/// Gets the size of the specified message, in bytes.
@@ -108,7 +108,7 @@ namespace MailKit {
 		int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the sizes for all available messages, in bytes.
+		/// Get the sizes for all available messages, in bytes.
 		/// </summary>
 		/// <remarks>
 		/// Gets the sizes for all available messages, in bytes.
@@ -118,7 +118,7 @@ namespace MailKit {
 		int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the headers for the specified message.
+		/// Get the headers for the specified message.
 		/// </summary>
 		/// <remarks>
 		/// Gets the headers for the specified message.
@@ -129,7 +129,7 @@ namespace MailKit {
 		HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the headers for the specified message.
+		/// Get the headers for the specified message.
 		/// </summary>
 		/// <remarks>
 		/// Gets the headers for the specified message.
@@ -140,10 +140,10 @@ namespace MailKit {
 		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the specified message.
+		/// Get the message with the specified UID.
 		/// </summary>
 		/// <remarks>
-		/// Gets the specified message.
+		/// Gets the message with the specified UID.
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -151,10 +151,10 @@ namespace MailKit {
 		MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Gets the specified message.
+		/// Get the message at the specified index.
 		/// </summary>
 		/// <remarks>
-		/// Gets the specified message.
+		/// Get the message at the specified index.
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>

@@ -87,7 +87,10 @@
         <summary>
             Occurs when a remote message store receives an alert message from the server.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            The <see cref="E:MailKit.Net.Imap.ImapClient.Alert" /> event is raised whenever the IMAP server includes an
+            <c>"[ALERT]"</c> code in a response to a client query.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Authenticate">
@@ -443,7 +446,9 @@
             Gets the folder for the specified namespace.
             </summary>
         <returns>The folder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the folder for the specified namespace.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="namespace" /> is <c>null</c>.
             </exception>
@@ -519,7 +524,9 @@
             Gets the folder for the specified path.
             </summary>
         <returns>The folder.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the folder for the specified path.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="path" /> is <c>null</c>.
             </exception>

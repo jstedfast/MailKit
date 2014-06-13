@@ -32,7 +32,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Imap.ImapProtocolException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,7 +52,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Imap.ImapProtocolException" />.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -70,7 +74,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> from the serialized data.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -90,7 +96,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Imap.ImapProtocolException" />.
+            </remarks>
       </Docs>
     </Member>
   </Members>

@@ -97,11 +97,11 @@
         <param name="index">The index of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the specified message.
+            Get the message at the specified index.
             </summary>
         <returns>The message.</returns>
         <remarks>
-            Gets the specified message.
+            Get the message at the specified index.
             </remarks>
       </Docs>
     </Member>
@@ -123,11 +123,11 @@
         <param name="uid">The UID of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the specified message.
+            Get the message with the specified UID.
             </summary>
         <returns>The message.</returns>
         <remarks>
-            Gets the specified message.
+            Gets the message with the specified UID.
             </remarks>
       </Docs>
     </Member>
@@ -147,7 +147,7 @@
       <Docs>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the number of messages available in the message spool.
+            Get the number of messages available in the message spool.
             </summary>
         <returns>The number of available messages.</returns>
         <remarks>
@@ -173,7 +173,7 @@
         <param name="index">The index of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the headers for the specified message.
+            Get the headers for the specified message.
             </summary>
         <returns>The message headers.</returns>
         <remarks>
@@ -199,7 +199,7 @@
         <param name="uid">The UID of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the headers for the specified message.
+            Get the headers for the specified message.
             </summary>
         <returns>The message headers.</returns>
         <remarks>
@@ -225,7 +225,7 @@
         <param name="index">The index of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the size of the specified message, in bytes.
+            Get the size of the specified message, in bytes.
             </summary>
         <returns>The message size, in bytes.</returns>
         <remarks>
@@ -251,7 +251,7 @@
         <param name="uid">The UID of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the size of the specified message, in bytes.
+            Get the size of the specified message, in bytes.
             </summary>
         <returns>The message size, in bytes.</returns>
         <remarks>
@@ -275,7 +275,7 @@
       <Docs>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the sizes for all available messages, in bytes.
+            Get the sizes for all available messages, in bytes.
             </summary>
         <returns>The message sizes, in bytes.</returns>
         <remarks>
@@ -301,7 +301,7 @@
         <param name="index">The message index.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the UID of the message at the specified index.
+            Get the UID of the message at the specified index.
             </summary>
         <returns>The message UID.</returns>
         <remarks>
@@ -326,7 +326,7 @@
       <Docs>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the full list of available message UIDs.
+            Get the full list of available message UIDs.
             </summary>
         <returns>The message UIDs.</returns>
         <remarks>

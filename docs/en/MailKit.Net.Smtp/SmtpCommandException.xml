@@ -36,7 +36,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Net.Smtp.SmtpCommandException" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Smtp.SmtpCommandException" /> from the serialized data.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="info" /> is <c>null</c>.
             </exception>
@@ -85,7 +87,9 @@
             When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" />
             with information about the exception.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Serializes the state of the <see cref="T:MailKit.Net.Smtp.SmtpCommandException" />.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="info" /> is <c>null</c>.
             </exception>

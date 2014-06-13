@@ -46,6 +46,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3CommandException"/> from the serialized data.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		protected Pop3CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -56,6 +59,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">An inner exception.</param>
 		public Pop3CommandException (string message, Exception innerException) : base (message, innerException)
@@ -65,6 +71,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		public Pop3CommandException (string message) : base (message)
 		{
@@ -73,6 +82,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// </remarks>
 		public Pop3CommandException ()
 		{
 		}

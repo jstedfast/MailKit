@@ -13,9 +13,7 @@
             An enumeration of the possible error codes that may be reported by a <see cref="T:MailKit.Net.Smtp.SmtpCommandException" />.
             </summary>
     <remarks>
-            Other than the <see cref="F:MailKit.Net.Smtp.SmtpErrorCode.ProtocolError" /> error, none of
-            the errors require reconnecting to the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> before
-            continuing to send more messages.
+            An enumeration of the possible error codes that may be reported by a <see cref="T:MailKit.Net.Smtp.SmtpCommandException" />.
             </remarks>
   </Docs>
   <Members>

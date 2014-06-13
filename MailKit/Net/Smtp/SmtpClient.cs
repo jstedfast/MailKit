@@ -845,7 +845,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Pings the SMTP server to keep the connection alive.
+		/// Ping the SMTP server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>

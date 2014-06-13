@@ -85,7 +85,7 @@ namespace MailKit {
 		int Timeout { get; set; }
 
 		/// <summary>
-		/// Establishes a connection to the server specified in the URI.
+		/// Connect to the server specified in the URI.
 		/// </summary>
 		/// <remarks>
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
@@ -96,7 +96,7 @@ namespace MailKit {
 		void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Authenticates using the supplied credentials.
+		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// If the service supports authentication, then the credentials are used
@@ -117,7 +117,7 @@ namespace MailKit {
 		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Pings the message service to keep the connection alive.
+		/// Ping the message service to keep the connection alive.
 		/// </summary>
 		/// <remarks>
 		/// Mail servers, if left idle for too long, will automatically drop the connection.

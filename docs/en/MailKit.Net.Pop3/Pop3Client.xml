@@ -531,7 +531,9 @@
             Gets an enumerator for the messages in the folder.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets an enumerator for the messages in the folder.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
@@ -576,10 +578,12 @@
         <param name="index">The index of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the specified message.
+            Get the message at the specified index.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the message at the specified index.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid message index.
             </exception>
@@ -627,10 +631,12 @@
         <param name="uid">The UID of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the specified message.
+            Get the message with the specified UID.
             </summary>
         <returns>The message.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the message with the specified UID.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uid" /> is <c>null</c>.
             </exception>
@@ -682,10 +688,12 @@
       <Docs>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the number of messages available in the message spool.
+            Get the number of messages available in the message spool.
             </summary>
         <returns>The number of available messages.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the number of messages available in the message spool.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
@@ -730,10 +738,12 @@
         <param name="index">The index of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the headers for the specified message.
+            Get the headers for the specified message.
             </summary>
         <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the headers for the specified message.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid message index.
             </exception>
@@ -781,10 +791,12 @@
         <param name="uid">The UID of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the headers for the specified message.
+            Get the headers for the specified message.
             </summary>
         <returns>The message headers.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the headers for the specified message.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uid" /> is <c>null</c>.
             </exception>
@@ -838,10 +850,12 @@
         <param name="index">The index of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the size of the specified message, in bytes.
+            Get the size of the specified message, in bytes.
             </summary>
         <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the size of the specified message, in bytes.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid message index.
             </exception>
@@ -889,10 +903,12 @@
         <param name="uid">The UID of the message.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the size of the specified message, in bytes.
+            Get the size of the specified message, in bytes.
             </summary>
         <returns>The message size, in bytes.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the size of the specified message, in bytes.
+            </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uid" /> is <c>null</c>.
             </exception>
@@ -941,10 +957,12 @@
       <Docs>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the sizes for all available messages, in bytes.
+            Get the sizes for all available messages, in bytes.
             </summary>
         <returns>The message sizes, in bytes.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the sizes for all available messages, in bytes.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
@@ -989,10 +1007,13 @@
         <param name="index">The message index.</param>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the UID of the message at the specified index.
+            Get the UID of the message at the specified index.
             </summary>
         <returns>The message UID.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Not all servers support UIDs, so you should first check
+            the <see cref="P:MailKit.Net.Pop3.Pop3Client.SupportsUids" /> property.
+            </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid message index.
             </exception>
@@ -1041,10 +1062,13 @@
       <Docs>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Gets the full list of available message UIDs.
+            Get the full list of available message UIDs.
             </summary>
         <returns>The message uids.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Not all servers support UIDs, so you should first check
+            the <see cref="P:MailKit.Net.Pop3.Pop3Client.SupportsUids" /> property.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
@@ -1154,7 +1178,7 @@
       <Docs>
         <param name="cancellationToken">A cancellation token.</param>
         <summary>
-            Pings the POP3 server to keep the connection alive.
+            Ping the POP3 server to keep the connection alive.
             </summary>
         <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
         <exception cref="T:System.ObjectDisposedException">
@@ -1198,7 +1222,11 @@
         <summary>
             Reset the state of all messages marked for deletion.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
@@ -1267,7 +1295,9 @@
             Gets an enumerator for the messages in the folder.
             </summary>
         <returns>The enumerator.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets an enumerator for the messages in the folder.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>

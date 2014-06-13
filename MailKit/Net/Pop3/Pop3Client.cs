@@ -673,7 +673,7 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Pings the POP3 server to keep the connection alive.
+		/// Ping the POP3 server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -726,8 +726,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the number of messages available in the message spool.
+		/// Get the number of messages available in the message spool.
 		/// </summary>
+		/// <remarks>
+		/// Gets the number of messages available in the message spool.
+		/// </remarks>
 		/// <returns>The number of available messages.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -791,8 +794,12 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the UID of the message at the specified index.
+		/// Get the UID of the message at the specified index.
 		/// </summary>
+		/// <remarks>
+		/// Not all servers support UIDs, so you should first check
+		/// the <see cref="SupportsUids"/> property.
+		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -889,8 +896,12 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the full list of available message UIDs.
+		/// Get the full list of available message UIDs.
 		/// </summary>
+		/// <remarks>
+		/// Not all servers support UIDs, so you should first check
+		/// the <see cref="SupportsUids"/> property.
+		/// </remarks>
 		/// <returns>The message uids.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1026,8 +1037,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the size of the specified message, in bytes.
+		/// Get the size of the specified message, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the size of the specified message, in bytes.
+		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1078,8 +1092,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the size of the specified message, in bytes.
+		/// Get the size of the specified message, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the size of the specified message, in bytes.
+		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1122,8 +1139,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the sizes for all available messages, in bytes.
+		/// Get the sizes for all available messages, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the sizes for all available messages, in bytes.
+		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1245,8 +1265,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the headers for the specified message.
+		/// Get the headers for the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified message.
+		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1300,8 +1323,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the headers for the specified message.
+		/// Get the headers for the specified message.
 		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified message.
+		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1344,8 +1370,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the specified message.
+		/// Get the message with the specified UID.
 		/// </summary>
+		/// <remarks>
+		/// Gets the message with the specified UID.
+		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1399,8 +1428,11 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets the specified message.
+		/// Get the message at the specified index.
 		/// </summary>
+		/// <remarks>
+		/// Gets the message at the specified index.
+		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1552,6 +1584,11 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Reset the state of all messages marked for deletion.
 		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1592,6 +1629,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets an enumerator for the messages in the folder.
 		/// </summary>
+		/// <remarks>
+		/// Gets an enumerator for the messages in the folder.
+		/// </remarks>
 		/// <returns>The enumerator.</returns>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1633,6 +1673,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets an enumerator for the messages in the folder.
 		/// </summary>
+		/// <remarks>
+		/// Gets an enumerator for the messages in the folder.
+		/// </remarks>
 		/// <returns>The enumerator.</returns>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.

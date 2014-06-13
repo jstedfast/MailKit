@@ -773,6 +773,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the folder for the specified namespace.
 		/// </summary>
+		/// <remarks>
+		/// Gets the folder for the specified namespace.
+		/// </remarks>
 		/// <returns>The folder.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -814,6 +817,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the folder for the specified path.
 		/// </summary>
+		/// <remarks>
+		/// Gets the folder for the specified path.
+		/// </remarks>
 		/// <returns>The folder.</returns>
 		/// <param name="path">The folder path.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -853,6 +859,10 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Occurs when a remote message store receives an alert message from the server.
 		/// </summary>
+		/// <remarks>
+		/// The <see cref="Alert"/> event is raised whenever the IMAP server includes an
+		/// <c>"[ALERT]"</c> code in a response to a client query.
+		/// </remarks>
 		public event EventHandler<AlertEventArgs> Alert;
 
 		void OnAlert (object sender, AlertEventArgs e)

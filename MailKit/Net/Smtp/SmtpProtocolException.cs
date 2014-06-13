@@ -47,6 +47,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpProtocolException"/> from the serialized data.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		protected SmtpProtocolException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -57,6 +60,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpProtocolException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">The inner exception.</param>
 		public SmtpProtocolException (string message, Exception innerException) : base (message, innerException)
@@ -66,6 +72,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpProtocolException"/>.
+		/// </remarks>
 		/// <param name="message">The error message.</param>
 		public SmtpProtocolException (string message) : base (message)
 		{
@@ -74,6 +83,9 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpProtocolException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpProtocolException"/>.
+		/// </remarks>
 		public SmtpProtocolException ()
 		{
 		}
