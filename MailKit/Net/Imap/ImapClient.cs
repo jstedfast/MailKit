@@ -398,7 +398,7 @@ namespace MailKit.Net.Imap {
 				throw new AuthenticationException ();
 
 			// fall back to the classic LOGIN command...
-			cred = credentials.GetCredential (uri, "LOGIN");
+			cred = credentials.GetCredential (uri, "DEFAULT");
 
 			ic = engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
 

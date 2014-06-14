@@ -469,7 +469,7 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			// fall back to the classic USER & PASS commands...
-			cred = credentials.GetCredential (uri, "USER");
+			cred = credentials.GetCredential (uri, "DEFAULT");
 
 			try {
 				SendCommand (cancellationToken, "USER {0}", cred.UserName);
