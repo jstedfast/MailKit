@@ -56,9 +56,9 @@ namespace MailKit {
 		UidValidity    = 1 << 3,
 
 		/// <summary>
-		/// Updates <see cref="IFolder.FirstUnread"/>.
+		/// Updates <see cref="IFolder.Unread"/>.
 		/// </summary>
-		FirstUnread    = 1 << 4,
+		Unread         = 1 << 4,
 
 		/// <summary>
 		/// Updates <see cref="IFolder.HighestModSeq"/>.

@@ -201,6 +201,16 @@ namespace MailKit {
 		int FirstUnread { get; }
 
 		/// <summary>
+		/// Gets the number of unread messages in the folder.
+		/// </summary>
+		/// <remarks>
+		/// This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Unread"/>.
+		/// </remarks>
+		/// <value>The number of unread messages.</value>
+		int Unread { get; }
+
+		/// <summary>
 		/// Gets the number of recently delivered messages.
 		/// </summary>
 		/// <remarks>
@@ -327,7 +337,13 @@ namespace MailKit {
 		/// Updates the values of the specified items.
 		/// </summary>
 		/// <remarks>
-		/// Updates the values of the specified items.
+		/// <para>Updates the values of the specified items.</para>
+		/// <para>The <see cref="Status(StatusItems, System.Threading.CancellationToken)"/> method
+		/// MUST NOT be used on a folder that is already in the opened state. Instead, other ways
+		/// of getting the desired information should be used.</para>
+		/// <para>For example, a common use for the <see cref="Status(StatusItems,System.Threading.CancellationToken)"/>
+		/// method is to get the number of unread messages in the folder. When the folder is open, however, it is
+		/// possible to use <code>var unreadCount = folder.Search (SearchQuery.NotSeen).Length;</code></para>
 		/// </remarks>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

@@ -1148,10 +1148,7 @@ namespace MailKit.Net.Imap {
 						folder.UpdateUidValidity (new UniqueId (value));
 						break;
 					case "UNSEEN":
-						if (value > 0)
-							value--;
-
-						folder.UpdateFirstUnread ((int) value);
+						folder.UpdateUnread ((int) value);
 						break;
 					}
 				}
