@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed StatusItems extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.16.0.0</AssemblyVersion>
+    <AssemblyVersion>0.17.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -26,7 +26,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.StatusItems Count = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.16.0.0</AssemblyVersion>
+        <AssemblyVersion>0.17.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.StatusItems</ReturnType>
@@ -37,28 +37,12 @@
             </summary>
       </Docs>
     </Member>
-    <Member MemberName="FirstUnread">
-      <MemberSignature Language="C#" Value="FirstUnread" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.StatusItems FirstUnread = int32(16)" />
-      <MemberType>Field</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.16.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.StatusItems</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Updates <see cref="P:MailKit.IFolder.FirstUnread" />.
-            </summary>
-      </Docs>
-    </Member>
     <Member MemberName="HighestModSeq">
       <MemberSignature Language="C#" Value="HighestModSeq" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.StatusItems HighestModSeq = int32(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.16.0.0</AssemblyVersion>
+        <AssemblyVersion>0.17.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.StatusItems</ReturnType>
@@ -74,7 +58,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.StatusItems Recent = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.16.0.0</AssemblyVersion>
+        <AssemblyVersion>0.17.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.StatusItems</ReturnType>
@@ -90,7 +74,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.StatusItems UidNext = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.16.0.0</AssemblyVersion>
+        <AssemblyVersion>0.17.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.StatusItems</ReturnType>
@@ -106,7 +90,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.StatusItems UidValidity = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.16.0.0</AssemblyVersion>
+        <AssemblyVersion>0.17.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.StatusItems</ReturnType>
@@ -114,6 +98,22 @@
       <Docs>
         <summary>
             Updates <see cref="P:MailKit.IFolder.UidValidity" />.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Unread">
+      <MemberSignature Language="C#" Value="Unread" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.StatusItems Unread = int32(16)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.17.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.StatusItems</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Updates <see cref="P:MailKit.IFolder.Unread" />.
             </summary>
       </Docs>
     </Member>

@@ -343,7 +343,8 @@ namespace MailKit {
 		/// of getting the desired information should be used.</para>
 		/// <para>For example, a common use for the <see cref="Status(StatusItems,System.Threading.CancellationToken)"/>
 		/// method is to get the number of unread messages in the folder. When the folder is open, however, it is
-		/// possible to use <code>var unreadCount = folder.Search (SearchQuery.NotSeen).Length;</code></para>
+		/// possible to use the <see cref="IFolder.Search(MailKit.Search.SearchQuery, System.Threading.CancellationToken)"/>
+		/// method to query for the list of unread messages.</para>
 		/// </remarks>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
