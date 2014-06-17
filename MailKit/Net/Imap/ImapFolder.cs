@@ -1174,7 +1174,8 @@ namespace MailKit.Net.Imap {
 
 			flags = flags.TrimEnd ();
 
-			var ic = Engine.QueueCommand (cancellationToken, null, "STATUS %F (%s)\r\n", this, flags);
+			var command = string.Format ("STATUS %F ({0})\r\n", flags);
+			var ic = Engine.QueueCommand (cancellationToken, null, command, this);
 
 			Engine.Wait (ic);
 
@@ -1282,7 +1283,8 @@ namespace MailKit.Net.Imap {
 			if (uids.Length == 0)
 				return;
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID EXPUNGE %s\r\n", set);
+			var command = string.Format ("UID EXPUNGE {0}\r\n", set);
+			var ic = Engine.QueueCommand (cancellationToken, this, command);
 
 			Engine.Wait (ic);
 
@@ -1706,7 +1708,8 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID COPY %s %F\r\n", set, destination);
+			var command = string.Format ("UID COPY {0} %F\r\n", set);
+			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
 			Engine.Wait (ic);
 
@@ -1797,7 +1800,8 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "UID MOVE %s %F\r\n", set, destination);
+			var command = string.Format ("UID MOVE {0} %F\r\n", set);
+			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
 			Engine.Wait (ic);
 
@@ -1870,7 +1874,8 @@ namespace MailKit.Net.Imap {
 			if (indexes.Length == 0)
 				return;
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "COPY %s %F\r\n", set, destination);
+			var command = string.Format ("COPY {0} %F\r\n", set);
+			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
 			Engine.Wait (ic);
 
@@ -1946,7 +1951,8 @@ namespace MailKit.Net.Imap {
 			if (indexes.Length == 0)
 				return;
 
-			var ic = Engine.QueueCommand (cancellationToken, this, "MOVE %s %F\r\n", set, destination);
+			var command = string.Format ("MOVE {0} %F\r\n", set);
+			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
 
 			Engine.Wait (ic);
 
@@ -3593,7 +3599,8 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[%s]<%d.%d>)\r\n", uid.Id, part.PartSpecifier, offset, count);
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", uid.Id, part.PartSpecifier, offset, count);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
 
@@ -3680,7 +3687,8 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[%s]<%d.%d>)\r\n", index + 1, part.PartSpecifier, offset, count);
+			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", index + 1, part.PartSpecifier, offset, count);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
 
