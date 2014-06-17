@@ -160,7 +160,7 @@ namespace MailKit {
 		/// <see cref="IFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The uid of the message.</value>
-		public UniqueId UniqueId {
+		public UniqueId? UniqueId {
 			get; internal set;
 		}
 
@@ -340,7 +340,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if the messages can be threaded; otherwise, <c>false</c>.</value>
 		bool IThreadable.CanThread {
-			get { return Envelope != null; }
+			get { return Envelope != null && UniqueId.HasValue; }
 		}
 
 		/// <summary>
@@ -415,7 +415,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The unique identifier.</value>
 		UniqueId IThreadable.ThreadableUniqueId {
-			get { return UniqueId; }
+			get { return UniqueId.Value; }
 		}
 
 		#endregion
