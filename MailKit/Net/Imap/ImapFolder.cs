@@ -982,6 +982,9 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
+			foreach (var folder in list)
+				folder.ParentFolder = this;
+
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
