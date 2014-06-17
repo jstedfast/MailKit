@@ -73,8 +73,8 @@ namespace MailKit.Net.Imap {
 
 	enum ImapProtocolVersion {
 		Unknown,
-		Imap4,
-		Imap4rev1
+		IMAP4,
+		IMAP4rev1
 	}
 
 	enum ImapUntaggedResult {
@@ -705,10 +705,10 @@ namespace MailKit.Net.Imap {
 			stream.UngetToken (token);
 
 			if ((Capabilities & ImapCapabilities.IMAP4rev1) != 0) {
-				ProtocolVersion = ImapProtocolVersion.Imap4rev1;
+				ProtocolVersion = ImapProtocolVersion.IMAP4rev1;
 				Capabilities |= ImapCapabilities.Status;
 			} else if ((Capabilities & ImapCapabilities.IMAP4) != 0) {
-				ProtocolVersion = ImapProtocolVersion.Imap4;
+				ProtocolVersion = ImapProtocolVersion.IMAP4;
 			}
 
 			if ((Capabilities & ImapCapabilities.QuickResync) != 0)

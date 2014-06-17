@@ -1147,7 +1147,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if ((Engine.Capabilities & ImapCapabilities.Status) != 0)
+			if ((Engine.Capabilities & ImapCapabilities.Status) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
 
 			CheckState (false, false);
