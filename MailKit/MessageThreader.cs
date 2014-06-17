@@ -146,6 +146,9 @@ namespace MailKit {
 
 				var id = message.ThreadableMessageId;
 
+				if (string.IsNullOrEmpty (id))
+					id = MimeUtils.GenerateMessageId ();
+
 				if (ids.TryGetValue (id, out node)) {
 					if (node.Message == null) {
 						// a previously processed message referenced this message
