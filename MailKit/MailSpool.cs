@@ -33,6 +33,12 @@ using System.Collections.Generic;
 using MimeKit;
 
 namespace MailKit {
+	/// <summary>
+	/// An abstract mail spool implementation.
+	/// </summary>
+	/// <remarks>
+	/// An abstract mail spool implementation.
+	/// </remarks>
 	public abstract class MailSpool : MailService, IMailSpool
 	{
 		/// <summary>

@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -33,6 +32,12 @@ using System.Collections.Generic;
 using MimeKit;
 
 namespace MailKit {
+	/// <summary>
+	/// An abstract mail transport implementation.
+	/// </summary>
+	/// <remarks>
+	/// An abstract mail transport implementation.
+	/// </remarks>
 	public abstract class MailTransport : MailService, IMailTransport
 	{
 		/// <summary>

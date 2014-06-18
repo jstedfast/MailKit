@@ -37,7 +37,7 @@ namespace MailKit {
 	public interface IMailStore : IMailService
 	{
 		/// <summary>
-		/// Gets the personal namespaces.
+		/// Get the personal namespaces.
 		/// </summary>
 		/// <remarks>
 		/// The personal folder namespaces contain a user's personal mailbox folders.
@@ -46,7 +46,7 @@ namespace MailKit {
 		FolderNamespaceCollection PersonalNamespaces { get; }
 
 		/// <summary>
-		/// Gets the shared namespaces.
+		/// Get the shared namespaces.
 		/// </summary>
 		/// <remarks>
 		/// The shared folder namespaces contain mailbox folders that are shared with the user.
@@ -55,7 +55,7 @@ namespace MailKit {
 		FolderNamespaceCollection SharedNamespaces { get; }
 
 		/// <summary>
-		/// Gets the other namespaces.
+		/// Get the other namespaces.
 		/// </summary>
 		/// <remarks>
 		/// The other folder namespaces contain other mailbox folders.
@@ -64,7 +64,7 @@ namespace MailKit {
 		FolderNamespaceCollection OtherNamespaces { get; }
 
 		/// <summary>
-		/// Gets the Inbox folder.
+		/// Get the Inbox folder.
 		/// </summary>
 		/// <remarks>
 		/// The Inbox folder is the default folder and is typically the folder
@@ -74,7 +74,7 @@ namespace MailKit {
 		IMailFolder Inbox { get; }
 
 		/// <summary>
-		/// Gets the specified special folder.
+		/// Get the specified special folder.
 		/// </summary>
 		/// <remarks>
 		/// Not all message stores support the concept of special folders,
@@ -88,7 +88,7 @@ namespace MailKit {
 		IMailFolder GetFolder (SpecialFolder folder);
 
 		/// <summary>
-		/// Gets the folder for the specified namespace.
+		/// Get the folder for the specified namespace.
 		/// </summary>
 		/// <remarks>
 		/// The main reason to get the toplevel folder in a namespace is
@@ -105,7 +105,7 @@ namespace MailKit {
 		IMailFolder GetFolder (FolderNamespace @namespace);
 
 		/// <summary>
-		/// Gets the folder for the specified path.
+		/// Get the folder for the specified path.
 		/// </summary>
 		/// <remarks>
 		/// Gets the folder for the specified path.

@@ -40,7 +40,7 @@ namespace MailKit {
 	public interface IMailTransport : IMailService
 	{
 		/// <summary>
-		/// Sends the specified message.
+		/// Send the specified message.
 		/// </summary>
 		/// <remarks>
 		/// Sends the specified message.
@@ -50,7 +50,7 @@ namespace MailKit {
 		void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously sends the specified message.
+		/// Asynchronously send the specified message.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously sends the specified message.
@@ -60,7 +60,7 @@ namespace MailKit {
 		Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Sends the specified message using the supplied sender and recipients.
+		/// Send the specified message using the supplied sender and recipients.
 		/// </summary>
 		/// <remarks>
 		/// Sends the specified message using the supplied sender and recipients.
@@ -72,7 +72,7 @@ namespace MailKit {
 		void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously sends the specified message using the supplied sender and recipients.
+		/// Asynchronously send the specified message using the supplied sender and recipients.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously sends the specified message using the supplied sender and recipients.

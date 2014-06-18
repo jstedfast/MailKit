@@ -127,7 +127,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets the protocol supported by the message service.
+		/// Get the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>
 		/// Gets the protocol supported by the message service.
@@ -138,7 +138,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets the capabilities supported by the SMTP server.
+		/// Get the capabilities supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection has been made via
@@ -160,7 +160,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets the maximum message size supported by the server.
+		/// Get the maximum message size supported by the server.
 		/// </summary>
 		/// <remarks>
 		/// <para>The maximum message size will not be known until a successful
@@ -184,7 +184,7 @@ namespace MailKit.Net.Smtp {
 		#region IMailService implementation
 
 		/// <summary>
-		/// Gets the authentication mechanisms supported by the SMTP server.
+		/// Get the authentication mechanisms supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the <see cref="Connect(Uri,CancellationToken)"/> method.
@@ -195,7 +195,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets or sets the timeout for network streaming operations, in milliseconds.
+		/// Get or set the timeout for network streaming operations, in milliseconds.
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
@@ -215,7 +215,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Gets whether or not the client is currently connected to an SMTP server.
+		/// Get whether or not the client is currently connected to an SMTP server.
 		/// </summary>
 		/// <remarks>
 		/// When a <see cref="SmtpProtocolException"/> is caught, the connection state of the
@@ -543,6 +543,8 @@ namespace MailKit.Net.Smtp {
 		{
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
+
+			CheckDisposed ();
 
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient must be connected before you can authenticate.");
@@ -1162,7 +1164,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Sends the specified message.
+		/// Send the specified message.
 		/// </summary>
 		/// <remarks>
 		/// Sends the message by uploading it to an SMTP server.
@@ -1215,7 +1217,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Sends the specified message using the supplied sender and recipients.
+		/// Send the specified message using the supplied sender and recipients.
 		/// </summary>
 		/// <remarks>
 		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.

@@ -35,6 +35,12 @@ using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace MailKit {
+	/// <summary>
+	/// An abstract mail service implementation.
+	/// </summary>
+	/// <remarks>
+	/// An abstract mail service implementation.
+	/// </remarks>
 	public abstract class MailService : IMailService
 	{
 		/// <summary>

@@ -45,7 +45,7 @@ namespace MailKit {
 	{
 #if !NETFX_CORE
 		/// <summary>
-		/// Gets or sets the client SSL certificates.
+		/// Get or set the client SSL certificates.
 		/// </summary>
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
@@ -57,7 +57,7 @@ namespace MailKit {
 #endif
 
 		/// <summary>
-		/// Gets the authentication mechanisms supported by the message service.
+		/// Get the authentication mechanisms supported by the message service.
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
@@ -67,7 +67,7 @@ namespace MailKit {
 		HashSet<string> AuthenticationMechanisms { get; }
 
 		/// <summary>
-		/// Gets whether or not the service is currently connected.
+		/// Get whether or not the service is currently connected.
 		/// </summary>
 		/// <remarks>
 		/// Gets whether or not the service is currently connected.
@@ -76,7 +76,7 @@ namespace MailKit {
 		bool IsConnected { get; }
 
 		/// <summary>
-		/// Gets or sets the timeout for network streaming operations, in milliseconds.
+		/// Get or set the timeout for network streaming operations, in milliseconds.
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
@@ -97,10 +97,10 @@ namespace MailKit {
 		void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously establishes a connection to the specified mail server.
+		/// Asynchronously connect to the specified mail server.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously establishes a connection to the specified mail server.
+		/// Asynchronously connects to the specified mail server.
 		/// </remarks>
 		/// <param name="uri">The server URI.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -139,7 +139,7 @@ namespace MailKit {
 		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously authenticates using the supplied credentials.
+		/// Asynchronously authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms, then
@@ -179,7 +179,7 @@ namespace MailKit {
 		Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Disconnects the service.
+		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
@@ -189,7 +189,7 @@ namespace MailKit {
 		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously disconnects the service.
+		/// Asynchronously disconnect the service.
 		/// </summary>
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
@@ -211,7 +211,7 @@ namespace MailKit {
 		void NoOp (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously pings the mail server to keep the connection alive.
+		/// Asynchronously ping the mail server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>

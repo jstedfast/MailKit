@@ -57,7 +57,7 @@ namespace MailKit.Net.Imap {
 	/// STARTTLS extension (as defined by rfc3501). The "imaps" protocol,
 	/// however, connects to the IMAP server using an SSL-wrapped connection.
 	/// </remarks>
-	public class ImapClient : MailService, IMailStore
+	public class ImapClient : MailStore
 	{
 		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
@@ -104,7 +104,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the protocol supported by the message service.
+		/// Get the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>
 		/// Gets the protocol supported by the message service.
@@ -115,7 +115,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the capabilities supported by the IMAP server.
+		/// Get the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection has been made via
@@ -213,7 +213,7 @@ namespace MailKit.Net.Imap {
 		#region IMailService implementation
 
 		/// <summary>
-		/// Gets the authentication mechanisms supported by the IMAP server.
+		/// Get the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> method.
@@ -224,7 +224,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the threading algorithms supported by the IMAP server.
+		/// Get the threading algorithms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The threading algorithms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> and
@@ -236,7 +236,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets or sets the timeout for network streaming operations, in milliseconds.
+		/// Get or set the timeout for network streaming operations, in milliseconds.
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets the underlying socket stream's <see cref="System.IO.Stream.ReadTimeout"/>
@@ -256,7 +256,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets whether or not the client is currently connected to an IMAP server.
+		/// Get whether or not the client is currently connected to an IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// When an <see cref="ImapProtocolException"/> is caught, the connection state of the
@@ -619,7 +619,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Pings the IMAP server to keep the connection alive.
+		/// Ping the IMAP server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -666,51 +666,51 @@ namespace MailKit.Net.Imap {
 		#region IMailStore implementation
 
 		/// <summary>
-		/// Gets the personal namespaces.
+		/// Get the personal namespaces.
 		/// </summary>
 		/// <remarks>
 		/// The personal folder namespaces contain a user's personal mailbox folders.
 		/// </remarks>
 		/// <value>The personal namespaces.</value>
-		public FolderNamespaceCollection PersonalNamespaces {
+		public override FolderNamespaceCollection PersonalNamespaces {
 			get { return engine.PersonalNamespaces; }
 		}
 
 		/// <summary>
-		/// Gets the shared namespaces.
+		/// Get the shared namespaces.
 		/// </summary>
 		/// <remarks>
 		/// The shared folder namespaces contain mailbox folders that are shared with the user.
 		/// </remarks>
 		/// <value>The shared namespaces.</value>
-		public FolderNamespaceCollection SharedNamespaces {
+		public override FolderNamespaceCollection SharedNamespaces {
 			get { return engine.SharedNamespaces; }
 		}
 
 		/// <summary>
-		/// Gets the other namespaces.
+		/// Get the other namespaces.
 		/// </summary>
 		/// <remarks>
 		/// The other folder namespaces contain other mailbox folders.
 		/// </remarks>
 		/// <value>The other namespaces.</value>
-		public FolderNamespaceCollection OtherNamespaces {
+		public override FolderNamespaceCollection OtherNamespaces {
 			get { return engine.OtherNamespaces; }
 		}
 
 		/// <summary>
-		/// Gets the Inbox folder.
+		/// Get the Inbox folder.
 		/// </summary>
 		/// <remarks>
 		/// The Inbox folder is the default folder and always exists.
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
-		public IMailFolder Inbox {
+		public override IMailFolder Inbox {
 			get { return engine.Inbox; }
 		}
 
 		/// <summary>
-		/// Gets the specified special folder.
+		/// Get the specified special folder.
 		/// </summary>
 		/// <remarks>
 		/// Not all IMAP servers support special folders. Only IMAP servers
@@ -731,7 +731,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// </exception>
-		public IMailFolder GetFolder (SpecialFolder folder)
+		public override IMailFolder GetFolder (SpecialFolder folder)
 		{
 			CheckDisposed ();
 
@@ -754,7 +754,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the folder for the specified namespace.
+		/// Get the folder for the specified namespace.
 		/// </summary>
 		/// <remarks>
 		/// Gets the folder for the specified namespace.
@@ -775,7 +775,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
 		/// </exception>
-		public IMailFolder GetFolder (FolderNamespace @namespace)
+		public override IMailFolder GetFolder (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException ("namespace");
@@ -798,7 +798,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the folder for the specified path.
+		/// Get the folder for the specified path.
 		/// </summary>
 		/// <remarks>
 		/// Gets the folder for the specified path.
@@ -823,7 +823,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
 		/// </exception>
-		public IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken))
+		public override IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
@@ -839,21 +839,9 @@ namespace MailKit.Net.Imap {
 			return engine.GetFolder (path, cancellationToken);
 		}
 
-		/// <summary>
-		/// Occurs when a remote message store receives an alert message from the server.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="Alert"/> event is raised whenever the IMAP server includes an
-		/// <c>"[ALERT]"</c> code in a response to a client query.
-		/// </remarks>
-		public event EventHandler<AlertEventArgs> Alert;
-
 		void OnAlert (object sender, AlertEventArgs e)
 		{
-			var handler = Alert;
-
-			if (handler != null)
-				handler (this, e);
+			OnAlert (e);
 		}
 
 		#endregion
