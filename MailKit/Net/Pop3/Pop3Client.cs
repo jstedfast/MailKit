@@ -63,7 +63,7 @@ namespace MailKit.Net.Pop3 {
 	/// STLS extension (as defined by rfc2595). The "pop3s" protocol,
 	/// however, connects to the POP3 server using an SSL-wrapped connection.
 	/// </remarks>
-	public class Pop3Client : MailService, IMailSpool
+	public class Pop3Client : MailSpool
 	{
 		[Flags]
 		enum ProbedCapabilities : byte {
@@ -704,7 +704,7 @@ namespace MailKit.Net.Pop3 {
 		/// <see cref="GetMessageUids(CancellationToken)"/> will fail.</para>
 		/// </remarks>
 		/// <value><c>true</c> if supports UIDs; otherwise, <c>false</c>.</value>
-		public bool SupportsUids {
+		public override bool SupportsUids {
 			get { return (engine.Capabilities & Pop3Capabilities.UIDL) != 0; }
 		}
 
@@ -737,7 +737,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken))
+		public override int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -813,7 +813,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -911,7 +911,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public string[] GetMessageUids (CancellationToken cancellationToken = default (CancellationToken))
+		public override string[] GetMessageUids (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1055,7 +1055,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1107,7 +1107,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1150,7 +1150,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken))
+		public override int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1286,7 +1286,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1338,7 +1338,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1391,7 +1391,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1443,7 +1443,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1497,7 +1497,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1550,7 +1550,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1594,7 +1594,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void Reset (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Reset (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1637,7 +1637,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public IEnumerator<MimeMessage> GetEnumerator ()
+		public override IEnumerator<MimeMessage> GetEnumerator ()
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1651,39 +1651,6 @@ namespace MailKit.Net.Pop3 {
 				yield return GetMessage (i, CancellationToken.None);
 
 			yield break;
-		}
-
-		/// <summary>
-		/// Gets an enumerator for the messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets an enumerator for the messages in the folder.
-		/// </remarks>
-		/// <returns>The enumerator.</returns>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="Pop3Client"/> has been disposed.
-		/// </exception>
-		/// <exception cref="InvalidOperationException">
-		/// The <see cref="Pop3Client"/> is not connected.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// The <see cref="Pop3Client"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="Pop3CommandException">
-		/// A POP3 command failed.
-		/// </exception>
-		/// <exception cref="Pop3ProtocolException">
-		/// A POP3 protocol error occurred.
-		/// </exception>
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
 		}
 
 		#endregion
