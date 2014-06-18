@@ -40,7 +40,7 @@ namespace MailKit.Net.Imap {
 #if !NETFX_CORE
 	[Serializable]
 #endif
-	public class ImapCommandException : ProtocolException
+	public class ImapCommandException : CommandException
 	{
 #if !NETFX_CORE
 		/// <summary>

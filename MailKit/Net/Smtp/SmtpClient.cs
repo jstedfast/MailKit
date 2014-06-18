@@ -60,7 +60,7 @@ namespace MailKit.Net.Smtp {
 	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol,
 	/// however, connects to the SMTP server using an SSL-wrapped connection.
 	/// </remarks>
-	public class SmtpClient : IMessageTransport
+	public class SmtpClient : MessageService, IMessageTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
@@ -73,8 +73,8 @@ namespace MailKit.Net.Smtp {
 			//Data,
 		}
 
+		readonly HashSet<string> authenticationMechanisms = new HashSet<string> ();
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
-		readonly HashSet<string> authmechs = new HashSet<string> ();
 		readonly byte[] input = new byte[4096];
 		readonly IProtocolLogger logger;
 		SmtpCapabilities capabilities;
@@ -87,6 +87,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		int timeout = 100000;
 		bool authenticated;
+		bool connected;
 		Stream stream;
 		bool disposed;
 		string host;
@@ -126,16 +127,14 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MailKit.Net.Smtp.SmtpClient"/> is reclaimed by garbage collection.
+		/// Gets the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MailKit.Net.Smtp.SmtpClient"/> is reclaimed by garbage collection.
+		/// Gets the protocol supported by the message service.
 		/// </remarks>
-		~SmtpClient ()
-		{
-			Dispose (false);
+		/// <value>The protocol.</value>
+		protected override string Protocol {
+			get { return "smtp"; }
 		}
 
 		/// <summary>
@@ -184,21 +183,6 @@ namespace MailKit.Net.Smtp {
 
 		#region IMessageService implementation
 
-#if !NETFX_CORE
-		/// <summary>
-		/// Gets or sets the client SSL certificates.
-		/// </summary>
-		/// <remarks>
-		/// <para>Some servers may require the client SSL certificates in order
-		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect(Uri,CancellationToken)"/>.</para>
-		/// </remarks>
-		/// <value>The client SSL certificates.</value>
-		public X509CertificateCollection ClientCertificates {
-			get; set;
-		}
-#endif
-
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the SMTP server.
 		/// </summary>
@@ -206,8 +190,8 @@ namespace MailKit.Net.Smtp {
 		/// The authentication mechanisms are queried durring the <see cref="Connect(Uri,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
-		public HashSet<string> AuthenticationMechanisms {
-			get { return authmechs; }
+		public override HashSet<string> AuthenticationMechanisms {
+			get { return authenticationMechanisms; }
 		}
 
 		/// <summary>
@@ -218,7 +202,7 @@ namespace MailKit.Net.Smtp {
 		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
 		/// </remarks>
 		/// <value>The timeout in milliseconds.</value>
-		public int Timeout {
+		public override int Timeout {
 			get { return timeout; }
 			set {
 				if (IsConnected && stream.CanTimeout) {
@@ -238,12 +222,12 @@ namespace MailKit.Net.Smtp {
 		/// <see cref="SmtpClient"/> should be checked before continuing.
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public bool IsConnected {
-			get; private set;
+		public override bool IsConnected {
+			get { return connected; }
 		}
 
 #if !NETFX_CORE
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+		static bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
@@ -466,7 +450,7 @@ namespace MailKit.Net.Smtp {
 			} else {
 				// Clear the extensions
 				capabilities = SmtpCapabilities.None;
-				authmechs.Clear();
+				AuthenticationMechanisms.Clear ();
 				MaxSize = 0;
 
 				var lines = response.Response.Split ('\n');
@@ -483,7 +467,7 @@ namespace MailKit.Net.Smtp {
 
 						var mechanisms = capability.Substring (index);
 						foreach (var mechanism in mechanisms.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-							authmechs.Add (mechanism);
+							AuthenticationMechanisms.Add (mechanism);
 					} else if (capability.StartsWith ("SIZE", StringComparison.Ordinal)) {
 						int index = 4;
 						uint size;
@@ -555,8 +539,11 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (credentials == null)
+				throw new ArgumentNullException ("credentials");
+
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient must be connected before you can authenticate.");
 
@@ -565,9 +552,6 @@ namespace MailKit.Net.Smtp {
 
 			if ((capabilities & SmtpCapabilities.Authentication) == 0)
 				throw new NotSupportedException ("The SMTP server does not support authentication.");
-
-			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
 
 			var uri = new Uri ("smtp://" + host);
 			SaslException authException = null;
@@ -637,8 +621,8 @@ namespace MailKit.Net.Smtp {
 			localEndPoint = new IPEndPoint (IPAddress.Loopback, 25);
 #endif
 			capabilities = SmtpCapabilities.None;
+			AuthenticationMechanisms.Clear ();
 			stream = replayStream;
-			authmechs.Clear ();
 			host = hostName;
 			MaxSize = 0;
 
@@ -652,7 +636,7 @@ namespace MailKit.Net.Smtp {
 				// Send EHLO and get a list of supported extensions
 				Ehlo (cancellationToken);
 
-				IsConnected = true;
+				connected = true;
 			} catch {
 				stream.Dispose ();
 				stream = null;
@@ -704,21 +688,21 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", "uri");
 
+			CheckDisposed ();
+
 			if (IsConnected)
 				throw new InvalidOperationException ("The SmtpClient is already connected.");
 
 			capabilities = SmtpCapabilities.None;
-			authmechs.Clear ();
+			AuthenticationMechanisms.Clear ();
 			MaxSize = 0;
 
 			var smtps = uri.Scheme.ToLowerInvariant () == "smtps";
@@ -805,7 +789,7 @@ namespace MailKit.Net.Smtp {
 					Ehlo (cancellationToken);
 				}
 
-				IsConnected = true;
+				connected = true;
 			} catch {
 				stream.Dispose ();
 				stream = null;
@@ -824,7 +808,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
-		public void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -867,7 +851,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public void NoOp (CancellationToken cancellationToken = default (CancellationToken))
+		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -886,7 +870,7 @@ namespace MailKit.Net.Smtp {
 #if !NETFX_CORE
 			localEndPoint = null;
 #endif
-			IsConnected = false;
+			connected = false;
 			host = null;
 
 			if (stream != null) {
@@ -1293,8 +1277,6 @@ namespace MailKit.Net.Smtp {
 
 		#endregion
 
-		#region IDisposable
-
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="SmtpClient"/> and
 		/// optionally releases the managed resources.
@@ -1305,7 +1287,7 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
-		protected virtual void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
 				if (queue != null)
@@ -1314,20 +1296,5 @@ namespace MailKit.Net.Smtp {
 				Disconnect ();
 			}
 		}
-
-		/// <summary>
-		/// Releases all resource used by the <see cref="MailKit.Net.Smtp.SmtpClient"/> object.
-		/// </summary>
-		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.Net.Smtp.SmtpClient"/>. The
-		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.Net.Smtp.SmtpClient"/> in an unusable state. After
-		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.Net.Smtp.SmtpClient"/> so
-		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Smtp.SmtpClient"/> was occupying.</remarks>
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		#endregion
 	}
 }

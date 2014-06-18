@@ -57,7 +57,7 @@ namespace MailKit.Net.Imap {
 	/// STARTTLS extension (as defined by rfc3501). The "imaps" protocol,
 	/// however, connects to the IMAP server using an SSL-wrapped connection.
 	/// </remarks>
-	public class ImapClient : IMessageStore
+	public class ImapClient : MessageService, IMessageStore
 	{
 		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
@@ -104,16 +104,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MailKit.Net.Imap.ImapClient"/> is reclaimed by garbage collection.
+		/// Gets the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MailKit.Net.Imap.ImapClient"/> is reclaimed by garbage collection.
+		/// Gets the protocol supported by the message service.
 		/// </remarks>
-		~ImapClient ()
-		{
-			Dispose (false);
+		/// <value>The protocol.</value>
+		protected override string Protocol {
+			get { return "imap"; }
 		}
 
 		/// <summary>
@@ -145,7 +143,7 @@ namespace MailKit.Net.Imap {
 		}
 
 #if !NETFX_CORE
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+		static bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
@@ -214,21 +212,6 @@ namespace MailKit.Net.Imap {
 
 		#region IMessageService implementation
 
-#if !NETFX_CORE
-		/// <summary>
-		/// Gets or sets the client SSL certificates.
-		/// </summary>
-		/// <remarks>
-		/// <para>Some servers may require the client SSL certificates in order
-		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect(Uri,CancellationToken)"/>.</para>
-		/// </remarks>
-		/// <value>The client SSL certificates.</value>
-		public X509CertificateCollection ClientCertificates {
-			get; set;
-		}
-#endif
-
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the IMAP server.
 		/// </summary>
@@ -236,7 +219,7 @@ namespace MailKit.Net.Imap {
 		/// The authentication mechanisms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
-		public HashSet<string> AuthenticationMechanisms {
+		public override HashSet<string> AuthenticationMechanisms {
 			get { return engine.AuthenticationMechanisms; }
 		}
 
@@ -260,7 +243,7 @@ namespace MailKit.Net.Imap {
 		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
 		/// </remarks>
 		/// <value>The timeout in milliseconds.</value>
-		public int Timeout {
+		public override int Timeout {
 			get { return timeout; }
 			set {
 				if (IsConnected && engine.Stream.CanTimeout) {
@@ -280,7 +263,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="ImapClient"/> should be checked before continuing.
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public bool IsConnected {
+		public override bool IsConnected {
 			get { return engine.IsConnected; }
 		}
 
@@ -322,9 +305,10 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
+			if (credentials == null)
+				throw new ArgumentNullException ("credentials");
 
 			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient must be connected before you can authenticate.");
@@ -332,8 +316,7 @@ namespace MailKit.Net.Imap {
 			if (engine.State >= ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("The ImapClient is already authenticated.");
 
-			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+			CheckDisposed ();
 
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var uri = new Uri ("imap://" + host);
@@ -483,15 +466,15 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", "uri");
+
+			CheckDisposed ();
 
 			if (IsConnected)
 				throw new InvalidOperationException ("The ImapClient is already connected.");
@@ -608,7 +591,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		public void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -660,7 +643,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public void NoOp (CancellationToken cancellationToken = default (CancellationToken))
+		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -875,8 +858,6 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
-		#region IDisposable implementation
-
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="ImapClient"/> and
 		/// optionally releases the managed resources.
@@ -887,7 +868,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
-		protected virtual void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
 				engine.Dispose ();
@@ -901,20 +882,5 @@ namespace MailKit.Net.Imap {
 				disposed = true;
 			}
 		}
-
-		/// <summary>
-		/// Releases all resource used by the <see cref="MailKit.Net.Imap.ImapClient"/> object.
-		/// </summary>
-		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.Net.Imap.ImapClient"/>. The
-		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.Net.Imap.ImapClient"/> in an unusable state. After
-		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.Net.Imap.ImapClient"/> so
-		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Imap.ImapClient"/> was occupying.</remarks>
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		#endregion
 	}
 }

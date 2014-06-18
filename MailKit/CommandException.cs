@@ -1,9 +1,9 @@
 ﻿//
-// Pop3CommandException.cs
+// CommandException.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2014 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,63 +29,63 @@ using System;
 using System.Runtime.Serialization;
 #endif
 
-namespace MailKit.Net.Pop3 {
+namespace MailKit {
 	/// <summary>
-	/// A POP3 command exception.
+	/// The exception that is thrown when there is a protocol error.
 	/// </summary>
 	/// <remarks>
-	/// The exception that is thrown when a POP3 command fails. Unlike a <see cref="Pop3ProtocolException"/>,
-	/// a <see cref="Pop3CommandException"/> does not require the <see cref="Pop3Client"/> to be reconnected.
+	/// A <see cref="ProtocolException"/> can be thrown by any of the various client
+	/// methods in MailKit.
 	/// </remarks>
-#if !NETFX_CORE
+	#if !NETFX_CORE
 	[Serializable]
-#endif
-	public class Pop3CommandException : CommandException
+	#endif
+	public abstract class CommandException : Exception
 	{
-#if !NETFX_CORE
+		#if !NETFX_CORE
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="Pop3CommandException"/> from the serialized data.
+		/// Creates a new <see cref="CommandException"/>.
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		protected Pop3CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
+		protected CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
-#endif
+		#endif
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// Creates a new <see cref="CommandException"/>.
 		/// </remarks>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">An inner exception.</param>
-		public Pop3CommandException (string message, Exception innerException) : base (message, innerException)
+		protected CommandException (string message, Exception innerException) : base (message, innerException)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// Creates a new <see cref="CommandException"/>.
 		/// </remarks>
 		/// <param name="message">The error message.</param>
-		public Pop3CommandException (string message) : base (message)
+		protected CommandException (string message) : base (message)
 		{
 		}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// Creates a new <see cref="CommandException"/>.
 		/// </remarks>
-		public Pop3CommandException ()
+		protected CommandException ()
 		{
 		}
 	}

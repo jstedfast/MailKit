@@ -63,7 +63,7 @@ namespace MailKit.Net.Pop3 {
 	/// STLS extension (as defined by rfc2595). The "pop3s" protocol,
 	/// however, connects to the POP3 server using an SSL-wrapped connection.
 	/// </remarks>
-	public class Pop3Client : IMessageSpool
+	public class Pop3Client : MessageService, IMessageSpool
 	{
 		[Flags]
 		enum ProbedCapabilities : byte {
@@ -120,16 +120,14 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MailKit.Net.Pop3.Pop3Client"/> is reclaimed by garbage collection.
+		/// Gets the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>
-		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MailKit.Net.Pop3.Pop3Client"/> is reclaimed by garbage collection.
+		/// Gets the protocol supported by the message service.
 		/// </remarks>
-		~Pop3Client ()
-		{
-			Dispose (false);
+		/// <value>The protocol.</value>
+		protected override string Protocol {
+			get { return "pop"; }
 		}
 
 		/// <summary>
@@ -208,7 +206,7 @@ namespace MailKit.Net.Pop3 {
 		}
 
 #if !NETFX_CORE
-		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+		static bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
@@ -217,7 +215,7 @@ namespace MailKit.Net.Pop3 {
 		}
 #endif
 
-		static ProtocolException CreatePop3Exception (Pop3Command pc)
+		static Exception CreatePop3Exception (Pop3Command pc)
 		{
 			var command = pc.Command.Split (' ')[0].TrimEnd ();
 			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
@@ -259,21 +257,6 @@ namespace MailKit.Net.Pop3 {
 
 		#region IMessageService implementation
 
-#if !NETFX_CORE
-		/// <summary>
-		/// Gets or sets the client SSL certificates.
-		/// </summary>
-		/// <remarks>
-		/// <para>Some servers may require the client SSL certificates in order
-		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect(Uri,CancellationToken)"/>.</para>
-		/// </remarks>
-		/// <value>The client SSL certificates.</value>
-		public X509CertificateCollection ClientCertificates {
-			get; set;
-		}
-#endif
-
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
@@ -284,7 +267,7 @@ namespace MailKit.Net.Pop3 {
 		/// login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="Pop3Capabilities.User"/>).</para>
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
-		public HashSet<string> AuthenticationMechanisms {
+		public override HashSet<string> AuthenticationMechanisms {
 			get { return engine.AuthenticationMechanisms; }
 		}
 
@@ -296,7 +279,7 @@ namespace MailKit.Net.Pop3 {
 		/// and <see cref="System.IO.Stream.WriteTimeout"/> values.
 		/// </remarks>
 		/// <value>The timeout in milliseconds.</value>
-		public int Timeout {
+		public override int Timeout {
 			get { return timeout; }
 			set {
 				if (IsConnected && engine.Stream.CanTimeout) {
@@ -316,7 +299,7 @@ namespace MailKit.Net.Pop3 {
 		/// <see cref="Pop3Client"/> should be checked before continuing.
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
-		public bool IsConnected {
+		public override bool IsConnected {
 			get { return engine.IsConnected; }
 		}
 
@@ -380,9 +363,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// An POP3 protocol error occurred.
 		/// </exception>
-		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
+			if (credentials == null)
+				throw new ArgumentNullException ("credentials");
 
 			if (!IsConnected)
 				throw new InvalidOperationException ("The Pop3Client must be connected before you can authenticate.");
@@ -390,8 +374,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State == Pop3EngineState.Transaction)
 				throw new InvalidOperationException ("The Pop3Client is already authenticated.");
 
-			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+			CheckDisposed ();
 
 			var uri = new Uri ("pop://" + host);
 			NetworkCredential cred;
@@ -544,15 +527,15 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
 
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", "uri");
+
+			CheckDisposed ();
 
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
@@ -645,7 +628,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		public void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -695,7 +678,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void NoOp (CancellationToken cancellationToken = default (CancellationToken))
+		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -1705,8 +1688,6 @@ namespace MailKit.Net.Pop3 {
 
 		#endregion
 
-		#region IDisposable implementation
-
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="Pop3Client"/> and
 		/// optionally releases the managed resources.
@@ -1717,7 +1698,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
-		protected virtual void Dispose (bool disposing)
+		protected override  void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
 				engine.Disconnect ();
@@ -1731,20 +1712,5 @@ namespace MailKit.Net.Pop3 {
 				disposed = true;
 			}
 		}
-
-		/// <summary>
-		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-		/// </summary>
-		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailKit.Net.Pop3.Pop3Client"/>. The
-		/// <see cref="Dispose()"/> method leaves the <see cref="MailKit.Net.Pop3.Pop3Client"/> in an unusable state. After
-		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MailKit.Net.Pop3.Pop3Client"/> so
-		/// the garbage collector can reclaim the memory that the <see cref="MailKit.Net.Pop3.Pop3Client"/> was occupying.</remarks>
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
-		#endregion
 	}
 }

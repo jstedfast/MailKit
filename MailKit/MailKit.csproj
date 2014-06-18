@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DB3A2478-4742-452B-80C1-F672B64285AD}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -118,6 +118,7 @@
     <Compile Include="BodyPartMessage.cs" />
     <Compile Include="BodyPartMultipart.cs" />
     <Compile Include="BodyPartText.cs" />
+    <Compile Include="CommandException.cs" />
     <Compile Include="DuplexStream.cs" />
     <Compile Include="Envelope.cs" />
     <Compile Include="FolderAccess.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageFlagsChangedEventArgs.cs" />
+    <Compile Include="MessageService.cs" />
     <Compile Include="MessageSorter.cs" />
     <Compile Include="MessageSummary.cs" />
     <Compile Include="MessageSummaryItems.cs" />

@@ -77,7 +77,7 @@ namespace MailKit.Net.Smtp {
 #if !NETFX_CORE
 	[Serializable]
 #endif
-	public class SmtpCommandException : ProtocolException
+	public class SmtpCommandException : CommandException
 	{
 #if !NETFX_CORE
 		/// <summary>
