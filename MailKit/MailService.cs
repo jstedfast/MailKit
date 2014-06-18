@@ -191,7 +191,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				Connect (uri, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -381,7 +381,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				Authenticate (credentials, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -520,7 +520,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				Disconnect (quit, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -579,7 +579,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				NoOp (cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>

@@ -116,7 +116,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				Send (message, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -218,7 +218,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				Send (message, sender, recipients, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 	}
 }

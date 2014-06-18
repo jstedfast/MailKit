@@ -115,7 +115,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageCount (cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -198,7 +198,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageUid (index, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -273,7 +273,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageUids (cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -354,7 +354,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageSize (uid, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -429,7 +429,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageSize (index, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -496,7 +496,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageSizes (cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -583,7 +583,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageHeaders (uid, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -658,7 +658,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessageHeaders (index, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -745,7 +745,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessage (uid, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -820,7 +820,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				return GetMessage (index, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -909,7 +909,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				DeleteMessage (uid, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -986,7 +986,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				DeleteMessage (index, cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
@@ -1055,7 +1055,7 @@ namespace MailKit {
 		{
 			return Task.Factory.StartNew (() => {
 				Reset (cancellationToken);
-			}, cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
