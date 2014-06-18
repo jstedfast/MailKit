@@ -329,7 +329,7 @@ namespace MailKit {
 		/// An I/O error occurred.
 		/// </exception>
 		/// <exception cref="CommandException">
-		/// The server replied to the NOOP command with a NO or BAD response.
+		/// The command was rejected by the mail server.
 		/// </exception>
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
