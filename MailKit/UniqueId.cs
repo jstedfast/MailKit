@@ -31,7 +31,7 @@ namespace MailKit {
 	/// A unique identifier.
 	/// </summary>
 	/// <remarks>
-	/// Represents a unique identifier for messages in a <see cref="IFolder"/>.
+	/// Represents a unique identifier for messages in a <see cref="IMailFolder"/>.
 	/// </remarks>
 	public struct UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>
 	{

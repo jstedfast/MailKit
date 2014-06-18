@@ -26,10 +26,10 @@
 
 namespace MailKit {
 	/// <summary>
-	/// Event args for the <see cref="IFolder.MessageFlagsChanged"/> event.
+	/// Event args for the <see cref="IMailFolder.MessageFlagsChanged"/> event.
 	/// </summary>
 	/// <remarks>
-	/// Event args for the <see cref="IFolder.MessageFlagsChanged"/> event.
+	/// Event args for the <see cref="IMailFolder.MessageFlagsChanged"/> event.
 	/// </remarks>
 	public class MessageFlagsChangedEventArgs : MessageEventArgs
 	{

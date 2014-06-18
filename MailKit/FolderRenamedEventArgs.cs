@@ -28,10 +28,10 @@ using System;
 
 namespace MailKit {
 	/// <summary>
-	/// Event args used when a <see cref="IFolder"/> is renamed.
+	/// Event args used when a <see cref="IMailFolder"/> is renamed.
 	/// </summary>
 	/// <remarks>
-	/// Event args used when a <see cref="IFolder"/> is renamed.
+	/// Event args used when a <see cref="IMailFolder"/> is renamed.
 	/// </remarks>
 	public class FolderRenamedEventArgs : EventArgs
 	{

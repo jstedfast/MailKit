@@ -1,5 +1,5 @@
 //
-// IFolder.cs
+// IMailFolder.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -34,12 +34,12 @@ using MailKit.Search;
 
 namespace MailKit {
 	/// <summary>
-	/// An interface for a mailbox folder as used by <see cref="IMessageStore"/>.
+	/// An interface for a mailbox folder as used by <see cref="IMailStore"/>.
 	/// </summary>
 	/// <remarks>
 	/// Implemented by message stores such as <see cref="MailKit.Net.Imap.ImapClient"/>
 	/// </remarks>
-	public interface IFolder : IEnumerable<MimeMessage>
+	public interface IMailFolder : IEnumerable<MimeMessage>
 	{
 		/// <summary>
 		/// Gets the parent folder.
@@ -48,7 +48,7 @@ namespace MailKit {
 		/// Root-level folders do not have a parent folder.
 		/// </remarks>
 		/// <value>The parent folder.</value>
-		IFolder ParentFolder { get; }
+		IMailFolder ParentFolder { get; }
 
 		/// <summary>
 		/// Gets the folder attributes.
@@ -259,7 +259,7 @@ namespace MailKit {
 		/// <param name="name">The name of the folder to create.</param>
 		/// <param name="isMessageFolder"><c>true</c> if the folder will be used to contain messages; otherwise <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
+		IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Renames the folder to exist with a new name under a new parent folder.
@@ -270,7 +270,7 @@ namespace MailKit {
 		/// <param name="parent">The new parent folder.</param>
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Rename (IFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
+		void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Deletes the folder on the IMAP server.
@@ -308,7 +308,7 @@ namespace MailKit {
 		/// <returns>The subfolders.</returns>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMailFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Gets the specified subfolder.
@@ -322,7 +322,7 @@ namespace MailKit {
 		/// <exception cref="FolderNotFoundException">
 		/// The requested folder could not be found.
 		/// </exception>
-		IFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken));
+		IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Forces the server to flush its state for the folder.
@@ -343,7 +343,7 @@ namespace MailKit {
 		/// of getting the desired information should be used.</para>
 		/// <para>For example, a common use for the <see cref="Status(StatusItems,System.Threading.CancellationToken)"/>
 		/// method is to get the number of unread messages in the folder. When the folder is open, however, it is
-		/// possible to use the <see cref="IFolder.Search(MailKit.Search.SearchQuery, System.Threading.CancellationToken)"/>
+		/// possible to use the <see cref="IMailFolder.Search(MailKit.Search.SearchQuery, System.Threading.CancellationToken)"/>
 		/// method to query for the list of unread messages.</para>
 		/// </remarks>
 		/// <param name="items">The items to update.</param>
@@ -429,7 +429,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] CopyTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		UniqueId[] CopyTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
@@ -441,7 +441,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId[] MoveTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		UniqueId[] MoveTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Copies the specified messages to the destination folder.
@@ -452,7 +452,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		void CopyTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Moves the specified messages to the destination folder.
@@ -463,7 +463,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		void MoveTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
@@ -867,7 +867,7 @@ namespace MailKit {
 		/// Searches the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="query">The search query.</param>
@@ -880,7 +880,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="query">The search query.</param>
@@ -892,7 +892,7 @@ namespace MailKit {
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -906,7 +906,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -919,7 +919,7 @@ namespace MailKit {
 		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="algorithm">The threading algorithm to use.</param>
@@ -931,7 +931,7 @@ namespace MailKit {
 		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="uids">The subset of UIDs</param>

@@ -1,5 +1,5 @@
 ﻿//
-// MessageService.cs
+// MailService.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -35,27 +35,27 @@ using System.Security.Cryptography.X509Certificates;
 #endif
 
 namespace MailKit {
-	public abstract class MessageService : IMessageService
+	public abstract class MailService : IMailService
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.MessageService"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Initializes a new instance of the <see cref="MailKit.MessageService"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
 		/// </remarks>
-		protected MessageService ()
+		protected MailService ()
 		{
 		}
 
 		/// <summary>
 		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MessageService"/> is reclaimed by garbage collection.
+		/// <see cref="MailService"/> is reclaimed by garbage collection.
 		/// </summary>
 		/// <remarks>
 		/// Releases unmanaged resources and performs other cleanup operations before the
-		/// <see cref="MessageService"/> is reclaimed by garbage collection.
+		/// <see cref="MailService"/> is reclaimed by garbage collection.
 		/// </remarks>
-		~MessageService ()
+		~MailService ()
 		{
 			Dispose (false);
 		}
@@ -136,10 +136,10 @@ namespace MailKit {
 		/// The <paramref name="uri"/> is not an absolute URI.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is already connected.
+		/// The <see cref="MailService"/> is already connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -167,10 +167,10 @@ namespace MailKit {
 		/// The <paramref name="uri"/> is not an absolute URI.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is already connected.
+		/// The <see cref="MailService"/> is already connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -214,10 +214,10 @@ namespace MailKit {
 		/// The <paramref name="hostName"/> is a zero-length string.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is already connected.
+		/// The <see cref="MailService"/> is already connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -265,10 +265,10 @@ namespace MailKit {
 		/// The <paramref name="hostName"/> is a zero-length string.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is already connected.
+		/// The <see cref="MailService"/> is already connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -314,10 +314,10 @@ namespace MailKit {
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -354,10 +354,10 @@ namespace MailKit {
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -405,10 +405,10 @@ namespace MailKit {
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -459,10 +459,10 @@ namespace MailKit {
 		/// <para><paramref name="password"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -501,7 +501,7 @@ namespace MailKit {
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		public abstract void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
@@ -514,7 +514,7 @@ namespace MailKit {
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		public virtual Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
@@ -529,12 +529,12 @@ namespace MailKit {
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MessageService"/> is not connected.</para>
+		/// <para>The <see cref="MailService"/> is not connected.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="MessageService"/> is not authenticated.</para>
+		/// <para>The <see cref="MailService"/> is not authenticated.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -556,12 +556,12 @@ namespace MailKit {
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MessageService"/> is not connected.</para>
+		/// <para>The <see cref="MailService"/> is not connected.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="MessageService"/> is not authenticated.</para>
+		/// <para>The <see cref="MailService"/> is not authenticated.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -583,11 +583,11 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Releases the unmanaged resources used by the <see cref="MessageService"/> and
+		/// Releases the unmanaged resources used by the <see cref="MailService"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
 		/// <remarks>
-		/// Releases the unmanaged resources used by the <see cref="MessageService"/> and
+		/// Releases the unmanaged resources used by the <see cref="MailService"/> and
 		/// optionally releases the managed resources.
 		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
@@ -597,12 +597,12 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Releases all resource used by the <see cref="MessageService"/> object.
+		/// Releases all resource used by the <see cref="MailService"/> object.
 		/// </summary>
-		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MessageService"/>. The
-		/// <see cref="Dispose()"/> method leaves the <see cref="MessageService"/> in an unusable state. After
-		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MessageService"/> so
-		/// the garbage collector can reclaim the memory that the <see cref="MessageService"/> was occupying.</remarks>
+		/// <remarks>Call <see cref="Dispose()"/> when you are finished using the <see cref="MailService"/>. The
+		/// <see cref="Dispose()"/> method leaves the <see cref="MailService"/> in an unusable state. After
+		/// calling <see cref="Dispose()"/>, you must release all references to the <see cref="MailService"/> so
+		/// the garbage collector can reclaim the memory that the <see cref="MailService"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			Dispose (true);

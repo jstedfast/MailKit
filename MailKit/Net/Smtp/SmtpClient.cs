@@ -60,7 +60,7 @@ namespace MailKit.Net.Smtp {
 	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol,
 	/// however, connects to the SMTP server using an SSL-wrapped connection.
 	/// </remarks>
-	public class SmtpClient : MessageService, IMessageTransport
+	public class SmtpClient : MailService, IMailTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
@@ -181,7 +181,7 @@ namespace MailKit.Net.Smtp {
 				throw new ObjectDisposedException ("SmtpClient");
 		}
 
-		#region IMessageService implementation
+		#region IMailService implementation
 
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the SMTP server.
@@ -888,7 +888,7 @@ namespace MailKit.Net.Smtp {
 
 		#endregion
 
-		#region IMessageTransport implementation
+		#region IMailTransport implementation
 
 		static MailboxAddress GetMessageSender (MimeMessage message)
 		{

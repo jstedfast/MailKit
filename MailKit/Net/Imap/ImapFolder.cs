@@ -44,7 +44,7 @@ namespace MailKit.Net.Imap {
 	/// <remarks>
 	/// An IMAP folder.
 	/// </remarks>
-	public class ImapFolder : IFolder
+	public class ImapFolder : IMailFolder
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
@@ -123,7 +123,7 @@ namespace MailKit.Net.Imap {
 			OnRenamed (oldFullName, FullName);
 		}
 
-		internal void SetParentFolder (IFolder parent)
+		internal void SetParentFolder (IMailFolder parent)
 		{
 			parent.Renamed += ParentFolderRenamed;
 			ParentFolder = parent;
@@ -178,7 +178,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		#region IFolder implementation
+		#region IMailFolder implementation
 
 		/// <summary>
 		/// Gets the parent folder.
@@ -187,7 +187,7 @@ namespace MailKit.Net.Imap {
 		/// Root-level folders do not have a parent folder.
 		/// </remarks>
 		/// <value>The parent folder.</value>
-		public IFolder ParentFolder {
+		public IMailFolder ParentFolder {
 			get; private set;
 		}
 
@@ -663,7 +663,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
+		public IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -753,7 +753,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Rename (IFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
+		public void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (parent == null)
 				throw new ArgumentNullException ("parent");
@@ -967,7 +967,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<IFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public IEnumerable<IMailFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (false, false);
 
@@ -1029,7 +1029,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -1690,7 +1690,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] CopyTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public UniqueId[] CopyTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
@@ -1775,7 +1775,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] MoveTo (UniqueId[] uids, IFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public UniqueId[] MoveTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				var copied = CopyTo (uids, destination, cancellationToken);
@@ -1859,7 +1859,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void CopyTo (int[] indexes, IFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public void CopyTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
 
@@ -1930,7 +1930,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void MoveTo (int[] indexes, IFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public void MoveTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				CopyTo (indexes, destination, cancellationToken);
@@ -4717,7 +4717,7 @@ namespace MailKit.Net.Imap {
 		/// Searches the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="query">The search query.</param>
@@ -4795,7 +4795,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="query">The search query.</param>
@@ -4888,7 +4888,7 @@ namespace MailKit.Net.Imap {
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -4976,7 +4976,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -5081,7 +5081,7 @@ namespace MailKit.Net.Imap {
 		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="algorithm">The threading algorithm to use.</param>
@@ -5161,7 +5161,7 @@ namespace MailKit.Net.Imap {
 		/// Threads the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="uids">The subset of UIDs</param>

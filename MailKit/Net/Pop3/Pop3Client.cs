@@ -63,7 +63,7 @@ namespace MailKit.Net.Pop3 {
 	/// STLS extension (as defined by rfc2595). The "pop3s" protocol,
 	/// however, connects to the POP3 server using an SSL-wrapped connection.
 	/// </remarks>
-	public class Pop3Client : MessageService, IMessageSpool
+	public class Pop3Client : MailService, IMailSpool
 	{
 		[Flags]
 		enum ProbedCapabilities : byte {
@@ -255,7 +255,7 @@ namespace MailKit.Net.Pop3 {
 				throw CreatePop3Exception (pc);
 		}
 
-		#region IMessageService implementation
+		#region IMailService implementation
 
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the POP3 server.
@@ -690,7 +690,7 @@ namespace MailKit.Net.Pop3 {
 
 		#endregion
 
-		#region IMessageSpool implementation
+		#region IMailSpool implementation
 
 		/// <summary>
 		/// Gets whether or not the <see cref="Pop3Client"/> supports referencing messages by UIDs.
@@ -1463,7 +1463,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1522,7 +1522,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -1570,7 +1570,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">

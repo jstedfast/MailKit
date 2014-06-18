@@ -1,5 +1,5 @@
 //
-// IMessageSpool.cs
+// IMailSpool.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -36,7 +36,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by <see cref="MailKit.Net.Pop3.Pop3Client"/>.
 	/// </remarks>
-	public interface IMessageSpool : IMessageService, IEnumerable<MimeMessage>
+	public interface IMailSpool : IMailService, IEnumerable<MimeMessage>
 	{
 		/// <summary>
 		/// Gets whether or not the service supports referencing messages by UIDs.
@@ -167,7 +167,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -179,7 +179,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
@@ -191,7 +191,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMessageService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		void Reset (CancellationToken cancellationToken = default (CancellationToken));

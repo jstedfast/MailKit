@@ -31,37 +31,37 @@ namespace MailKit {
 	/// Status items.
 	/// </summary>
 	/// <remarks>
-	/// Used with <see cref="IFolder.Status(StatusItems,System.Threading.CancellationToken)"/>
+	/// Used with <see cref="IMailFolder.Status(StatusItems,System.Threading.CancellationToken)"/>
 	/// </remarks>
 	[Flags]
 	public enum StatusItems {
 		/// <summary>
-		/// Updates <see cref="IFolder.Count"/>.
+		/// Updates <see cref="IMailFolder.Count"/>.
 		/// </summary>
 		Count          = 1 << 0,
 
 		/// <summary>
-		/// Updates <see cref="IFolder.Recent"/>.
+		/// Updates <see cref="IMailFolder.Recent"/>.
 		/// </summary>
 		Recent         = 1 << 1,
 
 		/// <summary>
-		/// Updates <see cref="IFolder.UidNext"/>.
+		/// Updates <see cref="IMailFolder.UidNext"/>.
 		/// </summary>
 		UidNext        = 1 << 2,
 
 		/// <summary>
-		/// Updates <see cref="IFolder.UidValidity"/>.
+		/// Updates <see cref="IMailFolder.UidValidity"/>.
 		/// </summary>
 		UidValidity    = 1 << 3,
 
 		/// <summary>
-		/// Updates <see cref="IFolder.Unread"/>.
+		/// Updates <see cref="IMailFolder.Unread"/>.
 		/// </summary>
 		Unread         = 1 << 4,
 
 		/// <summary>
-		/// Updates <see cref="IFolder.HighestModSeq"/>.
+		/// Updates <see cref="IMailFolder.HighestModSeq"/>.
 		/// </summary>
 		HighestModSeq  = 1 << 5,
 	}

@@ -53,7 +53,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The unique identifier may be <c>null</c> if the message is missing
-		/// from the <see cref="IFolder"/> or did not match the 
+		/// from the <see cref="IMailFolder"/> or did not match the 
 		/// <see cref="MailKit.Search.SearchQuery"/>.
 		/// </remarks>
 		/// <value>The unique identifier.</value>

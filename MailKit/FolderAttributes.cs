@@ -28,10 +28,10 @@ using System;
 
 namespace MailKit {
 	/// <summary>
-	/// Folder attributes as used by <see cref="IFolder.Attributes"/>.
+	/// Folder attributes as used by <see cref="IMailFolder.Attributes"/>.
 	/// </summary>
 	/// <remarks>
-	/// Folder attributes as used by <see cref="IFolder.Attributes"/>.
+	/// Folder attributes as used by <see cref="IMailFolder.Attributes"/>.
 	/// </remarks>
 	[Flags]
 	public enum FolderAttributes {

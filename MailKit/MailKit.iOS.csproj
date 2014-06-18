@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{60B5D72B-8219-48B6-B688-AD0FE284A96A}</ProjectGuid>
     <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -131,18 +131,18 @@
     <Compile Include="FolderNamespaceCollection.cs" />
     <Compile Include="FolderNotFoundException.cs" />
     <Compile Include="FolderRenamedEventArgs.cs" />
-    <Compile Include="IFolder.cs" />
-    <Compile Include="IMessageService.cs" />
-    <Compile Include="IMessageSpool.cs" />
-    <Compile Include="IMessageStore.cs" />
-    <Compile Include="IMessageTransport.cs" />
+    <Compile Include="IMailFolder.cs" />
+    <Compile Include="IMailService.cs" />
+    <Compile Include="IMailSpool.cs" />
+    <Compile Include="IMailStore.cs" />
+    <Compile Include="IMailTransport.cs" />
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="ISortable.cs" />
     <Compile Include="IThreadable.cs" />
+    <Compile Include="MailService.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageFlagsChangedEventArgs.cs" />
-    <Compile Include="MessageService.cs" />
     <Compile Include="MessageSorter.cs" />
     <Compile Include="MessageSummary.cs" />
     <Compile Include="MessageSummaryItems.cs" />

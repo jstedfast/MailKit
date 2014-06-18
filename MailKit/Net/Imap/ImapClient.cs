@@ -57,7 +57,7 @@ namespace MailKit.Net.Imap {
 	/// STARTTLS extension (as defined by rfc3501). The "imaps" protocol,
 	/// however, connects to the IMAP server using an SSL-wrapped connection.
 	/// </remarks>
-	public class ImapClient : MessageService, IMessageStore
+	public class ImapClient : MailService, IMailStore
 	{
 		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
@@ -210,7 +210,7 @@ namespace MailKit.Net.Imap {
 			engine.QResyncEnabled = true;
 		}
 
-		#region IMessageService implementation
+		#region IMailService implementation
 
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the IMAP server.
@@ -663,7 +663,7 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
-		#region IMessageStore implementation
+		#region IMailStore implementation
 
 		/// <summary>
 		/// Gets the personal namespaces.
@@ -705,7 +705,7 @@ namespace MailKit.Net.Imap {
 		/// The Inbox folder is the default folder and always exists.
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
-		public IFolder Inbox {
+		public IMailFolder Inbox {
 			get { return engine.Inbox; }
 		}
 
@@ -731,7 +731,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
 		/// </exception>
-		public IFolder GetFolder (SpecialFolder folder)
+		public IMailFolder GetFolder (SpecialFolder folder)
 		{
 			CheckDisposed ();
 
@@ -775,7 +775,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
 		/// </exception>
-		public IFolder GetFolder (FolderNamespace @namespace)
+		public IMailFolder GetFolder (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException ("namespace");
@@ -823,7 +823,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
 		/// </exception>
-		public IFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken))
+		public IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");

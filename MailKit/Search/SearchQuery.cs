@@ -30,10 +30,10 @@ using System.Collections.Generic;
 
 namespace MailKit.Search {
 	/// <summary>
-	/// A specialized query for searching messages in a <see cref="IFolder"/>.
+	/// A specialized query for searching messages in a <see cref="IMailFolder"/>.
 	/// </summary>
 	/// <remarks>
-	/// A specialized query for searching messages in a <see cref="IFolder"/>.
+	/// A specialized query for searching messages in a <see cref="IMailFolder"/>.
 	/// </remarks>
 	public class SearchQuery
 	{

@@ -1,5 +1,5 @@
 //
-// IMessageStore.cs
+// IMailStore.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -34,7 +34,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by <see cref="MailKit.Net.Imap.ImapClient"/>.
 	/// </remarks>
-	public interface IMessageStore : IMessageService
+	public interface IMailStore : IMailService
 	{
 		/// <summary>
 		/// Gets the personal namespaces.
@@ -71,7 +71,7 @@ namespace MailKit {
 		/// where all new messages are delivered.
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
-		IFolder Inbox { get; }
+		IMailFolder Inbox { get; }
 
 		/// <summary>
 		/// Gets the specified special folder.
@@ -85,7 +85,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="folder"/> is out of range.
 		/// </exception>
-		IFolder GetFolder (SpecialFolder folder);
+		IMailFolder GetFolder (SpecialFolder folder);
 
 		/// <summary>
 		/// Gets the folder for the specified namespace.
@@ -102,7 +102,7 @@ namespace MailKit {
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
 		/// </exception>
-		IFolder GetFolder (FolderNamespace @namespace);
+		IMailFolder GetFolder (FolderNamespace @namespace);
 
 		/// <summary>
 		/// Gets the folder for the specified path.
@@ -122,7 +122,7 @@ namespace MailKit {
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
 		/// </exception>
-		IFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
+		IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Occurs when a remote message store receives an alert message from the server.

@@ -34,7 +34,7 @@ namespace MailKit {
 	/// The exception that is thrown when a folder could not be found.
 	/// </summary>
 	/// <remarks>
-	/// This exception is thrown by <see cref="IFolder.GetSubfolder(string,System.Threading.CancellationToken)"/>.
+	/// This exception is thrown by <see cref="IMailFolder.GetSubfolder(string,System.Threading.CancellationToken)"/>.
 	/// </remarks>
 #if !NETFX_CORE
 	[Serializable]

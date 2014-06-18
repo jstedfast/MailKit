@@ -1,5 +1,5 @@
 //
-// IMessageService.cs
+// IMailService.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -41,7 +41,7 @@ namespace MailKit {
 	/// Implemented by <see cref="MailKit.Net.Smtp.SmtpClient"/>
 	/// and <see cref="MailKit.Net.Pop3.Pop3Client"/>.
 	/// </remarks>
-	public interface IMessageService : IDisposable
+	public interface IMailService : IDisposable
 	{
 #if !NETFX_CORE
 		/// <summary>
@@ -111,10 +111,10 @@ namespace MailKit {
 		/// The <paramref name="uri"/> is not an absolute URI.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="IMailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is already connected.
+		/// The <see cref="IMailService"/> is already connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -156,10 +156,10 @@ namespace MailKit {
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="IMailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// The <see cref="IMailService"/> is not connected or is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -197,7 +197,7 @@ namespace MailKit {
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="IMailService"/> has been disposed.
 		/// </exception>
 		Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
@@ -216,12 +216,12 @@ namespace MailKit {
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MessageService"/> has been disposed.
+		/// The <see cref="IMailService"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MessageService"/> is not connected.</para>
+		/// <para>The <see cref="IMailService"/> is not connected.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="MessageService"/> is not authenticated.</para>
+		/// <para>The <see cref="IMailService"/> is not authenticated.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.

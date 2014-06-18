@@ -1,5 +1,5 @@
 //
-// IMessageTransport.cs
+// IMailTransport.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -36,7 +36,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by <see cref="MailKit.Net.Smtp.SmtpClient"/>.
 	/// </remarks>
-	public interface IMessageTransport : IMessageService
+	public interface IMailTransport : IMailService
 	{
 		/// <summary>
 		/// Send the specified message.
