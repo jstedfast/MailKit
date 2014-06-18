@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 #if !NETFX_CORE
@@ -152,6 +153,48 @@ namespace MailKit {
 		public abstract void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Asynchronously establishes a connection to the specified mail server.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously establishes a connection to the specified mail server.
+		/// </remarks>
+		/// <param name="uri">The server URI.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// The <paramref name="uri"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="uri"/> is not an absolute URI.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MessageService"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task ConnectAsync (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException ("The uri must be absolute.", "uri");
+
+			return Task.Factory.StartNew (() => {
+				Connect (uri, cancellationToken);
+			}, cancellationToken);
+		}
+
+		/// <summary>
 		/// Establishes a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
@@ -203,6 +246,57 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Asynchronously establishes a connection to the specified mail server.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously establishes a connection to the specified mail server.
+		/// </remarks>
+		/// <param name="hostName">The host name of the server.</param>
+		/// <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
+		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// The <paramref name="hostName"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is out of range (<value>0</value> to <value>65535</value>, inclusive).
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="hostName"/> is a zero-length string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MessageService"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public Task ConnectAsync (string hostName, int port = 0, bool useSsl = false, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (hostName == null)
+				throw new ArgumentNullException ("hostName");
+
+			if (hostName.Length == 0)
+				throw new ArgumentException ("The host name cannot be empty.", "hostName");
+
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port");
+
+			string format = port > 0 ? "{0}{1}://{2}:{3}" : "{0}{1}://{2}";
+			string url = string.Format (format, Protocol, useSsl ? "s" : string.Empty, hostName, port);
+
+			return ConnectAsync (new Uri (url), cancellationToken);
+		}
+
+		/// <summary>
 		/// Authenticates using the supplied credentials.
 		/// </summary>
 		/// <remarks>
@@ -241,6 +335,54 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		public abstract void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously authenticates using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (credentials == null)
+				throw new ArgumentNullException ("credentials");
+
+			return Task.Factory.StartNew (() => {
+				Authenticate (credentials, cancellationToken);
+			}, cancellationToken);
+		}
 
 		/// <summary>
 		/// Authenticates using the specified user name and password.
@@ -297,7 +439,61 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Disconnect the service.
+		/// Asynchronously authenticates using the specified user name and password.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// </remarks>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public Task AuthenticateAsync (string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (userName == null)
+				throw new ArgumentNullException ("userName");
+
+			if (password == null)
+				throw new ArgumentNullException ("password");
+
+			var credentials = new NetworkCredential (userName, password);
+
+			return AuthenticateAsync (credentials, cancellationToken);
+		}
+
+		/// <summary>
+		/// Disconnects the service.
 		/// </summary>
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
@@ -308,6 +504,24 @@ namespace MailKit {
 		/// The <see cref="MessageService"/> has been disposed.
 		/// </exception>
 		public abstract void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously disconnects the service.
+		/// </summary>
+		/// <remarks>
+		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
+		/// </remarks>
+		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		public virtual Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				Disconnect (quit, cancellationToken);
+			}, cancellationToken);
+		}
 
 		/// <summary>
 		/// Pings the mail server to keep the connection alive.
@@ -335,6 +549,38 @@ namespace MailKit {
 		/// The server responded with an unexpected token.
 		/// </exception>
 		public abstract void NoOp (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously pings the mail server to keep the connection alive.
+		/// </summary>
+		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="MessageService"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="MessageService"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command was rejected by the mail server.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
+		public virtual Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				NoOp (cancellationToken);
+			}, cancellationToken);
+		}
 
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="MessageService"/> and

@@ -31,11 +31,13 @@ using System.Runtime.Serialization;
 
 namespace MailKit {
 	/// <summary>
-	/// The exception that is thrown when there is a protocol error.
+	/// The exception that is thrown when there is a command error.
 	/// </summary>
 	/// <remarks>
-	/// A <see cref="ProtocolException"/> can be thrown by any of the various client
-	/// methods in MailKit.
+	/// A <see cref="CommandException"/> can be thrown by any of the various client
+	/// methods in MailKit. Unlike a <see cref="ProtocolException"/>, a
+	/// <see cref="CommandException"/> is typically non-fatal (meaning that it does
+	/// not force the client to disconnect).
 	/// </remarks>
 	#if !NETFX_CORE
 	[Serializable]

@@ -27,6 +27,7 @@
 using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 #if !NETFX_CORE
 using System.Security.Cryptography.X509Certificates;
@@ -96,6 +97,37 @@ namespace MailKit {
 		void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Asynchronously establishes a connection to the specified mail server.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously establishes a connection to the specified mail server.
+		/// </remarks>
+		/// <param name="uri">The server URI.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// The <paramref name="uri"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="uri"/> is not an absolute URI.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MessageService"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		Task ConnectAsync (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
@@ -107,7 +139,47 @@ namespace MailKit {
 		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Disconnect the service.
+		/// Asynchronously authenticates using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// </remarks>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="credentials"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MessageService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Disconnects the service.
 		/// </summary>
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
@@ -117,6 +189,19 @@ namespace MailKit {
 		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Asynchronously disconnects the service.
+		/// </summary>
+		/// <remarks>
+		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
+		/// </remarks>
+		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Ping the message service to keep the connection alive.
 		/// </summary>
 		/// <remarks>
@@ -124,5 +209,32 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		void NoOp (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously pings the mail server to keep the connection alive.
+		/// </summary>
+		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MessageService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="MessageService"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="MessageService"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command was rejected by the mail server.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
+		Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken));
 	}
 }
