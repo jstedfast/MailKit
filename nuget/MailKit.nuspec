@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.17.0.0</version>
+        <version>0.18.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -21,7 +21,10 @@ Features include:
 * S/MIME and PGP support via MimeKit
 * Microsoft TNEF support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Added an Unread property to the IFolder interface as a way to get the unread message count.</releaseNotes>
+        <releaseNotes>* Fixed ImapFolder.Status() so that it no longer incorrectly throws an exception claiming that the server doesn't support the STATUS command.
+* Fixed ImapFolder.GetSubfolders() to set the ParentFolder property for each of the subfolders.
+* Fixed threading of messages where the Message-Id header does not exist.
+* Changed MessageSummary.UniqueId to be a Nullable&lt;UniqueId&gt; since IFolder.Fetch() does not force developers to request the UniqueId.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 wpa81</tags>
