@@ -60,7 +60,7 @@ namespace MailKit.Net.Smtp {
 	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol,
 	/// however, connects to the SMTP server using an SSL-wrapped connection.
 	/// </remarks>
-	public class SmtpClient : MailService, IMailTransport
+	public class SmtpClient : MailTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
@@ -1162,7 +1162,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Send the specified message.
+		/// Sends the specified message.
 		/// </summary>
 		/// <remarks>
 		/// Sends the message by uploading it to an SMTP server.
@@ -1197,7 +1197,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1215,7 +1215,7 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
-		/// Send the specified message using the supplied sender and recipients.
+		/// Sends the specified message using the supplied sender and recipients.
 		/// </summary>
 		/// <remarks>
 		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.
@@ -1256,7 +1256,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");

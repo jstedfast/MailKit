@@ -136,6 +136,7 @@
     <Compile Include="ISortable.cs" />
     <Compile Include="IThreadable.cs" />
     <Compile Include="MailService.cs" />
+    <Compile Include="MailTransport.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageFlagsChangedEventArgs.cs" />

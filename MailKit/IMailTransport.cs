@@ -25,6 +25,7 @@
 //
 
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using MimeKit;
@@ -34,30 +35,52 @@ namespace MailKit {
 	/// An interface for sending messages.
 	/// </summary>
 	/// <remarks>
-	/// Implemented by <see cref="MailKit.Net.Smtp.SmtpClient"/>.
+	/// An interface for sending messages.
 	/// </remarks>
 	public interface IMailTransport : IMailService
 	{
 		/// <summary>
-		/// Send the specified message.
+		/// Sends the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Sends the message by uploading it to an SMTP server.
+		/// Sends the specified message.
 		/// </remarks>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Send the specified message using the supplied sender and recipients.
+		/// Asynchronously sends the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.
+		/// Asynchronously sends the specified message.
+		/// </remarks>
+		/// <param name="message">The message.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Sends the specified message using the supplied sender and recipients.
+		/// </summary>
+		/// <remarks>
+		/// Sends the specified message using the supplied sender and recipients.
 		/// </remarks>
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">A cancellation token.</param>
 		void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously sends the specified message using the supplied sender and recipients.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sends the specified message using the supplied sender and recipients.
+		/// </remarks>
+		/// <param name="message">The message.</param>
+		/// <param name="sender">The mailbox address to use for sending the message.</param>
+		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
+		/// <param name="cancellationToken">A cancellation token.</param>
+		Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
 	}
 }
