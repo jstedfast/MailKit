@@ -165,7 +165,7 @@ namespace MailKit {
 		/// Get the highest mod-sequence value of all messages in the mailbox.
 		/// </summary>
 		/// <remarks>
-		/// This property is only available if the IMAP server supports the CONDSTORE extension.
+		/// Gets the highest mod-sequence value of all messages in the mailbox.
 		/// </remarks>
 		/// <value>The highest mod-sequence value.</value>
 		ulong HighestModSeq { get; }
@@ -355,7 +355,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the IMAP server supports the QRESYNC
+		/// message that is expunged. However, if the mail store supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
@@ -368,7 +368,12 @@ namespace MailKit {
 		/// Expunge the specified uids, permanently removing them from the folder.
 		/// </summary>
 		/// <remarks>
-		/// An <see cref="MessageExpunged"/> event will be emitted for each message that is expunged.
+		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
+		/// message that is expunged. However, if the mail store supports the QRESYNC
+		/// extension and it has been enabled via the
+		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
+		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -486,7 +491,10 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// <para>If the mail store supports quick resynchronization and the application has
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
+		/// since the specified mod-sequence value.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -512,7 +520,10 @@ namespace MailKit {
 		/// Fetch the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>If the mail store supports quick resynchronization and the application has
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
+		/// since the specified mod-sequence value.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum UID.</param>

@@ -194,7 +194,7 @@ namespace MailKit {
 		/// Get the highest mod-sequence value of all messages in the mailbox.
 		/// </summary>
 		/// <remarks>
-		/// This property is only available if the IMAP server supports the CONDSTORE extension.
+		/// Gets the highest mod-sequence value of all messages in the mailbox.
 		/// </remarks>
 		/// <value>The highest mod-sequence value.</value>
 		public ulong HighestModSeq {
@@ -621,7 +621,7 @@ namespace MailKit {
 		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the STATUS command.
+		/// The mail store does not support the STATUS command.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -642,7 +642,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the IMAP server supports the QRESYNC
+		/// message that is expunged. However, if the mail store supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
@@ -678,7 +678,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the IMAP server supports the QRESYNC
+		/// message that is expunged. However, if the mail store supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
@@ -897,7 +897,7 @@ namespace MailKit {
 		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UIDPLUS extension.
+		/// The mail store does not support the UIDPLUS extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -917,7 +917,7 @@ namespace MailKit {
 		/// Move the specified messages to the destination folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the IMAP server supports the MOVE command, then the MOVE command will be used. Otherwise,
+		/// <para>If the mail store supports the MOVE command, then the MOVE command will be used. Otherwise,
 		/// the messages will first be copied to the destination folder, then marked as \Deleted in the
 		/// originating folder, and finally expunged. Since the server could disconnect at any point between
 		/// those 3 operations, it may be advisable to implement your own logic for moving messages in this
@@ -948,7 +948,7 @@ namespace MailKit {
 		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UIDPLUS extension.
+		/// The mail store does not support the UIDPLUS extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1011,7 +1011,7 @@ namespace MailKit {
 		/// Move the specified messages to the destination folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the IMAP server supports the MOVE command, then the MOVE command will be used. Otherwise,
+		/// <para>If the mail store supports the MOVE command, then the MOVE command will be used. Otherwise,
 		/// the messages will first be copied to the destination folder and then marked as \Deleted in the
 		/// originating folder. Since the server could disconnect at any point between those 2 operations, it
 		/// may be advisable to implement your own logic for moving messages in this case in order to better
@@ -1101,7 +1101,7 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the IMAP server supports the QRESYNC extension and the application has
+		/// <para>If the mail store supports quick resynchronization and the application has
 		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
@@ -1192,7 +1192,7 @@ namespace MailKit {
 		/// Fetch the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the IMAP server supports the QRESYNC extension and the application has
+		/// <para>If the mail store supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
@@ -2361,7 +2361,7 @@ namespace MailKit {
 		/// <paramref name="query"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
+		/// One or more search terms in the <paramref name="query"/> are not supported by the mail store.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
@@ -2408,7 +2408,7 @@ namespace MailKit {
 		/// <paramref name="orderBy"/> is empty.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
 		/// <para>-or-</para>
 		/// <para>The server does not support the SORT extension.</para>
 		/// </exception>
@@ -2455,7 +2455,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> contains one or more invalid UIDs.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
+		/// One or more search terms in the <paramref name="query"/> are not supported by the mail store.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
@@ -2507,7 +2507,7 @@ namespace MailKit {
 		/// <para><paramref name="orderBy"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
 		/// <para>-or-</para>
 		/// <para>The server does not support the SORT extension.</para>
 		/// </exception>
@@ -2552,7 +2552,7 @@ namespace MailKit {
 		/// <paramref name="query"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
 		/// <para>-or-</para>
 		/// <para>The server does not support the THREAD extension.</para>
 		/// </exception>
@@ -2603,7 +2603,7 @@ namespace MailKit {
 		/// <paramref name="uids"/> contains one or more invalid UIDs.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
 		/// <para>-or-</para>
 		/// <para>The server does not support the THREAD extension.</para>
 		/// </exception>
