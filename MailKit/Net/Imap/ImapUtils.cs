@@ -630,7 +630,7 @@ namespace MailKit.Net.Imap {
 				var mesg = new BodyPartMessage ();
 
 				if (engine.IsGMail) {
-					// GMail's support for message/rfc822 body parts is broken, see issue #32
+					// GMail's support for message/rfc822 body parts is broken, see issue #32 for details.
 					token = engine.PeekToken (cancellationToken);
 					if (token.Type != ImapTokenType.CloseParen) {
 						mesg.Envelope = ParseEnvelope (engine, cancellationToken);
@@ -810,12 +810,16 @@ namespace MailKit.Net.Imap {
 		public static Envelope ParseEnvelope (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
-			var envelope = new Envelope ();
 			string nstring;
+
+			// GMail seems to send a NIL envelope for embedded message/rfc822 parts, see issue #59 for details.
+			if (token.Type == ImapTokenType.Nil)
+				return null;
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
+			var envelope = new Envelope ();
 			envelope.Date = ParseEnvelopeDate (engine, cancellationToken);
 			envelope.Subject = ReadNStringToken (engine, true, cancellationToken);
 			envelope.From = ParseEnvelopeAddressList (engine, cancellationToken);
