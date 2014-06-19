@@ -635,22 +635,17 @@ namespace MailKit.Net.Imap {
 			if (type.Matches ("message", "rfc822")) {
 				var mesg = new BodyPartMessage ();
 
-				if (engine.IsGMail) {
-					// GMail's support for message/rfc822 body parts is broken, see issue #32 for details.
-					token = engine.PeekToken (cancellationToken);
-					if (token.Type != ImapTokenType.CloseParen) {
-						mesg.Envelope = ParseEnvelope (engine, cancellationToken);
-						token = engine.PeekToken (cancellationToken);
-					}
+				// Note: GMail's support for message/rfc822 body parts is broken. Essentially,
+				// GMail treats message/rfc822 parts as if they were basic body parts.
+				//
+				// For examples, see issue #32 and issue #59.
+				//
+				// The workaround is to check for the expected '(' signifying an envelope token.
+				// If we do not get an '(', then we are likely looking at the Content-MD5 token
+				// which gets handled below.
+				token = engine.PeekToken (cancellationToken);
 
-					if (token.Type != ImapTokenType.CloseParen) {
-						mesg.Body = ParseBody (engine, path, cancellationToken);
-						token = engine.PeekToken (cancellationToken);
-					}
-
-					if (token.Type != ImapTokenType.CloseParen)
-						mesg.Lines = ReadNumber (engine, cancellationToken);
-				} else {
+				if (!engine.IsGMail || token.Type == ImapTokenType.OpenParen) {
 					mesg.Envelope = ParseEnvelope (engine, cancellationToken);
 					mesg.Body = ParseBody (engine, path, cancellationToken);
 					mesg.Lines = ReadNumber (engine, cancellationToken);
@@ -817,10 +812,6 @@ namespace MailKit.Net.Imap {
 		{
 			var token = engine.ReadToken (cancellationToken);
 			string nstring;
-
-			// GMail seems to send a NIL envelope for embedded message/rfc822 parts, see issue #59 for details.
-			if (token.Type == ImapTokenType.Nil)
-				return null;
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
