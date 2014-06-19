@@ -468,7 +468,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = client.GetMessageCount (CancellationToken.None);
-					Assert.AreEqual (7, count, "Expected 7 messages");
+					Assert.AreEqual (1, count, "Expected 1 message");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
 				}
