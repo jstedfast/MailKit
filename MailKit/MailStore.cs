@@ -92,7 +92,78 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the specified special folder.
+		/// Enable the quick resynchronization feature.
+		/// </summary>
+		/// <remarks>
+		/// <para>Enables quick resynchronization when a folder is opened using the
+		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// method.</para>
+		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>This method needs to be called immediately after
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support quick resynchronization.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously enable the quick resynchronization feature.
+		/// </summary>
+		/// <remarks>
+		/// <para>Enables quick resynchronization when a folder is opened using the
+		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// method.</para>
+		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>This method needs to be called immediately after
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support quick resynchronization.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				EnableQuickResync (cancellationToken);
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get the specified special folder.
 		/// </summary>
 		/// <remarks>
 		/// Not all mail stores support special folders. Each implementation
@@ -114,7 +185,7 @@ namespace MailKit {
 		public abstract IMailFolder GetFolder (SpecialFolder folder);
 
 		/// <summary>
-		/// Gets the folder for the specified namespace.
+		/// Get the folder for the specified namespace.
 		/// </summary>
 		/// <remarks>
 		/// Gets the folder for the specified namespace.
@@ -138,7 +209,7 @@ namespace MailKit {
 		public abstract IMailFolder GetFolder (FolderNamespace @namespace);
 
 		/// <summary>
-		/// Gets the folder for the specified path.
+		/// Get the folder for the specified path.
 		/// </summary>
 		/// <remarks>
 		/// Gets the folder for the specified path.
@@ -211,7 +282,7 @@ namespace MailKit {
 		public event EventHandler<AlertEventArgs> Alert;
 
 		/// <summary>
-		/// Raises the alert event.
+		/// Raise the alert event.
 		/// </summary>
 		/// <remarks>
 		/// Raises the alert event.

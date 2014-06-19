@@ -139,6 +139,7 @@
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="ISortable.cs" />
     <Compile Include="IThreadable.cs" />
+    <Compile Include="MailFolder.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="MailSpool.cs" />
     <Compile Include="MailStore.cs" />

@@ -377,7 +377,7 @@ namespace MailKit.Net.Imap {
 		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
 		/// </summary>
 		/// <param name="imap">The IMAP stream.</param>
-		/// <param name="cancellationToken">A cancellation token</param>
+		/// <param name="cancellationToken">The cancellation token</param>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -466,7 +466,7 @@ namespace MailKit.Net.Imap {
 		/// Reads a single line from the <see cref="ImapStream"/>.
 		/// </summary>
 		/// <returns>The line.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.InvalidOperationException">
 		/// The engine is not connected.
 		/// </exception>
@@ -773,7 +773,7 @@ namespace MailKit.Net.Imap {
 							FolderCache.Add (path, folder);
 						}
 
-						folder.IsNamespace = true;
+						folder.UpdateIsNamespace (true);
 
 						do {
 							token = stream.ReadToken (cancellationToken);
@@ -864,7 +864,7 @@ namespace MailKit.Net.Imap {
 		/// Parses the response code.
 		/// </summary>
 		/// <returns>The response code.</returns>
-		/// <param name="cancellationToken">Cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapResponseCode ParseResponseCode (CancellationToken cancellationToken)
 		{
 			ImapResponseCode code;
@@ -1164,7 +1164,7 @@ namespace MailKit.Net.Imap {
 		/// Processes an untagged response.
 		/// </summary>
 		/// <returns>The untagged response.</returns>
-		/// <param name="cancellationToken">Cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		internal ImapUntaggedResult ProcessUntaggedResponse (CancellationToken cancellationToken)
 		{
 			var result = ImapUntaggedResult.Handled;
@@ -1206,7 +1206,7 @@ namespace MailKit.Net.Imap {
 					stream.ReadToken (cancellationToken);
 					break;
 				case "FLAGS":
-					folder.AcceptedFlags = ImapUtils.ParseFlagsList (this, cancellationToken);
+					folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, cancellationToken));
 					token = stream.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.Eoln) {
@@ -1490,7 +1490,7 @@ namespace MailKit.Net.Imap {
 
 				if (list.Count > 0) {
 					PersonalNamespaces.Add (new FolderNamespace (list[0].DirectorySeparator, ""));
-					list[0].IsNamespace = true;
+					list[0].UpdateIsNamespace (true);
 				}
 
 				LookupParentFolders (list, cancellationToken);

@@ -29,7 +29,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
 
@@ -44,7 +43,7 @@ namespace MailKit.Net.Imap {
 	/// <remarks>
 	/// An IMAP folder.
 	/// </remarks>
-	public class ImapFolder : IMailFolder
+	public class ImapFolder : MailFolder
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
@@ -71,7 +70,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the engine.
+		/// Get the engine.
 		/// </summary>
 		/// <value>The engine.</value>
 		internal ImapEngine Engine {
@@ -79,7 +78,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the encoded name of the folder.
+		/// Get the encoded name of the folder.
 		/// </summary>
 		/// <value>The encoded name.</value>
 		internal string EncodedName {
@@ -181,235 +180,14 @@ namespace MailKit.Net.Imap {
 		#region IMailFolder implementation
 
 		/// <summary>
-		/// Gets the parent folder.
-		/// </summary>
-		/// <remarks>
-		/// Root-level folders do not have a parent folder.
-		/// </remarks>
-		/// <value>The parent folder.</value>
-		public IMailFolder ParentFolder {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the folder attributes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the folder attributes.
-		/// </remarks>
-		/// <value>The folder attributes.</value>
-		public FolderAttributes Attributes {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the permanent flags.
-		/// </summary>
-		/// <remarks>
-		/// The permanent flags are the message flags that will persist between sessions.
-		/// </remarks>
-		/// <value>The permanent flags.</value>
-		public MessageFlags PermanentFlags {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the accepted flags.
-		/// </summary>
-		/// <remarks>
-		/// The accepted flags are the message flags that will be accepted and persist
-		/// for the current session. For the set of flags that will persist between
-		/// sessions, see the <see cref="PermanentFlags"/> property.
-		/// </remarks>
-		/// <value>The accepted flags.</value>
-		public MessageFlags AcceptedFlags {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the directory separator.
-		/// </summary>
-		/// <remarks>
-		/// Gets the directory separator.
-		/// </remarks>
-		/// <value>The directory separator.</value>
-		public char DirectorySeparator { 
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the read/write access of the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets the read/write access of the folder.
-		/// </remarks>
-		/// <value>The read/write access.</value>
-		public FolderAccess Access {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets whether or not the folder is a namespace folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the folder is a namespace folder.
-		/// </remarks>
-		/// <value><c>true</c> if the folder is a namespace folder; otherwise, <c>false</c>.</value>
-		public bool IsNamespace {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets the full name of the folder.
-		/// </summary>
-		/// <remarks>
-		/// This is the equivalent of the full path of a file on a file system.
-		/// </remarks>
-		/// <value>The full name of the folder.</value>
-		public string FullName {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the name of the folder.
-		/// </summary>
-		/// <remarks>
-		/// This is the equivalent of the file name of a file on the file system.
-		/// </remarks>
-		/// <value>The name of the folder.</value>
-		public string Name {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the folder is subscribed.
-		/// </summary>
-		/// <remarks>
-		/// Gets a value indicating whether the folder is subscribed.
-		/// </remarks>
-		/// <value><c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
-		public bool IsSubscribed {
-			get; private set;
-		}
-
-		/// <summary>
 		/// Gets a value indicating whether the folder is currently open.
 		/// </summary>
 		/// <remarks>
 		/// Gets a value indicating whether the folder is currently open.
 		/// </remarks>
 		/// <value><c>true</c> if the folder is currently open; otherwise, <c>false</c>.</value>
-		public bool IsOpen {
+		public override bool IsOpen {
 			get { return Engine.Selected == this; }
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the folder exists.
-		/// </summary>
-		/// <remarks>
-		/// Gets a value indicating whether the folder exists.
-		/// </remarks>
-		/// <value><c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
-		public bool Exists {
-			get; internal set;
-		}
-
-		/// <summary>
-		/// Gets whether or not the folder supports mod-sequences.
-		/// </summary>
-		/// <remarks>
-		/// <para>If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
-		/// argument will throw <see cref="System.NotSupportedException"/> and should not be used.</para>
-		/// <para>There are two reasons that a <see cref="ImapFolder"/> might not support mod-sequences:
-		/// <list type="bullet">
-		/// <item>The IMAP server does not support the CONDSTORE extension (<see cref="ImapCapabilities.CondStore"/>).</item>
-		/// <item>The SELECT or EXAMINE command returned the NOMODSEQ response code.</item>
-		/// </list></para>
-		/// </remarks>
-		/// <value><c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
-		public bool SupportsModSeq {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the highest mod-sequence value of all messages in the mailbox.
-		/// </summary>
-		/// <remarks>
-		/// This property is only available if the IMAP server supports the CONDSTORE extension.
-		/// </remarks>
-		/// <value>The highest mod-sequence value.</value>
-		public ulong HighestModSeq {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the UID validity.
-		/// </summary>
-		/// <remarks>
-		/// <para>UIDs are only valid so long as the UID validity value remains unchanged. If and when
-		/// the folder's <see cref="UidValidity"/> is changed, a client MUST discard its cache of UIDs
-		/// along with any summary information that it may have and re-query the folder.</para>
-		/// <para>This value will only be set after the folder has been opened.</para>
-		/// </remarks>
-		/// <value>The UID validity.</value>
-		public UniqueId? UidValidity {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the UID that the folder will assign to the next message that is added.
-		/// </summary>
-		/// <remarks>
-		/// This value will only be set after the folder has been opened.
-		/// </remarks>
-		/// <value>The next UID.</value>
-		public UniqueId? UidNext {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the index of the first unread message in the folder.
-		/// </summary>
-		/// <remarks>
-		/// This value will only be set after the folder has been opened.
-		/// </remarks>
-		/// <value>The index of the first unread message.</value>
-		public int FirstUnread {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the number of unread messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
-		/// with <see cref="StatusItems.Unread"/>.
-		/// </remarks>
-		/// <value>The number of unread messages.</value>
-		public int Unread {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the number of recently added messages.
-		/// </summary>
-		/// <remarks>
-		/// Gets the number of recently added messages.
-		/// </remarks>
-		/// <value>The number of recently added messages.</value>
-		public int Recent {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the total number of messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets the total number of messages in the folder.
-		/// </remarks>
-		/// <value>The total number of messages.</value>
-		public int Count {
-			get; private set;
 		}
 
 		static string SelectOrExamine (FolderAccess access)
@@ -429,7 +207,7 @@ namespace MailKit.Net.Imap {
 		/// <para>This variant of the <see cref="Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// method is meant for quick resynchronization of the folder. Before calling this method,
 		/// the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method MUST be called.</para>
-		/// <para>You should also make sure to add listeners to the <see cref="Vanished"/> and
+		/// <para>You should also make sure to add listeners to the <see cref="MessagesVanished"/> and
 		/// <see cref="MessageFlagsChanged"/> events to get notifications of changes since
 		/// the last time the folder was opened.</para>
 		/// </remarks>
@@ -541,7 +319,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
+		public override FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
@@ -601,7 +379,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Close (bool expunge, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Close (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (true, false);
 
@@ -663,7 +441,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
+		public override IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -753,7 +531,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (parent == null)
 				throw new ArgumentNullException ("parent");
@@ -829,7 +607,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Delete (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Delete (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
 				throw new InvalidOperationException ("Cannot rename this folder.");
@@ -881,7 +659,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Subscribe (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Subscribe (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (false, false);
 
@@ -923,7 +701,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Unsubscribe (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Unsubscribe (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (false, false);
 
@@ -967,7 +745,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<IMailFolder> GetSubfolders (bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<IMailFolder> GetSubfolders (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (false, false);
 
@@ -1029,7 +807,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken))
+		public override IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -1094,7 +872,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Check (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Check (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (true, false);
 
@@ -1148,7 +926,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Status) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the STATUS command.");
@@ -1189,12 +967,12 @@ namespace MailKit.Net.Imap {
 		/// Expunges the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="Expunged"/> event will be emitted for each
+		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the IMAP server supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
-		/// the <see cref="Vanished"/> event will be emitted rather than the
-		/// <see cref="Expunged"/> event.</para>
+		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
+		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1219,7 +997,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Expunge (CancellationToken cancellationToken = default (CancellationToken))
+		public override void Expunge (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (true, true);
 
@@ -1237,12 +1015,12 @@ namespace MailKit.Net.Imap {
 		/// Expunges the specified uids, permanently removing them from the folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="Expunged"/> event will be emitted for each
+		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the IMAP server supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
-		/// the <see cref="Vanished"/> event will be emitted rather than the
-		/// <see cref="Expunged"/> event.</para>
+		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
+		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1274,7 +1052,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void Expunge (UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Expunge (UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
@@ -1348,7 +1126,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1404,7 +1182,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1497,7 +1275,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -1590,7 +1368,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -1690,7 +1468,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] CopyTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] CopyTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
@@ -1775,7 +1553,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] MoveTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] MoveTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				var copied = CopyTo (uids, destination, cancellationToken);
@@ -1859,7 +1637,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void CopyTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override void CopyTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
 
@@ -1930,7 +1708,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void MoveTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override void MoveTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				CopyTo (indexes, destination, cancellationToken);
@@ -2243,7 +2021,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var query = FormatSummaryItems (items);
 			var set = ImapUtils.FormatUidSet (uids);
@@ -2279,7 +2057,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="Vanished"/> events for messages that have vanished
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
@@ -2321,7 +2099,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var query = FormatSummaryItems (items);
 			var set = ImapUtils.FormatUidSet (uids);
@@ -2404,7 +2182,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min.Id == 0)
 				throw new ArgumentException ("The minimum uid is invalid.", "min");
@@ -2439,7 +2217,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="Vanished"/> events for messages that have vanished
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
@@ -2479,7 +2257,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min.Id == 0)
 				throw new ArgumentException ("The minimum uid is invalid.", "min");
@@ -2552,7 +2330,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (items);
@@ -2627,7 +2405,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (items);
@@ -2710,7 +2488,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0)
 				throw new ArgumentOutOfRangeException ("min");
@@ -2785,7 +2563,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0)
 				throw new ArgumentOutOfRangeException ("min");
@@ -2984,7 +2762,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -3046,7 +2824,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -3143,7 +2921,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return GetBodyPart (uid, part, false, cancellationToken);
 		}
@@ -3187,7 +2965,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -3276,7 +3054,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return GetBodyPart (index, part, false, cancellationToken);
 		}
@@ -3320,7 +3098,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -3415,7 +3193,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -3495,7 +3273,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index");
@@ -3580,7 +3358,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -3668,7 +3446,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index");
@@ -3786,7 +3564,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ModifyFlags (uids, null, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -3829,7 +3607,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ModifyFlags (uids, null, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -3872,7 +3650,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ModifyFlags (uids, null, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
@@ -3920,7 +3698,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ModifyFlags (uids, modseq, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -3968,7 +3746,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ModifyFlags (uids, modseq, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -4016,7 +3794,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ModifyFlags (uids, modseq, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
@@ -4102,7 +3880,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ModifyFlags (indexes, null, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -4145,7 +3923,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ModifyFlags (indexes, null, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -4188,7 +3966,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			ModifyFlags (indexes, null, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
@@ -4236,7 +4014,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ModifyFlags (indexes, modseq, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -4284,7 +4062,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ModifyFlags (indexes, modseq, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -4332,7 +4110,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public override int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ModifyFlags (indexes, modseq, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
@@ -4750,7 +4528,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var args = new List<string> ();
 			string charset;
@@ -4836,7 +4614,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var args = new List<string> ();
 			string charset;
@@ -4927,7 +4705,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 			var args = new List<string> ();
@@ -5022,7 +4800,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 			var args = new List<string> ();
@@ -5120,7 +4898,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var method = algorithm.ToString ().ToUpperInvariant ();
 			var args = new List<string> ();
@@ -5206,7 +4984,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var method = algorithm.ToString ().ToUpperInvariant ();
 			var set = ImapUtils.FormatUidSet (uids);
@@ -5258,10 +5036,7 @@ namespace MailKit.Net.Imap {
 
 		internal void OnExpunge (int index)
 		{
-			var handler = Expunged;
-
-			if (handler != null)
-				handler (this, new MessageEventArgs (index));
+			OnMessageExpunged (new MessageEventArgs (index));
 		}
 
 		internal void OnFetch (ImapEngine engine, int index, CancellationToken cancellationToken)
@@ -5364,10 +5139,27 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out vanished))
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			var handler = Vanished;
+			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));
+		}
 
-			if (handler != null)
-				handler (this, new MessagesVanishedEventArgs (vanished, earlier));
+		internal void UpdateAttributes (FolderAttributes attrs)
+		{
+			Attributes = attrs;
+		}
+
+		internal void UpdateAcceptedFlags (MessageFlags flags)
+		{
+			AcceptedFlags = flags;
+		}
+
+		internal void UpdatePermanentFlags (MessageFlags flags)
+		{
+			PermanentFlags = flags;
+		}
+
+		internal void UpdateIsNamespace (bool value)
+		{
+			IsNamespace = value;
 		}
 
 		internal void UpdateUnread (int count)
@@ -5392,150 +5184,6 @@ namespace MailKit.Net.Imap {
 
 		#endregion
 
-		/// <summary>
-		/// Occurs when the folder is deleted.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="Deleted"/> event is emitted when the folder is deleted.
-		/// </remarks>
-		public event EventHandler<EventArgs> Deleted;
-
-		void OnDeleted ()
-		{
-			var handler = Deleted;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Occurs when the folder is renamed.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="Renamed"/> event is emitted when the folder is renamed.
-		/// </remarks>
-		public event EventHandler<FolderRenamedEventArgs> Renamed;
-
-		void OnRenamed (string oldName, string newName)
-		{
-			var handler = Renamed;
-
-			if (handler != null)
-				handler (this, new FolderRenamedEventArgs (oldName, newName));
-		}
-
-		/// <summary>
-		/// Occurs when the folder is subscribed.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="Subscribed"/> event is emitted when the folder is subscribed.
-		/// </remarks>
-		public event EventHandler<EventArgs> Subscribed;
-
-		void OnSubscribed ()
-		{
-			var handler = Subscribed;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Occurs when the folder is unsubscribed.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="Unsubscribed"/> event is emitted when the folder is unsubscribed.
-		/// </remarks>
-		public event EventHandler<EventArgs> Unsubscribed;
-
-		void OnUnsubscribed ()
-		{
-			var handler = Unsubscribed;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Occurs when a message is expunged from the folder.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="Expunged"/> event is emitted when the IMAP server sends an untagged EXPUNGE response.
-		/// </remarks>
-		public event EventHandler<MessageEventArgs> Expunged;
-
-		/// <summary>
-		/// Occurs when a message vanishes from the folder.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="Vanished"/> event is emitted when the IMAP server sends an untagged VANISHED response.
-		/// </remarks>
-		public event EventHandler<MessagesVanishedEventArgs> Vanished;
-
-		/// <summary>
-		/// Occurs when flags changed on a message.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="MessageFlagsChanged"/> event is emitted when the IMAP server sends an untagged FETCH response containing FLAGS.
-		/// </remarks>
-		public event EventHandler<MessageFlagsChangedEventArgs> MessageFlagsChanged;
-
-		void OnFlagsChanged (MessageFlagsChangedEventArgs args)
-		{
-			var handler = MessageFlagsChanged;
-
-			if (handler != null)
-				handler (this, args);
-		}
-
-		/// <summary>
-		/// Occurs when the UID validity changes.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="UidValidityChanged"/> event is emitted whenever the <see cref="UidValidity"/> value changes.
-		/// </remarks>
-		public event EventHandler<EventArgs> UidValidityChanged;
-
-		void OnUidValidityChanged ()
-		{
-			var handler = UidValidityChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Occurs when the message count changes.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="CountChanged"/> event is emitted whenever the <see cref="Count"/> value changes.
-		/// </remarks>
-		public event EventHandler<EventArgs> CountChanged;
-
-		void OnCountChanged ()
-		{
-			var handler = CountChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Occurs when the recent message count changes.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="RecentChanged"/> event is emitted whenever the <see cref="Recent"/> value changes.
-		/// </remarks>
-		public event EventHandler<EventArgs> RecentChanged;
-
-		void OnRecentChanged ()
-		{
-			var handler = RecentChanged;
-
-			if (handler != null)
-				handler (this, EventArgs.Empty);
-		}
-
 		#endregion
 
 		#region IEnumerable<MimeMessage> implementation
@@ -5557,7 +5205,7 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>The folder is not currently open.</para>
 		/// </exception>
-		public IEnumerator<MimeMessage> GetEnumerator ()
+		public override IEnumerator<MimeMessage> GetEnumerator ()
 		{
 			CheckState (true, false);
 
@@ -5567,40 +5215,6 @@ namespace MailKit.Net.Imap {
 			yield break;
 		}
 
-		/// <summary>
-		/// Gets an enumerator for the messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets an enumerator for the messages in the folder.
-		/// </remarks>
-		/// <returns>The enumerator.</returns>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
-		/// </exception>
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
-
 		#endregion
-
-		/// <summary>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.Net.Imap.ImapFolder"/>.
-		/// </summary>
-		/// <remarks>
-		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.Net.Imap.ImapFolder"/>.
-		/// </remarks>
-		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.Net.Imap.ImapFolder"/>.</returns>
-		public override string ToString ()
-		{
-			return FullName;
-		}
 	}
 }

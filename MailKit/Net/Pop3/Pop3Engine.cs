@@ -161,7 +161,7 @@ namespace MailKit.Net.Pop3 {
 		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </summary>
 		/// <param name="pop3">The pop3 stream.</param>
-		/// <param name="cancellationToken">A cancellation token</param>
+		/// <param name="cancellationToken">The cancellation token</param>
 		public void Connect (Pop3Stream pop3, CancellationToken cancellationToken)
 		{
 			if (stream != null)
@@ -227,7 +227,7 @@ namespace MailKit.Net.Pop3 {
 		/// Reads a single line from the <see cref="Pop3Stream"/>.
 		/// </summary>
 		/// <returns>The line.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.InvalidOperationException">
 		/// The engine is not connected.
 		/// </exception>

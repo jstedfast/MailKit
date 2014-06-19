@@ -153,19 +153,19 @@ namespace MailKit.Net.Imap {
 #endif
 
 		/// <summary>
-		/// Enables the QRESYNC feature.
+		/// Enable the QRESYNC feature.
 		/// </summary>
 		/// <remarks>
 		/// <para>The QRESYNC extension improves resynchronization performance of folders by
 		/// querying the IMAP server for a list of changes when the folder is opened using the
 		/// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
 		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="ImapFolder.Expunged"/> event is replaced
-		/// with the <see cref="ImapFolder.Vanished"/> event.</para>
+		/// <para>If this feature is enabled, the <see cref="ImapFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="ImapFolder.MessagesVanished"/> event.</para>
 		/// <para>This method needs to be called immediately after
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
 		/// </remarks>
-		/// <param name="cancellationToken">Cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -184,7 +184,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken))
+		public override void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -268,7 +268,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Authenticates using the supplied credentials.
+		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the server supports one or more SASL authentication mechanisms, then
@@ -280,7 +280,7 @@ namespace MailKit.Net.Imap {
 		/// can be found, then LOGIN command is used as a fallback.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
@@ -421,7 +421,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Establishes a connection to the specified IMAP server.
+		/// Connect to the specified server.
 		/// </summary>
 		/// <remarks>
 		/// <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
@@ -444,7 +444,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
 		/// be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// The <paramref name="uri"/> is <c>null</c>.
 		/// </exception>
@@ -587,7 +587,7 @@ namespace MailKit.Net.Imap {
 		/// If <paramref name="quit"/> is <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
@@ -622,7 +622,7 @@ namespace MailKit.Net.Imap {
 		/// Ping the IMAP server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>

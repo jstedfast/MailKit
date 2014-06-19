@@ -93,7 +93,7 @@ namespace MailKit {
 		/// property will be populated.
 		/// </remarks>
 		/// <param name="uri">The server URI.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -103,7 +103,7 @@ namespace MailKit {
 		/// Asynchronously connects to the specified mail server.
 		/// </remarks>
 		/// <param name="uri">The server URI.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// The <paramref name="uri"/> is <c>null</c>.
 		/// </exception>
@@ -135,7 +135,7 @@ namespace MailKit {
 		/// to authenticate. Otherwise, this method simply returns.
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -151,7 +151,7 @@ namespace MailKit {
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
@@ -185,7 +185,7 @@ namespace MailKit {
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -195,7 +195,7 @@ namespace MailKit {
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailService"/> has been disposed.
 		/// </exception>
@@ -207,14 +207,14 @@ namespace MailKit {
 		/// <remarks>
 		/// Mail servers, if left idle for too long, will automatically drop the connection.
 		/// </remarks>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		void NoOp (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously ping the mail server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailService"/> has been disposed.
 		/// </exception>

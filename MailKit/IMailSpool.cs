@@ -60,7 +60,7 @@ namespace MailKit {
 		/// Gets the number of messages available in the message spool.
 		/// </remarks>
 		/// <returns>The number of available messages.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -70,7 +70,7 @@ namespace MailKit {
 		/// Asynchronously gets the number of messages available in the message spool.
 		/// </remarks>
 		/// <returns>The number of available messages.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -82,7 +82,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -94,7 +94,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace MailKit {
 		/// the <see cref="SupportsUids"/> property.
 		/// </remarks>
 		/// <returns>The message UIDs.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		string[] GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -116,7 +116,7 @@ namespace MailKit {
 		/// the <see cref="SupportsUids"/> property.
 		/// </remarks>
 		/// <returns>The message UIDs.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<string[]> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -127,7 +127,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -138,7 +138,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<int> GetMessageSizeAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -149,7 +149,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -160,7 +160,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -170,7 +170,7 @@ namespace MailKit {
 		/// Gets the sizes for all available messages, in bytes.
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -180,7 +180,7 @@ namespace MailKit {
 		/// Asynchronously gets the sizes for all available messages, in bytes.
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<int[]> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -191,7 +191,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -202,7 +202,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<HeaderList> GetMessageHeadersAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -213,7 +213,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -224,7 +224,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -246,7 +246,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<MimeMessage> GetMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -257,7 +257,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -268,7 +268,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -280,7 +280,7 @@ namespace MailKit {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -292,7 +292,7 @@ namespace MailKit {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -304,7 +304,7 @@ namespace MailKit {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -316,7 +316,7 @@ namespace MailKit {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -327,7 +327,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		void Reset (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -338,7 +338,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken));
 	}
 }

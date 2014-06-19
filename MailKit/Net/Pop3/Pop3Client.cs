@@ -335,7 +335,7 @@ namespace MailKit.Net.Pop3 {
 		/// can be found, then the USER and PASS commands are used as a fallback.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
@@ -502,7 +502,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
 		/// be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// The <paramref name="uri"/> is <c>null</c>.
 		/// </exception>
@@ -624,7 +624,7 @@ namespace MailKit.Net.Pop3 {
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
@@ -659,7 +659,7 @@ namespace MailKit.Net.Pop3 {
 		/// Ping the POP3 server to keep the connection alive.
 		/// </summary>
 		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
@@ -715,7 +715,7 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the number of messages available in the message spool.
 		/// </remarks>
 		/// <returns>The number of available messages.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
@@ -785,7 +785,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -886,7 +886,7 @@ namespace MailKit.Net.Pop3 {
 		/// the <see cref="SupportsUids"/> property.
 		/// </remarks>
 		/// <returns>The message uids.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
@@ -1027,7 +1027,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uid"/> is <c>null</c>.
 		/// </exception>
@@ -1082,7 +1082,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1128,7 +1128,7 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the sizes for all available messages, in bytes.
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
@@ -1255,7 +1255,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uid"/> is <c>null</c>.
 		/// </exception>
@@ -1313,7 +1313,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1360,7 +1360,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uid"/> is <c>null</c>.
 		/// </exception>
@@ -1418,7 +1418,7 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1466,7 +1466,7 @@ namespace MailKit.Net.Pop3 {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uid"/> is <c>null</c>.
 		/// </exception>
@@ -1525,7 +1525,7 @@ namespace MailKit.Net.Pop3 {
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1572,7 +1572,7 @@ namespace MailKit.Net.Pop3 {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
-		/// <param name="cancellationToken">A cancellation token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>

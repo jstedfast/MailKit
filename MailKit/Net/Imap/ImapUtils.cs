@@ -318,7 +318,8 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (engine.FolderCache.TryGetValue (encodedName, out folder)) {
-				folder.Attributes = (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked)) | attrs;
+				attrs |= (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked));
+				folder.UpdateAttributes (attrs);
 			} else {
 				folder = new ImapFolder (engine, encodedName, attrs, delim);
 				engine.FolderCache.Add (encodedName, folder);

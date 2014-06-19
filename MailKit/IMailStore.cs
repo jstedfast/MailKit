@@ -26,6 +26,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MailKit {
 	/// <summary>
@@ -72,6 +73,72 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
 		IMailFolder Inbox { get; }
+
+		/// <summary>
+		/// Enable the quick resynchronization feature.
+		/// </summary>
+		/// <remarks>
+		/// <para>Enables quick resynchronization when a folder is opened using the
+		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// method.</para>
+		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>This method needs to be called immediately after
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support quick resynchronization.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously enable the quick resynchronization feature.
+		/// </summary>
+		/// <remarks>
+		/// <para>Enables quick resynchronization when a folder is opened using the
+		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// method.</para>
+		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>This method needs to be called immediately after
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support quick resynchronization.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the specified special folder.
@@ -123,6 +190,26 @@ namespace MailKit {
 		/// The folder could not be found.
 		/// </exception>
 		IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the folder for the specified path.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the folder for the specified path.
+		/// </remarks>
+		/// <returns>The folder.</returns>
+		/// <param name="path">The folder path.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="path"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The folder could not be found.
+		/// </exception>
+		Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Occurs when a remote message store receives an alert message from the server.
