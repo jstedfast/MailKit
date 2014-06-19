@@ -205,6 +205,9 @@ namespace MailKit.Net.Pop3 {
 
 		static unsafe void MemMove (byte *buf, int sourceIndex, int destIndex, int length)
 		{
+			if (length == 0 || sourceIndex == destIndex)
+				return;
+
 			if (sourceIndex < destIndex) {
 				byte* src = buf + sourceIndex + length - 1;
 				byte *dest = buf + destIndex + length - 1;
