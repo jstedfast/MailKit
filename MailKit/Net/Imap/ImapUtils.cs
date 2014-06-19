@@ -131,6 +131,9 @@ namespace MailKit.Net.Imap {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
+			if (indexes.Length == 0)
+				throw new ArgumentException ("No indexes were specified.", "indexes");
+
 			var builder = new StringBuilder ();
 			int index = 0;
 
@@ -189,6 +192,9 @@ namespace MailKit.Net.Imap {
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
+
+			if (uids.Length == 0)
+				throw new ArgumentException ("No uids were specified.", "uids");
 
 			var builder = new StringBuilder ();
 			int index = 0;

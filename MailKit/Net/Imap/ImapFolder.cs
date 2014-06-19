@@ -243,7 +243,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public FolderAccess Open (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken))
+		public override FolderAccess Open (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
@@ -446,7 +446,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (string.IsNullOrEmpty (name) || name.IndexOf (DirectorySeparator) != -1)
+			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			CheckState (false, false);
@@ -542,7 +542,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (string.IsNullOrEmpty (name) || name.IndexOf (parent.DirectorySeparator) != -1)
+			if (name.Length == 0 || name.IndexOf (parent.DirectorySeparator) != -1)
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
@@ -610,7 +610,7 @@ namespace MailKit.Net.Imap {
 		public override void Delete (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
-				throw new InvalidOperationException ("Cannot rename this folder.");
+				throw new InvalidOperationException ("Cannot delete this folder.");
 
 			CheckState (false, false);
 
@@ -777,7 +777,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the specified subfolder.
 		/// </remarks>
-		/// <returns>The subfolder, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The subfolder.</returns>
 		/// <param name="name">The name of the subfolder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1028,7 +1028,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The list of uids contained one or more invalid values.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1439,6 +1441,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
@@ -1524,6 +1528,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
@@ -1611,6 +1617,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
@@ -1682,6 +1690,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="destination"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para>The destination folder does not belong to the <see cref="ImapClient"/>.</para>
@@ -1997,7 +2007,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2072,7 +2084,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> is invalid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2306,7 +2320,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2378,7 +2394,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2490,7 +2508,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0)
+			if (min < 0 || min >= Count)
 				throw new ArgumentOutOfRangeException ("min");
 
 			if (max != -1 && max < min)
@@ -2565,7 +2583,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0)
+			if (min < 0 || min >= Count)
 				throw new ArgumentOutOfRangeException ("min");
 
 			if (max != -1 && max < min)
@@ -3275,7 +3293,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (index < 0)
+			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
 			if (offset < 0)
@@ -3448,7 +3466,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (index < 0)
+			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
 			if (part == null)
@@ -3540,7 +3558,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3583,7 +3603,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3626,7 +3648,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3671,7 +3695,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3719,7 +3745,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3767,7 +3795,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains at least one invalid uid.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3856,7 +3886,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3899,7 +3931,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3942,7 +3976,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3987,7 +4023,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4035,7 +4073,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4083,7 +4123,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="indexes"/> contains at least one invalid index.
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4678,7 +4720,9 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="query"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains one or more invalid UIDs.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
@@ -4756,7 +4800,7 @@ namespace MailKit.Net.Imap {
 		/// The returned array of unique identifiers will be sorted in the preferred order and
 		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
 		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
+		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="uids">The subset of UIDs</param>
 		/// <param name="query">The search query.</param>
 		/// <param name="orderBy">The sort order.</param>
@@ -4769,7 +4813,9 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> contains one or more invalid UIDs.</para>
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is empty.</para>
 		/// </exception>
@@ -4955,7 +5001,9 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="query"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uids"/> contains one or more invalid UIDs.
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
