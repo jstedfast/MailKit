@@ -22,6 +22,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports the PIPELINING extension.
   * Parses the SIZE extension value.
   * All APIs are cancellable.
+  * Async APIs are available.
 * POP3 Client
   * Supports all of the SASL mechanisms listed above.
   * Also supports authentication via APOP and USER/PASS.
@@ -30,6 +31,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports client SSL/TLS certificates.
   * Supports the UIDL command.
   * All APIs are cancellable.
+  * Async APIs are available.
 * IMAP4 Client
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "imaps" protocol.
@@ -57,6 +59,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * XLIST
     * X-GM-EXT1 (X-GM-MSGID, X-GM-THRID, X-GM-RAW and X-GM-LABELS)
   * All APIs are cancellable.
+  * Async APIs are available.
 * Client-side sorting and threading of messages.
 
 ## TODO
@@ -70,10 +73,8 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 * SMTP Client
   * CHUNKING (hmmm, doesn't really seem all that useful...)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
-  * Async APIs
 * POP3 Client
   * PIPELINING
-  * Async APIs
 * IMAP4 Client
   * Extensions:
     * QUOTA
@@ -87,7 +88,6 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * FILTERS
     * LIST-STATUS
     * MULTISEARCH
-  * Async APIs
 * Maildir
 * Thunderbird mbox folder trees
 
