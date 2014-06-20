@@ -1,0 +1,797 @@
+<Type Name="MailService" FullName="MailKit.MailService">
+  <TypeSignature Language="C#" Value="public abstract class MailService : IDisposable, MailKit.IMailService" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MailService extends System.Object implements class MailKit.IMailService, class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.IMailService</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            An abstract mail service implementation.
+            </summary>
+    <remarks>
+            An abstract mail service implementation.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MailService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MailService" /> class.
+            </summary>
+        <remarks>
+            Initializes a new instance of the <see cref="T:MailKit.MailService" /> class.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="C#" Value="public abstract void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="credentials">The user's credentials.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Authenticates using the supplied credentials.
+            </summary>
+        <remarks>
+          <para>If the server supports one or more SASL authentication mechanisms, then
+            the SASL mechanisms that both the client and server support are tried
+            in order of greatest security to weakest security. Once a SASL
+            authentication mechanism is found that both client and server support,
+            the credentials are used to authenticate.</para>
+          <para>If the server does not support SASL or if no common SASL mechanisms
+            can be found, then the default login command is used as a fallback.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="credentials" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is not connected or is already authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Security.AuthenticationException">
+            Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Authenticate">
+      <MemberSignature Language="C#" Value="public void Authenticate (string userName, string password, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Authenticate(string userName, string password, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="userName" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="userName">The user name.</param>
+        <param name="password">The password.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Authenticates using the specified user name and password.
+            </summary>
+        <remarks>
+          <para>If the server supports one or more SASL authentication mechanisms, then
+            the SASL mechanisms that both the client and server support are tried
+            in order of greatest security to weakest security. Once a SASL
+            authentication mechanism is found that both client and server support,
+            the credentials are used to authenticate.</para>
+          <para>If the server does not support SASL or if no common SASL mechanisms
+            can be found, then the default login command is used as a fallback.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="userName" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="password" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is not connected or is already authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Security.AuthenticationException">
+            Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticateAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task AuthenticateAsync (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task AuthenticateAsync(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="credentials">The user's credentials.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously authenticates using the supplied credentials.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <para>If the server supports one or more SASL authentication mechanisms, then
+            the SASL mechanisms that both the client and server support are tried
+            in order of greatest security to weakest security. Once a SASL
+            authentication mechanism is found that both client and server support,
+            the credentials are used to authenticate.</para>
+          <para>If the server does not support SASL or if no common SASL mechanisms
+            can be found, then the default login command is used as a fallback.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="credentials" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is not connected or is already authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Security.AuthenticationException">
+            Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticateAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task AuthenticateAsync (string userName, string password, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task AuthenticateAsync(string userName, string password, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="userName" Type="System.String" />
+        <Parameter Name="password" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="userName">The user name.</param>
+        <param name="password">The password.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously authenticates using the specified user name and password.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <para>If the server supports one or more SASL authentication mechanisms, then
+            the SASL mechanisms that both the client and server support are tried
+            in order of greatest security to weakest security. Once a SASL
+            authentication mechanism is found that both client and server support,
+            the credentials are used to authenticate.</para>
+          <para>If the server does not support SASL or if no common SASL mechanisms
+            can be found, then the default login command is used as a fallback.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="userName" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="password" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is not connected or is already authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Security.AuthenticationException">
+            Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.Security.SaslException">
+            A SASL authentication error occurred.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AuthenticationMechanisms">
+      <MemberSignature Language="C#" Value="public abstract System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the authentication mechanisms supported by the mail server.
+            </summary>
+        <value>The authentication mechanisms.</value>
+        <remarks>
+            The authentication mechanisms are queried as part of the <see cref="M:MailKit.MailService.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ClientCertificates">
+      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets or sets the client SSL certificates.
+            </summary>
+        <value>The client SSL certificates.</value>
+        <remarks>
+          <para>Some servers may require the client SSL certificates in order
+            to allow the user to connect.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.MailService.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public abstract void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The server URI.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Establishes a connection to the specified mail server.
+            </summary>
+        <remarks>
+            Establishes a connection to the specified mail server.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+            The <paramref name="uri" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="uri" /> is not an absolute URI.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public void Connect (string hostName, int port = 0, bool useSsl = false, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(string hostName, int32 port, bool useSsl, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostName" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="useSsl" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="hostName">The host name of the server.</param>
+        <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
+        <param name="useSsl">
+          <value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Establishes a connection to the specified mail server.
+            </summary>
+        <remarks>
+            Establishes a connection to the specified mail server.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+            The <paramref name="hostName" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is out of range (<value>0</value> to <value>65535</value>, inclusive).
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="hostName" /> is a zero-length string.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task ConnectAsync (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task ConnectAsync(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The server URI.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously establishes a connection to the specified mail server.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            Asynchronously establishes a connection to the specified mail server.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+            The <paramref name="uri" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="uri" /> is not an absolute URI.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ConnectAsync (string hostName, int port = 0, bool useSsl = false, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task ConnectAsync(string hostName, int32 port, bool useSsl, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hostName" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="useSsl" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="hostName">The host name of the server.</param>
+        <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
+        <param name="useSsl">
+          <value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously establishes a connection to the specified mail server.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            Asynchronously establishes a connection to the specified mail server.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+            The <paramref name="hostName" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is out of range (<value>0</value> to <value>65535</value>, inclusive).
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="hostName" /> is a zero-length string.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Disconnect">
+      <MemberSignature Language="C#" Value="public abstract void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="quit" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Disconnects the service.
+            </summary>
+        <remarks>
+            If <paramref name="quit" /> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DisconnectAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task DisconnectAsync (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DisconnectAsync(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="quit" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously disconnects the service.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            If <paramref name="quit" /> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Releases all resource used by the <see cref="T:MailKit.MailService" /> object.
+            </summary>
+        <remarks>Call <see cref="M:MailKit.MailService.Dispose" /> when you are finished using the <see cref="T:MailKit.MailService" />. The
+            <see cref="M:MailKit.MailService.Dispose" /> method leaves the <see cref="T:MailKit.MailService" /> in an unusable state. After
+            calling <see cref="M:MailKit.MailService.Dispose" />, you must release all references to the <see cref="T:MailKit.MailService" /> so
+            the garbage collector can reclaim the memory that the <see cref="T:MailKit.MailService" /> was occupying.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dispose">
+      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="disposing" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="disposing">
+          <c>true</c> to release both managed and unmanaged resources;
+            <c>false</c> to release only the unmanaged resources.</param>
+        <summary>
+            Releases the unmanaged resources used by the <see cref="T:MailKit.MailService" /> and
+            optionally releases the managed resources.
+            </summary>
+        <remarks>
+            Releases the unmanaged resources used by the <see cref="T:MailKit.MailService" /> and
+            optionally releases the managed resources.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Finalize">
+      <MemberSignature Language="C#" Value="~MailService ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Releases unmanaged resources and performs other cleanup operations before the
+            <see cref="T:MailKit.MailService" /> is reclaimed by garbage collection.
+            </summary>
+        <remarks>
+            Releases unmanaged resources and performs other cleanup operations before the
+            <see cref="T:MailKit.MailService" /> is reclaimed by garbage collection.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsConnected">
+      <MemberSignature Language="C#" Value="public abstract bool IsConnected { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets whether or not the client is currently connected to an mail server.
+            </summary>
+        <value>
+          <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        <remarks>
+            When a <see cref="T:MailKit.ProtocolException" /> is caught, the connection state of the
+            connection should be checked before continuing.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NoOp">
+      <MemberSignature Language="C#" Value="public abstract void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Pings the mail server to keep the connection alive.
+            </summary>
+        <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailService" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailService" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command was rejected by the mail server.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            The server responded with an unexpected token.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="NoOpAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task NoOpAsync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task NoOpAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously pings the mail server to keep the connection alive.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailService" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailService" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command was rejected by the mail server.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            The server responded with an unexpected token.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Protocol">
+      <MemberSignature Language="C#" Value="protected abstract string Protocol { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Protocol" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the protocol supported by the message service.
+            </summary>
+        <value>The protocol.</value>
+        <remarks>
+            Gets the protocol supported by the message service.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Timeout">
+      <MemberSignature Language="C#" Value="public abstract int Timeout { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets or sets the timeout for network streaming operations, in milliseconds.
+            </summary>
+        <value>The timeout in milliseconds.</value>
+        <remarks>
+            Gets or sets the underlying socket stream's <see cref="P:System.IO.Stream.ReadTimeout" />
+            and <see cref="P:System.IO.Stream.WriteTimeout" /> values.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

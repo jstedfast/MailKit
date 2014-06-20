@@ -1,0 +1,136 @@
+<Type Name="IMailTransport" FullName="MailKit.IMailTransport">
+  <TypeSignature Language="C#" Value="public interface IMailTransport : IDisposable, MailKit.IMailService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMailTransport implements class MailKit.IMailService, class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.IMailService</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            An interface for sending messages.
+            </summary>
+    <remarks>
+            An interface for sending messages.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Send the specified message.
+            </summary>
+        <remarks>
+            Sends the specified message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public void Send (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="sender" Type="MimeKit.MailboxAddress" />
+        <Parameter Name="recipients" Type="System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message.</param>
+        <param name="sender">The mailbox address to use for sending the message.</param>
+        <param name="recipients">The mailbox addresses that should receive the message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Send the specified message using the supplied sender and recipients.
+            </summary>
+        <remarks>
+            Sends the specified message using the supplied sender and recipients.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task SendAsync (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously send the specified message.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            Asynchronously sends the specified message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SendAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task SendAsync (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="sender" Type="MimeKit.MailboxAddress" />
+        <Parameter Name="recipients" Type="System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message.</param>
+        <param name="sender">The mailbox address to use for sending the message.</param>
+        <param name="recipients">The mailbox addresses that should receive the message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously send the specified message using the supplied sender and recipients.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            Asynchronously sends the specified message using the supplied sender and recipients.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

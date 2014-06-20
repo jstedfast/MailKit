@@ -1,0 +1,426 @@
+<Type Name="MailStore" FullName="MailKit.MailStore">
+  <TypeSignature Language="C#" Value="public abstract class MailStore : MailKit.MailService, IDisposable, MailKit.IMailStore" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MailStore extends MailKit.MailService implements class MailKit.IMailService, class MailKit.IMailStore, class System.IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.MailService</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>MailKit.IMailStore</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>
+            An abstract mail store implementation.
+            </summary>
+    <remarks>
+            An abstract mail store implementation.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected MailStore ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MailStore" /> class.
+            </summary>
+        <remarks>
+            Initializes a new instance of the <see cref="T:MailKit.MailStore" /> class.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Alert">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.AlertEventArgs&gt; Alert;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.AlertEventArgs&gt; Alert" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;MailKit.AlertEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Occurs when a remote message store receives an alert message from the server.
+            </summary>
+        <remarks>
+            The <see cref="E:MailKit.MailStore.Alert" /> event is raised whenever the mail server sends an
+            alert message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EnableQuickResync">
+      <MemberSignature Language="C#" Value="public abstract void EnableQuickResync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void EnableQuickResync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Enable the quick resynchronization feature.
+            </summary>
+        <remarks>
+          <para>Enables quick resynchronization when a folder is opened using the
+            <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,MailKit.UniqueId,System.UInt64,MailKit.UniqueId[],System.Threading.CancellationToken)" />
+            method.</para>
+          <para>If this feature is enabled, the <see cref="E:MailKit.MailFolder.MessageExpunged" /> event
+            is replaced with the <see cref="E:MailKit.MailFolder.MessagesVanished" /> event.</para>
+          <para>This method needs to be called immediately after
+            <see cref="M:MailKit.MailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />,
+            before the opening of any folders.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailStore" /> is not connected, not authenticated, or a folder has been selected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The mail store does not support quick resynchronization.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EnableQuickResyncAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task EnableQuickResyncAsync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task EnableQuickResyncAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously enable the quick resynchronization feature.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <para>Enables quick resynchronization when a folder is opened using the
+            <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,MailKit.UniqueId,System.UInt64,MailKit.UniqueId[],System.Threading.CancellationToken)" />
+            method.</para>
+          <para>If this feature is enabled, the <see cref="E:MailKit.MailFolder.MessageExpunged" /> event
+            is replaced with the <see cref="E:MailKit.MailFolder.MessagesVanished" /> event.</para>
+          <para>This method needs to be called immediately after
+            <see cref="M:MailKit.MailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />,
+            before the opening of any folders.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailStore" /> is not connected, not authenticated, or a folder has been selected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The mail store does not support quick resynchronization.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolder">
+      <MemberSignature Language="C#" Value="public abstract MailKit.IMailFolder GetFolder (MailKit.FolderNamespace namespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IMailFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespace" Type="MailKit.FolderNamespace" />
+      </Parameters>
+      <Docs>
+        <param name="namespace">The namespace.</param>
+        <summary>
+            Get the folder for the specified namespace.
+            </summary>
+        <returns>The folder.</returns>
+        <remarks>
+            Gets the folder for the specified namespace.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="namespace" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailStore" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailStore" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The folder could not be found.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolder">
+      <MemberSignature Language="C#" Value="public abstract MailKit.IMailFolder GetFolder (MailKit.SpecialFolder folder);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IMailFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="folder" Type="MailKit.SpecialFolder" />
+      </Parameters>
+      <Docs>
+        <param name="folder">The type of special folder.</param>
+        <summary>
+            Get the specified special folder.
+            </summary>
+        <returns>The folder if available; otherwise <c>null</c>.</returns>
+        <remarks>
+            Not all mail stores support special folders. Each implementation
+            should provide a way to determine if special folders are supported.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="folder" /> is out of range.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailStore" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailStore" /> is not authenticated.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolder">
+      <MemberSignature Language="C#" Value="public abstract MailKit.IMailFolder GetFolder (string path, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IMailFolder GetFolder(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="path">The folder path.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the folder for the specified path.
+            </summary>
+        <returns>The folder.</returns>
+        <remarks>
+            Gets the folder for the specified path.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailStore" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailStore" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The folder could not be found.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolderAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;MailKit.IMailFolder&gt; GetFolderAsync (string path, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class MailKit.IMailFolder&gt; GetFolderAsync(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;MailKit.IMailFolder&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="path" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="path">The folder path.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the folder for the specified path.
+            </summary>
+        <returns>The folder.</returns>
+        <remarks>
+            Asynchronously gets the folder for the specified path.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="path" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailStore" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailStore" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The folder could not be found.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Inbox">
+      <MemberSignature Language="C#" Value="public abstract MailKit.IMailFolder Inbox { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IMailFolder Inbox" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the Inbox folder.
+            </summary>
+        <value>The Inbox folder.</value>
+        <remarks>
+            The Inbox folder is the default folder and always exists.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnAlert">
+      <MemberSignature Language="C#" Value="protected void OnAlert (MailKit.AlertEventArgs e);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance void OnAlert(class MailKit.AlertEventArgs e) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="e" Type="MailKit.AlertEventArgs" />
+      </Parameters>
+      <Docs>
+        <param name="e">The alert event args.</param>
+        <summary>
+            Raise the alert event.
+            </summary>
+        <remarks>
+            Raises the alert event.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OtherNamespaces">
+      <MemberSignature Language="C#" Value="public abstract MailKit.FolderNamespaceCollection OtherNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection OtherNamespaces" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the other namespaces.
+            </summary>
+        <value>The other namespaces.</value>
+        <remarks>
+            The other folder namespaces contain other mailbox folders.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PersonalNamespaces">
+      <MemberSignature Language="C#" Value="public abstract MailKit.FolderNamespaceCollection PersonalNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection PersonalNamespaces" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the personal namespaces.
+            </summary>
+        <value>The personal namespaces.</value>
+        <remarks>
+            The personal folder namespaces contain a user's personal mailbox folders.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SharedNamespaces">
+      <MemberSignature Language="C#" Value="public abstract MailKit.FolderNamespaceCollection SharedNamespaces { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the shared namespaces.
+            </summary>
+        <value>The shared namespaces.</value>
+        <remarks>
+            The shared folder namespaces contain mailbox folders that are shared with the user.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
