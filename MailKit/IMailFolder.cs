@@ -619,7 +619,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified messages to the folder.
 		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -631,7 +631,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified messages to the folder.
 		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -643,7 +643,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Appends the specified messages to the folder.
 		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
@@ -656,7 +656,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously appends the specified messages to the folder.
 		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
@@ -664,12 +664,36 @@ namespace MailKit {
 		Task<UniqueId[]> AppendAsync (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Copy the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Copies the specified message to the destination folder.
+		/// </remarks>
+		/// <returns>The UID of the message in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="uid">The UID of the message to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId? CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously copy the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously copies the specified message to the destination folder.
+		/// </remarks>
+		/// <returns>The UID of the message in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="uid">The UID of the message to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Copy the specified messages to the destination folder.
 		/// </summary>
 		/// <remarks>
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -681,11 +705,35 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<UniqueId[]> CopyToAsync (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Move the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Moves the specified message to the destination folder.
+		/// </remarks>
+		/// <returns>The UID of the message in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="uid">The UID of the message to move.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId? MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously move the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously moves the specified message to the destination folder.
+		/// </remarks>
+		/// <returns>The UID of the message in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="uid">The UID of the message to move.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Move the specified messages to the destination folder.
@@ -693,7 +741,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -705,11 +753,33 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<UniqueId[]> MoveToAsync (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Copy the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Copies the specified message to the destination folder.
+		/// </remarks>
+		/// <param name="index">The index of the message to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void CopyTo (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously copy the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously copies the specified message to the destination folder.
+		/// </remarks>
+		/// <param name="index">The indexes of the message to copy.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task CopyToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Copy the specified messages to the destination folder.
@@ -734,12 +804,34 @@ namespace MailKit {
 		Task CopyToAsync (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Move the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Moves the specified message to the destination folder.
+		/// </remarks>
+		/// <param name="index">The index of the message to move.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void MoveTo (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously move the specified message to the destination folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously moves the specified message to the destination folder.
+		/// </remarks>
+		/// <param name="index">The index of the message to move.</param>
+		/// <param name="destination">The destination folder.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task MoveToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Move the specified messages to the destination folder.
 		/// </summary>
 		/// <remarks>
 		/// Moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <param name="indexes">The indexes of the messages to copy.</param>
+		/// <param name="indexes">The indexes of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void MoveTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
@@ -750,7 +842,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <param name="indexes">The indexes of the messages to copy.</param>
+		/// <param name="indexes">The indexes of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task MoveToAsync (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));

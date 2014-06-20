@@ -1245,7 +1245,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Appends the specified messages to the folder.
 		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1313,7 +1313,7 @@ namespace MailKit.Net.Imap {
 						return code.DestUidSet;
 				}
 
-				return null;
+				return new UniqueId[0];
 			}
 
 			var uids = new List<UniqueId> ();
@@ -1335,7 +1335,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Appends the specified messages to the folder.
 		/// </remarks>
-		/// <returns>The UIDs of the appended messages, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
@@ -1409,7 +1409,7 @@ namespace MailKit.Net.Imap {
 						return code.DestUidSet;
 				}
 
-				return null;
+				return new UniqueId[0];
 			}
 
 			var uids = new List<UniqueId> ();
@@ -1431,7 +1431,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1518,8 +1518,8 @@ namespace MailKit.Net.Imap {
 		/// those 3 operations, it may be advisable to implement your own logic for moving messages in this
 		/// case in order to better handle spontanious server disconnects and other error conditions.</para>
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise, <c>null</c>.</returns>
-		/// <param name="uids">The UIDs of the messages to copy.</param>
+		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <param name="uids">The UIDs of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1681,7 +1681,7 @@ namespace MailKit.Net.Imap {
 		/// may be advisable to implement your own logic for moving messages in this case in order to better
 		/// handle spontanious server disconnects and other error conditions.</para>
 		/// </remarks>
-		/// <param name="indexes">The indexes of the messages to copy.</param>
+		/// <param name="indexes">The indexes of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
