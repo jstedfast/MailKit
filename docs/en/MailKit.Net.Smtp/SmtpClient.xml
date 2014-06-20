@@ -1,20 +1,14 @@
 <Type Name="SmtpClient" FullName="MailKit.Net.Smtp.SmtpClient">
-  <TypeSignature Language="C#" Value="public class SmtpClient : IDisposable, MailKit.IMessageTransport" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SmtpClient extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageTransport, class System.IDisposable" />
+  <TypeSignature Language="C#" Value="public class SmtpClient : MailKit.MailTransport" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SmtpClient extends MailKit.MailTransport" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.18.0.0</AssemblyVersion>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName>MailKit.MailTransport</BaseTypeName>
   </Base>
   <Interfaces>
-    <Interface>
-      <InterfaceName>MailKit.IMessageTransport</InterfaceName>
-    </Interface>
-    <Interface>
-      <InterfaceName>System.IDisposable</InterfaceName>
-    </Interface>
   </Interfaces>
   <Docs>
     <summary>
@@ -34,7 +28,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -54,7 +48,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
@@ -76,11 +70,11 @@
       </Docs>
     </Member>
     <Member MemberName="Authenticate">
-      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -91,7 +85,7 @@
       </Parameters>
       <Docs>
         <param name="credentials">The user's credentials.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Authenticates using the supplied credentials.
             </summary>
@@ -140,18 +134,18 @@
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the authentication mechanisms supported by the SMTP server.
+            Get the authentication mechanisms supported by the SMTP server.
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
@@ -164,14 +158,14 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Smtp.SmtpCapabilities Capabilities" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the capabilities supported by the SMTP server.
+            Get the capabilities supported by the SMTP server.
             </summary>
         <value>The capabilities.</value>
         <remarks>
@@ -184,34 +178,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="ClientCertificates">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets or sets the client SSL certificates.
-            </summary>
-        <value>The client SSL certificates.</value>
-        <remarks>
-          <para>Some servers may require the client SSL certificates in order
-            to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
-        </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -223,7 +195,7 @@
       <Docs>
         <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
             be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Establishes a connection to the specified SMTP server.
             </summary>
@@ -232,8 +204,8 @@
             in the uri is "smtp", a clear-text connection is made and defaults to using
             port 25 if no port is specified in the URI. However, if the schema in the
             uri is "smtps", an SSL connection is made using the
-            <see cref="P:MailKit.Net.Smtp.SmtpClient.ClientCertificates" /> and defaults to port 465 unless a port
-            is specified in the URI.</para>
+            <see cref="P:MailKit.MailService.ClientCertificates" /> and defaults to port 465 unless
+            a port is specified in the URI.</para>
           <para>It should be noted that when using a clear-text SMTP connection,
             if the server advertizes support for the STARTTLS extension, the client
             will automatically switch into TLS mode before authenticating unless the
@@ -271,11 +243,11 @@
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -286,7 +258,7 @@
       </Parameters>
       <Docs>
         <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Disconnect the service.
             </summary>
@@ -302,32 +274,11 @@
       </Docs>
     </Member>
     <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Releases all resource used by the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> object.
-            </summary>
-        <remarks>Call <see cref="M:MailKit.Net.Smtp.SmtpClient.Dispose" /> when you are finished using the <see cref="T:MailKit.Net.Smtp.SmtpClient" />. The
-            <see cref="M:MailKit.Net.Smtp.SmtpClient.Dispose" /> method leaves the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> in an unusable state. After
-            calling <see cref="M:MailKit.Net.Smtp.SmtpClient.Dispose" />, you must release all references to the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> so
-            the garbage collector can reclaim the memory that the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> was occupying.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -349,41 +300,19 @@
             </remarks>
       </Docs>
     </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~SmtpClient ();" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Releases unmanaged resources and performs other cleanup operations before the
-            <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is reclaimed by garbage collection.
-            </summary>
-        <remarks>
-            Releases unmanaged resources and performs other cleanup operations before the
-            <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is reclaimed by garbage collection.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="IsConnected">
-      <MemberSignature Language="C#" Value="public bool IsConnected { get; }" />
+      <MemberSignature Language="C#" Value="public override bool IsConnected { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets whether or not the client is currently connected to an SMTP server.
+            Get whether or not the client is currently connected to an SMTP server.
             </summary>
         <value>
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
@@ -398,14 +327,14 @@
       <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 MaxSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the maximum message size supported by the server.
+            Get the maximum message size supported by the server.
             </summary>
         <value>The maximum message size supported by the server.</value>
         <remarks>
@@ -419,11 +348,11 @@
       </Docs>
     </Member>
     <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -432,7 +361,7 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Ping the SMTP server to keep the connection alive.
             </summary>
@@ -460,12 +389,32 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="Protocol">
+      <MemberSignature Language="C#" Value="protected override string Protocol { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Protocol" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the protocol supported by the message service.
+            </summary>
+        <value>The protocol.</value>
+        <remarks>
+            Gets the protocol supported by the message service.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Send">
-      <MemberSignature Language="C#" Value="public void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -476,7 +425,7 @@
       </Parameters>
       <Docs>
         <param name="message">The message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Send the specified message.
             </summary>
@@ -517,11 +466,11 @@
       </Docs>
     </Member>
     <Member MemberName="Send">
-      <MemberSignature Language="C#" Value="public void Send (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Send (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Send(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -536,7 +485,7 @@
         <param name="message">The message.</param>
         <param name="sender">The mailbox address to use for sending the message.</param>
         <param name="recipients">The mailbox addresses that should receive the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Send the specified message using the supplied sender and recipients.
             </summary>
@@ -581,18 +530,18 @@
       </Docs>
     </Member>
     <Member MemberName="Timeout">
-      <MemberSignature Language="C#" Value="public int Timeout { get; set; }" />
+      <MemberSignature Language="C#" Value="public override int Timeout { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets or sets the timeout for network streaming operations, in milliseconds.
+            Get or set the timeout for network streaming operations, in milliseconds.
             </summary>
         <value>The timeout in milliseconds.</value>
         <remarks>

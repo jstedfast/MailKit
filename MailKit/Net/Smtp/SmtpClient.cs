@@ -654,8 +654,8 @@ namespace MailKit.Net.Smtp {
 		/// in the uri is "smtp", a clear-text connection is made and defaults to using
 		/// port 25 if no port is specified in the URI. However, if the schema in the
 		/// uri is "smtps", an SSL connection is made using the
-		/// <see cref="ClientCertificates"/> and defaults to port 465 unless a port
-		/// is specified in the URI.</para>
+		/// <see cref="MailService.ClientCertificates"/> and defaults to port 465 unless
+		/// a port is specified in the URI.</para>
 		/// <para>It should be noted that when using a clear-text SMTP connection,
 		/// if the server advertizes support for the STARTTLS extension, the client
 		/// will automatically switch into TLS mode before authenticating unless the

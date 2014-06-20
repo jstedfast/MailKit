@@ -490,7 +490,7 @@ namespace MailKit.Net.Pop3 {
 		/// in the uri is "pop", a clear-text connection is made and defaults to using
 		/// port 110 if no port is specified in the URI. However, if the schema in the
 		/// uri is "pops", an SSL connection is made using the
-		/// <see cref="ClientCertificates"/> and defaults to port 995 unless a port
+		/// <see cref="MailService.ClientCertificates"/> and defaults to port 995 unless a port
 		/// is specified in the URI.</para>
 		/// <para>It should be noted that when using a clear-text POP3 connection,
 		/// if the server advertizes support for the STLS extension, the client

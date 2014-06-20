@@ -1,23 +1,14 @@
 <Type Name="Pop3Client" FullName="MailKit.Net.Pop3.Pop3Client">
-  <TypeSignature Language="C#" Value="public class Pop3Client : IDisposable, MailKit.IMessageSpool, System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Pop3Client extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageSpool, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable, class System.IDisposable" />
+  <TypeSignature Language="C#" Value="public class Pop3Client : MailKit.MailSpool" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Pop3Client extends MailKit.MailSpool" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.18.0.0</AssemblyVersion>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName>MailKit.MailSpool</BaseTypeName>
   </Base>
   <Interfaces>
-    <Interface>
-      <InterfaceName>MailKit.IMessageSpool</InterfaceName>
-    </Interface>
-    <Interface>
-      <InterfaceName>System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;</InterfaceName>
-    </Interface>
-    <Interface>
-      <InterfaceName>System.IDisposable</InterfaceName>
-    </Interface>
   </Interfaces>
   <Docs>
     <summary>
@@ -37,7 +28,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -56,7 +47,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
@@ -77,11 +68,11 @@
       </Docs>
     </Member>
     <Member MemberName="Authenticate">
-      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -92,7 +83,7 @@
       </Parameters>
       <Docs>
         <param name="credentials">The user's credentials.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Authenticates using the supplied credentials.
             </summary>
@@ -144,11 +135,11 @@
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
@@ -171,7 +162,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Pop3.Pop3Capabilities Capabilities" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
@@ -191,34 +182,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="ClientCertificates">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets or sets the client SSL certificates.
-            </summary>
-        <value>The client SSL certificates.</value>
-        <remarks>
-          <para>Some servers may require the client SSL certificates in order
-            to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
-        </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -230,7 +199,7 @@
       <Docs>
         <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
             be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Establishes a connection to the specified POP3 server.
             </summary>
@@ -239,7 +208,7 @@
             in the uri is "pop", a clear-text connection is made and defaults to using
             port 110 if no port is specified in the URI. However, if the schema in the
             uri is "pops", an SSL connection is made using the
-            <see cref="P:MailKit.Net.Pop3.Pop3Client.ClientCertificates" /> and defaults to port 995 unless a port
+            <see cref="P:MailKit.MailService.ClientCertificates" /> and defaults to port 995 unless a port
             is specified in the URI.</para>
           <para>It should be noted that when using a clear-text POP3 connection,
             if the server advertizes support for the STLS extension, the client
@@ -278,11 +247,11 @@
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -293,14 +262,14 @@
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Mark the specified message for deletion.
             </summary>
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
-            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
             </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid message index.
@@ -332,11 +301,11 @@
       </Docs>
     </Member>
     <Member MemberName="DeleteMessage">
-      <MemberSignature Language="C#" Value="public void DeleteMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void DeleteMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -347,14 +316,14 @@
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Mark the specified message for deletion.
             </summary>
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
-            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uid" /> is <c>null</c>.
@@ -392,11 +361,11 @@
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -407,7 +376,7 @@
       </Parameters>
       <Docs>
         <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Disconnect the service.
             </summary>
@@ -420,32 +389,11 @@
       </Docs>
     </Member>
     <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-            </summary>
-        <remarks>Call <see cref="M:MailKit.Net.Pop3.Pop3Client.Dispose" /> when you are finished using the <see cref="T:MailKit.Net.Pop3.Pop3Client" />. The
-            <see cref="M:MailKit.Net.Pop3.Pop3Client.Dispose" /> method leaves the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> in an unusable state. After
-            calling <see cref="M:MailKit.Net.Pop3.Pop3Client.Dispose" />, you must release all references to the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> so
-            the garbage collector can reclaim the memory that the <see cref="T:MailKit.Net.Pop3.Pop3Client" /> was occupying.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -472,7 +420,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 ExpirePolicy" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -493,34 +441,12 @@
         </remarks>
       </Docs>
     </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~Pop3Client ();" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Releases unmanaged resources and performs other cleanup operations before the
-            <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is reclaimed by garbage collection.
-            </summary>
-        <remarks>
-            Releases unmanaged resources and performs other cleanup operations before the
-            <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is reclaimed by garbage collection.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt; GetEnumerator ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -561,11 +487,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -576,7 +502,7 @@
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the message at the specified index.
             </summary>
@@ -614,11 +540,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeMessage GetMessage (string uid, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -629,7 +555,7 @@
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the message with the specified UID.
             </summary>
@@ -673,11 +599,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageCount">
-      <MemberSignature Language="C#" Value="public int GetMessageCount (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageCount(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override int GetMessageCount (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMessageCount(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -686,7 +612,7 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the number of messages available in the message spool.
             </summary>
@@ -721,11 +647,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -736,7 +662,7 @@
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the headers for the specified message.
             </summary>
@@ -774,11 +700,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
-      <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.HeaderList GetMessageHeaders (string uid, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -789,7 +715,7 @@
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the headers for the specified message.
             </summary>
@@ -833,11 +759,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (int index, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override int GetMessageSize (int index, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMessageSize(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -848,7 +774,7 @@
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the size of the specified message, in bytes.
             </summary>
@@ -886,11 +812,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
-      <MemberSignature Language="C#" Value="public int GetMessageSize (string uid, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override int GetMessageSize (string uid, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetMessageSize(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -901,7 +827,7 @@
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the size of the specified message, in bytes.
             </summary>
@@ -942,11 +868,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -955,7 +881,7 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the sizes for all available messages, in bytes.
             </summary>
@@ -990,11 +916,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUid">
-      <MemberSignature Language="C#" Value="public string GetMessageUid (int index, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override string GetMessageUid (int index, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string GetMessageUid(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1005,7 +931,7 @@
       </Parameters>
       <Docs>
         <param name="index">The message index.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the UID of the message at the specified index.
             </summary>
@@ -1047,11 +973,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override string[] GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -1060,7 +986,7 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Get the full list of available message UIDs.
             </summary>
@@ -1103,7 +1029,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string Implementation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1120,11 +1046,11 @@
       </Docs>
     </Member>
     <Member MemberName="IsConnected">
-      <MemberSignature Language="C#" Value="public bool IsConnected { get; }" />
+      <MemberSignature Language="C#" Value="public override bool IsConnected { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1146,7 +1072,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 LoginDelay" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1163,11 +1089,11 @@
       </Docs>
     </Member>
     <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1176,7 +1102,7 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Ping the POP3 server to keep the connection alive.
             </summary>
@@ -1204,12 +1130,32 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="Protocol">
+      <MemberSignature Language="C#" Value="protected override string Protocol { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Protocol" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the protocol supported by the message service.
+            </summary>
+        <value>The protocol.</value>
+        <remarks>
+            Gets the protocol supported by the message service.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Reset (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Reset(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1218,14 +1164,14 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Reset the state of all messages marked for deletion.
             </summary>
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
-            (see <see cref="M:MailKit.IMessageService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
             </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
@@ -1254,11 +1200,11 @@
       </Docs>
     </Member>
     <Member MemberName="SupportsUids">
-      <MemberSignature Language="C#" Value="public bool SupportsUids { get; }" />
+      <MemberSignature Language="C#" Value="public override bool SupportsUids { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool SupportsUids" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1279,57 +1225,12 @@
         </remarks>
       </Docs>
     </Member>
-    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
-      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
-      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.IEnumerator</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets an enumerator for the messages in the folder.
-            </summary>
-        <returns>The enumerator.</returns>
-        <remarks>
-            Gets an enumerator for the messages in the folder.
-            </remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
-            </exception>
-        <exception cref="T:System.UnauthorizedAccessException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
-            </exception>
-        <exception cref="T:System.OperationCanceledException">
-            The operation was canceled via the cancellation token.
-            </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
-            A POP3 protocol error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
-            A POP3 command failed.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
-            A POP3 protocol error occurred.
-            </exception>
-      </Docs>
-    </Member>
     <Member MemberName="Timeout">
-      <MemberSignature Language="C#" Value="public int Timeout { get; set; }" />
+      <MemberSignature Language="C#" Value="public override int Timeout { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

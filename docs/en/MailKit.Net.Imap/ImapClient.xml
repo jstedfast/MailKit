@@ -1,20 +1,14 @@
 <Type Name="ImapClient" FullName="MailKit.Net.Imap.ImapClient">
-  <TypeSignature Language="C#" Value="public class ImapClient : IDisposable, MailKit.IMessageStore" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapClient extends System.Object implements class MailKit.IMessageService, class MailKit.IMessageStore, class System.IDisposable" />
+  <TypeSignature Language="C#" Value="public class ImapClient : MailKit.MailStore" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapClient extends MailKit.MailStore" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.18.0.0</AssemblyVersion>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName>MailKit.MailStore</BaseTypeName>
   </Base>
   <Interfaces>
-    <Interface>
-      <InterfaceName>MailKit.IMessageStore</InterfaceName>
-    </Interface>
-    <Interface>
-      <InterfaceName>System.IDisposable</InterfaceName>
-    </Interface>
   </Interfaces>
   <Docs>
     <summary>
@@ -34,7 +28,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -53,7 +47,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
@@ -73,32 +67,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Alert">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.AlertEventArgs&gt; Alert;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.AlertEventArgs&gt; Alert" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;MailKit.AlertEventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when a remote message store receives an alert message from the server.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapClient.Alert" /> event is raised whenever the IMAP server includes an
-            <c>"[ALERT]"</c> code in a response to a client query.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Authenticate">
-      <MemberSignature Language="C#" Value="public void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Authenticate (System.Net.ICredentials credentials, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -109,9 +83,9 @@
       </Parameters>
       <Docs>
         <param name="credentials">The user's credentials.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Authenticates using the supplied credentials.
+            Authenticate using the supplied credentials.
             </summary>
         <remarks>
           <para>If the server supports one or more SASL authentication mechanisms, then
@@ -152,18 +126,18 @@
       </Docs>
     </Member>
     <Member MemberName="AuthenticationMechanisms">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.HashSet&lt;string&gt; AuthenticationMechanisms { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the authentication mechanisms supported by the IMAP server.
+            Get the authentication mechanisms supported by the IMAP server.
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
@@ -176,14 +150,14 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Imap.ImapCapabilities Capabilities" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the capabilities supported by the IMAP server.
+            Get the capabilities supported by the IMAP server.
             </summary>
         <value>The capabilities.</value>
         <remarks>
@@ -196,34 +170,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="ClientCertificates">
-      <MemberSignature Language="C#" Value="public System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates { get; set; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets or sets the client SSL certificates.
-            </summary>
-        <value>The client SSL certificates.</value>
-        <remarks>
-          <para>Some servers may require the client SSL certificates in order
-            to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
-        </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -235,16 +187,16 @@
       <Docs>
         <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
             be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Establishes a connection to the specified IMAP server.
+            Connect to the specified server.
             </summary>
         <remarks>
           <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
             in the uri is "imap", a clear-text connection is made and defaults to using
             port 143 if no port is specified in the URI. However, if the schema in the
             uri is "imaps", an SSL connection is made using the
-            <see cref="P:MailKit.Net.Imap.ImapClient.ClientCertificates" /> and defaults to port 993 unless a port
+            <see cref="P:MailKit.MailService.ClientCertificates" /> and defaults to port 993 unless a port
             is specified in the URI.</para>
           <para>It should be noted that when using a clear-text IMAP connection,
             if the server advertizes support for the STARTTLS extension, the client
@@ -282,11 +234,11 @@
       </Docs>
     </Member>
     <Member MemberName="Disconnect">
-      <MemberSignature Language="C#" Value="public void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -297,7 +249,7 @@
       </Parameters>
       <Docs>
         <param name="quit">If set to <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.</param>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Disconnect the service.
             </summary>
@@ -310,32 +262,11 @@
       </Docs>
     </Member>
     <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="public void Dispose ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
+      <MemberSignature Language="C#" Value="protected override void Dispose (bool disposing);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Releases all resource used by the <see cref="T:MailKit.Net.Imap.ImapClient" /> object.
-            </summary>
-        <remarks>Call <see cref="M:MailKit.Net.Imap.ImapClient.Dispose" /> when you are finished using the <see cref="T:MailKit.Net.Imap.ImapClient" />. The
-            <see cref="M:MailKit.Net.Imap.ImapClient.Dispose" /> method leaves the <see cref="T:MailKit.Net.Imap.ImapClient" /> in an unusable state. After
-            calling <see cref="M:MailKit.Net.Imap.ImapClient.Dispose" />, you must release all references to the <see cref="T:MailKit.Net.Imap.ImapClient" /> so
-            the garbage collector can reclaim the memory that the <see cref="T:MailKit.Net.Imap.ImapClient" /> was occupying.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Dispose">
-      <MemberSignature Language="C#" Value="protected virtual void Dispose (bool disposing);" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void Dispose(bool disposing) cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -358,11 +289,11 @@
       </Docs>
     </Member>
     <Member MemberName="EnableQuickResync">
-      <MemberSignature Language="C#" Value="public void EnableQuickResync (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnableQuickResync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void EnableQuickResync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void EnableQuickResync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -371,17 +302,17 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">Cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Enables the QRESYNC feature.
+            Enable the QRESYNC feature.
             </summary>
         <remarks>
           <para>The QRESYNC extension improves resynchronization performance of folders by
             querying the IMAP server for a list of changes when the folder is opened using the
             <see cref="M:MailKit.Net.Imap.ImapFolder.Open(MailKit.FolderAccess,MailKit.UniqueId,System.UInt64,MailKit.UniqueId[],System.Threading.CancellationToken)" />
             method.</para>
-          <para>If this feature is enabled, the <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event is replaced
-            with the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event.</para>
+          <para>If this feature is enabled, the <see cref="E:MailKit.MailFolder.MessageExpunged" /> event is replaced
+            with the <see cref="E:MailKit.MailFolder.MessagesVanished" /> event.</para>
           <para>This method needs to be called immediately after
             <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />, before the opening of any folders.</para>
         </remarks>
@@ -405,37 +336,15 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Finalize">
-      <MemberSignature Language="C#" Value="~ImapClient ();" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Releases unmanaged resources and performs other cleanup operations before the
-            <see cref="T:MailKit.Net.Imap.ImapClient" /> is reclaimed by garbage collection.
-            </summary>
-        <remarks>
-            Releases unmanaged resources and performs other cleanup operations before the
-            <see cref="T:MailKit.Net.Imap.ImapClient" /> is reclaimed by garbage collection.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="GetFolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (MailKit.FolderNamespace namespace);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.IMailFolder GetFolder (MailKit.FolderNamespace namespace);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="namespace" Type="MailKit.FolderNamespace" />
@@ -443,7 +352,7 @@
       <Docs>
         <param name="namespace">The namespace.</param>
         <summary>
-            Gets the folder for the specified namespace.
+            Get the folder for the specified namespace.
             </summary>
         <returns>The folder.</returns>
         <remarks>
@@ -466,14 +375,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetFolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (MailKit.SpecialFolder folder);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.IMailFolder GetFolder (MailKit.SpecialFolder folder);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="folder" Type="MailKit.SpecialFolder" />
@@ -481,7 +390,7 @@
       <Docs>
         <param name="folder">The type of special folder.</param>
         <summary>
-            Gets the specified special folder.
+            Get the specified special folder.
             </summary>
         <returns>The folder if available; otherwise <c>null</c>.</returns>
         <remarks>
@@ -504,14 +413,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetFolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetFolder (string path, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetFolder(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.IMailFolder GetFolder (string path, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="path" Type="System.String" />
@@ -521,7 +430,7 @@
         <param name="path">The folder path.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Gets the folder for the specified path.
+            Get the folder for the specified path.
             </summary>
         <returns>The folder.</returns>
         <remarks>
@@ -538,27 +447,27 @@
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
         </exception>
-        <exception cref="T:MailKit.FolderNotFoundException">
-            The folder could not be found.
-            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The folder could not be found.
             </exception>
       </Docs>
     </Member>
     <Member MemberName="Inbox">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder Inbox { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IFolder Inbox" />
+      <MemberSignature Language="C#" Value="public override MailKit.IMailFolder Inbox { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IMailFolder Inbox" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the Inbox folder.
+            Get the Inbox folder.
             </summary>
         <value>The Inbox folder.</value>
         <remarks>
@@ -567,18 +476,18 @@
       </Docs>
     </Member>
     <Member MemberName="IsConnected">
-      <MemberSignature Language="C#" Value="public bool IsConnected { get; }" />
+      <MemberSignature Language="C#" Value="public override bool IsConnected { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets whether or not the client is currently connected to an IMAP server.
+            Get whether or not the client is currently connected to an IMAP server.
             </summary>
         <value>
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
@@ -589,11 +498,11 @@
       </Docs>
     </Member>
     <Member MemberName="NoOp">
-      <MemberSignature Language="C#" Value="public void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void NoOp (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -602,9 +511,9 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="cancellationToken">A cancellation token.</param>
+        <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Pings the IMAP server to keep the connection alive.
+            Ping the IMAP server to keep the connection alive.
             </summary>
         <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
         <exception cref="T:System.ObjectDisposedException">
@@ -630,18 +539,18 @@
       </Docs>
     </Member>
     <Member MemberName="OtherNamespaces">
-      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection OtherNamespaces { get; }" />
+      <MemberSignature Language="C#" Value="public override MailKit.FolderNamespaceCollection OtherNamespaces { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection OtherNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the other namespaces.
+            Get the other namespaces.
             </summary>
         <value>The other namespaces.</value>
         <remarks>
@@ -650,18 +559,18 @@
       </Docs>
     </Member>
     <Member MemberName="PersonalNamespaces">
-      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection PersonalNamespaces { get; }" />
+      <MemberSignature Language="C#" Value="public override MailKit.FolderNamespaceCollection PersonalNamespaces { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection PersonalNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the personal namespaces.
+            Get the personal namespaces.
             </summary>
         <value>The personal namespaces.</value>
         <remarks>
@@ -669,19 +578,39 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Protocol">
+      <MemberSignature Language="C#" Value="protected override string Protocol { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Protocol" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the protocol supported by the message service.
+            </summary>
+        <value>The protocol.</value>
+        <remarks>
+            Gets the protocol supported by the message service.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="SharedNamespaces">
-      <MemberSignature Language="C#" Value="public MailKit.FolderNamespaceCollection SharedNamespaces { get; }" />
+      <MemberSignature Language="C#" Value="public override MailKit.FolderNamespaceCollection SharedNamespaces { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the shared namespaces.
+            Get the shared namespaces.
             </summary>
         <value>The shared namespaces.</value>
         <remarks>
@@ -694,14 +623,14 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;valuetype MailKit.ThreadingAlgorithm&gt; ThreadingAlgorithms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;MailKit.ThreadingAlgorithm&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the threading algorithms supported by the IMAP server.
+            Get the threading algorithms supported by the IMAP server.
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
@@ -711,18 +640,18 @@
       </Docs>
     </Member>
     <Member MemberName="Timeout">
-      <MemberSignature Language="C#" Value="public int Timeout { get; set; }" />
+      <MemberSignature Language="C#" Value="public override int Timeout { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets or sets the timeout for network streaming operations, in milliseconds.
+            Get or set the timeout for network streaming operations, in milliseconds.
             </summary>
         <value>The timeout in milliseconds.</value>
         <remarks>

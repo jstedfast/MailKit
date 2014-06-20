@@ -207,14 +207,14 @@ namespace MailKit.Net.Imap {
 		/// <para>This variant of the <see cref="Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// method is meant for quick resynchronization of the folder. Before calling this method,
 		/// the <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method MUST be called.</para>
-		/// <para>You should also make sure to add listeners to the <see cref="MessagesVanished"/> and
-		/// <see cref="MessageFlagsChanged"/> events to get notifications of changes since
+		/// <para>You should also make sure to add listeners to the <see cref="MailFolder.MessagesVanished"/> and
+		/// <see cref="MailFolder.MessageFlagsChanged"/> events to get notifications of changes since
 		/// the last time the folder was opened.</para>
 		/// </remarks>
 		/// <returns>The <see cref="FolderAccess"/> state of the folder.</returns>
 		/// <param name="access">The requested folder access.</param>
-		/// <param name="uidValidity">The last known <see cref="UidValidity"/> value.</param>
-		/// <param name="highestModSeq">The last known <see cref="HighestModSeq"/> value.</param>
+		/// <param name="uidValidity">The last known <see cref="MailFolder.UidValidity"/> value.</param>
+		/// <param name="highestModSeq">The last known <see cref="MailFolder.HighestModSeq"/> value.</param>
 		/// <param name="uids">The last known list of unique message identifiers.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -427,7 +427,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
 		/// <para>-or-</para>
-		/// <para>The <see cref="DirectorySeparator"/> is nil, and thus child folders cannot be created.</para>
+		/// <para>The <see cref="MailFolder.DirectorySeparator"/> is nil, and thus child folders cannot be created.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -784,7 +784,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="name"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="name"/> is either an empty string or contains the <see cref="DirectorySeparator"/>.
+		/// <paramref name="name"/> is either an empty string or contains the <see cref="MailFolder.DirectorySeparator"/>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -967,12 +967,12 @@ namespace MailKit.Net.Imap {
 		/// Expunges the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the IMAP server supports the QRESYNC
+		/// <para>Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
+		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
-		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MessageExpunged"/> event.</para>
+		/// the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than the
+		/// <see cref="MailFolder.MessageExpunged"/> event.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1015,12 +1015,12 @@ namespace MailKit.Net.Imap {
 		/// Expunges the specified uids, permanently removing them from the folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the IMAP server supports the QRESYNC
+		/// <para>Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
+		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
-		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MessageExpunged"/> event.</para>
+		/// the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than the
+		/// <see cref="MailFolder.MessageExpunged"/> event.</para>
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1128,7 +1128,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -2069,8 +2069,8 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// then this method will emit <see cref="MailFolder.MessagesVanished"/> events for messages
+		/// that have vanished since the specified mod-sequence value.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -2231,8 +2231,8 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// then this method will emit <see cref="MailFolder.MessagesVanished"/> events for messages
+		/// that have vanished since the specified mod-sequence value.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum UID.</param>
@@ -3552,7 +3552,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
@@ -3561,6 +3561,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3586,6 +3588,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
+			if ((flags & AcceptedFlags) == MessageFlags.None)
+				return;
+
 			ModifyFlags (uids, null, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
@@ -3597,7 +3605,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
@@ -3606,6 +3614,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3631,6 +3641,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			ModifyFlags (uids, null, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
@@ -3642,7 +3655,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
@@ -3689,7 +3702,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
@@ -3698,6 +3711,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3726,6 +3741,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return ModifyFlags (uids, modseq, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
@@ -3739,7 +3757,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
@@ -3748,6 +3766,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3776,6 +3796,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return ModifyFlags (uids, modseq, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
@@ -3789,7 +3812,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="uids"/> is <c>null</c>.
@@ -3880,7 +3903,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
@@ -3889,6 +3912,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3914,6 +3939,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
+			if ((flags & AcceptedFlags) == MessageFlags.None)
+				return;
+
 			ModifyFlags (indexes, null, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
@@ -3925,7 +3956,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
@@ -3934,6 +3965,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -3959,6 +3992,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			ModifyFlags (indexes, null, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
@@ -3970,7 +4006,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
@@ -4017,7 +4053,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
@@ -4026,6 +4062,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4054,6 +4092,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return ModifyFlags (indexes, modseq, flags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
@@ -4067,7 +4108,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
@@ -4076,6 +4117,8 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -4104,6 +4147,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return ModifyFlags (indexes, modseq, flags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
 
@@ -4117,7 +4163,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.

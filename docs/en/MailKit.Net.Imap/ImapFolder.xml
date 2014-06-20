@@ -1,20 +1,14 @@
 <Type Name="ImapFolder" FullName="MailKit.Net.Imap.ImapFolder">
-  <TypeSignature Language="C#" Value="public class ImapFolder : MailKit.IFolder, System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapFolder extends System.Object implements class MailKit.IFolder, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable" />
+  <TypeSignature Language="C#" Value="public class ImapFolder : MailKit.MailFolder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapFolder extends MailKit.MailFolder" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.18.0.0</AssemblyVersion>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Object</BaseTypeName>
+    <BaseTypeName>MailKit.MailFolder</BaseTypeName>
   </Base>
   <Interfaces>
-    <Interface>
-      <InterfaceName>MailKit.IFolder</InterfaceName>
-    </Interface>
-    <Interface>
-      <InterfaceName>System.Collections.Generic.IEnumerable&lt;MimeKit.MimeMessage&gt;</InterfaceName>
-    </Interface>
   </Interfaces>
   <Docs>
     <summary>
@@ -25,54 +19,12 @@
             </remarks>
   </Docs>
   <Members>
-    <Member MemberName="AcceptedFlags">
-      <MemberSignature Language="C#" Value="public MailKit.MessageFlags AcceptedFlags { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.MessageFlags AcceptedFlags" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.MessageFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the accepted flags.
-            </summary>
-        <value>The accepted flags.</value>
-        <remarks>
-            The accepted flags are the message flags that will be accepted and persist
-            for the current session. For the set of flags that will persist between
-            sessions, see the <see cref="P:MailKit.Net.Imap.ImapFolder.PermanentFlags" /> property.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Access">
-      <MemberSignature Language="C#" Value="public MailKit.FolderAccess Access { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.FolderAccess Access" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.FolderAccess</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the read/write access of the folder.
-            </summary>
-        <value>The read/write access.</value>
-        <remarks>
-            Gets the read/write access of the folder.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public void AddFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void AddFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -86,7 +38,7 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages.
@@ -98,8 +50,13 @@
           <paramref name="uids" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -125,11 +82,11 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public void AddFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void AddFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -143,7 +100,7 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages.
@@ -155,8 +112,13 @@
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -182,11 +144,11 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] AddFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] AddFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] AddFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] AddFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -202,7 +164,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -215,8 +177,13 @@
           <paramref name="uids" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -245,11 +212,11 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public int[] AddFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] AddFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override int[] AddFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32[] AddFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -265,7 +232,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to add.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -278,8 +245,13 @@
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -308,11 +280,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags = MailKit.MessageFlags.None, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -357,11 +329,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -415,11 +387,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, DateTimeOffset date, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.DateTimeOffset date, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override Nullable&lt;MailKit.UniqueId&gt; Append (MimeKit.MimeMessage message, MailKit.MessageFlags flags, DateTimeOffset date, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.DateTimeOffset date, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -466,11 +438,11 @@
       </Docs>
     </Member>
     <Member MemberName="Append">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, DateTimeOffset[] dates, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.DateTimeOffset[] dates, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] Append (MimeKit.MimeMessage[] messages, MailKit.MessageFlags[] flags, DateTimeOffset[] dates, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] Append(class MimeKit.MimeMessage[] messages, valuetype MailKit.MessageFlags[] flags, valuetype System.DateTimeOffset[] dates, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -528,32 +500,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Attributes">
-      <MemberSignature Language="C#" Value="public MailKit.FolderAttributes Attributes { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.FolderAttributes Attributes" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.FolderAttributes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the folder attributes.
-            </summary>
-        <value>The folder attributes.</value>
-        <remarks>
-            Gets the folder attributes.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Check">
-      <MemberSignature Language="C#" Value="public void Check (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Check(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Check (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Check(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -594,11 +546,11 @@
       </Docs>
     </Member>
     <Member MemberName="Close">
-      <MemberSignature Language="C#" Value="public void Close (bool expunge, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Close(bool expunge, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Close (bool expunge = false, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close(bool expunge, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -641,18 +593,18 @@
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] CopyTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] CopyTo(valuetype MailKit.UniqueId[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] CopyTo (MailKit.UniqueId[] uids, MailKit.IMailFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] CopyTo(valuetype MailKit.UniqueId[] uids, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
+        <Parameter Name="destination" Type="MailKit.IMailFolder" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
@@ -674,6 +626,9 @@
             <paramref name="destination" /> is <c>null</c>.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
           <para>One or more of the <paramref name="uids" /> is invalid.</para>
           <para>-or-</para>
           <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
@@ -706,18 +661,18 @@
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
-      <MemberSignature Language="C#" Value="public void CopyTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(int32[] indexes, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void CopyTo (int[] indexes, MailKit.IMailFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void CopyTo(int32[] indexes, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
+        <Parameter Name="destination" Type="MailKit.IMailFolder" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
@@ -738,6 +693,9 @@
             <paramref name="destination" /> is <c>null</c>.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
           <para>One or more of the <paramref name="indexes" /> is invalid.</para>
           <para>-or-</para>
           <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
@@ -766,54 +724,15 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Count">
-      <MemberSignature Language="C#" Value="public int Count { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the total number of messages in the folder.
-            </summary>
-        <value>The total number of messages.</value>
-        <remarks>
-            Gets the total number of messages in the folder.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="CountChanged">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;EventArgs&gt; CountChanged;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; CountChanged" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when the message count changes.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.CountChanged" /> event is emitted whenever the <see cref="P:MailKit.Net.Imap.ImapFolder.Count" /> value changes.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder Create (string name, bool isMessageFolder, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder Create(string name, bool isMessageFolder, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.IMailFolder Create (string name, bool isMessageFolder, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder Create(string name, bool isMessageFolder, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
@@ -844,7 +763,7 @@
         <exception cref="T:System.InvalidOperationException">
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
           <para>-or-</para>
-          <para>The <see cref="P:MailKit.Net.Imap.ImapFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.</para>
+          <para>The <see cref="P:MailKit.MailFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -861,11 +780,11 @@
       </Docs>
     </Member>
     <Member MemberName="Delete">
-      <MemberSignature Language="C#" Value="public void Delete (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Delete(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Delete (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Delete(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -903,72 +822,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Deleted">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;EventArgs&gt; Deleted;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; Deleted" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when the folder is deleted.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.Deleted" /> event is emitted when the folder is deleted.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="DirectorySeparator">
-      <MemberSignature Language="C#" Value="public char DirectorySeparator { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance char DirectorySeparator" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Char</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the directory separator.
-            </summary>
-        <value>The directory separator.</value>
-        <remarks>
-            Gets the directory separator.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Exists">
-      <MemberSignature Language="C#" Value="public bool Exists { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance bool Exists" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets a value indicating whether the folder exists.
-            </summary>
-        <value>
-          <c>true</c> if the folder exists; otherwise, <c>false</c>.</value>
-        <remarks>
-            Gets a value indicating whether the folder exists.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Expunge">
-      <MemberSignature Language="C#" Value="public void Expunge (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Expunge (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Expunge(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -982,12 +841,12 @@
             Expunges the folder, permanently removing all messages marked for deletion.
             </summary>
         <remarks>
-          <para>Normally, an <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event will be emitted for each
-            message that is expunged. However, if the IMAP server supports the QRESYNC
+          <para>Normally, an <see cref="E:MailKit.MailFolder.MessageExpunged" /> event will be emitted
+            for each message that is expunged. However, if the IMAP server supports the QRESYNC
             extension and it has been enabled via the
             <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" /> method, then
-            the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event will be emitted rather than the
-            <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event.</para>
+            the <see cref="E:MailKit.MailFolder.MessagesVanished" /> event will be emitted rather than the
+            <see cref="E:MailKit.MailFolder.MessageExpunged" /> event.</para>
         </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -1014,11 +873,11 @@
       </Docs>
     </Member>
     <Member MemberName="Expunge">
-      <MemberSignature Language="C#" Value="public void Expunge (MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Expunge(valuetype MailKit.UniqueId[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Expunge (MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Expunge(valuetype MailKit.UniqueId[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1034,19 +893,22 @@
             Expunges the specified uids, permanently removing them from the folder.
             </summary>
         <remarks>
-          <para>Normally, an <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event will be emitted for each
-            message that is expunged. However, if the IMAP server supports the QRESYNC
+          <para>Normally, an <see cref="E:MailKit.MailFolder.MessageExpunged" /> event will be emitted
+            for each message that is expunged. However, if the IMAP server supports the QRESYNC
             extension and it has been enabled via the
             <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" /> method, then
-            the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event will be emitted rather than the
-            <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event.</para>
+            the <see cref="E:MailKit.MailFolder.MessagesVanished" /> event will be emitted rather than the
+            <see cref="E:MailKit.MailFolder.MessageExpunged" /> event.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-            The list of uids contained one or more invalid values.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -1071,31 +933,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Expunged">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessageEventArgs&gt; Expunged;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessageEventArgs&gt; Expunged" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;MailKit.MessageEventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when a message is expunged from the folder.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.Expunged" /> event is emitted when the IMAP server sends an untagged EXPUNGE response.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1123,8 +966,11 @@
           <paramref name="items" /> is empty.
             </exception>
         <exception cref="T:System.ArgumentException">
-            One or more of the <paramref name="uids" /> is invalid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -1150,11 +996,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1182,8 +1028,11 @@
           <paramref name="items" /> is empty.
             </exception>
         <exception cref="T:System.ArgumentException">
-            One or more of the <paramref name="indexes" /> is invalid.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -1209,11 +1058,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1267,11 +1116,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1294,8 +1143,8 @@
         <remarks>
           <para>If the IMAP server supports the QRESYNC extension and the application has
             enabled this feature via <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages
+            that have vanished since the specified mod-sequence value.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
@@ -1304,8 +1153,11 @@
           <paramref name="items" /> is empty.
             </exception>
         <exception cref="T:System.ArgumentException">
-            One or more of the <paramref name="uids" /> is invalid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -1334,11 +1186,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1396,11 +1248,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int[] indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1430,8 +1282,11 @@
           <paramref name="items" /> is empty.
             </exception>
         <exception cref="T:System.ArgumentException">
-            One or more of the <paramref name="indexes" /> is invalid.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -1460,11 +1315,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1489,8 +1344,8 @@
         <remarks>
           <para>If the IMAP server supports the QRESYNC extension and the application has
             enabled this feature via <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages
+            that have vanished since the specified mod-sequence value.</para>
         </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="min" /> is invalid.
@@ -1526,11 +1381,11 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.MessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.MessageSummary&gt;</ReturnType>
@@ -1592,52 +1447,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="FirstUnread">
-      <MemberSignature Language="C#" Value="public int FirstUnread { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance int32 FirstUnread" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the index of the first unread message in the folder.
-            </summary>
-        <value>The index of the first unread message.</value>
-        <remarks>
-            This value will only be set after the folder has been opened.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="FullName">
-      <MemberSignature Language="C#" Value="public string FullName { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the full name of the folder.
-            </summary>
-        <value>The full name of the folder.</value>
-        <remarks>
-            This is the equivalent of the full path of a file on a file system.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1689,11 +1504,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1745,11 +1560,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1804,11 +1619,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeEntity GetBodyPart (int index, MailKit.BodyPart part, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1863,11 +1678,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt; GetEnumerator ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -1894,11 +1709,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (MailKit.UniqueId uid, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(valuetype MailKit.UniqueId uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeMessage GetMessage (MailKit.UniqueId uid, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeMessage GetMessage(valuetype MailKit.UniqueId uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -1948,11 +1763,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
-      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MimeKit.MimeMessage GetMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -1999,11 +1814,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (MailKit.UniqueId uid, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2064,11 +1879,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (int index, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2129,11 +1944,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (MailKit.UniqueId uid, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (MailKit.UniqueId uid, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2199,11 +2014,11 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public System.IO.Stream GetStream (int index, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (int index, MailKit.BodyPart part, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2269,14 +2084,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetSubfolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder GetSubfolder (string name, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.IFolder GetSubfolder(string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.IMailFolder GetSubfolder (string name, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetSubfolder(string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="name" Type="System.String" />
@@ -2288,7 +2103,7 @@
         <summary>
             Gets the specified subfolder.
             </summary>
-        <returns>The subfolder, if available; otherwise, <c>null</c>.</returns>
+        <returns>The subfolder.</returns>
         <remarks>
             Gets the specified subfolder.
             </remarks>
@@ -2296,7 +2111,7 @@
           <paramref name="name" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="name" /> is either an empty string or contains the <see cref="P:MailKit.Net.Imap.ImapFolder.DirectorySeparator" />.
+          <paramref name="name" /> is either an empty string or contains the <see cref="P:MailKit.MailFolder.DirectorySeparator" />.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
@@ -2310,26 +2125,26 @@
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The requested folder could not be found.
+            </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             The server's response contained unexpected tokens.
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
             </exception>
-        <exception cref="T:MailKit.FolderNotFoundException">
-            The requested folder could not be found.
-            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt; GetSubfolders (bool subscribedOnly, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IFolder&gt; GetSubfolders(bool subscribedOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IEnumerable&lt;MailKit.IMailFolder&gt; GetSubfolders (bool subscribedOnly = false, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMailFolder&gt; GetSubfolders(bool subscribedOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IFolder&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMailFolder&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="subscribedOnly" Type="System.Boolean" />
@@ -2365,53 +2180,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="HighestModSeq">
-      <MemberSignature Language="C#" Value="public ulong HighestModSeq { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 HighestModSeq" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.UInt64</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the highest mod-sequence value of all messages in the mailbox.
-            </summary>
-        <value>The highest mod-sequence value.</value>
-        <remarks>
-            This property is only available if the IMAP server supports the CONDSTORE extension.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="IsNamespace">
-      <MemberSignature Language="C#" Value="public bool IsNamespace { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance bool IsNamespace" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets whether or not the folder is a namespace folder.
-            </summary>
-        <value>
-          <c>true</c> if the folder is a namespace folder; otherwise, <c>false</c>.</value>
-        <remarks>
-            Gets whether or not the folder is a namespace folder.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="IsOpen">
-      <MemberSignature Language="C#" Value="public bool IsOpen { get; }" />
+      <MemberSignature Language="C#" Value="public override bool IsOpen { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool IsOpen" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2427,59 +2201,19 @@
             </remarks>
       </Docs>
     </Member>
-    <Member MemberName="IsSubscribed">
-      <MemberSignature Language="C#" Value="public bool IsSubscribed { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance bool IsSubscribed" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets a value indicating whether the folder is subscribed.
-            </summary>
-        <value>
-          <c>true</c> if the folder is subscribed; otherwise, <c>false</c>.</value>
-        <remarks>
-            Gets a value indicating whether the folder is subscribed.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="MessageFlagsChanged">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessageFlagsChangedEventArgs&gt; MessageFlagsChanged;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessageFlagsChangedEventArgs&gt; MessageFlagsChanged" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;MailKit.MessageFlagsChangedEventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when flags changed on a message.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> event is emitted when the IMAP server sends an untagged FETCH response containing FLAGS.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="MoveTo">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] MoveTo (MailKit.UniqueId[] uids, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] MoveTo(valuetype MailKit.UniqueId[] uids, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] MoveTo (MailKit.UniqueId[] uids, MailKit.IMailFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] MoveTo(valuetype MailKit.UniqueId[] uids, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="uids" Type="MailKit.UniqueId[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
+        <Parameter Name="destination" Type="MailKit.IMailFolder" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
@@ -2505,6 +2239,9 @@
             <paramref name="destination" /> is <c>null</c>.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
           <para>One or more of the <paramref name="uids" /> is invalid.</para>
           <para>-or-</para>
           <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
@@ -2537,18 +2274,18 @@
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
-      <MemberSignature Language="C#" Value="public void MoveTo (int[] indexes, MailKit.IFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void MoveTo(int32[] indexes, class MailKit.IFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void MoveTo (int[] indexes, MailKit.IMailFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void MoveTo(int32[] indexes, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="indexes" Type="System.Int32[]" />
-        <Parameter Name="destination" Type="MailKit.IFolder" />
+        <Parameter Name="destination" Type="MailKit.IMailFolder" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
@@ -2573,6 +2310,9 @@
             <paramref name="destination" /> is <c>null</c>.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
           <para>One or more of the <paramref name="indexes" /> is invalid.</para>
           <para>-or-</para>
           <para>The destination folder does not belong to the <see cref="T:MailKit.Net.Imap.ImapClient" />.</para>
@@ -2601,32 +2341,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="C#" Value="public string Name { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the name of the folder.
-            </summary>
-        <value>The name of the folder.</value>
-        <remarks>
-            This is the equivalent of the file name of a file on the file system.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Open">
-      <MemberSignature Language="C#" Value="public MailKit.FolderAccess Open (MailKit.FolderAccess access, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.FolderAccess Open (MailKit.FolderAccess access, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderAccess</ReturnType>
@@ -2669,11 +2389,11 @@
       </Docs>
     </Member>
     <Member MemberName="Open">
-      <MemberSignature Language="C#" Value="public MailKit.FolderAccess Open (MailKit.FolderAccess access, MailKit.UniqueId uidValidity, ulong highestModSeq, MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype MailKit.UniqueId uidValidity, unsigned int64 highestModSeq, valuetype MailKit.UniqueId[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.FolderAccess Open (MailKit.FolderAccess access, MailKit.UniqueId uidValidity, ulong highestModSeq, MailKit.UniqueId[] uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype MailKit.UniqueId uidValidity, unsigned int64 highestModSeq, valuetype MailKit.UniqueId[] uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderAccess</ReturnType>
@@ -2687,8 +2407,8 @@
       </Parameters>
       <Docs>
         <param name="access">The requested folder access.</param>
-        <param name="uidValidity">The last known <see cref="P:MailKit.Net.Imap.ImapFolder.UidValidity" /> value.</param>
-        <param name="highestModSeq">The last known <see cref="P:MailKit.Net.Imap.ImapFolder.HighestModSeq" /> value.</param>
+        <param name="uidValidity">The last known <see cref="P:MailKit.MailFolder.UidValidity" /> value.</param>
+        <param name="highestModSeq">The last known <see cref="P:MailKit.MailFolder.HighestModSeq" /> value.</param>
         <param name="uids">The last known list of unique message identifiers.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -2699,8 +2419,8 @@
           <para>This variant of the <see cref="M:MailKit.Net.Imap.ImapFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
             method is meant for quick resynchronization of the folder. Before calling this method,
             the <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" /> method MUST be called.</para>
-          <para>You should also make sure to add listeners to the <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> and
-            <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events to get notifications of changes since
+          <para>You should also make sure to add listeners to the <see cref="E:MailKit.MailFolder.MessagesVanished" /> and
+            <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events to get notifications of changes since
             the last time the folder was opened.</para>
         </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -2731,91 +2451,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="ParentFolder">
-      <MemberSignature Language="C#" Value="public MailKit.IFolder ParentFolder { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IFolder ParentFolder" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.IFolder</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the parent folder.
-            </summary>
-        <value>The parent folder.</value>
-        <remarks>
-            Root-level folders do not have a parent folder.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="PermanentFlags">
-      <MemberSignature Language="C#" Value="public MailKit.MessageFlags PermanentFlags { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.MessageFlags PermanentFlags" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.MessageFlags</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the permanent flags.
-            </summary>
-        <value>The permanent flags.</value>
-        <remarks>
-            The permanent flags are the message flags that will persist between sessions.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Recent">
-      <MemberSignature Language="C#" Value="public int Recent { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance int32 Recent" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the number of recently added messages.
-            </summary>
-        <value>The number of recently added messages.</value>
-        <remarks>
-            Gets the number of recently added messages.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="RecentChanged">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;EventArgs&gt; RecentChanged;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; RecentChanged" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when the recent message count changes.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.RecentChanged" /> event is emitted whenever the <see cref="P:MailKit.Net.Imap.ImapFolder.Recent" /> value changes.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public void RemoveFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void RemoveFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2829,7 +2470,7 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages.
@@ -2841,8 +2482,13 @@
           <paramref name="uids" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -2868,11 +2514,11 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public void RemoveFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void RemoveFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2886,7 +2532,7 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages.
@@ -2898,8 +2544,13 @@
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -2925,11 +2576,11 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] RemoveFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] RemoveFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] RemoveFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] RemoveFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -2945,7 +2596,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -2958,8 +2609,13 @@
           <paramref name="uids" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -2988,11 +2644,11 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public int[] RemoveFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] RemoveFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override int[] RemoveFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32[] RemoveFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -3008,7 +2664,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to remove.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3021,8 +2677,13 @@
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3051,17 +2712,17 @@
       </Docs>
     </Member>
     <Member MemberName="Rename">
-      <MemberSignature Language="C#" Value="public void Rename (MailKit.IFolder parent, string name, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Rename(class MailKit.IFolder parent, string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Rename (MailKit.IMailFolder parent, string name, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Rename(class MailKit.IMailFolder parent, string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="parent" Type="MailKit.IFolder" />
+        <Parameter Name="parent" Type="MailKit.IMailFolder" />
         <Parameter Name="name" Type="System.String" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -3111,31 +2772,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Renamed">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.FolderRenamedEventArgs&gt; Renamed;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.FolderRenamedEventArgs&gt; Renamed" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;MailKit.FolderRenamedEventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when the folder is renamed.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.Renamed" /> event is emitted when the folder is renamed.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -3152,7 +2794,7 @@
             </summary>
         <returns>An array of matching UIDs.</returns>
         <remarks>
-            The returned array of unique identifiers can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            The returned array of unique identifiers can be used with <see cref="M:MailKit.IMailFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="query" /> is <c>null</c>.
@@ -3185,11 +2827,11 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] Search (MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] Search(class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -3210,7 +2852,7 @@
         <returns>An array of matching UIDs in the specified sort order.</returns>
         <remarks>
             The returned array of unique identifiers will be sorted in the preferred order and
-            can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            can be used with <see cref="M:MailKit.IMailFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -3252,11 +2894,11 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -3275,7 +2917,7 @@
             </summary>
         <returns>An array of matching UIDs.</returns>
         <remarks>
-            The returned array of unique identifiers can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            The returned array of unique identifiers can be used with <see cref="M:MailKit.IMailFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -3285,8 +2927,11 @@
             <paramref name="query" /> is <c>null</c>.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains one or more invalid UIDs.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.NotSupportedException">
             One or more search terms in the <paramref name="query" /> are not supported by the IMAP server.
             </exception>
@@ -3315,11 +2960,11 @@
       </Docs>
     </Member>
     <Member MemberName="Search">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] Search (MailKit.UniqueId[] uids, MailKit.Search.SearchQuery query, MailKit.Search.OrderBy[] orderBy, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] Search(valuetype MailKit.UniqueId[] uids, class MailKit.Search.SearchQuery query, class MailKit.Search.OrderBy[] orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -3339,10 +2984,10 @@
             Searches the subset of UIDs in the folder for messages matching the specified query,
             returning them in the preferred sort order.
             </summary>
-        <returns>An array of matching UIDs.</returns>
+        <returns>An array of matching UIDs in the specified sort order.</returns>
         <remarks>
             The returned array of unique identifiers will be sorted in the preferred order and
-            can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            can be used with <see cref="M:MailKit.IMailFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -3356,7 +3001,9 @@
         </exception>
         <exception cref="T:System.ArgumentException">
           <para>
-            <paramref name="uids" /> contains one or more invalid UIDs.</para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
           <para>-or-</para>
           <para>
             <paramref name="orderBy" /> is empty.</para>
@@ -3391,11 +3038,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public void SetFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void SetFlags (MailKit.UniqueId[] uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(valuetype MailKit.UniqueId[] uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3409,7 +3056,7 @@
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages.
@@ -3421,8 +3068,11 @@
           <paramref name="uids" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3448,11 +3098,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public void SetFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void SetFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void SetFlags (int[] indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(int32[] indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3466,7 +3116,7 @@
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages.
@@ -3478,8 +3128,11 @@
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3505,11 +3158,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public MailKit.UniqueId[] SetFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype MailKit.UniqueId[] SetFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.UniqueId[] SetFlags (MailKit.UniqueId[] uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.UniqueId[] SetFlags(valuetype MailKit.UniqueId[] uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>
@@ -3525,7 +3178,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3538,8 +3191,11 @@
           <paramref name="uids" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains at least one invalid uid.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3568,11 +3224,11 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public int[] SetFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] SetFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override int[] SetFlags (int[] indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32[] SetFlags(int32[] indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32[]</ReturnType>
@@ -3588,7 +3244,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to set.</param>
-        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.Net.Imap.ImapFolder.MessageFlagsChanged" /> events will be emitted.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3601,8 +3257,11 @@
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="indexes" /> contains at least one invalid index.
-            </exception>
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
@@ -3631,11 +3290,11 @@
       </Docs>
     </Member>
     <Member MemberName="Status">
-      <MemberSignature Language="C#" Value="public void Status (MailKit.StatusItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Status(valuetype MailKit.StatusItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Status (MailKit.StatusItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Status(valuetype MailKit.StatusItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3688,11 +3347,11 @@
       </Docs>
     </Member>
     <Member MemberName="Subscribe">
-      <MemberSignature Language="C#" Value="public void Subscribe (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Subscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Subscribe (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Subscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3728,86 +3387,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Subscribed">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;EventArgs&gt; Subscribed;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; Subscribed" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when the folder is subscribed.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.Subscribed" /> event is emitted when the folder is subscribed.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="SupportsModSeq">
-      <MemberSignature Language="C#" Value="public bool SupportsModSeq { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsModSeq" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets whether or not the folder supports mod-sequences.
-            </summary>
-        <value>
-          <c>true</c> if supports mod-sequences; otherwise, <c>false</c>.</value>
-        <remarks>
-          <para>If mod-sequences are not supported by the folder, then all of the APIs that take a modseq
-            argument will throw <see cref="T:System.NotSupportedException" /> and should not be used.</para>
-          <para>There are two reasons that a <see cref="T:MailKit.Net.Imap.ImapFolder" /> might not support mod-sequences:
-            <list type="bullet"><item>The IMAP server does not support the CONDSTORE extension (<see cref="F:MailKit.Net.Imap.ImapCapabilities.CondStore" />).</item><item>The SELECT or EXAMINE command returned the NOMODSEQ response code.</item></list></para>
-        </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
-      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
-      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Collections.IEnumerator</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Gets an enumerator for the messages in the folder.
-            </summary>
-        <returns>The enumerator.</returns>
-        <remarks>
-            Gets an enumerator for the messages in the folder.
-            </remarks>
-        <exception cref="T:System.ObjectDisposedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
-        </exception>
-      </Docs>
-    </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageThread[]</ReturnType>
@@ -3826,7 +3411,7 @@
             </summary>
         <returns>An array of message threads.</returns>
         <remarks>
-            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IMailFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="algorithm" /> is not supported.
@@ -3864,11 +3449,11 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public MailKit.MessageThread[] Thread (MailKit.UniqueId[] uids, MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.UniqueId[] uids, valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override MailKit.MessageThread[] Thread (MailKit.UniqueId[] uids, MailKit.ThreadingAlgorithm algorithm, MailKit.Search.SearchQuery query, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.MessageThread[] Thread(valuetype MailKit.UniqueId[] uids, valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageThread[]</ReturnType>
@@ -3889,7 +3474,7 @@
             </summary>
         <returns>An array of message threads.</returns>
         <remarks>
-            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
+            The <see cref="P:MailKit.MessageThread.UniqueId" /> can be used with <see cref="M:MailKit.IMailFolder.GetMessage(MailKit.UniqueId,System.Threading.CancellationToken)" />.
             </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="algorithm" /> is not supported.
@@ -3902,8 +3487,11 @@
             <paramref name="query" /> is <c>null</c>.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
-          <paramref name="uids" /> contains one or more invalid UIDs.
-            </exception>
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
         <exception cref="T:System.NotSupportedException">
           <para>One or more search terms in the <paramref name="query" /> are not supported by the IMAP server.</para>
           <para>-or-</para>
@@ -3933,116 +3521,12 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.String</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>
-            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.
-            </summary>
-        <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.</returns>
-        <remarks>
-            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.Net.Imap.ImapFolder" />.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="UidNext">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; UidNext { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UidNext" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the UID that the folder will assign to the next message that is added.
-            </summary>
-        <value>The next UID.</value>
-        <remarks>
-            This value will only be set after the folder has been opened.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="UidValidity">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; UidValidity { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UidValidity" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the UID validity.
-            </summary>
-        <value>The UID validity.</value>
-        <remarks>
-          <para>UIDs are only valid so long as the UID validity value remains unchanged. If and when
-            the folder's <see cref="P:MailKit.Net.Imap.ImapFolder.UidValidity" /> is changed, a client MUST discard its cache of UIDs
-            along with any summary information that it may have and re-query the folder.</para>
-          <para>This value will only be set after the folder has been opened.</para>
-        </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="UidValidityChanged">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;EventArgs&gt; UidValidityChanged;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; UidValidityChanged" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when the UID validity changes.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.UidValidityChanged" /> event is emitted whenever the <see cref="P:MailKit.Net.Imap.ImapFolder.UidValidity" /> value changes.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Unread">
-      <MemberSignature Language="C#" Value="public int Unread { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance int32 Unread" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Gets the number of unread messages in the folder.
-            </summary>
-        <value>The number of unread messages.</value>
-        <remarks>
-            This value will only be set after calling <see cref="M:MailKit.Net.Imap.ImapFolder.Status(MailKit.StatusItems,System.Threading.CancellationToken)" />
-            with <see cref="F:MailKit.StatusItems.Unread" />.
-            </remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Unsubscribe">
-      <MemberSignature Language="C#" Value="public void Unsubscribe (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Unsubscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Unsubscribe (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Unsubscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4076,44 +3560,6 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
             </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="Unsubscribed">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;EventArgs&gt; Unsubscribed;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class System.EventArgs&gt; Unsubscribed" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;System.EventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when the folder is unsubscribed.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.Unsubscribed" /> event is emitted when the folder is unsubscribed.
-            </remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="Vanished">
-      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessagesVanishedEventArgs&gt; Vanished;" />
-      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessagesVanishedEventArgs&gt; Vanished" />
-      <MemberType>Event</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.EventHandler&lt;MailKit.MessagesVanishedEventArgs&gt;</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Occurs when a message vanishes from the folder.
-            </summary>
-        <remarks>
-            The <see cref="E:MailKit.Net.Imap.ImapFolder.Vanished" /> event is emitted when the IMAP server sends an untagged VANISHED response.
-            </remarks>
       </Docs>
     </Member>
   </Members>

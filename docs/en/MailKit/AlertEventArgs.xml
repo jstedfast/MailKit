@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AlertEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.18.0.0</AssemblyVersion>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.EventArgs</BaseTypeName>
@@ -14,7 +14,7 @@
             Alert event arguments.
             </summary>
     <remarks>
-            Some <see cref="T:MailKit.IMessageStore" /> implementations, such as
+            Some <see cref="T:MailKit.IMailStore" /> implementations, such as
             <see cref="T:MailKit.Net.Imap.ImapClient" />, will emit Alert
             events when they receive alert messages from the server.
             </remarks>
@@ -25,7 +25,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string Message" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

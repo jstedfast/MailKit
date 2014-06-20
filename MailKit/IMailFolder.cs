@@ -512,7 +512,7 @@ namespace MailKit {
 		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
@@ -526,7 +526,7 @@ namespace MailKit {
 		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
@@ -540,7 +540,7 @@ namespace MailKit {
 		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
@@ -555,7 +555,7 @@ namespace MailKit {
 		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
-		/// <see cref="MailStore.EnableQuickResync(CancellationToken)"/> method, then
+		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
@@ -573,7 +573,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken));
+		UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -585,7 +585,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken));
+		Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Append the specified message to the folder.
@@ -784,7 +784,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
 		/// </remarks>
@@ -800,7 +800,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
 		/// </remarks>
@@ -842,7 +842,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>If the mail store supports the quick resynchronization feature and the application has
-		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
 		/// </remarks>
@@ -859,7 +859,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>If the mail store supports the quick resynchronization feature and the application has
-		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
 		/// since the specified mod-sequence value.</para>
 		/// </remarks>

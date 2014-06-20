@@ -1411,7 +1411,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Looks up and sets the <see cref="ImapFolder.ParentFolder"/> property of each of the folders.
+		/// Looks up and sets the <see cref="MailFolder.ParentFolder"/> property of each of the folders.
 		/// </summary>
 		/// <param name="folders">The IMAP folders.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

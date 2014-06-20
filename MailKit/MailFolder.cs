@@ -1401,7 +1401,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -1434,7 +1434,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -4026,6 +4026,9 @@ namespace MailKit {
 			if (uids.Length == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return Task.Factory.StartNew (() => {
 				AddFlags (uids, flags, silent, cancellationToken);
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
@@ -4120,6 +4123,9 @@ namespace MailKit {
 
 			if (uids.Length == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
+
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
 				RemoveFlags (uids, flags, silent, cancellationToken);
@@ -4240,6 +4246,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4287,6 +4295,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4321,6 +4331,9 @@ namespace MailKit {
 			if (uids.Length == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return Task.Factory.StartNew (() => {
 				return AddFlags (uids, modseq, flags, silent, cancellationToken);
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
@@ -4345,6 +4358,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4392,6 +4407,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4425,6 +4442,9 @@ namespace MailKit {
 
 			if (uids.Length == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
+
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
 				return RemoveFlags (uids, modseq, flags, silent, cancellationToken);
@@ -4553,6 +4573,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4595,6 +4617,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4623,6 +4647,9 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return Task.Factory.StartNew (() => {
 				AddFlags (indexes, flags, silent, cancellationToken);
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
@@ -4645,6 +4672,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4687,6 +4716,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4714,6 +4745,9 @@ namespace MailKit {
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
+
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
 				RemoveFlags (indexes, flags, silent, cancellationToken);
@@ -4831,6 +4865,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4878,6 +4914,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4909,6 +4947,9 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
+
 			return Task.Factory.StartNew (() => {
 				return AddFlags (indexes, modseq, flags, silent, cancellationToken);
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
@@ -4933,6 +4974,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4980,6 +5023,8 @@ namespace MailKit {
 		/// <para><paramref name="indexes"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -5010,6 +5055,9 @@ namespace MailKit {
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
+
+			if (flags == MessageFlags.None)
+				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
 				return RemoveFlags (indexes, modseq, flags, silent, cancellationToken);

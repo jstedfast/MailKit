@@ -79,12 +79,13 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Enables quick resynchronization when a folder is opened using the
-		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// <see cref="IMailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
 		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
-		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>If this feature is enabled, the <see cref="IMailFolder.MessageExpunged"/> event
+		/// is replaced with the <see cref="IMailFolder.MessagesVanished"/> event.</para>
 		/// <para>This method needs to be called immediately after
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// <see cref="Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
+		/// before the opening of any folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -112,12 +113,13 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Enables quick resynchronization when a folder is opened using the
-		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// <see cref="IMailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
 		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
-		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>If this feature is enabled, the <see cref="IMailFolder.MessageExpunged"/> event
+		/// is replaced with the <see cref="IMailFolder.MessagesVanished"/> event.</para>
 		/// <para>This method needs to be called immediately after
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// <see cref="Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
+		/// before the opening of any folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">

@@ -160,8 +160,8 @@ namespace MailKit.Net.Imap {
 		/// querying the IMAP server for a list of changes when the folder is opened using the
 		/// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
 		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="ImapFolder.MessageExpunged"/> event is replaced
-		/// with the <see cref="ImapFolder.MessagesVanished"/> event.</para>
+		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
 		/// <para>This method needs to be called immediately after
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
 		/// </remarks>
@@ -428,7 +428,7 @@ namespace MailKit.Net.Imap {
 		/// in the uri is "imap", a clear-text connection is made and defaults to using
 		/// port 143 if no port is specified in the URI. However, if the schema in the
 		/// uri is "imaps", an SSL connection is made using the
-		/// <see cref="ClientCertificates"/> and defaults to port 993 unless a port
+		/// <see cref="MailService.ClientCertificates"/> and defaults to port 993 unless a port
 		/// is specified in the URI.</para>
 		/// <para>It should be noted that when using a clear-text IMAP connection,
 		/// if the server advertizes support for the STARTTLS extension, the client

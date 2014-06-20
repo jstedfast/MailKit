@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageFlagsChangedEventArgs extends MailKit.MessageEventArgs" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.18.0.0</AssemblyVersion>
+    <AssemblyVersion>0.19.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MessageEventArgs</BaseTypeName>
@@ -11,10 +11,10 @@
   <Interfaces />
   <Docs>
     <summary>
-            Event args for the <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> event.
+            Event args for the <see cref="E:MailKit.IMailFolder.MessageFlagsChanged" /> event.
             </summary>
     <remarks>
-            Event args for the <see cref="E:MailKit.IFolder.MessageFlagsChanged" /> event.
+            Event args for the <see cref="E:MailKit.IMailFolder.MessageFlagsChanged" /> event.
             </remarks>
   </Docs>
   <Members>
@@ -23,7 +23,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.MessageFlags Flags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageFlags</ReturnType>
@@ -43,7 +43,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; ModSeq" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
@@ -63,7 +63,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UniqueId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.18.0.0</AssemblyVersion>
+        <AssemblyVersion>0.19.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
