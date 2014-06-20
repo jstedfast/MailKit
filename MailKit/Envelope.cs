@@ -320,6 +320,7 @@ namespace MailKit {
 
 				if (escaped || text[index] != '\\') {
 					token.Append (text[index]);
+					escaped = false;
 				} else {
 					escaped = true;
 				}
