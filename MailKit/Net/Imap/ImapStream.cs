@@ -279,7 +279,7 @@ namespace MailKit.Net.Imap {
 				#else
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
-				} while (Socket.Poll (1000, SelectMode.SelectRead));
+				} while (!Socket.Poll (1000, SelectMode.SelectRead));
 				#endif
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
