@@ -121,7 +121,7 @@ namespace MailKit.Net.Imap {
 			get { return DoneToken.IsCancellationRequested; }
 		}
 
-		public void Done ()
+		void Done ()
 		{
 			source.Cancel ();
 		}
