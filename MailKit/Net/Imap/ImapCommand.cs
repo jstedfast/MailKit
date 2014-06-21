@@ -447,7 +447,6 @@ namespace MailKit.Net.Imap {
 		{
 			var idle = UserData as ImapIdleContext;
 			var result = ImapCommandResult.None;
-			ImapToken token;
 
 			CancellationToken.ThrowIfCancellationRequested ();
 
@@ -465,7 +464,7 @@ namespace MailKit.Net.Imap {
 			do {
 				if (Engine.State == ImapEngineState.Idle && idle != null) {
 					try {
-						token = Engine.ReadToken (idle.Token);
+						Engine.Stream.WaitForData (idle.Token);
 					} catch (OperationCanceledException) {
 						if (idle.IsCancellationRequested)
 							throw;
@@ -479,12 +478,10 @@ namespace MailKit.Net.Imap {
 
 						Engine.State = ImapEngineState.Selected;
 						idle = null;
-
-						token = Engine.ReadToken (CancellationToken);
 					}
-				} else {
-					token = Engine.ReadToken (CancellationToken);
 				}
+
+				var token = Engine.ReadToken (CancellationToken);
 
 				if (token.Type == ImapTokenType.Plus) {
 					// we've gotten a continuation response from the server

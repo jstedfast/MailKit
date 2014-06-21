@@ -267,7 +267,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void WaitForData (CancellationToken cancellationToken)
+		internal void WaitForData (CancellationToken cancellationToken)
 		{
 			if (!cancellationToken.CanBeCanceled)
 				return;
