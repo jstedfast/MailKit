@@ -469,8 +469,8 @@ namespace MailKit.Net.Imap {
 						if (idle.IsCancellationRequested)
 							throw;
 
-						// if we made it here, then it suggests that it suggests
-						// that idle.IsDoneRequested is true.
+						// if we made it here, then it suggests that
+						// idle.IsDoneRequested is true
 
 						var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
 						Engine.Stream.Write (buf, 0, buf.Length);
