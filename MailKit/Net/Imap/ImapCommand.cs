@@ -92,6 +92,41 @@ namespace MailKit.Net.Imap {
 		Literal
 	}
 
+	class ImapIdleContext
+	{
+		readonly CancellationToken CancellationToken;
+		readonly CancellationToken DoneToken;
+		readonly CancellationTokenSource source;
+
+		public ImapIdleContext (CancellationToken doneToken, CancellationToken cancellationToken)
+		{
+			CancellationToken = cancellationToken;
+			DoneToken = doneToken;
+
+			source = new CancellationTokenSource ();
+
+			cancellationToken.Register (Done);
+			doneToken.Register (Done);
+		}
+
+		public CancellationToken Token {
+			get { return source.Token; }
+		}
+
+		public bool IsCancellationRequested {
+			get { return CancellationToken.IsCancellationRequested; }
+		}
+
+		public bool IsDoneRequested {
+			get { return DoneToken.IsCancellationRequested; }
+		}
+
+		public void Done ()
+		{
+			source.Cancel ();
+		}
+	}
+
 	/// <summary>
 	/// An IMAP literal object.
 	/// </summary>
@@ -410,7 +445,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public bool Step ()
 		{
+			var idle = UserData as ImapIdleContext;
 			var result = ImapCommandResult.None;
+			ImapToken token;
 
 			CancellationToken.ThrowIfCancellationRequested ();
 
@@ -426,7 +463,28 @@ namespace MailKit.Net.Imap {
 
 			// now we need to read the response...
 			do {
-				var token = Engine.ReadToken (CancellationToken);
+				if (Engine.State == ImapEngineState.Idle && idle != null) {
+					try {
+						token = Engine.ReadToken (idle.Token);
+					} catch (OperationCanceledException) {
+						if (idle.IsCancellationRequested)
+							throw;
+
+						// if we made it here, then it suggests that it suggests
+						// that idle.IsDoneRequested is true.
+
+						var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
+						Engine.Stream.Write (buf, 0, buf.Length);
+						Engine.Stream.Flush ();
+
+						Engine.State = ImapEngineState.Selected;
+						idle = null;
+
+						token = Engine.ReadToken (CancellationToken);
+					}
+				} else {
+					token = Engine.ReadToken (CancellationToken);
+				}
 
 				if (token.Type == ImapTokenType.Plus) {
 					// we've gotten a continuation response from the server

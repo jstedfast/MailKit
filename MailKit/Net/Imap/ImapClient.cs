@@ -662,6 +662,80 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("NOOP", ic.Result);
 		}
 
+		/// <summary>
+		/// Toggle the <see cref="ImapClient"/> into the IDLE state.
+		/// </summary>
+		/// <remarks>
+		/// <para>When a client enters the IDLE state, the IMAP server will send
+		/// events to the client as they occur on the selected folder. These events
+		/// may include notifications of new messages arriving, expunge notifications,
+		/// flag changes, etc.</para>
+		/// <para>Due to the nature of the IDLE command, a folder must be selected
+		/// before a client can enter into the IDLE state. This can be done by
+		/// opening a folder using
+		/// <see cref="MailKit.MailFolder.Open(FolderAccess,System.Threading.CancellationToken)"/>
+		/// or any of the other variants.</para>
+		/// </remarks>
+		/// <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="doneToken"/> must be cancellable (i.e. <see cref="System.Threading.CancellationToken.None"/> cannot be used).
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>A <see cref="ImapFolder"/> has not been opened.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the IDLE command with a NO or BAD response.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
+		public void Idle (CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (!doneToken.CanBeCanceled)
+				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
+
+			CheckDisposed ();
+
+			if (!engine.IsConnected)
+				throw new InvalidOperationException ("The ImapClient is not connected.");
+
+			if ((engine.Capabilities & ImapCapabilities.Idle) == 0)
+				throw new NotSupportedException ();
+
+			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
+				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+
+			if (engine.State != ImapEngineState.Selected)
+				throw new InvalidOperationException ("An ImapFolder has not been opened.");
+
+			var context = new ImapIdleContext (doneToken, cancellationToken);
+			var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
+			ic.UserData = context;
+
+			ic.ContinuationHandler = (imap, cmd, text) => {
+				imap.State = ImapEngineState.Idle;
+			};
+
+			engine.Wait (ic);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("IDLE", ic.Result);
+		}
+
 		#endregion
 
 		#region IMailStore implementation
