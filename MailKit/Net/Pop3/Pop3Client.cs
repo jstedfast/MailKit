@@ -590,6 +590,7 @@ namespace MailKit.Net.Pop3 {
 				stream.WriteTimeout = timeout;
 				stream.ReadTimeout = timeout;
 			}
+
 			host = uri.Host;
 
 			logger.LogConnect (uri);

@@ -529,6 +529,7 @@ namespace MailKit.Net.Imap {
 				stream.WriteTimeout = timeout;
 				stream.ReadTimeout = timeout;
 			}
+
 			host = uri.Host;
 
 			logger.LogConnect (uri);

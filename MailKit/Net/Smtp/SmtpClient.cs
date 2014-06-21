@@ -757,6 +757,7 @@ namespace MailKit.Net.Smtp {
 				stream.WriteTimeout = timeout;
 				stream.ReadTimeout = timeout;
 			}
+
 			host = uri.Host;
 
 			logger.LogConnect (uri);
