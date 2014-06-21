@@ -267,7 +267,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal void WaitForData (CancellationToken cancellationToken)
+		void WaitForData (int usec, CancellationToken cancellationToken)
 		{
 			if (!cancellationToken.CanBeCanceled)
 				return;
@@ -279,11 +279,19 @@ namespace MailKit.Net.Imap {
 				#else
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
-				} while (!Socket.Poll (1000, SelectMode.SelectRead));
+				} while (!Socket.Poll (usec, SelectMode.SelectRead));
 				#endif
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
+		}
+
+		internal void WaitForData (CancellationToken cancellationToken)
+		{
+			if (inputEnd > inputIndex)
+				return;
+
+			WaitForData (1000, cancellationToken);
 		}
 
 		unsafe int ReadAhead (byte* inbuf, int atleast, CancellationToken cancellationToken)
@@ -319,7 +327,7 @@ namespace MailKit.Net.Imap {
 
 			end = input.Length - PadSize;
 
-			WaitForData (cancellationToken);
+			WaitForData (1000, cancellationToken);
 
 			try {
 				if ((nread = Stream.Read (input, start, end - start)) > 0) {
