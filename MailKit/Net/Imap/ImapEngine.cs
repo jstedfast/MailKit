@@ -177,6 +177,14 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Indicates whether or not the engine is processing commands.
+		/// </summary>
+		/// <value><c>true</c> if th e engine is processing commands; otherwise, <c>false</c>.</value>
+		internal bool IsProcessingCommands {
+			get { return current != null; }
+		}
+
+		/// <summary>
 		/// Gets the capabilities version.
 		/// </summary>
 		/// <remarks>
@@ -1335,6 +1343,8 @@ namespace MailKit.Net.Imap {
 
 			current.Status = ImapCommandStatus.Active;
 
+			int id = current.Id;
+
 			try {
 				while (current.Step ()) {
 					// more literal data to send...
@@ -1345,9 +1355,11 @@ namespace MailKit.Net.Imap {
 			} catch {
 				Disconnect ();
 				throw;
+			} finally {
+				current = null;
 			}
 
-			return current.Id;
+			return id;
 		}
 
 		/// <summary>

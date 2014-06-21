@@ -195,6 +195,9 @@ namespace MailKit.Net.Imap {
 			if (engine.State > ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("QRESYNC needs to be enabled immediately after authenticating.");
 
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
+
 			if ((engine.Capabilities & ImapCapabilities.QuickResync) == 0)
 				throw new NotSupportedException ();
 
@@ -311,13 +314,16 @@ namespace MailKit.Net.Imap {
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
 
+			CheckDisposed ();
+
 			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient must be connected before you can authenticate.");
 
 			if (engine.State >= ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("The ImapClient is already authenticated.");
 
-			CheckDisposed ();
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var uri = new Uri ("imap://" + host);
@@ -477,6 +483,9 @@ namespace MailKit.Net.Imap {
 
 			CheckDisposed ();
 
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
+
 			if (IsConnected)
 				throw new InvalidOperationException ("The ImapClient is already connected.");
 
@@ -601,6 +610,9 @@ namespace MailKit.Net.Imap {
 				return;
 
 			if (quit) {
+				if (engine.IsProcessingCommands)
+					throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
+
 				try {
 					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
 
@@ -648,6 +660,9 @@ namespace MailKit.Net.Imap {
 		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
+
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if (!engine.IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
@@ -710,6 +725,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
 
 			CheckDisposed ();
+
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if (!engine.IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
@@ -784,6 +802,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
 
 			CheckDisposed ();
+
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if (!engine.IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
@@ -970,6 +991,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("path");
 
 			CheckDisposed ();
+
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
