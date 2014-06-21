@@ -539,7 +539,7 @@ namespace MailKit.Net.Imap {
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
 
-            if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
+			if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
 				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
 				engine.Wait (ic);
