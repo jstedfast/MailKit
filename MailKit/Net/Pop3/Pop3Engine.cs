@@ -348,7 +348,7 @@ namespace MailKit.Net.Pop3 {
 			try {
 				pc.CancellationToken.ThrowIfCancellationRequested ();
 			} catch (OperationCanceledException) {
-				queue.RemoveAll (x => x.CancellationToken == pc.CancellationToken);
+				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
 				throw;
 			}
 

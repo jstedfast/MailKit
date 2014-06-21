@@ -1914,7 +1914,7 @@ namespace MailKit.Net.Imap {
 						var label = ImapEncoding.Decode ((string) token.Value);
 
 						summary.GMailLabels.Add (label);
-						
+
 						token = engine.ReadToken (ic.CancellationToken);
 					}
 

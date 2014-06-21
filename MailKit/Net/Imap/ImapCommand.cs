@@ -416,7 +416,7 @@ namespace MailKit.Net.Imap {
 
 			if (current == 0) {
 				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
-				
+
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
 				Engine.Stream.Write (buf, 0, buf.Length);
 			}

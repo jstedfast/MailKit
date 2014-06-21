@@ -1329,8 +1329,7 @@ namespace MailKit.Net.Imap {
 			try {
 				current.CancellationToken.ThrowIfCancellationRequested ();
 			} catch (OperationCanceledException) {
-				// FIXME: is this right??
-				queue.RemoveAll (x => x.CancellationToken == current.CancellationToken);
+				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
 				throw;
 			}
 
