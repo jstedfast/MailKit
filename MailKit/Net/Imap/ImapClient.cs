@@ -413,7 +413,7 @@ namespace MailKit.Net.Imap {
 
 			host = hostName;
 
-			engine.Connect (new ImapStream (replayStream, logger), cancellationToken);
+			engine.Connect (new ImapStream (replayStream, null, logger), cancellationToken);
 			engine.TagPrefix = 'A';
 
 			if (engine.CapabilitiesVersion == 0)
@@ -534,7 +534,7 @@ namespace MailKit.Net.Imap {
 
 			logger.LogConnect (uri);
 
-			engine.Connect (new ImapStream (stream, logger), cancellationToken);
+			engine.Connect (new ImapStream (stream, socket, logger), cancellationToken);
 
 			// Only query the CAPABILITIES if the greeting didn't include them.
 			if (engine.CapabilitiesVersion == 0)

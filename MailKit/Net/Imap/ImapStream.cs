@@ -32,6 +32,9 @@ using Buffer = System.Buffer;
 
 #if NETFX_CORE
 using Windows.Storage.Streams;
+using Windows.Networking.Sockets;
+#else
+using System.Net.Sockets;
 #endif
 
 namespace MailKit.Net.Imap {
@@ -76,25 +79,61 @@ namespace MailKit.Net.Imap {
 		ImapToken nextToken;
 		bool disposed;
 
+		#if NETFX_CORE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
 		/// </summary>
 		/// <param name="source">The underlying network stream.</param>
+		/// <param name="socket">The underlying network socket.</param>
 		/// <param name="protocolLogger">The protocol logger.</param>
-		public ImapStream (Stream source, IProtocolLogger protocolLogger)
+		public ImapStream (Stream source, StreamSocket socket, IProtocolLogger protocolLogger)
 		{
 			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
+			Socket = socket;
 		}
+		#else
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
+		/// </summary>
+		/// <param name="source">The underlying network stream.</param>
+		/// <param name="socket">The underlying network socket.</param>
+		/// <param name="protocolLogger">The protocol logger.</param>
+		public ImapStream (Stream source, Socket socket, IProtocolLogger protocolLogger)
+		{
+			logger = protocolLogger;
+			IsConnected = true;
+			Stream = source;
+			Socket = socket;
+		}
+		#endif
 
 		/// <summary>
-		/// Gets or sets the underlying network stream.
+		/// Gets the underlying network stream.
 		/// </summary>
 		/// <value>The underlying network stream.</value>
 		public Stream Stream {
-			get; set;
+			get; internal set;
 		}
+
+		#if NETFX_CORE
+		/// <summary>
+		/// Gets the underlying network socket.
+		/// </summary>
+		/// <value>The underlying network socket.</value>
+		public StreamSocket Socket {
+			get; internal set;
+		}
+		#else
+		/// <summary>
+		/// Gets the underlying network socket.
+		/// </summary>
+		/// <value>The underlying network socket.</value>
+		public Socket Socket {
+			get; internal set;
+		}
+		#endif
 
 		/// <summary>
 		/// Gets or sets the mode used for reading.
@@ -228,7 +267,26 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		unsafe int ReadAhead (byte* inbuf, int atleast)
+		void WaitForData (CancellationToken cancellationToken)
+		{
+			if (!cancellationToken.CanBeCanceled)
+				return;
+
+			if (Socket != null) {
+				#if NETFX_CORE
+				// FIXME: how do we poll a StreamSocket?
+				cancellationToken.ThrowIfCancellationRequested ();
+				#else
+				do {
+					cancellationToken.ThrowIfCancellationRequested ();
+				} while (Socket.Poll (1000, SelectMode.SelectRead));
+				#endif
+			} else {
+				cancellationToken.ThrowIfCancellationRequested ();
+			}
+		}
+
+		unsafe int ReadAhead (byte* inbuf, int atleast, CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
 
@@ -260,6 +318,8 @@ namespace MailKit.Net.Imap {
 			inputEnd = start;
 
 			end = input.Length - PadSize;
+
+			WaitForData (cancellationToken);
 
 			try {
 				if ((nread = Stream.Read (input, start, end - start)) > 0) {
@@ -339,7 +399,7 @@ namespace MailKit.Net.Imap {
 			if (length < count && length <= ReadAheadSize) {
 				unsafe {
 					fixed (byte* inbuf = input) {
-						ReadAhead (inbuf, BlockSize);
+						ReadAhead (inbuf, BlockSize, CancellationToken.None);
 					}
 				}
 			}
@@ -404,8 +464,7 @@ namespace MailKit.Net.Imap {
 
 					inputIndex = (int) (inptr - inbuf);
 
-					cancellationToken.ThrowIfCancellationRequested ();
-					ReadAhead (inbuf, 1);
+					ReadAhead (inbuf, 1, cancellationToken);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
@@ -447,8 +506,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-				cancellationToken.ThrowIfCancellationRequested ();
-				ReadAhead (inbuf, 1);
+				ReadAhead (inbuf, 1, cancellationToken);
 
 				inptr = inbuf + inputIndex;
 				inend = inbuf + inputEnd;
@@ -495,8 +553,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-				cancellationToken.ThrowIfCancellationRequested ();
-				ReadAhead (inbuf, 1);
+				ReadAhead (inbuf, 1, cancellationToken);
 
 				inptr = inbuf + inputIndex;
 				inend = inbuf + inputEnd;
@@ -508,8 +565,7 @@ namespace MailKit.Net.Imap {
 			// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
 			inputIndex = (int) (inptr - inbuf);
 
-			cancellationToken.ThrowIfCancellationRequested ();
-			ReadAhead (inbuf, 2);
+			ReadAhead (inbuf, 2, cancellationToken);
 
 			inptr = inbuf + inputIndex;
 			inend = inbuf + inputEnd;
@@ -527,8 +583,7 @@ namespace MailKit.Net.Imap {
 
 					inputIndex = (int) (inptr - inbuf);
 
-					cancellationToken.ThrowIfCancellationRequested ();
-					ReadAhead (inbuf, 1);
+					ReadAhead (inbuf, 1, cancellationToken);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
@@ -550,8 +605,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-				cancellationToken.ThrowIfCancellationRequested ();
-				ReadAhead (inbuf, 1);
+				ReadAhead (inbuf, 1, cancellationToken);
 
 				inptr = inbuf + inputIndex;
 				inend = inbuf + inputEnd;
@@ -611,8 +665,7 @@ namespace MailKit.Net.Imap {
 
 						inputIndex = (int) (inptr - inbuf);
 
-						cancellationToken.ThrowIfCancellationRequested ();
-						ReadAhead (inbuf, 1);
+						ReadAhead (inbuf, 1, cancellationToken);
 
 						inptr = inbuf + inputIndex;
 						inend = inbuf + inputEnd;
@@ -680,7 +733,7 @@ namespace MailKit.Net.Imap {
 					byte* start, inptr, inend;
 
 					// we need at least 1 byte: "\n"
-					ReadAhead (inbuf, 1);
+					ReadAhead (inbuf, 1, CancellationToken.None);
 
 					offset = inputIndex;
 					buffer = input;

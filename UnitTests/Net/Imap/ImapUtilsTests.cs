@@ -109,7 +109,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 3028 92)\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine ()) {
 						BodyPartText basic;
 						BodyPart body;
@@ -147,7 +147,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "(\"Wed, 17 Jul 1996 02:23:25 -0700 (PDT)\" \"IMAP4rev1 WG mtg summary and minutes\" ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((NIL NIL \"imap\" \"cac.washington.edu\")) ((NIL NIL \"minutes\" \"CNRI.Reston.VA.US\") (\"John Klensin\" NIL \"KLENSIN\" \"MIT.EDU\")) NIL NIL \"<B27397-0100000@cac.washington.edu>\")\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine ()) {
 						Envelope envelope;
 
@@ -198,7 +198,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "(((\"text\" \"plain\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 28 2 NIL NIL NIL NIL) (\"text\" \"html\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 1707 65 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"----=_NextPart_001_0078_01CBB179.57530990\") NIL NIL NIL) (\"message\" \"rfc822\" NIL NIL NIL \"7bit\" 641 (\"Sat, 8 Jan 2011 14:16:36 +0100\" \"Subj 2\" ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Recipient\" NIL \"example\" \"gmail.com\")) NIL NIL NIL NIL) (\"text\" \"plain\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 185 18 NIL NIL (\"cs\") NIL) 31 NIL (\"attachment\" NIL) NIL NIL) (\"message\" \"rfc822\" NIL NIL NIL \"7bit\" 50592 (\"Sat, 8 Jan 2011 13:58:39 +0100\" \"Subj 1\" ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Recipient\" NIL \"example\" \"gmail.com\")) NIL NIL NIL NIL) ( (\"text\" \"plain\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 4296 345 NIL NIL NIL NIL) (\"text\" \"html\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 45069 1295 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"----=_NextPart_000_0073_01CBB179.57530990\") NIL (\"cs\") NIL) 1669 NIL (\"attachment\" NIL) NIL NIL) \"mixed\" (\"boundary\" \"----=_NextPart_000_0077_01CBB179.57530990\") NIL (\"cs\") NIL)\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine ()) {
 						BodyPartMultipart multipart;
 						BodyPart body;
@@ -237,7 +237,7 @@ namespace UnitTests.Net.Imap {
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
-				using (var tokenizer = new ImapStream (memory, new NullProtocolLogger ())) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine ()) {
 						MessageThread[] threads;
 
