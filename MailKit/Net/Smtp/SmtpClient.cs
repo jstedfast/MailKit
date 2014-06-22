@@ -40,6 +40,7 @@ using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Encoding = Portable.Text.Encoding;
+using Socket = StreamSocket;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
@@ -82,13 +83,12 @@ namespace MailKit.Net.Smtp {
 		MemoryBlockStream queue;
 #if !NETFX_CORE
 		EndPoint localEndPoint;
-#else
-		StreamSocket socket;
 #endif
 		int timeout = 100000;
 		bool authenticated;
 		bool connected;
 		Stream stream;
+		Socket socket;
 		bool disposed;
 		string host;
 
@@ -248,6 +248,25 @@ namespace MailKit.Net.Smtp {
 			return index > startIndex;
 		}
 
+		void Poll (SelectMode mode, CancellationToken cancellationToken)
+		{
+			if (!cancellationToken.CanBeCanceled)
+				return;
+
+			if (socket != null) {
+				#if NETFX_CORE
+				// FIXME: how do we poll a StreamSocket?
+				cancellationToken.ThrowIfCancellationRequested ();
+				#else
+				do {
+					cancellationToken.ThrowIfCancellationRequested ();
+				} while (!socket.Poll (1000, mode));
+				#endif
+			} else {
+				cancellationToken.ThrowIfCancellationRequested ();
+			}
+		}
+
 		SmtpResponse ReadResponse (CancellationToken cancellationToken)
 		{
 			using (var memory = new MemoryStream ()) {
@@ -268,7 +287,7 @@ namespace MailKit.Net.Smtp {
 						inputEnd = left;
 						inputIndex = 0;
 
-						cancellationToken.ThrowIfCancellationRequested ();
+						Poll (SelectMode.SelectRead, cancellationToken);
 
 						if ((nread = stream.Read (input, inputEnd, input.Length - inputEnd)) == 0)
 							throw new SmtpProtocolException ("The SMTP server unexpectedly disconnected.");
@@ -369,7 +388,7 @@ namespace MailKit.Net.Smtp {
 
 				queue.Position = 0;
 				while ((nread = queue.Read (input, 0, input.Length)) > 0) {
-					cancellationToken.ThrowIfCancellationRequested ();
+					Poll (SelectMode.SelectWrite, cancellationToken);
 					stream.Write (input, 0, nread);
 					logger.LogClient (input, 0, nread);
 				}
@@ -397,9 +416,9 @@ namespace MailKit.Net.Smtp {
 
 		SmtpResponse SendCommand (string command, CancellationToken cancellationToken)
 		{
-			cancellationToken.ThrowIfCancellationRequested ();
-
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
+
+			Poll (SelectMode.SelectWrite, cancellationToken);
 			stream.Write (bytes, 0, bytes.Length);
 			logger.LogClient (bytes, 0, bytes.Length);
 
@@ -625,6 +644,7 @@ namespace MailKit.Net.Smtp {
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			stream = replayStream;
+			socket = null;
 			host = hostName;
 			MaxSize = 0;
 
@@ -717,18 +737,19 @@ namespace MailKit.Net.Smtp {
 
 #if !NETFX_CORE
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
-			Socket socket = null;
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-				cancellationToken.ThrowIfCancellationRequested ();
-
 				try {
+					cancellationToken.ThrowIfCancellationRequested ();
 					socket.Connect (ipAddresses[i], port);
 					localEndPoint = socket.LocalEndPoint;
 					break;
 				} catch {
+					socket.Dispose ();
+					socket = null;
+
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}
@@ -796,6 +817,7 @@ namespace MailKit.Net.Smtp {
 			} catch {
 				stream.Dispose ();
 				stream = null;
+				socket = null;
 				throw;
 			}
 		}
@@ -886,6 +908,8 @@ namespace MailKit.Net.Smtp {
 				socket.Dispose ();
 				socket = null;
 			}
+#else
+			socket = null;
 #endif
 		}
 
@@ -1103,6 +1127,7 @@ namespace MailKit.Net.Smtp {
 				filtered.Flush ();
 			}
 
+			Poll (SelectMode.SelectWrite, cancellationToken);
 			stream.Write (EndData, 0, EndData.Length);
 
 			response = ReadResponse (cancellationToken);
