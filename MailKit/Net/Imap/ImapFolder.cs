@@ -2696,11 +2696,8 @@ namespace MailKit.Net.Imap {
 
 					stream = new MemoryBlockStream ();
 
-					ic.CancellationToken.ThrowIfCancellationRequested ();
-					while ((nread = engine.Stream.Read (buf, 0, buf.Length)) > 0) {
-						ic.CancellationToken.ThrowIfCancellationRequested ();
+					while ((nread = engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken)) > 0)
 						stream.Write (buf, 0, nread);
-					}
 
 					streams[specifier] = stream;
 					stream.Position = 0;

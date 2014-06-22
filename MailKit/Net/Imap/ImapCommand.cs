@@ -189,12 +189,10 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public void WriteTo (ImapStream stream, CancellationToken cancellationToken)
 		{
-			cancellationToken.ThrowIfCancellationRequested ();
-
 			if (Type == ImapLiteralType.String) {
 				var bytes = (byte[]) Literal;
-				stream.Write (bytes, 0, bytes.Length);
-				stream.Flush ();
+				stream.Write (bytes, 0, bytes.Length, cancellationToken);
+				stream.Flush (cancellationToken);
 				return;
 			}
 
@@ -205,7 +203,7 @@ namespace MailKit.Net.Imap {
 				var message = (MimeMessage) Literal;
 
 				message.WriteTo (options, stream, cancellationToken);
-				stream.Flush ();
+				stream.Flush (cancellationToken);
 				return;
 			}
 
@@ -213,12 +211,10 @@ namespace MailKit.Net.Imap {
 			var buf = new byte[4096];
 			int nread = 0;
 
-			while ((nread = literal.Read (buf, 0, buf.Length)) > 0) {
-				cancellationToken.ThrowIfCancellationRequested ();
-				stream.Write (buf, 0, nread);
-			}
+			while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
+				stream.Write (buf, 0, nread, cancellationToken);
 
-			stream.Flush ();
+			stream.Flush (cancellationToken);
 		}
 	}
 
@@ -448,13 +444,11 @@ namespace MailKit.Net.Imap {
 			var idle = UserData as ImapIdleContext;
 			var result = ImapCommandResult.None;
 
-			CancellationToken.ThrowIfCancellationRequested ();
-
 			if (current == 0) {
 				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
 
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
-				Engine.Stream.Write (buf, 0, buf.Length);
+				Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
 			}
 
 			Engine.Stream.Write (parts[current].Command, 0, parts[current].Command.Length);

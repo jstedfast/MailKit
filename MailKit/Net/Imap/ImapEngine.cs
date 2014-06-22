@@ -492,16 +492,12 @@ namespace MailKit.Net.Imap {
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			cancellationToken.ThrowIfCancellationRequested ();
-
 			using (var memory = new MemoryStream ()) {
 				int offset, count;
 				byte[] buf;
 
-				while (!stream.ReadLine (out buf, out offset, out count)) {
-					cancellationToken.ThrowIfCancellationRequested ();
+				while (!stream.ReadLine (out buf, out offset, out count, cancellationToken))
 					memory.Write (buf, offset, count);
-				}
 
 				memory.Write (buf, offset, count);
 
@@ -587,16 +583,12 @@ namespace MailKit.Net.Imap {
 			if (stream.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
 
-			cancellationToken.ThrowIfCancellationRequested ();
-
 			using (var memory = new MemoryStream (stream.LiteralLength)) {
 				var buf = new byte[4096];
 				int nread;
 
-				while ((nread = stream.Read (buf, 0, buf.Length)) > 0) {
-					cancellationToken.ThrowIfCancellationRequested ();
+				while ((nread = stream.Read (buf, 0, buf.Length, cancellationToken)) > 0)
 					memory.Write (buf, 0, nread);
-				}
 
 				nread = (int) memory.Length;
 #if !NETFX_CORE
@@ -621,8 +613,7 @@ namespace MailKit.Net.Imap {
 					int nread;
 
 					do {
-						cancellationToken.ThrowIfCancellationRequested ();
-						nread = stream.Read (buf, 0, buf.Length);
+						nread = stream.Read (buf, 0, buf.Length, cancellationToken);
 					} while (nread > 0);
 				}
 			} while (token.Type != ImapTokenType.Eoln);

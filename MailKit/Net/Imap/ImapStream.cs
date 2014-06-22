@@ -37,6 +37,8 @@ using Windows.Networking.Sockets;
 using System.Net.Sockets;
 #endif
 
+using MimeKit.IO;
+
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// An enumeration of the possible IMAP streaming modes.
@@ -58,7 +60,7 @@ namespace MailKit.Net.Imap {
 		Literal
 	}
 
-	class ImapStream : Stream
+	class ImapStream : Stream, ICancellableStream
 	{
 		const string AtomSpecials = "()[]{%*\\\"\n";
 		const int ReadAheadSize = 128;
@@ -267,7 +269,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void WaitForData (int usec, CancellationToken cancellationToken)
+		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
 			if (!cancellationToken.CanBeCanceled)
 				return;
@@ -279,7 +281,7 @@ namespace MailKit.Net.Imap {
 				#else
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
-				} while (!Socket.Poll (usec, SelectMode.SelectRead));
+				} while (!Socket.Poll (1000, mode));
 				#endif
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
@@ -291,7 +293,7 @@ namespace MailKit.Net.Imap {
 			if (inputEnd > inputIndex)
 				return;
 
-			WaitForData (1000, cancellationToken);
+			Poll (SelectMode.SelectRead, cancellationToken);
 		}
 
 		unsafe int ReadAhead (byte* inbuf, int atleast, CancellationToken cancellationToken)
@@ -327,7 +329,7 @@ namespace MailKit.Net.Imap {
 
 			end = input.Length - PadSize;
 
-			WaitForData (1000, cancellationToken);
+			Poll (SelectMode.SelectRead, cancellationToken);
 
 			try {
 				if ((nread = Stream.Read (input, start, end - start)) > 0) {
@@ -372,6 +374,72 @@ namespace MailKit.Net.Imap {
 		/// <param name="buffer">The buffer.</param>
 		/// <param name="offset">The buffer offset.</param>
 		/// <param name="count">The number of bytes to read.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// at the specified <paramref name="offset"/>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The stream is in token mode (see <see cref="ImapStreamMode.Token"/>).
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			ValidateArguments (buffer, offset, count);
+
+			if (Mode != ImapStreamMode.Literal)
+				return 0;
+
+			count = Math.Min (count, literalDataLeft);
+
+			int length = inputEnd - inputIndex;
+			int n;
+
+			if (length < count && length <= ReadAheadSize) {
+				unsafe {
+					fixed (byte* inbuf = input) {
+						ReadAhead (inbuf, BlockSize, cancellationToken);
+					}
+				}
+			}
+
+			length = inputEnd - inputIndex;
+			n = Math.Min (count, length);
+
+			Buffer.BlockCopy (input, inputIndex, buffer, offset, n);
+			literalDataLeft -= n;
+			inputIndex += n;
+
+			if (literalDataLeft == 0)
+				Mode = ImapStreamMode.Token;
+
+			return n;
+		}
+
+		/// <summary>
+		/// Reads a sequence of bytes from the stream and advances the position
+		/// within the stream by the number of bytes read.
+		/// </summary>
+		/// <returns>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many
+		/// bytes are not currently available, or zero (0) if the end of the stream has been reached.</returns>
+		/// <param name="buffer">The buffer.</param>
+		/// <param name="offset">The buffer offset.</param>
+		/// <param name="count">The number of bytes to read.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="buffer"/> is <c>null</c>.
 		/// </exception>
@@ -392,37 +460,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			CheckDisposed ();
-
-			ValidateArguments (buffer, offset, count);
-
-			if (Mode != ImapStreamMode.Literal)
-				return 0;
-
-			count = Math.Min (count, literalDataLeft);
-
-			int length = inputEnd - inputIndex;
-			int n;
-
-			if (length < count && length <= ReadAheadSize) {
-				unsafe {
-					fixed (byte* inbuf = input) {
-						ReadAhead (inbuf, BlockSize, CancellationToken.None);
-					}
-				}
-			}
-
-			length = inputEnd - inputIndex;
-			n = Math.Min (count, length);
-
-			Buffer.BlockCopy (input, inputIndex, buffer, offset, n);
-			literalDataLeft -= n;
-			inputIndex += n;
-
-			if (literalDataLeft == 0)
-				Mode = ImapStreamMode.Token;
-
-			return n;
+			return Read (buffer, offset, count, CancellationToken.None);
 		}
 
 		static bool IsAtom (byte c)
@@ -726,13 +764,17 @@ namespace MailKit.Net.Imap {
 		/// <param name="buffer">The buffer containing the line data.</param>
 		/// <param name="offset">The offset into the buffer containing bytes read.</param>
 		/// <param name="count">The number of bytes read.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal bool ReadLine (out byte[] buffer, out int offset, out int count)
+		internal bool ReadLine (out byte[] buffer, out int offset, out int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -741,7 +783,7 @@ namespace MailKit.Net.Imap {
 					byte* start, inptr, inend;
 
 					// we need at least 1 byte: "\n"
-					ReadAhead (inbuf, 1, CancellationToken.None);
+					ReadAhead (inbuf, 1, cancellationToken);
 
 					offset = inputIndex;
 					buffer = input;
@@ -774,6 +816,89 @@ namespace MailKit.Net.Imap {
 		/// Writes a sequence of bytes to the stream and advances the current
 		/// position within this stream by the number of bytes written.
 		/// </summary>
+		/// <remarks>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </remarks>
+		/// <param name='buffer'>The buffer to write.</param>
+		/// <param name='offset'>The offset of the first byte to write.</param>
+		/// <param name='count'>The number of bytes to write.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// at the specified <paramref name="offset"/>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			ValidateArguments (buffer, offset, count);
+
+			try {
+				int index = offset;
+				int left = count;
+
+				while (left > 0) {
+					int n = Math.Min (BlockSize - outputIndex, left);
+
+					if (outputIndex > 0 || n < BlockSize) {
+						// append the data to the output buffer
+						Buffer.BlockCopy (buffer, index, output, outputIndex, n);
+						outputIndex += n;
+						index += n;
+						left -= n;
+					}
+
+					if (outputIndex == BlockSize) {
+						// flush the output buffer
+						Poll (SelectMode.SelectWrite, cancellationToken);
+						Stream.Write (output, 0, BlockSize);
+						logger.LogClient (output, 0, BlockSize);
+						outputIndex = 0;
+					}
+
+					if (outputIndex == 0) {
+						// write blocks of data to the stream without buffering
+						while (left >= BlockSize) {
+							Poll (SelectMode.SelectWrite, cancellationToken);
+							Stream.Write (buffer, index, BlockSize);
+							logger.LogClient (buffer, index, BlockSize);
+							index += BlockSize;
+							left -= BlockSize;
+						}
+					}
+				}
+			} catch (IOException) {
+				IsConnected = false;
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </summary>
+		/// <remarks>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </remarks>
 		/// <param name='buffer'>The buffer to write.</param>
 		/// <param name='offset'>The offset of the first byte to write.</param>
 		/// <param name='count'>The number of bytes to write.</param>
@@ -797,62 +922,31 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			CheckDisposed ();
-
-			ValidateArguments (buffer, offset, count);
-
-			try {
-				int index = offset;
-				int left = count;
-
-				while (left > 0) {
-					int n = Math.Min (BlockSize - outputIndex, left);
-
-					if (outputIndex > 0 || n < BlockSize) {
-						// append the data to the output buffer
-						Buffer.BlockCopy (buffer, index, output, outputIndex, n);
-						outputIndex += n;
-						index += n;
-						left -= n;
-					}
-
-					if (outputIndex == BlockSize) {
-						// flush the output buffer
-						Stream.Write (output, 0, BlockSize);
-						logger.LogClient (output, 0, BlockSize);
-						outputIndex = 0;
-					}
-
-					if (outputIndex == 0) {
-						// write blocks of data to the stream without buffering
-						while (left >= BlockSize) {
-							Stream.Write (buffer, index, BlockSize);
-							logger.LogClient (buffer, index, BlockSize);
-							index += BlockSize;
-							left -= BlockSize;
-						}
-					}
-				}
-			} catch (IOException) {
-				IsConnected = false;
-				throw;
-			}
+			Write (buffer, offset, count, CancellationToken.None);
 		}
 
 		/// <summary>
 		/// Clears all output buffers for this stream and causes any buffered data to be written
 		/// to the underlying device.
 		/// </summary>
+		/// <remarks>
+		/// Clears all output buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The stream does not support writing.
 		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override void Flush ()
+		public void Flush (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -860,6 +954,7 @@ namespace MailKit.Net.Imap {
 				return;
 
 			try {
+				Poll (SelectMode.SelectWrite, cancellationToken);
 				Stream.Write (output, 0, outputIndex);
 				Stream.Flush ();
 				logger.LogClient (output, 0, outputIndex);
@@ -871,8 +966,33 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Clears all output buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </summary>
+		/// <remarks>
+		/// Clears all output buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </remarks>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public override void Flush ()
+		{
+			Flush (CancellationToken.None);
+		}
+
+		/// <summary>
 		/// Sets the position within the current stream.
 		/// </summary>
+		/// <remarks>
+		/// It is not possible to seek within a <see cref="ImapStream"/>.
+		/// </remarks>
 		/// <returns>The new position within the stream.</returns>
 		/// <param name="offset">The offset into the stream relative to the <paramref name="origin"/>.</param>
 		/// <param name="origin">The origin to seek from.</param>
@@ -887,6 +1007,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Sets the length of the stream.
 		/// </summary>
+		/// <remarks>
+		/// It is not possible to set the length of a <see cref="ImapStream"/>.
+		/// </remarks>
 		/// <param name="value">The desired length of the stream in bytes.</param>
 		/// <exception cref="System.NotSupportedException">
 		/// The stream does not support setting the length.
@@ -900,6 +1023,10 @@ namespace MailKit.Net.Imap {
 		/// Releases the unmanaged resources used by the <see cref="ImapStream"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
+		/// <remarks>
+		/// Releases the unmanaged resources used by the <see cref="ImapStream"/> and
+		/// optionally releases the managed resources.
+		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected override void Dispose (bool disposing)

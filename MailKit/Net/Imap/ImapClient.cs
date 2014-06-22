@@ -353,18 +353,16 @@ namespace MailKit.Net.Imap {
 					string challenge;
 
 					if (sasl.IsAuthenticated) {
-						// the server claims we aren't done authenticating, but our SASL mechanism thinks we are...
-						// FIXME: will sending an empty string abort the AUTHENTICATE command?
+						// The server claims we aren't done authenticating, but our SASL mechanism thinks we are...
+						// Send an empty string to abort the AUTHENTICATE command.
 						challenge = string.Empty;
 					} else {
 						challenge = sasl.Challenge (text);
 					}
 
-					cmd.CancellationToken.ThrowIfCancellationRequested ();
-
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
-					imap.Stream.Write (buf, 0, buf.Length);
-					imap.Stream.Flush ();
+					imap.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
+					imap.Stream.Flush (cmd.CancellationToken);
 				};
 
 				engine.Wait (ic);
