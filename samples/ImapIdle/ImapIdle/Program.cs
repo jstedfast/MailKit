@@ -70,13 +70,13 @@ namespace ImapIdle {
 					// event fires.
 					var folder = (ImapFolder) sender;
 
-					if (count > folder.Count) {
+					if (folder.Count > count) {
 						// New messages have arrived in the folder.
 						Console.WriteLine ("{0}: {1} new messages have arrived.", folder, count - folder.Count);
 
 						// Note: your first instict may be to fetch these new messages now, but you cannot do
 						// that in an event handler (the ImapFolder is not re-entrant).
-					} else if (count < folder.Count) {
+					} else if (folder.Count < count) {
 						// Note: this shouldn't happen since we are decrementing count in the MessageExpunged handler.
 						Console.WriteLine ("{0}: {1} messages have been removed.", folder, folder.Count - count);
 					} else {
