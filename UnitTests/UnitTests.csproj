@@ -3,9 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
+    <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}</ProjectGuid>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <OutputType>Library</OutputType>
     <RootNamespace>UnitTests</RootNamespace>
     <AssemblyName>UnitTests</AssemblyName>
@@ -41,11 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.csproj">
-      <Project>{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}</Project>
+      <Project>{D5F54A4F-D84B-430F-9271-F7861E285B3E}</Project>
       <Name>MimeKit</Name>
     </ProjectReference>
     <ProjectReference Include="..\MailKit\MailKit.csproj">
-      <Project>{DB3A2478-4742-452B-80C1-F672B64285AD}</Project>
+      <Project>{7264D469-A390-4C10-9C87-DAA37EDD3C1D}</Project>
       <Name>MailKit</Name>
     </ProjectReference>
   </ItemGroup>
