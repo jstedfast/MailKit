@@ -33,6 +33,7 @@ using Buffer = System.Buffer;
 #if NETFX_CORE
 using Windows.Storage.Streams;
 using Windows.Networking.Sockets;
+using Socket = StreamSocket;
 #else
 using System.Net.Sockets;
 #endif
@@ -81,21 +82,6 @@ namespace MailKit.Net.Imap {
 		ImapToken nextToken;
 		bool disposed;
 
-		#if NETFX_CORE
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
-		/// </summary>
-		/// <param name="source">The underlying network stream.</param>
-		/// <param name="socket">The underlying network socket.</param>
-		/// <param name="protocolLogger">The protocol logger.</param>
-		public ImapStream (Stream source, StreamSocket socket, IProtocolLogger protocolLogger)
-		{
-			logger = protocolLogger;
-			IsConnected = true;
-			Stream = source;
-			Socket = socket;
-		}
-		#else
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
 		/// </summary>
@@ -109,7 +95,6 @@ namespace MailKit.Net.Imap {
 			Stream = source;
 			Socket = socket;
 		}
-		#endif
 
 		/// <summary>
 		/// Gets the underlying network stream.
@@ -119,23 +104,13 @@ namespace MailKit.Net.Imap {
 			get; internal set;
 		}
 
-		#if NETFX_CORE
-		/// <summary>
-		/// Gets the underlying network socket.
-		/// </summary>
-		/// <value>The underlying network socket.</value>
-		public StreamSocket Socket {
-			get; internal set;
-		}
-		#else
 		/// <summary>
 		/// Gets the underlying network socket.
 		/// </summary>
 		/// <value>The underlying network socket.</value>
 		public Socket Socket {
-			get; internal set;
+			get; private set;
 		}
-		#endif
 
 		/// <summary>
 		/// Gets or sets the mode used for reading.
@@ -329,17 +304,16 @@ namespace MailKit.Net.Imap {
 
 			end = input.Length - PadSize;
 
-			Poll (SelectMode.SelectRead, cancellationToken);
-
 			try {
+				Poll (SelectMode.SelectRead, cancellationToken);
+
 				if ((nread = Stream.Read (input, start, end - start)) > 0) {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
-					IsConnected = false;
 					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
 				}
-			} catch (IOException) {
+			} catch {
 				IsConnected = false;
 				throw;
 			}
@@ -885,7 +859,7 @@ namespace MailKit.Net.Imap {
 						}
 					}
 				}
-			} catch (IOException) {
+			} catch {
 				IsConnected = false;
 				throw;
 			}
@@ -959,7 +933,7 @@ namespace MailKit.Net.Imap {
 				Stream.Flush ();
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
-			} catch (IOException) {
+			} catch {
 				IsConnected = false;
 				throw;
 			}
