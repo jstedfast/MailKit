@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImapIdleSample", "ImapIdleSample\ImapIdleSample.csproj", "{0265A920-EFF0-49F6-851C-05A4DEDBF573}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImapIdle", "ImapIdle\ImapIdle.csproj", "{0265A920-EFF0-49F6-851C-05A4DEDBF573}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "..\..\..\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
 EndProject
@@ -33,6 +33,6 @@ Global
 		{DB3A2478-4742-452B-80C1-F672B64285AD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ImapIdleSample\ImapIdleSample.csproj
+		StartupItem = ImapIdle\ImapIdle.csproj
 	EndGlobalSection
 EndGlobal

@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{0265A920-EFF0-49F6-851C-05A4DEDBF573}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ImapIdleSample</RootNamespace>
-    <AssemblyName>ImapIdleSample</AssemblyName>
+    <RootNamespace>ImapIdle</RootNamespace>
+    <AssemblyName>ImapIdle</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>

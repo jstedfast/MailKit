@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using MailKit.Net.Imap;
 using MailKit;
 
-namespace ImapIdleSample {
+namespace ImapIdle {
 	class Program
 	{
 		public static void Main (string[] args)
