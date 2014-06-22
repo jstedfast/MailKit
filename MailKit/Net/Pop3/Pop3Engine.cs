@@ -242,16 +242,12 @@ namespace MailKit.Net.Pop3 {
 			if (stream == null)
 				throw new InvalidOperationException ();
 
-			cancellationToken.ThrowIfCancellationRequested ();
-
 			using (var memory = new MemoryStream ()) {
 				int offset, count;
 				byte[] buf;
 
-				while (!stream.ReadLine (out buf, out offset, out count)) {
-					cancellationToken.ThrowIfCancellationRequested ();
+				while (!stream.ReadLine (out buf, out offset, out count, cancellationToken))
 					memory.Write (buf, offset, count);
-				}
 
 				memory.Write (buf, offset, count);
 

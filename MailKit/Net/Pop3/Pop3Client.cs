@@ -420,7 +420,7 @@ namespace MailKit.Net.Pop3 {
 							challenge = sasl.Challenge (text);
 
 							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
-							pop3.Stream.Write (buf, 0, buf.Length);
+							pop3.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
 
 							var response = pop3.ReadLine (cmd.CancellationToken);
 
@@ -478,7 +478,7 @@ namespace MailKit.Net.Pop3 {
 			probed = ProbedCapabilities.None;
 			host = hostName;
 
-			engine.Connect (new Pop3Stream (replayStream, logger), cancellationToken);
+			engine.Connect (new Pop3Stream (replayStream, null, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 		}
 
@@ -595,7 +595,7 @@ namespace MailKit.Net.Pop3 {
 
 			logger.LogConnect (uri);
 
-			engine.Connect (new Pop3Stream (stream, logger), cancellationToken);
+			engine.Connect (new Pop3Stream (stream, socket, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 
 			if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {

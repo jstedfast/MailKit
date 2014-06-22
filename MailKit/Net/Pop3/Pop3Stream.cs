@@ -26,6 +26,17 @@
 
 using System;
 using System.IO;
+using System.Threading;
+
+#if NETFX_CORE
+using Windows.Storage.Streams;
+using Windows.Networking.Sockets;
+using Socket = StreamSocket;
+#else
+using System.Net.Sockets;
+#endif
+
+using MimeKit.IO;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -55,7 +66,7 @@ namespace MailKit.Net.Pop3 {
 	/// A stream capable of reading data line-by-line (<see cref="Pop3StreamMode.Line"/>)
 	/// or by raw byte streams (<see cref="Pop3StreamMode.Data"/>).
 	/// </remarks>
-	class Pop3Stream : Stream
+	class Pop3Stream : Stream, ICancellableStream
 	{
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
@@ -74,12 +85,14 @@ namespace MailKit.Net.Pop3 {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Stream"/> class.
 		/// </summary>
 		/// <param name="source">The underlying network stream.</param>
+		/// <param name="socket">The underlying network socket.</param>
 		/// <param name="protocolLogger">The protocol logger.</param>
-		public Pop3Stream (Stream source, IProtocolLogger protocolLogger)
+		public Pop3Stream (Stream source, Socket socket, IProtocolLogger protocolLogger)
 		{
 			logger = protocolLogger;
 			IsConnected = true;
 			Stream = source;
+			Socket = socket;
 		}
 
 		/// <summary>
@@ -87,7 +100,15 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <value>The underlying network stream.</value>
 		public Stream Stream {
-			get; set;
+			get; internal set;
+		}
+
+		/// <summary>
+		/// Gets the underlying network socket.
+		/// </summary>
+		/// <value>The underlying network socket.</value>
+		public Socket Socket {
+			get; private set;
 		}
 
 		/// <summary>
@@ -225,7 +246,26 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		unsafe int ReadAhead (byte* inbuf)
+		void Poll (SelectMode mode, CancellationToken cancellationToken)
+		{
+			if (!cancellationToken.CanBeCanceled)
+				return;
+
+			if (Socket != null) {
+				#if NETFX_CORE
+				// FIXME: how do we poll a StreamSocket?
+				cancellationToken.ThrowIfCancellationRequested ();
+				#else
+				do {
+					cancellationToken.ThrowIfCancellationRequested ();
+				} while (!Socket.Poll (1000, mode));
+				#endif
+			} else {
+				cancellationToken.ThrowIfCancellationRequested ();
+			}
+		}
+
+		unsafe int ReadAhead (byte* inbuf, CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
 			int index = inputIndex;
@@ -255,14 +295,15 @@ namespace MailKit.Net.Pop3 {
 			end = input.Length - PadSize;
 
 			try {
+				Poll (SelectMode.SelectRead, cancellationToken);
+
 				if ((nread = Stream.Read (input, start, end - start)) > 0) {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
-					IsConnected = false;
 					throw new Pop3ProtocolException ("The POP3 server has unexpectedly disconnected.");
 				}
-			} catch (IOException) {
+			} catch {
 				IsConnected = false;
 				throw;
 			}
@@ -292,11 +333,16 @@ namespace MailKit.Net.Pop3 {
 		/// Reads a sequence of bytes from the stream and advances the position
 		/// within the stream by the number of bytes read.
 		/// </summary>
+		/// <remarks>
+		/// Reads a sequence of bytes from the stream and advances the position
+		/// within the stream by the number of bytes read.
+		/// </remarks>
 		/// <returns>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many
 		/// bytes are not currently available, or zero (0) if the end of the stream has been reached.</returns>
 		/// <param name="buffer">The buffer.</param>
 		/// <param name="offset">The buffer offset.</param>
 		/// <param name="count">The number of bytes to read.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="buffer"/> is <c>null</c>.
 		/// </exception>
@@ -312,10 +358,13 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.InvalidOperationException">
 		/// The stream is in line mode (see <see cref="Pop3StreamMode.Line"/>).
 		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override int Read (byte[] buffer, int offset, int count)
+		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -341,7 +390,7 @@ namespace MailKit.Net.Pop3 {
 								break;
 
 							allowReadAhead = false;
-							ReadAhead (inbuf);
+							ReadAhead (inbuf, cancellationToken);
 						}
 
 						inptr = inbuf + inputIndex;
@@ -395,6 +444,42 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Reads a sequence of bytes from the stream and advances the position
+		/// within the stream by the number of bytes read.
+		/// </summary>
+		/// <remarks>
+		/// Reads a sequence of bytes from the stream and advances the position
+		/// within the stream by the number of bytes read.
+		/// </remarks>
+		/// <returns>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many
+		/// bytes are not currently available, or zero (0) if the end of the stream has been reached.</returns>
+		/// <param name="buffer">The buffer.</param>
+		/// <param name="offset">The buffer offset.</param>
+		/// <param name="count">The number of bytes to read.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// at the specified <paramref name="offset"/>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The stream is in line mode (see <see cref="Pop3StreamMode.Line"/>).
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+			return Read (buffer, offset, count, CancellationToken.None);
+		}
+
+		/// <summary>
 		/// Reads a single line of input from the stream.
 		/// </summary>
 		/// <remarks>
@@ -404,13 +489,17 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="buffer">The buffer containing the line data.</param>
 		/// <param name="offset">The offset into the buffer containing bytes read.</param>
 		/// <param name="count">The number of bytes read.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal bool ReadLine (out byte[] buffer, out int offset, out int count)
+		internal bool ReadLine (out byte[] buffer, out int offset, out int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -419,7 +508,7 @@ namespace MailKit.Net.Pop3 {
 					byte* start, inptr, inend;
 
 					if (inputIndex == inputEnd)
-						ReadAhead (inbuf);
+						ReadAhead (inbuf, cancellationToken);
 
 					offset = inputIndex;
 					buffer = input;
@@ -455,6 +544,61 @@ namespace MailKit.Net.Pop3 {
 		/// Writes a sequence of bytes to the stream and advances the current
 		/// position within this stream by the number of bytes written.
 		/// </summary>
+		/// <remarks>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </remarks>
+		/// <param name='buffer'>The buffer to write.</param>
+		/// <param name='offset'>The offset of the first byte to write.</param>
+		/// <param name='count'>The number of bytes to write.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// at the specified <paramref name="offset"/>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			ValidateArguments (buffer, offset, count);
+
+			try {
+				Poll (SelectMode.SelectWrite, cancellationToken);
+				Stream.Write (buffer, offset, count);
+				logger.LogClient (buffer, offset, count);
+			} catch {
+				IsConnected = false;
+				throw;
+			}
+
+			IsEndOfData = false;
+		}
+
+		/// <summary>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </summary>
+		/// <remarks>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </remarks>
 		/// <param name='buffer'>The buffer to write.</param>
 		/// <param name='offset'>The offset of the first byte to write.</param>
 		/// <param name='count'>The number of bytes to write.</param>
@@ -478,25 +622,51 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			CheckDisposed ();
-
-			ValidateArguments (buffer, offset, count);
-
-			try {
-				Stream.Write (buffer, offset, count);
-				logger.LogClient (buffer, offset, count);
-			} catch (IOException) {
-				IsConnected = false;
-				throw;
-			}
-
-			IsEndOfData = false;
+			Write (buffer, offset, count, CancellationToken.None);
 		}
 
 		/// <summary>
 		/// Clears all buffers for this stream and causes any buffered data to be written
 		/// to the underlying device.
 		/// </summary>
+		/// <remarks>
+		/// Clears all buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public void Flush (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			try {
+				Poll (SelectMode.SelectWrite, cancellationToken);
+				Stream.Flush ();
+			} catch {
+				IsConnected = false;
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Clears all buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </summary>
+		/// <remarks>
+		/// Clears all buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </remarks>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
 		/// </exception>
@@ -508,14 +678,7 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Flush ()
 		{
-			CheckDisposed ();
-
-			try {
-				Stream.Flush ();
-			} catch (IOException) {
-				IsConnected = false;
-				throw;
-			}
+			Flush (CancellationToken.None);
 		}
 
 		/// <summary>
