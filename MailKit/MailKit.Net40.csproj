@@ -46,7 +46,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.Net40.csproj">
       <Project>{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}</Project>
-      <Name>MimeKit</Name>
+      <Name>MimeKit.Net40</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
