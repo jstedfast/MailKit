@@ -555,12 +555,13 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-				cancellationToken.ThrowIfCancellationRequested ();
-
 				try {
+					cancellationToken.ThrowIfCancellationRequested ();
 					socket.Connect (ipAddresses[i], port);
 					break;
-				} catch (Exception) {
+				} catch {
+					socket.Dispose ();
+
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}

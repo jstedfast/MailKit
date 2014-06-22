@@ -503,12 +503,13 @@ namespace MailKit.Net.Imap {
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-				cancellationToken.ThrowIfCancellationRequested ();
-
 				try {
+					cancellationToken.ThrowIfCancellationRequested ();
 					socket.Connect (ipAddresses[i], port);
 					break;
 				} catch {
+					socket.Dispose ();
+
 					if (i + 1 == ipAddresses.Length)
 						throw;
 				}
