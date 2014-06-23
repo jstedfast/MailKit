@@ -84,7 +84,7 @@ namespace MailKit {
 		/// <para>If this feature is enabled, the <see cref="IMailFolder.MessageExpunged"/> event
 		/// is replaced with the <see cref="IMailFolder.MessagesVanished"/> event.</para>
 		/// <para>This method needs to be called immediately after
-		/// <see cref="Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
+		/// <see cref="IMailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
 		/// before the opening of any folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -118,7 +118,7 @@ namespace MailKit {
 		/// <para>If this feature is enabled, the <see cref="IMailFolder.MessageExpunged"/> event
 		/// is replaced with the <see cref="IMailFolder.MessagesVanished"/> event.</para>
 		/// <para>This method needs to be called immediately after
-		/// <see cref="Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
+		/// <see cref="IMailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
 		/// before the opening of any folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>

@@ -1882,6 +1882,7 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="CommandException">
 		/// The command failed.
+		/// </exception>
 		public virtual Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
