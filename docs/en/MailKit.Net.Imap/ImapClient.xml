@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapClient extends MailKit.MailStore" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.19.0.0</AssemblyVersion>
+    <AssemblyVersion>0.20.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MailStore</BaseTypeName>
@@ -28,7 +28,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -47,7 +47,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
@@ -72,7 +72,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -130,7 +130,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
@@ -150,7 +150,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Imap.ImapCapabilities Capabilities" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -175,7 +175,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -238,7 +238,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -266,7 +266,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -293,7 +293,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void EnableQuickResync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -341,7 +341,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -379,7 +379,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -417,7 +417,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -455,12 +455,129 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="Idle">
+      <MemberSignature Language="C#" Value="public void Idle (System.Threading.CancellationToken doneToken, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Idle(valuetype System.Threading.CancellationToken doneToken, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="doneToken" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Toggle the <see cref="T:MailKit.Net.Imap.ImapClient" /> into the IDLE state.
+            </summary>
+        <remarks>
+          <para>When a client enters the IDLE state, the IMAP server will send
+            events to the client as they occur on the selected folder. These events
+            may include notifications of new messages arriving, expunge notifications,
+            flag changes, etc.</para>
+          <para>Due to the nature of the IDLE command, a folder must be selected
+            before a client can enter into the IDLE state. This can be done by
+            opening a folder using
+            <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
+            or any of the other variants.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="doneToken" /> must be cancellable (i.e. <see cref="P:System.Threading.CancellationToken.None" /> cannot be used).
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>A <see cref="T:MailKit.Net.Imap.ImapFolder" /> has not been opened.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the IDLE command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server responded with an unexpected token.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="IdleAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task IdleAsync (System.Threading.CancellationToken doneToken, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task IdleAsync(valuetype System.Threading.CancellationToken doneToken, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="doneToken" Type="System.Threading.CancellationToken" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously toggle the <see cref="T:MailKit.Net.Imap.ImapClient" /> into the IDLE state.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+          <para>When a client enters the IDLE state, the IMAP server will send
+            events to the client as they occur on the selected folder. These events
+            may include notifications of new messages arriving, expunge notifications,
+            flag changes, etc.</para>
+          <para>Due to the nature of the IDLE command, a folder must be selected
+            before a client can enter into the IDLE state. This can be done by
+            opening a folder using
+            <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
+            or any of the other variants.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="doneToken" /> must be cancellable (i.e. <see cref="P:System.Threading.CancellationToken.None" /> cannot be used).
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>A <see cref="T:MailKit.Net.Imap.ImapFolder" /> has not been opened.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the IDLE command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server responded with an unexpected token.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Inbox">
       <MemberSignature Language="C#" Value="public override MailKit.IMailFolder Inbox { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IMailFolder Inbox" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -480,7 +597,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -502,7 +619,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -543,7 +660,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection OtherNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -563,7 +680,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection PersonalNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -583,7 +700,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string Protocol" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -603,7 +720,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -618,12 +735,32 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="C#" Value="public override object SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the lock object used by the default Async methods.
+            </summary>
+        <value>The lock object.</value>
+        <remarks>
+            Gets the lock object used by the default Async methods.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="ThreadingAlgorithms">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;MailKit.ThreadingAlgorithm&gt; ThreadingAlgorithms { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;valuetype MailKit.ThreadingAlgorithm&gt; ThreadingAlgorithms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;MailKit.ThreadingAlgorithm&gt;</ReturnType>
@@ -644,7 +781,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

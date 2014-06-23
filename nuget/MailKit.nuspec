@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.19.0.0</version>
+        <version>0.20.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -16,27 +16,31 @@ Features include:
 * SASL Authentication via NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
 * A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME and PIPELINING
 * A fully-cancellable Pop3Client with support for STLS, UIDL, and APOP.
-* A fully-cancellable ImapClient with support for LITERAL+, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, XLIST, and X-GM-EXT1.
+* A fully-cancellable ImapClient with support for IDLE, LITERAL+, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, XLIST, and X-GM-EXT1.
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
 * S/MIME and PGP support via MimeKit
 * Microsoft TNEF support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Implemented a workaround for a GMail IMAP bug in the BODYSTRUCTURE response for messages with message/rfc822 attachments.
-* Fixed a logic bug in MemMove which sometimes caused corruption of messages while downloading via IMAP or POP3.
-* Implemented async versions of all SmtpClient, Pop3Client, ImapClient, and ImapFolder methods.
-* Renamed IMessageService to IMailService, IMessageSpool to IMailSpool, IMesageStore to IMailStore, and IMessageTransport to IMailTransport.
-* Renamed IFolder to IMailFolder for consistency.
+        <releaseNotes>* Updated IMAP and POP3 clients to take advantage of MimeKit's new ICancellableStream interface.
+* Added a SyncRoot to IMailService and IMailFolder and adding locking in the Async methods.
+* Fixed parsing of escaped strings in IMAP envelope values.
+* Added IMailFolder APIs to copy and move a single message.
+* Implemented support for the IMAP IDLE command.
+* Added .NET 4.5 assemblies to the NuGet package.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
-        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 wpa81</tags>
+        <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.39.0.0" />
+            <dependency id="MimeKit" version="0.40.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
             <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
             <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.0" />
+            <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
+            <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
+            <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5" />
             <frameworkAssembly assemblyName="System" targetFramework="MonoAndroid0.0" />
             <frameworkAssembly assemblyName="System.Core" targetFramework="MonoAndroid0.0" />
             <frameworkAssembly assemblyName="System.Data" targetFramework="MonoAndroid0.0" />
@@ -52,6 +56,8 @@ Features include:
         <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.xml" target="lib\MonoTouch\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
+        <file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\wpa81\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\wpa81\MailKit.xml" />
     </files>

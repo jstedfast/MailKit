@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MessagesVanishedEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.19.0.0</AssemblyVersion>
+    <AssemblyVersion>0.20.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.EventArgs</BaseTypeName>
@@ -23,7 +23,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool Earlier" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -44,7 +44,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.UniqueId[] UniqueIds" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId[]</ReturnType>

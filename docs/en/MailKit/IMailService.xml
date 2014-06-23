@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMailService implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.19.0.0</AssemblyVersion>
+    <AssemblyVersion>0.20.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -25,7 +25,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -51,7 +51,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task AuthenticateAsync(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -107,7 +107,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
@@ -128,7 +128,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Cryptography.X509Certificates.X509CertificateCollection ClientCertificates" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509CertificateCollection</ReturnType>
@@ -150,7 +150,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -176,7 +176,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task ConnectAsync(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -223,7 +223,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -248,7 +248,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DisconnectAsync(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -277,7 +277,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -298,7 +298,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -321,7 +321,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task NoOpAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -358,12 +358,32 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="SyncRoot">
+      <MemberSignature Language="C#" Value="public object SyncRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets an object that can be used to synchronize access to the folder.
+            </summary>
+        <value>The sync root.</value>
+        <remarks>
+            Gets an object that can be used to synchronize access to the folder.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Timeout">
       <MemberSignature Language="C#" Value="public int Timeout { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.19.0.0</AssemblyVersion>
+        <AssemblyVersion>0.20.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
