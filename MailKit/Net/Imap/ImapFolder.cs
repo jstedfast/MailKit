@@ -564,7 +564,14 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			var encodedName = ImapEncoding.Encode (parent.FullName + parent.DirectorySeparator + name);
+			string newFullName;
+
+			if (!string.IsNullOrEmpty (parent.FullName))
+				newFullName = parent.FullName + parent.DirectorySeparator + name;
+			else
+				newFullName = name;
+
+			var encodedName = ImapEncoding.Encode (newFullName);
 			var ic = Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
 			var oldFullName = FullName;
 
