@@ -38,6 +38,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports client SSL/TLS certificates.
   * Supports the following extensions:
     * LITERAL+
+    * IDLE
     * NAMESPACE
     * CHILDREN
     * LOGINDISABLED
@@ -78,7 +79,6 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 * IMAP4 Client
   * Extensions:
     * QUOTA
-    * IDLE
     * BINARY
     * CATENATE
     * LIST-EXTENDED
