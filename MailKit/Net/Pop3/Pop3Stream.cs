@@ -31,7 +31,7 @@ using System.Threading;
 #if NETFX_CORE
 using Windows.Storage.Streams;
 using Windows.Networking.Sockets;
-using Socket = StreamSocket;
+using Socket = Windows.Networking.Sockets.StreamSocket;
 #else
 using System.Net.Sockets;
 #endif
