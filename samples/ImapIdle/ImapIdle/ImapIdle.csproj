@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -29,28 +29,26 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle">
+      <HintPath>..\packages\MimeKit.0.40.0.0\lib\net40\BouncyCastle.dll</HintPath>
+    </Reference>
+    <Reference Include="MailKit">
+      <HintPath>..\packages\MailKit.0.20.0.0\lib\net40\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\packages\MimeKit.0.40.0.0\lib\net40\MimeKit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\bc-csharp\crypto\BouncyCastle.csproj">
-      <Project>{4C235092-820C-4DEB-9074-D356FB797D8B}</Project>
-      <Name>BouncyCastle</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\MimeKit\MimeKit\MimeKit.csproj">
-      <Project>{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}</Project>
-      <Name>MimeKit</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\MailKit\MailKit.csproj">
-      <Project>{DB3A2478-4742-452B-80C1-F672B64285AD}</Project>
-      <Name>MailKit</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
