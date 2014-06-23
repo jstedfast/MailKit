@@ -67,6 +67,17 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </remarks>
+		/// <value>The sync root.</value>
+		public abstract object SyncRoot {
+			get;
+		}
+
+		/// <summary>
 		/// Gets the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>
@@ -196,7 +207,9 @@ namespace MailKit {
 				throw new ArgumentException ("The uri must be absolute.", "uri");
 
 			return Task.Factory.StartNew (() => {
-				Connect (uri, cancellationToken);
+				lock (SyncRoot) {
+					Connect (uri, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -386,7 +399,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("credentials");
 
 			return Task.Factory.StartNew (() => {
-				Authenticate (credentials, cancellationToken);
+				lock (SyncRoot) {
+					Authenticate (credentials, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -525,7 +540,9 @@ namespace MailKit {
 		public virtual Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Disconnect (quit, cancellationToken);
+				lock (SyncRoot) {
+					Disconnect (quit, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -584,7 +601,9 @@ namespace MailKit {
 		public virtual Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				NoOp (cancellationToken);
+				lock (SyncRoot) {
+					NoOp (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 

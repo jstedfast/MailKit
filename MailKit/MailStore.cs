@@ -160,7 +160,9 @@ namespace MailKit {
 		public virtual Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				EnableQuickResync (cancellationToken);
+				lock (SyncRoot) {
+					EnableQuickResync (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -270,7 +272,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("path");
 
 			return Task.Factory.StartNew (() => {
-				return GetFolder (path, cancellationToken);
+				lock (SyncRoot) {
+					return GetFolder (path, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 

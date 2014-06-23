@@ -119,6 +119,17 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Gets the lock object used by the default Async methods.
+		/// </summary>
+		/// <remarks>
+		/// Gets the lock object used by the default Async methods.
+		/// </remarks>
+		/// <value>The lock object.</value>
+		public override object SyncRoot {
+			get { return engine; }
+		}
+
+		/// <summary>
 		/// Gets the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>

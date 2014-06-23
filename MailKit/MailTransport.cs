@@ -120,7 +120,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("message");
 
 			return Task.Factory.StartNew (() => {
-				Send (message, cancellationToken);
+				lock (SyncRoot) {
+					Send (message, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -222,7 +224,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("recipients");
 
 			return Task.Factory.StartNew (() => {
-				Send (message, sender, recipients, cancellationToken);
+				lock (SyncRoot) {
+					Send (message, sender, recipients, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 	}

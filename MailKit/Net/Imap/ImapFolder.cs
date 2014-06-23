@@ -85,6 +85,17 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </remarks>
+		/// <value>The sync root.</value>
+		public override object SyncRoot {
+			get { return Engine; }
+		}
+
 		void CheckState (bool open, bool rw)
 		{
 			if (Engine.IsDisposed)

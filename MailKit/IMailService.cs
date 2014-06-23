@@ -43,6 +43,15 @@ namespace MailKit {
 	/// </remarks>
 	public interface IMailService : IDisposable
 	{
+		/// <summary>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </remarks>
+		/// <value>The sync root.</value>
+		object SyncRoot { get; }
+
 #if !NETFX_CORE
 		/// <summary>
 		/// Get or set the client SSL certificates.

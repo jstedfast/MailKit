@@ -45,6 +45,27 @@ namespace MailKit {
 	public abstract class MailFolder : IMailFolder
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
+		/// </remarks>
+		protected MailFolder ()
+		{
+		}
+
+		/// <summary>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </summary>
+		/// <remarks>
+		///Gets an object that can be used to synchronize access to the folder.
+		/// </remarks>
+		/// <value>The sync root.</value>
+		public abstract object SyncRoot {
+			get;
+		}
+
+		/// <summary>
 		/// Get the parent folder.
 		/// </summary>
 		/// <remarks>
@@ -371,7 +392,9 @@ namespace MailKit {
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
-				return Open (access, uidValidity, highestModSeq, uids, cancellationToken);
+				lock (SyncRoot) {
+					return Open (access, uidValidity, highestModSeq, uids, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -443,7 +466,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("access");
 
 			return Task.Factory.StartNew (() => {
-				return Open (access, cancellationToken);
+				lock (SyncRoot) {
+					return Open (access, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -512,7 +537,9 @@ namespace MailKit {
 		public virtual Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Close (expunge, cancellationToken);
+				lock (SyncRoot) {
+					Close (expunge, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -599,7 +626,9 @@ namespace MailKit {
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			return Task.Factory.StartNew (() => {
-				return Create (name, isMessageFolder, cancellationToken);
+				lock (SyncRoot) {
+					return Create (name, isMessageFolder, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -698,7 +727,9 @@ namespace MailKit {
 				throw new InvalidOperationException ("Cannot rename this folder.");
 
 			return Task.Factory.StartNew (() => {
-				Rename (parent, name, cancellationToken);
+				lock (SyncRoot) {
+					Rename (parent, name, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -764,7 +795,9 @@ namespace MailKit {
 				throw new InvalidOperationException ("Cannot delete this folder.");
 
 			return Task.Factory.StartNew (() => {
-				Delete (cancellationToken);
+				lock (SyncRoot) {
+					Delete (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -823,7 +856,9 @@ namespace MailKit {
 		public virtual Task SubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Subscribe (cancellationToken);
+				lock (SyncRoot) {
+					Subscribe (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -882,7 +917,9 @@ namespace MailKit {
 		public virtual Task UnsubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Unsubscribe (cancellationToken);
+				lock (SyncRoot) {
+					Unsubscribe (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -945,7 +982,9 @@ namespace MailKit {
 		public virtual Task<IEnumerable<IMailFolder>> GetSubfoldersAsync (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetSubfolders (subscribedOnly, cancellationToken);
+				lock (SyncRoot) {
+					return GetSubfolders (subscribedOnly, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1032,7 +1071,9 @@ namespace MailKit {
 				throw new ArgumentException ("The name of the subfolder is invalid.", "name");
 
 			return Task.Factory.StartNew (() => {
-				return GetSubfolder (name, cancellationToken);
+				lock (SyncRoot) {
+					return GetSubfolder (name, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1099,7 +1140,9 @@ namespace MailKit {
 		public virtual Task CheckAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Check (cancellationToken);
+				lock (SyncRoot) {
+					Check (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1188,7 +1231,9 @@ namespace MailKit {
 		public virtual Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Status (items, cancellationToken);
+				lock (SyncRoot) {
+					Status (items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1265,7 +1310,9 @@ namespace MailKit {
 		public virtual Task ExpungeAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Expunge (cancellationToken);
+				lock (SyncRoot) {
+					Expunge (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1366,7 +1413,9 @@ namespace MailKit {
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
-				Expunge (uids, cancellationToken);
+				lock (SyncRoot) {
+					Expunge (uids, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1440,7 +1489,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("message");
 
 			return Task.Factory.StartNew (() => {
-				return Append (message, flags, cancellationToken);
+				lock (SyncRoot) {
+					return Append (message, flags, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1516,7 +1567,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("message");
 
 			return Task.Factory.StartNew (() => {
-				return Append (message, flags, date, cancellationToken);
+				lock (SyncRoot) {
+					return Append (message, flags, date, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1615,7 +1668,9 @@ namespace MailKit {
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
 			return Task.Factory.StartNew (() => {
-				return Append (messages, flags, cancellationToken);
+				lock (SyncRoot) {
+					return Append (messages, flags, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1723,7 +1778,9 @@ namespace MailKit {
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
 
 			return Task.Factory.StartNew (() => {
-				return Append (messages, flags, dates, cancellationToken);
+				lock (SyncRoot) {
+					return Append (messages, flags, dates, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1831,7 +1888,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("destination");
 
 			return Task.Factory.StartNew (() => {
-				return CopyTo (uid, destination, cancellationToken);
+				lock (SyncRoot) {
+					return CopyTo (uid, destination, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1941,7 +2000,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("destination");
 
 			return Task.Factory.StartNew (() => {
-				return CopyTo (uids, destination, cancellationToken);
+				lock (SyncRoot) {
+					return CopyTo (uids, destination, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2050,7 +2111,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("destination");
 
 			return Task.Factory.StartNew (() => {
-				return CopyTo (uid, destination, cancellationToken);
+				lock (SyncRoot) {
+					return CopyTo (uid, destination, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2162,7 +2225,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("destination");
 
 			return Task.Factory.StartNew (() => {
-				return MoveTo (uids, destination, cancellationToken);
+				lock (SyncRoot) {
+					return MoveTo (uids, destination, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2365,7 +2430,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("destination");
 
 			return Task.Factory.StartNew (() => {
-				CopyTo (indexes, destination, cancellationToken);
+				lock (SyncRoot) {
+					CopyTo (indexes, destination, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2568,7 +2635,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("destination");
 
 			return Task.Factory.StartNew (() => {
-				MoveTo (indexes, destination, cancellationToken);
+				lock (SyncRoot) {
+					MoveTo (indexes, destination, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2672,7 +2741,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (uids, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (uids, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2790,7 +2861,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (uids, modseq, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (uids, modseq, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2880,7 +2953,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (min, max, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (min, max, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -2984,7 +3059,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (min, max, modseq, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (min, max, modseq, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3085,7 +3162,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (indexes, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (indexes, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3194,7 +3273,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (indexes, modseq, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (indexes, modseq, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3292,7 +3373,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (min, max, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (min, max, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3398,7 +3481,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("items");
 
 			return Task.Factory.StartNew (() => {
-				return Fetch (min, max, modseq, items, cancellationToken);
+				lock (SyncRoot) {
+					return Fetch (min, max, modseq, items, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3475,7 +3560,9 @@ namespace MailKit {
 		public virtual Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessage (uid, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessage (uid, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3555,7 +3642,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("index");
 
 			return Task.Factory.StartNew (() => {
-				return GetMessage (index, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessage (index, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3643,7 +3732,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("part");
 
 			return Task.Factory.StartNew (() => {
-				return GetBodyPart (uid, part, cancellationToken);
+				lock (SyncRoot) {
+					return GetBodyPart (uid, part, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3733,7 +3824,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("part");
 
 			return Task.Factory.StartNew (() => {
-				return GetBodyPart (uid, part, headersOnly, cancellationToken);
+				lock (SyncRoot) {
+					return GetBodyPart (uid, part, headersOnly, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3824,7 +3917,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("part");
 
 			return Task.Factory.StartNew (() => {
-				return GetBodyPart (index, part, cancellationToken);
+				lock (SyncRoot) {
+					return GetBodyPart (index, part, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -3917,7 +4012,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("part");
 
 			return Task.Factory.StartNew (() => {
-				return GetBodyPart (index, part, headersOnly, cancellationToken);
+				lock (SyncRoot) {
+					return GetBodyPart (index, part, headersOnly, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4020,7 +4117,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			return Task.Factory.StartNew (() => {
-				return GetStream (uid, offset, count, cancellationToken);
+				lock (SyncRoot) {
+					return GetStream (uid, offset, count, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4124,7 +4223,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			return Task.Factory.StartNew (() => {
-				return GetStream (index, offset, count, cancellationToken);
+				lock (SyncRoot) {
+					return GetStream (index, offset, count, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4238,7 +4339,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			return Task.Factory.StartNew (() => {
-				return GetStream (uid, part, offset, count, cancellationToken);
+				lock (SyncRoot) {
+					return GetStream (uid, part, offset, count, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4353,7 +4456,9 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			return Task.Factory.StartNew (() => {
-				return GetStream (index, part, offset, count, cancellationToken);
+				lock (SyncRoot) {
+					return GetStream (index, part, offset, count, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4451,7 +4556,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				AddFlags (uids, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					AddFlags (uids, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4549,7 +4656,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				RemoveFlags (uids, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					RemoveFlags (uids, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4644,7 +4753,9 @@ namespace MailKit {
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
-				SetFlags (uids, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					SetFlags (uids, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4756,7 +4867,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				return AddFlags (uids, modseq, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					return AddFlags (uids, modseq, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4868,7 +4981,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				return RemoveFlags (uids, modseq, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					return RemoveFlags (uids, modseq, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -4973,7 +5088,9 @@ namespace MailKit {
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
-				return SetFlags (uids, modseq, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					return SetFlags (uids, modseq, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5072,7 +5189,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				AddFlags (indexes, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					AddFlags (indexes, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5171,7 +5290,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				RemoveFlags (indexes, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					RemoveFlags (indexes, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5263,7 +5384,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("indexes");
 
 			return Task.Factory.StartNew (() => {
-				SetFlags (indexes, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					SetFlags (indexes, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5372,7 +5495,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				return AddFlags (indexes, modseq, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					return AddFlags (indexes, modseq, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5481,7 +5606,9 @@ namespace MailKit {
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
-				return RemoveFlags (indexes, modseq, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					return RemoveFlags (indexes, modseq, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5583,7 +5710,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("indexes");
 
 			return Task.Factory.StartNew (() => {
-				return SetFlags (indexes, modseq, flags, silent, cancellationToken);
+				lock (SyncRoot) {
+					return SetFlags (indexes, modseq, flags, silent, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5669,7 +5798,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("query");
 
 			return Task.Factory.StartNew (() => {
-				return Search (query, cancellationToken);
+				lock (SyncRoot) {
+					return Search (query, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5781,7 +5912,9 @@ namespace MailKit {
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
 			return Task.Factory.StartNew (() => {
-				return Search (query, orderBy, cancellationToken);
+				lock (SyncRoot) {
+					return Search (query, orderBy, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -5889,7 +6022,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("query");
 
 			return Task.Factory.StartNew (() => {
-				return Search (uids, query, cancellationToken);
+				lock (SyncRoot) {
+					return Search (uids, query, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -6021,7 +6156,9 @@ namespace MailKit {
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
 			return Task.Factory.StartNew (() => {
-				return Search (uids, query, orderBy, cancellationToken);
+				lock (SyncRoot) {
+					return Search (uids, query, orderBy, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -6119,7 +6256,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("query");
 
 			return Task.Factory.StartNew (() => {
-				return Thread (algorithm, query, cancellationToken);
+				lock (SyncRoot) {
+					return Thread (algorithm, query, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -6239,7 +6378,9 @@ namespace MailKit {
 				throw new ArgumentNullException ("query");
 
 			return Task.Factory.StartNew (() => {
-				return Thread (uids, algorithm, query, cancellationToken);
+				lock (SyncRoot) {
+					return Thread (uids, algorithm, query, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 

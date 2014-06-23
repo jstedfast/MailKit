@@ -24,7 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
 using System.Threading;
 using System.Collections;
 using System.Threading.Tasks;
@@ -68,7 +67,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -99,7 +98,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -120,7 +119,9 @@ namespace MailKit {
 		public virtual Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageCount (cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageCount (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -140,7 +141,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -179,7 +180,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -203,7 +204,9 @@ namespace MailKit {
 		public virtual Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageUid (index, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageUid (index, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -219,7 +222,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -254,7 +257,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -278,7 +281,9 @@ namespace MailKit {
 		public virtual Task<string[]> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageUids (cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageUids (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -359,7 +364,9 @@ namespace MailKit {
 		public virtual Task<int> GetMessageSizeAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageSize (uid, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageSize (uid, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -434,7 +441,9 @@ namespace MailKit {
 		public virtual Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageSize (index, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageSize (index, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -449,7 +458,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -480,7 +489,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -501,7 +510,9 @@ namespace MailKit {
 		public virtual Task<int[]> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageSizes (cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageSizes (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -523,7 +534,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -564,7 +575,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -588,7 +599,9 @@ namespace MailKit {
 		public virtual Task<HeaderList> GetMessageHeadersAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageHeaders (uid, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageHeaders (uid, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -607,7 +620,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -642,7 +655,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -663,7 +676,9 @@ namespace MailKit {
 		public virtual Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessageHeaders (index, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessageHeaders (index, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -685,7 +700,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -726,7 +741,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -750,7 +765,9 @@ namespace MailKit {
 		public virtual Task<MimeMessage> GetMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessage (uid, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessage (uid, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -769,7 +786,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -804,7 +821,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -825,7 +842,9 @@ namespace MailKit {
 		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				return GetMessage (index, cancellationToken);
+				lock (SyncRoot) {
+					return GetMessage (index, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -848,7 +867,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -890,7 +909,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -914,7 +933,9 @@ namespace MailKit {
 		public virtual Task DeleteMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				DeleteMessage (uid, cancellationToken);
+				lock (SyncRoot) {
+					DeleteMessage (uid, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -934,7 +955,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -970,7 +991,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -991,7 +1012,9 @@ namespace MailKit {
 		public virtual Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				DeleteMessage (index, cancellationToken);
+				lock (SyncRoot) {
+					DeleteMessage (index, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1007,7 +1030,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -1039,7 +1062,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -1060,7 +1083,9 @@ namespace MailKit {
 		public Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
-				Reset (cancellationToken);
+				lock (SyncRoot) {
+					Reset (cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
@@ -1074,7 +1099,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
@@ -1104,7 +1129,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">

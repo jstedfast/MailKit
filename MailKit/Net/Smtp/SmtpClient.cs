@@ -127,6 +127,17 @@ namespace MailKit.Net.Smtp {
 		}
 
 		/// <summary>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </remarks>
+		/// <value>The sync root.</value>
+		public override object SyncRoot {
+			get { return this; }
+		}
+
+		/// <summary>
 		/// Get the protocol supported by the message service.
 		/// </summary>
 		/// <remarks>

@@ -43,6 +43,15 @@ namespace MailKit {
 	public interface IMailFolder : IEnumerable<MimeMessage>
 	{
 		/// <summary>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets an object that can be used to synchronize access to the folder.
+		/// </remarks>
+		/// <value>The sync root.</value>
+		object SyncRoot { get; }
+
+		/// <summary>
 		/// Get the parent folder.
 		/// </summary>
 		/// <remarks>
