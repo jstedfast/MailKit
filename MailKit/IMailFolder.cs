@@ -1353,6 +1353,30 @@ namespace MailKit {
 		Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void AddFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="uid">The UIDs of the message.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task AddFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Add a set of flags to the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -1377,6 +1401,30 @@ namespace MailKit {
 		Task AddFlagsAsync (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void RemoveFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Remove a set of flags from the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -1399,6 +1447,30 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task RemoveFlagsAsync (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void SetFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task SetFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages.
@@ -1509,6 +1581,30 @@ namespace MailKit {
 		Task<UniqueId[]> SetFlagsAsync (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void AddFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task AddFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Add a set of flags to the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -1533,6 +1629,30 @@ namespace MailKit {
 		Task AddFlagsAsync (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void RemoveFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task RemoveFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Remove a set of flags from the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -1555,6 +1675,30 @@ namespace MailKit {
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task RemoveFlagsAsync (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void SetFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task SetFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Set the flags of the specified messages.

@@ -4464,6 +4464,90 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void AddFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			AddFlags (new [] { uid }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task AddFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return AddFlagsAsync (new [] { uid }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
 		/// Add a set of flags to the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -4480,6 +4564,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4522,6 +4608,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4564,6 +4652,90 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="uid">The UIDs of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void RemoveFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			RemoveFlags (new [] { uid }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task RemoveFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return RemoveFlagsAsync (new [] { uid }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
 		/// Remove a set of flags from the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -4580,6 +4752,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4622,6 +4796,8 @@ namespace MailKit {
 		/// <para><paramref name="uids"/> is empty.</para>
 		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -4661,6 +4837,86 @@ namespace MailKit {
 					RemoveFlags (uids, flags, silent, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="uid">The UIDs of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void SetFlags (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			SetFlags (new [] { uid }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task SetFlagsAsync (UniqueId uid, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return SetFlagsAsync (new [] { uid }, flags, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -5096,6 +5352,90 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void AddFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			AddFlags (new [] { index }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously add a set of flags to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of flags to the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the messages.</param>
+		/// <param name="flags">The message flags to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task AddFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return AddFlagsAsync (new [] { index }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
 		/// Add a set of flags to the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -5197,6 +5537,90 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void RemoveFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			RemoveFlags (new [] { index }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously remove a set of flags from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of flags from the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task RemoveFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return RemoveFlagsAsync (new [] { index }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
 		/// Remove a set of flags from the specified messages.
 		/// </summary>
 		/// <remarks>
@@ -5295,6 +5719,86 @@ namespace MailKit {
 					RemoveFlags (indexes, flags, silent, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void SetFlags (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			SetFlags (new [] { index }, flags, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously set the flags of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the flags of the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="flags">The message flags to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task SetFlagsAsync (int index, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return SetFlagsAsync (new [] { index }, flags, silent, cancellationToken);
 		}
 
 		/// <summary>
