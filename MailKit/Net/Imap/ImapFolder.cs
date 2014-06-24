@@ -4231,6 +4231,11 @@ namespace MailKit.Net.Imap {
 			return true;
 		}
 
+		static string FormatDateTime (DateTime date)
+		{
+			return date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture).ToUpperInvariant ();
+		}
+
 		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens, ref bool ascii)
 		{
 			TextSearchQuery text = null;
@@ -4279,15 +4284,15 @@ namespace MailKit.Net.Imap {
 				break;
 			case SearchTerm.DeliveredAfter:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SINCE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				builder.AppendFormat ("SINCE {0}", FormatDateTime (date.Date));
 				break;
 			case SearchTerm.DeliveredBefore:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("BEFORE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				builder.AppendFormat ("BEFORE {0}", FormatDateTime (date.Date));
 				break;
 			case SearchTerm.DeliveredOn:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("ON {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				builder.AppendFormat ("ON {0}", FormatDateTime (date.Date));
 				break;
 			case SearchTerm.Draft:
 				builder.Append ("DRAFT");
@@ -4368,15 +4373,15 @@ namespace MailKit.Net.Imap {
 				break;
 			case SearchTerm.SentAfter:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SENTSINCE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				builder.AppendFormat ("SENTSINCE {0}", FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SentBefore:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SENTBEFORE {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				builder.AppendFormat ("SENTBEFORE {0}", FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SentOn:
 				date = (DateSearchQuery) query;
-				builder.AppendFormat ("SENTON {0}", date.Date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture));
+				builder.AppendFormat ("SENTON {0}", FormatDateTime (date.Date));
 				break;
 			case SearchTerm.SmallerThan:
 				numeric = (NumericSearchQuery) query;
