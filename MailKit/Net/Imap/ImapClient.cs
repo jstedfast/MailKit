@@ -518,6 +518,9 @@ namespace MailKit.Net.Imap {
 					cancellationToken.ThrowIfCancellationRequested ();
 					socket.Connect (ipAddresses[i], port);
 					break;
+				} catch (OperationCanceledException) {
+					socket.Dispose ();
+					throw;
 				} catch {
 					socket.Dispose ();
 
@@ -536,11 +539,17 @@ namespace MailKit.Net.Imap {
 #else
 			socket = new StreamSocket ();
 
-			cancellationToken.ThrowIfCancellationRequested ();
-			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
-				.AsTask (cancellationToken)
-				.GetAwaiter ()
-				.GetResult ();
+			try {
+				cancellationToken.ThrowIfCancellationRequested ();
+				socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), imaps ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
+					.AsTask (cancellationToken)
+					.GetAwaiter ()
+					.GetResult ();
+			} catch {
+				socket.Dispose ();
+				socket = null;
+				throw;
+			}
 
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
 #endif

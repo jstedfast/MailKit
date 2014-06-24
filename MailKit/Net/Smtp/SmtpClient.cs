@@ -757,6 +757,10 @@ namespace MailKit.Net.Smtp {
 					socket.Connect (ipAddresses[i], port);
 					localEndPoint = socket.LocalEndPoint;
 					break;
+				} catch (OperationCanceledException) {
+					socket.Dispose ();
+					socket = null;
+					throw;
 				} catch {
 					socket.Dispose ();
 					socket = null;
@@ -776,11 +780,17 @@ namespace MailKit.Net.Smtp {
 #else
 			socket = new StreamSocket ();
 
-			cancellationToken.ThrowIfCancellationRequested ();
-			socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), smtps ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
-				.AsTask (cancellationToken)
-				.GetAwaiter ()
-				.GetResult ();
+			try {
+				cancellationToken.ThrowIfCancellationRequested ();
+				socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), smtps ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
+					.AsTask (cancellationToken)
+					.GetAwaiter ()
+					.GetResult ();
+			} catch {
+				socket.Dispose ();
+				socket = null;
+				throw;
+			}
 
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
 #endif
