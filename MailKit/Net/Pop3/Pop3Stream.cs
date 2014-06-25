@@ -329,6 +329,14 @@ namespace MailKit.Net.Pop3 {
 				throw new ObjectDisposedException ("Pop3Stream");
 		}
 
+		unsafe bool NeedInput (byte* inptr, int inputLeft)
+		{
+			if (inputLeft == 2 && *inptr == (byte) '.' && *(inptr + 1) == '\n')
+				return false;
+
+			return true;
+		}
+
 		/// <summary>
 		/// Reads a sequence of bytes from the stream and advances the position
 		/// within the stream by the number of bytes read.
@@ -382,18 +390,22 @@ namespace MailKit.Net.Pop3 {
 					byte* outend = outptr + count;
 					bool allowReadAhead = true;
 					byte* inptr, inend;
+					int inputLeft;
 
 					do {
+						inputLeft = inputEnd - inputIndex;
+						inptr = inbuf + inputIndex;
+
 						// we need at least 3 bytes: ".\r\n"
-						if ((inputEnd - inputIndex) < 3) {
+						if (inputLeft < 3 && (midline || NeedInput (inptr, inputLeft))) {
 							if (!allowReadAhead)
 								break;
 
-							allowReadAhead = false;
 							ReadAhead (inbuf, cancellationToken);
+							inptr = inbuf + inputIndex;
+							allowReadAhead = false;
 						}
 
-						inptr = inbuf + inputIndex;
 						inend = inbuf + inputEnd;
 						*inend = (byte) '\n';
 
