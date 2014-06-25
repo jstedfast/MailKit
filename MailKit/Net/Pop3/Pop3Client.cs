@@ -603,7 +603,7 @@ namespace MailKit.Net.Pop3 {
 				throw;
 			}
 
-			stream = new DuplexStream (socket.InputStream.AsStreamForRead (), socket.OutputStream.AsStreamForWrite ());
+			stream = new DuplexStream (socket.InputStream.AsStreamForRead (0), socket.OutputStream.AsStreamForWrite (0));
 #endif
 
 			probed = ProbedCapabilities.None;
