@@ -341,11 +341,9 @@ namespace MailKit.Net.Pop3 {
 			var pc = queue[0];
 			queue.RemoveAt (0);
 
-			try {
-				pc.CancellationToken.ThrowIfCancellationRequested ();
-			} catch (OperationCanceledException) {
+			if (pc.CancellationToken.IsCancellationRequested) {
 				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
-				throw;
+				pc.CancellationToken.ThrowIfCancellationRequested ();
 			}
 
 			pc.Status = Pop3CommandStatus.Active;

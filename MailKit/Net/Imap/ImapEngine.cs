@@ -1325,11 +1325,9 @@ namespace MailKit.Net.Imap {
 			current = queue[0];
 			queue.RemoveAt (0);
 
-			try {
-				current.CancellationToken.ThrowIfCancellationRequested ();
-			} catch (OperationCanceledException) {
+			if (current.CancellationToken.IsCancellationRequested) {
 				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
-				throw;
+				current.CancellationToken.ThrowIfCancellationRequested ();
 			}
 
 			current.Status = ImapCommandStatus.Active;
