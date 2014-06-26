@@ -154,10 +154,10 @@ To switch to that branch,
 
 In the top-level MailKit source directory, there are three solution files: MailKit.sln, MailKit.Net40.sln and MailKit.Mobile.sln.
 
+* MailKit.sln includes the projects for .NET 4.5, .NET 4.0, Xamarin.Android, and Xamarin.iOS.
+* MailKit.Net40.sln just includes the .NET Framework 4.0 C# project (MailKit/MailKit.Net40.csproj)
 * MailKit.Mobile.sln just includes the Xamarin.iOS and Xamarin.Android projects.
-* MailKit.Net40.sln just includes the .NET Framework 4.0 C# project (MailKit/MailKit.csproj)
-* MailKit.sln includes everything that is in the MailKit.Net40.sln solution as well as the projects for Xamarin.Android,
-Xamarin.iOS, and Xamarin.Mac.
+* MailKit.Win.sln just includes the Windows 8.1 Universal project (aka wpa81).
 
 If you don't have the Xamarin products, you'll probably want to open the MailKit.Net45.sln instead of MailKit.sln.
 
@@ -174,8 +174,6 @@ One of the more common operations that MailKit is meant for is sending email mes
 
 ```csharp
 using System;
-using System.Net;
-using System.Threading;
 
 using MailKit.Net.Smtp;
 using MailKit;
@@ -200,24 +198,17 @@ I just wanted to let you know that Monica and I were going to go play some paint
 			};
 
 			using (var client = new SmtpClient ()) {
-				var credentials = new NetworkCredential ("joey", "password");
+				client.Connect ("smtp.friends.com", 587, false);
 
-				// Note: if the server requires SSL-on-connect, use the "smtps" protocol instead
-				var uri = new Uri ("smtp://smtp.gmail.com:587");
+				// Note: since we don't have an OAuth2 token, disable
+				// the XOAUTH2 authentication mechanism.
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-				using (var cancel = new CancellationTokenSource ()) {
-					client.Connect (uri, cancel.Token);
+				// Note: only needed if the SMTP server requires authentication
+				client.Authenticate ("joey", "password");
 
-					// Note: since we don't have an OAuth2 token, disable
-					// the XOAUTH2 authentication mechanism.
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
-					// Note: only needed if the SMTP server requires authentication
-					client.Authenticate (credentials, cancel.Token);
-
-					client.Send (message, cancel.Token);
-					client.Disconnect (true, cancel.Token);
-				}
+				client.Send (message);
+				client.Disconnect (true);
 			}
 		}
 	}
@@ -230,8 +221,6 @@ One of the other main uses of MailKit is retrieving messages from pop3 servers.
 
 ```csharp
 using System;
-using System.Net;
-using System.Threading;
 
 using MailKit.Net.Pop3;
 using MailKit;
@@ -243,28 +232,21 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new Pop3Client ()) {
-				var credentials = new NetworkCredential ("joey", "password");
+				client.Connect ("pop.friends.com", 110, false);
 
-				// Note: if the server requires SSL-on-connect, use the "pops" protocol instead
-				var uri = new Uri ("pop://mail.friends.com");
+				// Note: since we don't have an OAuth2 token, disable
+				// the XOAUTH2 authentication mechanism.
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-				using (var cancel = new CancellationTokenSource ()) {
-					client.Connect (uri, cancel.Token);
+				client.Authenticate ("joey", "password");
 
-					// Note: since we don't have an OAuth2 token, disable
-					// the XOAUTH2 authentication mechanism.
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
-					client.Authenticate (credentials, cancel.Token);
-
-					int count = client.GetMessageCount (cancel.Token);
-					for (int i = 0; i < count; i++) {
-						var message = client.GetMessage (i, cancel.Token);
-						Console.WriteLine ("Subject: {0}", message.Subject);
-					}
-
-					client.Disconnect (true, cancel.Token);
+				int count = client.GetMessageCount ();
+				for (int i = 0; i < count; i++) {
+					var message = client.GetMessage (i);
+					Console.WriteLine ("Subject: {0}", message.Subject);
 				}
+
+				client.Disconnect (true);
 			}
 		}
 	}
@@ -277,8 +259,6 @@ More important than POP3 support is the IMAP support. Here's a simple use-case o
 
 ```csharp
 using System;
-using System.Net;
-using System.Threading;
 
 using MailKit.Net.Imap;
 using MailKit.Search;
@@ -291,32 +271,27 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new ImapClient ()) {
-				var credentials = new NetworkCredential ("joey", "password");
-				var uri = new Uri ("imaps://imap.gmail.com");
+				client.Connect ("imap.friends.com", 995, true);
 
-				using (var cancel = new CancellationTokenSource ()) {
-					client.Connect (uri, cancel.Token);
+				// Note: since we don't have an OAuth2 token, disable
+				// the XOAUTH2 authentication mechanism.
+				client.AuthenticationMechanisms.Remove ("XOAUTH");
 
-					// Note: since we don't have an OAuth2 token, disable
-					// the XOAUTH2 authentication mechanism.
-					client.AuthenticationMechanisms.Remove ("XOAUTH");
+				client.Authenticate ("joey", "password");
 
-					client.Authenticate (credentials, cancel.Token);
+				// The Inbox folder is always available on all IMAP servers...
+				var inbox = client.Inbox;
+				inbox.Open (FolderAccess.ReadOnly);
 
-					// The Inbox folder is always available on all IMAP servers...
-					var inbox = client.Inbox;
-					inbox.Open (FolderAccess.ReadOnly, cancel.Token);
+				Console.WriteLine ("Total messages: {0}", inbox.Count);
+				Console.WriteLine ("Recent messages: {0}", inbox.Recent);
 
-					Console.WriteLine ("Total messages: {0}", inbox.Count);
-					Console.WriteLine ("Recent messages: {0}", inbox.Recent);
-
-					for (int i = 0; i < inbox.Count; i++) {
-						var message = inbox.GetMessage (i, cancel.Token);
-						Console.WriteLine ("Subject: {0}", message.Subject);
-					}
-
-					client.Disconnect (true, cancel.Token);
+				for (int i = 0; i < inbox.Count; i++) {
+					var message = inbox.GetMessage (i);
+					Console.WriteLine ("Subject: {0}", message.Subject);
 				}
+
+				client.Disconnect (true);
 			}
 		}
 	}
@@ -328,7 +303,7 @@ so that you can display a list of messages in a mail client without having to fi
 messages from the server:
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Token)) {
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId)) {
 	Console.WriteLine ("[summary] {0:D2}: {1}", summary.Index, summary.Envelope.Subject);
 }
 ```
@@ -337,7 +312,7 @@ The results of a Fetch command can also be used to download individual MIME part
 than downloading the entire message. For example:
 
 ```csharp
-foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Token)) {
+foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId)) {
 	var text = summary.Body as BodyPartText;
 
 	if (text == null) {
@@ -351,7 +326,7 @@ foreach (var summary in inbox.Fetch (0, -1, MessageSummaryItems.Full, cancel.Tok
 		continue;
 
 	// this will download *just* the text part
-	var part = inbox.GetBodyPart (summary.Index, text, cancel.Token);
+	var part = inbox.GetBodyPart (summary.UniqueId.Value, text);
 }
 ```
 
@@ -362,23 +337,23 @@ You may also be interested in sorting and searching...
 var query = SearchQuery.DeliveredAfter (DateTime.Parse ("2013-01-12"))
     .And (SearchQuery.SubjectContains ("MailKit")).And (SearchQuery.Seen);
 
-foreach (var uid in inbox.Search (query, cancel.Token)) {
-	var message = inbox.GetMessage (uid, cancel.Token);
+foreach (var uid in inbox.Search (query)) {
+	var message = inbox.GetMessage (uid);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 
 // let's do the same search, but this time sort them in reverse arrival order
 var orderBy = new [] { OrderBy.ReverseArrival };
-foreach (var uid in inbox.Search (query, orderBy, cancel.Token)) {
-	var message = inbox.GetMessage (uid, cancel.Token);
+foreach (var uid in inbox.Search (query, orderBy)) {
+	var message = inbox.GetMessage (uid);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 
 // you'll notice that the orderBy argument is an array... this is because you
 // can actually sort the search results based on multiple columns:
 orderBy = new [] { OrderBy.ReverseArrival, OrderBy.Subject };
-foreach (var uid in inbox.Search (query, orderBy, cancel.Token)) {
-	var message = inbox.GetMessage (uid, cancel.Token);
+foreach (var uid in inbox.Search (query, orderBy)) {
+	var message = inbox.GetMessage (uid);
 	Console.WriteLine ("[match] {0}: {1}", uid, message.Subject);
 }
 ```
@@ -391,7 +366,7 @@ How about navigating folders? MailKit can do that, too:
 ```csharp
 // Get the first personal namespace and list the toplevel folders under it.
 var personal = client.GetFolder (client.PersonalNamespaces[0]);
-foreach (var folder in personal.GetSubfolders (false, cancel.Token))
+foreach (var folder in personal.GetSubfolders (false))
 	Console.WriteLine ("[folder] {0}", folder.Name);
 ```
 
