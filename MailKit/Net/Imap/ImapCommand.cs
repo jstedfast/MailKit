@@ -460,10 +460,8 @@ namespace MailKit.Net.Imap {
 					try {
 						Engine.Stream.WaitForData (idle.Token);
 					} catch (OperationCanceledException) {
-						if (idle.IsCancellationRequested) {
-							Engine.Disconnect ();
+						if (idle.IsCancellationRequested)
 							throw;
-						}
 
 						// if we made it here, then it suggests that
 						// idle.IsDoneRequested is true
