@@ -272,26 +272,42 @@ namespace MailKit.Net.Imap {
 			Poll (SelectMode.SelectRead, cancellationToken);
 		}
 
-		int ReadBufferedSslData (int offset, int count)
+		int ReadBufferedData (int offset, int count)
 		{
 			#if !NETFX_CORE
-			if (Stream is SslStream) {
+			bool buffered = Stream is SslStream || Stream is DuplexStream;
+			#else
+			bool buffered = true;
+			#endif
+
+			if (buffered) {
+				#if !NETFX_CORE
+				int timeout = Socket.ReceiveTimeout;
+				#else
 				int timeout = Stream.ReadTimeout;
+				#endif
 
 				try {
+					#if !NETFX_CORE
+					Socket.ReceiveTimeout = 1;
+					#else
 					Stream.ReadTimeout = 1;
+					#endif
 
 					return Stream.Read (input, offset, count);
-				} catch (IOException ex) {
-					var sex = ex.InnerException as SocketException;
+				} catch (IOException io) {
+					var ex = io.InnerException as SocketException;
 
-					if (sex == null || sex.SocketErrorCode != SocketError.TimedOut)
+					if (ex == null || ex.SocketErrorCode != SocketError.TimedOut)
 						throw;
 				} finally {
+					#if !NETFX_CORE
+					Socket.ReceiveTimeout = timeout;
+					#else
 					Stream.ReadTimeout = timeout;
+					#endif
 				}
 			}
-			#endif
 
 			return 0;
 		}
@@ -332,7 +348,7 @@ namespace MailKit.Net.Imap {
 			try {
 				int count = end - start;
 
-				if ((nread = ReadBufferedSslData (start, count)) <= 0) {
+				if ((nread = ReadBufferedData (start, count)) <= 0) {
 					Poll (SelectMode.SelectRead, cancellationToken);
 					nread = Stream.Read (input, start, count);
 				}

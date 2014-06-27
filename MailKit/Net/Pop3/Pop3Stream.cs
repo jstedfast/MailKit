@@ -266,7 +266,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		int ReadBufferedSslData (int offset, int count)
+		int ReadBufferedData (int offset, int count)
 		{
 			#if !NETFX_CORE
 			if (Stream is SslStream) {
@@ -276,10 +276,10 @@ namespace MailKit.Net.Pop3 {
 					Stream.ReadTimeout = 1;
 
 					return Stream.Read (input, offset, count);
-				} catch (IOException ex) {
-					var sex = ex.InnerException as SocketException;
+				} catch (IOException io) {
+					var ex = io.InnerException as SocketException;
 
-					if (sex == null || sex.SocketErrorCode != SocketError.TimedOut)
+					if (ex == null || ex.SocketErrorCode != SocketError.TimedOut)
 						throw;
 				} finally {
 					Stream.ReadTimeout = timeout;
@@ -322,7 +322,7 @@ namespace MailKit.Net.Pop3 {
 			try {
 				int count = end - start;
 
-				if ((nread = ReadBufferedSslData (start, count)) <= 0) {
+				if ((nread = ReadBufferedData (start, count)) <= 0) {
 					Poll (SelectMode.SelectRead, cancellationToken);
 					nread = Stream.Read (input, start, count);
 				}
