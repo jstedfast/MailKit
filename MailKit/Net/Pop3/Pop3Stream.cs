@@ -33,6 +33,7 @@ using Windows.Storage.Streams;
 using Windows.Networking.Sockets;
 using Socket = Windows.Networking.Sockets.StreamSocket;
 #else
+using System.Net.Security;
 using System.Net.Sockets;
 #endif
 
@@ -265,6 +266,30 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
+		int ReadBufferedSslData (int offset, int count)
+		{
+			#if !NETFX_CORE
+			if (Stream is SslStream) {
+				int timeout = Stream.ReadTimeout;
+
+				try {
+					Stream.ReadTimeout = 1;
+
+					return Stream.Read (input, offset, count);
+				} catch (IOException ex) {
+					var sex = ex.InnerException as SocketException;
+
+					if (sex == null || sex.SocketErrorCode != SocketError.TimedOut)
+						throw;
+				} finally {
+					Stream.ReadTimeout = timeout;
+				}
+			}
+			#endif
+
+			return 0;
+		}
+
 		unsafe int ReadAhead (byte* inbuf, CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
@@ -295,9 +320,14 @@ namespace MailKit.Net.Pop3 {
 			end = input.Length - PadSize;
 
 			try {
-				Poll (SelectMode.SelectRead, cancellationToken);
+				int count = end - start;
 
-				if ((nread = Stream.Read (input, start, end - start)) > 0) {
+				if ((nread = ReadBufferedSslData (start, count)) <= 0) {
+					Poll (SelectMode.SelectRead, cancellationToken);
+					nread = Stream.Read (input, start, count);
+				}
+
+				if (nread > 0) {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
