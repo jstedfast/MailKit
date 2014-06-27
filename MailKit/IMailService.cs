@@ -245,5 +245,32 @@ namespace MailKit {
 		/// The server responded with an unexpected token.
 		/// </exception>
 		Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Occurs when the client has been successfully connected.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Connected"/> event is raised when the client
+		/// successfully connects to the mail server.
+		/// </remarks>
+		event EventHandler<EventArgs> Connected;
+
+		/// <summary>
+		/// Occurs when the client has been disconnected.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Disconnected"/> event is raised whenever the client
+		/// has been disconnected.
+		/// </remarks>
+		event EventHandler<EventArgs> Disconnected;
+
+		/// <summary>
+		/// Occurs when the client has been successfully authenticated.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Disconnected"/> event is raised whenever the client
+		/// has been authenticated.
+		/// </remarks>
+		event EventHandler<EventArgs> Authenticated;
 	}
 }

@@ -629,6 +629,7 @@ namespace MailKit.Net.Smtp {
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
 					Ehlo (cancellationToken);
 					authenticated = true;
+					OnAuthenticated ();
 					return;
 				}
 			}
@@ -675,6 +676,8 @@ namespace MailKit.Net.Smtp {
 				stream = null;
 				throw;
 			}
+
+			OnConnected ();
 		}
 
 		/// <summary>
@@ -841,6 +844,8 @@ namespace MailKit.Net.Smtp {
 				socket = null;
 				throw;
 			}
+
+			OnConnected ();
 		}
 
 		/// <summary>
@@ -932,6 +937,8 @@ namespace MailKit.Net.Smtp {
 #else
 			socket = null;
 #endif
+
+			OnDisconnected ();
 		}
 
 		#endregion

@@ -100,7 +100,7 @@ namespace MailKit.Net.Imap {
 
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine ();
-			engine.Alert += OnAlert;
+			engine.Alert += OnEngineAlert;
 			logger = protocolLogger;
 		}
 
@@ -390,6 +390,7 @@ namespace MailKit.Net.Imap {
 
 				engine.QueryNamespaces (cancellationToken);
 				engine.QuerySpecialFolders (cancellationToken);
+				OnAuthenticated ();
 				return;
 			}
 
@@ -415,6 +416,7 @@ namespace MailKit.Net.Imap {
 
 			engine.QueryNamespaces (cancellationToken);
 			engine.QuerySpecialFolders (cancellationToken);
+			OnAuthenticated ();
 		}
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
@@ -434,6 +436,9 @@ namespace MailKit.Net.Imap {
 
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
+
+			engine.Disconnected += OnEngineDisconnected;
+			OnConnected ();
 		}
 
 		/// <summary>
@@ -608,6 +613,9 @@ namespace MailKit.Net.Imap {
 						engine.QueryCapabilities (cancellationToken);
 				}
 			}
+
+			engine.Disconnected += OnEngineDisconnected;
+			OnConnected ();
 		}
 
 		/// <summary>
@@ -643,12 +651,12 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			engine.Disconnect ();
-
-#if NETFX_CORE
+			#if NETFX_CORE
 			socket.Dispose ();
 			socket = null;
-#endif
+			#endif
+
+			engine.Disconnect ();
 		}
 
 		/// <summary>
@@ -1023,12 +1031,18 @@ namespace MailKit.Net.Imap {
 			return engine.GetFolder (path, cancellationToken);
 		}
 
-		void OnAlert (object sender, AlertEventArgs e)
+		#endregion
+
+		void OnEngineAlert (object sender, AlertEventArgs e)
 		{
 			OnAlert (e);
 		}
 
-		#endregion
+		void OnEngineDisconnected (object sender, EventArgs e)
+		{
+			engine.Disconnected -= OnEngineDisconnected;
+			OnDisconnected ();
+		}
 
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="ImapClient"/> and

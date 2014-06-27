@@ -608,6 +608,75 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Occurs when the client has been successfully connected.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Connected"/> event is raised when the client
+		/// successfully connects to the mail server.
+		/// </remarks>
+		public event EventHandler<EventArgs> Connected;
+
+		/// <summary>
+		/// Raise the connected event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the connected event.
+		/// </remarks>
+		protected virtual void OnConnected ()
+		{
+			var handler = Connected;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Occurs when the client gets disconnected.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Disconnected"/> event is raised whenever the client
+		/// gets disconnected.
+		/// </remarks>
+		public event EventHandler<EventArgs> Disconnected;
+
+		/// <summary>
+		/// Raise the disconnected event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the disconnected event.
+		/// </remarks>
+		protected virtual void OnDisconnected ()
+		{
+			var handler = Disconnected;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Occurs when the client has been successfully authenticated.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Disconnected"/> event is raised whenever the client
+		/// has been authenticated.
+		/// </remarks>
+		public event EventHandler<EventArgs> Authenticated;
+
+		/// <summary>
+		/// Raise the authenticated event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the authenticated event.
+		/// </remarks>
+		protected virtual void OnAuthenticated ()
+		{
+			var handler = Authenticated;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="MailService"/> and
 		/// optionally releases the managed resources.
 		/// </summary>

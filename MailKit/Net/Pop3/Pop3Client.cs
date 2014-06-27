@@ -413,6 +413,7 @@ namespace MailKit.Net.Pop3 {
 				if (engine.State == Pop3EngineState.Transaction) {
 					engine.QueryCapabilities (cancellationToken);
 					ProbeCapabilities (cancellationToken);
+					OnAuthenticated ();
 					return;
 				}
 			}
@@ -457,6 +458,7 @@ namespace MailKit.Net.Pop3 {
 					engine.State = Pop3EngineState.Transaction;
 					engine.QueryCapabilities (cancellationToken);
 					ProbeCapabilities (cancellationToken);
+					OnAuthenticated ();
 					return;
 				}
 			}
@@ -474,6 +476,7 @@ namespace MailKit.Net.Pop3 {
 			engine.State = Pop3EngineState.Transaction;
 			engine.QueryCapabilities (cancellationToken);
 			ProbeCapabilities (cancellationToken);
+			OnAuthenticated ();
 		}
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
@@ -491,6 +494,8 @@ namespace MailKit.Net.Pop3 {
 
 			engine.Connect (new Pop3Stream (replayStream, null, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
+			engine.Disconnected += OnEngineDisconnected;
+			OnConnected ();
 		}
 
 		/// <summary>
@@ -636,6 +641,9 @@ namespace MailKit.Net.Pop3 {
 				// re-issue a CAPA command
 				engine.QueryCapabilities (cancellationToken);
 			}
+
+			engine.Disconnected += OnEngineDisconnected;
+			OnConnected ();
 		}
 
 		/// <summary>
@@ -666,14 +674,15 @@ namespace MailKit.Net.Pop3 {
 				}
 			}
 
-			engine.Disconnect ();
+			#if NETFX_CORE
+			socket.Dispose ();
+			socket = null;
+			#endif
+
 			uids.Clear ();
 			count = 0;
 
-#if NETFX_CORE
-			socket.Dispose ();
-			socket = null;
-#endif
+			engine.Disconnect ();
 		}
 
 		/// <summary>
@@ -707,6 +716,12 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ("You must be authenticated before you can issue a NOOP command.");
 
 			SendCommand (cancellationToken, "NOOP");
+		}
+
+		void OnEngineDisconnected (object sender, EventArgs e)
+		{
+			engine.Disconnected -= OnEngineDisconnected;
+			OnDisconnected ();
 		}
 
 		#endregion

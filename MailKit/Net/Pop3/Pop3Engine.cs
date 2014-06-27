@@ -40,18 +40,18 @@ namespace MailKit.Net.Pop3 {
 	/// </summary>
 	enum Pop3EngineState {
 		/// <summary>
-		/// The connection state indicates that engine is waiting to connect.
+		/// The Pop3Engine is in the disconnected state.
 		/// </summary>
-		Connection,
+		Disconnected,
 
 		/// <summary>
-		/// The authentication state indicates that the engine has not yet authenticated.
+		/// The Pop3Engine is in the connected state.
 		/// </summary>
-		Authentication,
+		Connected,
 
 		/// <summary>
-		/// The transaction state indicates that the engine is authenticated and may
-		/// retrieve messages from the server.
+		/// The Pop3Engine is in the transaction state, indicating that it is 
+		/// authenticated and may retrieve messages from the server.
 		/// </summary>
 		Transaction
 	}
@@ -104,6 +104,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets the underlying POP3 stream.
 		/// </summary>
+		/// <remarks>
+		/// Gets the underlying POP3 stream.
+		/// </remarks>
 		/// <value>The pop3 stream.</value>
 		public Pop3Stream Stream {
 			get { return stream; }
@@ -112,14 +115,20 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets or sets the state of the engine.
 		/// </summary>
+		/// <remarks>
+		/// Gets or sets the state of the engine.
+		/// </remarks>
 		/// <value>The engine state.</value>
 		public Pop3EngineState State {
-			get; set;
+			get; internal set;
 		}
 
 		/// <summary>
 		/// Gets whether or not the engine is currently connected to a POP3 server.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the engine is currently connected to a POP3 server.
+		/// </remarks>
 		/// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get { return stream != null && stream.IsConnected; }
@@ -128,6 +137,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets the APOP authentication token.
 		/// </summary>
+		/// <remarks>
+		/// Gets the APOP authentication token.
+		/// </remarks>
 		/// <value>The APOP authentication token.</value>
 		public string ApopToken {
 			get; private set;
@@ -136,6 +148,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets the EXPIRE extension policy value.
 		/// </summary>
+		/// <remarks>
+		/// Gets the EXPIRE extension policy value.
+		/// </remarks>
 		/// <value>The EXPIRE policy.</value>
 		public int ExpirePolicy {
 			get; private set;
@@ -144,6 +159,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets the implementation details of the server.
 		/// </summary>
+		/// <remarks>
+		/// Gets the implementation details of the server.
+		/// </remarks>
 		/// <value>The implementation details.</value>
 		public string Implementation {
 			get; private set;
@@ -152,6 +170,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Gets the login delay.
 		/// </summary>
+		/// <remarks>
+		/// Gets the login delay.
+		/// </remarks>
 		/// <value>The login delay.</value>
 		public int LoginDelay {
 			get; private set;
@@ -160,6 +181,9 @@ namespace MailKit.Net.Pop3 {
 		/// <summary>
 		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </summary>
+		/// <remarks>
+		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
+		/// </remarks>
 		/// <param name="pop3">The pop3 stream.</param>
 		/// <param name="cancellationToken">The cancellation token</param>
 		public void Connect (Pop3Stream pop3, CancellationToken cancellationToken)
@@ -169,7 +193,7 @@ namespace MailKit.Net.Pop3 {
 
 			Capabilities = Pop3Capabilities.User;
 			AuthenticationMechanisms.Clear ();
-			State = Pop3EngineState.Connection;
+			State = Pop3EngineState.Disconnected;
 			ApopToken = null;
 			stream = pop3;
 
@@ -207,19 +231,35 @@ namespace MailKit.Net.Pop3 {
 				Capabilities |= Pop3Capabilities.Apop;
 			}
 
-			State = Pop3EngineState.Authentication;
+			State = Pop3EngineState.Connected;
+		}
+
+		public event EventHandler<EventArgs> Disconnected;
+
+		void OnDisconnected ()
+		{
+			var handler = Disconnected;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
 		}
 
 		/// <summary>
-		/// Disconnects the <see cref="Pop3Stream"/>.
+		/// Disconnects the <see cref="Pop3Engine"/>.
 		/// </summary>
+		/// <remarks>
+		/// Disconnects the <see cref="Pop3Engine"/>.
+		/// </remarks>
 		public void Disconnect ()
 		{
-			State = Pop3EngineState.Connection;
-
 			if (stream != null) {
 				stream.Dispose ();
 				stream = null;
+			}
+
+			if (State != Pop3EngineState.Disconnected) {
+				State = Pop3EngineState.Disconnected;
+				OnDisconnected ();
 			}
 		}
 

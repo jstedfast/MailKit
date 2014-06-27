@@ -171,6 +171,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Indicates whether or not the engine is connected to a GMail server (used for various workarounds).
 		/// </summary>
+		/// <remarks>
+		/// Indicates whether or not the engine is connected to a GMail server (used for various workarounds).
+		/// </remarks>
 		/// <value><c>true</c> if the engine is connected to a GMail server; otherwise, <c>false</c>.</value>
 		internal bool IsGMail {
 			get { return (Capabilities & ImapCapabilities.GMailExt1) != 0; }
@@ -179,6 +182,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Indicates whether or not the engine is processing commands.
 		/// </summary>
+		/// <remarks>
+		/// Indicates whether or not the engine is processing commands.
+		/// </remarks>
 		/// <value><c>true</c> if th e engine is processing commands; otherwise, <c>false</c>.</value>
 		internal bool IsProcessingCommands {
 			get { return current != null; }
@@ -199,6 +205,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the IMAP protocol version.
 		/// </summary>
+		/// <remarks>
+		/// Gets the IMAP protocol version.
+		/// </remarks>
 		/// <value>The IMAP protocol version.</value>
 		public ImapProtocolVersion ProtocolVersion {
 			get; private set;
@@ -207,6 +216,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the supported charsets.
 		/// </summary>
+		/// <remarks>
+		/// Gets the supported charsets.
+		/// </remarks>
 		/// <value>The supported charsets.</value>
 		public HashSet<string> SupportedCharsets {
 			get; private set;
@@ -215,6 +227,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the supported contexts.
 		/// </summary>
+		/// <remarks>
+		/// Gets the supported contexts.
+		/// </remarks>
 		/// <value>The supported contexts.</value>
 		public HashSet<string> SupportedContexts {
 			get; private set;
@@ -223,6 +238,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets whether or not the QRESYNC feature has been enabled.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the QRESYNC feature has been enabled.
+		/// </remarks>
 		/// <value><c>true</c> if the QRESYNC feature has been enabled; otherwise, <c>false</c>.</value>
 		public bool QResyncEnabled {
 			get; internal set;
@@ -231,6 +249,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the underlying IMAP stream.
 		/// </summary>
+		/// <remarks>
+		/// Gets the underlying IMAP stream.
+		/// </remarks>
 		/// <value>The IMAP stream.</value>
 		public ImapStream Stream {
 			get { return stream; }
@@ -239,6 +260,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets or sets the state of the engine.
 		/// </summary>
+		/// <remarks>
+		/// Gets or sets the state of the engine.
+		/// </remarks>
 		/// <value>The engine state.</value>
 		public ImapEngineState State {
 			get; internal set;
@@ -247,6 +271,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets whether or not the engine is currently connected to a IMAP server.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the engine is currently connected to a IMAP server.
+		/// </remarks>
 		/// <value><c>true</c> if the engine is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get { return stream != null && stream.IsConnected; }
@@ -255,6 +282,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the personal folder namespaces.
 		/// </summary>
+		/// <remarks>
+		/// Gets the personal folder namespaces.
+		/// </remarks>
 		/// <value>The personal folder namespaces.</value>
 		public FolderNamespaceCollection PersonalNamespaces {
 			get; private set;
@@ -263,6 +293,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the shared folder namespaces.
 		/// </summary>
+		/// <remarks>
+		/// Gets the shared folder namespaces.
+		/// </remarks>
 		/// <value>The shared folder namespaces.</value>
 		public FolderNamespaceCollection SharedNamespaces {
 			get; private set;
@@ -271,6 +304,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the other folder namespaces.
 		/// </summary>
+		/// <remarks>
+		/// Gets the other folder namespaces.
+		/// </remarks>
 		/// <value>The other folder namespaces.</value>
 		public FolderNamespaceCollection OtherNamespaces {
 			get; private set;
@@ -279,6 +315,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets the selected folder.
 		/// </summary>
+		/// <remarks>
+		/// Gets the selected folder.
+		/// </remarks>
 		/// <value>The selected folder.</value>
 		public ImapFolder Selected {
 			get; internal set;
@@ -287,6 +326,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Gets a value indicating whether the engine is disposed.
 		/// </summary>
+		/// <remarks>
+		/// Gets a value indicating whether the engine is disposed.
+		/// </remarks>
 		/// <value><c>true</c> if the engine is disposed; otherwise, <c>false</c>.</value>
 		public bool IsDisposed {
 			get { return disposed; }
@@ -458,15 +500,21 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Disconnects the <see cref="ImapStream"/>.
+		/// Disconnects the <see cref="ImapEngine"/>.
 		/// </summary>
+		/// <remarks>
+		/// Disconnects the <see cref="ImapEngine"/>.
+		/// </remarks>
 		public void Disconnect ()
 		{
-			State = ImapEngineState.Disconnected;
-
 			if (stream != null) {
 				stream.Dispose ();
 				stream = null;
+			}
+
+			if (State != ImapEngineState.Disconnected) {
+				State = ImapEngineState.Disconnected;
+				OnDisconnected ();
 			}
 		}
 
@@ -1629,6 +1677,16 @@ namespace MailKit.Net.Imap {
 
 			if (handler != null)
 				handler (this, new AlertEventArgs (message));
+		}
+
+		public event EventHandler<EventArgs> Disconnected;
+
+		void OnDisconnected ()
+		{
+			var handler = Disconnected;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
 		}
 
 		/// <summary>

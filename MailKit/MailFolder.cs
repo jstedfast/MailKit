@@ -6903,7 +6903,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the deleted event.
 		/// </remarks>
-		protected void OnDeleted ()
+		protected virtual void OnDeleted ()
 		{
 			var handler = Deleted;
 
@@ -6924,7 +6924,7 @@ namespace MailKit {
 		/// </summary>
 		/// <param name="oldName">The old name of the folder.</param>
 		/// <param name="newName">The new name of the folder.</param>
-		protected void OnRenamed (string oldName, string newName)
+		protected virtual void OnRenamed (string oldName, string newName)
 		{
 			var handler = Renamed;
 
@@ -6946,7 +6946,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the subscribed event.
 		/// </remarks>
-		protected void OnSubscribed ()
+		protected virtual void OnSubscribed ()
 		{
 			var handler = Subscribed;
 
@@ -6968,7 +6968,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the unsubscribed event.
 		/// </remarks>
-		protected void OnUnsubscribed ()
+		protected virtual void OnUnsubscribed ()
 		{
 			var handler = Unsubscribed;
 
@@ -6991,7 +6991,7 @@ namespace MailKit {
 		/// Raises the message expunged event.
 		/// </remarks>
 		/// <param name="args">The message expunged event args.</param>
-		protected void OnMessageExpunged (MessageEventArgs args)
+		protected virtual void OnMessageExpunged (MessageEventArgs args)
 		{
 			var handler = MessageExpunged;
 
@@ -7014,7 +7014,7 @@ namespace MailKit {
 		/// Raises the messages vanished event.
 		/// </remarks>
 		/// <param name="args">The messages vanished event args.</param>
-		protected void OnMessagesVanished (MessagesVanishedEventArgs args)
+		protected virtual void OnMessagesVanished (MessagesVanishedEventArgs args)
 		{
 			var handler = MessagesVanished;
 
@@ -7037,7 +7037,7 @@ namespace MailKit {
 		/// Raises the flags changed event.
 		/// </remarks>
 		/// <param name="args">The message flags changed event args.</param>
-		protected void OnFlagsChanged (MessageFlagsChangedEventArgs args)
+		protected virtual void OnFlagsChanged (MessageFlagsChangedEventArgs args)
 		{
 			var handler = MessageFlagsChanged;
 
@@ -7059,7 +7059,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the uid validity changed event.
 		/// </remarks>
-		protected void OnUidValidityChanged ()
+		protected virtual void OnUidValidityChanged ()
 		{
 			var handler = UidValidityChanged;
 
@@ -7081,7 +7081,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the count changed event.
 		/// </remarks>
-		protected void OnCountChanged ()
+		protected virtual void OnCountChanged ()
 		{
 			var handler = CountChanged;
 
@@ -7103,7 +7103,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the recent changed event.
 		/// </remarks>
-		protected void OnRecentChanged ()
+		protected virtual void OnRecentChanged ()
 		{
 			var handler = RecentChanged;
 

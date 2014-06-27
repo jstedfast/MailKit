@@ -294,7 +294,7 @@ namespace MailKit {
 		/// Raises the alert event.
 		/// </remarks>
 		/// <param name="e">The alert event args.</param>
-		protected void OnAlert (AlertEventArgs e)
+		protected virtual void OnAlert (AlertEventArgs e)
 		{
 			var handler = Alert;
 
