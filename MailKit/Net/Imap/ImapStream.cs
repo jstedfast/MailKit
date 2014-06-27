@@ -275,24 +275,11 @@ namespace MailKit.Net.Imap {
 		int ReadBufferedData (int offset, int count)
 		{
 			#if !NETFX_CORE
-			bool buffered = Stream is SslStream || Stream is DuplexStream;
-			#else
-			bool buffered = true;
-			#endif
-
-			if (buffered) {
-				#if !NETFX_CORE
+			if (Stream is SslStream || Stream is DuplexStream) {
 				int timeout = Socket.ReceiveTimeout;
-				#else
-				int timeout = Stream.ReadTimeout;
-				#endif
 
 				try {
-					#if !NETFX_CORE
 					Socket.ReceiveTimeout = 1;
-					#else
-					Stream.ReadTimeout = 1;
-					#endif
 
 					return Stream.Read (input, offset, count);
 				} catch (IOException io) {
@@ -301,13 +288,10 @@ namespace MailKit.Net.Imap {
 					if (ex == null || ex.SocketErrorCode != SocketError.TimedOut)
 						throw;
 				} finally {
-					#if !NETFX_CORE
 					Socket.ReceiveTimeout = timeout;
-					#else
-					Stream.ReadTimeout = timeout;
-					#endif
 				}
 			}
+			#endif
 
 			return 0;
 		}
