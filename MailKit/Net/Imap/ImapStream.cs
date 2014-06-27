@@ -254,13 +254,6 @@ namespace MailKit.Net.Imap {
 				return;
 
 			if (Socket != null) {
-				if (Stream is SslStream) {
-					// Note: An SslStream may have buffered data, so polling the
-					// socket will not work properly.
-					cancellationToken.ThrowIfCancellationRequested ();
-					return;
-				}
-
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
 				} while (!Socket.Poll (1000, mode));
@@ -312,9 +305,23 @@ namespace MailKit.Net.Imap {
 			end = input.Length - PadSize;
 
 			try {
-				Poll (SelectMode.SelectRead, cancellationToken);
+				#if !NETFX_CORE
+				bool buffered = Stream is SslStream;
+				#else
+				bool buffered = true;
+				#endif
 
-				if ((nread = Stream.Read (input, start, end - start)) > 0) {
+				if (buffered) {
+					cancellationToken.ThrowIfCancellationRequested ();
+
+					nread = Stream.Read (input, start, end - start);
+				} else {
+					Poll (SelectMode.SelectRead, cancellationToken);
+
+					nread = Stream.Read (input, start, end - start);
+				}
+
+				if (nread > 0) {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
