@@ -249,45 +249,27 @@ namespace MailKit.Net.Pop3 {
 
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
+			#if NETFX_CORE
+			cancellationToken.ThrowIfCancellationRequested ();
+			#else
 			if (!cancellationToken.CanBeCanceled)
 				return;
 
 			if (Socket != null) {
-				#if NETFX_CORE
-				// FIXME: how do we poll a StreamSocket?
-				cancellationToken.ThrowIfCancellationRequested ();
-				#else
+				if (Stream is SslStream) {
+					// Note: An SslStream may have buffered data, so polling the
+					// socket will not work properly.
+					cancellationToken.ThrowIfCancellationRequested ();
+					return;
+				}
+
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
 				} while (!Socket.Poll (1000, mode));
-				#endif
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
-		}
-
-		int ReadBufferedData (int offset, int count)
-		{
-			#if !NETFX_CORE
-			if (Stream is SslStream) {
-				int timeout = Stream.ReadTimeout;
-
-				try {
-					Stream.ReadTimeout = 1;
-
-					return Stream.Read (input, offset, count);
-				} catch (IOException io) {
-					var ex = io.InnerException as SocketException;
-
-					if (ex == null || ex.SocketErrorCode != SocketError.TimedOut)
-						throw;
-				} finally {
-					Stream.ReadTimeout = timeout;
-				}
-			}
 			#endif
-
-			return 0;
 		}
 
 		unsafe int ReadAhead (byte* inbuf, CancellationToken cancellationToken)
@@ -320,14 +302,9 @@ namespace MailKit.Net.Pop3 {
 			end = input.Length - PadSize;
 
 			try {
-				int count = end - start;
+				Poll (SelectMode.SelectRead, cancellationToken);
 
-				if ((nread = ReadBufferedData (start, count)) <= 0) {
-					Poll (SelectMode.SelectRead, cancellationToken);
-					nread = Stream.Read (input, start, count);
-				}
-
-				if (nread > 0) {
+				if ((nread = Stream.Read (input, start, end - start)) > 0) {
 					logger.LogServer (input, start, nread);
 					inputEnd += nread;
 				} else {
