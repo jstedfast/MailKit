@@ -24,7 +24,7 @@
 // THE SOFTWARE.
 //
 
-using System;
+using System.Collections.Generic;
 
 namespace MailKit.Net.Imap {
 	enum ImapResponseCodeType : byte {
@@ -63,7 +63,7 @@ namespace MailKit.Net.Imap {
 	class ImapResponseCode
 	{
 		public readonly ImapResponseCodeType Type;
-		public UniqueId[] SrcUidSet, DestUidSet;
+		public IList<UniqueId> SrcUidSet, DestUidSet;
 		public UniqueId UidValidity;
 		public ulong HighestModSeq;
 		public MessageFlags Flags;

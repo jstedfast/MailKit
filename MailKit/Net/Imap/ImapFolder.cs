@@ -3902,7 +3902,7 @@ namespace MailKit.Net.Imap {
 					if (code.Type != ImapResponseCodeType.Modified)
 						continue;
 
-					var unmodified = new int[code.DestUidSet.Length];
+					var unmodified = new int[code.DestUidSet.Count];
 					for (int i = 0; i < unmodified.Length; i++)
 						unmodified[i] = (int) (code.DestUidSet[i].Id - 1);
 
@@ -4508,7 +4508,7 @@ namespace MailKit.Net.Imap {
 		static void ESearchMatches (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
-			UniqueId[] uids = null;
+			IList<UniqueId> uids = null;
 			uint min, max, count;
 			bool uid = false;
 			string atom;
@@ -4590,8 +4590,8 @@ namespace MailKit.Net.Imap {
 			} while (true);
 
 			if (!uid && uids != null) {
-				var indexes = new int[uids.Length];
-				for (int i = 0; i < uids.Length; i++)
+				var indexes = new int[uids.Count];
+				for (int i = 0; i < uids.Count; i++)
 					indexes[i] = (int) uids[i].Id - 1;
 
 				ic.UserData = indexes;
@@ -5229,8 +5229,8 @@ namespace MailKit.Net.Imap {
 		internal void OnVanished (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
+			IList<UniqueId> vanished;
 			bool earlier = false;
-			UniqueId[] vanished;
 
 			if (token.Type == ImapTokenType.OpenParen) {
 				do {

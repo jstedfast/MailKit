@@ -81,7 +81,7 @@ namespace MailKit.Net.Imap {
 		/// <returns><c>true</c> if the UIDs were successfully parsed, otherwise <c>false</c>.</returns>
 		/// <param name="atom">The atom string.</param>
 		/// <param name="uids">The UIDs.</param>
-		public static bool TryParseUidSet (string atom, out UniqueId[] uids)
+		public static bool TryParseUidSet (string atom, out IList<UniqueId> uids)
 		{
 			var ranges = atom.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			var list = new List<UniqueId> ();
@@ -110,7 +110,7 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			uids = list.ToArray ();
+			uids = list;
 
 			return true;
 		}
