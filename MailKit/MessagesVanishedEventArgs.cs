@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -51,7 +50,7 @@ namespace MailKit {
 		/// Gets the unique identifiers of the messages that vanished.
 		/// </remarks>
 		/// <value>The unique identifiers.</value>
-		public ReadOnlyCollection<UniqueId> UniqueIds {
+		public IList<UniqueId> UniqueIds {
 			get; private set;
 		}
 
