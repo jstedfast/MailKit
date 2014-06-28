@@ -126,18 +126,18 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// One or more of the indexes has a negative value.
 		/// </exception>
-		public static string FormatIndexSet (int[] indexes)
+		public static string FormatIndexSet (IList<int> indexes)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (indexes.Length == 0)
+			if (indexes.Count == 0)
 				throw new ArgumentException ("No indexes were specified.", "indexes");
 
 			var builder = new StringBuilder ();
 			int index = 0;
 
-			while (index < indexes.Length) {
+			while (index < indexes.Count) {
 				if (indexes[index] < 0)
 					throw new ArgumentException ("One or more of the indexes is negative.", "indexes");
 
@@ -145,18 +145,18 @@ namespace MailKit.Net.Imap {
 				int end = indexes[index];
 				int i = index + 1;
 
-				if (i < indexes.Length) {
+				if (i < indexes.Count) {
 					if (indexes[i] == end + 1) {
 						end = indexes[i++];
 
-						while (i < indexes.Length && indexes[i] == end + 1) {
+						while (i < indexes.Count && indexes[i] == end + 1) {
 							end++;
 							i++;
 						}
 					} else if (indexes[i] == end - 1) {
 						end = indexes[i++];
 
-						while (i < indexes.Length && indexes[i] == end - 1) {
+						while (i < indexes.Count && indexes[i] == end - 1) {
 							end--;
 							i++;
 						}
@@ -188,18 +188,18 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentException">
 		/// One or more of the UIDs is invalid.
 		/// </exception>
-		public static string FormatUidSet (UniqueId[] uids)
+		public static string FormatUidSet (IList<UniqueId> uids)
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			var builder = new StringBuilder ();
 			int index = 0;
 
-			while (index < uids.Length) {
+			while (index < uids.Count) {
 				if (uids[index].Id == 0)
 					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
 
@@ -207,18 +207,18 @@ namespace MailKit.Net.Imap {
 				uint end = uids[index].Id;
 				int i = index + 1;
 
-				if (i < uids.Length) {
+				if (i < uids.Count) {
 					if (uids[i].Id == end + 1) {
 						end = uids[i++].Id;
 
-						while (i < uids.Length && uids[i].Id == end + 1) {
+						while (i < uids.Count && uids[i].Id == end + 1) {
 							end++;
 							i++;
 						}
 					} else if (uids[i].Id == end - 1) {
 						end = uids[i++].Id;
 
-						while (i < uids.Length && uids[i].Id == end - 1) {
+						while (i < uids.Count && uids[i].Id == end - 1) {
 							end--;
 							i++;
 						}
@@ -947,7 +947,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The threads.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static MessageThread[] ParseThreads (ImapEngine engine, CancellationToken cancellationToken)
+		public static IList<MessageThread> ParseThreads (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var threads = new List<MessageThread> ();
 			ImapToken token;
@@ -966,7 +966,7 @@ namespace MailKit.Net.Imap {
 				threads.Add (ParseThread (engine, cancellationToken));
 			} while (true);
 
-			return threads.ToArray ();
+			return threads;
 		}
 	}
 }

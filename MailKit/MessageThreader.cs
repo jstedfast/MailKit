@@ -348,7 +348,7 @@ namespace MailKit {
 			}
 		}
 
-		static MessageThread[] ThreadByReferences (IEnumerable<IThreadable> messages, OrderBy[] orderBy)
+		static IList<MessageThread> ThreadByReferences (IEnumerable<IThreadable> messages, OrderBy[] orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var ids = CreateIdTable (messages);
@@ -359,10 +359,10 @@ namespace MailKit {
 
 			GetThreads (root, threads, orderBy);
 
-			return threads.ToArray ();
+			return threads;
 		}
 
-		static MessageThread[] ThreadBySubject (IEnumerable<IThreadable> messages, OrderBy[] orderBy)
+		static IList<MessageThread> ThreadBySubject (IEnumerable<IThreadable> messages, OrderBy[] orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var root = new ThreadableNode ();
@@ -381,7 +381,7 @@ namespace MailKit {
 
 			GetThreads (root, threads, orderBy);
 
-			return threads.ToArray ();
+			return threads;
 		}
 
 		/// <summary>
@@ -402,7 +402,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="messages"/> contains one or more items that is missing information needed for threading.
 		/// </exception>
-		public static MessageThread[] Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages)
+		public static IList<MessageThread> Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages)
 		{
 			return Thread (algorithm, messages, new [] { OrderBy.Arrival });
 		}
@@ -430,7 +430,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="messages"/> contains one or more items that is missing information needed for threading or sorting.
 		/// </exception>
-		public static MessageThread[] Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages, OrderBy[] orderBy)
+		public static IList<MessageThread> Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages, OrderBy[] orderBy)
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");

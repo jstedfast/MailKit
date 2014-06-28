@@ -25,6 +25,9 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MailKit {
 	/// <summary>
@@ -35,10 +38,10 @@ namespace MailKit {
 	/// </remarks>
 	public sealed class MessagesVanishedEventArgs : EventArgs
 	{
-		internal MessagesVanishedEventArgs (UniqueId[] uids, bool earlier)
+		internal MessagesVanishedEventArgs (IList<UniqueId> uids, bool earlier)
 		{
+			UniqueIds = new ReadOnlyCollection<UniqueId> (uids);
 			Earlier = earlier;
-			UniqueIds = uids;
 		}
 
 		/// <summary>
@@ -48,7 +51,7 @@ namespace MailKit {
 		/// Gets the unique identifiers of the messages that vanished.
 		/// </remarks>
 		/// <value>The unique identifiers.</value>
-		public UniqueId[] UniqueIds {
+		public ReadOnlyCollection<UniqueId> UniqueIds {
 			get; private set;
 		}
 

@@ -335,7 +335,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderAccess Open (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract FolderAccess Open (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously opens the folder using the requested folder access.
@@ -380,7 +380,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
@@ -388,7 +388,7 @@ namespace MailKit {
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
@@ -1359,7 +1359,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Expunge (UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously expunge the specified uids, permanently removing them from the folder.
@@ -1404,12 +1404,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task ExpungeAsync (UniqueId[] uids, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
@@ -1611,7 +1611,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -1651,12 +1651,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> AppendAsync (MimeMessage[] messages, MessageFlags[] flags, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
 
-			for (int i = 0; i < messages.Length; i++) {
+			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
 					throw new ArgumentException ("One or more of the messages is null.");
 			}
@@ -1664,7 +1664,7 @@ namespace MailKit {
 			if (flags == null)
 				throw new ArgumentNullException ("flags");
 
-			if (messages.Length != flags.Length)
+			if (messages.Count != flags.Count)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
 			return Task.Factory.StartNew (() => {
@@ -1715,7 +1715,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] Append (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -1758,12 +1758,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> AppendAsync (MimeMessage[] messages, MessageFlags[] flags, DateTimeOffset[] dates, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
 
-			for (int i = 0; i < messages.Length; i++) {
+			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
 					throw new ArgumentException ("One or more of the messages is null.");
 			}
@@ -1774,7 +1774,7 @@ namespace MailKit {
 			if (dates == null)
 				throw new ArgumentNullException ("dates");
 
-			if (messages.Length != flags.Length || messages.Length != dates.Length)
+			if (messages.Count != flags.Count || messages.Count != dates.Count)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
 
 			return Task.Factory.StartNew (() => {
@@ -1834,7 +1834,7 @@ namespace MailKit {
 
 			var uids = CopyTo (new [] { uid }, destination, cancellationToken);
 
-			if (uids != null && uids.Length > 0)
+			if (uids != null && uids.Count > 0)
 				return uids[0];
 
 			return null;
@@ -1940,7 +1940,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] CopyTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -1989,12 +1989,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> CopyToAsync (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (destination == null)
@@ -2057,7 +2057,7 @@ namespace MailKit {
 
 			var uids = MoveTo (new [] { uid }, destination, cancellationToken);
 
-			if (uids != null && uids.Length > 0)
+			if (uids != null && uids.Count > 0)
 				return uids[0];
 
 			return null;
@@ -2165,7 +2165,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] MoveTo (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -2214,12 +2214,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> MoveToAsync (UniqueId[] uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (destination == null)
@@ -2377,7 +2377,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void CopyTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -2422,7 +2422,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task CopyToAsync (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -2582,7 +2582,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void MoveTo (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -2627,7 +2627,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task MoveToAsync (int[] indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -2685,7 +2685,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IEnumerable<MessageSummary> Fetch (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IEnumerable<MessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
@@ -2730,12 +2730,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (UniqueId[] uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (items == MessageSummaryItems.None)
@@ -2798,7 +2798,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IEnumerable<MessageSummary> Fetch (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IEnumerable<MessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
@@ -2850,12 +2850,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (UniqueId[] uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (items == MessageSummaryItems.None)
@@ -3109,7 +3109,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IEnumerable<MessageSummary> Fetch (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IEnumerable<MessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -3154,7 +3154,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (int[] indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -3216,7 +3216,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IEnumerable<MessageSummary> Fetch (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IEnumerable<MessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
@@ -3265,7 +3265,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (int[] indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IEnumerable<MessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -4589,7 +4589,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void AddFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void AddFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -4633,12 +4633,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task AddFlagsAsync (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (flags == MessageFlags.None)
@@ -4777,7 +4777,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void RemoveFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -4821,12 +4821,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveFlagsAsync (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (flags == MessageFlags.None)
@@ -4959,7 +4959,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void SetFlags (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void SetFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -5001,12 +5001,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetFlagsAsync (UniqueId[] uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
@@ -5063,7 +5063,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] AddFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -5112,12 +5112,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> AddFlagsAsync (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (flags == MessageFlags.None)
@@ -5177,7 +5177,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] RemoveFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -5226,12 +5226,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> RemoveFlagsAsync (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (flags == MessageFlags.None)
@@ -5289,7 +5289,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] SetFlags (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -5336,12 +5336,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> SetFlagsAsync (UniqueId[] uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			return Task.Factory.StartNew (() => {
@@ -5477,7 +5477,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void AddFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void AddFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -5521,7 +5521,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task AddFlagsAsync (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -5662,7 +5662,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void RemoveFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void RemoveFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -5706,7 +5706,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RemoveFlagsAsync (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -5841,7 +5841,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void SetFlags (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void SetFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -5883,7 +5883,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task SetFlagsAsync (int[] indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -5942,7 +5942,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract int[] AddFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -5991,7 +5991,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<int[]> AddFlagsAsync (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -6053,7 +6053,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract int[] RemoveFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -6102,7 +6102,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<int[]> RemoveFlagsAsync (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -6162,7 +6162,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract int[] SetFlags (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -6209,7 +6209,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<int[]> SetFlagsAsync (int[] indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -6258,7 +6258,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query.
@@ -6297,7 +6297,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -6356,7 +6356,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] Search (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Search (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query,
@@ -6405,7 +6405,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> SearchAsync (SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> SearchAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -6413,7 +6413,7 @@ namespace MailKit {
 			if (orderBy == null)
 				throw new ArgumentNullException ("orderBy");
 
-			if (orderBy.Length == 0)
+			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
 			return Task.Factory.StartNew (() => {
@@ -6468,7 +6468,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] Search (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query.
@@ -6515,12 +6515,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> SearchAsync (UniqueId[] uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (query == null)
@@ -6587,7 +6587,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId[] Search (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query,
@@ -6643,12 +6643,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId[]> SearchAsync (UniqueId[] uids, SearchQuery query, OrderBy[] orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (query == null)
@@ -6657,7 +6657,7 @@ namespace MailKit {
 			if (orderBy == null)
 				throw new ArgumentNullException ("orderBy");
 
-			if (orderBy.Length == 0)
+			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
 			return Task.Factory.StartNew (() => {
@@ -6710,7 +6710,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MessageThread[] Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -6755,7 +6755,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MessageThread[]> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
 				throw new ArgumentNullException ("query");
@@ -6818,7 +6818,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MessageThread[] Thread (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -6871,12 +6871,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MessageThread[]> ThreadAsync (UniqueId[] uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			if (uids.Length == 0)
+			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
 			if (query == null)

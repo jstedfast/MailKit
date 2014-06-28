@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -239,7 +240,7 @@ namespace UnitTests.Net.Imap {
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
 					using (var engine = new ImapEngine ()) {
-						MessageThread[] threads;
+						IList<MessageThread> threads;
 
 						engine.SetStream (tokenizer);
 
@@ -253,7 +254,7 @@ namespace UnitTests.Net.Imap {
 						var token = engine.ReadToken (CancellationToken.None);
 						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
 
-						Assert.AreEqual (2, threads.Length, "Expected 2 threads.");
+						Assert.AreEqual (2, threads.Count, "Expected 2 threads.");
 
 						Assert.AreEqual ((uint) 2, threads[0].UniqueId.Value.Id);
 						Assert.AreEqual ((uint) 3, threads[1].UniqueId.Value.Id);
