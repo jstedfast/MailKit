@@ -92,25 +92,32 @@ namespace MailKit.Net.Imap {
 		Literal
 	}
 
-	class ImapIdleContext
+	class ImapIdleContext : IDisposable
 	{
-		readonly CancellationToken CancellationToken;
-		readonly CancellationToken DoneToken;
 		readonly CancellationTokenSource source;
 
-		public ImapIdleContext (CancellationToken doneToken, CancellationToken cancellationToken)
+		public ImapIdleContext (ImapEngine engine, CancellationToken doneToken, CancellationToken cancellationToken)
 		{
+			source = CancellationTokenSource.CreateLinkedTokenSource (doneToken, cancellationToken);
 			CancellationToken = cancellationToken;
 			DoneToken = doneToken;
-
-			source = new CancellationTokenSource ();
-
-			cancellationToken.Register (Done);
-			doneToken.Register (Done);
+			Engine = engine;
 		}
 
-		public CancellationToken Token {
+		public ImapEngine Engine {
+			get; private set;
+		}
+
+		public CancellationToken CancellationToken {
+			get; private set;
+		}
+
+		public CancellationToken LinkedToken {
 			get { return source.Token; }
+		}
+
+		public CancellationToken DoneToken {
+			get; private set;
 		}
 
 		public bool IsCancellationRequested {
@@ -121,9 +128,9 @@ namespace MailKit.Net.Imap {
 			get { return DoneToken.IsCancellationRequested; }
 		}
 
-		void Done ()
+		public void Dispose ()
 		{
-			source.Cancel ();
+			source.Dispose ();
 		}
 	}
 
@@ -443,6 +450,7 @@ namespace MailKit.Net.Imap {
 		{
 			var idle = UserData as ImapIdleContext;
 			var result = ImapCommandResult.None;
+			ImapToken token;
 
 			if (current == 0) {
 				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
@@ -456,26 +464,18 @@ namespace MailKit.Net.Imap {
 
 			// now we need to read the response...
 			do {
-				if (Engine.State == ImapEngineState.Idle && idle != null) {
+				if (Engine.State == ImapEngineState.Idle) {
 					try {
-						Engine.Stream.WaitForData (idle.Token);
+						token = Engine.ReadToken (idle.LinkedToken);
 					} catch (OperationCanceledException) {
 						if (idle.IsCancellationRequested)
 							throw;
 
-						// if we made it here, then it suggests that
-						// idle.IsDoneRequested is true
-
-						var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
-						Engine.Stream.Write (buf, 0, buf.Length);
-						Engine.Stream.Flush ();
-
-						Engine.State = ImapEngineState.Selected;
-						idle = null;
+						token = Engine.ReadToken (CancellationToken);
 					}
+				} else {
+					token = Engine.ReadToken (CancellationToken);
 				}
-
-				var token = Engine.ReadToken (CancellationToken);
 
 				if (token.Type == ImapTokenType.Plus) {
 					// we've gotten a continuation response from the server

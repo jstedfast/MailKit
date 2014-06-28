@@ -705,6 +705,20 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("NOOP", ic.Result);
 		}
 
+		static void IdleComplete (object state)
+		{
+			var ctx = (ImapIdleContext) state;
+
+			if (ctx.Engine.State == ImapEngineState.Idle) {
+				var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
+
+				ctx.Engine.Stream.Write (buf, 0, buf.Length);
+				ctx.Engine.Stream.Flush ();
+
+				ctx.Engine.State = ImapEngineState.Selected;
+			}
+		}
+
 		/// <summary>
 		/// Toggle the <see cref="ImapClient"/> into the IDLE state.
 		/// </summary>
@@ -768,18 +782,21 @@ namespace MailKit.Net.Imap {
 			if (engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("An ImapFolder has not been opened.");
 
-			var context = new ImapIdleContext (doneToken, cancellationToken);
-			var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
-			ic.UserData = context;
+			using (var context = new ImapIdleContext (engine, doneToken, cancellationToken)) {
+				var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
+				ic.UserData = context;
 
-			ic.ContinuationHandler = (imap, cmd, text) => {
-				imap.State = ImapEngineState.Idle;
-			};
+				ic.ContinuationHandler = (imap, cmd, text) => {
+					imap.State = ImapEngineState.Idle;
 
-			engine.Wait (ic);
+					doneToken.Register (IdleComplete, context);
+				};
 
-			if (ic.Result != ImapCommandResult.Ok)
-				throw new ImapCommandException ("IDLE", ic.Result);
+				engine.Wait (ic);
+
+				if (ic.Result != ImapCommandResult.Ok)
+					throw new ImapCommandException ("IDLE", ic.Result);
+			}
 		}
 
 		/// <summary>

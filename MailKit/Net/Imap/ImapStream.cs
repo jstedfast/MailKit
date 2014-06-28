@@ -263,14 +263,6 @@ namespace MailKit.Net.Imap {
 			#endif
 		}
 
-		internal void WaitForData (CancellationToken cancellationToken)
-		{
-			if (inputEnd > inputIndex)
-				return;
-
-			Poll (SelectMode.SelectRead, cancellationToken);
-		}
-
 		unsafe int ReadAhead (byte* inbuf, int atleast, CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
