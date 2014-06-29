@@ -1,0 +1,507 @@
+
+
+
+
+
+
+Network Working Group                                        M. Gahrns
+Request for Comments: 2193                                   Microsoft
+Category: Standards Track                               September 1997
+
+
+                        IMAP4 Mailbox Referrals
+
+Status of this Memo
+
+   This document specifies an Internet standards track protocol for the
+   Internet community, and requests discussion and suggestions for
+   improvements.  Please refer to the current edition of the "Internet
+   Official Protocol Standards" (STD 1) for the standardization state
+   and status of this protocol.  Distribution of this memo is unlimited.
+
+1. Abstract
+
+   When dealing with large amounts of users, messages and geographically
+   dispersed IMAP4 [RFC-2060] servers, it is often desirable to
+   distribute messages amongst different servers within an organization.
+   For example an administrator may choose to store user's personal
+   mailboxes on a local IMAP4 server, while storing shared mailboxes
+   remotely on another server.  This type of configuration is common
+   when it is uneconomical to store all data centrally due to limited
+   bandwidth or disk resources.
+
+   Mailbox referrals allow clients to seamlessly access mailboxes that
+   are distributed across several IMAP4 servers.
+
+   A referral mechanism can provide efficiencies over the alternative
+   "proxy method", in which the local IMAP4 server contacts the remote
+   server on behalf of the client, and then transfers the data from the
+   remote server to itself, and then on to the client.  The referral
+   mechanism's direct client connection to the remote server is often a
+   more efficient use of bandwidth, and does not require the local
+   server to impersonate the client when authenticating to the remote
+   server.
+
+2. Conventions used in this document
+
+   In examples, "C:" and "S:" indicate lines sent by the client and
+   server respectively.
+
+   A home server, is an IMAP4 server that contains the user's inbox.
+
+   A remote mailbox is a mailbox that is not hosted on the user's home
+   server.
+
+
+
+
+Gahrns                      Standards Track                     [Page 1]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+   A remote server is a server that contains remote mailboxes.
+
+   A shared mailbox, is a mailbox that multiple users have access to.
+
+   An IMAP mailbox referral is when the server directs the client to
+   another IMAP mailbox.
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC-2119].
+
+3. Introduction and Overview
+
+   IMAP4 servers that support this extension MUST list the keyword
+   MAILBOX-REFERRALS in their CAPABILITY response.  No client action is
+   needed to invoke the MAILBOX-REFERRALS capability in a server.
+
+   A MAILBOX-REFERRALS capable IMAP4 server MUST NOT return referrals
+   that result in a referrals loop.
+
+   A referral response consists of a tagged NO response and a REFERRAL
+   response code.  The REFERRAL response code MUST contain as an
+   argument a one or more valid URLs separated by a space as defined in
+   [RFC-1738]. If a server replies with multiple URLs for a particular
+   object, they MUST all be of the same type. In this case, the URL MUST
+   be an IMAP URL as defined in [RFC-2192].  A client that supports the
+   REFERRALS extension MUST be prepared for a URL of any type, but it
+   need only be able to process IMAP URLs.
+
+   A server MAY respond with multiple IMAP mailbox referrals if there is
+   more than one replica of the mailbox.  This allows the implementation
+   of a load balancing or failover scheme. How a server keeps multiple
+   replicas of a mailbox in sync is not addressed by this document.
+
+   If the server has a preferred order in which the client should
+   attempt to access the URLs, the preferred URL SHOULD be listed in the
+   first, with the remaining URLs presented in descending order of
+   preference.  If multiple referrals are given for a mailbox, a server
+   should be aware that there are synchronization issues for a client if
+   the UIDVALIDITY of the referred mailboxes are different.
+
+   An IMAP mailbox referral may be given in response to an IMAP command
+   that specifies a mailbox as an argument.
+
+
+
+
+
+
+
+
+Gahrns                      Standards Track                     [Page 2]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+   Example:
+
+      A001 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/REMOTE]Remote Mailbox
+
+   NOTE: user;AUTH=* is specified as required by [RFC-2192] to avoid a
+   client falling back to anonymous login.
+
+   Remote mailboxes and their inferiors, that are accessible only via
+   referrals SHOULD NOT appear in LIST and LSUB responses issued against
+   the user's home server.  They MUST appear in RLIST and RLSUB
+   responses issued against the user's home server. Hierarchy referrals,
+   in which a client would be required to connect to the remote server
+   to issue a LIST to discover the inferiors of a mailbox are not
+   addressed in this document.
+
+   For example, if shared mailboxes were only accessible via referrals
+   on a remote server, a RLIST "" "#SHARED/%" command would return the
+   same response if issued against the user's home server or the remote
+   server.
+
+   Note: Mailboxes that are available on the user's home server do not
+   need to be available on the remote server.  In addition, there may be
+   additional mailboxes available on the remote server, but they will
+   not accessible to the client via referrals unless they appear in the
+   LIST response to the RLIST command against the user's home server.
+
+   A MAILBOX-REFERRALS capable client will issue the RLIST and RLSUB
+   commands in lieu of LIST and LSUB.  The RLIST and RLSUB commands
+   behave identically to their LIST and LSUB counterparts, except remote
+   mailboxes are returned in addition to local mailboxes in the LIST and
+   LSUB responses.  This avoids displaying to a non MAILBOX-REFERRALS
+   enabled client inaccessible remote mailboxes.
+
+4.1. SELECT, EXAMINE, DELETE, SUBSCRIBE, UNSUBSCRIBE, STATUS and APPEND
+     Referrals
+
+   An IMAP4 server MAY respond to the SELECT, EXAMINE, DELETE,
+   SUBSCRIBE, UNSUBSCRIBE, STATUS or APPEND command with one or more
+   IMAP mailbox referrals to indicate to the client that the mailbox is
+   hosted on a remote server.
+
+   When a client processes an IMAP mailbox referral, it will open a new
+   connection or use an existing connection to the remote server so that
+   it is able to issue the commands necessary to process the remote
+   mailbox.
+
+
+
+
+
+
+Gahrns                      Standards Track                     [Page 3]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+   Example:  <IMAP4 connection to home server>
+
+      C: A001 DELETE "SHARED/FOO"
+      S: A001 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/SHARED/FOO]
+             Remote mailbox. Try SERVER2.
+
+      <Client established a second connection to SERVER2 and
+      issues the DELETE command on the referred mailbox>
+
+      S: * OK IMAP4rev1 server ready
+      C: B001 AUTHENTICATE KERBEROS_V4
+      <authentication exchange>
+      S: B001 OK user is authenticated
+
+      C: B002 DELETE "SHARED/FOO"
+      S: B002 OK DELETE completed
+
+   Example:  <IMAP4 connection to home server>
+
+      C: A001 SELECT REMOTE
+      S: A001 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/REMOTE
+          IMAP://user;AUTH=*@SERVER3/REMOTE] Remote mailbox.
+          Try SERVER2 or SERVER3.
+
+      <Client opens second connection to remote server, and
+       issues the commands needed to process the items in the
+       remote mailbox>
+
+      S: * OK IMAP4rev1 server ready
+      C: B001 AUTHENTICATE KERBEROS_V4
+      <authentication exchange>
+      S: B001 OK user is authenticated
+
+      C: B002 SELECT REMOTE
+      S: * 12 EXISTS
+      S: * 1 RECENT
+      S: * OK [UNSEEN 10] Message 10 is first unseen
+      S: * OK [UIDVALIDITY 123456789]
+      S: * FLAGS (Answered Flagged Deleted Seen Draft)
+      S: * OK [PERMANENTFLAGS (Answered Deleted Seen ]
+      S: B002 OK [READ-WRITE] Selected completed
+
+      C: B003 FETCH 10:12 RFC822
+      S: * 10 FETCH . . .
+      S: * 11 FETCH . . .
+      S: * 12 FETCH . . .
+      S: B003 OK FETCH Completed
+
+
+
+
+Gahrns                      Standards Track                     [Page 4]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+      <Client is finished processing the REMOTE mailbox and
+       wants to process a mailbox on its home server>
+
+      C: B004 LOGOUT
+      S: * BYE IMAP4rev1 server logging out
+      S: B004 OK LOGOUT Completed
+
+      <Client continues with first connection>
+
+      C: A002 SELECT INBOX
+      S: * 16 EXISTS
+      S: * 2 RECENT
+      S: * OK [UNSEEN 10] Message 10 is first unseen
+      S: * OK [UIDVALIDITY 123456789]
+      S: * FLAGS (Answered Flagged Deleted Seen Draft)
+      S: * OK [PERMANENTFLAGS (Answered Deleted Seen ]
+      S: A002 OK [READ-WRITE] Selected completed
+
+4.2. CREATE Referrals
+
+   An IMAP4 server MAY respond to the CREATE command with one or more
+   IMAP mailbox referrals, if it wishes to direct the client to issue
+   the CREATE against another server.  The server can employ any means,
+   such as examining the hierarchy of the specified mailbox name, in
+   determining which server the mailbox should be created on.
+
+   Example:
+
+      C: A001 CREATE "SHARED/FOO"
+      S: A001 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/SHARED/FOO]
+         Mailbox should be created on remote server
+
+   Alternatively, because a home server is required to maintain a
+   listing of referred remote mailboxes, a server MAY allow the creation
+   of a mailbox that will ultimately reside on a remote server against
+   the home server, and provide referrals on subsequent commands that
+   manipulate the mailbox.
+
+   Example:
+
+      C: A001 CREATE "SHARED/FOO"
+      S: A001 OK CREATE succeeded
+
+      C: A002 SELECT "SHARED/FOO"
+      S: A002 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/SHARED/FOO]
+         Remote mailbox.  Try SERVER2
+
+
+
+
+
+Gahrns                      Standards Track                     [Page 5]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+4.3. RENAME Referrals
+
+   An IMAP4 server MAY respond to the RENAME command with one or more
+   pairs of IMAP mailbox referrals.  In each pair of IMAP mailbox
+   referrals, the first one is an URL to the existing mailbox name and
+   the second is an URL to the requested new mailbox name.
+
+   If within an IMAP mailbox referral pair, the existing and new mailbox
+   URLs are on different servers, the remote servers are unable to
+   perform the RENAME operation.   To achieve the same behavior of
+   server RENAME, the client MAY issue the constituent CREATE, FETCH,
+   APPEND, and DELETE commands against both servers.
+
+   If within an IMAP mailbox referral pair, the existing and new mailbox
+   URLs are on the same server it is an indication that the currently
+   connected server is unable to perform the operation.  The client can
+   simply re-issue the RENAME command on the remote server.
+
+   Example:
+
+      C: A001 RENAME FOO BAR
+      S: A001 NO [REFERRAL IMAP://user;AUTH=*@SERVER1/FOO
+              IMAP://user;AUTH=*@SERVER2/BAR] Unable to rename mailbox
+              across servers
+
+   Since the existing and new mailbox names are on different servers,
+   the client would be required to make a connection to both servers and
+   issue the constituent commands require to achieve the RENAME.
+
+   Example:
+
+      C: A001 RENAME FOO BAR
+      S: A001 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/FOO
+              IMAP://user;AUTH=*@SERVER2/BAR] Unable to rename mailbox
+              located on SERVER2
+
+   Since both the existing and new mailbox are on the same remote
+   server, the client can simply make a connection to the remote server
+   and re-issue the RENAME command.
+
+4.4. COPY Referrals
+
+   An IMAP4 server MAY respond to the COPY command with one or more IMAP
+   mailbox referrals.  This indicates that the destination mailbox is on
+   a remote server.  To achieve the same behavior of a server COPY, the
+   client MAY issue the constituent FETCH and APPEND commands against
+   both servers.
+
+
+
+
+Gahrns                      Standards Track                     [Page 6]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+   Example:
+
+      C: A001 COPY 1 "SHARED/STUFF"
+      S: A001 NO [REFERRAL IMAP://user;AUTH=*@SERVER2/SHARED/STUFF]
+              Unable to copy message(s) to SERVER2.
+
+5.1 RLIST command
+
+   Arguments:  reference name
+               mailbox name with possible wildcards
+
+   Responses:  untagged responses: LIST
+
+   Result:     OK - RLIST Completed
+               NO - RLIST Failure
+               BAD - command unknown or arguments invalid
+
+   The RLIST command behaves identically to its LIST counterpart, except
+   remote mailboxes are returned in addition to local mailboxes in the
+   LIST responses.
+
+5.2 RLSUB Command
+
+   Arguments:  reference name
+               mailbox name with possible wildcards
+
+   Responses:  untagged responses: LSUB
+
+   Result:     OK - RLSUB Completed
+               NO - RLSUB Failure
+               BAD - command unknown or arguments invalid
+
+   The RLSUB command behaves identically to its LSUB counterpart, except
+   remote mailboxes are returned in addition to local mailboxes in the
+   LSUB responses.
+
+6. Formal Syntax
+
+   The following syntax specification uses the augmented Backus-Naur
+   Form (BNF) as described in [ABNF].
+
+   list_mailbox = <list_mailbox> as defined in [RFC-2060]
+
+   mailbox = <mailbox> as defined in [RFC-2060]
+
+   mailbox_referral = <tag> SPACE "NO" SPACE
+      <referral_response_code> (text / text_mime2)
+      ; See [RFC-2060] for <tag>, text and text_mime2 definition
+
+
+
+Gahrns                      Standards Track                     [Page 7]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+   referral_response_code = "[" "REFERRAL" 1*(SPACE <url>) "]"
+      ; See [RFC-1738] for <url> definition
+
+   rlist = "RLIST" SPACE mailbox SPACE list_mailbox
+
+   rlsub = "RLSUB" SPACE mailbox SPACE list_mailbox
+
+6. Security Considerations
+
+   The IMAP4 referral mechanism makes use of IMAP URLs, and as such,
+   have the same security considerations as general internet URLs [RFC-
+   1738], and in particular IMAP URLs [RFC-2192].
+
+   With the MAILBOX-REFERRALS capability, it is potentially easier to
+   write a rogue server that injects a bogus referral response that
+   directs a user to an incorrect mailbox.  Although referrals reduce
+   the effort to write such a server, the referral response makes
+   detection of the intrusion easier.
+
+7. References
+
+   [RFC-2060], Crispin, M., "Internet Message Access Protocol - Version
+   4rev1", RFC 2060, University of Washington, December 1996.
+
+   [RFC-2192], Newman, C., "IMAP URL Scheme", RFC 2192, Innosoft,
+   September 1997.
+
+   [RFC-1738], Berners-Lee, T., Masinter, L., and M. McCahill, "Uniform
+   Resource Locators (URL)", RFC 1738, CERN, Xerox Corporation,
+   University of Minnesota, December 1994.
+
+   [RFC-2119], Bradner, S., "Key words for use in RFCs to Indicate
+   Requirement Levels", RFC 2119, Harvard University, March 1997.
+
+   [ABNF], DRUMS working group, Dave Crocker Editor, "Augmented BNF for
+   Syntax Specifications: ABNF", Work in Progress, Internet Mail
+   Consortium, April 1997.
+
+8.  Acknowledgments
+
+   Many valuable suggestions were received from private discussions and
+   the IMAP4 mailing list.  In particular, Raymond Cheng, Mark Crispin,
+   Mark Keasling, Chris Newman and Larry Osterman made significant
+   contributions to this document.
+
+
+
+
+
+
+
+Gahrns                      Standards Track                     [Page 8]
+
+RFC 2193                IMAP4 Mailbox Referrals           September 1997
+
+
+9. Author's Address
+
+   Mike Gahrns
+   Microsoft
+   One Microsoft Way
+   Redmond, WA, 98072
+
+   Phone: (206) 936-9833
+   EMail: mikega@microsoft.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gahrns                      Standards Track                     [Page 9]
+
