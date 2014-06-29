@@ -152,7 +152,7 @@ namespace MailKit.Net.Imap {
 					Engine.OnAlert (code.Message);
 					break;
 				case ImapResponseCodeType.PermanentFlags:
-					PermanentFlags = code.Flags;
+					PermanentFlags = ((PermanentFlagsResponseCode) code).Flags;
 					break;
 				case ImapResponseCodeType.ReadOnly:
 					Access = FolderAccess.ReadOnly;
@@ -164,16 +164,16 @@ namespace MailKit.Net.Imap {
 					tryCreate = true;
 					break;
 				case ImapResponseCodeType.UidNext:
-					UidNext = code.Uid;
+					UidNext = ((UidNextResponseCode) code).Uid;
 					break;
 				case ImapResponseCodeType.UidValidity:
-					UidValidity = code.UidValidity;
+					UidValidity = ((UidValidityResponseCode) code).UidValidity;
 					break;
 				case ImapResponseCodeType.Unseen:
-					FirstUnread = code.Index;
+					FirstUnread = ((UnseenResponseCode) code).Index;
 					break;
 				case ImapResponseCodeType.HighestModSeq:
-					HighestModSeq = code.HighestModSeq;
+					HighestModSeq = ((HighestModSeqResponseCode) code).HighestModSeq;
 					SupportsModSeq = true;
 					break;
 				case ImapResponseCodeType.NoModSeq:
@@ -1165,10 +1165,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("APPEND", ic.Result);
 
-			foreach (var code in ic.RespCodes) {
-				if (code.Type == ImapResponseCodeType.AppendUid)
-					return code.DestUidSet[0];
-			}
+			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+
+			if (append != null && append.UidValidity == UidValidity)
+				return append.UidSet[0];
 
 			return null;
 		}
@@ -1221,10 +1221,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("APPEND", ic.Result);
 
-			foreach (var code in ic.RespCodes) {
-				if (code.Type == ImapResponseCodeType.AppendUid)
-					return code.DestUidSet[0];
-			}
+			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+
+			if (append != null && append.UidValidity == UidValidity)
+				return append.UidSet[0];
 
 			return null;
 		}
@@ -1329,10 +1329,10 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw new ImapCommandException ("APPEND", ic.Result);
 
-				foreach (var code in ic.RespCodes) {
-					if (code.Type == ImapResponseCodeType.AppendUid)
-						return code.DestUidSet;
-				}
+				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+
+				if (append != null && append.UidValidity == UidValidity)
+					return append.UidSet;
 
 				return new UniqueId[0];
 			}
@@ -1425,10 +1425,10 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw new ImapCommandException ("APPEND", ic.Result);
 
-				foreach (var code in ic.RespCodes) {
-					if (code.Type == ImapResponseCodeType.AppendUid)
-						return code.DestUidSet;
-				}
+				var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+
+				if (copy != null && copy.UidValidity == UidValidity)
+					return copy.DestUidSet;
 
 				return new UniqueId[0];
 			}
@@ -1521,10 +1521,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("COPY", ic.Result);
 
-			foreach (var code in ic.RespCodes) {
-				if (code.Type == ImapResponseCodeType.CopyUid)
-					return code.DestUidSet;
-			}
+			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+
+			if (copy != null && copy.UidValidity == UidValidity)
+				return copy.DestUidSet;
 
 			return new UniqueId[0];
 		}
@@ -1615,10 +1615,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("MOVE", ic.Result);
 
-			foreach (var code in ic.RespCodes) {
-				if (code.Type == ImapResponseCodeType.CopyUid)
-					return code.DestUidSet;
-			}
+			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+
+			if (copy != null && copy.UidValidity == UidValidity)
+				return copy.DestUidSet;
 
 			return new UniqueId[0];
 		}
@@ -3551,12 +3551,10 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("STORE", ic.Result);
 
 			if (modseq.HasValue) {
-				foreach (var code in ic.RespCodes) {
-					if (code.Type != ImapResponseCodeType.Modified)
-						continue;
+				var modified = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
 
-					return code.DestUidSet;
-				}
+				if (modified != null)
+					return modified.UidSet;
 			}
 
 			return new UniqueId[0];
@@ -3898,13 +3896,12 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("STORE", ic.Result);
 
 			if (modseq.HasValue) {
-				foreach (var code in ic.RespCodes) {
-					if (code.Type != ImapResponseCodeType.Modified)
-						continue;
+				var modified = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
 
-					var unmodified = new int[code.DestUidSet.Count];
+				if (modified != null) {
+					var unmodified = new int[modified.UidSet.Count];
 					for (int i = 0; i < unmodified.Length; i++)
-						unmodified[i] = (int) (code.DestUidSet[i].Id - 1);
+						unmodified[i] = (int) (modified.UidSet[i].Id - 1);
 
 					return unmodified;
 				}

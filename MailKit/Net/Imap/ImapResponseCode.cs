@@ -123,17 +123,119 @@ namespace MailKit.Net.Imap {
 	class ImapResponseCode
 	{
 		public readonly ImapResponseCodeType Type;
-		public IList<UniqueId> SrcUidSet, DestUidSet;
-		public UniqueId UidValidity;
-		public ulong HighestModSeq;
-		public MessageFlags Flags;
 		public string Message;
-		public UniqueId Uid;
-		public int Index;
 
-		public ImapResponseCode (ImapResponseCodeType type)
+		internal ImapResponseCode (ImapResponseCodeType type)
 		{
 			Type = type;
+		}
+
+		public static ImapResponseCode Create (ImapResponseCodeType type)
+		{
+			switch (type) {
+			case ImapResponseCodeType.NewName:        return new NewNameResponseCode (type);
+			case ImapResponseCodeType.PermanentFlags: return new PermanentFlagsResponseCode (type);
+			case ImapResponseCodeType.UidNext:        return new UidNextResponseCode (type);
+			case ImapResponseCodeType.UidValidity:    return new UidValidityResponseCode (type);
+			case ImapResponseCodeType.Unseen:         return new UnseenResponseCode (type);
+			case ImapResponseCodeType.AppendUid:      return new AppendUidResponseCode (type);
+			case ImapResponseCodeType.CopyUid:        return new CopyUidResponseCode (type);
+			case ImapResponseCodeType.BadUrl:         return new BadUrlResponseCode (type);
+			case ImapResponseCodeType.HighestModSeq:  return new HighestModSeqResponseCode (type);
+			case ImapResponseCodeType.Modified:       return new ModifiedResponseCode (type);
+			default:                                  return new ImapResponseCode (type);
+			}
+		}
+	}
+
+	class NewNameResponseCode : ImapResponseCode
+	{
+		public string OldName;
+		public string NewName;
+
+		internal NewNameResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class PermanentFlagsResponseCode : ImapResponseCode
+	{
+		public MessageFlags Flags;
+
+		internal PermanentFlagsResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class UidNextResponseCode : ImapResponseCode
+	{
+		public UniqueId Uid;
+
+		internal UidNextResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class UidValidityResponseCode : ImapResponseCode
+	{
+		public UniqueId UidValidity;
+
+		internal UidValidityResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class UnseenResponseCode : ImapResponseCode
+	{
+		public int Index;
+
+		internal UnseenResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class AppendUidResponseCode : UidValidityResponseCode
+	{
+		public IList<UniqueId> UidSet;
+
+		internal AppendUidResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class CopyUidResponseCode : UidValidityResponseCode
+	{
+		public IList<UniqueId> SrcUidSet, DestUidSet;
+
+		internal CopyUidResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class BadUrlResponseCode : ImapResponseCode
+	{
+		public string BadUrl;
+
+		internal BadUrlResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class HighestModSeqResponseCode : ImapResponseCode
+	{
+		public ulong HighestModSeq;
+
+		internal HighestModSeqResponseCode (ImapResponseCodeType type) : base (type)
+		{
+		}
+	}
+
+	class ModifiedResponseCode : ImapResponseCode
+	{
+		public IList<UniqueId> UidSet;
+
+		internal ModifiedResponseCode (ImapResponseCodeType type) : base (type)
+		{
 		}
 	}
 }

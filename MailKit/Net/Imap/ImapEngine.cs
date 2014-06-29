@@ -959,7 +959,7 @@ namespace MailKit.Net.Imap {
 			atom = (string) token.Value;
 			token = stream.ReadToken (cancellationToken);
 
-			code = new ImapResponseCode (GetResponseCodeType (atom));
+			code = ImapResponseCode.Create (GetResponseCodeType (atom));
 
 			switch (code.Type) {
 			case ImapResponseCodeType.Alert:
@@ -1004,34 +1004,42 @@ namespace MailKit.Net.Imap {
 
 				return code;
 			case ImapResponseCodeType.PermanentFlags:
+				var perm = (PermanentFlagsResponseCode) code;
+
 				stream.UngetToken (token);
-				code.Flags = ImapUtils.ParseFlagsList (this, cancellationToken);
+				perm.Flags = ImapUtils.ParseFlagsList (this, cancellationToken);
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.ReadOnly: break;
 			case ImapResponseCodeType.ReadWrite: break;
 			case ImapResponseCodeType.TryCreate: break;
 			case ImapResponseCodeType.UidNext:
+				var next = (UidNextResponseCode) code;
+
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
 					Debug.WriteLine ("Expected nz-number argument to 'UIDNEXT' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
-				code.Uid = new UniqueId (n32);
+				next.Uid = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.UidValidity:
+				var uidvalidity = (UidValidityResponseCode) code;
+
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
 					Debug.WriteLine ("Expected nz-number argument to 'UIDVALIDITY' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
-				code.UidValidity = new UniqueId (n32);
+				uidvalidity.UidValidity = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Unseen:
+				var unseen = (UnseenResponseCode) code;
+
 				// Note: we allow '0' here because some servers have been known to send "* OK [UNSEEN 0]" when the folder
 				// has no messages. See https://github.com/jstedfast/MailKit/issues/34 for details.
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
@@ -1039,11 +1047,13 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				code.Index = n32 > 0 ? (int) (n32 - 1) : 0;
+				unseen.Index = n32 > 0 ? (int) (n32 - 1) : 0;
 
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.NewName:
+				var rename = (NewNameResponseCode) code;
+
 				// Note: this RESP-CODE existed in rfc2060 but has been removed in rfc3501:
 				//
 				// 85) Remove NEWNAME.  It can't work because mailbox names can be
@@ -1054,8 +1064,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				// FIXME:
-				//code.OldName = (string) token.Value;
+				rename.OldName = (string) token.Value;
 
 				// the next token should be another atom or qstring token representing the new name of the folder
 				token = stream.ReadToken (cancellationToken);
@@ -1065,23 +1074,24 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				// FIXME:
-				//code.NewName = (string) token.Value;
+				rename.NewName = (string) token.Value;
 
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.AppendUid:
+				var append = (AppendUidResponseCode) code;
+
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
 					Debug.WriteLine ("Expected nz-number as first argument of the 'APPENDUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
-				code.UidValidity = new UniqueId (n32);
+				append.UidValidity = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 
 				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.DestUidSet)) {
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out append.UidSet)) {
 					Debug.WriteLine ("Expected nz-number or uid-set as second argument to 'APPENDUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
@@ -1089,23 +1099,25 @@ namespace MailKit.Net.Imap {
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.CopyUid:
+				var copy = (CopyUidResponseCode) code;
+
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
 					Debug.WriteLine ("Expected nz-number as first argument of the 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
-				code.UidValidity = new UniqueId (n32);
+				copy.UidValidity = new UniqueId (n32);
 
 				token = stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.SrcUidSet)) {
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out copy.SrcUidSet)) {
 					Debug.WriteLine ("Expected uid-set as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
 				token = stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.DestUidSet)) {
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out copy.DestUidSet)) {
 					Debug.WriteLine ("Expected uid-set as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
@@ -1113,18 +1125,33 @@ namespace MailKit.Net.Imap {
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.UidNotSticky: break;
+			case ImapResponseCodeType.BadUrl:
+				var badurl = (BadUrlResponseCode) code;
+
+				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
+					Debug.WriteLine ("Expected url-resp-text as argument to the 'BADURL' RESP-CODE, but got: {0}", token);
+					throw UnexpectedToken (token, false);
+				}
+
+				badurl.BadUrl = (string) token.Value;
+				break;
+			case ImapResponseCodeType.TooBig: break;
 			case ImapResponseCodeType.HighestModSeq:
+				var highest = (HighestModSeqResponseCode) code;
+
 				if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out n64) || n64 == 0) {
 					Debug.WriteLine ("Expected 64-bit nz-number as first argument of the 'HIGHESTMODSEQ' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
-				code.HighestModSeq = n64;
+				highest.HighestModSeq = n64;
 
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.Modified:
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out code.DestUidSet)) {
+				var modified = (ModifiedResponseCode) code;
+
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out modified.UidSet)) {
 					Debug.WriteLine ("Expected uid-set as first argument to 'MODIFIED' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
@@ -1132,11 +1159,28 @@ namespace MailKit.Net.Imap {
 				token = stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.NoModSeq: break;
+			case ImapResponseCodeType.CompressionActive: break;
 			case ImapResponseCodeType.Closed: break;
+			case ImapResponseCodeType.Unavailable: break;
+			case ImapResponseCodeType.AuthenticationFailed: break;
+			case ImapResponseCodeType.AuthorizationFailed: break;
+			case ImapResponseCodeType.Expired: break;
+			case ImapResponseCodeType.PrivacyRequired: break;
+			case ImapResponseCodeType.ContactAdmin: break;
+			case ImapResponseCodeType.NoPerm: break;
+			case ImapResponseCodeType.InUse: break;
+			case ImapResponseCodeType.ExpungeIssued: break;
+			case ImapResponseCodeType.Corruption: break;
+			case ImapResponseCodeType.ServerBug: break;
+			case ImapResponseCodeType.ClientBug: break;
+			case ImapResponseCodeType.CanNot: break;
+			case ImapResponseCodeType.Limit: break;
+			case ImapResponseCodeType.OverQuota: break;
+			case ImapResponseCodeType.AlreadyExists: break;
+			case ImapResponseCodeType.NonExistent: break;
 			default:
-				code = new ImapResponseCode (ImapResponseCodeType.Unknown);
-
-				Debug.WriteLine (string.Format ("Unknown RESP-CODE encountered: {0}", atom));
+				if (code.Type == ImapResponseCodeType.Unknown)
+					Debug.WriteLine (string.Format ("Unknown RESP-CODE encountered: {0}", atom));
 
 				// extensions are of the form: "[" atom [SPACE 1*<any TEXT_CHAR except "]">] "]"
 
