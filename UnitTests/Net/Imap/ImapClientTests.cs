@@ -50,12 +50,13 @@ namespace UnitTests.Net.Imap {
 			ImapCapabilities.Namespace | ImapCapabilities.Unselect;
 		static readonly ImapCapabilities GMailInitialCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
 			ImapCapabilities.Unselect | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Quota |
-			ImapCapabilities.XList | ImapCapabilities.Children | ImapCapabilities.GMailExt1 | ImapCapabilities.SaslIR;
+			ImapCapabilities.XList | ImapCapabilities.Children | ImapCapabilities.GMailExt1 | ImapCapabilities.SaslIR |
+			ImapCapabilities.Id;
 		static readonly ImapCapabilities GMailAuthenticatedCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
 			ImapCapabilities.Unselect | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Quota |
 			ImapCapabilities.XList | ImapCapabilities.Children | ImapCapabilities.GMailExt1 | ImapCapabilities.UidPlus |
 			ImapCapabilities.Compress | ImapCapabilities.Enable | ImapCapabilities.Move | ImapCapabilities.CondStore |
-			ImapCapabilities.ESearch;
+			ImapCapabilities.ESearch | ImapCapabilities.Id;
 
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
