@@ -729,6 +729,7 @@ namespace MailKit.Net.Imap {
 					case "WITHIN":            Capabilities |= ImapCapabilities.Within; break;
 					case "ENABLE":            Capabilities |= ImapCapabilities.Enable; break;
 					case "QRESYNC":           Capabilities |= ImapCapabilities.QuickResync; break;
+					case "SEARCHRES":         Capabilities |= ImapCapabilities.SearchResults; break;
 					case "SORT":              Capabilities |= ImapCapabilities.Sort; break;
 					case "LIST-EXTENDED":     Capabilities |= ImapCapabilities.ListExtended; break;
 					case "CONVERT":           Capabilities |= ImapCapabilities.Convert; break;

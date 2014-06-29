@@ -173,69 +173,74 @@ namespace MailKit.Net.Imap {
 		QuickResync      = 1L << 25,
 
 		/// <summary>
+		/// The server supports the SEARCHRES extension defined in rfc5182.
+		/// </summary>
+		SearchResults    = 1L << 26,
+
+		/// <summary>
 		/// The server supports the SORT extension defined in rfc5256.
 		/// </summary>
-		Sort             = 1L << 26,
+		Sort             = 1L << 27,
 
 		/// <summary>
 		/// The server supports the THREAD extension defined in rfc5256.
 		/// </summary>
-		Thread           = 1L << 27,
+		Thread           = 1L << 28,
 
 		/// <summary>
 		/// The server supports the LIST-EXTENDED extension defined in rfc5258.
 		/// </summary>
-		ListExtended     = 1L << 28,
+		ListExtended     = 1L << 29,
 
 		/// <summary>
 		/// The server supports the CONVERT extension defined in rfc5259.
 		/// </summary>
-		Convert          = 1L << 29,
+		Convert          = 1L << 30,
 
 		/// <summary>
 		/// The server supports the ESORT extension defined in rfc5267.
 		/// </summary>
-		ESort            = 1L << 30,
+		ESort            = 1L << 31,
 
 		/// <summary>
 		/// The server supports the CONTEXT extension defined in rfc5267.
 		/// </summary>
-		Context          = 1L << 31,
+		Context          = 1L << 32,
 
 		/// <summary>
 		/// The server supports the METADATA extension defined in rfc5464.
 		/// </summary>
-		Metadata         = 1L << 32,
+		Metadata         = 1L << 33,
 
 		/// <summary>
 		/// The server supports the NOTIFY extension defined in rfc5465.
 		/// </summary>
-		Notify           = 1L << 33,
+		Notify           = 1L << 34,
 
 		/// <summary>
 		/// The server supports the FILTERS extension defined in rfc5466.
 		/// </summary>
-		Filters          = 1L << 34,
+		Filters          = 1L << 35,
 
 		/// <summary>
 		/// The server supports the LIST-STATUS extension defined in rfc5819.
 		/// </summary>
-		ListStatus       = 1L << 35,
+		ListStatus       = 1L << 36,
 
 		/// <summary>
 		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse       = 1L << 36,
+		SpecialUse       = 1L << 37,
 
 		/// <summary>
 		/// The server supports the MULTISEARCH extension defined in rfc6237.
 		/// </summary>
-		MultiSearch      = 1L << 37,
+		MultiSearch      = 1L << 38,
 
 		/// <summary>
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
-		Move             = 1L << 38,
+		Move             = 1L << 39,
 
 		#region GMail Extensions
 
@@ -244,12 +249,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the XLIST extension (GMail).
 		/// </summary>
-		XList            = 1L << 39,
+		XList            = 1L << 40,
 
 		/// <summary>
 		/// The server supports the X-GM-EXT1 extension (GMail).
 		/// </summary>
-		GMailExt1        = 1L << 40
+		GMailExt1        = 1L << 41
 
 		#endregion
 	}
