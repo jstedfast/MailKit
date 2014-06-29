@@ -1165,10 +1165,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("APPEND", ic.Result);
 
-			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+			if (UidValidity.HasValue) {
+				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-			if (append != null && append.UidValidity == UidValidity)
-				return append.UidSet[0];
+				if (append != null && append.UidValidity == UidValidity.Value)
+					return append.UidSet[0];
+			}
 
 			return null;
 		}
@@ -1221,10 +1223,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("APPEND", ic.Result);
 
-			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+			if (UidValidity.HasValue) {
+				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-			if (append != null && append.UidValidity == UidValidity)
-				return append.UidSet[0];
+				if (append != null && append.UidValidity == UidValidity.Value)
+					return append.UidSet[0];
+			}
 
 			return null;
 		}
@@ -1329,10 +1333,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw new ImapCommandException ("APPEND", ic.Result);
 
-				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+				if (UidValidity.HasValue) {
+					var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-				if (append != null && append.UidValidity == UidValidity)
-					return append.UidSet;
+					if (append != null && append.UidValidity == UidValidity.Value)
+						return append.UidSet;
+				}
 
 				return new UniqueId[0];
 			}
@@ -1425,10 +1431,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw new ImapCommandException ("APPEND", ic.Result);
 
-				var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+				if (UidValidity.HasValue) {
+					var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-				if (copy != null && copy.UidValidity == UidValidity)
-					return copy.DestUidSet;
+					if (append != null && append.UidValidity == UidValidity.Value)
+						return append.UidSet;
+				}
 
 				return new UniqueId[0];
 			}
@@ -1521,10 +1529,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("COPY", ic.Result);
 
-			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+			if (destination.UidValidity.HasValue) {
+				var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
 
-			if (copy != null && copy.UidValidity == UidValidity)
-				return copy.DestUidSet;
+				if (copy != null && copy.UidValidity == destination.UidValidity.Value)
+					return copy.DestUidSet;
+			}
 
 			return new UniqueId[0];
 		}
@@ -1615,10 +1625,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("MOVE", ic.Result);
 
-			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+			if (destination.UidValidity.HasValue) {
+				var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
 
-			if (copy != null && copy.UidValidity == UidValidity)
-				return copy.DestUidSet;
+				if (copy != null && copy.UidValidity == destination.UidValidity.Value)
+					return copy.DestUidSet;
+			}
 
 			return new UniqueId[0];
 		}
