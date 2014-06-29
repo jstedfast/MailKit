@@ -41,10 +41,23 @@ namespace MailKit.Net.Imap {
 		UidValidity,
 		Unseen,
 
+		// RESP-CODES introduced in rfc2221:
+		Referral,
+
+		// RESP-CODES introduced in rfc3516,
+		UnknownCte,
+
 		// RESP-CODES introduced in rfc4315:
 		AppendUid,
 		CopyUid,
 		UidNotSticky,
+
+		// RESP-CODES introduced in rfc4467:
+		UrlMech,
+
+		// RESP-CODES introduced in rfc4469:
+		BadUrl,
+		TooBig,
 
 		// RESP-CODES introduced in rfc4551:
 		HighestModSeq,
@@ -56,6 +69,53 @@ namespace MailKit.Net.Imap {
 
 		// RESP-CODES introduced in rfc5162:
 		Closed,
+
+		// RESP-CODES introduced in rfc5182:
+		NotSaved,
+
+		// RESP-CODES introduced in rfc5255:
+		BadComparator,
+
+		// RESP-CODES introduced in rfc5257:
+		Annotate,
+		Annotations,
+
+		// RESP-CODES introduced in rfc5259:
+		MaxConvertMessages,
+		MaxConvertParts,
+		TempFail,
+
+		// RESP-CODES introduced in rfc5267:
+		NoUpdate,
+
+		// RESP-CODES introduced in rfc5464:
+		Metadata,
+
+		// RESP-CODES introduced in rfc5465:
+		NotificationOverflow,
+		BadEvent,
+
+		// RESP-CODES introduced in rfc5466:
+		UndefinedFilter,
+
+		// RESP-CODES introduced in rfc5530:
+		Unavailable,
+		AuthenticationFailed,
+		AuthorizationFailed,
+		Expired,
+		PrivacyRequired,
+		ContactAdmin,
+		NoPerm,
+		InUse,
+		ExpungeIssued,
+		Corruption,
+		ServerBug,
+		ClientBug,
+		CanNot,
+		Limit,
+		OverQuota,
+		AlreadyExists,
+		NonExistent,
 
 		Unknown       = 255
 	}

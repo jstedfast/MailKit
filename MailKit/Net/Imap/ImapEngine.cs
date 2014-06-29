@@ -888,27 +888,44 @@ namespace MailKit.Net.Imap {
 		static ImapResponseCodeType GetResponseCodeType (string atom)
 		{
 			switch (atom) {
-			case "ALERT":             return ImapResponseCodeType.Alert;
-			case "BADCHARSET":        return ImapResponseCodeType.BadCharset;
-			case "CAPABILITY":        return ImapResponseCodeType.Capability;
-			case "PARSE":             return ImapResponseCodeType.Parse;
-			case "PERMANENTFLAGS":    return ImapResponseCodeType.PermanentFlags;
-			case "READ-ONLY":         return ImapResponseCodeType.ReadOnly;
-			case "READ-WRITE":        return ImapResponseCodeType.ReadWrite;
-			case "TRYCREATE":         return ImapResponseCodeType.TryCreate;
-			case "UIDNEXT":           return ImapResponseCodeType.UidNext;
-			case "UIDVALIDITY":       return ImapResponseCodeType.UidValidity;
-			case "UNSEEN":            return ImapResponseCodeType.Unseen;
-			case "NEWNAME":           return ImapResponseCodeType.NewName;
-			case "APPENDUID":         return ImapResponseCodeType.AppendUid;
-			case "COPYUID":           return ImapResponseCodeType.CopyUid;
-			case "UIDNOTSTICKY":      return ImapResponseCodeType.UidNotSticky;
-			case "HIGHESTMODSEQ":     return ImapResponseCodeType.HighestModSeq;
-			case "MODIFIED":          return ImapResponseCodeType.Modified;
-			case "NOMODSEQ":          return ImapResponseCodeType.NoModSeq;
-			case "COMPRESSIONACTIVE": return ImapResponseCodeType.CompressionActive;
-			case "CLOSED":            return ImapResponseCodeType.Closed;
-			default:                  return ImapResponseCodeType.Unknown;
+			case "ALERT":                return ImapResponseCodeType.Alert;
+			case "BADCHARSET":           return ImapResponseCodeType.BadCharset;
+			case "CAPABILITY":           return ImapResponseCodeType.Capability;
+			case "PARSE":                return ImapResponseCodeType.Parse;
+			case "PERMANENTFLAGS":       return ImapResponseCodeType.PermanentFlags;
+			case "READ-ONLY":            return ImapResponseCodeType.ReadOnly;
+			case "READ-WRITE":           return ImapResponseCodeType.ReadWrite;
+			case "TRYCREATE":            return ImapResponseCodeType.TryCreate;
+			case "UIDNEXT":              return ImapResponseCodeType.UidNext;
+			case "UIDVALIDITY":          return ImapResponseCodeType.UidValidity;
+			case "UNSEEN":               return ImapResponseCodeType.Unseen;
+			case "NEWNAME":              return ImapResponseCodeType.NewName;
+			case "APPENDUID":            return ImapResponseCodeType.AppendUid;
+			case "COPYUID":              return ImapResponseCodeType.CopyUid;
+			case "UIDNOTSTICKY":         return ImapResponseCodeType.UidNotSticky;
+			case "HIGHESTMODSEQ":        return ImapResponseCodeType.HighestModSeq;
+			case "MODIFIED":             return ImapResponseCodeType.Modified;
+			case "NOMODSEQ":             return ImapResponseCodeType.NoModSeq;
+			case "COMPRESSIONACTIVE":    return ImapResponseCodeType.CompressionActive;
+			case "CLOSED":               return ImapResponseCodeType.Closed;
+			case "UNAVAILABLE":          return ImapResponseCodeType.Unavailable;
+			case "AUTHENTICATIONFAILED": return ImapResponseCodeType.AuthenticationFailed;
+			case "AUTHORIZATIONFAILED":  return ImapResponseCodeType.AuthorizationFailed;
+			case "EXPIRED":              return ImapResponseCodeType.Expired;
+			case "PRIVACYREQUIRED":      return ImapResponseCodeType.PrivacyRequired;
+			case "CONTACTADMIN":         return ImapResponseCodeType.ContactAdmin;
+			case "NOPERM":               return ImapResponseCodeType.NoPerm;
+			case "INUSE":                return ImapResponseCodeType.InUse;
+			case "EXPUNGEISSUED":        return ImapResponseCodeType.ExpungeIssued;
+			case "CORRUPTION":           return ImapResponseCodeType.Corruption;
+			case "SERVERBUG":            return ImapResponseCodeType.ServerBug;
+			case "CLIENTBUG":            return ImapResponseCodeType.ClientBug;
+			case "CANNOT":               return ImapResponseCodeType.CanNot;
+			case "LIMIT":                return ImapResponseCodeType.Limit;
+			case "OVERQUOTA":            return ImapResponseCodeType.OverQuota;
+			case "ALREADYEXISTS":        return ImapResponseCodeType.AlreadyExists;
+			case "NONEXISTENT":          return ImapResponseCodeType.NonExistent;
+			default:                     return ImapResponseCodeType.Unknown;
 			}
 		}
 
