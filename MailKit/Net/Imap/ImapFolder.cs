@@ -294,7 +294,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic.Result);
 
-			if (Engine.Selected != null)
+			if (Engine.Selected != null && Engine.Selected != this)
 				Engine.Selected.Access = FolderAccess.None;
 
 			Engine.State = ImapEngineState.Selected;
@@ -354,7 +354,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic.Result);
 
-			if (Engine.Selected != null)
+			if (Engine.Selected != null && Engine.Selected != this)
 				Engine.Selected.Access = FolderAccess.None;
 
 			Engine.State = ImapEngineState.Selected;
