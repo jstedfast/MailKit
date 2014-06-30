@@ -440,8 +440,14 @@ namespace MailKit {
 			while (index < text.Length && text[index] == ' ')
 				index++;
 
-			if (index >= text.Length || text[index] != '(')
+			if (index >= text.Length || text[index] != '(') {
+				if (index + 3 <= text.Length && text.Substring (index, 3) == "NIL") {
+					index += 3;
+					return true;
+				}
+
 				return false;
+			}
 
 			index++;
 
