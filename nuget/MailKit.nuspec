@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
@@ -27,7 +27,7 @@ Features include:
 * Fixed Pop3Stream.Read() to handle ".\n" as an alternate termination sequence.
 * Added convenience methods for changing flags on individual messages.
 * Added Connected, Disconnected, and Authenticated events.
-* Improved the public API by replacing T[] with IList<T>.
+* Improved the public API by replacing T[] with IList&lt;T&gt;.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
