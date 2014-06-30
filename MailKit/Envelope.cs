@@ -174,15 +174,24 @@ namespace MailKit {
 			else
 				builder.Append ("NIL ");
 
-			int at = mailbox.Address.LastIndexOf ('@');
+			if (mailbox.Address != null)
+			{
+				int at = mailbox.Address.LastIndexOf('@');
 
-			if (at >= 0) {
-				var domain = mailbox.Address.Substring (at + 1);
-				var user = mailbox.Address.Substring (0, at);
+				if (at >= 0)
+				{
+					var domain = mailbox.Address.Substring(at + 1);
+					var user = mailbox.Address.Substring(0, at);
 
-				builder.AppendFormat ("{0} {1}", MimeUtils.Quote (user), MimeUtils.Quote (domain));
-			} else {
-				builder.AppendFormat ("{0} NIL", MimeUtils.Quote (mailbox.Address));
+					builder.AppendFormat("{0} {1}", MimeUtils.Quote(user), MimeUtils.Quote(domain));
+				}
+				else
+				{
+					builder.AppendFormat("{0} NIL", MimeUtils.Quote(mailbox.Address));
+				}
+			}
+			else { 
+				builder.Append("NIL NIL");
 			}
 
 			builder.Append (')');
