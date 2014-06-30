@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.20.0.0</version>
+        <version>0.21.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -21,18 +21,19 @@ Features include:
 * S/MIME and PGP support via MimeKit
 * Microsoft TNEF support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Updated IMAP and POP3 clients to take advantage of MimeKit's new ICancellableStream interface.
-* Added a SyncRoot to IMailService and IMailFolder and adding locking in the Async methods.
-* Fixed parsing of escaped strings in IMAP envelope values.
-* Added IMailFolder APIs to copy and move a single message.
-* Implemented support for the IMAP IDLE command.
-* Added .NET 4.5 assemblies to the NuGet package.
+        <releaseNotes>* Fixed ImapFolder.Rename() to handle cases where the new ParentFolder's FullName is empty.
+* Fixed Connect() methods to properly handle cancellation around the socket.Connect().
+* Fixed a stream I/O blocking issue when downloading messages over an SSL-encrypted connection.
+* Fixed Pop3Stream.Read() to handle ".\n" as an alternate termination sequence.
+* Added convenience methods for changing flags on individual messages.
+* Added Connected, Disconnected, and Authenticated events.
+* Improved the public API by replacing T[] with IList<T>.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.40.0.0" />
+            <dependency id="MimeKit" version="0.41.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

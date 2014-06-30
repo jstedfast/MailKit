@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit MessageThreader extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.20.0.0</AssemblyVersion>
+    <AssemblyVersion>0.21.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -23,7 +23,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig string GetThreadableSubject(string subject, int32 replyDepth) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.20.0.0</AssemblyVersion>
+        <AssemblyVersion>0.21.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -48,14 +48,14 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public static MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, System.Collections.Generic.IEnumerable&lt;MailKit.IThreadable&gt; messages);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IThreadable&gt; messages) cil managed" />
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IList&lt;MailKit.MessageThread&gt; Thread (MailKit.ThreadingAlgorithm algorithm, System.Collections.Generic.IEnumerable&lt;MailKit.IThreadable&gt; messages);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IList`1&lt;class MailKit.MessageThread&gt; Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IThreadable&gt; messages) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.20.0.0</AssemblyVersion>
+        <AssemblyVersion>0.21.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.MessageThread[]</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.MessageThread&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />
@@ -83,14 +83,14 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public static MailKit.MessageThread[] Thread (MailKit.ThreadingAlgorithm algorithm, System.Collections.Generic.IEnumerable&lt;MailKit.IThreadable&gt; messages, MailKit.Search.OrderBy[] orderBy);" />
-      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.MessageThread[] Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IThreadable&gt; messages, class MailKit.Search.OrderBy[] orderBy) cil managed" />
+      <MemberSignature Language="C#" Value="public static System.Collections.Generic.IList&lt;MailKit.MessageThread&gt; Thread (MailKit.ThreadingAlgorithm algorithm, System.Collections.Generic.IEnumerable&lt;MailKit.IThreadable&gt; messages, MailKit.Search.OrderBy[] orderBy);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IList`1&lt;class MailKit.MessageThread&gt; Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IThreadable&gt; messages, class MailKit.Search.OrderBy[] orderBy) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.20.0.0</AssemblyVersion>
+        <AssemblyVersion>0.21.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>MailKit.MessageThread[]</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.MessageThread&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="algorithm" Type="MailKit.ThreadingAlgorithm" />

@@ -96,7 +96,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Enables quick resynchronization when a folder is opened using the
-		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
 		/// method.</para>
 		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event
 		/// is replaced with the <see cref="MailFolder.MessagesVanished"/> event.</para>
@@ -130,7 +130,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Enables quick resynchronization when a folder is opened using the
-		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,UniqueId[],System.Threading.CancellationToken)"/>
+		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
 		/// method.</para>
 		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event
 		/// is replaced with the <see cref="MailFolder.MessagesVanished"/> event.</para>

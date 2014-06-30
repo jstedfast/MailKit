@@ -33,8 +33,8 @@ namespace MailKit {
 	/// <remarks>
 	/// <see cref="MessageSummaryItems"/> are used to specify which properties
 	/// of <see cref="MessageSummary"/> should be populated by calls to
-	/// <see cref="IMailFolder.Fetch(UniqueId[], MessageSummaryItems, System.Threading.CancellationToken)"/>,
-	/// <see cref="IMailFolder.Fetch(int[], MessageSummaryItems, System.Threading.CancellationToken)"/>, or
+	/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;, MessageSummaryItems, System.Threading.CancellationToken)"/>,
+	/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;int&gt;, MessageSummaryItems, System.Threading.CancellationToken)"/>, or
 	/// <see cref="IMailFolder.Fetch(int, int, MessageSummaryItems, System.Threading.CancellationToken)"/>.
 	/// </remarks>
 	[Flags]

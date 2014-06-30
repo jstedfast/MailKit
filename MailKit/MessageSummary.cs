@@ -35,7 +35,7 @@ namespace MailKit {
 	/// </summary>
 	/// <remarks>
 	/// A <see cref="MessageSummary"/> is returned by
-	/// <see cref="IMailFolder.Fetch(UniqueId[], MessageSummaryItems, System.Threading.CancellationToken)"/>.
+	/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;, MessageSummaryItems, System.Threading.CancellationToken)"/>.
 	/// The properties of the <see cref="MessageSummary"/> that will be available
 	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.
 	/// </remarks>
@@ -55,7 +55,7 @@ namespace MailKit {
 		/// or <see cref="BodyPartMultipart"/>.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Body"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The body structure of the message.</value>
 		public BodyPart Body {
@@ -73,7 +73,7 @@ namespace MailKit {
 		/// and the message id.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Envelope"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The envelope of the message.</value>
 		public Envelope Envelope {
@@ -87,7 +87,7 @@ namespace MailKit {
 		/// <para>Gets the message flags, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.Flags"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The message flags.</value>
 		public MessageFlags? Flags {
@@ -101,7 +101,7 @@ namespace MailKit {
 		/// <para>Gets the internal date of the message (i.e. the "received" date), if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.InternalDate"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The internal date of the message.</value>
 		public DateTimeOffset? InternalDate {
@@ -115,7 +115,7 @@ namespace MailKit {
 		/// <para>Gets the size of the message, in bytes, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.MessageSize"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>
 		public uint? MessageSize {
@@ -129,7 +129,7 @@ namespace MailKit {
 		/// <para>Gets the mod-sequence value for the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.ModSeq"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The mod-sequence value.</value>
 		public ulong? ModSeq {
@@ -143,7 +143,7 @@ namespace MailKit {
 		/// <para>Gets the message-ids that the message references, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.References"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The references.</value>
 		public MessageIdList References {
@@ -157,7 +157,7 @@ namespace MailKit {
 		/// <para>Gets the unique ID of the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.UniqueId"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The uid of the message.</value>
 		public UniqueId? UniqueId {
@@ -184,7 +184,7 @@ namespace MailKit {
 		/// <para>Gets the GMail message identifier, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.GMailMessageId"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The GMail message identifier.</value>
 		public ulong? GMailMessageId {
@@ -198,7 +198,7 @@ namespace MailKit {
 		/// <para>Gets the GMail thread identifier, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.GMailThreadId"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The GMail thread identifier.</value>
 		public ulong? GMailThreadId {
@@ -212,7 +212,7 @@ namespace MailKit {
 		/// <para>Gets the list of GMail labels, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.GMailLabels"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(UniqueId[],MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The GMail labels.</value>
 		public List<string> GMailLabels {
