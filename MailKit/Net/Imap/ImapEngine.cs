@@ -1536,7 +1536,9 @@ namespace MailKit.Net.Imap {
 			ImapFolder parent;
 			int index;
 
-			foreach (var folder in list) {
+			for (int i = 0; i < list.Count; i++) {
+				var folder = list[i];
+
 				if (folder.ParentFolder != null)
 					continue;
 
