@@ -1536,6 +1536,7 @@ namespace MailKit.Net.Imap {
 			ImapFolder parent;
 			int index;
 
+			// Note: we use a for-loop instead of foreach because we conditionally add items to the list.
 			for (int i = 0; i < list.Count; i++) {
 				var folder = list[i];
 
