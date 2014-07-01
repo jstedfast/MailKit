@@ -4314,6 +4314,14 @@ namespace MailKit.Net.Imap {
 				builder.Append ("FROM %S");
 				args.Add (text.Text);
 				break;
+			case SearchTerm.Fuzzy:
+				if ((Engine.Capabilities & ImapCapabilities.FuzzySearch) == 0)
+					throw new NotSupportedException ("The FUZZY search term is not supported by the IMAP server.");
+
+				builder.Append ("FUZZY");
+				unary = (UnarySearchQuery) query;
+				BuildQuery (builder, unary.Operand, args, true, ref ascii);
+				break;
 			case SearchTerm.HeaderContains:
 				header = (HeaderSearchQuery) query;
 				builder.AppendFormat ("HEADER {0} %S", header.Field);

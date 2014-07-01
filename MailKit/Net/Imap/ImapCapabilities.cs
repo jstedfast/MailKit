@@ -228,19 +228,29 @@ namespace MailKit.Net.Imap {
 		ListStatus       = 1L << 36,
 
 		/// <summary>
-		/// The server supports the SEPCIAL-USE extension defined in rfc6154.
+		/// The server supports the CREATE-SPECIAL-USE extension defined in rfc6154.
 		/// </summary>
-		SpecialUse       = 1L << 37,
+		CreateSpecialUse = 1L << 37,
+
+		/// <summary>
+		/// The server supports the SPECIAL-USE extension defined in rfc6154.
+		/// </summary>
+		SpecialUse       = 1L << 38,
+
+		/// <summary>
+		/// The server supports the SEARCH=FUZZY extension defined in rfc6203.
+		/// </summary>
+		FuzzySearch      = 1L << 39,
 
 		/// <summary>
 		/// The server supports the MULTISEARCH extension defined in rfc6237.
 		/// </summary>
-		MultiSearch      = 1L << 38,
+		MultiSearch      = 1L << 40,
 
 		/// <summary>
 		/// The server supports the MOVE extension defined in rfc6851.
 		/// </summary>
-		Move             = 1L << 39,
+		Move             = 1L << 41,
 
 		#region GMail Extensions
 
@@ -249,12 +259,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the XLIST extension (GMail).
 		/// </summary>
-		XList            = 1L << 40,
+		XList            = 1L << 42,
 
 		/// <summary>
 		/// The server supports the X-GM-EXT1 extension (GMail).
 		/// </summary>
-		GMailExt1        = 1L << 41
+		GMailExt1        = 1L << 43
 
 		#endregion
 	}

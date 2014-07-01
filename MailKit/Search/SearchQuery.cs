@@ -382,6 +382,26 @@ namespace MailKit.Search {
 		}
 
 		/// <summary>
+		/// Applies a fuzzy matching algorithm to the specified expression.
+		/// </summary>
+		/// <remarks>
+		/// <para>Applies a fuzzy matching algorithm to the specified expression.</para>
+		/// <para>Note: This feature is not supported by all IMAP servers.</para>
+		/// </remarks>
+		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
+		/// <param name="expr">The expression</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="expr"/> is <c>null</c>.
+		/// </exception>
+		public static UnarySearchQuery Fuzzy (SearchQuery expr)
+		{
+			if (expr == null)
+				throw new ArgumentNullException ("expr");
+
+			return new UnarySearchQuery (SearchTerm.Fuzzy, expr);
+		}
+
+		/// <summary>
 		/// Matches messages that have the specified custom flag set.
 		/// </summary>
 		/// <remarks>
