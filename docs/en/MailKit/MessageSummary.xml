@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageSummary extends System.Object implements class MailKit.ISortable, class MailKit.IThreadable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.21.0.0</AssemblyVersion>
+    <AssemblyVersion>0.22.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -30,7 +30,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPart Body" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.BodyPart</ReturnType>
@@ -55,7 +55,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.Envelope Envelope" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Envelope</ReturnType>
@@ -82,7 +82,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.MessageFlags&gt; Flags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.MessageFlags&gt;</ReturnType>
@@ -105,7 +105,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.List`1&lt;string&gt; GMailLabels" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.List&lt;System.String&gt;</ReturnType>
@@ -128,7 +128,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; GMailMessageId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
@@ -151,7 +151,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; GMailThreadId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
@@ -174,7 +174,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 Index" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -194,7 +194,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype System.DateTimeOffset&gt; InternalDate" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.DateTimeOffset&gt;</ReturnType>
@@ -217,7 +217,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool MailKit.ISortable.CanSort" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -238,7 +238,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableCc" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -258,7 +258,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DateTimeOffset MailKit.ISortable.SortableDate" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.DateTimeOffset</ReturnType>
@@ -278,7 +278,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableFrom" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -298,7 +298,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 MailKit.ISortable.SortableIndex" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -318,7 +318,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 MailKit.ISortable.SortableSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
@@ -338,7 +338,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableSubject" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -358,7 +358,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MailKit.ISortable.SortableTo" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -378,7 +378,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool MailKit.IThreadable.CanThread" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -399,7 +399,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool MailKit.IThreadable.IsThreadableReply" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -420,7 +420,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MailKit.IThreadable.ThreadableMessageId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -441,7 +441,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MessageIdList MailKit.IThreadable.ThreadableReferences" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MessageIdList</ReturnType>
@@ -462,7 +462,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MailKit.IThreadable.ThreadableSubject" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -483,7 +483,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.UniqueId MailKit.IThreadable.ThreadableUniqueId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId</ReturnType>
@@ -503,7 +503,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; MessageSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
@@ -526,7 +526,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; ModSeq" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
@@ -549,7 +549,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MessageIdList References" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MessageIdList</ReturnType>
@@ -572,7 +572,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UniqueId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>

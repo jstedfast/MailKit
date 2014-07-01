@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit SmtpCommandException extends MailKit.CommandException" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.21.0.0</AssemblyVersion>
+    <AssemblyVersion>0.22.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.CommandException</BaseTypeName>
@@ -24,7 +24,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
@@ -49,7 +49,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Smtp.SmtpErrorCode ErrorCode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Smtp.SmtpErrorCode</ReturnType>
@@ -71,7 +71,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -100,7 +100,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MailboxAddress Mailbox" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MailboxAddress</ReturnType>
@@ -123,7 +123,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 StatusCode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.21.0.0</AssemblyVersion>
+        <AssemblyVersion>0.22.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

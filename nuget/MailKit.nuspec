@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.21.0.0</version>
+        <version>0.22.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -21,13 +21,9 @@ Features include:
 * S/MIME and PGP support via MimeKit
 * Microsoft TNEF support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed ImapFolder.Rename() to handle cases where the new ParentFolder's FullName is empty.
-* Fixed Connect() methods to properly handle cancellation around the socket.Connect().
-* Fixed a stream I/O blocking issue when downloading messages over an SSL-encrypted connection.
-* Fixed Pop3Stream.Read() to handle ".\n" as an alternate termination sequence.
-* Added convenience methods for changing flags on individual messages.
-* Added Connected, Disconnected, and Authenticated events.
-* Improved the public API by replacing T[] with IList&lt;T&gt;.
+        <releaseNotes>* Fixed a bug that would cause the IMailFolder.Access to be FolderAcces.None after opening the folder twice (first as ReadOnly and then a second time as ReadWrite).
+* Fixed an InvalidOperationException when requesting a folder using ImapClient.GetFolder(string path).
+* Fixed Envelope.TryParse() to properly handle null email addresses.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
