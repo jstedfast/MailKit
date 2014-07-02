@@ -39,6 +39,7 @@ namespace MailKit.Search {
 		Draft,
 		Flagged,
 		FromContains,
+		Fuzzy,
 		HeaderContains,
 		Keyword,
 		LargerThan,

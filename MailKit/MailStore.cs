@@ -81,6 +81,17 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get whether or not the mail store supports quotas.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the mail store supports quotas.
+		/// </remarks>
+		/// <value><c>true</c> if the mail store supports quotas; otherwise, <c>false</c>.</value>
+		public abstract bool SupportsQuotas {
+			get;
+		}
+
+		/// <summary>
 		/// Gets the Inbox folder.
 		/// </summary>
 		/// <remarks>

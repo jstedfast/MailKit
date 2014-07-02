@@ -984,6 +984,213 @@ namespace MailKit.Net.Imap {
 				throw new ImapCommandException ("STATUS", ic.Result);
 		}
 
+		static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+
+			switch (token.Type) {
+			case ImapTokenType.Literal: return engine.ReadLiteral (cancellationToken);
+			case ImapTokenType.QString: return (string) token.Value;
+			case ImapTokenType.Atom:    return (string) token.Value;
+			default:
+				throw ImapEngine.UnexpectedToken (token, false);
+			}
+		}
+
+		static void UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		{
+			// The first token should be the mailbox name
+			ReadStringToken (engine, ic.CancellationToken);
+
+			// ...followed by 0 or more quota roots
+			var token = engine.PeekToken (ic.CancellationToken);
+
+			while (token.Type != ImapTokenType.Eoln) {
+				ReadStringToken (engine, ic.CancellationToken);
+
+				token = engine.PeekToken (ic.CancellationToken);
+			}
+		}
+
+		static void UntaggedQuota (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		{
+			var encodedName = ReadStringToken (engine, ic.CancellationToken);
+			ImapFolder quotaRoot;
+			FolderQuota quota;
+
+			if (!engine.FolderCache.TryGetValue (encodedName, out quotaRoot)) {
+				// Note: this shouldn't happen because the quota root should
+				// be one of the parent folders which will all have been added
+				// to the folder cache by thsi point.
+			}
+
+			ic.UserData = quota = new FolderQuota (quotaRoot);
+
+			var token = engine.ReadToken (ic.CancellationToken);
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				uint used, limit;
+				string resource;
+
+				token = engine.ReadToken (ic.CancellationToken);
+
+				if (token.Type != ImapTokenType.Atom)
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				resource = (string) token.Value;
+
+				token = engine.ReadToken (ic.CancellationToken);
+
+				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out used))
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				token = engine.ReadToken (ic.CancellationToken);
+
+				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out limit))
+					throw ImapEngine.UnexpectedToken (token, false);
+
+				switch (resource.ToUpperInvariant ()) {
+				case "MESSAGE":
+					quota.CurrentMessageCount = used;
+					quota.MessageLimit = limit;
+					break;
+				case "STORAGE":
+					quota.CurrentStorageSize = used;
+					quota.StorageLimit = limit;
+					break;
+				}
+
+				token = engine.ReadToken (ic.CancellationToken);
+			}
+		}
+
+		/// <summary>
+		/// Get the quota information for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the quota information for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="ImapClient.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The folder quota.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the QUOTA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override FolderQuota GetQuota (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckState (false, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
+				throw new NotSupportedException ();
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, "GETQUOTAROOT %F\r\n", this);
+			ic.RegisterUntaggedHandler ("QUOTAROOT", UntaggedQuotaRoot);
+			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("GETQUOTAROOT", ic.Result);
+
+			if (ic.UserData == null)
+				return new FolderQuota (null);
+
+			return (FolderQuota) ic.UserData;
+		}
+
+		/// <summary>
+		/// Set the quota limits for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sets the quota limits for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="ImapClient.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The folder quota.</returns>
+		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the QUOTA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckState (false, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
+				throw new NotSupportedException ();
+
+			var command = new StringBuilder ("SETQUOTA %F (");
+			if (messageLimit.HasValue)
+				command.AppendFormat ("MESSAGE {0}", messageLimit.Value);
+			if (storageLimit.HasValue)
+				command.AppendFormat ("STORAGE {0}", storageLimit.Value);
+			command.Append (")\r\n");
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
+			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("SETQUOTA", ic.Result);
+
+			if (ic.UserData == null)
+				return new FolderQuota (null);
+
+			return (FolderQuota) ic.UserData;
+		}
+
 		/// <summary>
 		/// Expunges the folder, permanently removing all messages marked for deletion.
 		/// </summary>
@@ -4313,6 +4520,14 @@ namespace MailKit.Net.Imap {
 				text = (TextSearchQuery) query;
 				builder.Append ("FROM %S");
 				args.Add (text.Text);
+				break;
+			case SearchTerm.Fuzzy:
+				if ((Engine.Capabilities & ImapCapabilities.FuzzySearch) == 0)
+					throw new NotSupportedException ("The FUZZY search term is not supported by the IMAP server.");
+
+				builder.Append ("FUZZY");
+				unary = (UnarySearchQuery) query;
+				BuildQuery (builder, unary.Operand, args, true, ref ascii);
 				break;
 			case SearchTerm.HeaderContains:
 				header = (HeaderSearchQuery) query;

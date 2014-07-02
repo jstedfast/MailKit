@@ -137,6 +137,7 @@
     <Compile Include="FolderNamespace.cs" />
     <Compile Include="FolderNamespaceCollection.cs" />
     <Compile Include="FolderNotFoundException.cs" />
+    <Compile Include="FolderQuota.cs" />
     <Compile Include="FolderRenamedEventArgs.cs" />
     <Compile Include="IMailFolder.cs" />
     <Compile Include="IMailService.cs" />
