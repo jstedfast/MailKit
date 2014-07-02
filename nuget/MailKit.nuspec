@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
@@ -21,7 +21,7 @@ Features include:
 * S/MIME and PGP support via MimeKit
 * Microsoft TNEF support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed a bug that would cause the IMailFolder.Access to be FolderAcces.None after opening the folder twice (first as ReadOnly and then a second time as ReadWrite).
+        <releaseNotes>* Fixed a bug that would cause the IMailFolder.Access to be FolderAccess.None after opening the folder twice (first as ReadOnly and then a second time as ReadWrite).
 * Fixed an InvalidOperationException when requesting a folder using ImapClient.GetFolder(string path).
 * Fixed Envelope.TryParse() to properly handle null email addresses.
 * Improved documentation.</releaseNotes>
