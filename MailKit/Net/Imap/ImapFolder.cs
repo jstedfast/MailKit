@@ -999,19 +999,32 @@ namespace MailKit.Net.Imap {
 
 		static void UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
-			// Read the folder name
+			// The first token should be the mailbox name
 			ReadStringToken (engine, ic.CancellationToken);
 
-			// Read the Quota Root
-			ReadStringToken (engine, ic.CancellationToken);
+			// ...followed by 0 or more quota roots
+			var token = engine.PeekToken (ic.CancellationToken);
+
+			while (token.Type != ImapTokenType.Eoln) {
+				ReadStringToken (engine, ic.CancellationToken);
+
+				token = engine.PeekToken (ic.CancellationToken);
+			}
 		}
 
 		static void UntaggedQuota (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
 		{
-			var root = ReadStringToken (engine, ic.CancellationToken);
+			var encodedName = ReadStringToken (engine, ic.CancellationToken);
+			ImapFolder quotaRoot;
 			FolderQuota quota;
 
-			ic.UserData = quota = new FolderQuota (root);
+			if (!engine.FolderCache.TryGetValue (encodedName, out quotaRoot)) {
+				// Note: this shouldn't happen because the quota root should
+				// be one of the parent folders which will all have been added
+				// to the folder cache by thsi point.
+			}
+
+			ic.UserData = quota = new FolderQuota (quotaRoot);
 
 			var token = engine.ReadToken (ic.CancellationToken);
 

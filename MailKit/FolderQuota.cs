@@ -40,7 +40,7 @@ namespace MailKit {
 		/// Creates a new <see cref="FolderQuota"/> with the specified root.
 		/// </remarks>
 		/// <param name="quotaRoot">The quota root.</param>
-		public FolderQuota (string quotaRoot)
+		public FolderQuota (IMailFolder quotaRoot)
 		{
 			QuotaRoot = quotaRoot;
 		}
@@ -53,7 +53,7 @@ namespace MailKit {
 		/// it suggests that the folder does not have a quota.
 		/// </remarks>
 		/// <value>The quota root.</value>
-		public string QuotaRoot {
+		public IMailFolder QuotaRoot {
 			get; private set;
 		}
 
