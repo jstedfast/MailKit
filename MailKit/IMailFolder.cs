@@ -539,6 +539,34 @@ namespace MailKit {
 		Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Set the quota limits for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sets the quota limits for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="IMailStore.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The updated folder quota.</returns>
+		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the quota limits for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously sets the quota limits for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="IMailStore.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The updated folder quota.</returns>
+		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Expunge the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>

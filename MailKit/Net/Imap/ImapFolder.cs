@@ -1098,7 +1098,7 @@ namespace MailKit.Net.Imap {
 		/// The server's response contained unexpected tokens.
 		/// </exception>
 		/// <exception cref="ImapCommandException">
-		/// The command failed.
+		/// The server replied with a NO or BAD response.
 		/// </exception>
 		public override FolderQuota GetQuota (CancellationToken cancellationToken = default (CancellationToken))
 		{
@@ -1107,12 +1107,9 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
 				throw new NotSupportedException ();
 
-			var quotas = new Dictionary<string, FolderQuota> ();
-
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETQUOTAROOT %F\r\n", this);
 			ic.RegisterUntaggedHandler ("QUOTAROOT", UntaggedQuotaRoot);
 			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
-			ic.UserData = quotas;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -1121,6 +1118,72 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("GETQUOTAROOT", ic.Result);
+
+			if (ic.UserData == null)
+				return new FolderQuota (null);
+
+			return (FolderQuota) ic.UserData;
+		}
+
+		/// <summary>
+		/// Set the quota limits for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sets the quota limits for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="ImapClient.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The folder quota.</returns>
+		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the QUOTA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckState (false, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
+				throw new NotSupportedException ();
+
+			var command = new StringBuilder ("SETQUOTA %F (");
+			if (messageLimit.HasValue)
+				command.AppendFormat ("MESSAGE {0}", messageLimit.Value);
+			if (storageLimit.HasValue)
+				command.AppendFormat ("STORAGE {0}", storageLimit.Value);
+			command.Append (")\r\n");
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
+			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw new ImapCommandException ("SETQUOTA", ic.Result);
 
 			if (ic.UserData == null)
 				return new FolderQuota (null);

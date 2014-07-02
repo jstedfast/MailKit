@@ -1315,6 +1315,87 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Set the quota limits for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sets the quota limits for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="IMailStore.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The updated folder quota.</returns>
+		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support quotas.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the quota limits for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously sets the quota limits for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="IMailStore.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The updated folder quota.</returns>
+		/// <param name="messageLimit">If not <c>null</c>, sets the maximum number of messages to allow.</param>
+		/// <param name="storageLimit">If not <c>null</c>, sets the maximum storage size (in kilobytes).</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support quotas.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return SetQuota (messageLimit, storageLimit, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
 		/// Expunge the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>
