@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7264D469-A390-4C10-9C87-DAA37EDD3C1D}</ProjectGuid>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -127,6 +127,7 @@
     <Compile Include="FolderNamespace.cs" />
     <Compile Include="FolderNamespaceCollection.cs" />
     <Compile Include="FolderNotFoundException.cs" />
+    <Compile Include="FolderQuota.cs" />
     <Compile Include="FolderRenamedEventArgs.cs" />
     <Compile Include="IMailFolder.cs" />
     <Compile Include="IMailService.cs" />

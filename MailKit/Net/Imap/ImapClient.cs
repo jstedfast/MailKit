@@ -905,6 +905,17 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get whether or not the mail store supports quotas.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the mail store supports quotas.
+		/// </remarks>
+		/// <value><c>true</c> if the mail store supports quotas; otherwise, <c>false</c>.</value>
+		public override bool SupportsQuotas {
+			get { return (engine.Capabilities & ImapCapabilities.Quota) != 0; }
+		}
+
+		/// <summary>
 		/// Get the Inbox folder.
 		/// </summary>
 		/// <remarks>

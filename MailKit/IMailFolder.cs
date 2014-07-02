@@ -515,6 +515,30 @@ namespace MailKit {
 		Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Get the quota information for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the quota information for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="IMailStore.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The folder quota.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		FolderQuota GetQuota (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the quota information for the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously gets the quota information for the folder.</para>
+		/// <para>To determine if a quotas are supported, check the 
+		/// <see cref="IMailStore.SupportsQuotas"/> property.</para>
+		/// </remarks>
+		/// <returns>The folder quota.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Expunge the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>
