@@ -61,6 +61,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new DIGEST-MD5 SASL context.
+		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="entropy">Random characters to act as the cnonce token.</param>
@@ -72,6 +75,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismDigestMd5"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new DIGEST-MD5 SASL context.
+		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		public SaslMechanismDigestMd5 (Uri uri, ICredentials credentials) : base (uri, credentials)
@@ -81,6 +87,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Gets the name of the mechanism.
 		/// </summary>
+		/// <remarks>
+		/// Gets the name of the mechanism.
+		/// </remarks>
 		/// <value>The name of the mechanism.</value>
 		public override string MechanismName {
 			get { return "DIGEST-MD5"; }
@@ -89,6 +98,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Parses the server's challenge token and returns the next challenge response.
 		/// </summary>
+		/// <remarks>
+		/// Parses the server's challenge token and returns the next challenge response.
+		/// </remarks>
 		/// <returns>The next challenge response.</returns>
 		/// <param name="token">The server's challenge token.</param>
 		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
@@ -150,6 +162,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Resets the state of the SASL mechanism.
 		/// </summary>
+		/// <remarks>
+		/// Resets the state of the SASL mechanism.
+		/// </remarks>
 		public override void Reset ()
 		{
 			state = LoginState.Auth;

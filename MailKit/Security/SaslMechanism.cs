@@ -53,6 +53,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanism"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new SASL context.
+		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		protected SaslMechanism (Uri uri, ICredentials credentials)
@@ -64,6 +67,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Gets the name of the mechanism.
 		/// </summary>
+		/// <remarks>
+		/// Gets the name of the mechanism.
+		/// </remarks>
 		/// <value>The name of the mechanism.</value>
 		public abstract string MechanismName {
 			get;
@@ -72,6 +78,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Gets the user's credentials.
 		/// </summary>
+		/// <remarks>
+		/// Gets the user's credentials.
+		/// </remarks>
 		/// <value>The user's credentials.</value>
 		public ICredentials Credentials {
 			get; private set;
@@ -80,6 +89,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Gets or sets whether the SASL mechanism has finished authenticating.
 		/// </summary>
+		/// <remarks>
+		/// Gets or sets whether the SASL mechanism has finished authenticating.
+		/// </remarks>
 		/// <value><c>true</c> if the SASL mechanism has finished authenticating; otherwise, <c>false</c>.</value>
 		public bool IsAuthenticated {
 			get; protected set;
@@ -88,6 +100,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Gets or sets the URI of the service.
 		/// </summary>
+		/// <remarks>
+		/// Gets or sets the URI of the service.
+		/// </remarks>
 		/// <value>The URI of the service.</value>
 		public Uri Uri {
 			get; protected set;
@@ -96,6 +111,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Parses the server's challenge token and returns the next challenge response.
 		/// </summary>
+		/// <remarks>
+		/// Parses the server's challenge token and returns the next challenge response.
+		/// </remarks>
 		/// <returns>The next challenge response.</returns>
 		/// <param name="token">The server's challenge token.</param>
 		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
@@ -108,6 +126,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
 		/// </summary>
+		/// <remarks>
+		/// Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
+		/// </remarks>
 		/// <returns>The next base64-encoded challenge response.</returns>
 		/// <param name="token">The server's base64-encoded challenge token.</param>
 		/// <exception cref="SaslException">
@@ -137,6 +158,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Resets the state of the SASL mechanism.
 		/// </summary>
+		/// <remarks>
+		/// Resets the state of the SASL mechanism.
+		/// </remarks>
 		public virtual void Reset ()
 		{
 			IsAuthenticated = false;

@@ -31,6 +31,9 @@ namespace MailKit.Security {
 	/// <summary>
 	/// An enumeration of the possible error codes that may be reported by a <see cref="SaslException"/>.
 	/// </summary>
+	/// <remarks>
+	/// An enumeration of the possible error codes that may be reported by a <see cref="SaslException"/>.
+	/// </remarks>
 	public enum SaslErrorCode {
 		/// <summary>
 		/// The server's challenge was too long.
@@ -73,6 +76,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Deserializes a <see cref="SaslException"/>.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		protected SaslException (SerializationInfo info, StreamingContext context) : base (info, context)
@@ -85,6 +91,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SaslException"/>.
+		/// </remarks>
 		/// <param name="mechanism">The SASL mechanism.</param>
 		/// <param name="code">The error code.</param>
 		/// <param name="message">The error message.</param>
@@ -99,6 +108,9 @@ namespace MailKit.Security {
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.
 		/// </summary>
+		/// <remarks>
+		/// Serializes the state of the <see cref="SaslException"/>.
+		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -119,6 +131,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Gets the error code.
 		/// </summary>
+		/// <remarks>
+		/// Gets the error code.
+		/// </remarks>
 		/// <value>The error code.</value>
 		public SaslErrorCode ErrorCode {
 			get; private set;
@@ -127,6 +142,9 @@ namespace MailKit.Security {
 		/// <summary>
 		/// Gets the name of the SASL mechanism that had the error.
 		/// </summary>
+		/// <remarks>
+		/// Gets the name of the SASL mechanism that had the error.
+		/// </remarks>
 		/// <value>The name of the SASL mechanism.</value>
 		public string Mechanism {
 			get; private set;
