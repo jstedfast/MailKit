@@ -22,6 +22,7 @@ namespace ImapClientDemo
 		public FolderTreeView ()
 		{
 			ImageList = new ImageList ();
+			ImageList.Images.Add ("folder", GetImageResource ("folder.png"));
 			ImageList.Images.Add ("inbox", GetImageResource ("inbox.png"));
 			ImageList.Images.Add ("archive", GetImageResource ("archive.png"));
 			ImageList.Images.Add ("drafts", GetImageResource ("pencil.png"));
@@ -61,6 +62,18 @@ namespace ImapClientDemo
 				node.Text = folder.Name;
 			}
 
+			if (folder.Attributes.HasFlag (FolderAttributes.Trash))
+				node.SelectedImageKey = node.ImageKey = folder.Count > 0 ? "trash-full" : "trash-empty";
+		}
+
+		delegate void UpdateFolderNodeDelegate (IMailFolder folder);
+
+		TreeNode CreateFolderNode (IMailFolder folder)
+		{
+			var node = new TreeNode (folder.Name) { Tag = folder, ToolTipText = folder.FullName };
+
+			node.NodeFont = new Font (Font, FontStyle.Regular);
+
 			if (folder == Program.Client.Inbox)
 				node.SelectedImageKey = node.ImageKey = "inbox";
 			else if (folder.Attributes.HasFlag (FolderAttributes.Archive))
@@ -76,16 +89,7 @@ namespace ImapClientDemo
 			else if (folder.Attributes.HasFlag (FolderAttributes.Trash))
 				node.SelectedImageKey = node.ImageKey = folder.Count > 0 ? "trash-full" : "trash-empty";
 			else
-				node.SelectedImageKey = node.ImageKey = string.Empty;
-		}
-
-		delegate void UpdateFolderNodeDelegate (IMailFolder folder);
-
-		TreeNode CreateFolderNode (IMailFolder folder)
-		{
-			var node = new TreeNode (folder.Name) { Tag = folder, ToolTipText = folder.FullName };
-
-			node.NodeFont = new Font (Font, FontStyle.Regular);
+				node.SelectedImageKey = node.ImageKey = "folder";
 
 			if (CheckFolderForChildren (folder))
 				node.Nodes.Add ("Loading...");

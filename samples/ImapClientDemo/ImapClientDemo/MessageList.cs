@@ -63,6 +63,8 @@ namespace ImapClientDemo
 
 				AddMessageSummaries (summaries);
 			}
+
+			folder.CountChanged += CountChanged_TaskThread;
 		}
 
 		public async void OpenFolder (IMailFolder folder)
@@ -80,7 +82,6 @@ namespace ImapClientDemo
 			// in another thread so we'll have to proxy them back to the main thread.
 			folder.MessageFlagsChanged += MessageFlagsChanged_TaskThread;
 			folder.MessageExpunged += MessageExpunged_TaskThread;
-			folder.CountChanged += CountChanged_TaskThread;
 
 			this.folder = folder;
 
