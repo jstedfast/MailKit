@@ -23,9 +23,6 @@ namespace ImapClientDemo
 		{
 		}
 
-		delegate void MessageSummariesFetchedDelegate (IEnumerable<MessageSummary> summaries);
-		delegate void FolderOpenedDelegate ();
-
 		void UpdateMessageNode (TreeNode node)
 		{
 			var info = (MessageInfo) node.Tag;
