@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Drawing;
@@ -20,6 +21,20 @@ namespace ImapClientDemo
 
 		public FolderTreeView ()
 		{
+			ImageList = new ImageList ();
+			ImageList.Images.Add ("inbox", GetImageResource ("inbox.png"));
+			ImageList.Images.Add ("archive", GetImageResource ("archive.png"));
+			ImageList.Images.Add ("drafts", GetImageResource ("pencil.png"));
+			ImageList.Images.Add ("important", GetImageResource ("important.png"));
+			ImageList.Images.Add ("junk", GetImageResource ("junk.png"));
+			ImageList.Images.Add ("sent", GetImageResource ("paper-plane.png"));
+			ImageList.Images.Add ("trash-empty", GetImageResource ("trash-empty.png"));
+			ImageList.Images.Add ("trash-full", GetImageResource ("trash-full.png"));
+		}
+
+		static Image GetImageResource (string name)
+		{
+			return Image.FromStream (typeof (FolderTreeView).Assembly.GetManifestResourceStream ("ImapClientDemo.Resources." + name));
 		}
 
 		static bool CheckFolderForChildren (IMailFolder folder)
@@ -45,6 +60,23 @@ namespace ImapClientDemo
 				node.NodeFont = new Font (node.NodeFont, FontStyle.Regular);
 				node.Text = folder.Name;
 			}
+
+			if (folder == Program.Client.Inbox)
+				node.SelectedImageKey = node.ImageKey = "inbox";
+			else if (folder.Attributes.HasFlag (FolderAttributes.Archive))
+				node.SelectedImageKey = node.ImageKey = "archive";
+			else if (folder.Attributes.HasFlag (FolderAttributes.Drafts))
+				node.SelectedImageKey = node.ImageKey = "drafts";
+			else if (folder.Attributes.HasFlag (FolderAttributes.Flagged))
+				node.SelectedImageKey = node.ImageKey = "important";
+			else if (folder.Attributes.HasFlag (FolderAttributes.Junk))
+				node.SelectedImageKey = node.ImageKey = "junk";
+			else if (folder.Attributes.HasFlag (FolderAttributes.Sent))
+				node.SelectedImageKey = node.ImageKey = "sent";
+			else if (folder.Attributes.HasFlag (FolderAttributes.Trash))
+				node.SelectedImageKey = node.ImageKey = folder.Count > 0 ? "trash-full" : "trash-empty";
+			else
+				node.SelectedImageKey = node.ImageKey = string.Empty;
 		}
 
 		delegate void UpdateFolderNodeDelegate (IMailFolder folder);
