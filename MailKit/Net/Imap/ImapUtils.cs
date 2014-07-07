@@ -908,6 +908,36 @@ namespace MailKit.Net.Imap {
 			return flags;
 		}
 
+		/// <summary>
+		/// Parses the X-GM-LABELS list.
+		/// </summary>
+		/// <returns>The message labels.</returns>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public static IList<string> ParseLabelsList (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var token = engine.ReadToken (cancellationToken);
+			var labels = new List<string> ();
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			token = engine.ReadToken (cancellationToken);
+
+			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
+				var label = ImapEncoding.Decode ((string) token.Value);
+
+				labels.Add (label);
+
+				token = engine.ReadToken (cancellationToken);
+			}
+
+			if (token.Type != ImapTokenType.CloseParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			return labels;
+		}
+
 		static MessageThread ParseThread (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);

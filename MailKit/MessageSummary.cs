@@ -215,7 +215,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The GMail labels.</value>
-		public List<string> GMailLabels {
+		public IList<string> GMailLabels {
 			get; internal set;
 		}
 

@@ -148,6 +148,7 @@
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageFlagsChangedEventArgs.cs" />
+    <Compile Include="MessageLabelsChangedEventArgs.cs" />
     <Compile Include="MessageSorter.cs" />
     <Compile Include="MessageSummary.cs" />
     <Compile Include="MessageSummaryItems.cs" />

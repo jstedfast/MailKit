@@ -58,7 +58,7 @@ namespace MailKit {
 		/// Gets an object that can be used to synchronize access to the folder.
 		/// </summary>
 		/// <remarks>
-		///Gets an object that can be used to synchronize access to the folder.
+		/// Gets an object that can be used to synchronize access to the folder.
 		/// </remarks>
 		/// <value>The sync root.</value>
 		public abstract object SyncRoot {
@@ -6380,6 +6380,1187 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Add a set of labels to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of labels to the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void AddLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			AddLabels (new [] { uid }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously add a set of labels to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of labels to the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task AddLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return AddLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Add a set of labels to the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of labels to the specified messages.
+		/// </remarks>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void AddLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously add a set of labels to the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of labels to the specified messages.
+		/// </remarks>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task AddLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			if (uids.Count == 0)
+				throw new ArgumentException ("No uids were specified.", "uids");
+
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					AddLabels (uids, labels, silent, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Remove a set of labels from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of labels from the specified message.
+		/// </remarks>
+		/// <param name="uid">The UIDs of the message.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void RemoveLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			RemoveLabels (new [] { uid }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously remove a set of labels from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of labels from the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uid"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task RemoveLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return RemoveLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Remove a set of labels from the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of labels from the specified messages.
+		/// </remarks>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void RemoveLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove a set of labels from the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of labels from the specified messages.
+		/// </remarks>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task RemoveLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			if (uids.Count == 0)
+				throw new ArgumentException ("No uids were specified.", "uids");
+
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					RemoveLabels (uids, labels, silent, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Set the labels of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Sets the labels of the specified message.
+		/// </remarks>
+		/// <param name="uid">The UIDs of the message.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void SetLabels (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			SetLabels (new [] { uid }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously set the labels of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the labels of the specified message.
+		/// </remarks>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task SetLabelsAsync (UniqueId uid, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return SetLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Set the labels of the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Sets the labels of the specified messages.
+		/// </remarks>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void SetLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the labels of the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the labels of the specified messages.
+		/// </remarks>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task SetLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			if (uids.Count == 0)
+				throw new ArgumentException ("No uids were specified.", "uids");
+
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					SetLabels (uids, labels, silent, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Add a set of labels to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of labels to the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void AddLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			AddLabels (new [] { index }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously add a set of labels to the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of labels to the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the messages.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task AddLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return AddLabelsAsync (new [] { index }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Add a set of labels to the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of labels to the specified messages.
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void AddLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously add a set of labels to the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds a set of labels to the specified messages.
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task AddLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			if (indexes.Count == 0)
+				throw new ArgumentException ("No indexes were specified.", "indexes");
+
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					AddLabels (indexes, labels, silent, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Remove a set of labels from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of labels from the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void RemoveLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			RemoveLabels (new [] { index }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously remove a set of labels from the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of labels from the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task RemoveLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return RemoveLabelsAsync (new [] { index }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Remove a set of labels from the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of labels from the specified messages.
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void RemoveLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove a set of labels from the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes a set of labels from the specified messages.
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task RemoveLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			if (indexes.Count == 0)
+				throw new ArgumentException ("No indexes were specified.", "indexes");
+
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					RemoveLabels (indexes, labels, silent, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Set the labels of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Sets the labels of the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public void SetLabels (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			SetLabels (new [] { index }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously set the labels of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the labels of the specified message.
+		/// </remarks>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="labels"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="index"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public Task SetLabelsAsync (int index, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return SetLabelsAsync (new [] { index }, labels, silent, cancellationToken);
+		}
+
+		/// <summary>
+		/// Set the labels of the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Sets the labels of the specified messages.
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void SetLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the labels of the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the labels of the specified messages.
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task SetLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					SetLabels (indexes, labels, silent, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
 		/// Search the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
@@ -7189,15 +8370,38 @@ namespace MailKit {
 		public event EventHandler<MessageFlagsChangedEventArgs> MessageFlagsChanged;
 
 		/// <summary>
-		/// Raise the flags changed event.
+		/// Raise the message flags changed event.
 		/// </summary>
 		/// <remarks>
-		/// Raises the flags changed event.
+		/// Raises the message flags changed event.
 		/// </remarks>
 		/// <param name="args">The message flags changed event args.</param>
-		protected virtual void OnFlagsChanged (MessageFlagsChangedEventArgs args)
+		protected virtual void OnMessageFlagsChanged (MessageFlagsChangedEventArgs args)
 		{
 			var handler = MessageFlagsChanged;
+
+			if (handler != null)
+				handler (this, args);
+		}
+
+		/// <summary>
+		/// Occurs when labels changed on a message.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MessageLabelsChanged"/> event is emitted when the labels for a message are changed.
+		/// </remarks>
+		public event EventHandler<MessageLabelsChangedEventArgs> MessageLabelsChanged;
+
+		/// <summary>
+		/// Raise the message labels changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the message labels changed event.
+		/// </remarks>
+		/// <param name="args">The message labels changed event args.</param>
+		protected virtual void OnMessageLabelsChanged (MessageLabelsChangedEventArgs args)
+		{
+			var handler = MessageLabelsChanged;
 
 			if (handler != null)
 				handler (this, args);
