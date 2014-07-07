@@ -352,7 +352,7 @@ namespace MailKit.Net.Imap {
 
 		static bool IsQuotedSafe (char c)
 		{
-			return c < 128 && !char.IsControl (c) && c != '\\' && c != '"';
+			return c < 128 && !char.IsControl (c);
 		}
 
 		static ImapStringType GetStringType (string value)
