@@ -60,5 +60,16 @@ namespace MailKit {
 		public IList<string> Labels {
 			get; internal set;
 		}
+
+		/// <summary>
+		/// Gets the updated mod-sequence value of the message, if available.
+		/// </summary>
+		/// <remarks>
+		/// Gets the updated mod-sequence value of the message, if available.
+		/// </remarks>
+		/// <value>The mod-sequence value.</value>
+		public ulong? ModSeq {
+			get; internal set;
+		}
 	}
 }

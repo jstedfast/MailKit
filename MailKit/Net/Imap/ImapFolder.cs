@@ -5796,6 +5796,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					labels.ModSeq = modseq;
 					flags.ModSeq = modseq;
 					break;
 				case "UID":
