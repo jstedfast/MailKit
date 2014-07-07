@@ -4419,24 +4419,48 @@ namespace MailKit.Net.Imap {
 			return ModifyFlags (indexes, modseq, flags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
 
-		void ModifyLabels (IList<UniqueId> uids, IList<string> labels, string action, CancellationToken cancellationToken)
+		static string LabelListToString (IList<string> labels, IList<object> args)
 		{
-			var set = ImapUtils.FormatUidSet (uids);
-			var args = new object[labels.Count];
 			var list = new StringBuilder ("(");
 
 			for (int i = 0; i < labels.Count; i++) {
-				list.Append ("%S ");
-				args[i] = labels[i];
+				if (i > 0)
+					list.Append (' ');
+
+				switch (labels[i]) {
+				case "\\AllMail":
+				case "\\Drafts":
+				case "\\Important":
+				case "\\Inbox":
+				case "\\Spam":
+				case "\\Sent":
+				case "\\Starred":
+				case "\\Trash":
+					list.Append (labels[i]);
+					break;
+				default:
+					list.Append ("%S");
+					args.Add (labels[i]);
+					break;
+				}
 			}
 
-			list[list.Length - 1] = ')';
+			list.Append (')');
+
+			return list.ToString ();
+		}
+
+		void ModifyLabels (IList<UniqueId> uids, IList<string> labels, string action, CancellationToken cancellationToken)
+		{
+			var set = ImapUtils.FormatUidSet (uids);
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 				throw new NotSupportedException ();
 
 			CheckState (true, true);
 
+			var args = new List<object> ();
+			var list = LabelListToString (labels, args);
 			var format = string.Format ("UID STORE {0} {1} {2}\r\n", set, action, list);
 			var ic = Engine.QueueCommand (cancellationToken, this, format, args);
 
@@ -4611,21 +4635,14 @@ namespace MailKit.Net.Imap {
 		void ModifyLabels (IList<int> indexes, IList<string> labels, string action, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
-			var args = new object[labels.Count];
-			var list = new StringBuilder ("(");
-
-			for (int i = 0; i < labels.Count; i++) {
-				list.Append ("%S ");
-				args[i] = labels[i];
-			}
-
-			list[list.Length - 1] = ')';
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
 				throw new NotSupportedException ();
 
 			CheckState (true, true);
 
+			var args = new List<object> ();
+			var list = LabelListToString (labels, args);
 			var format = string.Format ("STORE {0} {1} {2}\r\n", set, action, list);
 			var ic = Engine.QueueCommand (cancellationToken, this, format, args);
 
