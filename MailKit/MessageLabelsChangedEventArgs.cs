@@ -28,10 +28,10 @@ using System.Collections.Generic;
 
 namespace MailKit {
 	/// <summary>
-	/// Event args for the <see cref="IMailFolder.LabelsChanged"/> event.
+	/// Event args for the <see cref="IMailFolder.MessageLabelsChanged"/> event.
 	/// </summary>
 	/// <remarks>
-	/// Event args for the <see cref="IMailFolder.LabelsChanged"/> event.
+	/// Event args for the <see cref="IMailFolder.MessageLabelsChanged"/> event.
 	/// </remarks>
 	public class MessageLabelsChangedEventArgs : MessageEventArgs
 	{

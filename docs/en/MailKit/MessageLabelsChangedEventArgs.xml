@@ -1,0 +1,62 @@
+<Type Name="MessageLabelsChangedEventArgs" FullName="MailKit.MessageLabelsChangedEventArgs">
+  <TypeSignature Language="C#" Value="public class MessageLabelsChangedEventArgs : MailKit.MessageEventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageLabelsChangedEventArgs extends MailKit.MessageEventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.23.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.MessageEventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Event args for the <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> event.
+            </summary>
+    <remarks>
+            Event args for the <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> event.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Labels">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;string&gt; Labels { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;string&gt; Labels" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the updated labels.
+            </summary>
+        <value>The updated labels.</value>
+        <remarks>
+            Gets the updated labels.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UniqueId">
+      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; UniqueId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UniqueId" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the unique ID of the message that changed, if available.
+            </summary>
+        <value>The unique ID of the message.</value>
+        <remarks>
+            Gets the unique ID of the message that changed, if available.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

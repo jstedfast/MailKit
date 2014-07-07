@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.22.0.0</version>
+        <version>0.23.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -16,14 +16,14 @@ Features include:
 * SASL Authentication via NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
 * A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME and PIPELINING
 * A fully-cancellable Pop3Client with support for STLS, UIDL, and APOP.
-* A fully-cancellable ImapClient with support for IDLE, LITERAL+, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, XLIST, and X-GM-EXT1.
+* A fully-cancellable ImapClient with support for QUOTA, LITERAL+, IDLE, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, SEARCH=FUZZY, XLIST, and X-GM-EXT1.
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
 * S/MIME and PGP support via MimeKit
 * Microsoft TNEF support via MimeKit</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed a bug that would cause the IMailFolder.Access to be FolderAccess.None after opening the folder twice (first as ReadOnly and then a second time as ReadWrite).
-* Fixed an InvalidOperationException when requesting a folder using ImapClient.GetFolder(string path).
-* Fixed Envelope.TryParse() to properly handle null email addresses.
+        <releaseNotes>* Added support for adding, removing, and setting GMail labels.
+* Added support for getting and setting quota information for folders.
+* Added support for fuzzy searches (IMAP SEARCH=FUZZY extension).
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>

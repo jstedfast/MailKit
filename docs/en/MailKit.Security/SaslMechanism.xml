@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SaslMechanism extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.22.0.0</AssemblyVersion>
+    <AssemblyVersion>0.23.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -26,7 +26,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Uri uri, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
@@ -38,7 +38,9 @@
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanism" /> class.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Creates a new SASL context.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="AuthMechanismRank">
@@ -46,7 +48,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly string[] AuthMechanismRank" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -66,7 +68,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Challenge(string token) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -80,7 +82,9 @@
             Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
             </summary>
         <returns>The next base64-encoded challenge response.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Decodes the base64-encoded server challenge and returns the next challenge response encoded in base64.
+            </remarks>
         <exception cref="T:MailKit.Security.SaslException">
             An error has occurred while parsing the server's challenge token.
             </exception>
@@ -91,7 +95,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance unsigned int8[] Challenge(unsigned int8[] token, int32 startIndex, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -109,7 +113,9 @@
             Parses the server's challenge token and returns the next challenge response.
             </summary>
         <returns>The next challenge response.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Parses the server's challenge token and returns the next challenge response.
+            </remarks>
         <exception cref="T:MailKit.Security.SaslException">
             An error has occurred while parsing the server's challenge token.
             </exception>
@@ -120,7 +126,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Security.SaslMechanism Create(string mechanism, class System.Uri uri, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Security.SaslMechanism</ReturnType>
@@ -159,7 +165,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentials Credentials" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentials</ReturnType>
@@ -169,7 +175,9 @@
             Gets the user's credentials.
             </summary>
         <value>The user's credentials.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the user's credentials.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsAuthenticated">
@@ -177,7 +185,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsAuthenticated" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -188,7 +196,9 @@
             </summary>
         <value>
           <c>true</c> if the SASL mechanism has finished authenticating; otherwise, <c>false</c>.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets or sets whether the SASL mechanism has finished authenticating.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsSupported">
@@ -196,7 +206,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsSupported(string mechanism) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -225,7 +235,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MechanismName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -235,7 +245,9 @@
             Gets the name of the mechanism.
             </summary>
         <value>The name of the mechanism.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets the name of the mechanism.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -243,7 +255,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -253,7 +265,9 @@
         <summary>
             Resets the state of the SASL mechanism.
             </summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Resets the state of the SASL mechanism.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Uri">
@@ -261,7 +275,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Uri" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.22.0.0</AssemblyVersion>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
@@ -271,7 +285,9 @@
             Gets or sets the URI of the service.
             </summary>
         <value>The URI of the service.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+            Gets or sets the URI of the service.
+            </remarks>
       </Docs>
     </Member>
   </Members>

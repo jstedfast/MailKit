@@ -1,0 +1,143 @@
+<Type Name="FolderQuota" FullName="MailKit.FolderQuota">
+  <TypeSignature Language="C#" Value="public class FolderQuota" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FolderQuota extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.23.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A folder quota.
+            </summary>
+    <remarks>
+            A <see cref="T:MailKit.FolderQuota" /> is returned by <see cref="M:MailKit.IMailFolder.GetQuota(System.Threading.CancellationToken)" />.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FolderQuota (MailKit.IMailFolder quotaRoot);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IMailFolder quotaRoot) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="quotaRoot" Type="MailKit.IMailFolder" />
+      </Parameters>
+      <Docs>
+        <param name="quotaRoot">The quota root.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.FolderQuota" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.FolderQuota" /> with the specified root.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentMessageCount">
+      <MemberSignature Language="C#" Value="public Nullable&lt;uint&gt; CurrentMessageCount { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; CurrentMessageCount" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get or set the current message count.
+            </summary>
+        <value>The current message count.</value>
+        <remarks>
+            Gets or sets the current message count.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentStorageSize">
+      <MemberSignature Language="C#" Value="public Nullable&lt;uint&gt; CurrentStorageSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; CurrentStorageSize" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets or sets the size of the current storage, in kilobytes.
+            </summary>
+        <value>The size of the current storage, in kilobytes.</value>
+        <remarks>
+            Gets or sets the size of the current storage, in kilobytes.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MessageLimit">
+      <MemberSignature Language="C#" Value="public Nullable&lt;uint&gt; MessageLimit { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; MessageLimit" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get or set the message limit.
+            </summary>
+        <value>The message limit.</value>
+        <remarks>
+            Gets or sets the message limit.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="QuotaRoot">
+      <MemberSignature Language="C#" Value="public MailKit.IMailFolder QuotaRoot { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IMailFolder QuotaRoot" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.IMailFolder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the quota root.
+            </summary>
+        <value>The quota root.</value>
+        <remarks>
+            Gets the quota root. If the quota root is <c>null</c>, then
+            it suggests that the folder does not have a quota.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="StorageLimit">
+      <MemberSignature Language="C#" Value="public Nullable&lt;uint&gt; StorageLimit { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; StorageLimit" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get or set the storage limit, in kilobytes.
+            </summary>
+        <value>The storage limit, in kilobytes.</value>
+        <remarks>
+            Gets or sets the storage limit, in kilobytes.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
