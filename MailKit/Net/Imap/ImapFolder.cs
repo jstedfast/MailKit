@@ -4450,7 +4450,7 @@ namespace MailKit.Net.Imap {
 			return list.ToString ();
 		}
 
-		void ModifyLabels (IList<UniqueId> uids, IList<string> labels, string action, CancellationToken cancellationToken)
+		IList<UniqueId> ModifyLabels (IList<UniqueId> uids, ulong? modseq, IList<string> labels, string action, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
@@ -4459,9 +4459,16 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, true);
 
+			if (uids.Count == 0)
+				return new UniqueId[0];
+
+			string @params = string.Empty;
+			if (modseq.HasValue)
+				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+
 			var args = new List<object> ();
 			var list = LabelListToString (labels, args);
-			var format = string.Format ("UID STORE {0} {1} {2}\r\n", set, action, list);
+			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
 			var ic = Engine.QueueCommand (cancellationToken, this, format, args);
 
 			Engine.Wait (ic);
@@ -4470,16 +4477,25 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("STORE", ic.Result);
+
+			if (modseq.HasValue) {
+				var modified = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
+
+				if (modified != null)
+					return modified.UidSet;
+			}
+
+			return new UniqueId[0];
 		}
 
 		/// <summary>
-		/// Add a set of GMail labels to the specified messages.
+		/// Add a set of labels to the specified messages.
 		/// </summary>
 		/// <remarks>
-		/// Adds a set of GMail labels to the specified messages.
+		/// Adds a set of labels to the specified messages.
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="labels">The GMail labels to add.</param>
+		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -4524,17 +4540,17 @@ namespace MailKit.Net.Imap {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			ModifyLabels (uids, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
+			ModifyLabels (uids, null, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
 		}
 
 		/// <summary>
-		/// Remove a set of GMail labels from the specified messages.
+		/// Remove a set of labels from the specified messages.
 		/// </summary>
 		/// <remarks>
-		/// Removes a set of GMail labels from the specified messages.
+		/// Removes a set of labels from the specified messages.
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="labels">The GMail labels to remove.</param>
+		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -4579,17 +4595,17 @@ namespace MailKit.Net.Imap {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			ModifyLabels (uids, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
+			ModifyLabels (uids, null, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
 		}
 
 		/// <summary>
-		/// Set the GMail labels of the specified messages.
+		/// Set the labels of the specified messages.
 		/// </summary>
 		/// <remarks>
-		/// Sets the GMail labels of the specified messages.
+		/// Sets the labels of the specified messages.
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="labels">The GMail labels to set.</param>
+		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -4629,10 +4645,176 @@ namespace MailKit.Net.Imap {
 			if (labels == null)
 				throw new ArgumentNullException ("labels");
 
-			ModifyLabels (uids, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
+			ModifyLabels (uids, null, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
 		}
 
-		void ModifyLabels (IList<int> indexes, IList<string> labels, string action, CancellationToken cancellationToken)
+		/// <summary>
+		/// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<UniqueId> AddLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return ModifyLabels (uids, modseq, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<UniqueId> RemoveLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return ModifyLabels (uids, modseq, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <remarks>
+		/// Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
+		/// <returns>The unique IDs of the messages that were not updated.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uids"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<UniqueId> SetLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			return ModifyLabels (uids, modseq, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
+		}
+
+		IList<int> ModifyLabels (IList<int> indexes, ulong? modseq, IList<string> labels, string action, CancellationToken cancellationToken)
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
 
@@ -4641,9 +4823,16 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, true);
 
+			if (indexes.Count == 0)
+				return new int[0];
+
+			string @params = string.Empty;
+			if (modseq.HasValue)
+				@params = string.Format (" (UNCHANGEDSINCE {0})", modseq.Value);
+
 			var args = new List<object> ();
 			var list = LabelListToString (labels, args);
-			var format = string.Format ("STORE {0} {1} {2}\r\n", set, action, list);
+			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
 			var ic = Engine.QueueCommand (cancellationToken, this, format, args);
 
 			Engine.Wait (ic);
@@ -4652,16 +4841,30 @@ namespace MailKit.Net.Imap {
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw new ImapCommandException ("STORE", ic.Result);
+
+			if (modseq.HasValue) {
+				var modified = ic.RespCodes.OfType<ModifiedResponseCode> ().FirstOrDefault ();
+
+				if (modified != null) {
+					var unmodified = new int[modified.UidSet.Count];
+					for (int i = 0; i < unmodified.Length; i++)
+						unmodified[i] = (int) (modified.UidSet[i].Id - 1);
+
+					return unmodified;
+				}
+			}
+
+			return new int[0];
 		}
 
 		/// <summary>
-		/// Add a set of GMail labels to the specified messages.
+		/// Add a set of labels to the specified messages.
 		/// </summary>
 		/// <remarks>
-		/// Adds a set of GMail labels to the specified messages.
+		/// Adds a set of labels to the specified messages.
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="labels">The GMail labels to add.</param>
+		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -4706,17 +4909,17 @@ namespace MailKit.Net.Imap {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			ModifyLabels (indexes, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
+			ModifyLabels (indexes, null, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
 		}
 
 		/// <summary>
-		/// Remove a set of GMail labels from the specified messages.
+		/// Remove a set of labels from the specified messages.
 		/// </summary>
 		/// <remarks>
-		/// Removes a set of GMail labels from the specified messages.
+		/// Removes a set of labels from the specified messages.
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="labels">The GMail labels to remove.</param>
+		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -4761,17 +4964,17 @@ namespace MailKit.Net.Imap {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			ModifyLabels (indexes, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
+			ModifyLabels (indexes, null, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
 		}
 
 		/// <summary>
-		/// Sets the GMail labels of the specified messages.
+		/// Sets the labels of the specified messages.
 		/// </summary>
 		/// <remarks>
-		/// Sets the GMail labels of the specified messages.
+		/// Sets the labels of the specified messages.
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="labels">The GMail labels to set.</param>
+		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MailFolder.MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -4811,7 +5014,173 @@ namespace MailKit.Net.Imap {
 			if (labels == null)
 				throw new ArgumentNullException ("labels");
 
-			ModifyLabels (indexes, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
+			ModifyLabels (indexes, null, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <remarks>
+		/// Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="labels">The labels to add.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No labels were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<int> AddLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return ModifyLabels (indexes, modseq, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <remarks>
+		/// Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="labels">The labels to remove.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No flags were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<int> RemoveLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			if (labels.Count == 0)
+				throw new ArgumentException ("No labels were specified.", "labels");
+
+			return ModifyLabels (indexes, modseq, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
+		}
+
+		/// <summary>
+		/// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </summary>
+		/// <remarks>
+		/// Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+		/// </remarks>
+		/// <returns>The indexes of the messages that were not updated.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="labels">The labels to set.</param>
+		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="labels"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="indexes"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open in read-write mode.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<int> SetLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (labels == null)
+				throw new ArgumentNullException ("labels");
+
+			return ModifyLabels (indexes, modseq, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
 		}
 
 		static bool IsAscii (string text)
