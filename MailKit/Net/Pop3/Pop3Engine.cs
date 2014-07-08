@@ -385,6 +385,11 @@ namespace MailKit.Net.Pop3 {
 			var cancellationToken = queue[0].CancellationToken;
 			var active = new List<Pop3Command> ();
 
+			if (cancellationToken.IsCancellationRequested) {
+				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
+				cancellationToken.ThrowIfCancellationRequested ();
+			}
+
 			for (int i = 0; i < count; i++) {
 				var pc = queue[0];
 
@@ -392,11 +397,6 @@ namespace MailKit.Net.Pop3 {
 					break;
 
 				queue.RemoveAt (0);
-
-				if (pc.CancellationToken.IsCancellationRequested) {
-					queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
-					pc.CancellationToken.ThrowIfCancellationRequested ();
-				}
 
 				pc.Status = Pop3CommandStatus.Active;
 				active.Add (pc);
