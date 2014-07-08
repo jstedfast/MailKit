@@ -482,13 +482,13 @@ namespace MailKit.Net.Pop3 {
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
 		{
-			CheckDisposed ();
-
 			if (hostName == null)
 				throw new ArgumentNullException ("hostName");
 
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
+
+			CheckDisposed ();
 
 			probed = ProbedCapabilities.None;
 			host = hostName;
@@ -858,11 +858,11 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
-				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
-
 			if (index < 0 || index >= count)
 				throw new ArgumentOutOfRangeException ("index");
+
+			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
+				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
 			string uid = null;
 
@@ -1094,16 +1094,16 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			int seqid;
+
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			CheckDisposed ();
 			CheckConnected ();
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
-
-			if (uid == null)
-				throw new ArgumentNullException ("uid");
-
-			int seqid;
 
 			if (!uids.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -1325,16 +1325,16 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			int seqid;
+
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			CheckDisposed ();
 			CheckConnected ();
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
-
-			if (uid == null)
-				throw new ArgumentNullException ("uid");
-
-			int seqid;
 
 			if (!uids.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -1430,16 +1430,16 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			int seqid;
+
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			CheckDisposed ();
 			CheckConnected ();
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
-
-			if (uid == null)
-				throw new ArgumentNullException ("uid");
-
-			int seqid;
 
 			if (!uids.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -1536,16 +1536,16 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			int seqid;
+
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			CheckDisposed ();
 			CheckConnected ();
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
-
-			if (uid == null)
-				throw new ArgumentNullException ("uid");
-
-			int seqid;
 
 			if (!uids.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -1599,6 +1599,239 @@ namespace MailKit.Net.Pop3 {
 				throw new ArgumentOutOfRangeException ("index");
 
 			SendCommand (cancellationToken, "DELE {0}", index + 1);
+		}
+
+		/// <summary>
+		/// Mark the specified messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the <paramref name="uids"/> are invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override void DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			if (uids.Count == 0)
+				throw new ArgumentException ("No uids specified.", "uids");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			var seqids = new List<int> ();
+			for (int i = 0; i < uids.Count; i++) {
+				int seqid;
+
+				if (!this.uids.TryGetValue (uids[i], out seqid))
+					throw new ArgumentException ("One or more of the uids are invalid.", "uids");
+
+				seqids.Add (seqid);
+			}
+
+			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
+				for (int i = 0; i < seqids.Count; i++)
+					SendCommand (cancellationToken, "DELE {0}", seqids[i]);
+
+				return;
+			}
+
+			var commands = new List<Pop3Command> ();
+			Pop3Command pc = null;
+
+			for (int i = 0; i < seqids.Count; i++) {
+				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", seqids[i]);
+				commands.Add (pc);
+			}
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			for (int i = 0; i < commands.Count; i++) {
+				if (commands[i].Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (commands[i]);
+			}
+		}
+
+		/// <summary>
+		/// Mark the specified messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// One or more of the <paramref name="indexes"/> are invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override void DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			if (indexes.Count == 0)
+				throw new ArgumentException ("No indexes specified.", "indexes");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			var seqids = new List<int> ();
+			for (int i = 0; i < indexes.Count; i++) {
+				if (indexes[i] < 0 || indexes[i] >= count)
+					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+
+				seqids.Add (indexes[i] + 1);
+			}
+
+			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
+				for (int i = 0; i < seqids.Count; i++)
+					SendCommand (cancellationToken, "DELE {0}", seqids[i]);
+
+				return;
+			}
+
+			var commands = new List<Pop3Command> ();
+			Pop3Command pc = null;
+
+			for (int i = 0; i < seqids.Count; i++) {
+				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", seqids[i]);
+				commands.Add (pc);
+			}
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			for (int i = 0; i < commands.Count; i++) {
+				if (commands[i].Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (commands[i]);
+			}
+		}
+
+		/// <summary>
+		/// Mark all messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override void DeleteAllMessages (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckDisposed ();
+			CheckConnected ();
+
+			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
+				for (int i = 0; i < count; i++)
+					SendCommand (cancellationToken, "DELE {0}", i + 1);
+
+				return;
+			}
+
+			var commands = new List<Pop3Command> ();
+			Pop3Command pc = null;
+
+			for (int i = 0; i < count; i++) {
+				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", i + 1);
+				commands.Add (pc);
+			}
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			for (int i = 0; i < commands.Count; i++) {
+				if (commands[i].Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (commands[i]);
+			}
 		}
 
 		/// <summary>
