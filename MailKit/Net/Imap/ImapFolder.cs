@@ -1723,8 +1723,11 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return new UniqueId[0];
 
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var indexes = Fetch (uids, MessageSummaryItems.UniqueId, cancellationToken).Select (x => x.Index).ToList ();
+				CopyTo (indexes, destination, cancellationToken);
+				return new UniqueId[0];
+			}
 
 			var command = string.Format ("UID COPY {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
@@ -1806,6 +1809,12 @@ namespace MailKit.Net.Imap {
 				return copied;
 			}
 
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				var copied = CopyTo (uids, destination, cancellationToken);
+				AddFlags (uids, MessageFlags.Deleted, true, cancellationToken);
+				return copied;
+			}
+
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (destination == null)
@@ -1818,9 +1827,6 @@ namespace MailKit.Net.Imap {
 
 			if (uids.Count == 0)
 				return new UniqueId[0];
-
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
 			var command = string.Format ("UID MOVE {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
