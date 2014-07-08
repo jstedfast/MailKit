@@ -130,6 +130,7 @@ namespace MailKit {
 		/// <see cref="IMailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
 		/// before the opening of any folders.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.

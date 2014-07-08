@@ -335,6 +335,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
@@ -359,6 +360,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
@@ -383,6 +385,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
@@ -407,6 +410,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
@@ -430,6 +434,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default (CancellationToken));
 
@@ -452,6 +457,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken));
 	}

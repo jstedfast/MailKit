@@ -510,6 +510,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously closes the folder, optionally expunging the messages marked for deletion.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -679,6 +680,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously renames the folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="parent">The new parent folder.</param>
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -768,6 +770,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously deletes the folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -834,6 +837,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously subscribes to the folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -895,6 +899,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously unsubscribes from the folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1114,6 +1119,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously forces the server to flush its state for the folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1201,6 +1207,7 @@ namespace MailKit {
 		/// possible to use the <see cref="MailFolder.Search(MailKit.Search.SearchQuery, System.Threading.CancellationToken)"/>
 		/// method to query for the list of unread messages.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1442,6 +1449,7 @@ namespace MailKit {
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -1530,6 +1538,7 @@ namespace MailKit {
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
 		/// <see cref="MessageExpunged"/> event.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -2447,6 +2456,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously copies the specified message to the destination folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The indexes of the message to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2543,6 +2553,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously copies the specified messages to the destination folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2652,6 +2663,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously moves the specified message to the destination folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2748,6 +2760,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously moves the specified messages to the destination folder.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -4755,6 +4768,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of flags to the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -4943,6 +4957,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of flags from the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -5125,6 +5140,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the flags of the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -5643,6 +5659,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of flags to the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -5828,6 +5845,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of flags from the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -6007,6 +6025,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the flags of the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -6521,6 +6540,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of labels to the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -6722,6 +6742,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of labels from the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -6917,6 +6938,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the labels of the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -7469,6 +7491,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of labels to the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -7670,6 +7693,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of labels from the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -7865,6 +7889,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the labels of the specified messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>

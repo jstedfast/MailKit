@@ -175,6 +175,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously establishes a connection to the specified mail server.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uri">The server URI.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -367,6 +368,7 @@ namespace MailKit {
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -532,6 +534,7 @@ namespace MailKit {
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -576,7 +579,10 @@ namespace MailKit {
 		/// <summary>
 		/// Asynchronously pings the mail server to keep the connection alive.
 		/// </summary>
-		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <remarks>
+		/// Mail servers, if left idle for too long, will automatically drop the connection.
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.

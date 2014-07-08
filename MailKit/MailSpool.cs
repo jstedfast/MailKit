@@ -1094,6 +1094,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1182,6 +1183,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
@@ -1269,6 +1271,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1364,6 +1367,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1447,6 +1451,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
