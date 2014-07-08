@@ -29,6 +29,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports SSL-wrapped connections via the "pops" protocol.
   * Supports the STLS extension.
   * Supports client SSL/TLS certificates.
+  * Supports the PIPELINING extension.
   * Supports the UIDL command.
   * All APIs are cancellable.
   * Async APIs are available.
@@ -77,7 +78,9 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * CHUNKING (hmmm, doesn't really seem all that useful...)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
 * POP3 Client
-  * PIPELINING
+  * Add batch methods for GetHeaders() that can take advantage of PIPELINING?
+  * Fix various Pop3Client.Get*() methods that return string[] or int[] to return IList<string> and IList<int>?
+  * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
 * IMAP4 Client
   * Extensions:
     * ACL
@@ -85,6 +88,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * CATENATE
     * LIST-EXTENDED (Note: partially implemented already for getting the special folders)
     * CONVERT (Note: none of the mainstream IMAP servers seem to support this)
+    * ANNOTATE
     * METADATA
     * NOTIFY (Note: only Dovecot seems to support this)
     * FILTERS (Note: none of the mainstream IMAP servers seem to support this)
