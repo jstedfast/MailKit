@@ -272,6 +272,50 @@ namespace MailKit {
 		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Get the messages with the specified UIDs.
+		/// </summary>
+		/// <remarks>
+		/// Gets the messages with the specified UIDs.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="uids">The UID of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the messages with the specified UIDs.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the messages with the specified UIDs.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<MimeMessage>> GetMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the messages at the specified indexes.
+		/// </summary>
+		/// <remarks>
+		/// Get the messages at the specified indexes.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the messages at the specified indexes.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously get the messages at the specified indexes.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Mark the specified message for deletion.
 		/// </summary>
 		/// <remarks>

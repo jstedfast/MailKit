@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Threading;
 using System.Collections;
 using System.Threading.Tasks;
@@ -363,6 +364,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<int> GetMessageSizeAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					return GetMessageSize (uid, cancellationToken);
@@ -598,6 +602,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<HeaderList> GetMessageHeadersAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					return GetMessageHeaders (uid, cancellationToken);
@@ -764,6 +771,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<MimeMessage> GetMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					return GetMessage (uid, cancellationToken);
@@ -844,6 +854,192 @@ namespace MailKit {
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					return GetMessage (index, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get the messages with the specified UIDs.
+		/// </summary>
+		/// <remarks>
+		/// Gets the messages with the specified UIDs.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No uids were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail spool does not support UIDs.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the messages with the specified UIDs.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the messages with the specified UIDs.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No uids were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail spool does not support UIDs.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task<IList<MimeMessage>> GetMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetMessages (uids, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get the messages at the specified indexes.
+		/// </summary>
+		/// <remarks>
+		/// Get the messages at the specified indexes.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the messages at the specified indexes.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously get the messages at the specified indexes.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetMessages (indexes, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -932,6 +1128,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DeleteMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (uid == null)
+				throw new ArgumentNullException ("uid");
+
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					DeleteMessage (uid, cancellationToken);
@@ -1032,7 +1231,9 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> are invalid.
+		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No uids were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
@@ -1074,7 +1275,9 @@ namespace MailKit {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> are invalid.
+		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No uids were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
@@ -1102,6 +1305,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DeleteMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					DeleteMessages (uids, cancellationToken);
@@ -1122,8 +1328,10 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// One or more of the <paramref name="indexes"/> are invalid.
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
@@ -1161,8 +1369,10 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// One or more of the <paramref name="indexes"/> are invalid.
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
@@ -1187,6 +1397,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					DeleteMessages (indexes, cancellationToken);

@@ -1284,6 +1284,56 @@ namespace MailKit.Net.Pop3 {
 			return message;
 		}
 
+		IList<MimeMessage> GetMessagesForSequenceIds (IList<int> seqids, bool headersOnly, CancellationToken cancellationToken)
+		{
+			var messages = new List<MimeMessage> ();
+
+			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
+				for (int i = 0; i < seqids.Count; i++)
+					messages.Add (GetMessageForSequenceId (seqids[i], headersOnly, cancellationToken));
+
+				return messages;
+			}
+
+			var commands = new Pop3Command[seqids.Count];
+			Pop3Command pc = null;
+
+			Pop3CommandHandler handler = (pop3, cmd, text) => {
+				if (cmd.Status != Pop3CommandStatus.Ok)
+					return;
+
+				try {
+					pop3.Stream.Mode = Pop3StreamMode.Data;
+					messages.Add (MimeMessage.Load (pop3.Stream, cancellationToken));
+				} finally {
+					pop3.Stream.Mode = Pop3StreamMode.Line;
+				}
+			};
+
+			for (int i = 0; i < seqids.Count; i++) {
+				if (headersOnly)
+					pc = engine.QueueCommand (cancellationToken, handler, "TOP {0} 0", seqids[i]);
+				else
+					pc = engine.QueueCommand (cancellationToken, handler, "RETR {0}", seqids[i]);
+
+				commands[i] = pc;
+			}
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			for (int i = 0; i < commands.Length; i++) {
+				if (commands[i].Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (commands[i]);
+
+				if (commands[i].Exception != null)
+					throw commands[i].Exception;
+			}
+
+			return messages;
+		}
+
 		/// <summary>
 		/// Get the headers for the specified message.
 		/// </summary>
@@ -1495,6 +1545,142 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Get the messages with the specified UIDs.
+		/// </summary>
+		/// <remarks>
+		/// Gets the messages with the specified UIDs.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No uids were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			if (uids.Count == 0)
+				throw new ArgumentException ("No uids specified.", "uids");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			var seqids = new int[uids.Count];
+
+			for (int i = 0; i < uids.Count; i++) {
+				int seqid;
+
+				if (!this.uids.TryGetValue (uids[i], out seqid))
+					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
+
+				seqids[i] = seqid;
+			}
+
+			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
+		}
+
+		/// <summary>
+		/// Get the messages at the specified indexes.
+		/// </summary>
+		/// <remarks>
+		/// Get the messages at the specified indexes.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			if (indexes.Count == 0)
+				throw new ArgumentException ("No indexes specified.", "indexes");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			var seqids = new int[indexes.Count];
+
+			for (int i = 0; i < indexes.Count; i++) {
+				if (indexes[i] < 0 || indexes[i] >= count)
+					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+
+				seqids[i] = indexes[i] + 1;
+			}
+
+			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
+		}
+
+		/// <summary>
 		/// Mark the specified message for deletion.
 		/// </summary>
 		/// <remarks>
@@ -1615,7 +1801,9 @@ namespace MailKit.Net.Pop3 {
 		/// <paramref name="uids"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="uids"/> are invalid.
+		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No uids were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1655,36 +1843,37 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			var seqids = new List<int> ();
+			var seqids = new int[uids.Count];
+
 			for (int i = 0; i < uids.Count; i++) {
 				int seqid;
 
 				if (!this.uids.TryGetValue (uids[i], out seqid))
 					throw new ArgumentException ("One or more of the uids are invalid.", "uids");
 
-				seqids.Add (seqid);
+				seqids[i] = seqid;
 			}
 
 			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
-				for (int i = 0; i < seqids.Count; i++)
+				for (int i = 0; i < seqids.Length; i++)
 					SendCommand (cancellationToken, "DELE {0}", seqids[i]);
 
 				return;
 			}
 
-			var commands = new List<Pop3Command> ();
+			var commands = new Pop3Command[seqids.Length];
 			Pop3Command pc = null;
 
-			for (int i = 0; i < seqids.Count; i++) {
+			for (int i = 0; i < seqids.Length; i++) {
 				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", seqids[i]);
-				commands.Add (pc);
+				commands[i] = pc;
 			}
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
 			}
 
-			for (int i = 0; i < commands.Count; i++) {
+			for (int i = 0; i < commands.Length; i++) {
 				if (commands[i].Status != Pop3CommandStatus.Ok)
 					throw CreatePop3Exception (commands[i]);
 			}
@@ -1703,8 +1892,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// One or more of the <paramref name="indexes"/> are invalid.
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1741,34 +1932,35 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			var seqids = new List<int> ();
+			var seqids = new int[indexes.Count];
+
 			for (int i = 0; i < indexes.Count; i++) {
 				if (indexes[i] < 0 || indexes[i] >= count)
 					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
 
-				seqids.Add (indexes[i] + 1);
+				seqids[i] = indexes[i] + 1;
 			}
 
 			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
-				for (int i = 0; i < seqids.Count; i++)
+				for (int i = 0; i < seqids.Length; i++)
 					SendCommand (cancellationToken, "DELE {0}", seqids[i]);
 
 				return;
 			}
 
-			var commands = new List<Pop3Command> ();
+			var commands = new Pop3Command[seqids.Length];
 			Pop3Command pc = null;
 
-			for (int i = 0; i < seqids.Count; i++) {
+			for (int i = 0; i < seqids.Length; i++) {
 				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", seqids[i]);
-				commands.Add (pc);
+				commands[i] = pc;
 			}
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
 			}
 
-			for (int i = 0; i < commands.Count; i++) {
+			for (int i = 0; i < commands.Length; i++) {
 				if (commands[i].Status != Pop3CommandStatus.Ok)
 					throw CreatePop3Exception (commands[i]);
 			}
@@ -1816,19 +2008,19 @@ namespace MailKit.Net.Pop3 {
 				return;
 			}
 
-			var commands = new List<Pop3Command> ();
+			var commands = new Pop3Command[count];
 			Pop3Command pc = null;
 
 			for (int i = 0; i < count; i++) {
 				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", i + 1);
-				commands.Add (pc);
+				commands[i] = pc;
 			}
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
 			}
 
-			for (int i = 0; i < commands.Count; i++) {
+			for (int i = 0; i < commands.Length; i++) {
 				if (commands[i].Status != Pop3CommandStatus.Ok)
 					throw CreatePop3Exception (commands[i]);
 			}
