@@ -76,6 +76,10 @@ namespace MailKit.Net.Pop3 {
 		// I/O buffering
 		readonly byte[] input = new byte[ReadAheadSize + BlockSize + PadSize];
 		const int inputStart = ReadAheadSize;
+
+		readonly byte[] output = new byte[BlockSize];
+		int outputIndex;
+
 		readonly IProtocolLogger logger;
 		int inputIndex = ReadAheadSize;
 		int inputEnd = ReadAheadSize;
@@ -606,9 +610,39 @@ namespace MailKit.Net.Pop3 {
 			ValidateArguments (buffer, offset, count);
 
 			try {
-				Poll (SelectMode.SelectWrite, cancellationToken);
-				Stream.Write (buffer, offset, count);
-				logger.LogClient (buffer, offset, count);
+				int index = offset;
+				int left = count;
+
+				while (left > 0) {
+					int n = Math.Min (BlockSize - outputIndex, left);
+
+					if (outputIndex > 0 || n < BlockSize) {
+						// append the data to the output buffer
+						Buffer.BlockCopy (buffer, index, output, outputIndex, n);
+						outputIndex += n;
+						index += n;
+						left -= n;
+					}
+
+					if (outputIndex == BlockSize) {
+						// flush the output buffer
+						Poll (SelectMode.SelectWrite, cancellationToken);
+						Stream.Write (output, 0, BlockSize);
+						logger.LogClient (output, 0, BlockSize);
+						outputIndex = 0;
+					}
+
+					if (outputIndex == 0) {
+						// write blocks of data to the stream without buffering
+						while (left >= BlockSize) {
+							Poll (SelectMode.SelectWrite, cancellationToken);
+							Stream.Write (buffer, index, BlockSize);
+							logger.LogClient (buffer, index, BlockSize);
+							index += BlockSize;
+							left -= BlockSize;
+						}
+					}
+				}
 			} catch {
 				IsConnected = false;
 				throw;
@@ -676,9 +710,15 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 
+			if (outputIndex == 0)
+				return;
+
 			try {
 				Poll (SelectMode.SelectWrite, cancellationToken);
+				Stream.Write (output, 0, outputIndex);
 				Stream.Flush ();
+				logger.LogClient (output, 0, outputIndex);
+				outputIndex = 0;
 			} catch {
 				IsConnected = false;
 				throw;

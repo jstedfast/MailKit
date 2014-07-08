@@ -334,13 +334,16 @@ namespace MailKit.Net.Pop3 {
 			return Pop3CommandStatus.ProtocolError;
 		}
 
-		void ProcessCommand (Pop3Command pc)
+		void SendCommand (Pop3Command pc)
+		{
+			var buf = Encoding.UTF8.GetBytes (pc.Command + "\r\n");
+
+			stream.Write (buf, 0, buf.Length);
+		}
+
+		void ReadResponse (Pop3Command pc)
 		{
 			string response, text;
-			byte[] buf;
-
-			buf = Encoding.UTF8.GetBytes (pc.Command + "\r\n");
-			stream.Write (buf, 0, buf.Length);
 
 			try {
 				response = ReadLine (pc.CancellationToken).TrimEnd ();
@@ -378,18 +381,35 @@ namespace MailKit.Net.Pop3 {
 			if (queue.Count == 0)
 				return 0;
 
-			var pc = queue[0];
-			queue.RemoveAt (0);
+			int count = (Capabilities & Pop3Capabilities.Pipelining) != 0 ? queue.Count : 1;
+			var cancellationToken = queue[0].CancellationToken;
+			var active = new List<Pop3Command> ();
 
-			if (pc.CancellationToken.IsCancellationRequested) {
-				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
-				pc.CancellationToken.ThrowIfCancellationRequested ();
+			for (int i = 0; i < count; i++) {
+				var pc = queue[0];
+
+				if (i > 0 && !pc.CancellationToken.Equals (cancellationToken))
+					break;
+
+				queue.RemoveAt (0);
+
+				if (pc.CancellationToken.IsCancellationRequested) {
+					queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
+					pc.CancellationToken.ThrowIfCancellationRequested ();
+				}
+
+				pc.Status = Pop3CommandStatus.Active;
+				active.Add (pc);
+
+				SendCommand (pc);
 			}
 
-			pc.Status = Pop3CommandStatus.Active;
-			ProcessCommand (pc);
+			stream.Flush (cancellationToken);
 
-			return pc.Id;
+			for (int i = 0; i < active.Count; i++)
+				ReadResponse (active[i]);
+
+			return active[active.Count - 1].Id;
 		}
 
 		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, string format, params object[] args)

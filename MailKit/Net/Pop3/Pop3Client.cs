@@ -433,6 +433,7 @@ namespace MailKit.Net.Pop3 {
 
 							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
 							pop3.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
+							pop3.Stream.Flush (cmd.CancellationToken);
 
 							var response = pop3.ReadLine (cmd.CancellationToken);
 
