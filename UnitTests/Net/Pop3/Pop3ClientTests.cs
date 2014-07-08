@@ -404,7 +404,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var uids = client.GetMessageUids (CancellationToken.None);
-					Assert.AreEqual (7, uids.Length, "Expected 7 uids");
+					Assert.AreEqual (7, uids.Count, "Expected 7 uids");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
 				}

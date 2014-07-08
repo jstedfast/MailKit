@@ -244,7 +244,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract string[] GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<string> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the full list of available message UIDs.
@@ -279,7 +279,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<string[]> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -480,7 +480,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<int> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the sizes for all available messages, in bytes.
@@ -511,7 +511,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<int[]> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {

@@ -72,7 +72,7 @@ namespace MailKit.Net.Pop3 {
 			User   = (1 << 2),
 		}
 
-		readonly Dictionary<string, int> uids = new Dictionary<string, int> ();
+		readonly Dictionary<string, int> dict = new Dictionary<string, int> ();
 		readonly IProtocolLogger logger;
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
@@ -680,7 +680,7 @@ namespace MailKit.Net.Pop3 {
 			socket = null;
 			#endif
 
-			uids.Clear ();
+			dict.Clear ();
 			count = 0;
 
 			engine.Disconnect ();
@@ -910,7 +910,7 @@ namespace MailKit.Net.Pop3 {
 
 			engine.Capabilities |= Pop3Capabilities.UIDL;
 
-			uids[uid] = index + 1;
+			dict[uid] = index + 1;
 
 			return uid;
 		}
@@ -948,7 +948,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override string[] GetMessageUids (CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<string> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -959,7 +959,7 @@ namespace MailKit.Net.Pop3 {
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
 
-			uids.Clear ();
+			dict.Clear ();
 
 			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
@@ -986,7 +986,7 @@ namespace MailKit.Net.Pop3 {
 						continue;
 					}
 
-					uids.Add (tokens[1], seqid);
+					dict.Add (tokens[1], seqid);
 				} while (true);
 			}, "UIDL");
 
@@ -1008,7 +1008,7 @@ namespace MailKit.Net.Pop3 {
 
 			engine.Capabilities |= Pop3Capabilities.UIDL;
 
-			return uids.Keys.ToArray ();
+			return dict.Keys.ToArray ();
 		}
 
 		int GetMessageSizeForSequenceId (int seqid, CancellationToken cancellationToken)
@@ -1105,7 +1105,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (!uids.TryGetValue (uid, out seqid))
+			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
 			return GetMessageSizeForSequenceId (seqid, cancellationToken);
@@ -1187,7 +1187,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override int[] GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<int> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1246,7 +1246,7 @@ namespace MailKit.Net.Pop3 {
 			if (pc.Exception != null)
 				throw pc.Exception;
 
-			return sizes.ToArray ();
+			return sizes;
 		}
 
 		MimeMessage GetMessageForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
@@ -1386,7 +1386,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (!uids.TryGetValue (uid, out seqid))
+			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
 			return GetMessageForSequenceId (seqid, true, cancellationToken).Headers;
@@ -1491,7 +1491,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (!uids.TryGetValue (uid, out seqid))
+			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
 			return GetMessageForSequenceId (seqid, false, cancellationToken);
@@ -1604,7 +1604,7 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < uids.Count; i++) {
 				int seqid;
 
-				if (!this.uids.TryGetValue (uids[i], out seqid))
+				if (!dict.TryGetValue (uids[i], out seqid))
 					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
 
 				seqids[i] = seqid;
@@ -1733,7 +1733,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (!uids.TryGetValue (uid, out seqid))
+			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
 			SendCommand (cancellationToken, "DELE {0}", seqid);
@@ -1848,7 +1848,7 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < uids.Count; i++) {
 				int seqid;
 
-				if (!this.uids.TryGetValue (uids[i], out seqid))
+				if (!dict.TryGetValue (uids[i], out seqid))
 					throw new ArgumentException ("One or more of the uids are invalid.", "uids");
 
 				seqids[i] = seqid;
