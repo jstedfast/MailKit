@@ -228,6 +228,50 @@ namespace MailKit {
 		Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Get the headers for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified messages.
+		/// </remarks>
+		/// <returns>The headers for the specified messages.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<HeaderList> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the headers for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the headers for the specified messages.
+		/// </remarks>
+		/// <returns>The headers for the specified messages.</returns>
+		/// <param name="uids">The UIDs of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<HeaderList>> GetMessageHeadersAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the headers for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified messages.
+		/// </remarks>
+		/// <returns>The headers for the specified messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the headers for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the headers for the specified messages.
+		/// </remarks>
+		/// <returns>The headers for the specified messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Get the message with the specified UID.
 		/// </summary>
 		/// <remarks>

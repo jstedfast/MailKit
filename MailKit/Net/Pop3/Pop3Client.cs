@@ -1440,6 +1440,154 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Get the headers for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified messages.
+		/// </remarks>
+		/// <returns>The headers for the specified messages.</returns>
+		/// <param name="uids">The UIDs of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No uids were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<HeaderList> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			if (uids.Count == 0)
+				throw new ArgumentException ("No uids specified.", "uids");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			var seqids = new int[uids.Count];
+
+			for (int i = 0; i < uids.Count; i++) {
+				int seqid;
+
+				if (!dict.TryGetValue (uids[i], out seqid))
+					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
+
+				seqids[i] = seqid;
+			}
+
+			var messages = GetMessagesForSequenceIds (seqids, true, cancellationToken);
+			var headers = new HeaderList[messages.Count];
+
+			for (int i = 0; i < headers.Length; i++)
+				headers[i] = messages[i].Headers;
+
+			return headers;
+		}
+
+		/// <summary>
+		/// Get the headers for the specified messages.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers for the specified messages.
+		/// </remarks>
+		/// <returns>The headers for the specified messages.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			if (indexes.Count == 0)
+				throw new ArgumentException ("No indexes specified.", "indexes");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			var seqids = new int[indexes.Count];
+
+			for (int i = 0; i < indexes.Count; i++) {
+				if (indexes[i] < 0 || indexes[i] >= count)
+					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+
+				seqids[i] = indexes[i] + 1;
+			}
+
+			var messages = GetMessagesForSequenceIds (seqids, true, cancellationToken);
+			var headers = new HeaderList[messages.Count];
+
+			for (int i = 0; i < headers.Length; i++)
+				headers[i] = messages[i].Headers;
+
+			return headers;
+		}
+
+		/// <summary>
 		/// Get the message with the specified UID.
 		/// </summary>
 		/// <remarks>
