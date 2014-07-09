@@ -82,7 +82,7 @@ namespace MailKit.Net.Pop3 {
 		int timeout = 100000;
 		bool disposed;
 		string host;
-		int count;
+		int total;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Client"/> class.
@@ -320,7 +320,7 @@ namespace MailKit.Net.Pop3 {
 				GetMessageCount (cancellationToken);
 
 				// if the message count is > 0, we can probe the UIDL command
-				if (count > 0) {
+				if (total > 0) {
 					try {
 						GetMessageUid (0, cancellationToken);
 					} catch (NotSupportedException) {
@@ -681,7 +681,7 @@ namespace MailKit.Net.Pop3 {
 			#endif
 
 			dict.Clear ();
-			count = 0;
+			total = 0;
 
 			engine.Disconnect ();
 		}
@@ -794,7 +794,7 @@ namespace MailKit.Net.Pop3 {
 					return;
 				}
 
-				if (!int.TryParse (tokens[0], out count)) {
+				if (!int.TryParse (tokens[0], out total)) {
 					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
 					return;
 				}
@@ -810,7 +810,7 @@ namespace MailKit.Net.Pop3 {
 			if (pc.Exception != null)
 				throw pc.Exception;
 
-			return count;
+			return total;
 		}
 
 		/// <summary>
@@ -858,7 +858,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (index < 0 || index >= count)
+			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
@@ -1152,7 +1152,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (index < 0 || index >= count)
+			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
 			return GetMessageSizeForSequenceId (index + 1, cancellationToken);
@@ -1433,7 +1433,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (index < 0 || index >= count)
+			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
 			return GetMessageForSequenceId (index + 1, true, cancellationToken).Headers;
@@ -1572,7 +1572,7 @@ namespace MailKit.Net.Pop3 {
 			var seqids = new int[indexes.Count];
 
 			for (int i = 0; i < indexes.Count; i++) {
-				if (indexes[i] < 0 || indexes[i] >= count)
+				if (indexes[i] < 0 || indexes[i] >= total)
 					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
 
 				seqids[i] = indexes[i] + 1;
@@ -1686,7 +1686,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (index < 0 || index >= count)
+			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
 			return GetMessageForSequenceId (index + 1, false, cancellationToken);
@@ -1819,11 +1819,74 @@ namespace MailKit.Net.Pop3 {
 			var seqids = new int[indexes.Count];
 
 			for (int i = 0; i < indexes.Count; i++) {
-				if (indexes[i] < 0 || indexes[i] >= count)
+				if (indexes[i] < 0 || indexes[i] >= total)
 					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
 
 				seqids[i] = indexes[i] + 1;
 			}
+
+			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
+		}
+
+		/// <summary>
+		/// Get the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the messages within the specified range.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (startIndex < 0 || startIndex >= total)
+				throw new ArgumentOutOfRangeException ("startIndex");
+
+			if (count < 0 || count > (total - startIndex))
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			if (count == 0)
+				return new MimeMessage[0];
+
+			var seqids = new int[count];
+
+			for (int i = 0; i < count; i++)
+				seqids[i] = startIndex + i;
 
 			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
 		}
@@ -1929,7 +1992,7 @@ namespace MailKit.Net.Pop3 {
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
 
-			if (index < 0 || index >= count)
+			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
 			SendCommand (cancellationToken, "DELE {0}", index + 1);
@@ -2083,7 +2146,7 @@ namespace MailKit.Net.Pop3 {
 			var seqids = new int[indexes.Count];
 
 			for (int i = 0; i < indexes.Count; i++) {
-				if (indexes[i] < 0 || indexes[i] >= count)
+				if (indexes[i] < 0 || indexes[i] >= total)
 					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
 
 				seqids[i] = indexes[i] + 1;
@@ -2150,16 +2213,16 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 
 			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
-				for (int i = 0; i < count; i++)
+				for (int i = 0; i < total; i++)
 					SendCommand (cancellationToken, "DELE {0}", i + 1);
 
 				return;
 			}
 
-			var commands = new Pop3Command[count];
+			var commands = new Pop3Command[total];
 			Pop3Command pc = null;
 
-			for (int i = 0; i < count; i++) {
+			for (int i = 0; i < total; i++) {
 				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", i + 1);
 				commands[i] = pc;
 			}

@@ -297,7 +297,7 @@ namespace MailKit {
 		/// Get the message at the specified index.
 		/// </summary>
 		/// <remarks>
-		/// Get the message at the specified index.
+		/// Gets the message at the specified index.
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
@@ -308,7 +308,7 @@ namespace MailKit {
 		/// Asynchronously get the message at the specified index.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously get the message at the specified index.
+		/// Asynchronously gets the message at the specified index.
 		/// </remarks>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
@@ -341,7 +341,7 @@ namespace MailKit {
 		/// Get the messages at the specified indexes.
 		/// </summary>
 		/// <remarks>
-		/// Get the messages at the specified indexes.
+		/// Gets the messages at the specified indexes.
 		/// </remarks>
 		/// <returns>The messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -352,12 +352,36 @@ namespace MailKit {
 		/// Asynchronously get the messages at the specified indexes.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously get the messages at the specified indexes.
+		/// Asynchronously gets the messages at the specified indexes.
 		/// </remarks>
 		/// <returns>The messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the messages within the specified range.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the messages within the specified range.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Mark the specified message for deletion.
