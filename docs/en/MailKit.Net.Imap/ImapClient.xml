@@ -533,7 +533,7 @@
         <summary>
             Asynchronously toggle the <see cref="T:MailKit.Net.Imap.ImapClient" /> into the IDLE state.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
           <para>When a client enters the IDLE state, the IMAP server will send
             events to the client as they occur on the selected folder. These events

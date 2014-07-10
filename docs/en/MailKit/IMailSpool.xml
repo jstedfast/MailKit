@@ -25,6 +25,57 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName="DeleteAllMessages">
+      <MemberSignature Language="C#" Value="public void DeleteAllMessages (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteAllMessages(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark all messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteAllMessagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task DeleteAllMessagesAsync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteAllMessagesAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously mark all messages for deletion.
+            </summary>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="DeleteMessage">
       <MemberSignature Language="C#" Value="public void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -99,7 +150,7 @@
         <summary>
             Asynchronously mark the specified message for deletion.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
@@ -127,7 +178,176 @@
         <summary>
             Asynchronously mark the specified message for deletion.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessages">
+      <MemberSignature Language="C#" Value="public void DeleteMessages (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessages(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark the specified messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessages">
+      <MemberSignature Language="C#" Value="public void DeleteMessages (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessages(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark the specified messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessages">
+      <MemberSignature Language="C#" Value="public void DeleteMessages (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessages(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to mark for deletion.</param>
+        <param name="count">The number of messages to mark for deletion.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark the specified range of messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task DeleteMessagesAsync (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessagesAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously mark the specified messages for deletion.
+            </summary>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task DeleteMessagesAsync (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessagesAsync(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously mark the specified messages for deletion.
+            </summary>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task DeleteMessagesAsync (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessagesAsync(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to mark for deletion.</param>
+        <param name="count">The number of messages to mark for deletion.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously mark the specified range of messages for deletion.
+            </summary>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
@@ -157,7 +377,7 @@
             </summary>
         <returns>The message.</returns>
         <remarks>
-            Get the message at the specified index.
+            Gets the message at the specified index.
             </remarks>
       </Docs>
     </Member>
@@ -209,7 +429,7 @@
             </summary>
         <returns>The message.</returns>
         <remarks>
-            Asynchronously get the message at the specified index.
+            Asynchronously gets the message at the specified index.
             </remarks>
       </Docs>
     </Member>
@@ -288,6 +508,58 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt; GetMessageHeaders (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the headers for the specified messages.
+            </summary>
+        <returns>The headers for the specified messages.</returns>
+        <remarks>
+            Gets the headers for the specified messages.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeaders">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt; GetMessageHeaders (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the headers for the specified messages.
+            </summary>
+        <returns>The headers for the specified messages.</returns>
+        <remarks>
+            Gets the headers for the specified messages.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeaders">
       <MemberSignature Language="C#" Value="public MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -336,6 +608,86 @@
         <returns>The message headers.</returns>
         <remarks>
             Gets the headers for the specified message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeaders">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt; GetMessageHeaders (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to get.</param>
+        <param name="count">The number of messages to get.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the headers of the messages within the specified range.
+            </summary>
+        <returns>The headers of the messages within the specified range.</returns>
+        <remarks>
+            Gets the headers of the messages within the specified range.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeadersAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the headers for the specified messages.
+            </summary>
+        <returns>The headers for the specified messages.</returns>
+        <remarks>
+            Asynchronously gets the headers for the specified messages.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeadersAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the headers for the specified messages.
+            </summary>
+        <returns>The headers for the specified messages.</returns>
+        <remarks>
+            Asynchronously gets the headers for the specified messages.
             </remarks>
       </Docs>
     </Member>
@@ -388,6 +740,194 @@
         <returns>The message headers.</returns>
         <remarks>
             Asynchronously gets the headers for the specified message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeadersAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to get.</param>
+        <param name="count">The number of messages to get.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the headers of the messages within the specified range.
+            </summary>
+        <returns>The headers of the messages within the specified range.</returns>
+        <remarks>
+            Gets the headers of the messages within the specified range.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessages">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt; GetMessages (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the messages at the specified indexes.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Gets the messages at the specified indexes.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessages">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt; GetMessages (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UID of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the messages with the specified UIDs.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Gets the messages with the specified UIDs.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessages">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt; GetMessages (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to get.</param>
+        <param name="count">The number of messages to get.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the messages within the specified range.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Gets the messages within the specified range.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt; GetMessagesAsync (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt;&gt; GetMessagesAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the messages at the specified indexes.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Asynchronously gets the messages at the specified indexes.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt; GetMessagesAsync (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt;&gt; GetMessagesAsync(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the messages with the specified UIDs.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Asynchronously gets the messages with the specified UIDs.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt; GetMessagesAsync (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt;&gt; GetMessagesAsync(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to get.</param>
+        <param name="count">The number of messages to get.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the messages within the specified range.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Asynchronously gets the messages within the specified range.
             </remarks>
       </Docs>
     </Member>
@@ -496,14 +1036,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;int&gt; GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
@@ -520,14 +1060,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizesAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;int[]&gt; GetMessageSizesAsync (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;int32[]&gt; GetMessageSizesAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;int&gt;&gt; GetMessageSizesAsync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;int32&gt;&gt; GetMessageSizesAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Int32[]&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.Int32&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
@@ -598,14 +1138,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public string[] GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;string&gt; GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;string&gt; GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
@@ -623,14 +1163,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUidsAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;string[]&gt; GetMessageUidsAsync (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;string[]&gt; GetMessageUidsAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;string&gt;&gt; GetMessageUidsAsync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;string&gt;&gt; GetMessageUidsAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.String[]&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.String&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
@@ -690,7 +1230,7 @@
         <summary>
             Asynchronously reset the state of all messages marked for deletion.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected

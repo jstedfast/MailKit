@@ -34,8 +34,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MailTransport" /> class.
+            </summary>
+        <remarks>
+            Initializes a new instance of the <see cref="T:MailKit.MailTransport" /> class.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -175,7 +179,7 @@
         <summary>
             Asynchronously sends the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sends the specified message.
             </remarks>
@@ -233,7 +237,7 @@
         <summary>
             Asynchronously sends the specified message using the supplied sender and recipients.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sends the specified message using the supplied sender and recipients.
             </remarks>

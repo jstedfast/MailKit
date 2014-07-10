@@ -178,7 +178,7 @@
         <summary>
             Asynchronously authenticates using the supplied credentials.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
           <para>If the server supports one or more SASL authentication mechanisms, then
             the SASL mechanisms that both the client and server support are tried
@@ -236,7 +236,7 @@
         <summary>
             Asynchronously authenticates using the specified user name and password.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
           <para>If the server supports one or more SASL authentication mechanisms, then
             the SASL mechanisms that both the client and server support are tried
@@ -458,7 +458,7 @@
         <summary>
             Asynchronously establishes a connection to the specified mail server.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously establishes a connection to the specified mail server.
             </remarks>
@@ -510,7 +510,7 @@
         <summary>
             Asynchronously establishes a connection to the specified mail server.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously establishes a connection to the specified mail server.
             </remarks>
@@ -608,7 +608,7 @@
         <summary>
             Asynchronously disconnects the service.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             If <paramref name="quit" /> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
             </remarks>
@@ -788,8 +788,10 @@
         <summary>
             Asynchronously pings the mail server to keep the connection alive.
             </summary>
-        <returns>To be added.</returns>
-        <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Mail servers, if left idle for too long, will automatically drop the connection.
+            </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.MailService" /> has been disposed.
             </exception>

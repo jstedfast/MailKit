@@ -128,7 +128,7 @@
         <summary>
             Asynchronously enable the quick resynchronization feature.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
           <para>Enables quick resynchronization when a folder is opened using the
             <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,MailKit.UniqueId,System.UInt64,System.Collections.Generic.IList{MailKit.UniqueId},System.Threading.CancellationToken)" />

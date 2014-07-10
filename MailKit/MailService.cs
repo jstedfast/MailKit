@@ -271,6 +271,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously establishes a connection to the specified mail server.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="hostName">The host name of the server.</param>
 		/// <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
 		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
@@ -473,6 +474,7 @@ namespace MailKit {
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

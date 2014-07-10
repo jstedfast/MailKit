@@ -813,6 +813,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="MailKit.MailFolder.Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// or any of the other variants.</para>
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">

@@ -96,7 +96,7 @@
         <summary>
             Asynchronously send the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sends the specified message.
             </remarks>
@@ -126,7 +126,7 @@
         <summary>
             Asynchronously send the specified message using the supplied sender and recipients.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sends the specified message using the supplied sender and recipients.
             </remarks>

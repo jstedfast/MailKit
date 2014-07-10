@@ -41,6 +41,16 @@ namespace MailKit {
 	public abstract class MailTransport : MailService, IMailTransport
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MailTransport"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="MailKit.MailTransport"/> class.
+		/// </remarks>
+		protected MailTransport ()
+		{
+		}
+
+		/// <summary>
 		/// Sends the specified message.
 		/// </summary>
 		/// <remarks>

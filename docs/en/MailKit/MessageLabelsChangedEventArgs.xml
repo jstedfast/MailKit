@@ -38,6 +38,26 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="ModSeq">
+      <MemberSignature Language="C#" Value="public Nullable&lt;ulong&gt; ModSeq { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; ModSeq" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the updated mod-sequence value of the message, if available.
+            </summary>
+        <value>The mod-sequence value.</value>
+        <remarks>
+            Gets the updated mod-sequence value of the message, if available.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="UniqueId">
       <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; UniqueId { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UniqueId" />

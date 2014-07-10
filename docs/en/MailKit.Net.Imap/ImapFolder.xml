@@ -297,14 +297,14 @@
       </Parameters>
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
-        <param name="labels">The GMail labels to add.</param>
+        <param name="labels">The labels to add.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Add a set of GMail labels to the specified messages.
+            Add a set of labels to the specified messages.
             </summary>
         <remarks>
-            Adds a set of GMail labels to the specified messages.
+            Adds a set of labels to the specified messages.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -363,14 +363,152 @@
       </Parameters>
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
-        <param name="labels">The GMail labels to add.</param>
+        <param name="labels">The labels to add.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Add a set of GMail labels to the specified messages.
+            Add a set of labels to the specified messages.
             </summary>
         <remarks>
-            Adds a set of GMail labels to the specified messages.
+            Adds a set of labels to the specified messages.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="indexes" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="labels" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No labels were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open in read-write mode.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AddLabels">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; AddLabels (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; AddLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to add.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="labels" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No labels were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open in read-write mode.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="AddLabels">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; AddLabels (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; AddLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to add.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -2910,14 +3048,14 @@
       </Parameters>
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
-        <param name="labels">The GMail labels to remove.</param>
+        <param name="labels">The labels to remove.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Remove a set of GMail labels from the specified messages.
+            Remove a set of labels from the specified messages.
             </summary>
         <remarks>
-            Removes a set of GMail labels from the specified messages.
+            Removes a set of labels from the specified messages.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -2976,14 +3114,152 @@
       </Parameters>
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
-        <param name="labels">The GMail labels to remove.</param>
+        <param name="labels">The labels to remove.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Remove a set of GMail labels from the specified messages.
+            Remove a set of labels from the specified messages.
             </summary>
         <remarks>
-            Removes a set of GMail labels from the specified messages.
+            Removes a set of labels from the specified messages.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="indexes" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="labels" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open in read-write mode.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveLabels">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; RemoveLabels (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; RemoveLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to remove.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="labels" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>No flags were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open in read-write mode.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveLabels">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; RemoveLabels (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; RemoveLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to remove.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -3620,14 +3896,14 @@
       </Parameters>
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
-        <param name="labels">The GMail labels to set.</param>
+        <param name="labels">The labels to set.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Set the GMail labels of the specified messages.
+            Set the labels of the specified messages.
             </summary>
         <remarks>
-            Sets the GMail labels of the specified messages.
+            Sets the labels of the specified messages.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -3684,14 +3960,148 @@
       </Parameters>
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
-        <param name="labels">The GMail labels to set.</param>
+        <param name="labels">The labels to set.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Sets the GMail labels of the specified messages.
+            Sets the labels of the specified messages.
             </summary>
         <remarks>
-            Sets the GMail labels of the specified messages.
+            Sets the labels of the specified messages.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="indexes" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="labels" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="indexes" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open in read-write mode.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLabels">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; SetLabels (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; SetLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to set.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="labels" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uids" /> is empty.</para>
+          <para>-or-</para>
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open in read-write mode.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLabels">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; SetLabels (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; SetLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to set.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>

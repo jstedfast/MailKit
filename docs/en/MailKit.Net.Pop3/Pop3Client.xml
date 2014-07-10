@@ -246,6 +246,52 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="DeleteAllMessages">
+      <MemberSignature Language="C#" Value="public override void DeleteAllMessages (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteAllMessages(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark all messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.Net.Pop3.Pop3Client.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="DeleteMessage">
       <MemberSignature Language="C#" Value="public override void DeleteMessage (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -269,7 +315,7 @@
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
-            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            (see <see cref="M:MailKit.Net.Pop3.Pop3Client.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
             </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="index" /> is not a valid message index.
@@ -323,7 +369,7 @@
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
-            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            (see <see cref="M:MailKit.Net.Pop3.Pop3Client.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uid" /> is <c>null</c>.
@@ -351,6 +397,175 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessages">
+      <MemberSignature Language="C#" Value="public override void DeleteMessages (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteMessages(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark the specified messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.Net.Pop3.Pop3Client.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No indexes were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessages">
+      <MemberSignature Language="C#" Value="public override void DeleteMessages (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteMessages(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark the specified messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.Net.Pop3.Pop3Client.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No uids were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="DeleteMessages">
+      <MemberSignature Language="C#" Value="public override void DeleteMessages (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteMessages(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to mark for deletion.</param>
+        <param name="count">The number of messages to mark for deletion.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Mark the specified range of messages for deletion.
+            </summary>
+        <remarks>
+            Messages marked for deletion are not actually deleted until the session
+            is cleanly disconnected
+            (see <see cref="M:MailKit.Net.Pop3.Pop3Client.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="startIndex" /> and <paramref name="count" /> do not specify
+            a valid range of messages.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
             The POP3 command failed.
@@ -647,6 +862,122 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt; GetMessageHeaders (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the headers for the specified messages.
+            </summary>
+        <returns>The headers for the specified messages.</returns>
+        <remarks>
+            Gets the headers for the specified messages.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No indexes were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeaders">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt; GetMessageHeaders (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the headers for the specified messages.
+            </summary>
+        <returns>The headers for the specified messages.</returns>
+        <remarks>
+            Gets the headers for the specified messages.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No uids were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeaders">
       <MemberSignature Language="C#" Value="public override MimeKit.HeaderList GetMessageHeaders (int index, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -749,6 +1080,234 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessageHeaders">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt; GetMessageHeaders (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to get.</param>
+        <param name="count">The number of messages to get.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the headers of the messages within the specified range.
+            </summary>
+        <returns>The headers of the messages within the specified range.</returns>
+        <remarks>
+            Gets the headers of the messages within the specified range.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="startIndex" /> and <paramref name="count" /> do not specify
+            a valid range of messages.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessages">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt; GetMessages (System.Collections.Generic.IList&lt;int&gt; indexes, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the messages at the specified indexes.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Get the messages at the specified indexes.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No indexes were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessages">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt; GetMessages (System.Collections.Generic.IList&lt;string&gt; uids, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the messages with the specified UIDs.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Gets the messages with the specified UIDs.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uids" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No uids were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMessages">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt; GetMessages (int startIndex, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first message to get.</param>
+        <param name="count">The number of messages to get.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the messages within the specified range.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Gets the messages within the specified range.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="startIndex" /> and <paramref name="count" /> do not specify
+            a valid range of messages.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
             The POP3 command failed.
@@ -868,14 +1427,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
-      <MemberSignature Language="C#" Value="public override int[] GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32[] GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; GetMessageSizes (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Int32[]</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
@@ -895,17 +1454,14 @@
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
-        <exception cref="T:System.IO.IOException">
-            An I/O error occurred.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
-            A POP3 protocol error occurred.
-            </exception>
         <exception cref="T:System.UnauthorizedAccessException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
             The POP3 command failed.
@@ -973,14 +1529,14 @@
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
-      <MemberSignature Language="C#" Value="public override string[] GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string[] GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;string&gt; GetMessageUids (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;string&gt; GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.23.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.String[]</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
@@ -1001,14 +1557,11 @@
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
-        <exception cref="T:System.NotSupportedException">
-            The POP3 server does not support the UIDL extension.
-            </exception>
-        <exception cref="T:MailKit.Net.Pop3.Pop3Exception">
-            A POP3 protocol error occurred.
-            </exception>
         <exception cref="T:System.UnauthorizedAccessException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UIDL extension.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1171,7 +1724,7 @@
         <remarks>
             Messages marked for deletion are not actually deleted until the session
             is cleanly disconnected
-            (see <see cref="M:MailKit.IMailService.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
+            (see <see cref="M:MailKit.Net.Pop3.Pop3Client.Disconnect(System.Boolean,System.Threading.CancellationToken)" />).
             </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.

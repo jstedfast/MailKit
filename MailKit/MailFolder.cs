@@ -4682,6 +4682,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of flags to the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -4871,6 +4872,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of flags from the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -5058,6 +5060,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the flags of the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -5573,6 +5576,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of flags to the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the messages.</param>
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -5759,6 +5763,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of flags from the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -5943,6 +5948,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the flags of the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
@@ -6449,6 +6455,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of labels to the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -6651,6 +6658,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of labels from the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -6851,6 +6859,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the labels of the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -7400,6 +7409,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously adds a set of labels to the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the messages.</param>
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -7602,6 +7612,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes a set of labels from the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -7802,6 +7813,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the labels of the specified message.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
@@ -8989,6 +9001,9 @@ namespace MailKit {
 		/// <summary>
 		/// Raise the renamed event.
 		/// </summary>
+		/// <remarks>
+		/// Raises the renamed event.
+		/// </remarks>
 		/// <param name="oldName">The old name of the folder.</param>
 		/// <param name="newName">The new name of the folder.</param>
 		protected virtual void OnRenamed (string oldName, string newName)

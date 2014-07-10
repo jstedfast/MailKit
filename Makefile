@@ -13,6 +13,9 @@ clean:
 	xbuild /target:Clean /p:Configuration=Debug $(SOLUTION)
 	xbuild /target:Clean /p:Configuration=Release $(SOLUTION)
 
+check-docs:
+	@find docs/en -name "*.xml" -exec grep -l "To be added." {} \;
+
 update-docs: $(ASSEMBLY)
 	mdoc update --delete -o docs/en $(ASSEMBLY)
 

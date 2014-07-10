@@ -42,6 +42,16 @@ namespace MailKit {
 	public abstract class MailSpool : MailService, IMailSpool
 	{
 		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MailSpool"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="MailKit.MailSpool"/> class.
+		/// </remarks>
+		protected MailSpool ()
+		{
+		}
+
+		/// <summary>
 		/// Get whether or not the service supports referencing messages by UIDs.
 		/// </summary>
 		/// <remarks>
@@ -1973,6 +1983,7 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.

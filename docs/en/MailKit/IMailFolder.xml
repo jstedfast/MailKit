@@ -264,7 +264,7 @@
         <summary>
             Asynchronously add a set of flags to the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of flags to the specified message.
             </remarks>
@@ -294,7 +294,7 @@
         <summary>
             Asynchronously add a set of flags to the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of flags to the specified messages.
             </remarks>
@@ -324,7 +324,7 @@
         <summary>
             Asynchronously add a set of flags to the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of flags to the specified messages.
             </remarks>
@@ -354,7 +354,7 @@
         <summary>
             Asynchronously add a set of flags to the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of flags to the specified message.
             </remarks>
@@ -540,6 +540,70 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="AddLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; AddLabels (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; AddLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to add.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;int&gt; AddLabels (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; AddLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to add.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="AddLabelsAsync">
       <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task AddLabelsAsync (MailKit.UniqueId uid, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task AddLabelsAsync(valuetype MailKit.UniqueId uid, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -564,7 +628,7 @@
         <summary>
             Asynchronously add a set of labels to the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of labels to the specified message.
             </remarks>
@@ -594,7 +658,7 @@
         <summary>
             Asynchronously add a set of labels to the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of labels to the specified messages.
             </remarks>
@@ -624,7 +688,7 @@
         <summary>
             Asynchronously add a set of labels to the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of labels to the specified messages.
             </remarks>
@@ -654,9 +718,73 @@
         <summary>
             Asynchronously add a set of labels to the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously adds a set of labels to the specified message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddLabelsAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;&gt; AddLabelsAsync (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt;&gt; AddLabelsAsync(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to add.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Asynchronously adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddLabelsAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;int&gt;&gt; AddLabelsAsync (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;int32&gt;&gt; AddLabelsAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.Int32&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to add.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Asynchronously adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
             </remarks>
       </Docs>
     </Member>
@@ -953,7 +1081,7 @@
         <summary>
             Asynchronously force the server to flush its state for the folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously forces the server to flush its state for the folder.
             </remarks>
@@ -1004,7 +1132,7 @@
         <summary>
             Asynchronously close the folder, optionally expunging the messages marked for deletion.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously closes the folder, optionally expunging the messages marked for deletion.
             </remarks>
@@ -1198,7 +1326,7 @@
         <summary>
             Asynchronously copy the specified messages to the destination folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously copies the specified messages to the destination folder.
             </remarks>
@@ -1226,7 +1354,7 @@
         <summary>
             Asynchronously copy the specified message to the destination folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously copies the specified message to the destination folder.
             </remarks>
@@ -1370,7 +1498,7 @@
         <summary>
             Asynchronously delete the folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously deletes the folder.
             </remarks>
@@ -1512,7 +1640,7 @@
         <summary>
             Asynchronously expunge the folder, permanently removing all messages marked for deletion.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
           <para>Normally, an <see cref="E:MailKit.IMailFolder.MessageExpunged" /> event will be emitted for each
             message that is expunged. However, if the mail store supports the quick
@@ -1543,7 +1671,7 @@
         <summary>
             Asynchronously expunge the specified uids, permanently removing them from the folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
           <para>Normally, an <see cref="E:MailKit.IMailFolder.MessageExpunged" /> event will be emitted for each
             message that is expunged. However, if the mail store supports the quick
@@ -3201,7 +3329,7 @@
         <summary>
             Asynchronously move the specified messages to the destination folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously moves the specified messages to the destination folder.
             </remarks>
@@ -3229,7 +3357,7 @@
         <summary>
             Asynchronously move the specified message to the destination folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously moves the specified message to the destination folder.
             </remarks>
@@ -3664,7 +3792,7 @@
         <summary>
             Asynchronously remove a set of flags from the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of flags from the specified message.
             </remarks>
@@ -3694,7 +3822,7 @@
         <summary>
             Asynchronously remove a set of flags from the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of flags from the specified messages.
             </remarks>
@@ -3724,7 +3852,7 @@
         <summary>
             Asynchronously remove a set of flags from the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of flags from the specified messages.
             </remarks>
@@ -3754,7 +3882,7 @@
         <summary>
             Asynchronously remove a set of flags from the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of flags from the specified message.
             </remarks>
@@ -3940,6 +4068,70 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="RemoveLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; RemoveLabels (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; RemoveLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to remove.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;int&gt; RemoveLabels (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; RemoveLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to remove.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="RemoveLabelsAsync">
       <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task RemoveLabelsAsync (MailKit.UniqueId uid, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task RemoveLabelsAsync(valuetype MailKit.UniqueId uid, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -3964,7 +4156,7 @@
         <summary>
             Asynchronously remove a set of labels from the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of labels from the specified message.
             </remarks>
@@ -3994,7 +4186,7 @@
         <summary>
             Asynchronously remove a set of labels from the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of labels from the specified messages.
             </remarks>
@@ -4024,7 +4216,7 @@
         <summary>
             Asynchronously remove a set of labels from the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of labels from the specified messages.
             </remarks>
@@ -4054,9 +4246,73 @@
         <summary>
             Asynchronously remove a set of labels from the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously removes a set of labels from the specified message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveLabelsAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;&gt; RemoveLabelsAsync (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt;&gt; RemoveLabelsAsync(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to remove.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Asynchronously removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveLabelsAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;int&gt;&gt; RemoveLabelsAsync (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;int32&gt;&gt; RemoveLabelsAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.Int32&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to remove.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Asynchronously removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
             </remarks>
       </Docs>
     </Member>
@@ -4109,7 +4365,7 @@
         <summary>
             Asynchronously rename the folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously renames the folder.
             </remarks>
@@ -4570,7 +4826,7 @@
         <summary>
             Asynchronously set the flags of the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the flags of the specified message.
             </remarks>
@@ -4600,7 +4856,7 @@
         <summary>
             Asynchronously set the flags of the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the flags of the specified messages.
             </remarks>
@@ -4630,7 +4886,7 @@
         <summary>
             Asynchronously set the flags of the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the flags of the specified messages.
             </remarks>
@@ -4660,7 +4916,7 @@
         <summary>
             Asynchronously set the flags of the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the flags of the specified message.
             </remarks>
@@ -4846,6 +5102,70 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="SetLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; SetLabels (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; SetLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to set.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLabels">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;int&gt; SetLabels (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; SetLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to set.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="SetLabelsAsync">
       <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task SetLabelsAsync (MailKit.UniqueId uid, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SetLabelsAsync(valuetype MailKit.UniqueId uid, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -4870,7 +5190,7 @@
         <summary>
             Asynchronously set the labels of the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the labels of the specified message.
             </remarks>
@@ -4900,7 +5220,7 @@
         <summary>
             Asynchronously set the labels of the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the labels of the specified messages.
             </remarks>
@@ -4930,7 +5250,7 @@
         <summary>
             Asynchronously set the labels of the specified messages.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the labels of the specified messages.
             </remarks>
@@ -4960,9 +5280,73 @@
         <summary>
             Asynchronously set the labels of the specified message.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously sets the labels of the specified message.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLabelsAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;&gt; SetLabelsAsync (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt;&gt; SetLabelsAsync(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to set.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The unique IDs of the messages that were not updated.</returns>
+        <remarks>
+            Asynchronously sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLabelsAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;int&gt;&gt; SetLabelsAsync (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, System.Collections.Generic.IList&lt;string&gt; labels, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;int32&gt;&gt; SetLabelsAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.Int32&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="silent" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="labels">The labels to set.</param>
+        <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.IMailFolder.MessageLabelsChanged" /> events will be emitted.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+            </summary>
+        <returns>The indexes of the messages that were not updated.</returns>
+        <remarks>
+            Asynchronously sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
             </remarks>
       </Docs>
     </Member>
@@ -5078,7 +5462,7 @@
         <summary>
             Asynchronously update the values of the specified items.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
           <para>Updates the values of the specified items.</para>
           <para>The <see cref="M:MailKit.IMailFolder.Status(MailKit.StatusItems,System.Threading.CancellationToken)" /> method
@@ -5132,7 +5516,7 @@
         <summary>
             Asynchronously subscribe to the folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously subscribes to the folder.
             </remarks>
@@ -5439,7 +5823,7 @@
         <summary>
             Asynchronously unsubscribe from the folder.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously unsubscribes from the folder.
             </remarks>
