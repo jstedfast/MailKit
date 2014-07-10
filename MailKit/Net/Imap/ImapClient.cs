@@ -220,7 +220,7 @@ namespace MailKit.Net.Imap {
 			engine.Wait (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				throw new ImapCommandException ("ENABLE", ic.Result);
+				throw ImapCommandException.Create ("ENABLE", ic);
 
 			engine.QResyncEnabled = true;
 		}
@@ -702,7 +702,7 @@ namespace MailKit.Net.Imap {
 			engine.Wait (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				throw new ImapCommandException ("NOOP", ic.Result);
+				throw ImapCommandException.Create ("NOOP", ic);
 		}
 
 		static void IdleComplete (object state)
@@ -795,7 +795,7 @@ namespace MailKit.Net.Imap {
 				engine.Wait (ic);
 
 				if (ic.Result != ImapCommandResult.Ok)
-					throw new ImapCommandException ("IDLE", ic.Result);
+					throw ImapCommandException.Create ("IDLE", ic);
 			}
 		}
 

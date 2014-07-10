@@ -252,6 +252,7 @@ namespace MailKit.Net.Imap {
 		public ImapCommandResult Result { get; internal set; }
 		public ImapProtocolException Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
+		public string ResultText { get; internal set; }
 		public ImapFolder Folder { get; private set; }
 		public object UserData { get; internal set; }
 		public string Tag { get; private set; }

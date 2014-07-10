@@ -1350,8 +1350,10 @@ namespace MailKit.Net.Imap {
 						if (current != null)
 							current.RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
-						// throw away any remaining text up until the end of the line
-						ReadLine (cancellationToken);
+						var text = ReadLine (cancellationToken);
+
+						if (current != null)
+							current.ResultText = text.Trim ();
 					}
 					break;
 				default:
@@ -1725,7 +1727,7 @@ namespace MailKit.Net.Imap {
 			ProcessResponseCodes (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				throw new ImapCommandException ("LIST", ic.Result);
+				throw ImapCommandException.Create ("LIST", ic);
 
 			return list.Count > 0 ? list[0] : null;
 		}

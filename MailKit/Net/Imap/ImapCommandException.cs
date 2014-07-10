@@ -57,16 +57,25 @@ namespace MailKit.Net.Imap {
 #endif
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
+		/// Create a new <see cref="ImapCommandException"/> based on the specified command name and <see cref="ImapCommand"/> state.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="ImapCommandException"/>.
+		/// Create a new <see cref="ImapCommandException"/> based on the specified command name and <see cref="ImapCommand"/> state.
 		/// </remarks>
-		/// <param name="command">The command.</param>
-		/// <param name="result">The command result.</param>
-		internal ImapCommandException (string command, ImapCommandResult result)
-			: base (string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response.", command, result.ToString ().ToUpperInvariant ()))
+		/// <returns>A new command exception.</returns>
+		/// <param name="command">The command name.</param>
+		/// <param name="ic">The command state.</param>
+		internal static ImapCommandException Create (string command, ImapCommand ic)
 		{
+			var result = ic.Result.ToString ().ToUpperInvariant ();
+			string message;
+
+			if (!string.IsNullOrEmpty (ic.ResultText))
+				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response: {2}", command, result, ic.ResultText);
+			else
+				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response.", command, result);
+
+			return new ImapCommandException (message);
 		}
 
 		/// <summary>
