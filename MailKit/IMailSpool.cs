@@ -272,6 +272,30 @@ namespace MailKit {
 		Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Get the headers of the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers of the messages within the specified range.
+		/// </remarks>
+		/// <returns>The headers of the messages within the specified range.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the headers of the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers of the messages within the specified range.
+		/// </remarks>
+		/// <returns>The headers of the messages within the specified range.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Get the message with the specified UID.
 		/// </summary>
 		/// <remarks>
@@ -482,6 +506,33 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Mark the specified range of messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
+		/// <param name="count">The number of messages to mark for deletion.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously mark the specified range of messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
+		/// <param name="count">The number of messages to mark for deletion.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Mark all messages for deletion.

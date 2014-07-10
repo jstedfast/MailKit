@@ -1588,6 +1588,75 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Get the headers of the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers of the messages within the specified range.
+		/// </remarks>
+		/// <returns>The headers of the messages within the specified range.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (startIndex < 0 || startIndex >= total)
+				throw new ArgumentOutOfRangeException ("startIndex");
+
+			if (count < 0 || count > (total - startIndex))
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			if (count == 0)
+				return new HeaderList[0];
+
+			var seqids = new int[count];
+
+			for (int i = 0; i < count; i++)
+				seqids[i] = startIndex + i;
+
+			var messages = GetMessagesForSequenceIds (seqids, true, cancellationToken);
+			var headers = new HeaderList[messages.Count];
+
+			for (int i = 0; i < headers.Length; i++)
+				headers[i] = messages[i].Headers;
+
+			return headers;
+		}
+
+		/// <summary>
 		/// Get the message with the specified UID.
 		/// </summary>
 		/// <remarks>
@@ -1897,7 +1966,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1956,7 +2025,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2004,7 +2073,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2096,7 +2165,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2178,12 +2247,90 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Mark the specified range of messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
+		/// <param name="count">The number of messages to mark for deletion.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (startIndex < 0 || startIndex >= total)
+				throw new ArgumentOutOfRangeException ("startIndex");
+
+			if (count < 0 || count > (total - startIndex))
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if (engine.State != Pop3EngineState.Transaction)
+				throw new UnauthorizedAccessException ();
+
+			if (count == 0)
+				return;
+
+			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
+				for (int i = 0; i < count; i++)
+					SendCommand (cancellationToken, "DELE {0}", startIndex + i + 1);
+
+				return;
+			}
+
+			var commands = new Pop3Command[count];
+			Pop3Command pc = null;
+
+			for (int i = 0; i < count; i++) {
+				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", startIndex + i + 1);
+				commands[i] = pc;
+			}
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			for (int i = 0; i < commands.Length; i++) {
+				if (commands[i].Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (commands[i]);
+			}
+		}
+
+		/// <summary>
 		/// Mark all messages for deletion.
 		/// </summary>
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -2209,32 +2356,8 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void DeleteAllMessages (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckDisposed ();
-			CheckConnected ();
-
-			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
-				for (int i = 0; i < total; i++)
-					SendCommand (cancellationToken, "DELE {0}", i + 1);
-
-				return;
-			}
-
-			var commands = new Pop3Command[total];
-			Pop3Command pc = null;
-
-			for (int i = 0; i < total; i++) {
-				pc = engine.QueueCommand (cancellationToken, null, "DELE {0}", i + 1);
-				commands[i] = pc;
-			}
-
-			while (engine.Iterate () < pc.Id) {
-				// continue processing commands
-			}
-
-			for (int i = 0; i < commands.Length; i++) {
-				if (commands[i].Status != Pop3CommandStatus.Ok)
-					throw CreatePop3Exception (commands[i]);
-			}
+			if (total > 0)
+				DeleteMessages (0, total, cancellationToken);
 		}
 
 		/// <summary>
@@ -2243,7 +2366,7 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">

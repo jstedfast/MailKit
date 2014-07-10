@@ -882,6 +882,87 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the headers of the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers of the messages within the specified range.
+		/// </remarks>
+		/// <returns>The headers of the messages within the specified range.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the headers of the messages within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the headers of the messages within the specified range.
+		/// </remarks>
+		/// <returns>The headers of the messages within the specified range.</returns>
+		/// <param name="startIndex">The index of the first message to get.</param>
+		/// <param name="count">The number of messages to get.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetMessageHeaders (startIndex, count, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
 		/// Get the message with the specified UID.
 		/// </summary>
 		/// <remarks>
@@ -1329,7 +1410,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1371,7 +1452,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uid">The UID of the message.</param>
@@ -1424,7 +1505,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1460,7 +1541,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="index">The index of the message.</param>
@@ -1504,7 +1585,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1548,7 +1629,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The UIDs of the messages.</param>
@@ -1606,7 +1687,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1647,7 +1728,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Messages marked for deletion are not actually deleted until the session
 		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -1692,6 +1773,90 @@ namespace MailKit {
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					DeleteMessages (indexes, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Mark the specified range of messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
+		/// <param name="count">The number of messages to mark for deletion.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously mark the specified range of messages for deletion.
+		/// </summary>
+		/// <remarks>
+		/// Messages marked for deletion are not actually deleted until the session
+		/// is cleanly disconnected
+		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
+		/// <param name="count">The number of messages to mark for deletion.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					DeleteMessages (startIndex, count, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
