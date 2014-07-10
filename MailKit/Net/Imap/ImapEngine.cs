@@ -1335,29 +1335,19 @@ namespace MailKit.Net.Imap {
 				case "STATUS":
 					UpdateStatus (cancellationToken);
 					break;
-				case "NO": case "BAD":
-					// our command got rejected...
-					result = atom == "NO" ? ImapUntaggedResult.No : ImapUntaggedResult.Bad;
+				case "OK": case "NO": case "BAD":
+					if (atom == "OK")
+						result = ImapUntaggedResult.Ok;
+					else if (atom == "NO")
+						result = ImapUntaggedResult.No;
+					else
+						result = ImapUntaggedResult.Bad;
 
 					token = stream.ReadToken (cancellationToken);
 
 					if (token.Type == ImapTokenType.OpenBracket) {
 						var code = ParseResponseCode (cancellationToken);
 						if (current != null)
-							current.RespCodes.Add (code);
-					} else if (token.Type != ImapTokenType.Eoln) {
-						// throw away any remaining text up until the end of the line
-						ReadLine (cancellationToken);
-					}
-					break;
-				case "OK":
-					result = ImapUntaggedResult.Ok;
-
-					token = stream.ReadToken (cancellationToken);
-
-					if (token.Type == ImapTokenType.OpenBracket) {
-						var code = ParseResponseCode (cancellationToken);
-						if (current != null && code.Type != ImapResponseCodeType.Closed)
 							current.RespCodes.Add (code);
 					} else if (token.Type != ImapTokenType.Eoln) {
 						// throw away any remaining text up until the end of the line
