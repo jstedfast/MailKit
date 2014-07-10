@@ -1755,9 +1755,10 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>If the IMAP server supports the MOVE command, then the MOVE command will be used. Otherwise,
 		/// the messages will first be copied to the destination folder, then marked as \Deleted in the
-		/// originating folder, and finally expunged. Since the server could disconnect at any point between
-		/// those 3 operations, it may be advisable to implement your own logic for moving messages in this
-		/// case in order to better handle spontanious server disconnects and other error conditions.</para>
+		/// originating folder, and finally, if the server supports the UIDPLUS extension, expunged. Since the
+		/// server could disconnect at any point between those 3 operations, it may be advisable to implement
+		/// your own logic for moving messages in this case in order to better handle spontanious server
+		/// disconnects and other error conditions.</para>
 		/// </remarks>
 		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
 		/// <param name="uids">The UIDs of the messages to move.</param>
@@ -1805,14 +1806,15 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				var copied = CopyTo (uids, destination, cancellationToken);
 				AddFlags (uids, MessageFlags.Deleted, true, cancellationToken);
-				Expunge (uids, cancellationToken);
+				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
+					Expunge (uids, cancellationToken);
 				return copied;
 			}
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
-				var copied = CopyTo (uids, destination, cancellationToken);
-				AddFlags (uids, MessageFlags.Deleted, true, cancellationToken);
-				return copied;
+				var indexes = Fetch (uids, MessageSummaryItems.UniqueId, cancellationToken).Select (x => x.Index).ToList ();
+				MoveTo (indexes, destination, cancellationToken);
+				return new UniqueId[0];
 			}
 
 			var set = ImapUtils.FormatUidSet (uids);
