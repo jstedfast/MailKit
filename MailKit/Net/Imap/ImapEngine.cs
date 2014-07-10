@@ -964,15 +964,7 @@ namespace MailKit.Net.Imap {
 			code = ImapResponseCode.Create (GetResponseCodeType (atom));
 
 			switch (code.Type) {
-			case ImapResponseCodeType.Alert:
-				if (token.Type != ImapTokenType.CloseBracket) {
-					Debug.WriteLine ("Expected ']' after 'ALERT' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
-				}
-
-				code.Message = ReadLine (cancellationToken).Trim ();
-
-				return code;
+			case ImapResponseCodeType.Alert: break;
 			case ImapResponseCodeType.BadCharset:
 				if (token.Type == ImapTokenType.OpenParen) {
 					token = stream.ReadToken (cancellationToken);
@@ -996,15 +988,7 @@ namespace MailKit.Net.Imap {
 				UpdateCapabilities (ImapTokenType.CloseBracket, cancellationToken);
 				token = ReadToken (cancellationToken);
 				break;
-			case ImapResponseCodeType.Parse:
-				if (token.Type != ImapTokenType.CloseBracket) {
-					Debug.WriteLine ("Expected ']' after 'PARSE' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
-				}
-
-				code.Message = ReadLine (cancellationToken).Trim ();
-
-				return code;
+			case ImapResponseCodeType.Parse: break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
@@ -1198,8 +1182,7 @@ namespace MailKit.Net.Imap {
 				throw UnexpectedToken (token, false);
 			}
 
-			// ignore any text after the response code
-			ReadLine (cancellationToken);
+			code.Message = ReadLine (cancellationToken).Trim ();
 
 			return code;
 		}
