@@ -123,27 +123,73 @@ namespace MailKit.Net.Imap {
 	class ImapResponseCode
 	{
 		public readonly ImapResponseCodeType Type;
+		public readonly bool IsError;
 		public string Message;
 
-		internal ImapResponseCode (ImapResponseCodeType type)
+		internal ImapResponseCode (ImapResponseCodeType type, bool isError)
 		{
+			IsError = isError;
 			Type = type;
 		}
 
 		public static ImapResponseCode Create (ImapResponseCodeType type)
 		{
 			switch (type) {
-			case ImapResponseCodeType.NewName:        return new NewNameResponseCode (type);
-			case ImapResponseCodeType.PermanentFlags: return new PermanentFlagsResponseCode (type);
-			case ImapResponseCodeType.UidNext:        return new UidNextResponseCode (type);
-			case ImapResponseCodeType.UidValidity:    return new UidValidityResponseCode (type);
-			case ImapResponseCodeType.Unseen:         return new UnseenResponseCode (type);
-			case ImapResponseCodeType.AppendUid:      return new AppendUidResponseCode (type);
-			case ImapResponseCodeType.CopyUid:        return new CopyUidResponseCode (type);
-			case ImapResponseCodeType.BadUrl:         return new BadUrlResponseCode (type);
-			case ImapResponseCodeType.HighestModSeq:  return new HighestModSeqResponseCode (type);
-			case ImapResponseCodeType.Modified:       return new ModifiedResponseCode (type);
-			default:                                  return new ImapResponseCode (type);
+			case ImapResponseCodeType.Alert:                return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.BadCharset:           return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.Capability:           return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.NewName:              return new NewNameResponseCode (type);
+			case ImapResponseCodeType.Parse:                return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.PermanentFlags:       return new PermanentFlagsResponseCode (type);
+			case ImapResponseCodeType.ReadOnly:             return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.ReadWrite:            return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.TryCreate:            return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.UidNext:              return new UidNextResponseCode (type);
+			case ImapResponseCodeType.UidValidity:          return new UidValidityResponseCode (type);
+			case ImapResponseCodeType.Unseen:               return new UnseenResponseCode (type);
+			case ImapResponseCodeType.Referral:             return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.UnknownCte:           return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.AppendUid:            return new AppendUidResponseCode (type);
+			case ImapResponseCodeType.CopyUid:              return new CopyUidResponseCode (type);
+			case ImapResponseCodeType.UidNotSticky:         return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.UrlMech:              return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.BadUrl:               return new BadUrlResponseCode (type);
+			case ImapResponseCodeType.TooBig:               return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.HighestModSeq:        return new HighestModSeqResponseCode (type);
+			case ImapResponseCodeType.Modified:             return new ModifiedResponseCode (type);
+			case ImapResponseCodeType.NoModSeq:             return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.CompressionActive:    return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.Closed:               return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.NotSaved:             return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.BadComparator:        return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.Annotate:             return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.Annotations:          return new ImapResponseCode (type, false);
+			case ImapResponseCodeType.MaxConvertMessages:   return new MaxConvertResponseCode (type);
+			case ImapResponseCodeType.MaxConvertParts:      return new MaxConvertResponseCode (type);
+			case ImapResponseCodeType.TempFail:             return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.NoUpdate:             return new NoUpdateResponseCode (type);
+			case ImapResponseCodeType.Metadata:             return new ImapResponseCode (type, false); // FIXME:
+			case ImapResponseCodeType.NotificationOverflow: return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.BadEvent:             return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.UndefinedFilter:      return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.Unavailable:          return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.AuthenticationFailed: return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.AuthorizationFailed:  return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.Expired:              return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.PrivacyRequired:      return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.ContactAdmin:         return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.NoPerm:               return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.InUse:                return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.ExpungeIssued:        return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.Corruption:           return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.ServerBug:            return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.ClientBug:            return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.CanNot:               return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.Limit:                return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.OverQuota:            return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.AlreadyExists:        return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.NonExistent:          return new ImapResponseCode (type, true);
+			default:                                        return new ImapResponseCode (type, true);
 			}
 		}
 	}
@@ -153,7 +199,7 @@ namespace MailKit.Net.Imap {
 		public string OldName;
 		public string NewName;
 
-		internal NewNameResponseCode (ImapResponseCodeType type) : base (type)
+		internal NewNameResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
 		}
 	}
@@ -162,7 +208,7 @@ namespace MailKit.Net.Imap {
 	{
 		public MessageFlags Flags;
 
-		internal PermanentFlagsResponseCode (ImapResponseCodeType type) : base (type)
+		internal PermanentFlagsResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
 		}
 	}
@@ -171,7 +217,7 @@ namespace MailKit.Net.Imap {
 	{
 		public UniqueId Uid;
 
-		internal UidNextResponseCode (ImapResponseCodeType type) : base (type)
+		internal UidNextResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
 		}
 	}
@@ -180,7 +226,7 @@ namespace MailKit.Net.Imap {
 	{
 		public UniqueId UidValidity;
 
-		internal UidValidityResponseCode (ImapResponseCodeType type) : base (type)
+		internal UidValidityResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
 		}
 	}
@@ -189,7 +235,7 @@ namespace MailKit.Net.Imap {
 	{
 		public int Index;
 
-		internal UnseenResponseCode (ImapResponseCodeType type) : base (type)
+		internal UnseenResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
 		}
 	}
@@ -216,7 +262,7 @@ namespace MailKit.Net.Imap {
 	{
 		public string BadUrl;
 
-		internal BadUrlResponseCode (ImapResponseCodeType type) : base (type)
+		internal BadUrlResponseCode (ImapResponseCodeType type) : base (type, true)
 		{
 		}
 	}
@@ -225,7 +271,7 @@ namespace MailKit.Net.Imap {
 	{
 		public ulong HighestModSeq;
 
-		internal HighestModSeqResponseCode (ImapResponseCodeType type) : base (type)
+		internal HighestModSeqResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
 		}
 	}
@@ -234,7 +280,25 @@ namespace MailKit.Net.Imap {
 	{
 		public IList<UniqueId> UidSet;
 
-		internal ModifiedResponseCode (ImapResponseCodeType type) : base (type)
+		internal ModifiedResponseCode (ImapResponseCodeType type) : base (type, false)
+		{
+		}
+	}
+
+	class MaxConvertResponseCode : ImapResponseCode
+	{
+		public int MaxConvert;
+
+		internal MaxConvertResponseCode (ImapResponseCodeType type) : base (type, true)
+		{
+		}
+	}
+
+	class NoUpdateResponseCode : ImapResponseCode
+	{
+		public string Tag;
+
+		internal NoUpdateResponseCode (ImapResponseCodeType type) : base (type, true)
 		{
 		}
 	}

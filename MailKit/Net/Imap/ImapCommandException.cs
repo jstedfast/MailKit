@@ -68,10 +68,21 @@ namespace MailKit.Net.Imap {
 		internal static ImapCommandException Create (string command, ImapCommand ic)
 		{
 			var result = ic.Result.ToString ().ToUpperInvariant ();
-			string message;
+			string message, reason = null;
 
-			if (!string.IsNullOrEmpty (ic.ResultText))
-				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response: {2}", command, result, ic.ResultText);
+			if (string.IsNullOrEmpty (ic.ResultText)) {
+				for (int i = 0; i < ic.RespCodes.Count; i++) {
+					if (ic.RespCodes[i].IsError) {
+						reason = ic.RespCodes[i].Message;
+						break;
+					}
+				}
+			} else {
+				reason = ic.ResultText;
+			}
+
+			if (!string.IsNullOrEmpty (reason))
+				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response: {2}", command, result, reason);
 			else
 				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response.", command, result);
 

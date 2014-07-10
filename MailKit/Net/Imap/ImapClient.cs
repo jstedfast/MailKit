@@ -282,6 +282,20 @@ namespace MailKit.Net.Imap {
 			get { return engine.IsConnected; }
 		}
 
+		static AuthenticationException CreateAuthenticationException (ImapCommand ic)
+		{
+			if (string.IsNullOrEmpty (ic.ResultText)) {
+				for (int i = 0; i < ic.RespCodes.Count; i++) {
+					if (ic.RespCodes[i].IsError)
+						return new AuthenticationException (ic.RespCodes[i].Message);
+				}
+
+				return new AuthenticationException ();
+			}
+
+			return new AuthenticationException (ic.ResultText);
+		}
+
 		/// <summary>
 		/// Authenticate using the supplied credentials.
 		/// </summary>
@@ -339,7 +353,7 @@ namespace MailKit.Net.Imap {
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var uri = new Uri ("imap://" + host);
 			NetworkCredential cred;
-			ImapCommand ic;
+			ImapCommand ic = null;
 
 			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
@@ -394,8 +408,12 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0)
-				throw new AuthenticationException ();
+			if ((Capabilities & ImapCapabilities.LoginDisabled) != 0) {
+				if (ic == null)
+					throw new AuthenticationException ("The LOGIN command is disabled.");
+
+				throw CreateAuthenticationException (ic);
+			}
 
 			// fall back to the classic LOGIN command...
 			cred = credentials.GetCredential (uri, "DEFAULT");
@@ -405,7 +423,7 @@ namespace MailKit.Net.Imap {
 			engine.Wait (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
-				throw new AuthenticationException ();
+				throw CreateAuthenticationException (ic);
 
 			engine.State = ImapEngineState.Authenticated;
 

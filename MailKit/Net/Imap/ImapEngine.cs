@@ -964,7 +964,6 @@ namespace MailKit.Net.Imap {
 			code = ImapResponseCode.Create (GetResponseCodeType (atom));
 
 			switch (code.Type) {
-			case ImapResponseCodeType.Alert: break;
 			case ImapResponseCodeType.BadCharset:
 				if (token.Type == ImapTokenType.OpenParen) {
 					token = stream.ReadToken (cancellationToken);
@@ -988,7 +987,6 @@ namespace MailKit.Net.Imap {
 				UpdateCapabilities (ImapTokenType.CloseBracket, cancellationToken);
 				token = ReadToken (cancellationToken);
 				break;
-			case ImapResponseCodeType.Parse: break;
 			case ImapResponseCodeType.PermanentFlags:
 				var perm = (PermanentFlagsResponseCode) code;
 
@@ -996,9 +994,6 @@ namespace MailKit.Net.Imap {
 				perm.Flags = ImapUtils.ParseFlagsList (this, cancellationToken);
 				token = stream.ReadToken (cancellationToken);
 				break;
-			case ImapResponseCodeType.ReadOnly: break;
-			case ImapResponseCodeType.ReadWrite: break;
-			case ImapResponseCodeType.TryCreate: break;
 			case ImapResponseCodeType.UidNext:
 				var next = (UidNextResponseCode) code;
 
@@ -1110,7 +1105,6 @@ namespace MailKit.Net.Imap {
 
 				token = stream.ReadToken (cancellationToken);
 				break;
-			case ImapResponseCodeType.UidNotSticky: break;
 			case ImapResponseCodeType.BadUrl:
 				var badurl = (BadUrlResponseCode) code;
 
@@ -1121,7 +1115,6 @@ namespace MailKit.Net.Imap {
 
 				badurl.BadUrl = (string) token.Value;
 				break;
-			case ImapResponseCodeType.TooBig: break;
 			case ImapResponseCodeType.HighestModSeq:
 				var highest = (HighestModSeqResponseCode) code;
 
@@ -1138,32 +1131,35 @@ namespace MailKit.Net.Imap {
 				var modified = (ModifiedResponseCode) code;
 
 				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out modified.UidSet)) {
-					Debug.WriteLine ("Expected uid-set as first argument to 'MODIFIED' RESP-CODE, but got: {0}", token);
+					Debug.WriteLine ("Expected uid-set argument to 'MODIFIED' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
 				token = stream.ReadToken (cancellationToken);
 				break;
-			case ImapResponseCodeType.NoModSeq: break;
-			case ImapResponseCodeType.CompressionActive: break;
-			case ImapResponseCodeType.Closed: break;
-			case ImapResponseCodeType.Unavailable: break;
-			case ImapResponseCodeType.AuthenticationFailed: break;
-			case ImapResponseCodeType.AuthorizationFailed: break;
-			case ImapResponseCodeType.Expired: break;
-			case ImapResponseCodeType.PrivacyRequired: break;
-			case ImapResponseCodeType.ContactAdmin: break;
-			case ImapResponseCodeType.NoPerm: break;
-			case ImapResponseCodeType.InUse: break;
-			case ImapResponseCodeType.ExpungeIssued: break;
-			case ImapResponseCodeType.Corruption: break;
-			case ImapResponseCodeType.ServerBug: break;
-			case ImapResponseCodeType.ClientBug: break;
-			case ImapResponseCodeType.CanNot: break;
-			case ImapResponseCodeType.Limit: break;
-			case ImapResponseCodeType.OverQuota: break;
-			case ImapResponseCodeType.AlreadyExists: break;
-			case ImapResponseCodeType.NonExistent: break;
+			case ImapResponseCodeType.MaxConvertMessages:
+			case ImapResponseCodeType.MaxConvertParts:
+				var maxConvert = (MaxConvertResponseCode) code;
+
+				if (token.Type != ImapTokenType.Atom || !int.TryParse ((string) token.Value, out maxConvert.MaxConvert)) {
+					Debug.WriteLine ("Expected number argument to '{0}' RESP-CODE, but got: {1}", code.Type.ToString ().ToUpperInvariant (), token);
+					throw UnexpectedToken (token, false);
+				}
+
+				token = stream.ReadToken (cancellationToken);
+				break;
+			case ImapResponseCodeType.NoUpdate:
+				var noUpdate = (NoUpdateResponseCode) code;
+
+				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
+					Debug.WriteLine ("Expected string argument to 'NOUPDATE' RESP-CODE, but got: {0}", token);
+					throw UnexpectedToken (token, false);
+				}
+
+				noUpdate.Tag = (string) token.Value;
+
+				token = stream.ReadToken (cancellationToken);
+				break;
 			default:
 				if (code.Type == ImapResponseCodeType.Unknown)
 					Debug.WriteLine (string.Format ("Unknown RESP-CODE encountered: {0}", atom));
