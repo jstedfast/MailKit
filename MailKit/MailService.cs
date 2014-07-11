@@ -665,10 +665,10 @@ namespace MailKit {
 		/// Occurs when the client has been successfully authenticated.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="Disconnected"/> event is raised whenever the client
+		/// The <see cref="Authenticated"/> event is raised whenever the client
 		/// has been authenticated.
 		/// </remarks>
-		public event EventHandler<EventArgs> Authenticated;
+		public event EventHandler<AuthenticatedEventArgs> Authenticated;
 
 		/// <summary>
 		/// Raise the authenticated event.
@@ -676,12 +676,13 @@ namespace MailKit {
 		/// <remarks>
 		/// Raises the authenticated event.
 		/// </remarks>
-		protected virtual void OnAuthenticated ()
+		/// <param name="message">The notification sent by the server when the client successfully authenticates.</param>
+		protected virtual void OnAuthenticated (string message)
 		{
 			var handler = Authenticated;
 
 			if (handler != null)
-				handler (this, EventArgs.Empty);
+				handler (this, new AuthenticatedEventArgs (message));
 		}
 
 		/// <summary>

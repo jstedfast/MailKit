@@ -1,9 +1,9 @@
 ﻿//
-// AlertEventArgs.cs
+// AuthenticatedEventArgs.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2014 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,34 +28,33 @@ using System;
 
 namespace MailKit {
 	/// <summary>
-	/// Alert event arguments.
+	/// Authenticated event arguments.
 	/// </summary>
 	/// <remarks>
-	/// Some <see cref="IMailStore"/> implementations, such as
-	/// <see cref="MailKit.Net.Imap.ImapClient"/>, will emit Alert
-	/// events when they receive alert messages from the server.
+	/// Some servers, such as GMail IMAP, will send some free-form text in
+	/// the response to a successful login.
 	/// </remarks>
-	public class AlertEventArgs : EventArgs
+	public class AuthenticatedEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.AlertEventArgs"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.AuthenticatedEventArgs"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="AlertEventArgs"/>.
+		/// Creates a new <see cref="AuthenticatedEventArgs"/>.
 		/// </remarks>
-		/// <param name="message">The alert message.</param>
-		public AlertEventArgs (string message)
+		/// <param name="message">The free-form text.</param>
+		public AuthenticatedEventArgs (string message)
 		{
 			Message = message;
 		}
 
 		/// <summary>
-		/// Gets the alert message.
+		/// Get the free-form text sent by the server.
 		/// </summary>
 		/// <remarks>
-		/// The alert message will be the exact message received from the server.
+		/// Gets the free-form text sent by the server.
 		/// </remarks>
-		/// <value>The alert message.</value>
+		/// <value>The free-form text sent by the server.</value>
 		public string Message {
 			get; private set;
 		}

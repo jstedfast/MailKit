@@ -404,7 +404,7 @@ namespace MailKit.Net.Imap {
 
 				engine.QueryNamespaces (cancellationToken);
 				engine.QuerySpecialFolders (cancellationToken);
-				OnAuthenticated ();
+				OnAuthenticated (ic.ResultText);
 				return;
 			}
 
@@ -434,7 +434,7 @@ namespace MailKit.Net.Imap {
 
 			engine.QueryNamespaces (cancellationToken);
 			engine.QuerySpecialFolders (cancellationToken);
-			OnAuthenticated ();
+			OnAuthenticated (ic.ResultText);
 		}
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)

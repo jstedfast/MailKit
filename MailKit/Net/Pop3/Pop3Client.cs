@@ -253,9 +253,14 @@ namespace MailKit.Net.Pop3 {
 				throw CreatePop3Exception (pc);
 		}
 
-		void SendCommand (CancellationToken token, string format, params object[] args)
+		string SendCommand (CancellationToken token, string format, params object[] args)
 		{
-			var pc = engine.QueueCommand (token, null, format, args);
+			string okText = string.Empty;
+
+			var pc = engine.QueueCommand (token, (pop3, cmd, text) => {
+				if (cmd.Status == Pop3CommandStatus.Ok)
+					okText = text;
+			}, format, args);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -263,6 +268,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (pc.Status != Pop3CommandStatus.Ok)
 				throw CreatePop3Exception (pc);
+
+			return okText;
 		}
 
 		#region IMailService implementation
@@ -387,6 +394,7 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 
 			var uri = new Uri ("pop://" + host);
+			string authMessage = string.Empty;
 			NetworkCredential cred;
 			string challenge;
 			Pop3Command pc;
@@ -397,15 +405,14 @@ namespace MailKit.Net.Pop3 {
 				var md5sum = new StringBuilder ();
 				byte[] digest;
 
-				using (var md5 = new MD5 ()) {
+				using (var md5 = new MD5 ())
 					digest = md5.ComputeHash (Encoding.UTF8.GetBytes (challenge));
-				}
 
 				for (int i = 0; i < digest.Length; i++)
 					md5sum.Append (digest[i].ToString ("x2"));
 
 				try {
-					SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
+					authMessage = SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
 					engine.State = Pop3EngineState.Transaction;
 				} catch (Pop3CommandException) {
 				}
@@ -413,7 +420,7 @@ namespace MailKit.Net.Pop3 {
 				if (engine.State == Pop3EngineState.Transaction) {
 					engine.QueryCapabilities (cancellationToken);
 					ProbeCapabilities (cancellationToken);
-					OnAuthenticated ();
+					OnAuthenticated (authMessage);
 					return;
 				}
 			}
@@ -428,7 +435,12 @@ namespace MailKit.Net.Pop3 {
 					cancellationToken.ThrowIfCancellationRequested ();
 
 					pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
-						while (!sasl.IsAuthenticated && cmd.Status == Pop3CommandStatus.Continue) {
+						if (cmd.Status == Pop3CommandStatus.Ok) {
+							authMessage = text;
+							return;
+						}
+
+						while (!sasl.IsAuthenticated) {
 							challenge = sasl.Challenge (text);
 
 							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
@@ -459,7 +471,7 @@ namespace MailKit.Net.Pop3 {
 					engine.State = Pop3EngineState.Transaction;
 					engine.QueryCapabilities (cancellationToken);
 					ProbeCapabilities (cancellationToken);
-					OnAuthenticated ();
+					OnAuthenticated (authMessage);
 					return;
 				}
 			}
@@ -469,7 +481,7 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				SendCommand (cancellationToken, "USER {0}", cred.UserName);
-				SendCommand (cancellationToken, "PASS {0}", cred.Password);
+				authMessage = SendCommand (cancellationToken, "PASS {0}", cred.Password);
 			} catch (Pop3CommandException) {
 				throw new AuthenticationException ();
 			}
@@ -477,7 +489,7 @@ namespace MailKit.Net.Pop3 {
 			engine.State = Pop3EngineState.Transaction;
 			engine.QueryCapabilities (cancellationToken);
 			ProbeCapabilities (cancellationToken);
-			OnAuthenticated ();
+			OnAuthenticated (authMessage);
 		}
 
 		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)

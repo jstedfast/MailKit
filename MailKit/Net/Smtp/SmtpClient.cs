@@ -629,7 +629,7 @@ namespace MailKit.Net.Smtp {
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
 					Ehlo (cancellationToken);
 					authenticated = true;
-					OnAuthenticated ();
+					OnAuthenticated (response.Response);
 					return;
 				}
 			}

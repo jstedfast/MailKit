@@ -274,9 +274,9 @@ namespace MailKit {
 		/// Occurs when the client has been successfully authenticated.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="Disconnected"/> event is raised whenever the client
+		/// The <see cref="Authenticated"/> event is raised whenever the client
 		/// has been authenticated.
 		/// </remarks>
-		event EventHandler<EventArgs> Authenticated;
+		event EventHandler<AuthenticatedEventArgs> Authenticated;
 	}
 }

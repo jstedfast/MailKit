@@ -181,6 +181,7 @@
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
     <Compile Include="AlertEventArgs.cs" />
+    <Compile Include="AuthenticatedEventArgs.cs" />
     <Compile Include="BodyPart.cs" />
     <Compile Include="BodyPartBasic.cs" />
     <Compile Include="BodyPartCollection.cs" />
