@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using Buffer = System.Buffer;
 
 #if NETFX_CORE
 using Windows.Storage.Streams;
