@@ -25,8 +25,11 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+
+using MimeKit.Utils;
 
 namespace MailKit {
 	/// <summary>
@@ -124,8 +127,12 @@ namespace MailKit {
 
 				if (uri.IsAbsoluteUri) {
 					if (cid) {
-						if (bodyPart.ContentId == uri.AbsolutePath)
-							return index;
+						if (!string.IsNullOrEmpty (bodyPart.ContentId)) {
+							var id = MimeUtils.EnumerateReferences (bodyPart.ContentId).FirstOrDefault ();
+
+							if (id == uri.AbsolutePath)
+								return index;
+						}
 					} else if (bodyPart.ContentLocation != null) {
 						Uri absolute;
 
