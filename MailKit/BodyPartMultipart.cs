@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Text;
 
 using MimeKit;
@@ -82,7 +83,7 @@ namespace MailKit {
 		/// Gets the Content-Location of the body part, if available.
 		/// </remarks>
 		/// <value>The content location.</value>
-		public string ContentLocation {
+		public Uri ContentLocation {
 			get; internal set;
 		}
 

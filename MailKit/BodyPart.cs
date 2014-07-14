@@ -87,6 +87,14 @@ namespace MailKit {
 				builder.Append ("NIL");
 		}
 
+		internal static void Encode (StringBuilder builder, Uri location)
+		{
+			if (location != null)
+				builder.Append (MimeUtils.Quote (location.ToString ()));
+			else
+				builder.Append ("NIL");
+		}
+
 		internal static void Encode (StringBuilder builder, string[] values)
 		{
 			if (values == null || values.Length == 0) {
@@ -324,6 +332,25 @@ namespace MailKit {
 			return true;
 		}
 
+		static bool TryParse (string text, ref int index, out Uri uri)
+		{
+			string nstring;
+
+			uri = null;
+
+			if (!TryParse (text, ref index, out nstring))
+				return false;
+
+			if (!string.IsNullOrEmpty (nstring)) {
+				if (Uri.IsWellFormedUriString (nstring, UriKind.Absolute))
+					uri = new Uri (nstring, UriKind.Absolute);
+				else if (Uri.IsWellFormedUriString (nstring, UriKind.Relative))
+					uri = new Uri (nstring, UriKind.Relative);
+			}
+
+			return true;
+		}
+
 		static bool TryParse (string text, ref int index, out IList<Parameter> parameters)
 		{
 			string name, value;
@@ -489,6 +516,7 @@ namespace MailKit {
 			ContentType contentType;
 			string[] array;
 			string nstring;
+			Uri location;
 			uint number;
 
 			part = null;
@@ -536,10 +564,10 @@ namespace MailKit {
 
 				multipart.ContentLanguage = array;
 
-				if (!TryParse (text, ref index, out nstring))
+				if (!TryParse (text, ref index, out location))
 					return false;
 
-				multipart.ContentLocation = nstring;
+				multipart.ContentLocation = location;
 
 				part = multipart;
 			} else {
@@ -594,10 +622,10 @@ namespace MailKit {
 
 				basic.ContentLanguage = array;
 
-				if (!TryParse (text, ref index, out nstring))
+				if (!TryParse (text, ref index, out location))
 					return false;
 
-				basic.ContentLocation = nstring;
+				basic.ContentLocation = location;
 
 				if (message != null) {
 					Envelope envelope;

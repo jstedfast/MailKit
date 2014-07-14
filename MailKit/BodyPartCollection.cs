@@ -92,6 +92,59 @@ namespace MailKit {
 			}
 		}
 
+		/// <summary>
+		/// Gets the index of the body part matching the specified URI.
+		/// </summary>
+		/// <remarks>
+		/// <para>Finds the index of the body part matching the specified URI, if it exists.</para>
+		/// <para>If the URI scheme is <c>"cid"</c>, then matching is performed based on the Content-Id header
+		/// values, otherwise the Content-Location headers are used. If the provided URI is absolute and a child
+		/// part's Content-Location is relative, then then the child part's Content-Location URI will be combined
+		/// with the value of its Content-Base header, if available, otherwise it will be combined with the
+		/// multipart/related part's Content-Base header in order to produce an absolute URI that can be
+		/// compared with the provided absolute URI.</para>
+		/// </remarks>
+		/// <returns>The index of the part matching the specified URI if found; otherwise <c>-1</c>.</returns>
+		/// <param name="uri">The URI of the body part.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uri"/> is <c>null</c>.
+		/// </exception>
+		public int IndexOf (Uri uri)
+		{
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			bool cid = uri.IsAbsoluteUri && uri.Scheme.ToLowerInvariant () == "cid";
+
+			for (int index = 0; index < Count; index++) {
+				var bodyPart = this[index] as BodyPartBasic;
+
+				if (bodyPart == null)
+					continue;
+
+				if (uri.IsAbsoluteUri) {
+					if (cid) {
+						if (bodyPart.ContentId == uri.AbsolutePath)
+							return index;
+					} else if (bodyPart.ContentLocation != null) {
+						Uri absolute;
+
+						if (!bodyPart.ContentLocation.IsAbsoluteUri)
+							continue;
+
+						absolute = bodyPart.ContentLocation;
+
+						if (absolute == uri)
+							return index;
+					}
+				} else if (bodyPart.ContentLocation == uri) {
+					return index;
+				}
+			}
+
+			return -1;
+		}
+
 		#region IEnumerable implementation
 
 		/// <summary>

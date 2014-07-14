@@ -476,7 +476,7 @@ namespace MailKit.Net.Imap {
 			return disposition;
 		}
 
-		static string[] ParseContentLocation (ImapEngine engine, CancellationToken cancellationToken)
+		static string[] ParseContentLanguage (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			var languages = new List<string> ();
@@ -513,6 +513,22 @@ namespace MailKit.Net.Imap {
 			}
 
 			return languages.ToArray ();
+		}
+
+		static Uri ParseContentLocation (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var location = ReadNStringToken (engine, false, cancellationToken);
+
+			if (string.IsNullOrWhiteSpace (location))
+				return null;
+
+			if (Uri.IsWellFormedUriString (location, UriKind.Absolute))
+				return new Uri (location, UriKind.Absolute);
+
+			if (Uri.IsWellFormedUriString (location, UriKind.Relative))
+				return new Uri (location, UriKind.Relative);
+
+			return null;
 		}
 
 		static void SkipBodyExtensions (ImapEngine engine, CancellationToken cancellationToken)
@@ -589,12 +605,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentLanguage = ParseContentLocation (engine, cancellationToken);
+				body.ContentLanguage = ParseContentLanguage (engine, cancellationToken);
 				token = engine.PeekToken (cancellationToken);
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentLocation = ReadNStringToken (engine, false, cancellationToken);
+				body.ContentLocation = ParseContentLocation (engine, cancellationToken);
 				token = engine.PeekToken (cancellationToken);
 			}
 
@@ -681,12 +697,12 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentLanguage = ParseContentLocation (engine, cancellationToken);
+				body.ContentLanguage = ParseContentLanguage (engine, cancellationToken);
 				token = engine.PeekToken (cancellationToken);
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {
-				body.ContentLocation = ReadNStringToken (engine, false, cancellationToken);
+				body.ContentLocation = ParseContentLocation (engine, cancellationToken);
 				token = engine.PeekToken (cancellationToken);
 			}
 
