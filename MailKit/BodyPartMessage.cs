@@ -35,7 +35,13 @@ namespace MailKit {
 	/// </remarks>
 	public class BodyPartMessage : BodyPartBasic
 	{
-		internal BodyPartMessage ()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartMessage"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartMessage"/>.
+		/// </remarks>
+		public BodyPartMessage ()
 		{
 		}
 
@@ -47,7 +53,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The envelope.</value>
 		public Envelope Envelope {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -58,7 +64,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The body structure.</value>
 		public BodyPart Body {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -69,7 +75,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The number of lines.</value>
 		public uint Lines {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>

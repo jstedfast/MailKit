@@ -38,7 +38,13 @@ namespace MailKit {
 	/// </remarks>
 	public class BodyPartMultipart : BodyPart
 	{
-		internal BodyPartMultipart ()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartMultipart"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartMultipart"/>.
+		/// </remarks>
+		public BodyPartMultipart ()
 		{
 			BodyParts = new BodyPartCollection ();
 		}
@@ -62,7 +68,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content disposition.</value>
 		public ContentDisposition ContentDisposition {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -73,7 +79,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content language.</value>
 		public string[] ContentLanguage {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -84,7 +90,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content location.</value>
 		public Uri ContentLocation {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>

@@ -39,7 +39,13 @@ namespace MailKit {
 	/// </remarks>
 	public class BodyPartBasic : BodyPart
 	{
-		internal BodyPartBasic ()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartBasic"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartBasic"/>.
+		/// </remarks>
+		public BodyPartBasic ()
 		{
 		}
 
@@ -51,7 +57,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content identifier.</value>
 		public string ContentId {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -62,7 +68,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content description.</value>
 		public string ContentDescription {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -73,7 +79,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content transfer encoding.</value>
 		public string ContentTransferEncoding {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -84,7 +90,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The number of octets.</value>
 		public uint Octets {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -95,7 +101,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content md5.</value>
 		public string ContentMd5 {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -106,7 +112,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content disposition.</value>
 		public ContentDisposition ContentDisposition {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -117,7 +123,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content language.</value>
 		public string[] ContentLanguage {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -128,7 +134,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content location.</value>
 		public Uri ContentLocation {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>

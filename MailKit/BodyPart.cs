@@ -60,7 +60,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The content type.</value>
 		public ContentType ContentType {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -71,7 +71,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The part specifier.</value>
 		public string PartSpecifier {
-			get; internal set;
+			get; set;
 		}
 
 		internal static void Encode (StringBuilder builder, uint value)

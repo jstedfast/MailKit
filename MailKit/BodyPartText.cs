@@ -35,7 +35,13 @@ namespace MailKit {
 	/// </remarks>
 	public class BodyPartText : BodyPartBasic
 	{
-		internal BodyPartText ()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.BodyPartText"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="BodyPartText"/>.
+		/// </remarks>
+		public BodyPartText ()
 		{
 		}
 
@@ -47,7 +53,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The number of lines.</value>
 		public uint Lines {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
