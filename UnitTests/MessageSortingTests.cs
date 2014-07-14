@@ -49,9 +49,8 @@ namespace UnitTests {
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "aaaa";
-			summary.Envelope.From = InternetAddressList.Parse ("Jeffrey Stedfast <jeff@xamarin.com>");
-			summary.Envelope.To = InternetAddressList.Parse ("Jeffrey Stedfast <jeff@xamarin.com>");
-			summary.Envelope.Cc = new InternetAddressList ();
+			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
+			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
 			summary.MessageSize = 520;
 			messages.Add (summary);
 
@@ -59,9 +58,8 @@ namespace UnitTests {
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "bbbb";
-			summary.Envelope.From = InternetAddressList.Parse ("Jeffrey Stedfast <jeff@xamarin.com>");
-			summary.Envelope.To = InternetAddressList.Parse ("Jeffrey Stedfast <jeff@xamarin.com>");
-			summary.Envelope.Cc = new InternetAddressList ();
+			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
+			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
 			summary.MessageSize = 265;
 			messages.Add (summary);
 
@@ -69,9 +67,8 @@ namespace UnitTests {
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "cccc";
-			summary.Envelope.From = InternetAddressList.Parse ("Jeffrey Stedfast <jeff@xamarin.com>");
-			summary.Envelope.To = InternetAddressList.Parse ("Jeffrey Stedfast <jeff@xamarin.com>");
-			summary.Envelope.Cc = new InternetAddressList ();
+			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
+			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
 			summary.MessageSize = 520;
 			messages.Add (summary);
 

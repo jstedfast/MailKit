@@ -44,8 +44,20 @@ namespace MailKit {
 	/// </remarks>
 	public class Envelope
 	{
-		internal Envelope ()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Envelope"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Envelope"/>.
+		/// </remarks>
+		public Envelope ()
 		{
+			From = new InternetAddressList ();
+			Sender = new InternetAddressList ();
+			ReplyTo = new InternetAddressList ();
+			To = new InternetAddressList ();
+			Cc = new InternetAddressList ();
+			Bcc = new InternetAddressList ();
 		}
 
 		/// <summary>
@@ -56,7 +68,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The address(es) that the message is from.</value>
 		public InternetAddressList From {
-			get; internal set;
+			get; private set;
 		}
 
 		/// <summary>
@@ -68,7 +80,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The actual sender(s) of the message.</value>
 		public InternetAddressList Sender {
-			get; internal set;
+			get; private set;
 		}
 
 		/// <summary>
@@ -80,7 +92,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The address(es) that replies should be sent to.</value>
 		public InternetAddressList ReplyTo {
-			get; internal set;
+			get; private set;
 		}
 
 		/// <summary>
@@ -91,7 +103,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The address(es) that the message was sent to.</value>
 		public InternetAddressList To {
-			get; internal set;
+			get; private set;
 		}
 
 		/// <summary>
@@ -102,7 +114,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The address(es) that the message was carbon-copied to.</value>
 		public InternetAddressList Cc {
-			get; internal set;
+			get; private set;
 		}
 
 		/// <summary>
@@ -113,7 +125,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The address(es) that the message was carbon-copied to.</value>
 		public InternetAddressList Bcc {
-			get; internal set;
+			get; private set;
 		}
 
 		/// <summary>
@@ -124,7 +136,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The Message-Id that the message is replying to.</value>
 		public string InReplyTo {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -135,7 +147,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The date the message was sent.</value>
 		public DateTimeOffset? Date {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -146,7 +158,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The message identifier.</value>
 		public string MessageId {
-			get; internal set;
+			get; set;
 		}
 
 		/// <summary>
@@ -157,7 +169,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The subject.</value>
 		public string Subject {
-			get; internal set;
+			get; set;
 		}
 
 		static void EncodeMailbox (StringBuilder builder, MailboxAddress mailbox)

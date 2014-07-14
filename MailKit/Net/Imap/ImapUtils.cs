@@ -766,13 +766,12 @@ namespace MailKit.Net.Imap {
 				list.Add (new MailboxAddress (name, address));
 		}
 
-		static InternetAddressList ParseEnvelopeAddressList (ImapEngine engine, CancellationToken cancellationToken)
+		static void ParseEnvelopeAddressList (InternetAddressList list, ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
-			var list = new InternetAddressList ();
 
 			if (token.Type == ImapTokenType.Nil)
-				return list;
+				return;
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
@@ -788,8 +787,6 @@ namespace MailKit.Net.Imap {
 
 				AddEnvelopeAddress (list, engine, cancellationToken);
 			} while (true);
-
-			return list;
 		}
 
 		static DateTimeOffset? ParseEnvelopeDate (ImapEngine engine, CancellationToken cancellationToken)
@@ -835,12 +832,12 @@ namespace MailKit.Net.Imap {
 			var envelope = new Envelope ();
 			envelope.Date = ParseEnvelopeDate (engine, cancellationToken);
 			envelope.Subject = ReadNStringToken (engine, true, cancellationToken);
-			envelope.From = ParseEnvelopeAddressList (engine, cancellationToken);
-			envelope.Sender = ParseEnvelopeAddressList (engine, cancellationToken);
-			envelope.ReplyTo = ParseEnvelopeAddressList (engine, cancellationToken);
-			envelope.To = ParseEnvelopeAddressList (engine, cancellationToken);
-			envelope.Cc = ParseEnvelopeAddressList (engine, cancellationToken);
-			envelope.Bcc = ParseEnvelopeAddressList (engine, cancellationToken);
+			ParseEnvelopeAddressList (envelope.From, engine, cancellationToken);
+			ParseEnvelopeAddressList (envelope.Sender, engine, cancellationToken);
+			ParseEnvelopeAddressList (envelope.ReplyTo, engine, cancellationToken);
+			ParseEnvelopeAddressList (envelope.To, engine, cancellationToken);
+			ParseEnvelopeAddressList (envelope.Cc, engine, cancellationToken);
+			ParseEnvelopeAddressList (envelope.Bcc, engine, cancellationToken);
 
 			if ((nstring = ReadNStringToken (engine, false, cancellationToken)) != null)
 				envelope.InReplyTo = MimeUtils.EnumerateReferences (nstring).FirstOrDefault ();
