@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.23.0.0</version>
+        <version>0.24.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -14,22 +14,26 @@
 
 Features include:
 * SASL Authentication via NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
-* A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME and PIPELINING
-* A fully-cancellable Pop3Client with support for STLS, UIDL, and APOP.
+* A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME and PIPELINING.
+* A fully-cancellable Pop3Client with support for STLS, UIDL, APOP, and PIPELINING.
 * A fully-cancellable ImapClient with support for QUOTA, LITERAL+, IDLE, NAMESPACE, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, SEARCH=FUZZY, XLIST, and X-GM-EXT1.
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
-* S/MIME and PGP support via MimeKit
-* Microsoft TNEF support via MimeKit</description>
+* Asynchronous versions of all methods that hit the network.
+* S/MIME and PGP support via MimeKit.
+* Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Added support for adding, removing, and setting GMail labels.
-* Added support for getting and setting quota information for folders.
-* Added support for fuzzy searches (IMAP SEARCH=FUZZY extension).
+        <releaseNotes>* Modified BodyPart*.ContentLocation to be a Uri and added BodyPartCollection.IndexOf(Uri).
+* Implemented support for UID COPY and UID MOVE for IMAP servers that don't support UIDPLUS.
+* Modified Pop3Client APIs that returned T[] to return an IList&lt;T&gt; instead for consistency with the IMAP APIs.
+* Implemented PIPELINING support for Pop3Client.
+* Added a ModSeq property to MessageLabelsChangedEventArgs.
+* Improved ImapCommandExceptions thrown by ImapFolder and ImapClient to include the server error text (if available).
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.41.0.0" />
+            <dependency id="MimeKit" version="0.42.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

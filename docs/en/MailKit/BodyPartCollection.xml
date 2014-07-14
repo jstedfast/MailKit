@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartCollection extends System.Object implements class System.Collections.Generic.IEnumerable`1&lt;class MailKit.BodyPart&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.23.0.0</AssemblyVersion>
+    <AssemblyVersion>0.24.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -27,7 +27,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -47,7 +47,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MailKit.BodyPart&gt; GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;MailKit.BodyPart&gt;</ReturnType>
@@ -63,12 +63,45 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="IndexOf">
+      <MemberSignature Language="C#" Value="public int IndexOf (Uri uri);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(class System.Uri uri) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The URI of the body part.</param>
+        <summary>
+            Gets the index of the body part matching the specified URI.
+            </summary>
+        <returns>The index of the part matching the specified URI if found; otherwise <c>-1</c>.</returns>
+        <remarks>
+          <para>Finds the index of the body part matching the specified URI, if it exists.</para>
+          <para>If the URI scheme is <c>"cid"</c>, then matching is performed based on the Content-Id header
+            values, otherwise the Content-Location headers are used. If the provided URI is absolute and a child
+            part's Content-Location is relative, then then the child part's Content-Location URI will be combined
+            with the value of its Content-Base header, if available, otherwise it will be combined with the
+            multipart/related part's Content-Base header in order to produce an absolute URI that can be
+            compared with the provided absolute URI.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="uri" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public MailKit.BodyPart this[int index] { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPart Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.BodyPart</ReturnType>
@@ -92,7 +125,7 @@
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>

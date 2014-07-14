@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AlertEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.23.0.0</AssemblyVersion>
+    <AssemblyVersion>0.24.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.EventArgs</BaseTypeName>
@@ -20,12 +20,32 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AlertEventArgs (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">The alert message.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.AlertEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.AlertEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Message">
       <MemberSignature Language="C#" Value="public string Message { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string Message" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.23.0.0</AssemblyVersion>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
