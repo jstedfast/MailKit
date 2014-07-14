@@ -1,0 +1,63 @@
+<Type Name="AuthenticatedEventArgs" FullName="MailKit.AuthenticatedEventArgs">
+  <TypeSignature Language="C#" Value="public class AuthenticatedEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AuthenticatedEventArgs extends System.EventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.24.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.EventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Authenticated event arguments.
+            </summary>
+    <remarks>
+            Some servers, such as GMail IMAP, will send some free-form text in
+            the response to a successful login.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AuthenticatedEventArgs (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">The free-form text.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.AuthenticatedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.AuthenticatedEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public string Message { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Message" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the free-form text sent by the server.
+            </summary>
+        <value>The free-form text sent by the server.</value>
+        <remarks>
+            Gets the free-form text sent by the server.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
