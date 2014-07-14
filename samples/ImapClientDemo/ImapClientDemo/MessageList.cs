@@ -143,5 +143,21 @@ namespace ImapClientDemo
 			// proxy back to the main thread
 			Invoke (new EventHandler (CountChanged), sender, e);
 		}
+
+		public event EventHandler<MessageSelectedEventArgs> MessageSelected;
+
+		protected override void OnAfterSelect (TreeViewEventArgs e)
+		{
+			var handler = MessageSelected;
+
+			if (handler != null) {
+				var info = (MessageInfo) e.Node.Tag;
+
+				if (info.Summary.UniqueId.HasValue)
+					handler (this, new MessageSelectedEventArgs (folder, info.Summary.UniqueId.Value, info.Summary.Body));
+			}
+
+			base.OnAfterSelect (e);
+		}
 	}
 }

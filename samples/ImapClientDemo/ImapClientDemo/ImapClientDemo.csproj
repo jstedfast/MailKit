@@ -32,20 +32,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle, Version=1.8.5294.10866, Culture=neutral, PublicKeyToken=eec3120e64a3fcba, processorArchitecture=MSIL">
+    <Reference Include="BouncyCastle, Version=1.8.5307.35058, Culture=neutral, PublicKeyToken=eec3120e64a3fcba, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MimeKit.0.41.0.0\lib\net45\BouncyCastle.dll</HintPath>
+      <HintPath>..\packages\MimeKit.0.42.0.0\lib\net45\BouncyCastle.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="MailKit, Version=0.23.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
+    <Reference Include="MailKit, Version=0.24.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MailKit.0.23.0.0\lib\net45\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.0.24.0.0\lib\net45\MailKit.dll</HintPath>
     </Reference>
-    <Reference Include="MimeKit, Version=0.41.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
+    <Reference Include="MimeKit, Version=0.42.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MimeKit.0.41.0.0\lib\net45\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.0.42.0.0\lib\net45\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,6 +80,7 @@
     <Compile Include="MessageList.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="MessageSelectedEventArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="LoginWindow.resx">

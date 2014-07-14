@@ -187,8 +187,10 @@ namespace ImapClientDemo
 
 		protected override void OnAfterSelect (TreeViewEventArgs e)
 		{
-			if (FolderSelected != null)
-				FolderSelected (this, new FolderSelectedEventArgs ((IMailFolder) e.Node.Tag));
+			var handler = FolderSelected;
+
+			if (handler != null)
+				handler (this, new FolderSelectedEventArgs ((IMailFolder) e.Node.Tag));
 
 			base.OnAfterSelect (e);
 		}

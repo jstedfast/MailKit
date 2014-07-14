@@ -27,10 +27,12 @@
 		/// </summary>
 		private void InitializeComponent ()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.folderPanel = new System.Windows.Forms.Panel();
-			this.messageListPanel = new System.Windows.Forms.Panel();
 			this.folderTreeView = new ImapClientDemo.FolderTreeView();
+			this.messageListPanel = new System.Windows.Forms.Panel();
 			this.messageList = new ImapClientDemo.MessageList();
+			this.webBrowser = new System.Windows.Forms.WebBrowser();
 			this.folderPanel.SuspendLayout();
 			this.messageListPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -43,6 +45,17 @@
 			this.folderPanel.Size = new System.Drawing.Size(200, 487);
 			this.folderPanel.TabIndex = 0;
 			// 
+			// folderTreeView
+			// 
+			this.folderTreeView.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.folderTreeView.ImageIndex = 0;
+			this.folderTreeView.Location = new System.Drawing.Point(0, 0);
+			this.folderTreeView.Name = "folderTreeView";
+			this.folderTreeView.PathSeparator = "/";
+			this.folderTreeView.SelectedImageIndex = 0;
+			this.folderTreeView.Size = new System.Drawing.Size(200, 487);
+			this.folderTreeView.TabIndex = 0;
+			// 
 			// messageListPanel
 			// 
 			this.messageListPanel.Controls.Add(this.messageList);
@@ -50,15 +63,6 @@
 			this.messageListPanel.Name = "messageListPanel";
 			this.messageListPanel.Size = new System.Drawing.Size(328, 487);
 			this.messageListPanel.TabIndex = 1;
-			// 
-			// folderTreeView
-			// 
-			this.folderTreeView.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.folderTreeView.Location = new System.Drawing.Point(0, 0);
-			this.folderTreeView.Name = "folderTreeView";
-			this.folderTreeView.PathSeparator = "/";
-			this.folderTreeView.Size = new System.Drawing.Size(200, 487);
-			this.folderTreeView.TabIndex = 0;
 			// 
 			// messageList
 			// 
@@ -68,11 +72,20 @@
 			this.messageList.Size = new System.Drawing.Size(328, 487);
 			this.messageList.TabIndex = 0;
 			// 
+			// webBrowser
+			// 
+			this.webBrowser.Location = new System.Drawing.Point(540, 0);
+			this.webBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+			this.webBrowser.Name = "webBrowser";
+			this.webBrowser.Size = new System.Drawing.Size(391, 487);
+			this.webBrowser.TabIndex = 2;
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(933, 487);
+			this.Controls.Add(this.webBrowser);
 			this.Controls.Add(this.messageListPanel);
 			this.Controls.Add(this.folderPanel);
 			this.Name = "MainWindow";
@@ -89,6 +102,7 @@
 		private FolderTreeView folderTreeView;
 		private System.Windows.Forms.Panel messageListPanel;
 		private MessageList messageList;
+		private System.Windows.Forms.WebBrowser webBrowser;
 
 	}
 }
