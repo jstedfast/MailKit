@@ -1414,7 +1414,12 @@ namespace MailKit.Net.Imap {
 
 			if (current.CancellationToken.IsCancellationRequested) {
 				queue.RemoveAll (x => x.CancellationToken.IsCancellationRequested);
-				current.CancellationToken.ThrowIfCancellationRequested ();
+
+				try {
+					current.CancellationToken.ThrowIfCancellationRequested ();
+				} finally {
+					current = null;
+				}
 			}
 
 			current.Status = ImapCommandStatus.Active;
