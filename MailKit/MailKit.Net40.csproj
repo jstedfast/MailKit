@@ -134,6 +134,7 @@
     <Compile Include="IMailSpool.cs" />
     <Compile Include="IMailStore.cs" />
     <Compile Include="IMailTransport.cs" />
+    <Compile Include="IMessageSummary.cs" />
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="ISortable.cs" />
     <Compile Include="IThreadable.cs" />

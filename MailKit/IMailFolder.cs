@@ -931,7 +931,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
@@ -943,7 +943,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
@@ -959,7 +959,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
@@ -975,7 +975,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two UIDs, inclusive.
@@ -988,7 +988,7 @@ namespace MailKit {
 		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two UIDs, inclusive.
@@ -1001,7 +1001,7 @@ namespace MailKit {
 		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
@@ -1018,7 +1018,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
@@ -1035,7 +1035,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes.
@@ -1047,7 +1047,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -1059,7 +1059,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
@@ -1072,7 +1072,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
@@ -1085,7 +1085,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
@@ -1098,7 +1098,7 @@ namespace MailKit {
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -1111,7 +1111,7 @@ namespace MailKit {
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
@@ -1125,7 +1125,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IEnumerable<MessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		IEnumerable<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
@@ -1139,7 +1139,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IEnumerable<MessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the specified message.

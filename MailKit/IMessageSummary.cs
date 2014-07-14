@@ -1,9 +1,9 @@
 ﻿//
-// MessageSummary.cs
+// IMessageSummary.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2014 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,31 +34,13 @@ namespace MailKit {
 	/// A summary of a message.
 	/// </summary>
 	/// <remarks>
-	/// A <see cref="MessageSummary"/> is returned by
+	/// A <see cref="IMessageSummary"/> is returned by
 	/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;, MessageSummaryItems, System.Threading.CancellationToken)"/>.
-	/// The properties of the <see cref="MessageSummary"/> that will be available
+	/// The properties of the <see cref="IMessageSummary"/> that will be available
 	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.
 	/// </remarks>
-	public class MessageSummary : IMessageSummary
+	public interface IMessageSummary : IThreadable, ISortable
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.MessageSummary"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="MessageSummary"/>.
-		/// </remarks>
-		/// <param name="index">The message index.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is negative.
-		/// </exception>
-		public MessageSummary (int index)
-		{
-			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index");
-
-			Index = index;
-		}
-
 		/// <summary>
 		/// Gets the body structure of the message, if available.
 		/// </summary>
@@ -71,9 +53,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The body structure of the message.</value>
-		public BodyPart Body {
-			get; set;
-		}
+		BodyPart Body { get; }
 
 		/// <summary>
 		/// Gets the envelope of the message, if available.
@@ -89,9 +69,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The envelope of the message.</value>
-		public Envelope Envelope {
-			get; set;
-		}
+		Envelope Envelope { get; }
 
 		/// <summary>
 		/// Gets the message flags, if available.
@@ -103,9 +81,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The message flags.</value>
-		public MessageFlags? Flags {
-			get; set;
-		}
+		MessageFlags? Flags { get; }
 
 		/// <summary>
 		/// Gets the internal date of the message (i.e. the "received" date), if available.
@@ -117,9 +93,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The internal date of the message.</value>
-		public DateTimeOffset? InternalDate {
-			get; set;
-		}
+		DateTimeOffset? InternalDate { get; }
 
 		/// <summary>
 		/// Gets the size of the message, in bytes, if available.
@@ -131,9 +105,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>
-		public uint? MessageSize {
-			get; set;
-		}
+		uint? MessageSize { get; }
 
 		/// <summary>
 		/// Gets the mod-sequence value for the message, if available.
@@ -145,9 +117,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The mod-sequence value.</value>
-		public ulong? ModSeq {
-			get; set;
-		}
+		ulong? ModSeq { get; }
 
 		/// <summary>
 		/// Gets the message-ids that the message references, if available.
@@ -159,9 +129,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The references.</value>
-		public MessageIdList References {
-			get; set;
-		}
+		MessageIdList References { get; }
 
 		/// <summary>
 		/// Gets the unique ID of the message, if available.
@@ -173,9 +141,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The uid of the message.</value>
-		public UniqueId? UniqueId {
-			get; set;
-		}
+		UniqueId? UniqueId { get; }
 
 		/// <summary>
 		/// Gets the index of the message.
@@ -184,9 +150,7 @@ namespace MailKit {
 		/// Gets the index of the message.
 		/// </remarks>
 		/// <value>The index of the message.</value>
-		public int Index {
-			get; private set;
-		}
+		int Index { get; }
 
 		#region GMail extension properties
 
@@ -200,9 +164,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The GMail message identifier.</value>
-		public ulong? GMailMessageId {
-			get; set;
-		}
+		ulong? GMailMessageId { get; }
 
 		/// <summary>
 		/// Gets the GMail thread identifier, if available.
@@ -214,9 +176,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The GMail thread identifier.</value>
-		public ulong? GMailThreadId {
-			get; set;
-		}
+		ulong? GMailThreadId { get; }
 
 		/// <summary>
 		/// Gets the list of GMail labels, if available.
@@ -228,208 +188,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The GMail labels.</value>
-		public IList<string> GMailLabels {
-			get; set;
-		}
-
-		#endregion
-
-		#region ISortable implementation
-
-		/// <summary>
-		/// Gets whether or not the messages can be sorted.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the messages can be sorted.
-		/// </remarks>
-		/// <value><c>true</c> if the messages can be sorted; otherwise, <c>false</c>.</value>
-		bool ISortable.CanSort {
-			get { return Envelope != null; }
-		}
-
-		/// <summary>
-		/// Gets the message index in the folder it belongs to.
-		/// </summary>
-		/// <remarks>
-		/// Gets the message index in the folder it belongs to.
-		/// </remarks>
-		/// <value>The index.</value>
-		int ISortable.SortableIndex {
-			get { return Index; }
-		}
-
-		/// <summary>
-		/// Gets the Cc header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Cc header value.
-		/// </remarks>
-		/// <value>The Cc header value.</value>
-		string ISortable.SortableCc {
-			get { return Envelope.Cc.ToString (); }
-		}
-
-		/// <summary>
-		/// Gets the Date header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Date header value.
-		/// </remarks>
-		/// <value>The date.</value>
-		DateTimeOffset ISortable.SortableDate {
-			get { return Envelope.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
-		}
-
-		/// <summary>
-		/// Gets the From header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the From header value.
-		/// </remarks>
-		/// <value>The From header value.</value>
-		string ISortable.SortableFrom {
-			get { return Envelope.From.ToString (); }
-		}
-
-		/// <summary>
-		/// Gets the size of the message, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the size of the message, in bytes.
-		/// </remarks>
-		/// <value>The size of the message, in bytes.</value>
-		uint ISortable.SortableSize {
-			get { return MessageSize ?? 0; }
-		}
-
-		/// <summary>
-		/// Gets the Subject header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Subject header value.
-		/// </remarks>
-		/// <value>The Subject header value.</value>
-		string ISortable.SortableSubject {
-			get { return Envelope.Subject; }
-		}
-
-		/// <summary>
-		/// Gets the To header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the To header value.
-		/// </remarks>
-		/// <value>The To header value.</value>
-		string ISortable.SortableTo {
-			get { return Envelope.To.ToString (); }
-		}
-
-		#endregion
-
-		#region IThreadable implementation
-
-		MessageIdList threadableReferences;
-		int threadableReplyDepth = -1;
-		string threadableSubject;
-
-		void UpdateThreadableSubject ()
-		{
-			if (threadableSubject != null)
-				return;
-
-			if (Envelope.Subject != null) {
-				threadableSubject = MessageThreader.GetThreadableSubject (Envelope.Subject, out threadableReplyDepth);
-			} else {
-				threadableSubject = string.Empty;
-				threadableReplyDepth = 0;
-			}
-		}
-
-		/// <summary>
-		/// Gets whether the message can be threaded.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether the message can be threaded.
-		/// </remarks>
-		/// <value><c>true</c> if the messages can be threaded; otherwise, <c>false</c>.</value>
-		bool IThreadable.CanThread {
-			get { return Envelope != null && UniqueId.HasValue; }
-		}
-
-		/// <summary>
-		/// Gets the threadable subject.
-		/// </summary>
-		/// <remarks>
-		/// A normalized Subject header value where prefixes such as
-		/// "Re:", "Re[#]:", etc have been pruned.
-		/// </remarks>
-		/// <value>The threadable subject.</value>
-		string IThreadable.ThreadableSubject {
-			get {
-				UpdateThreadableSubject ();
-
-				return threadableSubject;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether this instance is a reply.
-		/// </summary>
-		/// <remarks>
-		/// This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
-		/// </remarks>
-		/// <value><c>true</c> if this instance is a reply; otherwise, <c>false</c>.</value>
-		bool IThreadable.IsThreadableReply {
-			get {
-				UpdateThreadableSubject ();
-
-				return threadableReplyDepth != 0;
-			}
-		}
-
-		/// <summary>
-		/// Gets the threadable message identifier.
-		/// </summary>
-		/// <remarks>
-		/// This value should be the canonicalized Message-Id header value
-		/// without the angle brackets.
-		/// </remarks>
-		/// <value>The threadable message identifier.</value>
-		string IThreadable.ThreadableMessageId {
-			get { return Envelope.MessageId; }
-		}
-
-		/// <summary>
-		/// Gets the threadable references.
-		/// </summary>
-		/// <remarks>
-		/// This value should be the list of canonicalized Message-Ids
-		/// found in the In-Reply-To and References headers.
-		/// </remarks>
-		/// <value>The threadable references.</value>
-		MessageIdList IThreadable.ThreadableReferences {
-			get {
-				if (threadableReferences == null) {
-					threadableReferences = References != null ? References.Clone () : new MessageIdList ();
-
-					if (Envelope.InReplyTo != null)
-						threadableReferences.Add (Envelope.InReplyTo);
-				}
-
-				return threadableReferences;
-			}
-		}
-
-		/// <summary>
-		/// Gets the unique identifier.
-		/// </summary>
-		/// <remarks>
-		/// Gets the unique identifier.
-		/// </remarks>
-		/// <value>The unique identifier.</value>
-		UniqueId IThreadable.ThreadableUniqueId {
-			get { return UniqueId.Value; }
-		}
+		IList<string> GMailLabels { get; }
 
 		#endregion
 	}
