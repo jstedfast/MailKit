@@ -2868,9 +2868,11 @@ namespace MailKit.Net.Imap {
 		{
 			var streams = (Dictionary<string, Stream>) ic.UserData;
 			var token = engine.ReadToken (ic.CancellationToken);
-			var args = new MessageFlagsChangedEventArgs (index);
+			var labels = new MessageLabelsChangedEventArgs (index);
+			var flags = new MessageFlagsChangedEventArgs (index);
+			bool labelsChanged = false;
+			bool flagsChanged = false;
 			var buf = new byte[4096];
-			bool emit = false;
 			string specifier;
 			Stream stream;
 			int nread;
@@ -2954,7 +2956,8 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					args.UniqueId = new UniqueId (uid);
+					labels.UniqueId = new UniqueId (uid);
+					flags.UniqueId = new UniqueId (uid);
 					break;
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2972,13 +2975,20 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					args.ModSeq = modseq;
+					labels.ModSeq = modseq;
+					flags.ModSeq = modseq;
 					break;
 				case "FLAGS":
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					args.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
-					emit = true;
+					flags.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+					flagsChanged = true;
+					break;
+				case "X-GM-LABELS":
+					// even though we didn't request this piece of information, the IMAP server
+					// may send it if another client has recently modified the message labels.
+					labels.Labels = ImapUtils.ParseLabelsList (engine, ic.CancellationToken);
+					labelsChanged = true;
 					break;
 				default:
 					throw ImapEngine.UnexpectedToken (token, false);
@@ -2988,8 +2998,11 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			if (emit)
-				ic.Folder.OnMessageFlagsChanged (args);
+			if (flagsChanged)
+				ic.Folder.OnMessageFlagsChanged (flags);
+
+			if (labels != null)
+				ic.Folder.OnMessageLabelsChanged (labels);
 		}
 
 		/// <summary>
