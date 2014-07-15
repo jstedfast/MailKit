@@ -26,6 +26,9 @@ Features include:
 * Fixed BodyPartCollection.IndexOf(Uri) for cid: URIs.
 * Modified BodyPartCollection to implement ICollection instead of IEnumerable.
 * Modified IMailFolder.Fetch() to return IMessageSummaries which allows anyone to implement their own IMailFolder for other mail storage types (Exchange, Maildir, etc).
+* Added public .ctors to MessageFlagsChangedEventArgs and MessageLabelsChangedEventArgs.
+* Added public .ctors and setters for all of the BodyPart classes.
+* Added public .ctor and setters to Envelope.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
