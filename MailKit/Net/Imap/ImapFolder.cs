@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using MimeKit;
 using MimeKit.IO;
@@ -1560,7 +1561,10 @@ namespace MailKit.Net.Imap {
 					uids = null;
 			}
 
-			return uids ?? new List<UniqueId> ();
+			if (uids == null)
+				return new UniqueId[0];
+
+			return uids.AsReadOnly ();
 		}
 
 		/// <summary>
@@ -1658,7 +1662,10 @@ namespace MailKit.Net.Imap {
 					uids = null;
 			}
 
-			return uids ?? new List<UniqueId> ();
+			if (uids == null)
+				return new UniqueId[0];
+
+			return uids.AsReadOnly ();
 		}
 
 		/// <summary>
@@ -4112,7 +4119,7 @@ namespace MailKit.Net.Imap {
 					for (int i = 0; i < unmodified.Length; i++)
 						unmodified[i] = (int) (modified.UidSet[i].Id - 1);
 
-					return unmodified;
+					return new ReadOnlyCollection<int> (unmodified);
 				}
 			}
 
@@ -4858,7 +4865,7 @@ namespace MailKit.Net.Imap {
 					for (int i = 0; i < unmodified.Length; i++)
 						unmodified[i] = (int) (modified.UidSet[i].Id - 1);
 
-					return unmodified;
+					return new ReadOnlyCollection<int> (unmodified);
 				}
 			}
 

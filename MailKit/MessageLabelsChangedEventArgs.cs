@@ -25,6 +25,7 @@
 //
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace MailKit {
 	/// <summary>
@@ -35,8 +36,75 @@ namespace MailKit {
 	/// </remarks>
 	public class MessageLabelsChangedEventArgs : MessageEventArgs
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageLabelsChangedEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
+		/// </remarks>
+		/// <param name="index">The message index.</param>
 		internal MessageLabelsChangedEventArgs (int index) : base (index)
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageLabelsChangedEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
+		/// </remarks>
+		/// <param name="index">The message index.</param>
+		/// <param name="labels">The message labels.</param>
+		public MessageLabelsChangedEventArgs (int index, IList<string> labels) : base (index)
+		{
+			Labels = new ReadOnlyCollection<string> (labels);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageLabelsChangedEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
+		/// </remarks>
+		/// <param name="index">The message index.</param>
+		/// <param name="labels">The message labels.</param>
+		/// <param name="modseq">The modification sequence value.</param>
+		public MessageLabelsChangedEventArgs (int index, IList<string> labels, ulong modseq) : base (index)
+		{
+			Labels = new ReadOnlyCollection<string> (labels);
+			ModSeq = modseq;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageLabelsChangedEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
+		/// </remarks>
+		/// <param name="index">The message index.</param>
+		/// <param name="uid">The unique id of the message.</param>
+		/// <param name="labels">The message labels.</param>
+		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels) : base (index)
+		{
+			UniqueId = uid;
+			Labels = new ReadOnlyCollection<string> (labels);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageLabelsChangedEventArgs"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MessageLabelsChangedEventArgs"/>.
+		/// </remarks>
+		/// <param name="index">The message index.</param>
+		/// <param name="uid">The unique id of the message.</param>
+		/// <param name="labels">The message labels.</param>
+		/// <param name="modseq">The modification sequence value.</param>
+		public MessageLabelsChangedEventArgs (int index, UniqueId uid, IList<string> labels, ulong modseq) : base (index)
+		{
+			UniqueId = uid;
+			Labels = new ReadOnlyCollection<string> (labels);
+			ModSeq = modseq;
 		}
 
 		/// <summary>

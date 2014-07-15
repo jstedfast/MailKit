@@ -31,6 +31,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 using MimeKit;
 using MimeKit.Utils;
@@ -110,7 +111,7 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			uids = list;
+			uids = list.AsReadOnly ();
 
 			return true;
 		}
@@ -927,7 +928,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The message labels.</returns>
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static IList<string> ParseLabelsList (ImapEngine engine, CancellationToken cancellationToken)
+		public static ReadOnlyCollection<string> ParseLabelsList (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			var labels = new List<string> ();
@@ -948,7 +949,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			return labels;
+			return labels.AsReadOnly ();
 		}
 
 		static MessageThread ParseThread (ImapEngine engine, CancellationToken cancellationToken)
