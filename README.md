@@ -77,10 +77,10 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 * SMTP Client
   * CHUNKING (hmmm, doesn't really seem all that useful...)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
+  * Implement [SMTPUTF8](http://www.ietf.org/rfc/rfc6531.txt)
 * POP3 Client
-  * Add batch methods for GetHeaders() that can take advantage of PIPELINING?
-  * Fix various Pop3Client.Get*() methods that return string[] or int[] to return IList<string> and IList<int>?
   * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
+  * UTF8 extension ([rfc6856](http://www.ietf.org/rfc/rfc6856.txt))
 * IMAP4 Client
   * Extensions:
     * ACL
@@ -95,6 +95,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * LIST-STATUS (Note: only Dovecot seems to support this)
     * CREATE-SPECIAL-USE (Note: not widely supported)
     * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
+    * UTF8=ACCEPT and UTF8=ONLY ([rfc6855](http://www.ietf.org/rfc/rfc6855.txt))
 * Maildir
 * Thunderbird mbox folder trees
 
