@@ -2230,6 +2230,15 @@ namespace MailKit.Net.Imap {
 			return string.Format ("({0})", string.Join (" ", tokens));
 		}
 
+		static IList<IMessageSummary> AsReadOnly (ICollection<IMessageSummary> collection)
+		{
+			var array = new IMessageSummary[collection.Count];
+
+			collection.CopyTo (array, 0);
+
+			return new ReadOnlyCollection<IMessageSummary> (array);
+		}
+
 		/// <summary>
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
@@ -2300,7 +2309,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		/// <summary>
@@ -2384,7 +2393,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		static string GetFetchRange (UniqueId min, UniqueId? max)
@@ -2462,7 +2471,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		/// <summary>
@@ -2540,7 +2549,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		/// <summary>
@@ -2613,7 +2622,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		/// <summary>
@@ -2693,7 +2702,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		static string GetFetchRange (int min, int max)
@@ -2774,7 +2783,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		/// <summary>
@@ -2852,7 +2861,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
+			return AsReadOnly (results.Values);
 		}
 
 		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
