@@ -30,7 +30,8 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports the STLS extension.
   * Supports client SSL/TLS certificates.
   * Supports the PIPELINING extension.
-  * Supports the UIDL command.
+  * Supports the UIDL extension.
+  * Supports the UTF8 extension.
   * All APIs are cancellable.
   * Async APIs are available.
 * IMAP4 Client
@@ -77,10 +78,12 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 * SMTP Client
   * CHUNKING (hmmm, doesn't really seem all that useful...)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
-  * Implement [SMTPUTF8](http://www.ietf.org/rfc/rfc6531.txt)
+  * Extensions:
+    * SMTPUTF8
 * POP3 Client
   * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
-  * UTF8 extension ([rfc6856](http://www.ietf.org/rfc/rfc6856.txt))
+  * Extensions:
+    * LANG
 * IMAP4 Client
   * Extensions:
     * ACL
@@ -95,7 +98,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * LIST-STATUS (Note: only Dovecot seems to support this)
     * CREATE-SPECIAL-USE (Note: not widely supported)
     * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
-    * UTF8=ACCEPT and UTF8=ONLY ([rfc6855](http://www.ietf.org/rfc/rfc6855.txt))
+    * UTF8=ACCEPT and UTF8=ONLY
 * Maildir
 * Thunderbird mbox folder trees
 
