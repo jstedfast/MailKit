@@ -2012,12 +2012,15 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			var results = (SortedDictionary<int, MessageSummary>) ic.UserData;
+			var results = (SortedDictionary<int, IMessageSummary>) ic.UserData;
+			IMessageSummary isummary;
 			MessageSummary summary;
 
-			if (!results.TryGetValue (index, out summary)) {
+			if (!results.TryGetValue (index, out isummary)) {
 				summary = new MessageSummary (index);
 				results.Add (index, summary);
+			} else {
+				summary = (MessageSummary) isummary;
 			}
 
 			do {
@@ -2270,7 +2273,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var query = FormatSummaryItems (items);
 			var set = ImapUtils.FormatUidSet (uids);
@@ -2281,11 +2284,11 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			if (uids.Count == 0)
-				return new MessageSummary[0];
+				return new IMessageSummary[0];
 
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2297,7 +2300,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		/// <summary>
@@ -2350,7 +2353,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var query = FormatSummaryItems (items);
 			var set = ImapUtils.FormatUidSet (uids);
@@ -2364,12 +2367,12 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			if (uids.Count == 0)
-				return new MessageSummary[0];
+				return new IMessageSummary[0];
 
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2381,7 +2384,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		static string GetFetchRange (UniqueId min, UniqueId? max)
@@ -2433,7 +2436,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min.Id == 0)
 				throw new ArgumentException ("The minimum uid is invalid.", "min");
@@ -2447,7 +2450,7 @@ namespace MailKit.Net.Imap {
 
 			var command = string.Format ("UID FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2459,7 +2462,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		/// <summary>
@@ -2508,7 +2511,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min.Id == 0)
 				throw new ArgumentException ("The minimum uid is invalid.", "min");
@@ -2525,7 +2528,7 @@ namespace MailKit.Net.Imap {
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", GetFetchRange (min, max), query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2537,7 +2540,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		/// <summary>
@@ -2583,7 +2586,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (items);
@@ -2594,11 +2597,11 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			if (indexes.Count == 0)
-				return new MessageSummary[0];
+				return new IMessageSummary[0];
 
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2610,7 +2613,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		/// <summary>
@@ -2660,7 +2663,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
 			var query = FormatSummaryItems (items);
@@ -2674,11 +2677,11 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			if (indexes.Count == 0)
-				return new MessageSummary[0];
+				return new IMessageSummary[0];
 
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2690,7 +2693,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		static string GetFetchRange (int min, int max)
@@ -2743,7 +2746,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min >= Count)
 				throw new ArgumentOutOfRangeException ("min");
@@ -2759,7 +2762,7 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (items);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2771,7 +2774,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		/// <summary>
@@ -2818,7 +2821,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min >= Count)
 				throw new ArgumentOutOfRangeException ("min");
@@ -2837,7 +2840,7 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (items);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, MessageSummary> ();
+			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
 			ic.UserData = results;
 
@@ -2849,7 +2852,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return results.Values;
+			return new ReadOnlyCollection<IMessageSummary> (results.Values.ToList ());
 		}
 
 		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
