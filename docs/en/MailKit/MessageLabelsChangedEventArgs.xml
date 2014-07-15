@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageLabelsChangedEventArgs extends MailKit.MessageEventArgs" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.24.0.0</AssemblyVersion>
+    <AssemblyVersion>0.25.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MessageEventArgs</BaseTypeName>
@@ -18,12 +18,108 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageLabelsChangedEventArgs (int index, System.Collections.Generic.IList&lt;string&gt; labels);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, class System.Collections.Generic.IList`1&lt;string&gt; labels) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="labels">The message labels.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageLabelsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageLabelsChangedEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageLabelsChangedEventArgs (int index, MailKit.UniqueId uid, System.Collections.Generic.IList&lt;string&gt; labels);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.UniqueId uid, class System.Collections.Generic.IList`1&lt;string&gt; labels) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="uid">The unique id of the message.</param>
+        <param name="labels">The message labels.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageLabelsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageLabelsChangedEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageLabelsChangedEventArgs (int index, System.Collections.Generic.IList&lt;string&gt; labels, ulong modseq);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, class System.Collections.Generic.IList`1&lt;string&gt; labels, unsigned int64 modseq) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="labels">The message labels.</param>
+        <param name="modseq">The modification sequence value.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageLabelsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageLabelsChangedEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageLabelsChangedEventArgs (int index, MailKit.UniqueId uid, System.Collections.Generic.IList&lt;string&gt; labels, ulong modseq);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.UniqueId uid, class System.Collections.Generic.IList`1&lt;string&gt; labels, unsigned int64 modseq) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="labels" Type="System.Collections.Generic.IList&lt;System.String&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="uid">The unique id of the message.</param>
+        <param name="labels">The message labels.</param>
+        <param name="modseq">The modification sequence value.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageLabelsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageLabelsChangedEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Labels">
       <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;string&gt; Labels { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IList`1&lt;string&gt; Labels" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.String&gt;</ReturnType>
@@ -43,7 +139,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; ModSeq" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
@@ -63,7 +159,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UniqueId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>

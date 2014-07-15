@@ -1,14 +1,17 @@
 <Type Name="BodyPartCollection" FullName="MailKit.BodyPartCollection">
-  <TypeSignature Language="C#" Value="public class BodyPartCollection : System.Collections.Generic.IEnumerable&lt;MailKit.BodyPart&gt;" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartCollection extends System.Object implements class System.Collections.Generic.IEnumerable`1&lt;class MailKit.BodyPart&gt;, class System.Collections.IEnumerable" />
+  <TypeSignature Language="C#" Value="public class BodyPartCollection : System.Collections.Generic.ICollection&lt;MailKit.BodyPart&gt;, System.Collections.Generic.IEnumerable&lt;MailKit.BodyPart&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartCollection extends System.Object implements class System.Collections.Generic.ICollection`1&lt;class MailKit.BodyPart&gt;, class System.Collections.Generic.IEnumerable`1&lt;class MailKit.BodyPart&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.24.0.0</AssemblyVersion>
+    <AssemblyVersion>0.25.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.ICollection&lt;MailKit.BodyPart&gt;</InterfaceName>
+    </Interface>
     <Interface>
       <InterfaceName>System.Collections.Generic.IEnumerable&lt;MailKit.BodyPart&gt;</InterfaceName>
     </Interface>
@@ -22,19 +25,142 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BodyPartCollection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.BodyPartCollection" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.BodyPartCollection" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (MailKit.BodyPart part);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Add(class MailKit.BodyPart part) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="part" Type="MailKit.BodyPart" />
+      </Parameters>
+      <Docs>
+        <param name="part">The body part.</param>
+        <summary>
+            Add the specified body part to the collection.
+            </summary>
+        <remarks>
+            Adds the specified body part to the collection.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="part" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Clears the body part collection.
+            </summary>
+        <remarks>
+            Removes all of the body parts from the collection.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public bool Contains (MailKit.BodyPart part);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Contains(class MailKit.BodyPart part) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="part" Type="MailKit.BodyPart" />
+      </Parameters>
+      <Docs>
+        <param name="part">The body part.</param>
+        <summary>
+            Checks if the collection contains the specified body part.
+            </summary>
+        <returns>
+          <value>true</value> if the specified body part exists; otherwise <value>false</value>.</returns>
+        <remarks>
+            Determines whether or not the collection contains the specified body part.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="part" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (MailKit.BodyPart[] array, int arrayIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(class MailKit.BodyPart[] array, int32 arrayIndex) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="MailKit.BodyPart[]" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">The array.</param>
+        <param name="arrayIndex">The array index.</param>
+        <summary>
+            Copies all of the body parts in the collection to the specified array.
+            </summary>
+        <remarks>
+            Copies all of the body parts within the collection into the array,
+            starting at the specified array index.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="arrayIndex" /> is out of range.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Count">
       <MemberSignature Language="C#" Value="public int Count { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the number of body parts in the collection.
+            Get the number of body parts in the collection.
             </summary>
         <value>The count.</value>
         <remarks>
@@ -47,7 +173,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MailKit.BodyPart&gt; GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;MailKit.BodyPart&gt;</ReturnType>
@@ -68,7 +194,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 IndexOf(class System.Uri uri) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -96,12 +222,33 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get whether or not this body part collection is read only.
+            </summary>
+        <value>
+          <c>true</c> if this collection is read only; otherwise, <c>false</c>.</value>
+        <remarks>
+            Gets whether or not this body part collection is read only.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public MailKit.BodyPart this[int index] { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPart Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.BodyPart</ReturnType>
@@ -112,12 +259,43 @@
       <Docs>
         <param name="index">The index.</param>
         <summary>
-            Gets the <see cref="T:MailKit.BodyPart" /> at the specified index.
+            Get the body part at the specified index.
             </summary>
-        <value>THe body part at the specified index.</value>
+        <value>The body part at the specified index.</value>
         <remarks>
-            Gets the <see cref="T:MailKit.BodyPart" /> at the specified index.
+            Gets the body part at the specified index.
             </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is out of range.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public bool Remove (MailKit.BodyPart part);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Remove(class MailKit.BodyPart part) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="part" Type="MailKit.BodyPart" />
+      </Parameters>
+      <Docs>
+        <param name="part">The body part.</param>
+        <summary>
+            Removes the specified body part.
+            </summary>
+        <returns>
+          <value>true</value> if the body part was removed; otherwise <value>false</value>.</returns>
+        <remarks>
+            Removes the specified body part.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="part" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -125,7 +303,7 @@
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>

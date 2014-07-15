@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BodyPartText extends MailKit.BodyPartBasic" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.24.0.0</AssemblyVersion>
+    <AssemblyVersion>0.25.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.BodyPartBasic</BaseTypeName>
@@ -18,12 +18,29 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public BodyPartText ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.BodyPartText" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.BodyPartText" />.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Encode">
       <MemberSignature Language="C#" Value="protected override void Encode (System.Text.StringBuilder builder);" />
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Encode(class System.Text.StringBuilder builder) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -42,11 +59,11 @@
       </Docs>
     </Member>
     <Member MemberName="Lines">
-      <MemberSignature Language="C#" Value="public uint Lines { get; }" />
+      <MemberSignature Language="C#" Value="public uint Lines { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 Lines" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.24.0.0</AssemblyVersion>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>

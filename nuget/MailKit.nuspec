@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.24.0.0</version>
+        <version>0.25.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,12 +22,10 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Modified BodyPart*.ContentLocation to be a Uri and added BodyPartCollection.IndexOf(Uri).
-* Implemented support for UID COPY and UID MOVE for IMAP servers that don't support UIDPLUS.
-* Modified Pop3Client APIs that returned T[] to return an IList&lt;T&gt; instead for consistency with the IMAP APIs.
-* Implemented PIPELINING support for Pop3Client.
-* Added a ModSeq property to MessageLabelsChangedEventArgs.
-* Improved ImapCommandExceptions thrown by ImapFolder and ImapClient to include the server error text (if available).
+        <releaseNotes>* Fixed ImapEngine.Iterate() to always set 'current' back to null after it is done (fixes state when cancellation happens before the command is actually invoked).
+* Fixed BodyPartCollection.IndexOf(Uri) for cid: URIs.
+* Modified BodyPartCollection to implement ICollection instead of IEnumerable.
+* Modified IMailFolder.Fetch() to return IMessageSummaries which allows anyone to implement their own IMailFolder for other mail storage types (Exchange, Maildir, etc).
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
