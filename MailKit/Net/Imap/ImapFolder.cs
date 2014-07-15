@@ -1564,7 +1564,7 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				return new UniqueId[0];
 
-			return uids.AsReadOnly ();
+			return new ReadOnlyCollection<UniqueId> (uids);
 		}
 
 		/// <summary>
@@ -1665,7 +1665,7 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				return new UniqueId[0];
 
-			return uids.AsReadOnly ();
+			return new ReadOnlyCollection<UniqueId> (uids);
 		}
 
 		/// <summary>

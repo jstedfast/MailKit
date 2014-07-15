@@ -111,7 +111,7 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			uids = list.AsReadOnly ();
+			uids = new ReadOnlyCollection<UniqueId> (list);
 
 			return true;
 		}
@@ -949,7 +949,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			return labels.AsReadOnly ();
+			return new ReadOnlyCollection<string> (labels);
 		}
 
 		static MessageThread ParseThread (ImapEngine engine, CancellationToken cancellationToken)
