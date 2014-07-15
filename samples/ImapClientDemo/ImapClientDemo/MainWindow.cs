@@ -120,6 +120,9 @@ namespace ImapClientDemo
 							if (string.IsNullOrEmpty (fileName))
 								fileName = Guid.NewGuid ().ToString ();
 
+							if (!Directory.Exists (uid.ToString ()))
+								Directory.CreateDirectory (uid.ToString ());
+
 							fileName = Path.Combine (uid.ToString (), fileName);
 
 							using (var stream = File.Create (fileName))

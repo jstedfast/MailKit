@@ -10,10 +10,10 @@ namespace ImapClientDemo
 {
 	class MessageInfo
 	{
-		public readonly MessageSummary Summary;
+		public readonly IMessageSummary Summary;
 		public MessageFlags Flags;
 
-		public MessageInfo (MessageSummary summary)
+		public MessageInfo (IMessageSummary summary)
 		{
 			Summary = summary;
 

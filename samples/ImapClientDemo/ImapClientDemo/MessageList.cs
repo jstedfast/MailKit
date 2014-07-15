@@ -38,7 +38,7 @@ namespace ImapClientDemo
 			node.NodeFont = new Font (Font, style);
 		}
 
-		void AddMessageSummaries (IEnumerable<MessageSummary> summaries)
+		void AddMessageSummaries (IEnumerable<IMessageSummary> summaries)
 		{
 			foreach (var message in summaries) {
 				var info = new MessageInfo (message);
