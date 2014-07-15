@@ -103,5 +103,24 @@ namespace MailKit.Net.Pop3 {
 		/// (not recommended unless no other authentication mechanisms exist).
 		/// </summary>
 		User                   = (1 << 9),
+
+		/// <summary>
+		/// The server supports the UTF8 extension (rfc6856), allowing clients to
+		/// retrieve messages in the UTF-8 encoding.
+		/// </summary>
+		UTF8                   = (1 << 10),
+
+		/// <summary>
+		/// The server supports the UTF8 extension (rfc6856), allowing clients to
+		/// authenticate using UTF-8 encoded usernames and passwords.
+		/// </summary>
+		UTF8User               = (1 << 11),
+
+		/// <summary>
+		/// The server supports the UTF8 extension (rfc6856), allowing clients to
+		/// authenticate using UTF-8 encoded usernames and passwords and retrieve
+		/// messages in the UTF-8 encoding.
+		/// </summary>
+		Lang                   = (1 << 12),
 	}
 }

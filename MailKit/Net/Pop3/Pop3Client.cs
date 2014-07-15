@@ -30,6 +30,7 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 #if NETFX_CORE
@@ -738,6 +739,91 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Enable UTF8 mode.
+		/// </summary>
+		/// <remarks>
+		/// The POP3 UTF8 extension allows the client to retrieve messages in the UTF-8 encoding and
+		/// may also allow the user to authenticate using a UTF-8 encoded username or password.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="Pop3Client"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="Pop3Client"/> has already been authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public void EnableUTF8 (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new InvalidOperationException ("The Pop3Client is not connected.");
+
+			if (engine.State != Pop3EngineState.Connected)
+				throw new InvalidOperationException ("You must enable UTF-8 mode before authenticating.");
+
+			if ((engine.Capabilities & Pop3Capabilities.UTF8) == 0)
+				throw new NotSupportedException ();
+
+			if (engine.UTF8Enabled)
+				return;
+
+			SendCommand (cancellationToken, "UTF8");
+			engine.UTF8Enabled = true;
+		}
+
+		/// <summary>
+		/// Asynchronously enable UTF8 mode.
+		/// </summary>
+		/// <remarks>
+		/// The POP3 UTF8 extension allows the client to retrieve messages in the UTF-8 encoding and
+		/// may also allow the user to authenticate using a UTF-8 encoded username or password.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="Pop3Client"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="Pop3Client"/> has already been authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public Task EnableUTF8Async (CancellationToken cancellationToken)
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					EnableUTF8 (cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
 
 		#region IMailSpool implementation
 

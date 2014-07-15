@@ -78,6 +78,17 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Gets whether or not the UTF8 extension has been enabled.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the UTF8 extension has been enabled.
+		/// </remarks>
+		/// <value><c>true</c> if UTF8 is enabled; otherwise, <c>false</c>.</value>
+		public bool UTF8Enabled {
+			get; internal set;
+		}
+
+		/// <summary>
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
@@ -259,6 +270,7 @@ namespace MailKit.Net.Pop3 {
 
 			if (State != Pop3EngineState.Disconnected) {
 				State = Pop3EngineState.Disconnected;
+				UTF8Enabled = false;
 				OnDisconnected ();
 			}
 		}
@@ -298,7 +310,11 @@ namespace MailKit.Net.Pop3 {
 				buf = memory.ToArray ();
 #endif
 
-				return Latin1.GetString (buf, 0, count);
+				try {
+					return Encoding.UTF8.GetString (buf, 0, count);
+				} catch {
+					return Latin1.GetString (buf, 0, count);
+				}
 			}
 		}
 
@@ -498,6 +514,17 @@ namespace MailKit.Net.Pop3 {
 					break;
 				case "USER":
 					engine.Capabilities |= Pop3Capabilities.User;
+					break;
+				case "UTF8":
+					engine.Capabilities |= Pop3Capabilities.UTF8;
+
+					foreach (var item in data.Split (' ')) {
+						if (item == "USER")
+							engine.Capabilities |= Pop3Capabilities.UTF8User;
+					}
+					break;
+				case "LANG":
+					engine.Capabilities |= Pop3Capabilities.Lang;
 					break;
 				}
 			} while (true);
