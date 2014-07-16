@@ -468,6 +468,7 @@ namespace MailKit.Net.Imap {
 			SupportedCharsets.Add ("UTF-8");
 			CapabilitiesVersion = 0;
 			QResyncEnabled = false;
+			UTF8Enabled = false;
 			stream = imap;
 			Tag = 0;
 
