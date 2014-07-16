@@ -247,6 +247,17 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets whether or not the UTF8=ACCEPT feature has been enabled.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the UTF8=ACCEPT feature has been enabled.
+		/// </remarks>
+		/// <value><c>true</c> if the UTF8=ACCEPT feature has been enabled; otherwise, <c>false</c>.</value>
+		public bool UTF8Enabled {
+			get; internal set;
+		}
+
+		/// <summary>
 		/// Gets the underlying IMAP stream.
 		/// </summary>
 		/// <remarks>
@@ -742,6 +753,8 @@ namespace MailKit.Net.Imap {
 					case "SEARCH=FUZZY":       Capabilities |= ImapCapabilities.FuzzySearch; break;
 					case "MULTISEARCH":        Capabilities |= ImapCapabilities.MultiSearch; break;
 					case "MOVE":               Capabilities |= ImapCapabilities.Move; break;
+					case "UTF8=ACCEPT":        Capabilities |= ImapCapabilities.UTF8Accept; break;
+					case "UTF8=ONLY":          Capabilities |= ImapCapabilities.UTF8Only; break;
 					case "XLIST":              Capabilities |= ImapCapabilities.XList; break;
 					case "X-GM-EXT-1":         Capabilities |= ImapCapabilities.GMailExt1; break;
 					}
@@ -767,6 +780,9 @@ namespace MailKit.Net.Imap {
 
 			if ((Capabilities & ImapCapabilities.QuickResync) != 0)
 				Capabilities |= ImapCapabilities.CondStore;
+
+			if ((Capabilities & ImapCapabilities.UTF8Only) != 0)
+				Capabilities |= ImapCapabilities.UTF8Accept;
 		}
 
 		void UpdateNamespaces (CancellationToken cancellationToken)
@@ -821,7 +837,7 @@ namespace MailKit.Net.Imap {
 							delim = '\0';
 						}
 
-						namespaces[n].Add (new FolderNamespace (delim, ImapEncoding.Decode (path)));
+						namespaces[n].Add (new FolderNamespace (delim, DecodeMailboxName (path)));
 						if (!FolderCache.TryGetValue (path, out folder)) {
 							folder = new ImapFolder (this, path, FolderAttributes.None, delim);
 							FolderCache.Add (path, folder);
@@ -1526,7 +1542,7 @@ namespace MailKit.Net.Imap {
 						continue;
 
 					var parentName = folder.FullName.Substring (0, index);
-					encodedName = ImapEncoding.Encode (parentName);
+					encodedName = EncodeMailboxName (parentName);
 				} else {
 					encodedName = string.Empty;
 				}
@@ -1692,7 +1708,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapFolder GetFolder (string path, CancellationToken cancellationToken)
 		{
-			var encodedName = ImapEncoding.Encode (path);
+			var encodedName = EncodeMailboxName (path);
 			var list = new List<ImapFolder> ();
 			ImapFolder folder;
 
@@ -1716,6 +1732,53 @@ namespace MailKit.Net.Imap {
 			return list.Count > 0 ? list[0] : null;
 		}
 
+		/// <summary>
+		/// Decodes the name of the mailbox.
+		/// </summary>
+		/// <returns>The mailbox name.</returns>
+		/// <param name="encodedName">The encoded name.</param>
+		public string DecodeMailboxName (string encodedName)
+		{
+			return UTF8Enabled ? encodedName : ImapEncoding.Decode (encodedName);
+		}
+
+		/// <summary>
+		/// Encodes the name of the mailbox.
+		/// </summary>
+		/// <returns>The mailbox name.</returns>
+		/// <param name="mailboxName">The encoded mailbox name.</param>
+		public string EncodeMailboxName (string mailboxName)
+		{
+			return UTF8Enabled ? mailboxName : ImapEncoding.Encode (mailboxName);
+		}
+
+		/// <summary>
+		/// Determines whether the mailbox name is valid or not.
+		/// </summary>
+		/// <returns><c>true</c> if the mailbox name is valid; otherwise, <c>false</c>.</returns>
+		/// <param name="mailboxName">The mailbox name.</param>
+		/// <param name="delim">The path delimeter.</param>
+		public bool IsValidMailboxName (string mailboxName, char delim)
+		{
+			// From rfc6855:
+			//
+			// Mailbox names MUST comply with the Net-Unicode Definition ([RFC5198], Section 2)
+			// with the specific exception that they MUST NOT contain control characters
+			// (U+0000-U+001F and U+0080-U+009F), a delete character (U+007F), a line separator (U+2028),
+			// or a paragraph separator (U+2029).
+			for (int i = 0; i < mailboxName.Length; i++) {
+				char c = mailboxName[i];
+
+				if (c <= 0x1F || (c >= 0x80 && c <= 0x9F) || c == 0x7F || c == 0x2028 || c == 0x2029 || c == delim)
+					return false;
+			}
+
+			return mailboxName.Length > 0;
+		}
+
+		/// <summary>
+		/// Occurs when the engine receives an alert message from the server.
+		/// </summary>
 		public event EventHandler<AlertEventArgs> Alert;
 
 		internal void OnAlert (string message)

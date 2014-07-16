@@ -55,7 +55,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="delim">The path delimeter.</param>
 		internal ImapFolder (ImapEngine engine, string encodedName, FolderAttributes attrs, char delim)
 		{
-			FullName = ImapEncoding.Decode (encodedName);
+			FullName = engine.DecodeMailboxName (encodedName);
 			Name = GetBaseName (FullName, delim);
 			DirectorySeparator = delim;
 			EncodedName = encodedName;
@@ -124,7 +124,7 @@ namespace MailKit.Net.Imap {
 			var oldFullName = FullName;
 
 			FullName = ParentFolder.FullName + DirectorySeparator + Name;
-			EncodedName = ImapEncoding.Encode (FullName);
+			EncodedName = Engine.EncodeMailboxName (FullName);
 			Engine.FolderCache.Remove (oldEncodedName);
 			Engine.FolderCache[EncodedName] = this;
 
@@ -461,7 +461,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
+			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			CheckState (false, false);
@@ -470,7 +470,7 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("Cannot create child folders.");
 
 			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
-			var encodedName = ImapEncoding.Encode (fullName);
+			var encodedName = Engine.EncodeMailboxName (fullName);
 			var list = new List<ImapFolder> ();
 			var createName = encodedName;
 			ImapFolder folder;
@@ -557,7 +557,7 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (name.Length == 0 || name.IndexOf (parent.DirectorySeparator) != -1)
+			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
 			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
@@ -572,7 +572,7 @@ namespace MailKit.Net.Imap {
 			else
 				newFullName = name;
 
-			var encodedName = ImapEncoding.Encode (newFullName);
+			var encodedName = Engine.EncodeMailboxName (newFullName);
 			var ic = Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
 			var oldFullName = FullName;
 
@@ -589,7 +589,7 @@ namespace MailKit.Net.Imap {
 			ParentFolder.Renamed -= ParentFolderRenamed;
 			SetParentFolder (parent);
 
-			FullName = ImapEncoding.Decode (encodedName);
+			FullName = Engine.DecodeMailboxName (encodedName);
 			EncodedName = encodedName;
 			Name = name;
 
@@ -834,13 +834,13 @@ namespace MailKit.Net.Imap {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
+			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name of the subfolder is invalid.", "name");
 
 			CheckState (false, false);
 
 			var fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
-			var encodedName = ImapEncoding.Encode (fullName);
+			var encodedName = Engine.EncodeMailboxName (fullName);
 			var list = new List<ImapFolder> ();
 			ImapFolder subfolder;
 
@@ -5664,7 +5664,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				command += "RETURN () ";
 
-			if (args.Count > 0)
+			if (args.Count > 0 && !Engine.UTF8Enabled)
 				command += "CHARSET " + charset + " ";
 
 			command += expr + "\r\n";
@@ -5847,7 +5847,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				command += "RETURN () ";
 
-			if (args.Count > 0)
+			if (args.Count > 0 && !Engine.UTF8Enabled)
 				command += "CHARSET " + charset + " ";
 
 			command += "UID " + set + " " + expr + "\r\n";

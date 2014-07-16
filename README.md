@@ -55,6 +55,8 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * SPECIAL-USE
     * SEARCH=FUZZY (partial)
     * MOVE
+    * UTF8=ACCEPT
+    * UTF8=ONLY
     * XLIST
     * X-GM-EXT1 (X-GM-MSGID, X-GM-THRID, X-GM-RAW and X-GM-LABELS)
   * All APIs are cancellable.
@@ -90,7 +92,6 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * LIST-STATUS (Note: only Dovecot seems to support this)
     * CREATE-SPECIAL-USE (Note: not widely supported)
     * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
-    * UTF8=ACCEPT and UTF8=ONLY
 * Maildir
 * Thunderbird mbox folder trees
 

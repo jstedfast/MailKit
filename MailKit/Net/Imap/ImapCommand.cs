@@ -351,12 +351,12 @@ namespace MailKit.Net.Imap {
 			return c < 128 && !char.IsControl (c) && "(){ \t%*\\\"]".IndexOf (c) == -1;
 		}
 
-		static bool IsQuotedSafe (char c)
+		bool IsQuotedSafe (char c)
 		{
-			return c < 128 && !char.IsControl (c);
+			return (c < 128 || Engine.UTF8Enabled) && !char.IsControl (c);
 		}
 
-		static ImapStringType GetStringType (string value)
+		ImapStringType GetStringType (string value)
 		{
 			var type = ImapStringType.Atom;
 

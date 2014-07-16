@@ -252,6 +252,16 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		Move             = 1L << 41,
 
+		/// <summary>
+		/// The server supports the UTF8=ACCEPT extension defined in rfc6855.
+		/// </summary>
+		UTF8Accept       = 1L << 42,
+
+		/// <summary>
+		/// The server supports the UTF8=ONLY extension defined in rfc6855.
+		/// </summary>
+		UTF8Only         = 1L << 43,
+
 		#region GMail Extensions
 
 		// These are documented here: https://developers.google.com/gmail/imap_extensions
@@ -259,12 +269,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// The server supports the XLIST extension (GMail).
 		/// </summary>
-		XList            = 1L << 42,
+		XList            = 1L << 44,
 
 		/// <summary>
 		/// The server supports the X-GM-EXT1 extension (GMail).
 		/// </summary>
-		GMailExt1        = 1L << 43
+		GMailExt1        = 1L << 45
 
 		#endregion
 	}

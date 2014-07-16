@@ -210,7 +210,7 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if ((engine.Capabilities & ImapCapabilities.QuickResync) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
 			if (engine.QResyncEnabled)
 				return;
@@ -223,6 +223,94 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("ENABLE", ic);
 
 			engine.QResyncEnabled = true;
+		}
+
+		/// <summary>
+		/// Enable the UTF8=ACCEPT extension.
+		/// </summary>
+		/// <remarks>
+		/// Enables the UTF8=ACCEPT extension.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the UTF8=ACCEPT extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void EnableUTF8 (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new InvalidOperationException ("The ImapClient must be connected before you can enable UTF8=ACCEPT.");
+
+			if (engine.State > ImapEngineState.Authenticated)
+				throw new InvalidOperationException ("UTF8=ACCEPT needs to be enabled immediately after authenticating.");
+
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
+
+			if ((engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UTF8=ACCEPT extension.");
+
+			if (engine.UTF8Enabled)
+				return;
+
+			var ic = engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
+
+			engine.Wait (ic);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("ENABLE", ic);
+
+			engine.UTF8Enabled = true;
+		}
+
+		/// <summary>
+		/// Enable the UTF8=ACCEPT extension.
+		/// </summary>
+		/// <remarks>
+		/// Enables the UTF8=ACCEPT extension.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the UTF8=ACCEPT extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public Task EnableUTF8Async (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					EnableUTF8 (cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		#region IMailService implementation
@@ -1024,7 +1112,7 @@ namespace MailKit.Net.Imap {
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("The ImapClient is not authenticated.");
 
-			var encodedName = ImapEncoding.Encode (@namespace.Path);
+			var encodedName = engine.EncodeMailboxName (@namespace.Path);
 			ImapFolder folder;
 
 			if (engine.FolderCache.TryGetValue (encodedName, out folder))

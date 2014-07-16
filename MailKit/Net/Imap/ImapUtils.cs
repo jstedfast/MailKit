@@ -939,7 +939,7 @@ namespace MailKit.Net.Imap {
 			token = engine.ReadToken (cancellationToken);
 
 			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
-				var label = ImapEncoding.Decode ((string) token.Value);
+				var label = engine.DecodeMailboxName ((string) token.Value);
 
 				labels.Add (label);
 
