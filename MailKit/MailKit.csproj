@@ -69,6 +69,7 @@
     <Compile Include="Net\Pop3\Pop3Command.cs" />
     <Compile Include="Net\Pop3\Pop3CommandException.cs" />
     <Compile Include="Net\Pop3\Pop3Engine.cs" />
+    <Compile Include="Net\Pop3\Pop3Language.cs" />
     <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
     <Compile Include="Net\Pop3\Pop3Stream.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />

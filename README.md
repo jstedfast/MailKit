@@ -32,6 +32,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports the PIPELINING extension.
   * Supports the UIDL extension.
   * Supports the UTF8 extension.
+  * Supports the LANG extension.
   * All APIs are cancellable.
   * Async APIs are available.
 * IMAP4 Client
@@ -82,8 +83,6 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * SMTPUTF8
 * POP3 Client
   * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
-  * Extensions:
-    * LANG
 * IMAP4 Client
   * Extensions:
     * ACL

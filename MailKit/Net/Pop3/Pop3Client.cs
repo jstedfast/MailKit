@@ -32,6 +32,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 #if NETFX_CORE
 using Windows.Networking;
@@ -759,6 +760,9 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UTF8 extension.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -771,9 +775,7 @@ namespace MailKit.Net.Pop3 {
 		public void EnableUTF8 (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The Pop3Client is not connected.");
+			CheckConnected ();
 
 			if (engine.State != Pop3EngineState.Connected)
 				throw new InvalidOperationException ("You must enable UTF-8 mode before authenticating.");
@@ -807,6 +809,9 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UTF8 extension.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -821,6 +826,206 @@ namespace MailKit.Net.Pop3 {
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					EnableUTF8 (cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get the list of languages supported by the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// If the POP3 server supports the LANG extension, it is possible to
+		/// query the list of languages supported by the POP3 server that can
+		/// be used for error messages.
+		/// </remarks>
+		/// <returns>The supported languages.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the LANG extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public IList<Pop3Language> GetLanguages (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+			CheckConnected ();
+
+			if ((Capabilities & Pop3Capabilities.Lang) == 0)
+				throw new NotSupportedException ("The POP3 server does not support the LANG extension.");
+
+			var langs = new List<Pop3Language> ();
+
+			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+				if (cmd.Status != Pop3CommandStatus.Ok)
+					return;
+
+				do {
+					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ();
+					if (response == ".")
+						break;
+
+					var tokens = response.Split (new [] { ' ' }, 2);
+					if (tokens.Length != 2)
+						continue;
+
+					langs.Add (new Pop3Language (tokens[0], tokens[1]));
+				} while (true);
+			}, "LANG");
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			if (pc.Status != Pop3CommandStatus.Ok)
+				throw CreatePop3Exception (pc);
+
+			if (pc.Exception != null)
+				throw pc.Exception;
+
+			return new ReadOnlyCollection<Pop3Language> (langs);
+		}
+
+		/// <summary>
+		/// Asynchronously get the list of languages supported by the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// If the POP3 server supports the LANG extension, it is possible to
+		/// query the list of languages supported by the POP3 server that can
+		/// be used for error messages.
+		/// </remarks>
+		/// <returns>The supported languages.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the LANG extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken)
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetLanguages (cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Set the language used by the POP3 server for error messages.
+		/// </summary>
+		/// <remarks>
+		/// If the POP3 server supports the LANG extension, it is possible to
+		/// set the language used by the POP3 server for error messages.
+		/// </remarks>
+		/// <param name="lang">The language code.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="lang"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the LANG extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public void SetLanguage (string lang, CancellationToken cancellationToken)
+		{
+			if (lang == null)
+				throw new ArgumentNullException ("lang");
+
+			CheckDisposed ();
+			CheckConnected ();
+
+			if ((Capabilities & Pop3Capabilities.Lang) == 0)
+				throw new NotSupportedException ("The POP3 server does not support the LANG extension.");
+
+			SendCommand (cancellationToken, "LANG {0}", lang);
+		}
+
+		/// <summary>
+		/// Asynchronously set the language used by the POP3 server for error messages.
+		/// </summary>
+		/// <remarks>
+		/// If the POP3 server supports the LANG extension, it is possible to
+		/// set the language used by the POP3 server for error messages.
+		/// </remarks>
+		/// <param name="lang">The language code.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="lang"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the LANG extension.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public Task SetLanguageAsync (string lang, CancellationToken cancellationToken)
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					SetLanguage (lang, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
