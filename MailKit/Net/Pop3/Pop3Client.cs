@@ -82,7 +82,7 @@ namespace MailKit.Net.Pop3 {
 		StreamSocket socket;
 #endif
 		int timeout = 100000;
-		bool disposed;
+		bool disposed, utf8;
 		string host;
 		int total;
 
@@ -736,6 +736,8 @@ namespace MailKit.Net.Pop3 {
 		void OnEngineDisconnected (object sender, EventArgs e)
 		{
 			engine.Disconnected -= OnEngineDisconnected;
+			utf8 = false;
+
 			OnDisconnected ();
 		}
 
@@ -772,7 +774,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void EnableUTF8 (CancellationToken cancellationToken)
+		public void EnableUTF8 (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -783,11 +785,11 @@ namespace MailKit.Net.Pop3 {
 			if ((engine.Capabilities & Pop3Capabilities.UTF8) == 0)
 				throw new NotSupportedException ();
 
-			if (engine.UTF8Enabled)
+			if (utf8)
 				return;
 
 			SendCommand (cancellationToken, "UTF8");
-			engine.UTF8Enabled = true;
+			utf8 = true;
 		}
 
 		/// <summary>
@@ -821,7 +823,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public Task EnableUTF8Async (CancellationToken cancellationToken)
+		public Task EnableUTF8Async (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -861,7 +863,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public IList<Pop3Language> GetLanguages (CancellationToken cancellationToken)
+		public IList<Pop3Language> GetLanguages (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -932,7 +934,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken)
+		public Task<IList<Pop3Language>> GetLanguagesAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -952,6 +954,9 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="lang"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="lang"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -974,10 +979,13 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void SetLanguage (string lang, CancellationToken cancellationToken)
+		public void SetLanguage (string lang, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (lang == null)
 				throw new ArgumentNullException ("lang");
+
+			if (lang.Length == 0)
+				throw new ArgumentException ("The language code cannot be empty.", "lang");
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -1000,6 +1008,9 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="lang"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="lang"/> is empty.
+		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
@@ -1021,7 +1032,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public Task SetLanguageAsync (string lang, CancellationToken cancellationToken)
+		public Task SetLanguageAsync (string lang, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {

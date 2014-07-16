@@ -49,7 +49,8 @@ namespace MailKit.Net.Pop3 {
 		/// Get the language code.
 		/// </summary>
 		/// <remarks>
-		/// Gets the language code.
+		/// Gets the language code. This is the value that should be given to
+		/// <see cref="Pop3Client.SetLanguage(string,System.Threading.CancellationToken)"/>.
 		/// </remarks>
 		/// <value>The language.</value>
 		public string Language {

@@ -78,17 +78,6 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Gets whether or not the UTF8 extension has been enabled.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the UTF8 extension has been enabled.
-		/// </remarks>
-		/// <value><c>true</c> if UTF8 is enabled; otherwise, <c>false</c>.</value>
-		public bool UTF8Enabled {
-			get; internal set;
-		}
-
-		/// <summary>
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
@@ -270,7 +259,6 @@ namespace MailKit.Net.Pop3 {
 
 			if (State != Pop3EngineState.Disconnected) {
 				State = Pop3EngineState.Disconnected;
-				UTF8Enabled = false;
 				OnDisconnected ();
 			}
 		}
