@@ -783,7 +783,7 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ("You must enable UTF-8 mode before authenticating.");
 
 			if ((engine.Capabilities & Pop3Capabilities.UTF8) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The POP3 server does not support the UTF8 extension.");
 
 			if (utf8)
 				return;
