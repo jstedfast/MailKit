@@ -3001,7 +3001,7 @@ namespace MailKit.Net.Imap {
 			if (flagsChanged)
 				ic.Folder.OnMessageFlagsChanged (flags);
 
-			if (labels != null)
+			if (labelsChanged)
 				ic.Folder.OnMessageLabelsChanged (labels);
 		}
 
