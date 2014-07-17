@@ -408,7 +408,11 @@ namespace MailKit.Security {
 				}
 			}
 
+			#if !NETFX_CORE
 			return builder.ToString ().Normalize (NormalizationForm.FormKC);
+			#else
+			return builder.ToString ();
+			#endif
 		}
 	}
 }
