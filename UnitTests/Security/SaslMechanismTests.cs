@@ -269,5 +269,35 @@ namespace UnitTests.Security {
 			Assert.AreEqual (string.Empty, type1.Host, "Expected initial NTLM client challenge host does not match.");
 			Assert.IsFalse (sasl.IsAuthenticated, "NTLM should not be authenticated.");
 		}
+
+		[Test]
+		public void TestSaslPrep ()
+		{
+			// The following examples are from rfc4013, Section 3.
+			// #  Input            Output     Comments
+			// -  -----            ------     --------
+			// 1  I<U+00AD>X       IX         SOFT HYPHEN mapped to nothing
+			Assert.AreEqual ("IX", SaslMechanism.SaslPrep ("I\u00ADX"), "1");
+			// 2  user             user       no transformation
+			Assert.AreEqual ("user", SaslMechanism.SaslPrep ("user"), "2");
+			// 3  USER             USER       case preserved, will not match #2
+			Assert.AreEqual ("USER", SaslMechanism.SaslPrep ("USER"), "3");
+			// 4  <U+00AA>         a          output is NFKC, input in ISO 8859-1
+			Assert.AreEqual ("a", SaslMechanism.SaslPrep ("\u00AA"), "4");
+			// 5  <U+2168>         IX         output is NFKC, will match #1
+			Assert.AreEqual ("IX", SaslMechanism.SaslPrep ("\u2168"), "5");
+			// 6  <U+0007>                    Error - prohibited character
+			try {
+				SaslMechanism.SaslPrep ("\u0007");
+				Assert.Fail ("6");
+			} catch (ArgumentException) {
+			}
+			// 7  <U+0627><U+0031>            Error - bidirectional check
+			//try {
+			//	SaslMechanism.SaslPrep ("\u0627\u0031");
+			//	Assert.Fail ("7");
+			//} catch (ArgumentException) {
+			//}
+		}
 	}
 }

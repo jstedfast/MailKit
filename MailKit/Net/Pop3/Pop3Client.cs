@@ -397,13 +397,16 @@ namespace MailKit.Net.Pop3 {
 
 			var uri = new Uri ("pop://" + host);
 			string authMessage = string.Empty;
+			string userName, password;
 			NetworkCredential cred;
 			string challenge;
 			Pop3Command pc;
 
 			if ((engine.Capabilities & Pop3Capabilities.Apop) != 0) {
 				cred = credentials.GetCredential (uri, "APOP");
-				challenge = engine.ApopToken + cred.Password;
+				userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
+				password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
+				challenge = engine.ApopToken + password;
 				var md5sum = new StringBuilder ();
 				byte[] digest;
 
@@ -414,7 +417,7 @@ namespace MailKit.Net.Pop3 {
 					md5sum.Append (digest[i].ToString ("x2"));
 
 				try {
-					authMessage = SendCommand (cancellationToken, "APOP {0} {1}", cred.UserName, md5sum);
+					authMessage = SendCommand (cancellationToken, "APOP {0} {1}", userName, md5sum);
 					engine.State = Pop3EngineState.Transaction;
 				} catch (Pop3CommandException) {
 				}
@@ -480,10 +483,12 @@ namespace MailKit.Net.Pop3 {
 
 			// fall back to the classic USER & PASS commands...
 			cred = credentials.GetCredential (uri, "DEFAULT");
+			userName = utf8 ? SaslMechanism.SaslPrep (cred.UserName) : cred.UserName;
+			password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
 
 			try {
-				SendCommand (cancellationToken, "USER {0}", cred.UserName);
-				authMessage = SendCommand (cancellationToken, "PASS {0}", cred.Password);
+				SendCommand (cancellationToken, "USER {0}", userName);
+				authMessage = SendCommand (cancellationToken, "PASS {0}", password);
 			} catch (Pop3CommandException) {
 				throw new AuthenticationException ();
 			}
