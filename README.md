@@ -63,38 +63,6 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Async APIs are available.
 * Client-side sorting and threading of messages.
 
-## TODO
-
-* SASL Authentication
-  * Improve XOAUTH2
-  * ANONYMOUS
-  * GSSAPI
-  * SCRAM-SHA-1
-  * SCRAM-*
-* SMTP Client
-  * CHUNKING (hmmm, doesn't really seem all that useful...)
-  * Throw an exception if the MimeMessage is larger than the SIZE value?
-  * Extensions:
-    * SMTPUTF8
-* POP3 Client
-  * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
-* IMAP4 Client
-  * Extensions:
-    * ACL
-    * BINARY
-    * CATENATE
-    * LIST-EXTENDED (Note: partially implemented already for getting the special folders)
-    * CONVERT (Note: none of the mainstream IMAP servers seem to support this)
-    * ANNOTATE
-    * METADATA
-    * NOTIFY (Note: only Dovecot seems to support this)
-    * FILTERS (Note: none of the mainstream IMAP servers seem to support this)
-    * LIST-STATUS (Note: only Dovecot seems to support this)
-    * CREATE-SPECIAL-USE (Note: not widely supported)
-    * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
-* Maildir
-* Thunderbird mbox folder trees
-
 ## Goals
 
 The main goal of this project is to provide the .NET world with robust, fully featured and RFC-compliant
