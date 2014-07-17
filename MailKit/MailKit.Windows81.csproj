@@ -203,6 +203,7 @@
     <Compile Include="Security\SaslMechanismNtlm.cs" />
     <Compile Include="Security\SaslMechanismOAuth2.cs" />
     <Compile Include="Security\SaslMechanismPlain.cs" />
+    <Compile Include="Security\SaslMechanismScramBase.cs" />
     <Compile Include="AlertEventArgs.cs" />
     <Compile Include="AuthenticatedEventArgs.cs" />
     <Compile Include="BodyPart.cs" />
