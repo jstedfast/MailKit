@@ -1,11 +1,9 @@
 ## TODO
 
 * SASL Authentication
-  * Improve XOAUTH2
+  * Include code to fetch an OAuth2 token?
   * ANONYMOUS
   * GSSAPI
-  * SCRAM-SHA-1
-  * SCRAM-*
 * SMTP Client
   * CHUNKING (hmmm, doesn't really seem all that useful...)
   * Throw an exception if the MimeMessage is larger than the SIZE value?

@@ -7,6 +7,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 ## Features
 
 * SASL Authentication
+  * SCRAM-SHA-1
   * CRAM-MD5
   * DIGEST-MD5
   * LOGIN
