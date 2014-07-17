@@ -271,6 +271,33 @@ namespace UnitTests.Security {
 		}
 
 		[Test]
+		public void TestScramSha1 ()
+		{
+			const string cnonce = "fyko+d2lbbFgONRv9qkxdawL";
+			var uri = new Uri ("imap://elwood.innosoft.com");
+			var credentials = new NetworkCredential ("user", "pencil");
+			var sasl = new SaslMechanismScramSha1 (uri, credentials, cnonce);
+			string token;
+
+			var challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (null)));
+
+			Assert.AreEqual ("n,,n=user,r=" + cnonce, challenge, "Initial SCRAM-SHA-1 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-1 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,s=QSXCR+Q6sek8bf92,i=4096"));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+
+			const string expected = "c=biws,r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j,p=v0X8v3Bz2T0CJGbJQyF0X+HI4Ts=";
+			Assert.AreEqual (expected, challenge, "Second SCRAM-SHA-1 challenge response does not match the expected string.");
+			Assert.IsFalse (sasl.IsAuthenticated, "SCRAM-SHA-1 should not be authenticated yet.");
+
+			token = Convert.ToBase64String (Encoding.UTF8.GetBytes ("v=rmF9pqV8S7suAoZWja4dJRkFsKQ="));
+			challenge = Encoding.UTF8.GetString (Convert.FromBase64String (sasl.Challenge (token)));
+			Assert.AreEqual (string.Empty, challenge, "Third SCRAM-SHA-1 challenge should be an empty string.");
+			Assert.IsTrue (sasl.IsAuthenticated, "SCRAM-SHA-1 should be authenticated now.");
+		}
+
+		[Test]
 		public void TestSaslPrep ()
 		{
 			// The following examples are from rfc4013, Section 3.

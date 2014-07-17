@@ -73,22 +73,16 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
-		/// Apply the HMAC keyed algorithm.
+		/// Create the HMAC context.
 		/// </summary>
 		/// <remarks>
-		/// HMAC(key, str): Apply the HMAC keyed hash algorithm (defined in
-		/// [RFC2104]) using the octet string represented by "key" as the key
-		/// and the octet string "str" as the input string. The size of the
-		/// result is the hash result size for the hash function in use. For
-		/// example, it is 20 octets for SHA-1 (see [RFC3174]).
+		/// Creates the HMAC context using the secret key.
 		/// </remarks>
-		/// <returns>The results of the HMAC keyed algorithm.</returns>
-		/// <param name="key">The key.</param>
-		/// <param name="str">The string.</param>
-		protected override byte[] HMAC (byte[] key, byte[] str)
+		/// <returns>The HMAC context.</returns>
+		/// <param name="key">The secret key.</param>
+		protected override KeyedHashAlgorithm CreateHMAC (byte[] key)
 		{
-			using (var hmac = new HMACSHA1 (key))
-				return hmac.ComputeHash (str);
+			return new HMACSHA1 (key);
 		}
 
 		/// <summary>

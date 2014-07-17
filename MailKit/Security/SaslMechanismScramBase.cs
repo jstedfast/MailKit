@@ -81,17 +81,6 @@ namespace MailKit.Security {
 		{
 		}
 
-		/// <summary>
-		/// Gets the hash size.
-		/// </summary>
-		/// <remarks>
-		/// For SHA-1, the hash size would be 20.
-		/// </remarks>
-		/// <value>The hash size.</value>
-		protected abstract int HashSize {
-			get;
-		}
-
 		static string Normalize (string str)
 		{
 			var builder = new StringBuilder ();
@@ -111,6 +100,16 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Create the HMAC context.
+		/// </summary>
+		/// <remarks>
+		/// Creates the HMAC context using the secret key.
+		/// </remarks>
+		/// <returns>The HMAC context.</returns>
+		/// <param name="key">The secret key.</param>
+		protected abstract KeyedHashAlgorithm CreateHMAC (byte[] key);
+
+		/// <summary>
 		/// Apply the HMAC keyed algorithm.
 		/// </summary>
 		/// <remarks>
@@ -123,7 +122,11 @@ namespace MailKit.Security {
 		/// <returns>The results of the HMAC keyed algorithm.</returns>
 		/// <param name="key">The key.</param>
 		/// <param name="str">The string.</param>
-		protected abstract byte[] HMAC (byte[] key, byte[] str);
+		byte[] HMAC (byte[] key, byte[] str)
+		{
+			using (var hmac = CreateHMAC (key))
+				return hmac.ComputeHash (str);
+		}
 
 		/// <summary>
 		/// Apply the cryptographic hash function.
@@ -174,21 +177,23 @@ namespace MailKit.Security {
 		// HMAC() == output length of H().
 		byte[] Hi (byte[] str, byte[] salt, int count)
 		{
-			var salt1 = new byte[salt.Length + 4];
-			byte[] hi, u1;
+			using (var hmac = CreateHMAC (str)) {
+				var salt1 = new byte[salt.Length + 4];
+				byte[] hi, u1;
 
-			Buffer.BlockCopy (salt, 0, salt1, 0, salt.Length);
-			salt1[salt1.Length - 1] = (byte) 1;
+				Buffer.BlockCopy (salt, 0, salt1, 0, salt.Length);
+				salt1[salt1.Length - 1] = (byte) 1;
 
-			hi = u1 = HMAC (str, salt1);
+				hi = u1 = hmac.ComputeHash (salt1);
 
-			for (int i = 1; i <= count; i++) {
-				var u2 = HMAC (str, u1);
-				Xor (hi, u2);
-				u1 = u2;
+				for (int i = 1; i < count; i++) {
+					var u2 = hmac.ComputeHash (u1);
+					Xor (hi, u2);
+					u1 = u2;
+				}
+
+				return hi;
 			}
-
-			return hi;
 		}
 
 		static Dictionary<char, string> ParseServerChallenge (string challenge)
@@ -229,7 +234,7 @@ namespace MailKit.Security {
 			switch (state) {
 			case LoginState.Initial:
 				if (string.IsNullOrEmpty (cnonce)) {
-					var entropy = new byte[15];
+					var entropy = new byte[18];
 
 					using (var rng = RandomNumberGenerator.Create ())
 						rng.GetBytes (entropy);
@@ -237,8 +242,8 @@ namespace MailKit.Security {
 					cnonce = Convert.ToBase64String (entropy);
 				}
 
-				client = "n,,n=" + Normalize (cred.UserName) + ",r=" + cnonce;
-				response = Encoding.UTF8.GetBytes (client);
+				client = "n=" + Normalize (cred.UserName) + ",r=" + cnonce;
+				response = Encoding.UTF8.GetBytes ("n,," + client);
 				state = LoginState.Final;
 				break;
 			case LoginState.Final:
@@ -270,9 +275,9 @@ namespace MailKit.Security {
 
 				var key = HMAC (salted, Encoding.ASCII.GetBytes ("Client Key"));
 				signature = HMAC (Hash (key), auth);
-				var proof = Xor (key, signature);
+				Xor (key, signature);
 
-				response = Encoding.UTF8.GetBytes (withoutProof + ",p=" + Convert.ToBase64String (proof));
+				response = Encoding.UTF8.GetBytes (withoutProof + ",p=" + Convert.ToBase64String (key));
 				state = LoginState.Validate;
 				break;
 			case LoginState.Validate:
