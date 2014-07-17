@@ -31,9 +31,7 @@ using System.Collections.Generic;
 
 #if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
-using MD5 = MimeKit.Cryptography.MD5;
 #else
-using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
 using System.Security.Cryptography;
 #endif
 
@@ -137,17 +135,24 @@ namespace MailKit.Security {
 		/// use.
 		/// </remarks>
 		/// <returns>The results of the hash.</returns>
-		/// <param name="str">String.</param>
+		/// <param name="str">The string.</param>
 		protected abstract byte[] Hash (byte[] str);
 
-		static byte[] Xor (byte[] a, byte[] b)
+		/// <summary>
+		/// Apply the exclusive-or operation to combine two octet strings.
+		/// </summary>
+		/// <remarks>
+		/// Apply the exclusive-or operation to combine the octet string
+		/// on the left of this operator with the octet string on the right of
+		/// this operator.  The length of the output and each of the two
+		/// inputs will be the same for this use.
+		/// </remarks>
+		/// <param name="a">The alpha component.</param>
+		/// <param name="b">The blue component.</param>
+		static void Xor (byte[] a, byte[] b)
 		{
-			var result = new byte[a.Length];
-
 			for (int i = 0; i < a.Length; i++)
-				result[i] = (byte) (a[i] ^ b[i]);
-
-			return result;
+				a[i] = (byte) (a[i] ^ b[i]);
 		}
 
 		// Hi(str, salt, i):
@@ -179,7 +184,7 @@ namespace MailKit.Security {
 
 			for (int i = 1; i <= count; i++) {
 				var u2 = HMAC (str, u1);
-				hi = Xor (hi, u2);
+				Xor (hi, u2);
 				u1 = u2;
 			}
 

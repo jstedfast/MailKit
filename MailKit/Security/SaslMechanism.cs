@@ -48,7 +48,7 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {
-			"NTLM", "DIGEST-MD5", "CRAM-MD5", "XOAUTH2", "PLAIN", "LOGIN"
+			"SCRAM-SHA-1", "NTLM", "DIGEST-MD5", "CRAM-MD5", "XOAUTH2", "PLAIN", "LOGIN"
 		};
 
 		/// <summary>
@@ -185,6 +185,7 @@ namespace MailKit.Security {
 				throw new ArgumentNullException ("mechanism");
 
 			switch (mechanism) {
+			case "SCRAM-SHA-1": return true;
 			case "DIGEST-MD5":  return true;
 			case "CRAM-MD5":    return true;
 			case "XOAUTH2":     return true;
@@ -226,6 +227,7 @@ namespace MailKit.Security {
 
 			switch (mechanism) {
 			//case "KERBEROS_V4": return null;
+			case "SCRAM-SHA-1": return new SaslMechanismScramSha1 (uri, credentials);
 			case "DIGEST-MD5":  return new SaslMechanismDigestMd5 (uri, credentials);
 			case "CRAM-MD5":    return new SaslMechanismCramMd5 (uri, credentials);
 			//case "GSSAPI":      return null;
