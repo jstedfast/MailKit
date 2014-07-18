@@ -35,6 +35,12 @@ using System.Security.Cryptography;
 #endif
 
 namespace MailKit.Security {
+	/// <summary>
+	/// The SCRAM-SHA-1 SASL mechanism.
+	/// </summary>
+	/// <remarks>
+	/// A salted challenge/response SASL mechanism that uses the HMAC SHA-1 algorithm.
+	/// </remarks>
 	public class SaslMechanismScramSha1 : SaslMechanismScramBase
 	{
 		/// <summary>

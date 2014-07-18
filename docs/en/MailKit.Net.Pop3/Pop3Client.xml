@@ -630,6 +630,101 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="EnableUTF8">
+      <MemberSignature Language="C#" Value="public void EnableUTF8 (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnableUTF8(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Enable UTF8 mode.
+            </summary>
+        <remarks>
+            The POP3 UTF8 extension allows the client to retrieve messages in the UTF-8 encoding and
+            may also allow the user to authenticate using a UTF-8 encoded username or password.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has already been authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UTF8 extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EnableUTF8Async">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task EnableUTF8Async (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task EnableUTF8Async(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously enable UTF8 mode.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            The POP3 UTF8 extension allows the client to retrieve messages in the UTF-8 encoding and
+            may also allow the user to authenticate using a UTF-8 encoded username or password.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has already been authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the UTF8 extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="ExpirePolicy">
       <MemberSignature Language="C#" Value="public int ExpirePolicy { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance int32 ExpirePolicy" />
@@ -695,6 +790,100 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
             A POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetLanguages">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.Net.Pop3.Pop3Language&gt; GetLanguages (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IList`1&lt;class MailKit.Net.Pop3.Pop3Language&gt; GetLanguages(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.Net.Pop3.Pop3Language&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the list of languages supported by the POP3 server.
+            </summary>
+        <returns>The supported languages.</returns>
+        <remarks>
+            If the POP3 server supports the LANG extension, it is possible to
+            query the list of languages supported by the POP3 server that can
+            be used for error messages.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the LANG extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetLanguagesAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.Net.Pop3.Pop3Language&gt;&gt; GetLanguagesAsync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.Net.Pop3.Pop3Language&gt;&gt; GetLanguagesAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.Net.Pop3.Pop3Language&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the list of languages supported by the POP3 server.
+            </summary>
+        <returns>The supported languages.</returns>
+        <remarks>
+            If the POP3 server supports the LANG extension, it is possible to
+            query the list of languages supported by the POP3 server that can
+            be used for error messages.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the LANG extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
@@ -1743,6 +1932,113 @@
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLanguage">
+      <MemberSignature Language="C#" Value="public void SetLanguage (string lang, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetLanguage(string lang, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="lang" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="lang">The language code.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Set the language used by the POP3 server for error messages.
+            </summary>
+        <remarks>
+            If the POP3 server supports the LANG extension, it is possible to
+            set the language used by the POP3 server for error messages.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="lang" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="lang" /> is empty.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the LANG extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetLanguageAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task SetLanguageAsync (string lang, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task SetLanguageAsync(string lang, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="lang" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="lang">The language code.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously set the language used by the POP3 server for error messages.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            If the POP3 server supports the LANG extension, it is possible to
+            set the language used by the POP3 server for error messages.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="lang" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="lang" /> is empty.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The POP3 server does not support the LANG extension.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
             The POP3 command failed.

@@ -336,6 +336,89 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="EnableUTF8">
+      <MemberSignature Language="C#" Value="public void EnableUTF8 (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnableUTF8(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Enable the UTF8=ACCEPT extension.
+            </summary>
+        <remarks>
+            Enables the UTF8=ACCEPT extension.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the UTF8=ACCEPT extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="EnableUTF8Async">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task EnableUTF8Async (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task EnableUTF8Async(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Enable the UTF8=ACCEPT extension.
+            </summary>
+        <returns>To be added.</returns>
+        <remarks>
+            Enables the UTF8=ACCEPT extension.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the UTF8=ACCEPT extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="GetFolder">
       <MemberSignature Language="C#" Value="public override MailKit.IMailFolder GetFolder (MailKit.FolderNamespace namespace);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />

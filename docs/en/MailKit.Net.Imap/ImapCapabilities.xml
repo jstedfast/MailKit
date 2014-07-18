@@ -250,7 +250,7 @@
     </Member>
     <Member MemberName="GMailExt1">
       <MemberSignature Language="C#" Value="GMailExt1" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int64(8796093022208)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int64(35184372088832)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
@@ -712,6 +712,38 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="UTF8Accept">
+      <MemberSignature Language="C#" Value="UTF8Accept" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UTF8Accept = int64(4398046511104)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the UTF8=ACCEPT extension defined in rfc6855.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UTF8Only">
+      <MemberSignature Language="C#" Value="UTF8Only" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UTF8Only = int64(8796093022208)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the UTF8=ONLY extension defined in rfc6855.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Within">
       <MemberSignature Language="C#" Value="Within" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Within = int64(8388608)" />
@@ -730,7 +762,7 @@
     </Member>
     <Member MemberName="XList">
       <MemberSignature Language="C#" Value="XList" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int64(4398046511104)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int64(17592186044416)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>

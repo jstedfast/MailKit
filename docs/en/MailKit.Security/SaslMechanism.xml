@@ -270,6 +270,36 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="SaslPrep">
+      <MemberSignature Language="C#" Value="public static string SaslPrep (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string SaslPrep(string s) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">The string to prepare.</param>
+        <summary>
+            Prepares the user name or password string.
+            </summary>
+        <returns>The prepared string.</returns>
+        <remarks>
+            Prepares a user name or password string according to the rules of rfc4013.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="s" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="s" /> contains prohibited characters.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Uri">
       <MemberSignature Language="C#" Value="public Uri Uri { get; protected set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Uri" />

@@ -109,6 +109,7 @@
       <Type Name="Pop3Capabilities" Kind="Enumeration" />
       <Type Name="Pop3Client" Kind="Class" />
       <Type Name="Pop3CommandException" Kind="Class" />
+      <Type Name="Pop3Language" Kind="Class" />
       <Type Name="Pop3ProtocolException" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Net.Smtp">
@@ -139,6 +140,8 @@
       <Type Name="SaslMechanismNtlm" Kind="Class" />
       <Type Name="SaslMechanismOAuth2" Kind="Class" />
       <Type Name="SaslMechanismPlain" Kind="Class" />
+      <Type Name="SaslMechanismScramBase" Kind="Class" />
+      <Type Name="SaslMechanismScramSha1" Kind="Class" />
     </Namespace>
   </Types>
   <Title>MailKit</Title>

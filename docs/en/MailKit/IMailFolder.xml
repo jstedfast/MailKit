@@ -1683,14 +1683,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
@@ -1711,14 +1711,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
@@ -1739,14 +1739,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="MailKit.UniqueId" />
@@ -1769,14 +1769,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
@@ -1802,14 +1802,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
@@ -1832,14 +1832,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="System.Int32" />
@@ -1862,14 +1862,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="MailKit.UniqueId" />
@@ -1897,14 +1897,14 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="System.Int32" />
@@ -1929,14 +1929,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
@@ -1957,14 +1957,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
@@ -1985,14 +1985,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="MailKit.UniqueId" />
@@ -2015,14 +2015,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
@@ -2048,14 +2048,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
@@ -2078,14 +2078,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (int min, int max, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="System.Int32" />
@@ -2108,14 +2108,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (MailKit.UniqueId min, Nullable&lt;MailKit.UniqueId&gt; max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="MailKit.UniqueId" />
@@ -2143,14 +2143,14 @@
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt; FetchAsync (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt;&gt; FetchAsync(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.25.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="min" Type="System.Int32" />

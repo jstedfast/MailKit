@@ -1,0 +1,170 @@
+<Type Name="SaslMechanismScramBase" FullName="MailKit.Security.SaslMechanismScramBase">
+  <TypeSignature Language="C#" Value="public abstract class SaslMechanismScramBase : MailKit.Security.SaslMechanism" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SaslMechanismScramBase extends MailKit.Security.SaslMechanism" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>0.25.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>MailKit.Security.SaslMechanism</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            The base class for SCRAM-based SASL mechanisms.
+            </summary>
+    <remarks>
+            SCRAM-based SASL mechanisms are salted challenge/response authentication mechanisms.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SaslMechanismScramBase (Uri uri, System.Net.ICredentials credentials);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Uri uri, class System.Net.ICredentials credentials) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The URI of the service.</param>
+        <param name="credentials">The user's credentials.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanismScramBase" /> class.
+            </summary>
+        <remarks>
+            Creates a new SCRAM-based SASL context.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected SaslMechanismScramBase (Uri uri, System.Net.ICredentials credentials, string entropy);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig specialname rtspecialname instance void .ctor(class System.Uri uri, class System.Net.ICredentials credentials, string entropy) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="credentials" Type="System.Net.ICredentials" />
+        <Parameter Name="entropy" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The URI of the service.</param>
+        <param name="credentials">The user's credentials.</param>
+        <param name="entropy">Random characters to act as the cnonce token.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Security.SaslMechanismScramBase" /> class.
+            </summary>
+        <remarks>
+            Creates a new SCRAM-based SASL context.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Challenge">
+      <MemberSignature Language="C#" Value="protected override byte[] Challenge (byte[] token, int startIndex, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance unsigned int8[] Challenge(unsigned int8[] token, int32 startIndex, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="System.Byte[]" />
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="token">The server's challenge token.</param>
+        <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
+        <param name="length">The length of the server's challenge.</param>
+        <summary>
+            Parses the server's challenge token and returns the next challenge response.
+            </summary>
+        <returns>The next challenge response.</returns>
+        <remarks>
+            Parses the server's challenge token and returns the next challenge response.
+            </remarks>
+        <exception cref="T:MailKit.Security.SaslException">
+            An error has occurred while parsing the server's challenge token.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateHMAC">
+      <MemberSignature Language="C#" Value="protected abstract System.Security.Cryptography.KeyedHashAlgorithm CreateHMAC (byte[] key);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.Security.Cryptography.KeyedHashAlgorithm CreateHMAC(unsigned int8[] key) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Security.Cryptography.KeyedHashAlgorithm</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="key" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="key">The secret key.</param>
+        <summary>
+            Create the HMAC context.
+            </summary>
+        <returns>The HMAC context.</returns>
+        <remarks>
+            Creates the HMAC context using the secret key.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Hash">
+      <MemberSignature Language="C#" Value="protected abstract byte[] Hash (byte[] str);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance unsigned int8[] Hash(unsigned int8[] str) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="str" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="str">The string.</param>
+        <summary>
+            Apply the cryptographic hash function.
+            </summary>
+        <returns>The results of the hash.</returns>
+        <remarks>
+            H(str): Apply the cryptographic hash function to the octet string
+            "str", producing an octet string as a result.  The size of the
+            result depends on the hash result size for the hash function in
+            use.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public override void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Resets the state of the SASL mechanism.
+            </summary>
+        <remarks>
+            Resets the state of the SASL mechanism.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

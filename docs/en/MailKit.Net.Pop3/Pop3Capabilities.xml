@@ -57,6 +57,24 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Lang">
+      <MemberSignature Language="C#" Value="Lang" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities Lang = int32(4096)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the UTF8 extension (rfc6856), allowing clients to
+            authenticate using UTF-8 encoded usernames and passwords and retrieve
+            messages in the UTF-8 encoding.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="LoginDelay">
       <MemberSignature Language="C#" Value="LoginDelay" />
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities LoginDelay = int32(4)" />
@@ -209,6 +227,40 @@
             The server supports the USER authentication command, allowing the
             client to authenticate via a plain-text username and password command
             (not recommended unless no other authentication mechanisms exist).
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UTF8">
+      <MemberSignature Language="C#" Value="UTF8" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities UTF8 = int32(1024)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the UTF8 extension (rfc6856), allowing clients to
+            retrieve messages in the UTF-8 encoding.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="UTF8User">
+      <MemberSignature Language="C#" Value="UTF8User" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Pop3.Pop3Capabilities UTF8User = int32(2048)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Pop3.Pop3Capabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the UTF8 extension (rfc6856), allowing clients to
+            authenticate using UTF-8 encoded usernames and passwords.
             </summary>
       </Docs>
     </Member>
