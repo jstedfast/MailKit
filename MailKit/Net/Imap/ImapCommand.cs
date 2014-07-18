@@ -58,7 +58,7 @@ namespace MailKit.Net.Imap {
 	/// <remarks>
 	/// <para>Most IMAP commands return their results in untagged responses.</para>
 	/// </remarks>
-	delegate void ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, int index, ImapToken token);
+	delegate void ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, int index);
 
 	delegate void ImapCommandResetHandler (ImapCommand ic);
 

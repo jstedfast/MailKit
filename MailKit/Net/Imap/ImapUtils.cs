@@ -246,8 +246,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine.</param>
 		/// <param name="ic">The IMAP command.</param>
 		/// <param name="index">The index.</param>
-		/// <param name="tok">The token.</param>
-		public static void ParseFolderList (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		public static void ParseFolderList (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 			var list = (List<ImapFolder>) ic.UserData;

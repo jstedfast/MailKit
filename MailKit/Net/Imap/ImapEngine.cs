@@ -1367,7 +1367,7 @@ namespace MailKit.Net.Imap {
 
 						if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 							// the command registered an untagged handler for this atom...
-							handler (this, current, (int) number - 1, token);
+							handler (this, current, (int) number - 1);
 						} else if (folder != null) {
 							switch (atom) {
 							case "EXISTS":
@@ -1399,7 +1399,7 @@ namespace MailKit.Net.Imap {
 						SkipLine (cancellationToken);
 					} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
 						// the command registered an untagged handler for this atom...
-						handler (this, current, -1, token);
+						handler (this, current, -1);
 						SkipLine (cancellationToken);
 					} else if (atom == "VANISHED" && folder != null) {
 						folder.OnVanished (this, cancellationToken);

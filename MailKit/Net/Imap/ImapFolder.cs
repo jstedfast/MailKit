@@ -210,7 +210,7 @@ namespace MailKit.Net.Imap {
 			return access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT";
 		}
 
-		static void QResyncFetch (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void QResyncFetch (ImapEngine engine, ImapCommand ic, int index)
 		{
 			ic.Folder.OnFetch (engine, index, ic.CancellationToken);
 		}
@@ -998,7 +998,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static void UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, int index)
 		{
 			// The first token should be the mailbox name
 			ReadStringToken (engine, ic.CancellationToken);
@@ -1013,7 +1013,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static void UntaggedQuota (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void UntaggedQuota (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var encodedName = ReadStringToken (engine, ic.CancellationToken);
 			ImapFolder quotaRoot;
@@ -2005,7 +2005,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("MOVE", ic);
 		}
 
-		static void FetchSummaryItems (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void FetchSummaryItems (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 
@@ -2864,7 +2864,7 @@ namespace MailKit.Net.Imap {
 			return AsReadOnly (results.Values);
 		}
 
-		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var streams = (Dictionary<string, Stream>) ic.UserData;
 			var token = engine.ReadToken (ic.CancellationToken);
@@ -5490,7 +5490,7 @@ namespace MailKit.Net.Imap {
 			return builder.ToString ();
 		}
 
-		static void SearchMatches (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void SearchMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var uids = new List<UniqueId> ();
 			ImapToken token;
@@ -5515,7 +5515,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = uids;
 		}
 
-		static void ESearchMatches (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void ESearchMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 			IList<UniqueId> uids = null;
@@ -5973,7 +5973,7 @@ namespace MailKit.Net.Imap {
 			return (IList<UniqueId>) ic.UserData;
 		}
 
-		static void ThreadMatches (ImapEngine engine, ImapCommand ic, int index, ImapToken tok)
+		static void ThreadMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
 			ic.UserData = ImapUtils.ParseThreads (engine, ic.CancellationToken);
 		}
