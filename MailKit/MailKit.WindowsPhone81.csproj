@@ -172,6 +172,7 @@
     <Compile Include="Security\Ntlm\Type2Message.cs" />
     <Compile Include="Security\Ntlm\Type3Message.cs" />
     <Compile Include="Security\AuthenticationException.cs" />
+    <Compile Include="Security\KeyedHashAlgorithm.cs" />
     <Compile Include="Security\RandomNumberGenerator.cs" />
     <Compile Include="Security\SaslException.cs" />
     <Compile Include="Security\SaslMechanism.cs" />
