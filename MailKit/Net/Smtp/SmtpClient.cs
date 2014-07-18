@@ -81,9 +81,6 @@ namespace MailKit.Net.Smtp {
 		SmtpCapabilities capabilities;
 		int inputIndex, inputEnd;
 		MemoryBlockStream queue;
-#if !NETFX_CORE
-		EndPoint localEndPoint;
-#endif
 		int timeout = 100000;
 		bool authenticated;
 		bool connected;
@@ -168,6 +165,19 @@ namespace MailKit.Net.Smtp {
 
 				capabilities = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets the local domain.
+		/// </summary>
+		/// <remarks>
+		/// The local domain is used in the HELO or EHLO commands sent to
+		/// the SMTP server. If left unset, the local IP address will be
+		/// used instead.
+		/// </remarks>
+		/// <value>The local domain.</value>
+		public string LocalDomain {
+			get; set;
 		}
 
 		/// <summary>
@@ -265,14 +275,14 @@ namespace MailKit.Net.Smtp {
 				return;
 
 			if (socket != null) {
-				#if NETFX_CORE
+#if NETFX_CORE
 				// FIXME: how do we poll a StreamSocket?
 				cancellationToken.ThrowIfCancellationRequested ();
-				#else
+#else
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
 				} while (!socket.Poll (1000, mode));
-				#endif
+#endif
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
@@ -441,18 +451,34 @@ namespace MailKit.Net.Smtp {
 			string command = ehlo ? "EHLO " : "HELO ";
 
 #if !NETFX_CORE
-			var ip = localEndPoint as IPEndPoint;
+			string domain = null;
+			IPAddress ip = null;
+
+			if (!string.IsNullOrEmpty (LocalDomain)) {
+				if (!IPAddress.TryParse (LocalDomain, out ip))
+					domain = LocalDomain;
+			} else if (socket != null) {
+				var ipEndPoint = socket.LocalEndPoint as IPEndPoint;
+
+				if (ipEndPoint == null)
+					domain = ((DnsEndPoint) socket.LocalEndPoint).Host;
+				else
+					ip = ipEndPoint.Address;
+			} else {
+				domain = "[127.0.0.1]";
+			}
 
 			if (ip != null) {
-				command += "[";
-				if (localEndPoint.AddressFamily == AddressFamily.InterNetworkV6)
-					command += "IPv6:";
-				command += ip.Address;
-				command += "]";
-			} else {
-				command += ((DnsEndPoint) localEndPoint).Host;
+				if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+					domain = "[IPv6:" + ip + "]";
+				else
+					domain = "[" + ip + "]";
 			}
+
+			command += domain;
 #else
+			if (!string.IsNullOrEmpty (LocalDomain))
+				command += LocalDomain;
 			if (socket.Information.LocalAddress.IPInformation != null)
 				command += "[" + socket.Information.LocalAddress.IPInformation + "]";
 			else
@@ -650,14 +676,11 @@ namespace MailKit.Net.Smtp {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
-#if !NETFX_CORE
-			localEndPoint = new IPEndPoint (IPAddress.Loopback, 25);
-#endif
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			stream = replayStream;
-			socket = null;
 			host = hostName;
+			socket = null;
 			MaxSize = 0;
 
 			try {
@@ -758,7 +781,6 @@ namespace MailKit.Net.Smtp {
 				try {
 					cancellationToken.ThrowIfCancellationRequested ();
 					socket.Connect (ipAddresses[i], port);
-					localEndPoint = socket.LocalEndPoint;
 					break;
 				} catch (OperationCanceledException) {
 					socket.Dispose ();
@@ -918,9 +940,6 @@ namespace MailKit.Net.Smtp {
 		void Disconnect ()
 		{
 			authenticated = false;
-#if !NETFX_CORE
-			localEndPoint = null;
-#endif
 			connected = false;
 			host = null;
 
