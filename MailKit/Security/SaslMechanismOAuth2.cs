@@ -64,6 +64,18 @@ namespace MailKit.Security {
 		}
 
 		/// <summary>
+		/// Gets whether or not the mechanism supports an initial response (SASL-IR).
+		/// </summary>
+		/// <remarks>
+		/// SASL mechanisms that support sending an initial client response to the server
+		/// should return <value>true</value>.
+		/// </remarks>
+		/// <value><c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+		public override bool SupportsInitialResponse {
+			get { return true; }
+		}
+
+		/// <summary>
 		/// Parses the server's challenge token and returns the next challenge response.
 		/// </summary>
 		/// <remarks>
@@ -73,6 +85,9 @@ namespace MailKit.Security {
 		/// <param name="token">The server's challenge token.</param>
 		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
 		/// <param name="length">The length of the server's challenge.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The SASL mechanism is already authenticated.
+		/// </exception>
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>

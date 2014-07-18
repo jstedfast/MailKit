@@ -105,6 +105,12 @@ namespace MailKit.Security {
 		/// <param name="token">The server's challenge token.</param>
 		/// <param name="startIndex">The index into the token specifying where the server's challenge begins.</param>
 		/// <param name="length">The length of the server's challenge.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The SASL mechanism is already authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// THe SASL mechanism does not support SASL-IR.
+		/// </exception>
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
 		/// </exception>
@@ -114,7 +120,7 @@ namespace MailKit.Security {
 				throw new InvalidOperationException ();
 
 			if (token == null)
-				return null;
+				throw new NotSupportedException ("DIGEST-MD5 does not support SASL-IR.");
 
 			var cred = Credentials.GetCredential (Uri, MechanismName);
 

@@ -628,10 +628,12 @@ namespace MailKit.Net.Smtp {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				// send an initial challenge if the mechanism supports it
-				if ((challenge = sasl.Challenge (null)) != null)
+				if (sasl.SupportsInitialResponse) {
+					challenge = sasl.Challenge (null);
 					command = string.Format ("AUTH {0} {1}", authmech, challenge);
-				else
+				} else {
 					command = string.Format ("AUTH {0}", authmech);
+				}
 
 				response = SendCommand (command, cancellationToken);
 

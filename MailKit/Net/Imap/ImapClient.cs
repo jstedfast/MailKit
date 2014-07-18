@@ -452,13 +452,12 @@ namespace MailKit.Net.Imap {
 				cancellationToken.ThrowIfCancellationRequested ();
 
 				var command = string.Format ("AUTHENTICATE {0}", sasl.MechanismName);
-				var ir = sasl.Challenge (null);
 
-				if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && ir != null) {
+				if ((engine.Capabilities & ImapCapabilities.SaslIR) != 0 && sasl.SupportsInitialResponse) {
+					var ir = sasl.Challenge (null);
 					command += " " + ir + "\r\n";
 				} else {
 					command += "\r\n";
-					sasl.Reset ();
 				}
 
 				ic = engine.QueueCommand (cancellationToken, null, command);
