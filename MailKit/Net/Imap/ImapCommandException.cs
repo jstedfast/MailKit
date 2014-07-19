@@ -86,7 +86,7 @@ namespace MailKit.Net.Imap {
 			else
 				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response.", command, result);
 
-			return new ImapCommandException (message);
+			return ic.Exception != null ? new ImapCommandException (message, ic.Exception) : new ImapCommandException (message);
 		}
 
 		/// <summary>
