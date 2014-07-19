@@ -194,8 +194,16 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
+			var range = uids as UniqueIdRange;
+			if (range != null)
+				return range.ToString ();
+
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
+
+			var set = uids as UniqueIdSet;
+			if (set != null)
+				return set.ToString ();
 
 			var builder = new StringBuilder ();
 			int index = 0;

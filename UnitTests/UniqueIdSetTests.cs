@@ -35,7 +35,7 @@ namespace UnitTests {
 	public class UniqueIdSetTests
 	{
 		[Test]
-		public void TestSimpleUniqueIdSet ()
+		public void TestUniqueIdSet ()
 		{
 			UniqueId[] uids = {
 				new UniqueId (1), new UniqueId (2), new UniqueId (3),
@@ -46,6 +46,7 @@ namespace UnitTests {
 			var actual = list.ToString ();
 
 			Assert.AreEqual ("1:9", actual, "Incorrect initial value.");
+			Assert.AreEqual (9, list.Count, "Incorrect initial count.");
 
 			// Test Remove()
 
@@ -53,16 +54,19 @@ namespace UnitTests {
 			actual = list.ToString ();
 
 			Assert.AreEqual ("2:9", actual, "Incorrect results after Remove() #1.");
+			Assert.AreEqual (8, list.Count, "Incorrect count after Remove() #1.");
 
 			list.Remove (uids[uids.Length - 1]);
 			actual = list.ToString ();
 
 			Assert.AreEqual ("2:8", actual, "Incorrect results after Remove() #2.");
+			Assert.AreEqual (7, list.Count, "Incorrect count after Remove() #2.");
 
 			list.Remove (uids[4]);
 			actual = list.ToString ();
 
 			Assert.AreEqual ("2:4,6:8", actual, "Incorrect results after Remove() #3.");
+			Assert.AreEqual (6, list.Count, "Incorrect count after Remove() #3.");
 
 			// Test Add()
 
@@ -70,16 +74,19 @@ namespace UnitTests {
 			actual = list.ToString ();
 
 			Assert.AreEqual ("2:8", actual, "Incorrect results after Add() #1.");
+			Assert.AreEqual (7, list.Count, "Incorrect count after Add() #1.");
 
 			list.Add (new UniqueId (1));
 			actual = list.ToString ();
 
 			Assert.AreEqual ("1:8", actual, "Incorrect results after Add() #2.");
+			Assert.AreEqual (8, list.Count, "Incorrect count after Add() #2.");
 
 			list.Add (new UniqueId (9));
 			actual = list.ToString ();
 
 			Assert.AreEqual ("1:9", actual, "Incorrect results after Add() #3.");
+			Assert.AreEqual (9, list.Count, "Incorrect count after Add() #3.");
 
 			// Test RemoveAt()
 
@@ -87,16 +94,31 @@ namespace UnitTests {
 			actual = list.ToString ();
 
 			Assert.AreEqual ("2:9", actual, "Incorrect results after RemoveAt() #1.");
+			Assert.AreEqual (8, list.Count, "Incorrect count after RemoveAt() #1.");
 
 			list.RemoveAt (7);
 			actual = list.ToString ();
 
 			Assert.AreEqual ("2:8", actual, "Incorrect results after RemoveAt() #2.");
+			Assert.AreEqual (7, list.Count, "Incorrect count after RemoveAt() #2.");
 
 			list.RemoveAt (3);
 			actual = list.ToString ();
 
 			Assert.AreEqual ("2:4,6:8", actual, "Incorrect results after RemoveAt() #3.");
+			Assert.AreEqual (6, list.Count, "Incorrect count after RemoveAt() #3.");
+
+			// Test adding a range of items
+
+			list.AddRange (uids);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("1:9", actual, "Incorrect results after AddRange().");
+			Assert.AreEqual (9, list.Count, "Incorrect count after AddRange().");
+
+			// Test clearing the list
+			list.Clear ();
+			Assert.AreEqual (0, list.Count, "Incorrect count after Clear().");
 		}
 
 		[Test]

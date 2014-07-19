@@ -40,6 +40,7 @@ namespace MailKit {
 	public class UniqueIdSet : IList<UniqueId>
 	{
 		readonly List<UniqueIdRange> ranges;
+		int count;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdSet"/> class.
@@ -76,14 +77,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
-			get {
-				int count = 0;
-
-				for (int i = 0; i < ranges.Count; i++)
-					count += ranges[i].Count;
-
-				return count;
-			}
+			get { return count; }
 		}
 
 		/// <summary>
@@ -127,6 +121,7 @@ namespace MailKit {
 
 			if (max == 0) {
 				ranges.Add (new UniqueIdRange (uid, uid));
+				count++;
 				return;
 			}
 
@@ -142,10 +137,12 @@ namespace MailKit {
 							// merge the 2 ranges together
 							ranges[i].Max = ranges[i + 1].Max;
 							ranges.RemoveAt (i + 1);
+							count++;
 							return;
 						}
 
 						ranges[i].Max = uid;
+						count++;
 						return;
 					}
 
@@ -157,10 +154,12 @@ namespace MailKit {
 							// merge the 2 ranges together
 							ranges[i - 1].Max = ranges[i].Max;
 							ranges.RemoveAt (i);
+							count++;
 							return;
 						}
 
 						ranges[i].Min = uid;
+						count++;
 						return;
 					}
 
@@ -174,6 +173,8 @@ namespace MailKit {
 				ranges.Insert (i, range);
 			else
 				ranges.Add (range);
+
+			count++;
 		}
 
 		/// <summary>
@@ -213,6 +214,7 @@ namespace MailKit {
 		public void Clear ()
 		{
 			ranges.Clear ();
+			count = 0;
 		}
 
 		/// <summary>
@@ -279,6 +281,8 @@ namespace MailKit {
 				ranges.Insert (index, range);
 				ranges[index + 1].Min = min;
 			}
+
+			count--;
 		}
 
 		/// <summary>
