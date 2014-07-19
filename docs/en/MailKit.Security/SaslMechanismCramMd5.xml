@@ -69,6 +69,12 @@
         <exception cref="T:MailKit.Security.SaslException">
             An error has occurred while parsing the server's challenge token.
             </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The SASL mechanism is already authenticated.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            THe SASL mechanism does not support SASL-IR.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MechanismName">

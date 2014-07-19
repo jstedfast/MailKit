@@ -208,7 +208,7 @@ namespace MailKit {
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.
 		/// </summary>
 		/// <remarks>
-		///  Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.
 		/// </remarks>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.</returns>
 		public override string ToString ()

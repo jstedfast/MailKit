@@ -322,6 +322,28 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="LocalDomain">
+      <MemberSignature Language="C#" Value="public string LocalDomain { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LocalDomain" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets or sets the local domain.
+            </summary>
+        <value>The local domain.</value>
+        <remarks>
+            The local domain is used in the HELO or EHLO commands sent to
+            the SMTP server. If left unset, the local IP address will be
+            used instead.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="MaxSize">
       <MemberSignature Language="C#" Value="public uint MaxSize { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 MaxSize" />

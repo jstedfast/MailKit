@@ -97,6 +97,8 @@
       <Type Name="StatusItems" Kind="Enumeration" />
       <Type Name="ThreadingAlgorithm" Kind="Enumeration" />
       <Type Name="UniqueId" Kind="Structure" />
+      <Type Name="UniqueIdRange" Kind="Class" />
+      <Type Name="UniqueIdSet" Kind="Class" />
     </Namespace>
     <Namespace Name="MailKit.Net.Imap">
       <Type Name="ImapCapabilities" Kind="Enumeration" />

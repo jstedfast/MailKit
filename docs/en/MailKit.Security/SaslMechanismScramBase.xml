@@ -93,6 +93,9 @@
         <exception cref="T:MailKit.Security.SaslException">
             An error has occurred while parsing the server's challenge token.
             </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The SASL mechanism is already authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CreateHMAC">
@@ -163,6 +166,28 @@
             </summary>
         <remarks>
             Resets the state of the SASL mechanism.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsInitialResponse">
+      <MemberSignature Language="C#" Value="public override bool SupportsInitialResponse { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SupportsInitialResponse" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets whether or not the mechanism supports an initial response (SASL-IR).
+            </summary>
+        <value>
+          <c>true</c> if the mechanism supports an initial response; otherwise, <c>false</c>.</value>
+        <remarks>
+            SASL mechanisms that support sending an initial client response to the server
+            should return <value>true</value>.
             </remarks>
       </Docs>
     </Member>
