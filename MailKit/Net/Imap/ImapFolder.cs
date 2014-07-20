@@ -1436,15 +1436,8 @@ namespace MailKit.Net.Imap {
 		ImapCommand QueueMultiAppend (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken)
 		{
 			var args = new List<object> ();
-			string format = string.Empty;
+			string format = "APPEND %F";
 
-			// Note: GMail claims to support UIDPLUS, but does not accept "UID APPEND"
-			if (!Engine.IsGMail) {
-				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
-					format = "UID ";
-			}
-
-			format += "APPEND %F";
 			args.Add (this);
 
 			for (int i = 0; i < messages.Count; i++) {
