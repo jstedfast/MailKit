@@ -743,7 +743,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public ImapToken ReadToken (CancellationToken cancellationToken)
 		{
-			return ReadToken (StringSpecials, cancellationToken);
+			return ReadToken (AtomSpecials, cancellationToken);
 		}
 
 		/// <summary>
