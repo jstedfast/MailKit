@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SaslMechanismScramSha1 extends MailKit.Security.SaslMechanismScramBase" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.25.0.0</AssemblyVersion>
+    <AssemblyVersion>0.26.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.Security.SaslMechanismScramBase</BaseTypeName>
@@ -23,7 +23,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Uri uri, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
@@ -45,7 +45,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.Security.Cryptography.KeyedHashAlgorithm CreateHMAC(unsigned int8[] key) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.KeyedHashAlgorithm</ReturnType>
@@ -69,7 +69,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance unsigned int8[] Hash(unsigned int8[] str) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -96,7 +96,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MechanismName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

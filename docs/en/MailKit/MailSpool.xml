@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MailSpool extends MailKit.MailService implements class MailKit.IMailService, class MailKit.IMailSpool, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MimeMessage&gt;, class System.Collections.IEnumerable, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.25.0.0</AssemblyVersion>
+    <AssemblyVersion>0.26.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MailService</BaseTypeName>
@@ -33,7 +33,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -50,7 +50,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteAllMessages(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -96,7 +96,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteAllMessagesAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -143,7 +143,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -194,7 +194,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -251,7 +251,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessageAsync(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -303,7 +303,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessageAsync(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -361,7 +361,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessages(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -417,7 +417,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessages(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -476,7 +476,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteMessages(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -530,7 +530,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessagesAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -587,7 +587,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessagesAsync(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -647,7 +647,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task DeleteMessagesAsync(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -702,7 +702,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -744,7 +744,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -794,7 +794,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.MimeMessage GetMessage(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -850,7 +850,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class MimeKit.MimeMessage&gt; GetMessageAsync(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -900,7 +900,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class MimeKit.MimeMessage&gt; GetMessageAsync(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -956,7 +956,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageCount(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1001,7 +1001,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;int32&gt; GetMessageCountAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Int32&gt;</ReturnType>
@@ -1046,7 +1046,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
@@ -1101,7 +1101,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
@@ -1159,7 +1159,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -1209,7 +1209,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class MimeKit.HeaderList GetMessageHeaders(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.HeaderList</ReturnType>
@@ -1265,7 +1265,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt; GetMessageHeaders(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;</ReturnType>
@@ -1318,7 +1318,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt;</ReturnType>
@@ -1373,7 +1373,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt;</ReturnType>
@@ -1431,7 +1431,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class MimeKit.HeaderList&gt; GetMessageHeadersAsync(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;MimeKit.HeaderList&gt;</ReturnType>
@@ -1481,7 +1481,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class MimeKit.HeaderList&gt; GetMessageHeadersAsync(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;MimeKit.HeaderList&gt;</ReturnType>
@@ -1537,7 +1537,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.HeaderList&gt;&gt; GetMessageHeadersAsync(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.HeaderList&gt;&gt;</ReturnType>
@@ -1590,7 +1590,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -1645,7 +1645,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -1703,7 +1703,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; GetMessages(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -1756,7 +1756,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt;&gt; GetMessagesAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt;</ReturnType>
@@ -1811,7 +1811,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt;&gt; GetMessagesAsync(class System.Collections.Generic.IList`1&lt;string&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt;</ReturnType>
@@ -1869,7 +1869,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt;&gt; GetMessagesAsync(int32 startIndex, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;MimeKit.MimeMessage&gt;&gt;</ReturnType>
@@ -1922,7 +1922,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -1972,7 +1972,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMessageSize(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2025,7 +2025,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;int32&gt; GetMessageSizeAsync(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Int32&gt;</ReturnType>
@@ -2075,7 +2075,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;int32&gt; GetMessageSizeAsync(string uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Int32&gt;</ReturnType>
@@ -2128,7 +2128,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; GetMessageSizes(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
@@ -2173,7 +2173,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;int32&gt;&gt; GetMessageSizesAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.Int32&gt;&gt;</ReturnType>
@@ -2218,7 +2218,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetMessageUid(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -2272,7 +2272,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;string&gt; GetMessageUidAsync(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.String&gt;</ReturnType>
@@ -2326,7 +2326,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;string&gt; GetMessageUids(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.String&gt;</ReturnType>
@@ -2375,7 +2375,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;string&gt;&gt; GetMessageUidsAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.String&gt;&gt;</ReturnType>
@@ -2424,7 +2424,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2470,7 +2470,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task ResetAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -2517,7 +2517,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool SupportsUids" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2543,7 +2543,7 @@
       <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>

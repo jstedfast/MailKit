@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SaslMechanism extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.25.0.0</AssemblyVersion>
+    <AssemblyVersion>0.26.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -26,7 +26,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Uri uri, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
@@ -48,7 +48,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly string[] AuthMechanismRank" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
@@ -68,7 +68,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string Challenge(string token) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -101,7 +101,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance unsigned int8[] Challenge(unsigned int8[] token, int32 startIndex, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -138,7 +138,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Security.SaslMechanism Create(string mechanism, class System.Uri uri, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Security.SaslMechanism</ReturnType>
@@ -177,7 +177,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentials Credentials" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentials</ReturnType>
@@ -197,7 +197,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsAuthenticated" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -218,7 +218,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsSupported(string mechanism) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -247,7 +247,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string MechanismName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -267,7 +267,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -287,7 +287,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig string SaslPrep(string s) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -317,7 +317,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool SupportsInitialResponse" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -339,7 +339,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Uri Uri" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.25.0.0</AssemblyVersion>
+        <AssemblyVersion>0.26.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>

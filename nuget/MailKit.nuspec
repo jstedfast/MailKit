@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.25.0.0</version>
+        <version>0.26.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,13 +22,14 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed ImapEngine.Iterate() to always set 'current' back to null after it is done (fixes state when cancellation happens before the command is actually invoked).
-* Fixed BodyPartCollection.IndexOf(Uri) for cid: URIs.
-* Modified BodyPartCollection to implement ICollection instead of IEnumerable.
-* Modified IMailFolder.Fetch() to return IMessageSummaries which allows anyone to implement their own IMailFolder for other mail storage types (Exchange, Maildir, etc).
-* Added public .ctors to MessageFlagsChangedEventArgs and MessageLabelsChangedEventArgs.
-* Added public .ctors and setters for all of the BodyPart classes.
-* Added public .ctor and setters to Envelope.
+        <releaseNotes>* Modified IMailFolder.Fetch() to return IList instead of IEnumerable.
+* Added SmtpClient.LocalDomain to allow developers to override the string used in the HELO/EHLO commands.
+* Added UniqueIdRange and UniqueIdSet classes which implement IList&lt;UniqueId&gt; which can be more memory efficient than using a List or an array of UniqueIds.
+* Fixed IMAP's X-GM-LABELS support to handle GMail labels with square brackets in the name.
+* Implemented IMAP UTF8=ACCEPT and UTF8=ONLY extensions.
+* Implemented POP3 UTF8 and LANG extensions.
+* Implemented the SCRAM-SHA-1 SASL mechanism.
+* Fixed IMAP's APPEND command.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
