@@ -2009,7 +2009,8 @@ namespace MailKit.Net.Imap {
 			}
 
 			do {
-				token = engine.ReadToken (ic.CancellationToken);
+				// Note: we use AtomSpecials here so that we get "BODY" instead of "BODY[..."
+				token = engine.ReadToken (ImapStream.AtomSpecials, ic.CancellationToken);
 
 				if (token.Type == ImapTokenType.CloseParen || token.Type == ImapTokenType.Eoln)
 					break;

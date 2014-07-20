@@ -580,6 +580,29 @@ namespace MailKit.Net.Imap {
 		/// Reads the next token.
 		/// </summary>
 		/// <returns>The token.</returns>
+		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The engine is not connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public ImapToken ReadToken (string specials, CancellationToken cancellationToken)
+		{
+			return stream.ReadToken (specials, cancellationToken);
+		}
+
+		/// <summary>
+		/// Reads the next token.
+		/// </summary>
+		/// <returns>The token.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.InvalidOperationException">
 		/// The engine is not connected.

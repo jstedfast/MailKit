@@ -509,7 +509,7 @@ namespace MailKit.Net.Imap {
 						if (result == ImapCommandResult.None)
 							throw ImapEngine.UnexpectedToken (token, false);
 
-						token = Engine.Stream.ReadToken (CancellationToken);
+						token = Engine.ReadToken (CancellationToken);
 						if (token.Type == ImapTokenType.OpenBracket) {
 							var code = Engine.ParseResponseCode (CancellationToken);
 							RespCodes.Add (code);

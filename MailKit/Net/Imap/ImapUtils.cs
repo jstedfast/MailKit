@@ -943,7 +943,8 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			token = engine.ReadToken (cancellationToken);
+			// Note: GMail's IMAP implementation is broken and does not quote strings with ']' like it should.
+			token = engine.ReadToken (ImapStream.GMailLabelSpecials, cancellationToken);
 
 			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
 				var label = engine.DecodeMailboxName ((string) token.Value);

@@ -64,7 +64,10 @@ namespace MailKit.Net.Imap {
 
 	class ImapStream : Stream, ICancellableStream
 	{
-		const string AtomSpecials = "()[]{%*\\\"\n";
+		// Note: GMail's IMAP implementation is broken and does not quote strings with ']' like it should.
+		public const string GMailLabelSpecials = "(){%*\\\"\n";
+		public const string StringSpecials = "()]{%*\\\"\n";
+		public const string AtomSpecials = "()[]{%*\\\"\n";
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
 		const int PadSize = 4;
@@ -443,9 +446,9 @@ namespace MailKit.Net.Imap {
 			return Read (buffer, offset, count, CancellationToken.None);
 		}
 
-		static bool IsAtom (byte c)
+		static bool IsAtom (byte c, string specials)
 		{
-			return !IsCtrl (c) && !IsWhiteSpace (c) && AtomSpecials.IndexOf ((char) c) == -1;
+			return !IsCtrl (c) && !IsWhiteSpace (c) && specials.IndexOf ((char) c) == -1;
 		}
 
 		static bool IsCtrl (byte c)
@@ -509,7 +512,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		unsafe string ReadAtomString (byte* inbuf, bool flag, CancellationToken cancellationToken)
+		unsafe string ReadAtomString (byte* inbuf, bool flag, string specials, CancellationToken cancellationToken)
 		{
 			var builder = new StringBuilder ();
 			byte* inptr = inbuf + inputIndex;
@@ -524,7 +527,7 @@ namespace MailKit.Net.Imap {
 					return "*";
 				}
 
-				while (IsAtom (*inptr))
+				while (IsAtom (*inptr, specials))
 					builder.Append ((char) *inptr++);
 
 				if (inptr < inend)
@@ -543,9 +546,9 @@ namespace MailKit.Net.Imap {
 			return builder.ToString ();
 		}
 
-		unsafe ImapToken ReadAtomToken (byte* inbuf, CancellationToken cancellationToken)
+		unsafe ImapToken ReadAtomToken (byte* inbuf, string specials, CancellationToken cancellationToken)
 		{
-			var atom = ReadAtomString (inbuf, false, cancellationToken);
+			var atom = ReadAtomString (inbuf, false, specials, cancellationToken);
 
 			return atom == "NIL" ? new ImapToken (ImapTokenType.Nil, atom) : new ImapToken (ImapTokenType.Atom, atom);
 		}
@@ -554,7 +557,7 @@ namespace MailKit.Net.Imap {
 		{
 			inputIndex++;
 
-			var flag = "\\" + ReadAtomString (inbuf, true, cancellationToken);
+			var flag = "\\" + ReadAtomString (inbuf, true, AtomSpecials, cancellationToken);
 
 			return new ImapToken (ImapTokenType.Flag, flag);
 		}
@@ -655,6 +658,8 @@ namespace MailKit.Net.Imap {
 		/// Reads the next available token from the stream.
 		/// </summary>
 		/// <returns>The token.</returns>
+		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
 		/// </exception>
@@ -664,7 +669,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public ImapToken ReadToken (CancellationToken cancellationToken)
+		public ImapToken ReadToken (string specials, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -711,8 +716,8 @@ namespace MailKit.Net.Imap {
 					if (c == '\\')
 						return ReadFlagToken (inbuf, cancellationToken);
 
-					if (c != '+' && IsAtom (*inptr))
-						return ReadAtomToken (inbuf, cancellationToken);
+					if (c != '+' && IsAtom (*inptr, specials))
+						return ReadAtomToken (inbuf, specials, cancellationToken);
 
 					// special character token
 					inputIndex++;
@@ -720,6 +725,25 @@ namespace MailKit.Net.Imap {
 					return new ImapToken ((ImapTokenType) c, c);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Reads the next available token from the stream.
+		/// </summary>
+		/// <returns>The token.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public ImapToken ReadToken (CancellationToken cancellationToken)
+		{
+			return ReadToken (StringSpecials, cancellationToken);
 		}
 
 		/// <summary>
