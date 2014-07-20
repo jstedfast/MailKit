@@ -59,6 +59,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new unique id set containing the specified uids.
 		/// </remarks>
+		/// <param name="uids">An initial set of unique ids.</param>
 		public UniqueIdSet (IEnumerable<UniqueId> uids)
 		{
 			ranges = new List<UniqueIdRange> ();

@@ -36,9 +36,8 @@ using MimeKit.IO;
 using MimeKit.Utils;
 
 #if NETFX_CORE
-using Encoding = Portable.Text.Encoding;
-
 using Windows.Storage.Streams;
+using Encoding = Portable.Text.Encoding;
 #endif
 
 namespace MailKit.Net.Imap {

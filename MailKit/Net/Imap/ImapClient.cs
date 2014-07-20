@@ -285,6 +285,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Enables the UTF8=ACCEPT extension.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.

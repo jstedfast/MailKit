@@ -804,6 +804,7 @@ namespace MailKit.Net.Pop3 {
 		/// The POP3 UTF8 extension allows the client to retrieve messages in the UTF-8 encoding and
 		/// may also allow the user to authenticate using a UTF-8 encoded username or password.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1008,6 +1009,7 @@ namespace MailKit.Net.Pop3 {
 		/// If the POP3 server supports the LANG extension, it is possible to
 		/// set the language used by the POP3 server for error messages.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="lang">The language code.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">

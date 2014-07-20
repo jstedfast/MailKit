@@ -395,7 +395,7 @@
         <summary>
             Enable the UTF8=ACCEPT extension.
             </summary>
-        <returns>To be added.</returns>
+        <returns>An asynchronous task context.</returns>
         <remarks>
             Enables the UTF8=ACCEPT extension.
             </remarks>

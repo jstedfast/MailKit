@@ -57,7 +57,7 @@
         <Parameter Name="uids" Type="System.Collections.Generic.IEnumerable&lt;MailKit.UniqueId&gt;" />
       </Parameters>
       <Docs>
-        <param name="uids">To be added.</param>
+        <param name="uids">An initial set of unique ids.</param>
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.UniqueIdSet" /> class.
             </summary>
