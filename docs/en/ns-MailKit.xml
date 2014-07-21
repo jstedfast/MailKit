@@ -15,7 +15,7 @@
 	One of the more common operations that MailKit is meant for is sending email messages.
       </para>
       <example>
-	<code lang="c#">
+	<code lang="C#">
 using System;
 using System.Net;
 using System.Threading;
@@ -43,20 +43,14 @@ I just wanted to let you know that Monica and I were going to go play some paint
             };
 
             using (var client = new SmtpClient ()) {
-                var credentials = new NetworkCredential ("joey", "password");
+                client.Connect ("smtp.gmail.com", 587, true);
 
-                // Note: if the server requires SSL-on-connect, use the "smtps" protocol instead
-                var uri = new Uri ("smtp://smtp.gmail.com:587");
+                // only needed if the SMTP server requires authentication
+                client.Authenticate ("joey", "password");
 
-                using (var cancel = new CancellationTokenSource ()) {
-                    client.Connect (uri, cancel.Token);
+                client.Send (message);
 
-                    // only needed if the SMTP server requires authentication
-                    client.Authenticate (credentials, cancel.Token);
-
-                    client.Send (message, cancel.Token);
-                    client.Disconnect (true, cancel.Token);
-                }
+                client.Disconnect (true);
             }
         }
     }
@@ -69,7 +63,7 @@ I just wanted to let you know that Monica and I were going to go play some paint
 	One of the other main uses of MailKit is retrieving messages from pop3 servers.
       </para>
       <example>
-	<code lang="c#">
+	<code lang="C#">
 using System;
 using System.Net;
 using System.Threading;
@@ -84,23 +78,17 @@ namespace TestClient {
         public static void Main (string[] args)
         {
             using (var client = new Pop3Client ()) {
-                var credentials = new NetworkCredential ("joey", "password");
+                client.Connect ("mail.friends.com", 995, true);
 
-                // Note: if the server requires SSL-on-connect, use the "pops" protocol instead
-                var uri = new Uri ("pop://mail.friends.com");
+                client.Authenticate ("joey", "password");
 
-                using (var cancel = new CancellationTokenSource ()) {
-                    client.Connect (uri, cancel.Token);
-                    client.Authenticate (credentials, cancel.Token);
-
-                    int count = client.GetMessageCount (cancel.Token);
-                    for (int i = 0; i &lt; count; i++) {
-                        var message = client.GetMessage (i, cancel.Token);
-                        Console.WriteLine ("Subject: {0}", message.Subject);
-                    }
-
-                    client.Disconnect (true, cancel.Token);
+                int count = client.GetMessageCount (cancel.Token);
+                for (int i = 0; i &lt; count; i++) {
+                    var message = client.GetMessage (i, cancel.Token);
+                    Console.WriteLine ("Subject: {0}", message.Subject);
                 }
+
+                client.Disconnect (true, cancel.Token);
             }
         }
     }
