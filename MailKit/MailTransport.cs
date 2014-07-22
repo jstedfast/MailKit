@@ -258,7 +258,9 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
@@ -275,6 +277,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
 		/// Authentication is required before sending a message.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -298,7 +303,9 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
@@ -316,6 +323,9 @@ namespace MailKit {
 		/// <exception cref="System.UnauthorizedAccessException">
 		/// Authentication is required before sending a message.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -327,6 +337,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
@@ -349,6 +362,8 @@ namespace MailKit {
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
 		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="sender"/> is <c>null</c>.</para>
@@ -370,6 +385,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.UnauthorizedAccessException">
 		/// Authentication is required before sending a message.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -395,6 +413,8 @@ namespace MailKit {
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
 		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="sender"/> is <c>null</c>.</para>
@@ -417,6 +437,9 @@ namespace MailKit {
 		/// <exception cref="System.UnauthorizedAccessException">
 		/// Authentication is required before sending a message.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -428,6 +451,9 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
