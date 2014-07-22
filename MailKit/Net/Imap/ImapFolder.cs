@@ -1303,9 +1303,9 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("EXPUNGE", ic);
 		}
 
-		ImapCommand QueueAppend (MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
+		ImapCommand QueueAppend (bool utf8, MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
 		{
-			string format = "APPEND %F";
+			string format = utf8 ? "UTF8 APPEND %F" : "APPEND %F";
 
 			if (flags != MessageFlags.None)
 				format += " " + ImapUtils.FormatFlagsList (flags);
@@ -1356,7 +1356,8 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			var ic = QueueAppend (message, flags, null, cancellationToken);
+			var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
+			var ic = QueueAppend (utf8, message, flags, null, cancellationToken);
 
 			Engine.Wait (ic);
 
@@ -1414,7 +1415,8 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			var ic = QueueAppend (message, flags, date, cancellationToken);
+			var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
+			var ic = QueueAppend (utf8, message, flags, date, cancellationToken);
 
 			Engine.Wait (ic);
 
@@ -1433,10 +1435,10 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
-		ImapCommand QueueMultiAppend (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken)
+		ImapCommand QueueMultiAppend (bool utf8, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken)
 		{
+			string format = utf8 ? "UTF8 APPEND %F" : "APPEND %F";
 			var args = new List<object> ();
-			string format = "APPEND %F";
 
 			args.Add (this);
 
@@ -1517,7 +1519,8 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (messages, flags, null, cancellationToken);
+				var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
+				var ic = QueueMultiAppend (utf8, messages, flags, null, cancellationToken);
 
 				Engine.Wait (ic);
 
@@ -1618,7 +1621,8 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (messages, flags, dates, cancellationToken);
+				var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
+				var ic = QueueMultiAppend (utf8, messages, flags, dates, cancellationToken);
 
 				Engine.Wait (ic);
 

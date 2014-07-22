@@ -140,9 +140,12 @@ namespace MailKit.Net.Imap {
 	{
 		public readonly ImapLiteralType Type;
 		public readonly object Literal;
+		readonly FormatOptions format;
 
-		public ImapLiteral (object literal)
+		public ImapLiteral (FormatOptions options, object literal)
 		{
+			format = options;
+
 			if (literal is MimeMessage) {
 				Type = ImapLiteralType.MimeMessage;
 			} else if (literal is Stream) {
@@ -176,10 +179,7 @@ namespace MailKit.Net.Imap {
 						stream.Position = 0;
 						break;
 					case ImapLiteralType.MimeMessage:
-						var options = FormatOptions.Default.Clone ();
-						options.NewLineFormat = NewLineFormat.Dos;
-
-						((MimeMessage) Literal).WriteTo (options, measure);
+						((MimeMessage) Literal).WriteTo (format, measure);
 						break;
 					}
 
@@ -203,12 +203,9 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (Type == ImapLiteralType.MimeMessage) {
-				var options = FormatOptions.Default.Clone ();
-				options.NewLineFormat = NewLineFormat.Dos;
-
 				var message = (MimeMessage) Literal;
 
-				message.WriteTo (options, stream, cancellationToken);
+				message.WriteTo (format, stream, cancellationToken);
 				stream.Flush (cancellationToken);
 				return;
 			}
@@ -281,10 +278,15 @@ namespace MailKit.Net.Imap {
 			Folder = folder;
 
 			using (var builder = new MemoryStream ()) {
+				var options = FormatOptions.Default.Clone ();
 				int argc = 0;
 				byte[] buf;
 				string str;
 				char c;
+
+				options.International = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
+				options.NewLineFormat = NewLineFormat.Dos;
+				options.HiddenHeaders.Clear ();
 
 				for (int i = 0; i < format.Length; i++) {
 					if (format[i] == '%') {
@@ -308,10 +310,10 @@ namespace MailKit.Net.Imap {
 							break;
 						case 'F': // an ImapFolder
 							var utf7 = ((ImapFolder) args[argc++]).EncodedName;
-							AppendString (builder, utf7);
+							AppendString (options, builder, utf7);
 							break;
 						case 'L':
-							var literal = new ImapLiteral (args[argc++]);
+							var literal = new ImapLiteral (options, args[argc++]);
 							var length = literal.Length;
 
 							buf = Encoding.ASCII.GetBytes (length.ToString ());
@@ -327,7 +329,7 @@ namespace MailKit.Net.Imap {
 							builder.SetLength (0);
 							break;
 						case 'S': // a string which may need to be quoted or made into a literal
-							AppendString (builder, (string) args[argc++]);
+							AppendString (options, builder, (string) args[argc++]);
 							break;
 						case 's': // a safe atom string
 							buf = Encoding.ASCII.GetBytes ((string) args[argc++]);
@@ -371,7 +373,7 @@ namespace MailKit.Net.Imap {
 			return type;
 		}
 
-		void AppendString (MemoryStream builder, string value)
+		void AppendString (FormatOptions options, MemoryStream builder, string value)
 		{
 			byte[] buf;
 
@@ -392,7 +394,7 @@ namespace MailKit.Net.Imap {
 				if ((Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0) {
 					builder.Write (literal, 0, literal.Length);
 				} else {
-					parts.Add (new ImapCommandPart (builder.ToArray (), new ImapLiteral (literal)));
+					parts.Add (new ImapCommandPart (builder.ToArray (), new ImapLiteral (options, literal)));
 					builder.SetLength (0);
 				}
 				break;
