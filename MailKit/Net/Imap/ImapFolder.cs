@@ -1303,9 +1303,9 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("EXPUNGE", ic);
 		}
 
-		ImapCommand QueueAppend (bool utf8, MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
+		ImapCommand QueueAppend (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
 		{
-			string format = utf8 ? "UTF8 APPEND %F" : "APPEND %F";
+			string format = options.International ? "UTF8 APPEND %F" : "APPEND %F";
 
 			if (flags != MessageFlags.None)
 				format += " " + ImapUtils.FormatFlagsList (flags);
@@ -1315,7 +1315,7 @@ namespace MailKit.Net.Imap {
 
 			format += " %L\r\n";
 
-			return Engine.QueueCommand (cancellationToken, null, format, this, message);
+			return Engine.QueueCommand (cancellationToken, null, options, format, this, message);
 		}
 
 		/// <summary>
@@ -1325,20 +1325,28 @@ namespace MailKit.Net.Imap {
 		/// Appends the specified message to the folder.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1349,15 +1357,29 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
 			CheckState (false, false);
 
-			var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
-			var ic = QueueAppend (utf8, message, flags, null, cancellationToken);
+			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
+
+			var format = options.Clone ();
+			format.NewLineFormat = NewLineFormat.Dos;
+
+			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
+				format.International = true;
+
+			if (format.International && !Engine.UTF8Enabled)
+				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
+
+			var ic = QueueAppend (format, message, flags, null, cancellationToken);
 
 			Engine.Wait (ic);
 
@@ -1383,21 +1405,29 @@ namespace MailKit.Net.Imap {
 		/// Appends the specified message to the folder.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="message"/> is <c>null</c>.
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1408,15 +1438,29 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
 			CheckState (false, false);
 
-			var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
-			var ic = QueueAppend (utf8, message, flags, date, cancellationToken);
+			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
+
+			var format = options.Clone ();
+			format.NewLineFormat = NewLineFormat.Dos;
+
+			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
+				format.International = true;
+
+			if (format.International && !Engine.UTF8Enabled)
+				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
+
+			var ic = QueueAppend (format, message, flags, null, cancellationToken);
 
 			Engine.Wait (ic);
 
@@ -1435,9 +1479,9 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
-		ImapCommand QueueMultiAppend (bool utf8, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken)
+		ImapCommand QueueMultiAppend (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken)
 		{
-			string format = utf8 ? "UTF8 APPEND %F" : "APPEND %F";
+			string format = options.International ? "UTF8 APPEND %F" : "APPEND %F";
 			var args = new List<object> ();
 
 			args.Add (this);
@@ -1456,7 +1500,7 @@ namespace MailKit.Net.Imap {
 
 			format += "\r\n";
 
-			return Engine.QueueCommand (cancellationToken, null, format, args.ToArray ());
+			return Engine.QueueCommand (cancellationToken, null, options, format, args.ToArray ());
 		}
 
 		/// <summary>
@@ -1466,10 +1510,13 @@ namespace MailKit.Net.Imap {
 		/// Appends the specified messages to the folder.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="messages">The list of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
 		/// <para><paramref name="messages"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="flags"/> is <c>null</c>.</para>
@@ -1483,10 +1530,15 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1497,8 +1549,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
 
@@ -1515,12 +1570,23 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
+			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
+
+			var format = options.Clone ();
+			format.NewLineFormat = NewLineFormat.Dos;
+
+			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
+				format.International = true;
+
+			if (format.International && !Engine.UTF8Enabled)
+				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
+
 			if (messages.Count == 0)
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
-				var ic = QueueMultiAppend (utf8, messages, flags, null, cancellationToken);
+				var ic = QueueMultiAppend (format, messages, flags, null, cancellationToken);
 
 				Engine.Wait (ic);
 
@@ -1542,7 +1608,7 @@ namespace MailKit.Net.Imap {
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < messages.Count; i++) {
-				var uid = Append (messages[i], flags[i], cancellationToken);
+				var uid = Append (format, messages[i], flags[i], cancellationToken);
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else
@@ -1562,11 +1628,14 @@ namespace MailKit.Net.Imap {
 		/// Appends the specified messages to the folder.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="messages">The list of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
 		/// <para><paramref name="messages"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="flags"/> is <c>null</c>.</para>
@@ -1582,10 +1651,15 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1596,8 +1670,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
 
@@ -1617,12 +1694,23 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
+			if (options.International && (Engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UTF8 extension.");
+
+			var format = options.Clone ();
+			format.NewLineFormat = NewLineFormat.Dos;
+
+			if ((Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only)
+				format.International = true;
+
+			if (format.International && !Engine.UTF8Enabled)
+				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
+
 			if (messages.Count == 0)
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var utf8 = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
-				var ic = QueueMultiAppend (utf8, messages, flags, dates, cancellationToken);
+				var ic = QueueMultiAppend (format, messages, flags, dates, cancellationToken);
 
 				Engine.Wait (ic);
 
@@ -1644,7 +1732,7 @@ namespace MailKit.Net.Imap {
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < messages.Count; i++) {
-				var uid = Append (messages[i], flags[i], dates[i], cancellationToken);
+				var uid = Append (format, messages[i], flags[i], dates[i], cancellationToken);
 				if (uids != null && uid.HasValue)
 					uids.Add (uid.Value);
 				else

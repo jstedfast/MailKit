@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using Encoding = Portable.Text.Encoding;
 #endif
 
+using MimeKit;
+
 namespace MailKit.Net.Imap {
 	/// <summary>
 	/// The state of the <see cref="ImapEngine"/>.
@@ -1533,13 +1535,27 @@ namespace MailKit.Net.Imap {
 		/// <returns>The command.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="folder">The folder that the command operates on.</param>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="format">The command format.</param>
+		/// <param name="args">The command arguments.</param>
+		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
+		{
+			var ic = new ImapCommand (this, cancellationToken, folder, options, format, args);
+			QueueCommand (ic);
+			return ic;
+		}
+
+		/// <summary>
+		/// Queues the command.
+		/// </summary>
+		/// <returns>The command.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="folder">The folder that the command operates on.</param>
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
 		public ImapCommand QueueCommand (CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
 		{
-			var ic = new ImapCommand (this, cancellationToken, folder, format, args);
-			QueueCommand (ic);
-			return ic;
+			return QueueCommand (cancellationToken, folder, FormatOptions.Default, format, args);
 		}
 
 		/// <summary>

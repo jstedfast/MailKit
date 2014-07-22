@@ -684,6 +684,60 @@ namespace MailKit {
 		Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="date">The received date of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="date">The received date of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
@@ -732,6 +786,60 @@ namespace MailKit {
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The list of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The list of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The list of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each of the messages.</param>
+		/// <param name="dates">The received dates to use for each of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The list of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each of the messages.</param>
+		/// <param name="dates">The received dates to use for each of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.

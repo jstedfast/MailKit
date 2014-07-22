@@ -1617,7 +1617,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Append (FormatOptions.Default, message, flags, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -1694,7 +1697,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Append (FormatOptions.Default, message, flags, date, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -1741,6 +1747,198 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
+			if (message == null)
+				throw new ArgumentNullException ("message");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Append (options, message, flags, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="date">The received date of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified message to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified message to the folder.
+		/// </remarks>
+		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="flags">The message flags.</param>
+		/// <param name="date">The received date of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
+			if (message == null)
+				throw new ArgumentNullException ("message");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Append (options, message, flags, date, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
 		/// Append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
@@ -1778,7 +1976,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Append (FormatOptions.Default, messages, flags, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -1882,7 +2083,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Append (FormatOptions.Default, messages, flags, dates, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -1947,6 +2151,255 @@ namespace MailKit {
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					return Append (messages, flags, dates, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The array of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="messages"/> is null.</para>
+		/// <para>-or-</para>
+		/// <para>The number of messages does not match the number of flags.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The array of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="messages"/> is null.</para>
+		/// <para>-or-</para>
+		/// <para>The number of messages does not match the number of flags.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
+			if (messages == null)
+				throw new ArgumentNullException ("messages");
+
+			for (int i = 0; i < messages.Count; i++) {
+				if (messages[i] == null)
+					throw new ArgumentException ("One or more of the messages is null.");
+			}
+
+			if (flags == null)
+				throw new ArgumentNullException ("flags");
+
+			if (messages.Count != flags.Count)
+				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Append (options, messages, flags, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The array of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each of the messages.</param>
+		/// <param name="dates">The received dates to use for each of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="dates"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="messages"/> is null.</para>
+		/// <para>-or-</para>
+		/// <para>The number of messages, flags, and dates do not match.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously append the specified messages to the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously appends the specified messages to the folder.
+		/// </remarks>
+		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="messages">The array of messages to append to the folder.</param>
+		/// <param name="flags">The message flags to use for each of the messages.</param>
+		/// <param name="dates">The received dates to use for each of the messages.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="flags"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="dates"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="messages"/> is null.</para>
+		/// <para>-or-</para>
+		/// <para>The number of messages, flags, and dates do not match.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
+			if (messages == null)
+				throw new ArgumentNullException ("messages");
+
+			for (int i = 0; i < messages.Count; i++) {
+				if (messages[i] == null)
+					throw new ArgumentException ("One or more of the messages is null.");
+			}
+
+			if (flags == null)
+				throw new ArgumentNullException ("flags");
+
+			if (dates == null)
+				throw new ArgumentNullException ("dates");
+
+			if (messages.Count != flags.Count || messages.Count != dates.Count)
+				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Append (options, messages, flags, dates, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}

@@ -265,9 +265,10 @@ namespace MailKit.Net.Imap {
 		/// <param name="engine">The IMAP engine that will be sending the command.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="folder">The IMAP folder that the command operates on.</param>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="format">The command format.</param>
 		/// <param name="args">The command arguments.</param>
-		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
+		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
 		{
 			UntaggedHandlers = new Dictionary<string, ImapUntaggedHandler> ();
 			RespCodes = new List<ImapResponseCode> ();
@@ -278,15 +279,10 @@ namespace MailKit.Net.Imap {
 			Folder = folder;
 
 			using (var builder = new MemoryStream ()) {
-				var options = FormatOptions.Default.Clone ();
 				int argc = 0;
 				byte[] buf;
 				string str;
 				char c;
-
-				options.International = (Engine.Capabilities & ImapCapabilities.UTF8Only) == ImapCapabilities.UTF8Only;
-				options.NewLineFormat = NewLineFormat.Dos;
-				options.HiddenHeaders.Clear ();
 
 				for (int i = 0; i < format.Length; i++) {
 					if (format[i] == '%') {
@@ -345,6 +341,19 @@ namespace MailKit.Net.Imap {
 
 				parts.Add (new ImapCommandPart (builder.ToArray (), null));
 			}
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
+		/// </summary>
+		/// <param name="engine">The IMAP engine that will be sending the command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="folder">The IMAP folder that the command operates on.</param>
+		/// <param name="format">The command format.</param>
+		/// <param name="args">The command arguments.</param>
+		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
+			: this (engine, cancellationToken, folder, FormatOptions.Default, format, args)
+		{
 		}
 
 		static bool IsAtom (char c)
