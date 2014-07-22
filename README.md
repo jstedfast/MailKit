@@ -7,18 +7,18 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
 ## Features
 
 * SASL Authentication
-  * SCRAM-SHA-1
   * CRAM-MD5
   * DIGEST-MD5
   * LOGIN
   * NTLM
   * PLAIN
+  * SCRAM-SHA-1
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * SMTP Client
   * Supports all of the SASL mechanisms listed above.
   * Supports SSL-wrapped connections via the "smtps" protocol.
   * Supports client SSL/TLS certificates.
-  * Supports the following extensions: STARTTLS, SIZE, 8BITMIME, PIPELINING, BINARYMIME
+  * Supports the following extensions: STARTTLS, SIZE, 8BITMIME, PIPELINING, BINARYMIME, SMTPUTF8
   * All APIs are cancellable.
   * Async APIs are available.
 * POP3 Client

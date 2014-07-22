@@ -1001,7 +1001,8 @@ namespace MailKit.Net.Smtp {
 		enum SmtpExtension {
 			None         = 0,
 			EightBitMime = 1 << 0,
-			BinaryMime   = 1 << 1
+			BinaryMime   = 1 << 1,
+			UTF8         = 1 << 2,
 		}
 
 		ContentEncoding GetFinalEncoding (MimePart part)
@@ -1090,11 +1091,13 @@ namespace MailKit.Net.Smtp {
 
 		static string GetMailFromCommand (MailboxAddress mailbox, SmtpExtension extensions)
 		{
+			var utf8 = (extensions & SmtpExtension.UTF8) != 0 ? "SMTPUTF8 " : string.Empty;
+
 			if ((extensions & SmtpExtension.BinaryMime) != 0)
-				return string.Format ("MAIL FROM:<{0}> BODY=BINARYMIME", mailbox.Address);
+				return string.Format ("MAIL FROM:<{0}> {1}BODY=BINARYMIME", mailbox.Address, utf8);
 
 			if ((extensions & SmtpExtension.EightBitMime) != 0)
-				return string.Format ("MAIL FROM:<{0}> BODY=8BITMIME", mailbox.Address);
+				return string.Format ("MAIL FROM:<{0}> {1}BODY=8BITMIME", mailbox.Address, utf8);
 
 			return string.Format ("MAIL FROM:<{0}>", mailbox.Address);
 		}
@@ -1156,19 +1159,12 @@ namespace MailKit.Net.Smtp {
 			ProcessRcptToResponse (SendCommand (command, cancellationToken), mailbox);
 		}
 
-		void Data (MimeMessage message, CancellationToken cancellationToken)
+		void Data (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
 		{
 			var response = SendCommand ("DATA", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
-
-			var options = FormatOptions.Default.Clone ();
-			options.NewLineFormat = NewLineFormat.Dos;
-
-			options.HiddenHeaders.Add (HeaderId.ContentLength);
-			options.HiddenHeaders.Add (HeaderId.ResentBcc);
-			options.HiddenHeaders.Add (HeaderId.Bcc);
 
 			using (var filtered = new FilteredStream (stream)) {
 				filtered.Add (new SmtpDataFilter ());
@@ -1204,14 +1200,26 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void Send (MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient is not connected.");
 
+			bool utf8 = (Capabilities & SmtpCapabilities.UTF8) != 0 && (Capabilities & SmtpCapabilities.EightBitMime) != 0;
+
+			var format = options.Clone ();
+			format.International = format.International && utf8;
+			format.HiddenHeaders.Add (HeaderId.ContentLength);
+			format.HiddenHeaders.Add (HeaderId.ResentBcc);
+			format.HiddenHeaders.Add (HeaderId.Bcc);
+			format.NewLineFormat = NewLineFormat.Dos;
+
 			var extensions = PrepareMimeEntity (message);
+
+			if (format.International)
+				extensions |= SmtpExtension.UTF8;
 
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
@@ -1225,7 +1233,7 @@ namespace MailKit.Net.Smtp {
 				// of their responses.
 				FlushCommandQueue (sender, recipients, cancellationToken);
 
-				Data (message, cancellationToken);
+				Data (format, message, cancellationToken);
 			} catch (UnauthorizedAccessException) {
 				// do not disconnect
 				throw;
@@ -1244,6 +1252,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Sends the message by uploading it to an SMTP server.
 		/// </remarks>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1274,7 +1283,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1288,7 +1297,7 @@ namespace MailKit.Net.Smtp {
 			if (recipients.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
 
-			Send (message, sender, recipients, cancellationToken);
+			Send (options, message, sender, recipients, cancellationToken);
 		}
 
 		/// <summary>
@@ -1297,6 +1306,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Sends the message by uploading it to an SMTP server using the supplied sender and recipients.
 		/// </remarks>
+		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
@@ -1333,7 +1343,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1349,7 +1359,7 @@ namespace MailKit.Net.Smtp {
 			if (rcpts.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
 
-			Send (message, sender, rcpts, cancellationToken);
+			Send (options, message, sender, rcpts, cancellationToken);
 		}
 
 		#endregion
