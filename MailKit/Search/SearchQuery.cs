@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace MailKit.Search {
@@ -528,10 +527,10 @@ namespace MailKit.Search {
 				throw new ArgumentException ("Cannot search an empty header field name.", "field");
 
 			if (text == null)
-				throw new ArgumentNullException ("value");
+				throw new ArgumentNullException ("text");
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty header value.", "value");
+				throw new ArgumentException ("Cannot search for an empty header value.", "text");
 
 			return new HeaderSearchQuery (field, text);
 		}
@@ -905,10 +904,7 @@ namespace MailKit.Search {
 
 		internal virtual SearchQuery Optimize (ISearchQueryOptimizer optimizer)
 		{
-			if (optimizer.CanReduce (this))
-				return optimizer.Reduce (this);
-
-			return this;
+			return optimizer.CanReduce (this) ? optimizer.Reduce (this) : this;
 		}
 	}
 }
