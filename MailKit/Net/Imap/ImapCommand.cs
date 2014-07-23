@@ -397,13 +397,13 @@ namespace MailKit.Net.Imap {
 
 				builder.WriteByte ((byte) '{');
 				builder.Write (buf, 0, buf.Length);
-				if ((Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0)
+				if (Engine.IsGMail || (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0)
 					builder.WriteByte ((byte) '+');
 				builder.WriteByte ((byte) '}');
 				builder.WriteByte ((byte) '\r');
 				builder.WriteByte ((byte) '\n');
 
-				if ((Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0) {
+				if (Engine.IsGMail || (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0) {
 					builder.Write (literal, 0, literal.Length);
 				} else {
 					parts.Add (new ImapCommandPart (builder.ToArray (), new ImapLiteral (options, literal)));
