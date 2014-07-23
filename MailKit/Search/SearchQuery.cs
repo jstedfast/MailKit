@@ -655,6 +655,25 @@ namespace MailKit.Search {
 		public static readonly SearchQuery NotSeen = new SearchQuery (SearchTerm.NotSeen);
 
 		/// <summary>
+		/// Matches messages older than the specified number of seconds.
+		/// </summary>
+		/// <remarks>
+		/// Matches messages older than the specified number of seconds.
+		/// </remarks>
+		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
+		/// <param name="seconds">The number of seconds.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// The number of seconds cannot be less than <c>1</c>.
+		/// </exception>
+		public static NumericSearchQuery OlderThan (int seconds)
+		{
+			if (seconds < 1)
+				throw new ArgumentOutOfRangeException ("seconds");
+
+			return new NumericSearchQuery (SearchTerm.Older, (ulong) seconds);
+		}
+
+		/// <summary>
 		/// Creates a conditional OR operation.
 		/// </summary>
 		/// <remarks>
@@ -820,6 +839,25 @@ namespace MailKit.Search {
 				throw new ArgumentException ("Cannot search for an empty string.", "text");
 
 			return new TextSearchQuery (SearchTerm.ToContains, text);
+		}
+
+		/// <summary>
+		/// Matches messages younger than the specified number of seconds.
+		/// </summary>
+		/// <remarks>
+		/// Matches messages younger than the specified number of seconds.
+		/// </remarks>
+		/// <returns>A <see cref="NumericSearchQuery"/>.</returns>
+		/// <param name="seconds">The number of seconds.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// The number of seconds cannot be less than <c>1</c>.
+		/// </exception>
+		public static NumericSearchQuery YoungerThan (int seconds)
+		{
+			if (seconds < 1)
+				throw new ArgumentOutOfRangeException ("seconds");
+
+			return new NumericSearchQuery (SearchTerm.Younger, (ulong) seconds);
 		}
 
 		#region GMail extensions

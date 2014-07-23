@@ -5447,6 +5447,13 @@ namespace MailKit.Net.Imap {
 			case SearchTerm.NotSeen:
 				builder.Append ("UNSEEN");
 				break;
+			case SearchTerm.Older:
+				if ((Engine.Capabilities & ImapCapabilities.Within) == 0)
+					throw new NotSupportedException ("The OLDER search term is not supported by the IMAP server.");
+
+				numeric = (NumericSearchQuery) query;
+				builder.AppendFormat ("OLDER {0}", numeric.Value);
+				break;
 			case SearchTerm.Or:
 				builder.Append ("OR");
 				binary = (BinarySearchQuery) query;
@@ -5486,6 +5493,13 @@ namespace MailKit.Net.Imap {
 				args.Add (text.Text);
 				break;
 			case SearchTerm.Uid:
+				break;
+			case SearchTerm.Younger:
+				if ((Engine.Capabilities & ImapCapabilities.Within) == 0)
+					throw new NotSupportedException ("The YOUNGER search term is not supported by the IMAP server.");
+
+				numeric = (NumericSearchQuery) query;
+				builder.AppendFormat ("YOUNGER {0}", numeric.Value);
 				break;
 			case SearchTerm.GMailMessageId:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)

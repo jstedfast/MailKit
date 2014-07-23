@@ -7,8 +7,6 @@
 * SMTP Client
   * CHUNKING (hmmm, doesn't really seem all that useful...)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
-  * Extensions:
-    * SMTPUTF8
 * POP3 Client
   * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
 * IMAP4 Client
