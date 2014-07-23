@@ -1305,7 +1305,7 @@ namespace MailKit.Net.Imap {
 
 		ImapCommand QueueAppend (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
 		{
-			string format = options.International ? "UTF8 APPEND %F" : "APPEND %F";
+			string format = "APPEND %F";
 
 			if (flags != MessageFlags.None)
 				format += " " + ImapUtils.FormatFlagsList (flags);
@@ -1481,8 +1481,8 @@ namespace MailKit.Net.Imap {
 
 		ImapCommand QueueMultiAppend (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken)
 		{
-			string format = options.International ? "UTF8 APPEND %F" : "APPEND %F";
 			var args = new List<object> ();
+			string format = "APPEND %F";
 
 			args.Add (this);
 

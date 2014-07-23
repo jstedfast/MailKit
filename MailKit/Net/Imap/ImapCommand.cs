@@ -312,17 +312,20 @@ namespace MailKit.Net.Imap {
 							var literal = new ImapLiteral (options, args[argc++]);
 							var length = literal.Length;
 
-							buf = Encoding.ASCII.GetBytes (length.ToString ());
-
 							// FIXME: support LITERAL+?
-							builder.WriteByte ((byte) '{');
+							if (options.International)
+								str = "UTF8 (~{" + length + "}\r\n";
+							else
+								str = "{" + length + "}\r\n";
+
+							buf = Encoding.ASCII.GetBytes (str);
 							builder.Write (buf, 0, buf.Length);
-							builder.WriteByte ((byte) '}');
-							builder.WriteByte ((byte) '\r');
-							builder.WriteByte ((byte) '\n');
 
 							parts.Add (new ImapCommandPart (builder.ToArray (), literal));
 							builder.SetLength (0);
+
+							if (options.International)
+								builder.WriteByte ((byte) ')');
 							break;
 						case 'S': // a string which may need to be quoted or made into a literal
 							AppendString (options, builder, (string) args[argc++]);
