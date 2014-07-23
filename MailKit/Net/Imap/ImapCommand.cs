@@ -565,7 +565,7 @@ namespace MailKit.Net.Imap {
 			if (Status == ImapCommandStatus.Active) {
 				current++;
 
-				if (current == parts.Count || result != ImapCommandResult.None) {
+				if (current >= parts.Count || result != ImapCommandResult.None) {
 					Status = ImapCommandStatus.Complete;
 					Result = result;
 					return false;
