@@ -279,6 +279,7 @@ namespace MailKit.Net.Imap {
 			Folder = folder;
 
 			using (var builder = new MemoryStream ()) {
+				var plus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ? "+" : string.Empty;
 				int argc = 0;
 				byte[] buf;
 				string str;
@@ -312,11 +313,10 @@ namespace MailKit.Net.Imap {
 							var literal = new ImapLiteral (options, args[argc++]);
 							var length = literal.Length;
 
-							// FIXME: support LITERAL+?
 							if (options.International)
-								str = "UTF8 (~{" + length + "}\r\n";
+								str = "UTF8 (~{" + length + plus + "}\r\n";
 							else
-								str = "{" + length + "}\r\n";
+								str = "{" + length + plus + "}\r\n";
 
 							buf = Encoding.ASCII.GetBytes (str);
 							builder.Write (buf, 0, buf.Length);
@@ -462,6 +462,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public bool Step ()
 		{
+			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
 			var idle = UserData as ImapIdleContext;
 			var result = ImapCommandResult.None;
 			ImapToken token;
@@ -473,7 +474,22 @@ namespace MailKit.Net.Imap {
 				Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
 			}
 
-			Engine.Stream.Write (parts[current].Command, 0, parts[current].Command.Length);
+			do {
+				var command = parts[current].Command;
+
+				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
+
+				if (!supportsLiteralPlus)
+					break;
+
+				parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+
+				if (current + 1 >= parts.Count)
+					break;
+
+				current++;
+			} while (true);
+
 			Engine.Stream.Flush ();
 
 			// now we need to read the response...
@@ -496,7 +512,7 @@ namespace MailKit.Net.Imap {
 					var text = Engine.ReadLine (CancellationToken).Trim ();
 
 					// if we've got a Literal pending, the '+' means we can send it now...
-					if (parts[current].Literal != null) {
+					if (!supportsLiteralPlus && parts[current].Literal != null) {
 						parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 						break;
 					}
