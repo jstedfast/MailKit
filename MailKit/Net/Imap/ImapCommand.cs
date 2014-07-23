@@ -212,7 +212,7 @@ namespace MailKit.Net.Imap {
 
 			var literal = (Stream) Literal;
 			var buf = new byte[4096];
-			int nread = 0;
+			int nread;
 
 			while ((nread = literal.Read (buf, 0, buf.Length)) > 0)
 				stream.Write (buf, 0, nread, cancellationToken);
@@ -257,7 +257,7 @@ namespace MailKit.Net.Imap {
 
 		readonly List<ImapCommandPart> parts = new List<ImapCommandPart> ();
 		readonly ImapEngine Engine;
-		int current = 0;
+		int current;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
