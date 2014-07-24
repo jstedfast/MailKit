@@ -1207,17 +1207,18 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient is not connected.");
 
-			if (options.International && (Capabilities & SmtpCapabilities.UTF8) == 0)
-				throw new NotSupportedException ("The SMTP server does not support the SMTPUTF8 extension.");
-
-			if (options.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
-				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
-
 			var format = options.Clone ();
+			format.International = format.International || sender.IsInternational || recipients.Any (x => x.IsInternational);
 			format.HiddenHeaders.Add (HeaderId.ContentLength);
 			format.HiddenHeaders.Add (HeaderId.ResentBcc);
 			format.HiddenHeaders.Add (HeaderId.Bcc);
 			format.NewLineFormat = NewLineFormat.Dos;
+
+			if (format.International && (Capabilities & SmtpCapabilities.UTF8) == 0)
+				throw new NotSupportedException ("The SMTP server does not support the SMTPUTF8 extension.");
+
+			if (format.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
+				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
 			var extensions = PrepareMimeEntity (message);
 
@@ -1280,7 +1281,7 @@ namespace MailKit.Net.Smtp {
 		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// Internationalized formatting was requested but is not supported by the server.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1345,7 +1346,7 @@ namespace MailKit.Net.Smtp {
 		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// <para>Internationalized formatting was requested but is not supported by the server.</para>
+		/// Internationalized formatting was requested but is not supported by the server.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
