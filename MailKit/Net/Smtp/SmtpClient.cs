@@ -1058,6 +1058,9 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if (entity is Multipart) {
+				if (entity.ContentType.Matches ("multipart", "signed"))
+					return SmtpExtension.None;
+
 				var extensions = SmtpExtension.None;
 				var multipart = (Multipart) entity;
 
