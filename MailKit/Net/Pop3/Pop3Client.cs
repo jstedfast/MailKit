@@ -83,6 +83,7 @@ namespace MailKit.Net.Pop3 {
 #endif
 		int timeout = 100000;
 		bool disposed, utf8;
+		MimeParser parser;
 		string host;
 		int total;
 
@@ -1581,7 +1582,13 @@ namespace MailKit.Net.Pop3 {
 
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
-					message = MimeMessage.Load (pop3.Stream, cancellationToken);
+
+					if (parser == null)
+						parser = new MimeParser (ParserOptions.Default, pop3.Stream);
+					else
+						parser.SetStream (ParserOptions.Default, pop3.Stream);
+
+					message = parser.ParseMessage (cancellationToken);
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
@@ -1625,7 +1632,13 @@ namespace MailKit.Net.Pop3 {
 
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
-					messages.Add (MimeMessage.Load (pop3.Stream, cancellationToken));
+
+					if (parser == null)
+						parser = new MimeParser (ParserOptions.Default, pop3.Stream);
+					else
+						parser.SetStream (ParserOptions.Default, pop3.Stream);
+
+					messages.Add (parser.ParseMessage (cancellationToken));
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
