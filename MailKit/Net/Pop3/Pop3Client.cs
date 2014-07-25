@@ -239,6 +239,11 @@ namespace MailKit.Net.Pop3 {
 			return new Pop3ProtocolException (message);
 		}
 
+		static ProtocolException CreatePop3ParseException (Exception innerException, string format, params object[] args)
+		{
+			return new Pop3ProtocolException (string.Format (format, args), innerException);
+		}
+
 		static ProtocolException CreatePop3ParseException (string format, params object[] args)
 		{
 			return new Pop3ProtocolException (string.Format (format, args));
@@ -1571,6 +1576,16 @@ namespace MailKit.Net.Pop3 {
 			return sizes;
 		}
 
+		MimeMessage ParseMessage (CancellationToken cancellationToken)
+		{
+			if (parser == null)
+				parser = new MimeParser (ParserOptions.Default, engine.Stream);
+			else
+				parser.SetStream (ParserOptions.Default, engine.Stream);
+
+			return parser.ParseMessage (cancellationToken);
+		}
+
 		MimeMessage GetMessageForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
 		{
 			MimeMessage message = null;
@@ -1583,12 +1598,11 @@ namespace MailKit.Net.Pop3 {
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
 
-					if (parser == null)
-						parser = new MimeParser (ParserOptions.Default, pop3.Stream);
-					else
-						parser.SetStream (ParserOptions.Default, pop3.Stream);
-
-					message = parser.ParseMessage (cancellationToken);
+					message = ParseMessage (cancellationToken);
+				} catch (FormatException ex) {
+					// consume any remaining data and capture the exception...
+					cmd.Exception = CreatePop3ParseException (ex, "Failed to parse the message.");
+					pop3.Stream.CopyTo (Stream.Null, 4096);
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
@@ -1633,12 +1647,11 @@ namespace MailKit.Net.Pop3 {
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
 
-					if (parser == null)
-						parser = new MimeParser (ParserOptions.Default, pop3.Stream);
-					else
-						parser.SetStream (ParserOptions.Default, pop3.Stream);
-
-					messages.Add (parser.ParseMessage (cancellationToken));
+					messages.Add (ParseMessage (cancellationToken));
+				} catch (FormatException ex) {
+					// consume any remaining data and capture the exception...
+					cmd.Exception = CreatePop3ParseException (ex, "Failed to parse message.");
+					pop3.Stream.CopyTo (Stream.Null, 4096);
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
