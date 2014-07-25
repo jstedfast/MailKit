@@ -2181,9 +2181,14 @@ namespace MailKit.Net.Imap {
 						if (token.Type != ImapTokenType.Literal)
 							throw ImapEngine.UnexpectedToken (token, false);
 
-						var message = MimeMessage.Load (engine.Stream, ic.CancellationToken);
+						try {
+							var message = engine.ParseMessage (engine.Stream, false, ic.CancellationToken);
 
-						summary.References = message.References;
+							summary.References = message.References;
+						} catch (ParseException) {
+							// consume any remaining literal data...
+							engine.Stream.CopyTo (Stream.Null, 4096);
+						}
 					} else {
 						summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
 					}
@@ -3141,7 +3146,7 @@ namespace MailKit.Net.Imap {
 			if (!streams.TryGetValue (string.Empty, out stream))
 				return null;
 
-			return MimeMessage.Load (stream, cancellationToken);
+			return Engine.ParseMessage (stream, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -3203,7 +3208,7 @@ namespace MailKit.Net.Imap {
 			if (!streams.TryGetValue (string.Empty, out stream))
 				return null;
 
-			return MimeMessage.Load (stream, cancellationToken);
+			return Engine.ParseMessage (stream, true, cancellationToken);
 		}
 
 		static string GetBodyPartQuery (BodyPart part, bool headersOnly, out string[] tags)
@@ -3356,7 +3361,7 @@ namespace MailKit.Net.Imap {
 				chained.Add (stream);
 			}
 
-			var entity = MimeEntity.Load (chained, cancellationToken);
+			var entity = Engine.ParseEntity (chained, true, cancellationToken);
 
 			if (part.PartSpecifier.Length == 0) {
 				for (int i = entity.Headers.Count; i > 0; i--) {
@@ -3489,7 +3494,7 @@ namespace MailKit.Net.Imap {
 				chained.Add (stream);
 			}
 
-			var entity = MimeEntity.Load (chained, cancellationToken);
+			var entity = Engine.ParseEntity (chained, true, cancellationToken);
 
 			if (part.PartSpecifier.Length == 0) {
 				for (int i = entity.Headers.Count; i > 0; i--) {

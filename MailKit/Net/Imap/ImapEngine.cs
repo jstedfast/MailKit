@@ -99,6 +99,7 @@ namespace MailKit.Net.Imap {
 		internal char TagPrefix;
 		ImapCommand current;
 		ImapStream stream;
+		MimeParser parser;
 		internal int Tag;
 		bool disposed;
 		int nextId;
@@ -1841,6 +1842,26 @@ namespace MailKit.Net.Imap {
 			}
 
 			return mailboxName.Length > 0;
+		}
+
+		public MimeMessage ParseMessage (Stream stream, bool persistent, CancellationToken cancellationToken)
+		{
+			if (parser == null)
+				parser = new MimeParser (ParserOptions.Default, stream, persistent);
+			else
+				parser.SetStream (ParserOptions.Default, stream, persistent);
+
+			return parser.ParseMessage (cancellationToken);
+		}
+
+		public MimeEntity ParseEntity (Stream stream, bool persistent, CancellationToken cancellationToken)
+		{
+			if (parser == null)
+				parser = new MimeParser (ParserOptions.Default, stream, persistent);
+			else
+				parser.SetStream (ParserOptions.Default, stream, persistent);
+
+			return parser.ParseEntity (cancellationToken);
 		}
 
 		/// <summary>
