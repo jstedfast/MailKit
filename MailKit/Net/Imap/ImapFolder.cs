@@ -2185,7 +2185,7 @@ namespace MailKit.Net.Imap {
 							var message = engine.ParseMessage (engine.Stream, false, ic.CancellationToken);
 
 							summary.References = message.References;
-						} catch (ParseException) {
+						} catch (FormatException) {
 							// consume any remaining literal data...
 							engine.Stream.CopyTo (Stream.Null, 4096);
 						}
