@@ -320,4 +320,3 @@ namespace MailKit {
 		}
 	}
 }
-

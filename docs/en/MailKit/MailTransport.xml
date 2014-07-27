@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit MailTransport extends MailKit.MailService implements class MailKit.IMailService, class MailKit.IMailTransport, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.26.0.0</AssemblyVersion>
+    <AssemblyVersion>0.90.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MailService</BaseTypeName>
@@ -30,7 +30,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.26.0.0</AssemblyVersion>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -43,11 +43,11 @@
       </Docs>
     </Member>
     <Member MemberName="Send">
-      <MemberSignature Language="C#" Value="public abstract void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="C#" Value="public virtual void Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.26.0.0</AssemblyVersion>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -96,11 +96,73 @@
       </Docs>
     </Member>
     <Member MemberName="Send">
-      <MemberSignature Language="C#" Value="public abstract void Send (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="C#" Value="public abstract void Send (MimeKit.FormatOptions options, MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="options" Type="MimeKit.FormatOptions" />
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="options">The formatting options.</param>
+        <param name="message">The message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Sends the specified message.
+            </summary>
+        <remarks>
+            Sends the specified message.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="options" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="message" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailTransport" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
+          <para>-or-</para>
+          <para>A sender has not been specified.</para>
+          <para>-or-</para>
+          <para>No recipients have been specified.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation has been canceled.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            Authentication is required before sending a message.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>Internationalized formatting was requested but is not supported by the transport.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The send command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol exception occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public virtual void Send (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.26.0.0</AssemblyVersion>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -148,6 +210,78 @@
         <exception cref="T:System.UnauthorizedAccessException">
             Authentication is required before sending a message.
             </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The send command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol exception occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Send">
+      <MemberSignature Language="C#" Value="public abstract void Send (MimeKit.FormatOptions options, MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="options" Type="MimeKit.FormatOptions" />
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="sender" Type="MimeKit.MailboxAddress" />
+        <Parameter Name="recipients" Type="System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="options">The formatting options.</param>
+        <param name="message">The message.</param>
+        <param name="sender">The mailbox address to use for sending the message.</param>
+        <param name="recipients">The mailbox addresses that should receive the message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Sends the specified message using the supplied sender and recipients.
+            </summary>
+        <remarks>
+            Sends the specified message using the supplied sender and recipients.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="options" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="message" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="sender" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="recipients" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailTransport" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
+          <para>-or-</para>
+          <para>A sender has not been specified.</para>
+          <para>-or-</para>
+          <para>No recipients have been specified.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation has been canceled.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            Authentication is required before sending a message.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>Internationalized formatting was requested but is not supported by the transport.</para>
+        </exception>
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
             </exception>
@@ -164,7 +298,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.26.0.0</AssemblyVersion>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -214,11 +348,74 @@
       </Docs>
     </Member>
     <Member MemberName="SendAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task SendAsync (MimeKit.FormatOptions options, MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="options" Type="MimeKit.FormatOptions" />
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="options">The formatting options.</param>
+        <param name="message">The message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously sends the specified message.
+            </summary>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Asynchronously sends the specified message.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="options" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="message" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailTransport" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
+          <para>-or-</para>
+          <para>A sender has not been specified.</para>
+          <para>-or-</para>
+          <para>No recipients have been specified.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation has been canceled.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            Authentication is required before sending a message.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>Internationalized formatting was requested but is not supported by the transport.</para>
+        </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The send command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol exception occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SendAsync">
       <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task SendAsync (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.26.0.0</AssemblyVersion>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -267,6 +464,79 @@
         <exception cref="T:System.UnauthorizedAccessException">
             Authentication is required before sending a message.
             </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The send command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol exception occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SendAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task SendAsync (MimeKit.FormatOptions options, MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt; recipients, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="options" Type="MimeKit.FormatOptions" />
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="sender" Type="MimeKit.MailboxAddress" />
+        <Parameter Name="recipients" Type="System.Collections.Generic.IEnumerable&lt;MimeKit.MailboxAddress&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="options">The formatting options.</param>
+        <param name="message">The message.</param>
+        <param name="sender">The mailbox address to use for sending the message.</param>
+        <param name="recipients">The mailbox addresses that should receive the message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously sends the specified message using the supplied sender and recipients.
+            </summary>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Asynchronously sends the specified message using the supplied sender and recipients.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="options" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="message" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="sender" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="recipients" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailTransport" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
+          <para>-or-</para>
+          <para>A sender has not been specified.</para>
+          <para>-or-</para>
+          <para>No recipients have been specified.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation has been canceled.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            Authentication is required before sending a message.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <para>Internationalized formatting was requested but is not supported by the transport.</para>
+        </exception>
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
             </exception>
