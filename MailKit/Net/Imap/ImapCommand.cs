@@ -479,7 +479,7 @@ namespace MailKit.Net.Imap {
 
 				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
 
-				if (!supportsLiteralPlus)
+				if (!supportsLiteralPlus || parts[current].Literal == null)
 					break;
 
 				parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
