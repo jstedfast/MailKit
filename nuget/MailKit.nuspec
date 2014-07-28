@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.90.0.0</version>
+        <version>0.90.0.1</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -27,6 +27,8 @@ Features include:
 * Optimized IMAP APPEND for servers that support the LITERAL+ extension.
 * Optimized GMail IMAP search queries to take advantage of LITERAL+.
 * Added support for the IMAP WITHIN extension.
+* Fixed NullReferenceException in IMAP's Authenticate() method (issue #74).
+* Fixed premature socket timeouts for IDLE commands.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
