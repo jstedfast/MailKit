@@ -55,8 +55,13 @@ namespace ImapIdle {
 				client.Inbox.Open (FolderAccess.ReadOnly);
 
 				// keep track of the messages
-				var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId).ToList ();
-				int count = messages.Count;
+				IList<IMessageSummary> messages = null;
+				int count = 0;
+
+				if (client.Inbox.Count > 0) {
+					messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId).ToList ();
+					count = messages.Count;
+				}
 
 				// connect to some events...
 				client.Inbox.CountChanged += (sender, e) => {
