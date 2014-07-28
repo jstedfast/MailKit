@@ -495,9 +495,16 @@ namespace MailKit.Net.Imap {
 			// now we need to read the response...
 			do {
 				if (Engine.State == ImapEngineState.Idle) {
+					int timeout = Engine.Stream.ReadTimeout;
+
 					try {
+						Engine.Stream.ReadTimeout = -1;
+
 						token = Engine.ReadToken (idle.LinkedToken);
+						Engine.Stream.ReadTimeout = timeout;
 					} catch (OperationCanceledException) {
+						Engine.Stream.ReadTimeout = timeout;
+
 						if (idle.IsCancellationRequested)
 							throw;
 
