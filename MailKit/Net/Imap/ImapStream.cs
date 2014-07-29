@@ -137,7 +137,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <value><c>true</c> if the stream is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
-			get; private set;
+			get; internal set;
 		}
 
 		/// <summary>

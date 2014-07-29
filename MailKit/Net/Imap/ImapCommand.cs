@@ -508,6 +508,8 @@ namespace MailKit.Net.Imap {
 						if (idle.IsCancellationRequested)
 							throw;
 
+						Engine.Stream.IsConnected = true;
+
 						token = Engine.ReadToken (CancellationToken);
 					}
 				} else {
