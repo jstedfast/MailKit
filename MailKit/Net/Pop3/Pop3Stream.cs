@@ -400,14 +400,14 @@ namespace MailKit.Net.Pop3 {
 			if (Mode != Pop3StreamMode.Data)
 				throw new InvalidOperationException ();
 
-			if (IsEndOfData)
+			if (IsEndOfData || count == 0)
 				return 0;
 
 			unsafe {
-				fixed (byte* inbuf = input, outbuf = buffer) {
-					byte* outptr = outbuf + offset;
-					byte* outend = outptr + count;
-					bool allowReadAhead = true;
+				fixed (byte* inbuf = input, bufptr = buffer) {
+					byte* outbuf = bufptr + offset;
+					byte* outend = outbuf + count;
+					byte* outptr = outbuf;
 					byte* inptr, inend;
 					int inputLeft;
 
@@ -417,12 +417,11 @@ namespace MailKit.Net.Pop3 {
 
 						// we need at least 3 bytes: ".\r\n"
 						if (inputLeft < 3 && (midline || NeedInput (inptr, inputLeft))) {
-							if (!allowReadAhead)
+							if (outptr > outbuf)
 								break;
 
 							ReadAhead (inbuf, cancellationToken);
 							inptr = inbuf + inputIndex;
-							allowReadAhead = false;
 						}
 
 						inend = inbuf + inputEnd;
@@ -469,7 +468,7 @@ namespace MailKit.Net.Pop3 {
 						inputIndex = (int) (inptr - inbuf);
 					} while (outptr < outend && !IsEndOfData);
 
-					return (int) (outptr - outbuf) - offset;
+					return (int) (outptr - outbuf);
 				}
 			}
 		}
