@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapFolder extends MailKit.MailFolder" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.90.0.0</AssemblyVersion>
+    <AssemblyVersion>0.91.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MailFolder</BaseTypeName>
@@ -24,7 +24,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -86,7 +86,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -148,7 +148,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; AddFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -216,7 +216,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; AddFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
@@ -284,7 +284,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -350,7 +350,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -416,7 +416,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; AddLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -485,7 +485,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; AddLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
@@ -554,7 +554,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -614,7 +614,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.FormatOptions options, class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; messages, class System.Collections.Generic.IList`1&lt;valuetype MailKit.MessageFlags&gt; flags, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -682,7 +682,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, valuetype MailKit.MessageFlags flags, valuetype System.DateTimeOffset date, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -744,7 +744,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; Append(class MimeKit.FormatOptions options, class System.Collections.Generic.IList`1&lt;class MimeKit.MimeMessage&gt; messages, class System.Collections.Generic.IList`1&lt;valuetype MailKit.MessageFlags&gt; flags, class System.Collections.Generic.IList`1&lt;valuetype System.DateTimeOffset&gt; dates, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -817,7 +817,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Check(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -862,7 +862,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Close(bool expunge, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -909,7 +909,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; CopyTo(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -977,7 +977,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void CopyTo(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1041,7 +1041,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder Create(string name, bool isMessageFolder, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -1096,7 +1096,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Delete(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1139,7 +1139,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Expunge(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1189,7 +1189,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Expunge(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -1250,7 +1250,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1312,7 +1312,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1374,7 +1374,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1432,7 +1432,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1502,7 +1502,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1569,7 +1569,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1631,7 +1631,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(valuetype MailKit.UniqueId min, valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1697,7 +1697,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
@@ -1764,7 +1764,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1820,7 +1820,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1876,7 +1876,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1935,7 +1935,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(int32 index, class MailKit.BodyPart part, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeEntity</ReturnType>
@@ -1994,7 +1994,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerator`1&lt;class MimeKit.MimeMessage&gt; GetEnumerator() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerator&lt;MimeKit.MimeMessage&gt;</ReturnType>
@@ -2025,7 +2025,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeMessage GetMessage(valuetype MailKit.UniqueId uid, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -2079,7 +2079,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeMessage GetMessage(int32 index, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MimeKit.MimeMessage</ReturnType>
@@ -2130,7 +2130,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.FolderQuota GetQuota(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderQuota</ReturnType>
@@ -2179,7 +2179,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2244,7 +2244,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2309,7 +2309,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2379,7 +2379,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, class MailKit.BodyPart part, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
@@ -2449,7 +2449,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetSubfolder(string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -2502,7 +2502,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMailFolder&gt; GetSubfolders(bool subscribedOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMailFolder&gt;</ReturnType>
@@ -2546,7 +2546,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsOpen" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -2567,7 +2567,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; MoveTo(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -2640,7 +2640,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void MoveTo(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2708,7 +2708,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderAccess</ReturnType>
@@ -2755,7 +2755,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance valuetype MailKit.FolderAccess Open(valuetype MailKit.FolderAccess access, valuetype MailKit.UniqueId uidValidity, unsigned int64 highestModSeq, class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderAccess</ReturnType>
@@ -2818,7 +2818,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2880,7 +2880,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -2942,7 +2942,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; RemoveFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3010,7 +3010,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; RemoveFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
@@ -3078,7 +3078,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3144,7 +3144,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3210,7 +3210,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; RemoveLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3279,7 +3279,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; RemoveLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
@@ -3348,7 +3348,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Rename(class MailKit.IMailFolder parent, string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3409,7 +3409,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; Search(class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3463,7 +3463,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; Search(class MailKit.Search.SearchQuery query, class System.Collections.Generic.IList`1&lt;class MailKit.Search.OrderBy&gt; orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3530,7 +3530,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; Search(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3596,7 +3596,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; Search(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class MailKit.Search.SearchQuery query, class System.Collections.Generic.IList`1&lt;class MailKit.Search.OrderBy&gt; orderBy, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3674,7 +3674,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3734,7 +3734,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3794,7 +3794,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; SetFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -3860,7 +3860,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; SetFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
@@ -3926,7 +3926,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -3990,7 +3990,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4054,7 +4054,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; SetLabels(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;</ReturnType>
@@ -4121,7 +4121,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; SetLabels(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, class System.Collections.Generic.IList`1&lt;string&gt; labels, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;System.Int32&gt;</ReturnType>
@@ -4188,7 +4188,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.FolderQuota SetQuota(valuetype System.Nullable`1&lt;unsigned int32&gt; messageLimit, valuetype System.Nullable`1&lt;unsigned int32&gt; storageLimit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderQuota</ReturnType>
@@ -4241,7 +4241,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Status(valuetype MailKit.StatusItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4298,7 +4298,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Subscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -4339,7 +4339,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -4359,7 +4359,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.MessageThread&gt; Thread(valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.MessageThread&gt;</ReturnType>
@@ -4420,7 +4420,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.MessageThread&gt; Thread(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.ThreadingAlgorithm algorithm, class MailKit.Search.SearchQuery query, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.IList&lt;MailKit.MessageThread&gt;</ReturnType>
@@ -4493,7 +4493,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Unsubscribe(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>

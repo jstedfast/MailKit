@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SmtpErrorCode extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.90.0.0</AssemblyVersion>
+    <AssemblyVersion>0.91.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -22,7 +22,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpErrorCode MessageNotAccepted = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Smtp.SmtpErrorCode</ReturnType>
@@ -39,7 +39,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpErrorCode RecipientNotAccepted = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Smtp.SmtpErrorCode</ReturnType>
@@ -57,7 +57,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpErrorCode SenderNotAccepted = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Smtp.SmtpErrorCode</ReturnType>
@@ -75,7 +75,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpErrorCode UnexpectedStatusCode = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Smtp.SmtpErrorCode</ReturnType>

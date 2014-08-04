@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FolderQuota extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.90.0.0</AssemblyVersion>
+    <AssemblyVersion>0.91.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -23,7 +23,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IMailFolder quotaRoot) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="quotaRoot" Type="MailKit.IMailFolder" />
@@ -43,7 +43,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; CurrentMessageCount" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
@@ -63,7 +63,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; CurrentStorageSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
@@ -83,7 +83,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; MessageLimit" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
@@ -103,7 +103,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IMailFolder QuotaRoot" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -124,7 +124,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int32&gt; StorageLimit" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.90.0.0</AssemblyVersion>
+        <AssemblyVersion>0.91.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt32&gt;</ReturnType>
