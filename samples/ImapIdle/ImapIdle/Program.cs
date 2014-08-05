@@ -227,8 +227,9 @@ namespace ImapIdle {
 		{
 			var idle = (IdleState) state;
 
-			while (!idle.IsCancellationRequested)
-			{
+			// Note: since the IMAP server will drop the connection after 10 minutes, we must loop sending IDLE commands that
+			// last ~9 minutes until the user has requested that they do not want to IDLE anymore.
+			while (!idle.IsCancellationRequested) {
 				// Note: In .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
 				// takes a TimeSpan argument, thus eliminating the need to create a timer.
 				using (var timeout = new CancellationTokenSource ()) {
