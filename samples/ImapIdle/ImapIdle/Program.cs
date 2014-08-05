@@ -227,33 +227,50 @@ namespace ImapIdle {
 		{
 			var idle = (IdleState) state;
 
-			// Note: since the IMAP server will drop the connection after 10 minutes, we must loop sending IDLE commands that
-			// last ~9 minutes until the user has requested that they do not want to IDLE anymore.
-			while (!idle.IsCancellationRequested) {
-				// Note: In .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
-				// takes a TimeSpan argument, thus eliminating the need to create a timer.
-				using (var timeout = new CancellationTokenSource ()) {
-					using (var timer = new System.Timers.Timer (9 * 60 * 1000)) {
-						// End the IDLE command after 9 minutes... (most servers will disconnect the client after 10 minutes)
-						timer.Elapsed += (sender, e) => timeout.Cancel ();
-						timer.AutoReset = false;
-						timer.Enabled = true;
+			lock (idle.Client.SyncRoot) {
+				// Note: since the IMAP server will drop the connection after 10 minutes, we must loop sending IDLE commands that
+				// last ~9 minutes until the user has requested that they do not want to IDLE anymore.
+				while (!idle.IsCancellationRequested) {
+					// Note: In .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
+					// takes a TimeSpan argument, thus eliminating the need to create a timer.
+					using (var timeout = new CancellationTokenSource ()) {
+						using (var timer = new System.Timers.Timer (9 * 60 * 1000)) {
+							// End the IDLE command after 9 minutes... (most servers will disconnect the client after 10 minutes)
+							timer.Elapsed += (sender, e) => timeout.Cancel ();
+							timer.AutoReset = false;
+							timer.Enabled = true;
 
-						try {
-							// We set the timeout source so that if the idle.DoneToken is cancelled, it can cancel the timeout
-							idle.SetTimeoutSource (timeout);
+							try {
+								// We set the timeout source so that if the idle.DoneToken is cancelled, it can cancel the timeout
+								idle.SetTimeoutSource (timeout);
 
-							// The Idle() method will not return until the timeout has elapsed or idle.CancellationToken is cancelled
-							idle.Client.Idle (timeout.Token, idle.CancellationToken);
+								if (idle.Client.Capabilities.HasFlag (ImapCapabilities.Idle)) {
+									// The Idle() method will not return until the timeout has elapsed or idle.CancellationToken is cancelled
+									idle.Client.Idle (timeout.Token, idle.CancellationToken);
+								} else {
+									// The IMAP server does not support IDLE, so send a NOOP command instead
+									idle.Client.NoOp (idle.CancellationToken);
 
-							// Note: this isn't really necessary but a lot of IMAP client developers seem to do it... so why not?
-							idle.Client.NoOp (idle.CancellationToken);
-						} catch (OperationCanceledException) {
-							// This means that idle.CancellationToken was cancelled, not the DoneToken nor the timeout
-							break;
-						} finally {
-							// We're about to Dispose() the timeout source, so set it to null.
-							idle.SetTimeoutSource (null);
+									// Wait for the timeout to elapse or the cancellation token to be cancelled
+									WaitHandle.WaitAny (new [] { timeout.Token.WaitHandle, idle.CancellationToken.WaitHandle });
+								}
+							} catch (OperationCanceledException) {
+								// This means that idle.CancellationToken was cancelled, not the DoneToken nor the timeout.
+								break;
+							} catch (ImapProtocolException) {
+								// The IMAP server sent garbage in a response and the ImapClient was unable to deal with it.
+								// This should never happen in practice, but it's probably still a good idea to handle it.
+								//
+								// Note: an ImapProtocolException almost always results in the ImapClient getting disconnected.
+								break;
+							} catch (ImapCommandException) {
+								// The IMAP server responded with "NO" or "BAD" to either the IDLE command or the NOOP command.
+								// This should never happen... but again, we're catching it for the sake of completeness.
+								break;
+							} finally {
+								// We're about to Dispose() the timeout source, so set it to null.
+								idle.SetTimeoutSource (null);
+							}
 						}
 					}
 				}
