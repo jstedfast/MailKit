@@ -28,7 +28,6 @@ using System;
 using System.Net;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using MailKit.Net.Imap;
@@ -121,13 +120,15 @@ namespace ImapIdle {
 					Console.WriteLine ("{0}: flags for message {1} have changed to: {2}.", folder, e.Index, e.Flags);
 				};
 
-				Console.WriteLine ("Hit any key to end the IDLE command.");
+				Console.WriteLine ("Hit any key to end the IDLE loop.");
 				using (var done = new CancellationTokenSource ()) {
-					var task = client.IdleAsync (done.Token);
+					var thread = new Thread (IdleLoop);
+
+					thread.Start (new IdleState (client, done.Token));
 
 					Console.ReadKey ();
 					done.Cancel ();
-					task.Wait ();
+					thread.Join ();
 				}
 
 				if (count > messages.Count) {
@@ -137,6 +138,79 @@ namespace ImapIdle {
 				}
 
 				client.Disconnect (true);
+			}
+		}
+
+		class IdleState
+		{
+			readonly object mutex = new object ();
+			CancellationTokenSource timeout;
+
+			public CancellationToken CancellationToken { get; private set; }
+			public CancellationToken DoneToken { get; private set; }
+			public ImapClient Client { get; private set; }
+
+			public bool IsCancellationRequested {
+				get {
+					return CancellationToken.IsCancellationRequested || DoneToken.IsCancellationRequested;
+				}
+			}
+
+			public IdleState (ImapClient client, CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken))
+			{
+				CancellationToken = cancellationToken;
+				DoneToken = doneToken;
+				Client = client;
+
+				// When the user hits a key, end the current timeout as well
+				doneToken.Register (CancelTimeout);
+			}
+
+			void CancelTimeout ()
+			{
+				lock (mutex) {
+					if (timeout != null)
+						timeout.Cancel ();
+				}
+			}
+
+			public void SetTimeoutSource (CancellationTokenSource source)
+			{
+				lock (mutex) {
+					timeout = source;
+
+					if (timeout != null && IsCancellationRequested)
+						timeout.Cancel ();
+				}
+			}
+		}
+
+		static void IdleLoop (object state)
+		{
+			var idle = (IdleState) state;
+
+			while (!idle.IsCancellationRequested)
+			{
+				using (var timeout = new CancellationTokenSource ()) {
+					using (var timer = new System.Timers.Timer (9 * 60 * 1000)) {
+						// End the IDLE command after 9 minutes... (most servers will disconnect the client after 10 minutes)
+						timer.Elapsed += (sender, e) => timeout.Cancel ();
+						timer.AutoReset = false;
+						timer.Enabled = true;
+
+						try {
+							idle.SetTimeoutSource (timeout);
+							idle.Client.Idle (timeout.Token, idle.CancellationToken);
+							idle.Client.NoOp (idle.CancellationToken);
+						} catch (OperationCanceledException) {
+							// This means that idle.CancellationToken was cancelled, not the DoneToken nor the timeout
+							break;
+						} finally {
+							// We're about to Dispose() the timeout source, so set it to null.
+							idle.SetTimeoutSource (null);
+						}
+					}
+				}
 			}
 		}
 	}
