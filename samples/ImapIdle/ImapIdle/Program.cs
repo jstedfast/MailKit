@@ -146,16 +146,51 @@ namespace ImapIdle {
 			readonly object mutex = new object ();
 			CancellationTokenSource timeout;
 
+			/// <summary>
+			/// Gets the cancellation token.
+			/// </summary>
+			/// <remarks>
+			/// <para>The cancellation token is the brute-force approach to cancelling the IDLE and/or NOOP command.</para>
+			/// <para>Using the cancellation token will typically drop the connection to the server and so should
+			/// not be used unless the client is in the process of shutting down or otherwise needs to
+			/// immediately abort communication with the server.</para>
+			/// </remarks>
+			/// <value>The cancellation token.</value>
 			public CancellationToken CancellationToken { get; private set; }
+
+			/// <summary>
+			/// Gets the done token.
+			/// </summary>
+			/// <remarks>
+			/// <para>The done token tells the <see cref="Program.IdleLoop"/> that the user has requested to end the loop.</para>
+			/// <para>When the done token is cancelled, the <see cref="Program.IdleLoop"/> will gracefully come to an end by
+			/// cancelling the timeout and then breaking out of the loop.</para>
+			/// </remarks>
+			/// <value>The done token.</value>
 			public CancellationToken DoneToken { get; private set; }
+
+			/// <summary>
+			/// Gets the IMAP client.
+			/// </summary>
+			/// <value>The IMAP client.</value>
 			public ImapClient Client { get; private set; }
 
+			/// <summary>
+			/// Checks whether or not either of the CancellationToken's have been cancelled.
+			/// </summary>
+			/// <value><c>true</c> if cancellation was requested; otherwise, <c>false</c>.</value>
 			public bool IsCancellationRequested {
 				get {
 					return CancellationToken.IsCancellationRequested || DoneToken.IsCancellationRequested;
 				}
 			}
 
+			/// <summary>
+			/// Initializes a new instance of the <see cref="IdleState"/> class.
+			/// </summary>
+			/// <param name="client">The IMAP client.</param>
+			/// <param name="doneToken">The user-controlled 'done' token.</param>
+			/// <param name="cancellationToken">The brute-force cancellation token.</param>
 			public IdleState (ImapClient client, CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken))
 			{
 				CancellationToken = cancellationToken;
@@ -166,6 +201,9 @@ namespace ImapIdle {
 				doneToken.Register (CancelTimeout);
 			}
 
+			/// <summary>
+			/// Cancels the timeout token source, forcing ImapClient.Idle() to gracefully exit.
+			/// </summary>
 			void CancelTimeout ()
 			{
 				lock (mutex) {
@@ -191,6 +229,8 @@ namespace ImapIdle {
 
 			while (!idle.IsCancellationRequested)
 			{
+				// Note: In .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
+				// takes a TimeSpan argument, thus eliminating the need to create a timer.
 				using (var timeout = new CancellationTokenSource ()) {
 					using (var timer = new System.Timers.Timer (9 * 60 * 1000)) {
 						// End the IDLE command after 9 minutes... (most servers will disconnect the client after 10 minutes)
@@ -199,8 +239,13 @@ namespace ImapIdle {
 						timer.Enabled = true;
 
 						try {
+							// We set the timeout source so that if the idle.DoneToken is cancelled, it can cancel the timeout
 							idle.SetTimeoutSource (timeout);
+
+							// The Idle() method will not return until the timeout has elapsed or idle.CancellationToken is cancelled
 							idle.Client.Idle (timeout.Token, idle.CancellationToken);
+
+							// Note: this isn't really necessary but a lot of IMAP client developers seem to do it... so why not?
 							idle.Client.NoOp (idle.CancellationToken);
 						} catch (OperationCanceledException) {
 							// This means that idle.CancellationToken was cancelled, not the DoneToken nor the timeout
