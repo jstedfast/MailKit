@@ -522,6 +522,8 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		public void Disconnect ()
 		{
+			current = null;
+
 			if (stream != null) {
 				stream.Dispose ();
 				stream = null;
