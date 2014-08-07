@@ -251,29 +251,35 @@ namespace MailKit.Net.Pop3 {
 		unsafe int ReadAhead (CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
-			int index = inputIndex;
 			int start = inputStart;
 			int end = inputEnd;
 			int nread;
 
-			// attempt to align the end of the remaining input with ReadAheadSize
-			if (index >= start) {
-				start -= Math.Min (ReadAheadSize, left);
-				Buffer.BlockCopy (input, index, input, start, left);
-				index = start;
-				start += left;
-			} else if (index > 0) {
-				int shift = Math.Min (index, end - start);
-				Buffer.BlockCopy (input, index, input, index - shift, left);
-				index -= shift;
-				start = index + left;
-			} else {
-				// we can't shift...
-				start = end;
-			}
+			if (left > 0) {
+				int index = inputIndex;
 
-			inputIndex = index;
-			inputEnd = start;
+				// attempt to align the end of the remaining input with ReadAheadSize
+				if (index >= start) {
+					start -= Math.Min (ReadAheadSize, left);
+					Buffer.BlockCopy (input, index, input, start, left);
+					index = start;
+					start += left;
+				} else if (index > 0) {
+					int shift = Math.Min (index, end - start);
+					Buffer.BlockCopy (input, index, input, index - shift, left);
+					index -= shift;
+					start = index + left;
+				} else {
+					// we can't shift...
+					start = end;
+				}
+
+				inputIndex = index;
+				inputEnd = start;
+			} else {
+				inputIndex = start;
+				inputEnd = start;
+			}
 
 			end = input.Length - PadSize;
 
