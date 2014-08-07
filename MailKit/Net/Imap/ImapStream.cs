@@ -226,28 +226,6 @@ namespace MailKit.Net.Imap {
 			get { return Stream.Length; }
 		}
 
-		static unsafe void MemMove (byte *buf, int sourceIndex, int destIndex, int length)
-		{
-			if (length == 0 || sourceIndex == destIndex)
-				return;
-
-			if (sourceIndex < destIndex) {
-				byte* src = buf + sourceIndex + length - 1;
-				byte *dest = buf + destIndex + length - 1;
-				byte *start = buf + sourceIndex;
-
-				while (src >= start)
-					*dest-- = *src--;
-			} else {
-				byte* src = buf + sourceIndex;
-				byte* dest = buf + destIndex;
-				byte* end = src + length;
-
-				while (src < end)
-					*dest++ = *src++;
-			}
-		}
-
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
 			#if NETFX_CORE
@@ -266,7 +244,7 @@ namespace MailKit.Net.Imap {
 			#endif
 		}
 
-		unsafe int ReadAhead (byte* inbuf, int atleast, CancellationToken cancellationToken)
+		unsafe int ReadAhead (int atleast, CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
 
@@ -281,12 +259,12 @@ namespace MailKit.Net.Imap {
 			// attempt to align the end of the remaining input with ReadAheadSize
 			if (index >= start) {
 				start -= Math.Min (ReadAheadSize, left);
-				MemMove (inbuf, index, start, left);
+				Buffer.BlockCopy (input, index, input, start, left);
 				index = start;
 				start += left;
 			} else if (index > 0) {
 				int shift = Math.Min (index, end - start);
-				MemMove (inbuf, index, index - shift, left);
+				Buffer.BlockCopy (input, index, input, index - shift, left);
 				index -= shift;
 				start = index + left;
 			} else {
@@ -393,13 +371,8 @@ namespace MailKit.Net.Imap {
 			int length = inputEnd - inputIndex;
 			int n;
 
-			if (length < count && length <= ReadAheadSize) {
-				unsafe {
-					fixed (byte* inbuf = input) {
-						ReadAhead (inbuf, BlockSize, cancellationToken);
-					}
-				}
-			}
+			if (length < count && length <= ReadAheadSize)
+				ReadAhead (BlockSize, cancellationToken);
 
 			length = inputEnd - inputIndex;
 			n = Math.Min (count, length);
@@ -493,7 +466,7 @@ namespace MailKit.Net.Imap {
 
 					inputIndex = (int) (inptr - inbuf);
 
-					ReadAhead (inbuf, 1, cancellationToken);
+					ReadAhead (1, cancellationToken);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
@@ -535,7 +508,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-				ReadAhead (inbuf, 1, cancellationToken);
+				ReadAhead (1, cancellationToken);
 
 				inptr = inbuf + inputIndex;
 				inend = inbuf + inputEnd;
@@ -582,7 +555,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-				ReadAhead (inbuf, 1, cancellationToken);
+				ReadAhead (1, cancellationToken);
 
 				inptr = inbuf + inputIndex;
 				inend = inbuf + inputEnd;
@@ -594,7 +567,7 @@ namespace MailKit.Net.Imap {
 			// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
 			inputIndex = (int) (inptr - inbuf);
 
-			ReadAhead (inbuf, 2, cancellationToken);
+			ReadAhead (2, cancellationToken);
 
 			inptr = inbuf + inputIndex;
 			inend = inbuf + inputEnd;
@@ -612,7 +585,7 @@ namespace MailKit.Net.Imap {
 
 					inputIndex = (int) (inptr - inbuf);
 
-					ReadAhead (inbuf, 1, cancellationToken);
+					ReadAhead (1, cancellationToken);
 
 					inptr = inbuf + inputIndex;
 					inend = inbuf + inputEnd;
@@ -634,7 +607,7 @@ namespace MailKit.Net.Imap {
 
 				inputIndex = (int) (inptr - inbuf);
 
-				ReadAhead (inbuf, 1, cancellationToken);
+				ReadAhead (1, cancellationToken);
 
 				inptr = inbuf + inputIndex;
 				inend = inbuf + inputEnd;
@@ -696,7 +669,7 @@ namespace MailKit.Net.Imap {
 
 						inputIndex = (int) (inptr - inbuf);
 
-						ReadAhead (inbuf, 1, cancellationToken);
+						ReadAhead (1, cancellationToken);
 
 						inptr = inbuf + inputIndex;
 						inend = inbuf + inputEnd;
@@ -787,7 +760,7 @@ namespace MailKit.Net.Imap {
 					byte* start, inptr, inend;
 
 					// we need at least 1 byte: "\n"
-					ReadAhead (inbuf, 1, cancellationToken);
+					ReadAhead (1, cancellationToken);
 
 					offset = inputIndex;
 					buffer = input;
