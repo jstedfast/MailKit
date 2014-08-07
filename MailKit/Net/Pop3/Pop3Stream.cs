@@ -230,28 +230,6 @@ namespace MailKit.Net.Pop3 {
 			get { return Stream.Length; }
 		}
 
-		static unsafe void MemMove (byte *buf, int sourceIndex, int destIndex, int length)
-		{
-			if (length == 0 || sourceIndex == destIndex)
-				return;
-
-			if (sourceIndex < destIndex) {
-				byte* src = buf + sourceIndex + length - 1;
-				byte *dest = buf + destIndex + length - 1;
-				byte *start = buf + sourceIndex;
-
-				while (src >= start)
-					*dest-- = *src--;
-			} else {
-				byte* src = buf + sourceIndex;
-				byte* dest = buf + destIndex;
-				byte* end = src + length;
-
-				while (src < end)
-					*dest++ = *src++;
-			}
-		}
-
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
 			#if NETFX_CORE
@@ -270,7 +248,7 @@ namespace MailKit.Net.Pop3 {
 			#endif
 		}
 
-		unsafe int ReadAhead (byte* inbuf, CancellationToken cancellationToken)
+		unsafe int ReadAhead (CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
 			int index = inputIndex;
@@ -281,12 +259,12 @@ namespace MailKit.Net.Pop3 {
 			// attempt to align the end of the remaining input with ReadAheadSize
 			if (index >= start) {
 				start -= Math.Min (ReadAheadSize, left);
-				MemMove (inbuf, index, start, left);
+				Buffer.BlockCopy (input, index, input, start, left);
 				index = start;
 				start += left;
 			} else if (index > 0) {
 				int shift = Math.Min (index, end - start);
-				MemMove (inbuf, index, index - shift, left);
+				Buffer.BlockCopy (input, index, input, index - shift, left);
 				index -= shift;
 				start = index + left;
 			} else {
@@ -420,7 +398,7 @@ namespace MailKit.Net.Pop3 {
 							if (outptr > outbuf)
 								break;
 
-							ReadAhead (inbuf, cancellationToken);
+							ReadAhead (cancellationToken);
 							inptr = inbuf + inputIndex;
 						}
 
@@ -538,7 +516,7 @@ namespace MailKit.Net.Pop3 {
 					byte* start, inptr, inend;
 
 					if (inputIndex == inputEnd)
-						ReadAhead (inbuf, cancellationToken);
+						ReadAhead (cancellationToken);
 
 					offset = inputIndex;
 					buffer = input;
