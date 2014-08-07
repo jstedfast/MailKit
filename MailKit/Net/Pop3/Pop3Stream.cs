@@ -428,17 +428,24 @@ namespace MailKit.Net.Pop3 {
 								break;
 
 							if (*inptr == (byte) '.') {
-								if ((inend - inptr) >= 3 && *(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
+								inputLeft = (int) (inend - inptr);
+
+								if (inputLeft >= 3 && *(inptr + 1) == (byte) '\r' && *(inptr + 2) == (byte) '\n') {
 									IsEndOfData = true;
 									midline = false;
 									inptr += 3;
 									break;
 								}
 
-								if ((inend - inptr) >= 2 && *(inptr + 1) == (byte) '\n') {
+								if (inputLeft >= 2 && *(inptr + 1) == (byte) '\n') {
 									IsEndOfData = true;
 									midline = false;
 									inptr += 2;
+									break;
+								}
+
+								if (inputLeft == 1 || (inputLeft == 2 && *(inptr + 1) == (byte) '\r')) {
+									// not enough data...
 									break;
 								}
 

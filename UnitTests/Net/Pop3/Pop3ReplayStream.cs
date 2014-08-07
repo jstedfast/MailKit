@@ -105,7 +105,7 @@ namespace UnitTests.Net.Pop3 {
 			Assert.AreEqual (Pop3ReplayState.SendResponse, state, "Trying to read when no command given.");
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
-			int nread = stream.Read (buffer, offset, count);
+			int nread = stream.Read (buffer, offset, 1);
 
 			if (stream.Position == stream.Length) {
 				state = Pop3ReplayState.WaitForCommand;
