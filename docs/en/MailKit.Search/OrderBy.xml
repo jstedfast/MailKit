@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit OrderBy extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.91.0.0</AssemblyVersion>
+    <AssemblyVersion>0.92.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -25,7 +25,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Arrival" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -44,7 +44,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Cc" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -63,7 +63,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Date" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -82,7 +82,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy From" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -101,7 +101,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseArrival" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -120,7 +120,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseCc" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -139,7 +139,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseDate" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -158,7 +158,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseFrom" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -177,7 +177,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseSize" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -196,7 +196,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseSubject" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -215,7 +215,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseTo" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -234,7 +234,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Size" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -253,7 +253,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy Subject" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
@@ -272,7 +272,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy To" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.91.0.0</AssemblyVersion>
+        <AssemblyVersion>0.92.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.OrderBy</ReturnType>
