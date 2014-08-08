@@ -67,7 +67,6 @@ namespace MailKit.Net.Imap {
 #endif
 		int timeout = 100000;
 		bool disposed;
-		string host;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapClient"/> class.
@@ -440,7 +439,7 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			int capabilitiesVersion = engine.CapabilitiesVersion;
-			var uri = new Uri ("imap://" + host);
+			var uri = new Uri ("imap://" + engine.Uri.Host);
 			NetworkCredential cred;
 			ImapCommand ic = null;
 
@@ -535,9 +534,9 @@ namespace MailKit.Net.Imap {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
-			host = hostName;
+			var uri = new Uri ("imap://" + hostName);
 
-			engine.Connect (new ImapStream (replayStream, null, logger), cancellationToken);
+			engine.Connect (uri, new ImapStream (replayStream, null, logger), cancellationToken);
 			engine.TagPrefix = 'A';
 
 			if (engine.CapabilitiesVersion == 0)
@@ -670,11 +669,9 @@ namespace MailKit.Net.Imap {
 				stream.ReadTimeout = timeout;
 			}
 
-			host = uri.Host;
-
 			logger.LogConnect (uri);
 
-			engine.Connect (new ImapStream (stream, socket, logger), cancellationToken);
+			engine.Connect (uri, new ImapStream (stream, socket, logger), cancellationToken);
 
 			// Only query the CAPABILITIES if the greeting didn't include them.
 			if (engine.CapabilitiesVersion == 0)
