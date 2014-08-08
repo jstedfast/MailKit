@@ -61,6 +61,10 @@ namespace MailKit.Net.Imap {
 			EncodedName = encodedName;
 			Attributes = attrs;
 			Engine = engine;
+
+			engine.Disconnected += (sender, e) => {
+				Access = FolderAccess.None;
+			};
 		}
 
 		static string GetBaseName (string fullName, char delim)
