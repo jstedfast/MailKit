@@ -2843,7 +2843,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0 || min >= Count)
+			if (min < 0 || min > Count)
 				throw new ArgumentOutOfRangeException ("min");
 
 			if (max != -1 && max < min)
@@ -2853,6 +2853,9 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentOutOfRangeException ("items");
 
 			CheckState (true, false);
+
+			if (min == Count)
+				return new IMessageSummary[0];
 
 			var query = FormatSummaryItems (items);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);

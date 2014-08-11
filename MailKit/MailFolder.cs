@@ -3988,7 +3988,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min < 0)
+			if (min < 0 || min > Count)
 				throw new ArgumentOutOfRangeException ("min");
 
 			if (max != -1 && max < min)
