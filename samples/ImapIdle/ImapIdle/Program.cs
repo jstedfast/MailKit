@@ -54,13 +54,8 @@ namespace ImapIdle {
 				client.Inbox.Open (FolderAccess.ReadOnly);
 
 				// keep track of the messages
-				IList<IMessageSummary> messages = null;
-				int count = 0;
-
-				if (client.Inbox.Count > 0) {
-					messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId).ToList ();
-					count = messages.Count;
-				}
+				var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId).ToList ();
+				int count = messages.Count;
 
 				// connect to some events...
 				client.Inbox.CountChanged += (sender, e) => {
@@ -228,14 +223,16 @@ namespace ImapIdle {
 			var idle = (IdleState) state;
 
 			lock (idle.Client.SyncRoot) {
-				// Note: since the IMAP server will drop the connection after 10 minutes, we must loop sending IDLE commands that
-				// last ~9 minutes until the user has requested that they do not want to IDLE anymore.
+				// Note: since the IMAP server will drop the connection after 30 minutes, we must loop sending IDLE commands that
+				// last ~29 minutes or until the user has requested that they do not want to IDLE anymore.
+				//
+				// For GMail, we use a 9 minute interval because they do not seem to keep the connection alive for more than ~10 minutes.
 				while (!idle.IsCancellationRequested) {
 					// Note: In .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
 					// takes a TimeSpan argument, thus eliminating the need to create a timer.
 					using (var timeout = new CancellationTokenSource ()) {
 						using (var timer = new System.Timers.Timer (9 * 60 * 1000)) {
-							// End the IDLE command after 9 minutes... (most servers will disconnect the client after 10 minutes)
+							// End the IDLE command after 29 minutes... (most servers will disconnect the client after 30 minutes)
 							timer.Elapsed += (sender, e) => timeout.Cancel ();
 							timer.AutoReset = false;
 							timer.Enabled = true;
