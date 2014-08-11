@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageFlagsChangedEventArgs extends MailKit.MessageEventArgs" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.92.0.0</AssemblyVersion>
+    <AssemblyVersion>0.93.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MessageEventArgs</BaseTypeName>
@@ -23,7 +23,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.MessageFlags flags) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.92.0.0</AssemblyVersion>
+        <AssemblyVersion>0.93.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
@@ -45,7 +45,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.MessageFlags flags, unsigned int64 modseq) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.92.0.0</AssemblyVersion>
+        <AssemblyVersion>0.93.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
@@ -69,7 +69,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.UniqueId uid, valuetype MailKit.MessageFlags flags) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.92.0.0</AssemblyVersion>
+        <AssemblyVersion>0.93.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
@@ -93,7 +93,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.UniqueId uid, valuetype MailKit.MessageFlags flags, unsigned int64 modseq) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.92.0.0</AssemblyVersion>
+        <AssemblyVersion>0.93.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
@@ -119,7 +119,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.MessageFlags Flags" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.92.0.0</AssemblyVersion>
+        <AssemblyVersion>0.93.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.MessageFlags</ReturnType>
@@ -139,7 +139,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;unsigned int64&gt; ModSeq" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.92.0.0</AssemblyVersion>
+        <AssemblyVersion>0.93.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.UInt64&gt;</ReturnType>
@@ -159,7 +159,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UniqueId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.92.0.0</AssemblyVersion>
+        <AssemblyVersion>0.93.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.92.0.0</version>
+        <version>0.93.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,14 +22,13 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed ImapClient's state before emitting the Disconnected event so that it's possible to reconnect in the event handler.
-* Fixed Pop3Stream.Read() to handle cases where there isn't enough data.
-* Improved documentation.</releaseNotes>
+        <releaseNotes>* Allow calling ImapFolder.Fetch (0, -1, ...) even if the folder is empty.</releaseNotes>
+* When the ImapClient gets disconnected, all ImapFolder.Access properties get changed to FolderAccess.None.
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.92.0.0" />
+            <dependency id="MimeKit" version="0.93.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
