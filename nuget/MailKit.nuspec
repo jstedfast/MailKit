@@ -22,8 +22,8 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Allow calling ImapFolder.Fetch (0, -1, ...) even if the folder is empty.</releaseNotes>
-* When the ImapClient gets disconnected, all ImapFolder.Access properties get changed to FolderAccess.None.
+        <releaseNotes>* Allow calling ImapFolder.Fetch (0, -1, ...) even if the folder is empty.
+* When the ImapClient gets disconnected, all ImapFolder.Access properties get changed to FolderAccess.None.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
