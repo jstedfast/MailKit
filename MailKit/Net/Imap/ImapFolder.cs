@@ -275,10 +275,10 @@ namespace MailKit.Net.Imap {
 				return access;
 
 			if ((Engine.Capabilities & ImapCapabilities.QuickResync) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
 			if (!Engine.QResyncEnabled)
-				throw new InvalidOperationException ("The QRESYNC feature is not enabled.");
+				throw new InvalidOperationException ("The QRESYNC extension has not been enabled.");
 
 			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity.Id, highestModSeq);
 
@@ -1110,7 +1110,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETQUOTAROOT %F\r\n", this);
 			ic.RegisterUntaggedHandler ("QUOTAROOT", UntaggedQuotaRoot);
@@ -1170,7 +1170,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			if ((Engine.Capabilities & ImapCapabilities.Quota) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
 			var command = new StringBuilder ("SETQUOTA %F (");
 			if (messageLimit.HasValue)
@@ -1278,6 +1278,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the UIDPLUS extension.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -1292,6 +1295,9 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			CheckState (true, true);
+
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
 			if (uids.Count == 0)
 				return;
@@ -4584,7 +4590,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the Google Mail extensions.");
 
 			CheckState (true, true);
 
@@ -4948,7 +4954,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the Google Mail extensions.");
 
 			CheckState (true, true);
 
