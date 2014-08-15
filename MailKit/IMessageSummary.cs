@@ -84,6 +84,18 @@ namespace MailKit {
 		MessageFlags? Flags { get; }
 
 		/// <summary>
+		/// Gets the list of headers, if available.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the list of headers, if available.</para>
+		/// <para>This property will only be set if the
+		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Collections.Generic.HashSet&lt;MimeKit.HeaderId&gt;,System.Threading.CancellationToken)"/>.
+		/// method is used.</para>
+		/// </remarks>
+		/// <value>The list of headers.</value>
+		HeaderList Headers { get; }
+
+		/// <summary>
 		/// Gets the internal date of the message (i.e. the "received" date), if available.
 		/// </summary>
 		/// <remarks>

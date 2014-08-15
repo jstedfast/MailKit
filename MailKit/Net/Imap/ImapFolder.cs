@@ -2193,8 +2193,8 @@ namespace MailKit.Net.Imap {
 
 						try {
 							var message = engine.ParseMessage (engine.Stream, false, ic.CancellationToken);
-
 							summary.References = message.References;
+							summary.Headers = message.Headers;
 						} catch (FormatException) {
 							// consume any remaining literal data...
 							engine.Stream.CopyTo (Stream.Null, 4096);
@@ -2263,7 +2263,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 		}
 
-		string FormatSummaryItems (MessageSummaryItems items)
+		string FormatSummaryItems (MessageSummaryItems items, HashSet<HeaderId> fields)
 		{
 			if ((items & MessageSummaryItems.BodyStructure) != 0 && (items & MessageSummaryItems.Body) != 0) {
 				// don't query both the BODY and BODYSTRUCTURE, that's just dumb...
@@ -2313,8 +2313,27 @@ namespace MailKit.Net.Imap {
 					tokens.Add ("X-GM-LABELS");
 			}
 
-			if ((items & MessageSummaryItems.References) != 0)
-				tokens.Add ("BODY.PEEK[HEADER.FIELDS (REFERENCES)]");
+			if ((items & MessageSummaryItems.References) != 0 || fields != null) {
+				var headers = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
+
+				if (fields.Contains (HeaderId.References))
+					items &= ~MessageSummaryItems.References;
+
+				if ((items & MessageSummaryItems.References) != 0)
+					headers.Append ("REFERENCES ");
+
+				if (fields != null) {
+					foreach (var field in fields) {
+						headers.Append (field.ToHeaderName ().ToUpperInvariant ());
+						headers.Append (' ');
+					}
+				}
+
+				headers[headers.Length - 1] = ')';
+				headers.Append (']');
+
+				tokens.Add (headers.ToString ());
+			}
 
 			if (tokens.Count == 1)
 				return tokens[0];
@@ -2348,9 +2367,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2376,7 +2393,6 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var query = FormatSummaryItems (items);
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (items == MessageSummaryItems.None)
@@ -2387,6 +2403,83 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
+			var query = FormatSummaryItems (items, null);
+			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var results = new SortedDictionary<int, IMessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("FETCH", ic);
+
+			return AsReadOnly (results.Values);
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the specified message UIDs.
+		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the specified message UIDs.
+		/// </remarks>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="uids">The UIDs.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="fields">The desired header fields.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var set = ImapUtils.FormatUidSet (uids);
+
+			if (fields == null)
+				throw new ArgumentNullException ("fields");
+
+			if (fields.Count == 0)
+				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+
+			CheckState (true, false);
+
+			if (uids.Count == 0)
+				return new IMessageSummary[0];
+
+			var query = FormatSummaryItems (items, fields);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, IMessageSummary> ();
@@ -2425,9 +2518,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2456,7 +2547,6 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var query = FormatSummaryItems (items);
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (items == MessageSummaryItems.None)
@@ -2470,6 +2560,7 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
+			var query = FormatSummaryItems (items, null);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
@@ -2488,86 +2579,8 @@ namespace MailKit.Net.Imap {
 			return AsReadOnly (results.Values);
 		}
 
-		static string GetFetchRange (UniqueId min, UniqueId? max)
-		{
-			if (max.HasValue && max.Value.Id == min.Id)
-				return min.ToString ();
-
-			var maxValue = max.HasValue ? max.Value.Id.ToString () : "*";
-
-			return string.Format ("{0}:{1}", min.Id, maxValue);
-		}
-
 		/// <summary>
-		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
-		/// </summary>
-		/// <remarks>
-		/// Fetches the message summaries for the messages between the two UIDs, inclusive.
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum UID.</param>
-		/// <param name="max">The maximum UID, or <c>null</c> to specify no upper bound.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="min"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="items"/> is empty.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied with a NO or BAD response.
-		/// </exception>
-		public override IList<IMessageSummary> Fetch (UniqueId min, UniqueId? max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (min.Id == 0)
-				throw new ArgumentException ("The minimum uid is invalid.", "min");
-
-			var query = FormatSummaryItems (items);
-
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
-
-			CheckState (true, false);
-
-			var command = string.Format ("UID FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
-			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
-
-			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
-
-			ProcessResponseCodes (ic, null);
-
-			if (ic.Result != ImapCommandResult.Ok)
-				throw ImapCommandException.Create ("FETCH", ic);
-
-			return AsReadOnly (results.Values);
-		}
-
-		/// <summary>
-		/// Fetches the message summaries for the messages between the two UIDs (inclusive) that have a higher mod-sequence value than the one specified.
+		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
@@ -2576,16 +2589,20 @@ namespace MailKit.Net.Imap {
 		/// that have vanished since the specified mod-sequence value.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum UID.</param>
-		/// <param name="max">The maximum UID.</param>
+		/// <param name="uids">The UIDs.</param>
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="fields">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="min"/> is invalid.
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uids"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is <c>null</c>.</para>
 		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="items"/> is empty.
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is empty.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2612,22 +2629,27 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<IMessageSummary> Fetch (UniqueId min, UniqueId? max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (min.Id == 0)
-				throw new ArgumentException ("The minimum uid is invalid.", "min");
+			var set = ImapUtils.FormatUidSet (uids);
 
-			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+			if (fields == null)
+				throw new ArgumentNullException ("fields");
+
+			if (fields.Count == 0)
+				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
 
 			CheckState (true, false);
 
-			var query = FormatSummaryItems (items);
+			if (uids.Count == 0)
+				return new IMessageSummary[0];
+
+			var query = FormatSummaryItems (items, fields);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
-			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", GetFetchRange (min, max), query, modseq, vanished);
+			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, IMessageSummary> ();
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
@@ -2661,9 +2683,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2690,7 +2710,6 @@ namespace MailKit.Net.Imap {
 		public override IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
-			var query = FormatSummaryItems (items);
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
@@ -2700,6 +2719,83 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
+			var query = FormatSummaryItems (items, null);
+			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var results = new SortedDictionary<int, IMessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("FETCH", ic);
+
+			return AsReadOnly (results.Values);
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the specified message indexes.
+		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the specified message indexes.
+		/// </remarks>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="indexes">The indexes.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="fields">The desired header fields.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var set = ImapUtils.FormatIndexSet (indexes);
+
+			if (fields == null)
+				throw new ArgumentNullException ("fields");
+
+			if (fields.Count == 0)
+				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+
+			CheckState (true, false);
+
+			if (indexes.Count == 0)
+				return new IMessageSummary[0];
+
+			var query = FormatSummaryItems (items, fields);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, IMessageSummary> ();
@@ -2735,9 +2831,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="items"/> is empty.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// One or more of the <paramref name="indexes"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -2767,7 +2861,6 @@ namespace MailKit.Net.Imap {
 		public override IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatIndexSet (indexes);
-			var query = FormatSummaryItems (items);
 
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
@@ -2780,6 +2873,90 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
+			var query = FormatSummaryItems (items, null);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var results = new SortedDictionary<int, IMessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("FETCH", ic);
+
+			return AsReadOnly (results.Values);
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// </remarks>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="indexes">The indexes.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="fields">The desired header fields.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="fields"/> is empty.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			var set = ImapUtils.FormatIndexSet (indexes);
+
+			if (fields == null)
+				throw new ArgumentNullException ("fields");
+
+			if (fields.Count == 0)
+				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+
+			if (!SupportsModSeq)
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
+
+			CheckState (true, false);
+
+			if (indexes.Count == 0)
+				return new IMessageSummary[0];
+
+			var query = FormatSummaryItems (items, fields);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, IMessageSummary> ();
@@ -2863,7 +3040,89 @@ namespace MailKit.Net.Imap {
 			if (min == Count)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items);
+			var query = FormatSummaryItems (items, null);
+			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var results = new SortedDictionary<int, IMessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("FETCH", ic);
+
+			return AsReadOnly (results.Values);
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// </remarks>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="fields">The desired header fields.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="min"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="max"/> is out of range.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="fields"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="fields"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (min < 0 || min > Count)
+				throw new ArgumentOutOfRangeException ("min");
+
+			if (max != -1 && max < min)
+				throw new ArgumentOutOfRangeException ("max");
+
+			if (fields == null)
+				throw new ArgumentNullException ("fields");
+
+			if (fields.Count == 0)
+				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+
+			CheckState (true, false);
+
+			if (min == Count)
+				return new IMessageSummary[0];
+
+			var query = FormatSummaryItems (items, fields);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, IMessageSummary> ();
@@ -2941,7 +3200,93 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var query = FormatSummaryItems (items);
+			var query = FormatSummaryItems (items, null);
+			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var results = new SortedDictionary<int, IMessageSummary> ();
+			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.UserData = results;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("FETCH", ic);
+
+			return AsReadOnly (results.Values);
+		}
+
+		/// <summary>
+		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </summary>
+		/// <remarks>
+		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// </remarks>
+		/// <returns>An enumeration of summaries for the requested messages.</returns>
+		/// <param name="min">The minimum index.</param>
+		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+		/// <param name="modseq">The mod-sequence value.</param>
+		/// <param name="items">The message summary items to fetch.</param>
+		/// <param name="fields">The desired header fields.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="min"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="max"/> is out of range.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="fields"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="fields"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The <see cref="ImapFolder"/> does not support mod-sequences.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (min < 0 || min >= Count)
+				throw new ArgumentOutOfRangeException ("min");
+
+			if (max != -1 && max < min)
+				throw new ArgumentOutOfRangeException ("max");
+
+			if (fields == null)
+				throw new ArgumentNullException ("fields");
+
+			if (fields.Count == 0)
+				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+
+			if (!SupportsModSeq)
+				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
+
+			CheckState (true, false);
+
+			var query = FormatSummaryItems (items, fields);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var results = new SortedDictionary<int, IMessageSummary> ();
