@@ -420,7 +420,7 @@ The first thing you'll need to do is fork MailKit to your own GitHub repository.
 
     git clone git@github.com/<your-account>/MailKit.git
 
-If you use [Xamarin Studio](http://xamarin.com/studio) or [MonoDevelop](http://monodevelop.org), all of the
+If you use [Xamarin Studio](http://xamarin.com/studio) or [MonoDevelop](http://monodevelop.com), all of the
 solution files are configured with the coding style used by MailKit. If you use Visual Studio or some
 other editor, please try to maintain the existing coding style as best as you can.
 
