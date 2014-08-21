@@ -652,7 +652,8 @@ namespace MailKit.Net.Imap {
 			var type = ParseContentType (engine, cancellationToken);
 			var id = ReadNStringToken (engine, false, cancellationToken);
 			var desc = ReadNStringToken (engine, true, cancellationToken);
-			var enc = ReadStringToken (engine, cancellationToken);
+			// Note: technically, body-fld-enc, is not allowed to be NIL, but we need to deal with broken servers...
+			var enc = ReadNStringToken (engine, false, cancellationToken);
 			var octets = ReadNumber (engine, cancellationToken);
 			BodyPartBasic body;
 
