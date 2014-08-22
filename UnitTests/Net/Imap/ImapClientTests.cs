@@ -347,5 +347,54 @@ namespace UnitTests.Net.Imap {
 				client.Disconnect (false, CancellationToken.None);
 			}
 		}
+		
+		[Test]
+		public void TestMessageCount()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			//INBOX has 1 message present in this test
+			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
+			//next command simulates one expunge + one new message
+			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				
+				try {
+					var credentials = new NetworkCredential ("username", "password");
+
+					// Note: Do not try XOAUTH2
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+					client.Authenticate (credentials, CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+				
+				var count = -1;
+				
+				client.Inbox.Open(FolderAccess.ReadOnly);
+				
+				client.Inbox.CountChanged += delegate {
+					count = client.Inbox.Count;
+				};
+				
+				client.NoOp();
+				
+				Assert.AreEqual(1, count, "Count is not correct");
+			}
+		}
 	}
 }
