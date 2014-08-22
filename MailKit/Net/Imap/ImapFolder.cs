@@ -6627,6 +6627,8 @@ namespace MailKit.Net.Imap {
 
 		internal void OnExpunge (int index)
 		{
+			Count--;
+			
 			OnMessageExpunged (new MessageEventArgs (index));
 		}
 
