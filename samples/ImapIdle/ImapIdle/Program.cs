@@ -59,33 +59,18 @@ namespace ImapIdle {
 
 				// connect to some events...
 				client.Inbox.CountChanged += (sender, e) => {
-					// Note: the CountChanged event can fire for one of two reasons:
-					//
-					// 1. New messages have arrived in the folder.
-					// 2. Messages have been expunged from the folder.
-					//
-					// If messages have been expunged, then the MessageExpunged event
-					// should also fire and it should fire *before* the CountChanged
-					// event fires.
+					// Note: the CountChanged event will fire when new messages arrive in the folder.
 					var folder = (ImapFolder) sender;
 
-					if (folder.Count > count) {
-						// New messages have arrived in the folder.
-						Console.WriteLine ("{0}: {1} new messages have arrived.", folder, folder.Count - count);
+					// New messages have arrived in the folder.
+					Console.WriteLine ("{0}: {1} new messages have arrived.", folder, folder.Count - count);
 
-						// Note: your first instict may be to fetch these new messages now, but you cannot do
-						// that in an event handler (the ImapFolder is not re-entrant).
-					} else if (folder.Count < count) {
-						// Note: this shouldn't happen since we are decrementing count in the MessageExpunged handler.
-						Console.WriteLine ("{0}: {1} messages have been removed.", folder, count - folder.Count);
-					} else {
-						// We just got a CountChanged event after 1 or more MessageExpunged events.
-						Console.WriteLine ("{0}: the message count is now {1}.", folder, folder.Count);
-					}
-
-					// update our count so we can keep track of whether or not CountChanged events
-					// signify new mail arriving.
+					// Update our count so we can figure out how many new messages arrived the next time this
+					// event fires.
 					count = folder.Count;
+
+					// Note: your first instict may be to fetch these new messages now, but you cannot do
+					// that in an event handler (the ImapFolder is not re-entrant).
 				};
 
 				client.Inbox.MessageExpunged += (sender, e) => {
@@ -103,10 +88,6 @@ namespace ImapIdle {
 					} else {
 						Console.WriteLine ("{0}: expunged message {1}: Unknown message.", folder, e.Index);
 					}
-
-					// update our count so we can keep track of whether or not CountChanged events
-					// signify new mail arriving.
-					count--;
 				};
 
 				client.Inbox.MessageFlagsChanged += (sender, e) => {
@@ -126,7 +107,7 @@ namespace ImapIdle {
 					thread.Join ();
 				}
 
-				if (count > messages.Count) {
+				if (client.Inbox.Count > messages.Count) {
 					Console.WriteLine ("The new messages that arrived during IDLE are:");
 					foreach (var message in client.Inbox.Fetch (messages.Count, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId))
 						Console.WriteLine ("Subject: {0}", message.Envelope.Subject);
