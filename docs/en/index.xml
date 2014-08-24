@@ -1,6 +1,6 @@
 <Overview>
   <Assemblies>
-    <Assembly Name="MailKit" Version="0.94.0.0">
+    <Assembly Name="MailKit" Version="0.95.0.0">
       <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 11 00 00 00 cd e2 09 73 2c e6 0a 8f a7 0e e6 43 cb 32 e9 bf 81 49 b6 10 18 c5 b1 66 48 9b 8a 5c ae 44 f1 f8 8c a9 7a b9 d9 e0 35 42 19 33 a6 f0 d5 56 ac c7 c2 21 9a e1 46 4e 35 38 6c a1 e2 39 aa 42 50 8b 9e db b4 16 4b fa 82 aa 2a 0f 4c d9 83 d9 e5 ba 2a cf e0 8a 10 a2 09 3e 2b 2b f8 40 8e ef 43 11 4d b8 9b 39 99 c5 9a f1 d3 dc 2c 9f 0c db f5 10 74 e9 a4 82 cf 09 c9 11 6a e1 c5 54 3c e8 ff 9b ]</AssemblyPublicKey>
       <Attributes>
         <Attribute>
@@ -16,10 +16,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("0.94.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("0.95.0.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.94.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("0.95.0.0")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
@@ -41,6 +41,9 @@
         </Attribute>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.Guid("2fe79b66-d107-45da-9493-175f59c4a53c")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.0", FrameworkDisplayName="")</AttributeName>
         </Attribute>
       </Attributes>
     </Assembly>

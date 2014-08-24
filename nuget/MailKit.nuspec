@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.94.0.0</version>
+        <version>0.95.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,8 +22,8 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed ImapFolder.Expunge(IList&lt;UniqueId&gt; uids) to throw NotSupportedException if the server does not support the UIDPLUS extension.
-* Added IMailFolder.Fetch() variants that allow specifying specific header fields to retrieve (in addition to other summary items).
+        <releaseNotes>Fixed the ImapClient to handle illegal NIL tokens for the body-enc-fld value in BODY and BODYSTRUCTURE responses.
+* Fixed ImapFolder to decrement its Count property when the server sends an untagged EXPUNGED notification.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
