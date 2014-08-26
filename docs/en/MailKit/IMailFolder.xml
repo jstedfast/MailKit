@@ -3754,6 +3754,25 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="MessagesArrived">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessagesArrivedEventArgs&gt; MessagesArrived;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessagesArrivedEventArgs&gt; MessagesArrived" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.95.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;MailKit.MessagesArrivedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Occurs when new messages arrive in the folder.
+            </summary>
+        <remarks>
+            Emitted when new mmessages arrive in the folder.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="MessagesVanished">
       <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessagesVanishedEventArgs&gt; MessagesVanished;" />
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessagesVanishedEventArgs&gt; MessagesVanished" />

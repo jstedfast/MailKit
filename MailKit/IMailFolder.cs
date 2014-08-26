@@ -2768,6 +2768,14 @@ namespace MailKit {
 		event EventHandler<MessageEventArgs> MessageExpunged;
 
 		/// <summary>
+		/// Occurs when new messages arrive in the folder.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when new mmessages arrive in the folder.
+		/// </remarks>
+		event EventHandler<MessagesArrivedEventArgs> MessagesArrived;
+
+		/// <summary>
 		/// Occurs when messages vanish from the folder.
 		/// </summary>
 		/// <remarks>

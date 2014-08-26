@@ -1,6 +1,6 @@
 <Type Name="MessagesVanishedEventArgs" FullName="MailKit.MessagesVanishedEventArgs">
-  <TypeSignature Language="C#" Value="public sealed class MessagesVanishedEventArgs : EventArgs" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MessagesVanishedEventArgs extends System.EventArgs" />
+  <TypeSignature Language="C#" Value="public class MessagesVanishedEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessagesVanishedEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>0.94.0.0</AssemblyVersion>
@@ -19,6 +19,28 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessagesVanishedEventArgs (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, bool earlier);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, bool earlier) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.95.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="earlier" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The list of unique identifiers.</param>
+        <param name="earlier">If set to <c>true</c>, the messages vanished in the past as opposed to just now.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessagesVanishedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessagesVanishedEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Earlier">
       <MemberSignature Language="C#" Value="public bool Earlier { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool Earlier" />

@@ -42,9 +42,6 @@
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.Guid("2fe79b66-d107-45da-9493-175f59c4a53c")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.0", FrameworkDisplayName="")</AttributeName>
-        </Attribute>
       </Attributes>
     </Assembly>
   </Assemblies>
@@ -87,6 +84,7 @@
       <Type Name="MessageFlags" Kind="Enumeration" />
       <Type Name="MessageFlagsChangedEventArgs" Kind="Class" />
       <Type Name="MessageLabelsChangedEventArgs" Kind="Class" />
+      <Type Name="MessagesArrivedEventArgs" Kind="Class" />
       <Type Name="MessageSorter" Kind="Class" />
       <Type Name="MessageSummary" Kind="Class" />
       <Type Name="MessageSummaryItems" Kind="Enumeration" />

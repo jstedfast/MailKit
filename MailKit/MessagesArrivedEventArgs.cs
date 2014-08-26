@@ -1,9 +1,9 @@
 ﻿//
-// MessagesVanishedEventArgs.cs
+// MessagesArrivedEventArgs.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2014 Jeffrey Stedfast
+// Copyright (c) 2014 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,51 +25,36 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace MailKit {
 	/// <summary>
-	/// Event args used when a message vanishes from a folder.
+	/// Event args used when messages arrive in a folder.
 	/// </summary>
 	/// <remarks>
-	/// Event args used when a message vanishes from a folder.
+	/// Event args used when messages arrive in a folder.
 	/// </remarks>
-	public class MessagesVanishedEventArgs : EventArgs
+	public class MessagesArrivedEventArgs : EventArgs
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.MessagesVanishedEventArgs"/> class.
+		/// Initializes a new instance of the <see cref="MailKit.MessagesArrivedEventArgs"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="MessagesVanishedEventArgs"/>.
+		/// Creates a new <see cref="MessagesArrivedEventArgs"/>.
 		/// </remarks>
-		/// <param name="uids">The list of unique identifiers.</param>
-		/// <param name="earlier">If set to <c>true</c>, the messages vanished in the past as opposed to just now.</param>
-		public MessagesVanishedEventArgs (IList<UniqueId> uids, bool earlier)
+		/// <param name="count">The number of messages that just arrived.</param>
+		public MessagesArrivedEventArgs (int count)
 		{
-			UniqueIds = new ReadOnlyCollection<UniqueId> (uids);
-			Earlier = earlier;
+			Count = count;
 		}
 
 		/// <summary>
-		/// Gets the unique identifiers of the messages that vanished.
+		/// Get the number of messages that just arrived in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Gets the unique identifiers of the messages that vanished.
+		/// Gets the number of messages that just arrived in the folder.
 		/// </remarks>
-		/// <value>The unique identifiers.</value>
-		public IList<UniqueId> UniqueIds {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets whether the messages vanished inthe past as opposed to just now.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether the messages vanished inthe past as opposed to just now.
-		/// </remarks>
-		/// <value><c>true</c> if the messages vanished earlier; otherwise, <c>false</c>.</value>
-		public bool Earlier {
+		/// <value>The count.</value>
+		public int Count {
 			get; private set;
 		}
 	}
