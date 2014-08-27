@@ -36,6 +36,14 @@ namespace MailKit {
 	public struct UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>
 	{
 		/// <summary>
+		/// The maximum <see cref="UniqueId"/> value.
+		/// </summary>
+		/// <remarks>
+		/// The maximum <see cref="UniqueId"/> value.
+		/// </remarks>
+		public static readonly UniqueId MaxValue = new UniqueId (uint.MaxValue);
+
+		/// <summary>
 		/// The identifier.
 		/// </summary>
 		/// <remarks>

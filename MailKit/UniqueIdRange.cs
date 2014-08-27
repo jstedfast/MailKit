@@ -316,7 +316,13 @@ namespace MailKit {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="UniqueIdRange"/>.</returns>
 		public override string ToString ()
 		{
-			return Min == Max ? Min.ToString () : string.Format ("{0}:{1}", Min, Max);
+			if (Min == Max)
+				return Min.ToString ();
+
+			if (Max == UniqueId.MaxValue)
+				return string.Format ("{0}:*", Min);
+
+			return string.Format ("{0}:{1}", Min, Max);
 		}
 	}
 }
