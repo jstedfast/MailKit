@@ -2316,7 +2316,7 @@ namespace MailKit.Net.Imap {
 			if ((items & MessageSummaryItems.References) != 0 || fields != null) {
 				var headers = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
 
-				if (fields.Contains (HeaderId.References))
+				if (fields != null && fields.Contains (HeaderId.References))
 					items &= ~MessageSummaryItems.References;
 
 				if ((items & MessageSummaryItems.References) != 0)
