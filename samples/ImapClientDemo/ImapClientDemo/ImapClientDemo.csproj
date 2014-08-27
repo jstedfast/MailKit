@@ -39,9 +39,9 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="MailKit, Version=0.95.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
+    <Reference Include="MailKit, Version=0.96.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MailKit.0.95.0.0\lib\net45\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.0.96.0.0\lib\net45\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit, Version=0.95.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
