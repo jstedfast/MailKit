@@ -4949,7 +4949,7 @@ namespace MailKit.Net.Imap {
 			var args = new List<object> ();
 			var list = LabelListToString (labels, args);
 			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, args);
+			var ic = Engine.QueueCommand (cancellationToken, this, format, args.ToArray ());
 
 			Engine.Wait (ic);
 
@@ -5313,7 +5313,7 @@ namespace MailKit.Net.Imap {
 			var args = new List<object> ();
 			var list = LabelListToString (labels, args);
 			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
-			var ic = Engine.QueueCommand (cancellationToken, this, format, args);
+			var ic = Engine.QueueCommand (cancellationToken, this, format, args.ToArray ());
 
 			Engine.Wait (ic);
 
