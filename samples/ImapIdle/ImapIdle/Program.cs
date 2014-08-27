@@ -55,19 +55,14 @@ namespace ImapIdle {
 
 				// keep track of the messages
 				var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId).ToList ();
-				int count = messages.Count;
 
 				// connect to some events...
-				client.Inbox.CountChanged += (sender, e) => {
+				client.Inbox.MessagesArrived += (sender, e) => {
 					// Note: the CountChanged event will fire when new messages arrive in the folder.
 					var folder = (ImapFolder) sender;
 
 					// New messages have arrived in the folder.
-					Console.WriteLine ("{0}: {1} new messages have arrived.", folder, folder.Count - count);
-
-					// Update our count so we can figure out how many new messages arrived the next time this
-					// event fires.
-					count = folder.Count;
+					Console.WriteLine ("{0}: {1} new messages have arrived.", folder, e.Count);
 
 					// Note: your first instict may be to fetch these new messages now, but you cannot do
 					// that in an event handler (the ImapFolder is not re-entrant).
