@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.95.0.0</version>
+        <version>0.96.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,8 +22,8 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>Fixed the ImapClient to handle illegal NIL tokens for the body-enc-fld value in BODY and BODYSTRUCTURE responses.
-* Fixed ImapFolder to decrement its Count property when the server sends an untagged EXPUNGED notification.
+        <releaseNotes>* Added a new MessagesArrived event to MailFolder which obsoletes CountChanged.
+* Fixed a bug which caused a NullReferenceException to be thrown when calling ImapFolder.Fetch().
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
@@ -57,5 +57,7 @@ Features include:
         <file src="..\MailKit\bin\Release\lib\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\wpa81\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\wpa81\MailKit.xml" />
+	<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\portable-netcore451+wpa81\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\portable-netcore451+wpa81\MailKit.xml" />
     </files>
 </package>
