@@ -234,7 +234,7 @@ namespace MailKit.Net.Pop3 {
 			var message = string.Format ("POP3 server did not respond with a +OK response to the {0} command.", command);
 
 			if (pc.Status == Pop3CommandStatus.Error)
-				return new Pop3CommandException (message);
+				return new Pop3CommandException (message, pc.StatusText);
 
 			return new Pop3ProtocolException (message);
 		}
@@ -461,6 +461,8 @@ namespace MailKit.Net.Pop3 {
 							var response = pop3.ReadLine (cmd.CancellationToken);
 
 							cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
+							cmd.StatusText = text;
+
 							if (cmd.Status == Pop3CommandStatus.ProtocolError)
 								throw new Pop3ProtocolException (string.Format ("Unexpected response from server: {0}", response));
 						}

@@ -53,6 +53,10 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="context">The streaming context.</param>
 		protected Pop3CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			StatusText = info.GetString ("StatusText");
 		}
 #endif
 
@@ -66,6 +70,27 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="innerException">An inner exception.</param>
 		public Pop3CommandException (string message, Exception innerException) : base (message, innerException)
 		{
+			StatusText = string.Empty;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// </remarks>
+		/// <param name="message">The error message.</param>
+		/// <param name="statusText">The response status text.</param>
+		/// <param name="innerException">An inner exception.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="statusText"/> is <c>null</c>.
+		/// </exception>
+		public Pop3CommandException (string message, string statusText, Exception innerException) : base (message, innerException)
+		{
+			if (statusText == null)
+				throw new ArgumentNullException ("statusText");
+
+			StatusText = statusText;
 		}
 
 		/// <summary>
@@ -77,6 +102,23 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="message">The error message.</param>
 		public Pop3CommandException (string message) : base (message)
 		{
+			StatusText = string.Empty;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3CommandException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="Pop3CommandException"/>.
+		/// </remarks>
+		/// <param name="message">The error message.</param>
+		/// <param name="statusText">The response status text.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="statusText"/> is <c>null</c>.
+		/// </exception>
+		public Pop3CommandException (string message, string statusText) : base (message)
+		{
+			StatusText = statusText;
 		}
 
 		/// <summary>
@@ -87,6 +129,18 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		public Pop3CommandException ()
 		{
+			StatusText = string.Empty;
+		}
+
+		/// <summary>
+		/// Get the response status text.
+		/// </summary>
+		/// <remarks>
+		/// Gets the response status text.
+		/// </remarks>
+		/// <value>The response status text.</value>
+		public string StatusText {
+			get; private set;
 		}
 	}
 }

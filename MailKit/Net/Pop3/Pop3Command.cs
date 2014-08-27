@@ -57,6 +57,7 @@ namespace MailKit.Net.Pop3 {
 		// output
 		public Pop3CommandStatus Status { get; internal set; }
 		public ProtocolException Exception { get; set; }
+		public string StatusText { get; set; }
 
 		public Pop3Command (CancellationToken cancellationToken, Pop3CommandHandler handler, string format, params object[] args)
 		{

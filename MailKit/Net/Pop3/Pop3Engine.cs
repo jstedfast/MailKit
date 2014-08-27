@@ -358,6 +358,8 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			pc.Status = GetCommandStatus (response, out text);
+			pc.StatusText = text;
+
 			switch (pc.Status) {
 			case Pop3CommandStatus.ProtocolError:
 				Disconnect ();
