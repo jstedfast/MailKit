@@ -105,5 +105,77 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Pop3CommandException (string message, string statusText);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, string statusText) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="statusText" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">The error message.</param>
+        <param name="statusText">The response status text.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3CommandException" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Pop3.Pop3CommandException" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="statusText" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Pop3CommandException (string message, string statusText, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, string statusText, class System.Exception innerException) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="statusText" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">The error message.</param>
+        <param name="statusText">The response status text.</param>
+        <param name="innerException">An inner exception.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Pop3.Pop3CommandException" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.Net.Pop3.Pop3CommandException" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="statusText" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="StatusText">
+      <MemberSignature Language="C#" Value="public string StatusText { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StatusText" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the response status text.
+            </summary>
+        <value>The response status text.</value>
+        <remarks>
+            Gets the response status text.
+            </remarks>
+      </Docs>
+    </Member>
   </Members>
 </Type>

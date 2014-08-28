@@ -172,6 +172,44 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="MaxValue">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.UniqueId MaxValue;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype MailKit.UniqueId MaxValue" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The maximum <see cref="T:MailKit.UniqueId" /> value.
+            </summary>
+        <remarks>
+            The maximum <see cref="T:MailKit.UniqueId" /> value.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MinValue">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.UniqueId MinValue;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype MailKit.UniqueId MinValue" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.UniqueId</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The minimum <see cref="T:MailKit.UniqueId" /> value.
+            </summary>
+        <remarks>
+            The minimum <see cref="T:MailKit.UniqueId" /> value.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (MailKit.UniqueId uid1, MailKit.UniqueId uid2);" />
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype MailKit.UniqueId uid1, valuetype MailKit.UniqueId uid2) cil managed" />
