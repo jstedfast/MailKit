@@ -306,6 +306,9 @@ namespace MailKit.Net.Imap {
 				} else {
 					throw new ImapProtocolException ("The IMAP server has unexpectedly disconnected.");
 				}
+
+				if (buffered)
+					cancellationToken.ThrowIfCancellationRequested ();
 			} catch {
 				IsConnected = false;
 				throw;
