@@ -3,8 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImapClient extends MailKit.MailStore" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.94.0.0</AssemblyVersion>
-    <AssemblyVersion>0.96.0.0</AssemblyVersion>
+    <AssemblyVersion>0.97.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.MailStore</BaseTypeName>
@@ -29,8 +28,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -49,8 +47,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IProtocolLogger protocolLogger) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="protocolLogger" Type="MailKit.IProtocolLogger" />
@@ -75,8 +72,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Authenticate(class System.Net.ICredentials credentials, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -134,8 +130,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; AuthenticationMechanisms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
@@ -155,8 +150,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.Net.Imap.ImapCapabilities Capabilities" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
@@ -181,8 +175,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -245,8 +238,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -274,8 +266,7 @@
       <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Dispose(bool disposing) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -302,8 +293,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void EnableQuickResync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -351,8 +341,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EnableUTF8(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -393,8 +382,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task EnableUTF8Async(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -436,8 +424,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(class MailKit.FolderNamespace namespace) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -475,8 +462,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(valuetype MailKit.SpecialFolder folder) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -514,8 +500,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.IMailFolder GetFolder(string path, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -558,8 +543,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Idle(valuetype System.Threading.CancellationToken doneToken, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -617,8 +601,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task IdleAsync(valuetype System.Threading.CancellationToken doneToken, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -677,8 +660,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IMailFolder Inbox" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.IMailFolder</ReturnType>
@@ -698,8 +680,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -721,8 +702,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void NoOp(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -763,8 +743,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection OtherNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -784,8 +763,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection PersonalNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -805,8 +783,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance string Protocol" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -826,8 +803,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.FolderNamespaceCollection</ReturnType>
@@ -847,8 +823,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance bool SupportsQuotas" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -869,8 +844,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance object SyncRoot" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -890,8 +864,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;valuetype MailKit.ThreadingAlgorithm&gt; ThreadingAlgorithms" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Generic.HashSet&lt;MailKit.ThreadingAlgorithm&gt;</ReturnType>
@@ -912,8 +885,7 @@
       <MemberSignature Language="ILAsm" Value=".property instance int32 Timeout" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

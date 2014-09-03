@@ -3,8 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit UniqueId extends System.ValueType implements class System.IComparable`1&lt;valuetype MailKit.UniqueId&gt;, class System.IEquatable`1&lt;valuetype MailKit.UniqueId&gt;" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.94.0.0</AssemblyVersion>
-    <AssemblyVersion>0.96.0.0</AssemblyVersion>
+    <AssemblyVersion>0.97.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
@@ -31,8 +30,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int32 id) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="id" Type="System.UInt32" />
@@ -52,8 +50,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(valuetype MailKit.UniqueId other) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -81,8 +78,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Equals(valuetype MailKit.UniqueId other) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -108,8 +104,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -135,8 +130,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -157,8 +151,7 @@
       <MemberSignature Language="ILAsm" Value=".field public initonly unsigned int32 Id" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
@@ -177,7 +170,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype MailKit.UniqueId MaxValue" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId</ReturnType>
@@ -196,7 +189,7 @@
       <MemberSignature Language="ILAsm" Value=".field public static initonly valuetype MailKit.UniqueId MinValue" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.UniqueId</ReturnType>
@@ -215,8 +208,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype MailKit.UniqueId uid1, valuetype MailKit.UniqueId uid2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -243,8 +235,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_GreaterThan(valuetype MailKit.UniqueId uid1, valuetype MailKit.UniqueId uid2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -271,8 +262,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_GreaterThanOrEqual(valuetype MailKit.UniqueId uid1, valuetype MailKit.UniqueId uid2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -299,8 +289,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype MailKit.UniqueId uid1, valuetype MailKit.UniqueId uid2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -327,8 +316,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_LessThan(valuetype MailKit.UniqueId uid1, valuetype MailKit.UniqueId uid2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -355,8 +343,7 @@
       <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_LessThanOrEqual(valuetype MailKit.UniqueId uid1, valuetype MailKit.UniqueId uid2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -383,8 +370,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.94.0.0</AssemblyVersion>
-        <AssemblyVersion>0.96.0.0</AssemblyVersion>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
