@@ -5976,8 +5976,6 @@ namespace MailKit.Net.Imap {
 				uids.Add (new UniqueId (uid));
 			} while (true);
 
-			uids.Sort ();
-
 			ic.UserData = uids;
 		}
 
