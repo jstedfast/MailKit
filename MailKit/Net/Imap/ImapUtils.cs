@@ -66,6 +66,94 @@ namespace MailKit.Net.Imap {
 				date.Offset.Hours, date.Offset.Minutes);
 		}
 
+		static bool TryGetInt32 (string text, ref int index, out int value)
+		{
+			int startIndex = index;
+
+			value = 0;
+
+			while (index < text.Length && text[index] >= '0' && text[index] <= '9') {
+				int digit = text[index] - '0';
+
+				if (value > int.MaxValue / 10) {
+					// integer overflow
+					return false;
+				}
+
+				if (value == int.MaxValue / 10 && digit > int.MaxValue % 10) {
+					// integer overflow
+					return false;
+				}
+
+				value = (value * 10) + digit;
+				index++;
+			}
+
+			return index > startIndex;
+		}
+
+		static bool TryGetInt32 (string text, ref int index, char delim, out int value)
+		{
+			return TryGetInt32 (text, ref index, out value) && index < text.Length && text[index] == delim;
+		}
+
+		static bool TryGetMonth (string text, ref int index, char delim, out int month)
+		{
+			int startIndex = index;
+
+			month = 0;
+
+			if ((index = text.IndexOf (delim, index)) == -1 || (index - startIndex) != 3)
+				return false;
+
+			for (int i = 0; i < Months.Length; i++) {
+				if (string.Compare (Months[i], 0, text, startIndex, 3, StringComparison.OrdinalIgnoreCase) == 0) {
+					month = i + 1;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		static bool TryGetTimeZone (string text, ref int index, out TimeSpan timezone)
+		{
+			int tzone, sign = 1;
+
+			if (index >= text.Length)
+				return false;
+
+			if (text[index] == '-') {
+				sign = -1;
+				index++;
+			} else if (text[index] == '+') {
+				index++;
+			}
+
+			if (!TryGetInt32 (text, ref index, out tzone))
+				return false;
+
+			tzone *= sign;
+
+			while (tzone < -1400)
+				tzone += 2400;
+
+			while (tzone > 1400)
+				tzone -= 2400;
+
+			int minutes = tzone % 100;
+			int hours = tzone / 100;
+
+			timezone = new TimeSpan (hours, minutes, 0);
+
+			return true;
+		}
+
+		static Exception InvalidInternalDateFormat (string text)
+		{
+			return new FormatException ("Invalid INTERNALDATE format: " + text);
+		}
+
 		/// <summary>
 		/// Parses the internal date string.
 		/// </summary>
@@ -73,7 +161,48 @@ namespace MailKit.Net.Imap {
 		/// <param name="text">The text to parse.</param>
 		public static DateTimeOffset ParseInternalDate (string text)
 		{
-			return DateTimeOffset.ParseExact (text.Trim (), "d-MMM-yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat);
+			int day, month, year, hour, minute, second;
+			TimeSpan timezone;
+			int index = 0;
+
+			while (index < text.Length && char.IsWhiteSpace (text[index]))
+				index++;
+
+			if (index >= text.Length || !TryGetInt32 (text, ref index, '-', out day) || day < 1 || day > 31)
+				throw InvalidInternalDateFormat (text);
+
+			index++;
+			if (index >= text.Length || !TryGetMonth (text, ref index, '-', out month))
+				throw InvalidInternalDateFormat (text);
+
+			index++;
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out year) || year < 1969)
+				throw InvalidInternalDateFormat (text);
+
+			index++;
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out hour) || hour > 23)
+				throw InvalidInternalDateFormat (text);
+
+			index++;
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ':', out minute) || minute > 59)
+				throw InvalidInternalDateFormat (text);
+
+			index++;
+			if (index >= text.Length || !TryGetInt32 (text, ref index, ' ', out second) || second > 59)
+				throw InvalidInternalDateFormat (text);
+
+			index++;
+			if (index >= text.Length || !TryGetTimeZone (text, ref index, out timezone))
+				throw InvalidInternalDateFormat (text);
+
+			while (index < text.Length && char.IsWhiteSpace (text[index]))
+				index++;
+
+			if (index < text.Length)
+				throw InvalidInternalDateFormat (text);
+
+			// return DateTimeOffset.ParseExact (text.Trim (), "d-MMM-yyyy HH:mm:ss zzz", CultureInfo.InvariantCulture.DateTimeFormat);
+			return new DateTimeOffset (year, month, day, hour, minute, second, timezone);
 		}
 
 		/// <summary>
