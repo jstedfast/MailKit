@@ -120,8 +120,10 @@ namespace MailKit.Net.Imap {
 		{
 			int tzone, sign = 1;
 
-			if (index >= text.Length)
+			if (index >= text.Length) {
+				timezone = new TimeSpan ();
 				return false;
+			}
 
 			if (text[index] == '-') {
 				sign = -1;
@@ -130,8 +132,10 @@ namespace MailKit.Net.Imap {
 				index++;
 			}
 
-			if (!TryGetInt32 (text, ref index, out tzone))
+			if (!TryGetInt32 (text, ref index, out tzone)) {
+				timezone = new TimeSpan ();
 				return false;
+			}
 
 			tzone *= sign;
 
