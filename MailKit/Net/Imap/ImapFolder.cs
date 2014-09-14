@@ -2207,7 +2207,7 @@ namespace MailKit.Net.Imap {
 					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
 					break;
 				case "FLAGS":
-					summary.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+					summary.Flags = ImapUtils.ParseFlagsList (engine, summary.UserFlags, ic.CancellationToken);
 					break;
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -3421,7 +3421,7 @@ namespace MailKit.Net.Imap {
 				case "FLAGS":
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					flags.Flags = ImapUtils.ParseFlagsList (engine, ic.CancellationToken);
+					flags.Flags = ImapUtils.ParseFlagsList (engine, flags.UserFlags, ic.CancellationToken);
 					flagsChanged = true;
 					break;
 				case "X-GM-LABELS":
@@ -6708,7 +6708,7 @@ namespace MailKit.Net.Imap {
 					flags.UniqueId = new UniqueId (uid);
 					break;
 				case "FLAGS":
-					flags.Flags = ImapUtils.ParseFlagsList (engine, cancellationToken);
+					flags.Flags = ImapUtils.ParseFlagsList (engine, flags.UserFlags, cancellationToken);
 					flagsChanged = true;
 					break;
 				case "X-GM-LABELS":

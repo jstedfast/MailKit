@@ -636,5 +636,28 @@
         </remarks>
       </Docs>
     </Member>
+    <Member MemberName="UserFlags">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; UserFlags { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; UserFlags" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the user-defined message flags, if available.
+            </summary>
+        <value>The user-defined message flags.</value>
+        <remarks>
+          <para>Gets the user-defined message flags, if available.</para>
+          <para>This property will only be set if the
+            <see cref="F:MailKit.MessageSummaryItems.Flags" /> flag is passed to
+            <see cref="M:MailKit.IMailFolder.Fetch(System.Collections.Generic.IList{MailKit.UniqueId},MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
   </Members>
 </Type>

@@ -1034,8 +1034,9 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The message flags.</returns>
 		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="userFlags">A hash set of user-defined message flags that will be populated if non-null.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static MessageFlags ParseFlagsList (ImapEngine engine, CancellationToken cancellationToken)
+		public static MessageFlags ParseFlagsList (ImapEngine engine, HashSet<string> userFlags, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			var flags = MessageFlags.None;
@@ -1057,6 +1058,10 @@ namespace MailKit.Net.Imap {
 				case "\\Seen":     flags |= MessageFlags.Seen; break;
 				case "\\Recent":   flags |= MessageFlags.Recent; break;
 				case "\\*":        flags |= MessageFlags.UserDefined; break;
+				default:
+					if (userFlags != null)
+						userFlags.Add (flag);
+					break;
 				}
 
 				token = engine.ReadToken (cancellationToken);

@@ -41,6 +41,33 @@
       </Docs>
     </Member>
     <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageFlagsChangedEventArgs (int index, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="flags">The message flags.</param>
+        <param name="userFlags">The user-defined message flags.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageFlagsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageFlagsChangedEventArgs" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="userFlags" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MessageFlagsChangedEventArgs (int index, MailKit.MessageFlags flags, ulong modseq);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.MessageFlags flags, unsigned int64 modseq) cil managed" />
       <MemberType>Constructor</MemberType>
@@ -89,6 +116,64 @@
       </Docs>
     </Member>
     <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageFlagsChangedEventArgs (int index, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, ulong modseq);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, unsigned int64 modseq) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="flags">The message flags.</param>
+        <param name="userFlags">The user-defined message flags.</param>
+        <param name="modseq">The modification sequence value.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageFlagsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageFlagsChangedEventArgs" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="userFlags" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageFlagsChangedEventArgs (int index, MailKit.UniqueId uid, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.UniqueId uid, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="uid">The unique id of the message.</param>
+        <param name="flags">The message flags.</param>
+        <param name="userFlags">The user-defined message flags.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageFlagsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageFlagsChangedEventArgs" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="userFlags" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MessageFlagsChangedEventArgs (int index, MailKit.UniqueId uid, MailKit.MessageFlags flags, ulong modseq);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.UniqueId uid, valuetype MailKit.MessageFlags flags, unsigned int64 modseq) cil managed" />
       <MemberType>Constructor</MemberType>
@@ -112,6 +197,37 @@
         <remarks>
             Creates a new <see cref="T:MailKit.MessageFlagsChangedEventArgs" />.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageFlagsChangedEventArgs (int index, MailKit.UniqueId uid, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, ulong modseq);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int32 index, valuetype MailKit.UniqueId uid, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, unsigned int64 modseq) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+      </Parameters>
+      <Docs>
+        <param name="index">The message index.</param>
+        <param name="uid">The unique id of the message.</param>
+        <param name="flags">The message flags.</param>
+        <param name="userFlags">The user-defined message flags.</param>
+        <param name="modseq">The modification sequence value.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageFlagsChangedEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageFlagsChangedEventArgs" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="userFlags" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Flags">
@@ -171,6 +287,26 @@
         <value>The unique ID of the message.</value>
         <remarks>
             Gets the unique ID of the message that changed, if available.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="UserFlags">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.HashSet&lt;string&gt; UserFlags { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.HashSet`1&lt;string&gt; UserFlags" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.HashSet&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the updated user-defined message flags.
+            </summary>
+        <value>The updated user-defined message flags.</value>
+        <remarks>
+            Gets the updated user-defined message flags.
             </remarks>
       </Docs>
     </Member>

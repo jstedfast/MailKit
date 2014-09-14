@@ -1076,7 +1076,7 @@ namespace MailKit.Net.Imap {
 				var perm = (PermanentFlagsResponseCode) code;
 
 				Stream.UngetToken (token);
-				perm.Flags = ImapUtils.ParseFlagsList (this, cancellationToken);
+				perm.Flags = ImapUtils.ParseFlagsList (this, null, cancellationToken);
 				token = Stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.UidNext:
@@ -1385,7 +1385,7 @@ namespace MailKit.Net.Imap {
 					Stream.ReadToken (cancellationToken);
 					break;
 				case "FLAGS":
-					folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, cancellationToken));
+					folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, null, cancellationToken));
 					token = Stream.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.Eoln) {
