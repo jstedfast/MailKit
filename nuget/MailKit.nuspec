@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>0.97.0.0</version>
+        <version>0.98.0.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,16 +22,16 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed the MailFolder.[Add,Remove,Set]Labels() methods (issue #89).
-* Added a StatusText property to Pop3CommandException (issue #88).
-* Added UniqueId.MinValue and MaxValue and modified UniqueIdRange.ToString() to use "*" if MaxValue is used.
-* Fixed a corner case in IMAP IDLE support (issue #90).
+        <releaseNotes>* Fixed ImapFolder to not sort the UIDs returned by the SORT command (d'oh!).
+* Manually parse INTERNALDATE values to handle timezones outside of the +1400/-1400 range.
+* Added overrides for IMailFolder.[Add,Remove,Set]Flags() that take a set of user-defined flags.
+* Added a UserFlags property to IMessageSummary to access the user-defined flags that are set on each message.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="0.96.0.0" />
+            <dependency id="MimeKit" version="0.97.0.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

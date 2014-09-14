@@ -3,7 +3,7 @@
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMailTransport implements class MailKit.IMailService, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
-    <AssemblyVersion>0.97.0.0</AssemblyVersion>
+    <AssemblyVersion>0.98.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -27,7 +27,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -52,7 +52,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -79,7 +79,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -108,7 +108,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Send(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -139,7 +139,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -165,7 +165,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -193,7 +193,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
@@ -223,7 +223,7 @@
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task SendAsync(class MimeKit.FormatOptions options, class MimeKit.MimeMessage message, class MimeKit.MailboxAddress sender, class System.Collections.Generic.IEnumerable`1&lt;class MimeKit.MailboxAddress&gt; recipients, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>0.97.0.0</AssemblyVersion>
+        <AssemblyVersion>0.98.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
