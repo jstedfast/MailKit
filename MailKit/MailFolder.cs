@@ -45,6 +45,15 @@ namespace MailKit {
 	public abstract class MailFolder : IMailFolder
 	{
 		/// <summary>
+		/// The bit mask of settable flags.
+		/// </summary>
+		/// <remarks>
+		/// Only flags in list of settable flags may be set on a message by the client.
+		/// </remarks>
+		protected static readonly MessageFlags SettableFlags = MessageFlags.Answered | MessageFlags.Deleted |
+			MessageFlags.Draft | MessageFlags.Flagged | MessageFlags.Seen;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
 		/// </summary>
 		/// <remarks>
@@ -5813,7 +5822,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -5920,7 +5929,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -6200,7 +6209,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -6307,7 +6316,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -6789,7 +6798,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -6905,7 +6914,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -7022,7 +7031,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -7138,7 +7147,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -7634,7 +7643,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -7738,7 +7747,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -8015,7 +8024,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -8119,7 +8128,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -8592,7 +8601,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -8705,7 +8714,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -8819,7 +8828,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None)
+			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
@@ -8932,7 +8941,7 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			if (flags == MessageFlags.None && (userFlags == null || userFlags.Count == 0))
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
 			return Task.Factory.StartNew (() => {
