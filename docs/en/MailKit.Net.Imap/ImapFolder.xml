@@ -20,8 +20,8 @@
   </Docs>
   <Members>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public override void AddFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void AddFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -32,12 +32,14 @@
       <Parameters>
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to add.</param>
+        <param name="userFlags">A set of user-defined flags to add.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -82,8 +84,8 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public override void AddFlags (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void AddFlags (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -94,12 +96,14 @@
       <Parameters>
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to add.</param>
+        <param name="userFlags">A set of user-defined flags to add.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -144,8 +148,8 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; AddFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; AddFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; AddFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; AddFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -157,6 +161,7 @@
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
         <Parameter Name="modseq" Type="System.UInt64" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -164,6 +169,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to add.</param>
+        <param name="userFlags">A set of user-defined flags to add.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -212,8 +218,8 @@
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
-      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; AddFlags (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; AddFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; AddFlags (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; AddFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -225,6 +231,7 @@
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
         <Parameter Name="modseq" Type="System.UInt64" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -232,6 +239,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to add.</param>
+        <param name="userFlags">A set of user-defined flags to add.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -3093,8 +3101,8 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public override void RemoveFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void RemoveFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -3105,12 +3113,14 @@
       <Parameters>
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to remove.</param>
+        <param name="userFlags">A set of user-defined flags to remove.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -3155,8 +3165,8 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public override void RemoveFlags (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void RemoveFlags (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -3167,12 +3177,14 @@
       <Parameters>
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to remove.</param>
+        <param name="userFlags">A set of user-defined flags to remove.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -3217,8 +3229,8 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; RemoveFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; RemoveFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; RemoveFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; RemoveFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -3230,6 +3242,7 @@
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
         <Parameter Name="modseq" Type="System.UInt64" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -3237,6 +3250,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to remove.</param>
+        <param name="userFlags">A set of user-defined flags to remove.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -3285,8 +3299,8 @@
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
-      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; RemoveFlags (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; RemoveFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; RemoveFlags (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; RemoveFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -3298,6 +3312,7 @@
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
         <Parameter Name="modseq" Type="System.UInt64" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -3305,6 +3320,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to remove.</param>
+        <param name="userFlags">A set of user-defined flags to remove.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -3949,8 +3965,8 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public override void SetFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void SetFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -3961,12 +3977,14 @@
       <Parameters>
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uids">The UIDs of the messages.</param>
         <param name="flags">The message flags to set.</param>
+        <param name="userFlags">A set of user-defined flags to set.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -4009,8 +4027,8 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public override void SetFlags (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void SetFlags (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -4021,12 +4039,14 @@
       <Parameters>
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="indexes">The indexes of the messages.</param>
         <param name="flags">The message flags to set.</param>
+        <param name="userFlags">A set of user-defined flags to set.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -4069,8 +4089,8 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; SetFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; SetFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; SetFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; SetFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -4082,6 +4102,7 @@
         <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
         <Parameter Name="modseq" Type="System.UInt64" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -4089,6 +4110,7 @@
         <param name="uids">The UIDs of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to set.</param>
+        <param name="userFlags">A set of user-defined flags to set.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
@@ -4135,8 +4157,8 @@
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
-      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; SetFlags (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageFlags flags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; SetFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;int&gt; SetFlags (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;int32&gt; SetFlags(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.97.0.0</AssemblyVersion>
@@ -4148,6 +4170,7 @@
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
         <Parameter Name="modseq" Type="System.UInt64" />
         <Parameter Name="flags" Type="MailKit.MessageFlags" />
+        <Parameter Name="userFlags" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="silent" Type="System.Boolean" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
@@ -4155,6 +4178,7 @@
         <param name="indexes">The indexes of the messages.</param>
         <param name="modseq">The mod-sequence value.</param>
         <param name="flags">The message flags to set.</param>
+        <param name="userFlags">A set of user-defined flags to set.</param>
         <param name="silent">If set to <c>true</c>, no <see cref="E:MailKit.MailFolder.MessageFlagsChanged" /> events will be emitted.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>

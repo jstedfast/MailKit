@@ -1000,11 +1000,13 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The flags list string.</returns>
 		/// <param name="flags">The message flags.</param>
-		public static string FormatFlagsList (MessageFlags flags)
+		/// <param name="numUserFlags">The number of user-defined flags.</param>
+		public static string FormatFlagsList (MessageFlags flags, int numUserFlags)
 		{
 			var builder = new StringBuilder ();
 
 			builder.Append ('(');
+
 			if ((flags & MessageFlags.Answered) != 0)
 				builder.Append ("\\Answered ");
 			if ((flags & MessageFlags.Deleted) != 0)
@@ -1015,8 +1017,13 @@ namespace MailKit.Net.Imap {
 				builder.Append ("\\Flagged ");
 			if ((flags & MessageFlags.Seen) != 0)
 				builder.Append ("\\Seen ");
+
+			for (int i = 0; i < numUserFlags; i++)
+				builder.Append ("%S ");
+
 			if (builder.Length > 1)
 				builder.Length--;
+
 			builder.Append (')');
 
 			return builder.ToString ();
