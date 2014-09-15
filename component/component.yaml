@@ -1,0 +1,20 @@
+id: mailkit
+name: MailKit
+version: 0.98.0.0
+publisher: Jeffrey Stedfast
+publisher-url: http://github.com/jstedfast/MailKit
+getting-started: GettingStarted.md
+details: Details.md
+license: ../License.md
+summary: A cross-platform .NET library for IMAP, POP3, and SMTP.
+icons:
+  - mailkit.png
+  - mailkit-128.png
+monodoc: docs/
+libraries:
+  ios:
+    - ../MailKit/bin/Release/lib/MonoTouch/MailKit.dll
+  android:
+    - ../MimeKit/bin/Release/lib/MonoAndroid/MailKit.dll
+build:
+  - ../MailKit.Mobile.sln
