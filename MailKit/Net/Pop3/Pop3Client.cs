@@ -1994,7 +1994,7 @@ namespace MailKit.Net.Pop3 {
 			var seqids = new int[count];
 
 			for (int i = 0; i < count; i++)
-				seqids[i] = startIndex + i;
+				seqids[i] = startIndex + i + 1;
 
 			var messages = GetMessagesForSequenceIds (seqids, true, cancellationToken);
 			var headers = new HeaderList[messages.Count];
