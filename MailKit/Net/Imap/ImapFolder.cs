@@ -6165,7 +6165,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
-			return (IList<UniqueId>) ic.UserData;
+			var results = (IList<UniqueId>) ic.UserData;
+
+			if (results == null)
+				return new UniqueId[0];
+
+			return results;
 		}
 
 		/// <summary>
@@ -6260,7 +6265,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
-			return (IList<UniqueId>) ic.UserData;
+			var results = (IList<UniqueId>) ic.UserData;
+
+			if (results == null)
+				return new UniqueId[0];
+
+			return results;
 		}
 
 		/// <summary>
@@ -6348,7 +6358,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
-			return (IList<UniqueId>) ic.UserData;
+			var results = (IList<UniqueId>) ic.UserData;
+
+			if (results == null)
+				return new UniqueId[0];
+
+			return results;
 		}
 
 		/// <summary>
@@ -6452,7 +6467,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
-			return (IList<UniqueId>) ic.UserData;
+			var results = (IList<UniqueId>) ic.UserData;
+
+			if (results == null)
+				return new UniqueId[0];
+
+			return results;
 		}
 
 		static void ThreadMatches (ImapEngine engine, ImapCommand ic, int index)
@@ -6537,7 +6557,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("THREAD", ic);
 
-			return (IList<MessageThread>) ic.UserData;
+			var threads = (IList<MessageThread>) ic.UserData;
+
+			if (threads == null)
+				return new MessageThread[0];
+
+			return threads;
 		}
 
 		/// <summary>
@@ -6626,7 +6651,12 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("THREAD", ic);
 
-			return (IList<MessageThread>) ic.UserData;
+			var threads = (IList<MessageThread>) ic.UserData;
+
+			if (threads == null)
+				return new MessageThread[0];
+
+			return threads;
 		}
 
 		#region Untagged response handlers called by ImapEngine
