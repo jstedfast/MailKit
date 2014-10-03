@@ -462,8 +462,8 @@ namespace MailKit.Security {
 			var builder = new StringBuilder ();
 			builder.AppendFormat ("username=\"{0}\"", UserName);
 			builder.AppendFormat (",realm=\"{0}\"", Realm);
-			builder.AppendFormat (",nonce={0}", Nonce);
-			builder.AppendFormat (",cnonce={0}", CNonce);
+			builder.AppendFormat (",nonce=\"{0}\"", Nonce);
+			builder.AppendFormat (",cnonce=\"{0}\"", CNonce);
 			builder.AppendFormat (",nc={0:x8}", Nc);
 			builder.AppendFormat (",qop=\"{0}\"", Qop);
 			builder.AppendFormat (",digest-uri=\"{0}\"", DigestUri);
