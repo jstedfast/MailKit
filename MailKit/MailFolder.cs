@@ -2742,7 +2742,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return CopyTo (uid, destination, cancellationToken);
+					return MoveTo (uid, destination, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
