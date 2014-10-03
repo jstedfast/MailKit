@@ -467,7 +467,7 @@ namespace MailKit.Security {
 			builder.AppendFormat (",nc={0:x8}", Nc);
 			builder.AppendFormat (",qop=\"{0}\"", Qop);
 			builder.AppendFormat (",digest-uri=\"{0}\"", DigestUri);
-			builder.AppendFormat (",response=\"{0}\"", Response);
+			builder.AppendFormat (",response={0}", Response);
 			if (MaxBuf > 0)
 				builder.AppendFormat (",maxbuf={0}", MaxBuf);
 			if (!string.IsNullOrEmpty (Charset))
