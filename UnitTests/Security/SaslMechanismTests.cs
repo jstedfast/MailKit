@@ -59,7 +59,7 @@ namespace UnitTests.Security {
 		public void TestDigestMd5ExampleFromRfc2831 ()
 		{
 			const string serverToken1 = "realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",qop=\"auth\",algorithm=md5-sess,charset=utf-8";
-			const string expected1 = "username=\"chris\",realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",cnonce=\"OA6MHXh6VqTrRk\",nc=00000001,qop=\"auth\",digest-uri=\"imap/elwood.innosoft.com\",response=d388dad90d4bbd760a152321f2143af7,charset=\"utf-8\",algorithm=\"md5-sess\"";
+			const string expected1 = "username=\"chris\",realm=\"elwood.innosoft.com\",nonce=\"OA6MG9tEQGm2hh\",cnonce=\"OA6MHXh6VqTrRk\",nc=00000001,qop=\"auth\",digest-uri=\"imap/elwood.innosoft.com\",response=d388dad90d4bbd760a152321f2143af7,charset=utf-8,algorithm=md5-sess";
 			const string serverToken2 = "rspauth=ea40f60335c427b5527b84dbabcdfffd";
 			var credentials = new NetworkCredential ("chris", "secret");
 			var uri = new Uri ("imap://elwood.innosoft.com");
