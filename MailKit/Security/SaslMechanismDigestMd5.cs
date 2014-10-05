@@ -450,6 +450,21 @@ namespace MailKit.Security {
 			return HexEncode (digest);
 		}
 
+		static string Quote (string text)
+		{
+			var quoted = new StringBuilder ();
+
+			quoted.Append ("\"");
+			for (int i = 0; i < text.Length; i++) {
+				if (text[i] == '\\' || text[i] == '"')
+					quoted.Append ('\\');
+				quoted.Append (text[i]);
+			}
+			quoted.Append ("\"");
+
+			return quoted.ToString ();
+		}
+
 		public byte[] Encode ()
 		{
 			Encoding encoding;
@@ -460,7 +475,7 @@ namespace MailKit.Security {
 				encoding = Encoding.UTF8;
 
 			var builder = new StringBuilder ();
-			builder.AppendFormat ("username=\"{0}\"", UserName);
+			builder.AppendFormat ("username={0}", Quote (UserName));
 			builder.AppendFormat (",realm=\"{0}\"", Realm);
 			builder.AppendFormat (",nonce=\"{0}\"", Nonce);
 			builder.AppendFormat (",cnonce=\"{0}\"", CNonce);
@@ -471,9 +486,9 @@ namespace MailKit.Security {
 			if (MaxBuf > 0)
 				builder.AppendFormat (",maxbuf={0}", MaxBuf);
 			if (!string.IsNullOrEmpty (Charset))
-				builder.AppendFormat (",charset=\"{0}\"", Charset);
+				builder.AppendFormat (",charset={0}", Charset);
 			if (!string.IsNullOrEmpty (Algorithm))
-				builder.AppendFormat (",algorithm=\"{0}\"", Algorithm);
+				builder.AppendFormat (",algorithm={0}", Algorithm);
 			if (!string.IsNullOrEmpty (Cipher))
 				builder.AppendFormat (",cipher=\"{0}\"", Cipher);
 			if (!string.IsNullOrEmpty (AuthZid))
