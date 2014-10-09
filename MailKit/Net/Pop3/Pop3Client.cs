@@ -614,6 +614,9 @@ namespace MailKit.Net.Pop3 {
 				}
 			}
 
+			if (socket == null)
+				throw new IOException (string.Format ("Failed to resolve host: {0}", uri.Host));
+
 			if (pops) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Default, true);
