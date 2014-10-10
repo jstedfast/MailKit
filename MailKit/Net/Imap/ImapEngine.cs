@@ -435,7 +435,7 @@ namespace MailKit.Net.Imap {
 			else
 				message = string.Format ("Unexpected token in IMAP response: {0}", token);
 
-			return new ImapProtocolException (message);
+			return new ImapProtocolException (message) { UnexpectedToken = true };
 		}
 
 		/// <summary>

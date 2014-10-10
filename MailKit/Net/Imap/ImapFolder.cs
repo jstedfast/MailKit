@@ -2092,6 +2092,16 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("MOVE", ic);
 		}
 
+		static void ReadLiteralData (ImapEngine engine, CancellationToken cancellationToken)
+		{
+			var buf = new byte[4096];
+			int nread;
+
+			do {
+				nread = engine.Stream.Read (buf, 0, buf.Length, cancellationToken);
+			} while (nread > 0);
+		}
+
 		static void FetchSummaryItems (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
@@ -2197,10 +2207,32 @@ namespace MailKit.Net.Imap {
 							summary.Headers = message.Headers;
 						} catch (FormatException) {
 							// consume any remaining literal data...
-							engine.Stream.CopyTo (Stream.Null, 4096);
+							ReadLiteralData (engine, ic.CancellationToken);
 						}
 					} else {
-						summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+						try {
+							summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+						} catch (ImapProtocolException ex) {
+							if (!ex.UnexpectedToken)
+								throw;
+
+							// Note: GMail's IMAP implementation sometimes replies with completely broken BODY values
+							// (see issue #32 for examples), so to work around this nonsense, we need to drop the
+							// remainder of this line.
+							do {
+								token = engine.PeekToken (ic.CancellationToken);
+
+								if (token.Type == ImapTokenType.Eoln)
+									break;
+
+								token = engine.ReadToken (ic.CancellationToken);
+
+								if (token.Type == ImapTokenType.Literal)
+									ReadLiteralData (engine, ic.CancellationToken);
+							} while (true);
+
+							return;
+						}
 					}
 					break;
 				case "ENVELOPE":

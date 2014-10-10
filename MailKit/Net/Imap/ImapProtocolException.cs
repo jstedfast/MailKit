@@ -89,6 +89,17 @@ namespace MailKit.Net.Imap {
 		public ImapProtocolException ()
 		{
 		}
+
+		/// <summary>
+		/// Gets or sets whether or not this exception was thrown due to an unexpected token.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets whether or not this exception was thrown due to an unexpected token.
+		/// </remarks>
+		/// <value><c>true</c> if an unexpected token was encountered; otherwise, <c>false</c>.</value>
+		internal bool UnexpectedToken {
+			get; set;
+		}
 	}
 }
 
