@@ -427,6 +427,9 @@ other editor, please try to maintain the existing coding style as best as you ca
 Once you've got some changes that you'd like to submit upstream to the official MailKit repository,
 simply send me a Pull Request and I will try to review your changes in a timely manner.
 
+If you'd like to contribute but don't have any particular features in mind to work on, check out the issue
+tracker and look for something that might pique your interest!
+
 ## Reporting Bugs
 
 Have a bug or a feature request? [Please open a new issue](https://github.com/jstedfast/MailKit/issues).
