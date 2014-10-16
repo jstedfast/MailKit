@@ -349,7 +349,7 @@ namespace UnitTests.Net.Imap {
 		}
 		
 		[Test]
-		public void TestMessageCount()
+		public void TestMessageCount ()
 		{
 			var commands = new List<ImapReplayCommand> ();
 			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
@@ -358,9 +358,9 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			//INBOX has 1 message present in this test
+			// INBOX has 1 message present in this test
 			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
-			//next command simulates one expunge + one new message
+			// next command simulates one expunge + one new message
 			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
 
 			using (var client = new ImapClient ()) {
@@ -385,7 +385,7 @@ namespace UnitTests.Net.Imap {
 				
 				var count = -1;
 				
-				client.Inbox.Open(FolderAccess.ReadOnly);
+				client.Inbox.Open (FolderAccess.ReadOnly);
 				
 				client.Inbox.CountChanged += delegate {
 					count = client.Inbox.Count;
