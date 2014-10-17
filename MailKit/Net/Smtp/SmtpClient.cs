@@ -802,7 +802,7 @@ namespace MailKit.Net.Smtp {
 
 			if (smtps) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Default, true);
+				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -851,7 +851,7 @@ namespace MailKit.Net.Smtp {
 
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls, true);
+					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, true);
 					stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (uri.DnsSafeHost))
