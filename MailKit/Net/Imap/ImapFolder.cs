@@ -1470,7 +1470,7 @@ namespace MailKit.Net.Imap {
 			if (format.International && !Engine.UTF8Enabled)
 				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
 
-			var ic = QueueAppend (format, message, flags, null, cancellationToken);
+			var ic = QueueAppend (format, message, flags, date, cancellationToken);
 
 			Engine.Wait (ic);
 
