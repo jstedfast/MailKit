@@ -3411,16 +3411,24 @@ namespace MailKit.Net.Imap {
 						token = engine.ReadToken (ic.CancellationToken);
 					}
 
-					if (token.Type != ImapTokenType.Literal)
+					switch (token.Type) {
+					case ImapTokenType.Literal:
+						stream = new MemoryBlockStream ();
+
+						while ((nread = engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken)) > 0)
+							stream.Write (buf, 0, nread);
+
+						streams[specifier] = stream;
+						stream.Position = 0;
+						break;
+					case ImapTokenType.QString:
+					case ImapTokenType.Atom:
+						stream = new MemoryStream (Encoding.UTF8.GetBytes ((string) token.Value), false);
+						break;
+					default:
 						throw ImapEngine.UnexpectedToken (token, false);
+					}
 
-					stream = new MemoryBlockStream ();
-
-					while ((nread = engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken)) > 0)
-						stream.Write (buf, 0, nread);
-
-					streams[specifier] = stream;
-					stream.Position = 0;
 					break;
 				case "UID":
 					token = engine.ReadToken (ic.CancellationToken);
