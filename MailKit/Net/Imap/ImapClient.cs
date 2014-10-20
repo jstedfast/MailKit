@@ -60,6 +60,11 @@ namespace MailKit.Net.Imap {
 	/// </remarks>
 	public class ImapClient : MailStore
 	{
+#if NET_4_5 || __MOBILE__
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+#else
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
+#endif
 		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
 #if NETFX_CORE
@@ -644,7 +649,7 @@ namespace MailKit.Net.Imap {
 
 			if (imaps) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, true);
+				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -688,7 +693,7 @@ namespace MailKit.Net.Imap {
 				if (ic.Result == ImapCommandResult.Ok) {
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, true);
+					tls.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
 					engine.Stream.Stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (uri.DnsSafeHost))

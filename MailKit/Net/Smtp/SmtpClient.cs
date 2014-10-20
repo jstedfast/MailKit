@@ -63,6 +63,11 @@ namespace MailKit.Net.Smtp {
 	/// </remarks>
 	public class SmtpClient : MailTransport
 	{
+#if NET_4_5 || __MOBILE__
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+#else
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
+#endif
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 
@@ -802,7 +807,7 @@ namespace MailKit.Net.Smtp {
 
 			if (smtps) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, true);
+				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -851,7 +856,7 @@ namespace MailKit.Net.Smtp {
 
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (uri.Host, ClientCertificates, SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12, true);
+					tls.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
 					stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (uri.DnsSafeHost))
