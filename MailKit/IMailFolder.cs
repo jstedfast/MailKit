@@ -214,17 +214,20 @@ namespace MailKit {
 		/// Get the number of unread messages in the folder.
 		/// </summary>
 		/// <remarks>
-		/// This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
-		/// with <see cref="StatusItems.Unread"/>.
+		/// <para>Gets the number of unread messages in the folder.</para>
+		/// <para>Note: This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Unread"/>.</para>
 		/// </remarks>
 		/// <value>The number of unread messages.</value>
 		int Unread { get; }
 
 		/// <summary>
-		/// Get the number of recently delivered messages.
+		/// Get the number of recently delivered messages in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Gets the number of recently delivered messages.
+		/// <para>Gets the number of recently delivered messages in the folder.</para>
+		/// <para>Note: This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Recent"/>.</para>
 		/// </remarks>
 		/// <value>The number of recently delivered messages.</value>
 		int Recent { get; }

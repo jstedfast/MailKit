@@ -271,8 +271,9 @@ namespace MailKit {
 		/// Get the number of unread messages in the folder.
 		/// </summary>
 		/// <remarks>
-		/// This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
-		/// with <see cref="StatusItems.Unread"/>.
+		/// <para>Gets the number of unread messages in the folder.</para>
+		/// <para>Note: This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Unread"/>.</para>
 		/// </remarks>
 		/// <value>The number of unread messages.</value>
 		public int Unread {
@@ -280,10 +281,12 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get the number of recently added messages.
+		/// Get the number of recently added messages in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Gets the number of recently added messages.
+		/// <para>Gets the number of recently delivered messages in the folder.</para>
+		/// <para>Note: This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Recent"/> or by opening the folder.</para>
 		/// </remarks>
 		/// <value>The number of recently added messages.</value>
 		public int Recent {
@@ -294,7 +297,9 @@ namespace MailKit {
 		/// Get the total number of messages in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Gets the total number of messages in the folder.
+		/// <para>Gets the total number of messages in the folder.</para>
+		/// <para>Note: This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Count"/> or by opening the folder.</para>
 		/// </remarks>
 		/// <value>The total number of messages.</value>
 		public int Count {
