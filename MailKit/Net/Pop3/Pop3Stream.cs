@@ -524,6 +524,8 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 
+			IsEndOfData = false;
+
 			unsafe {
 				fixed (byte* inbuf = input) {
 					byte* start, inptr, inend;
