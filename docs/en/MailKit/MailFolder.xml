@@ -4101,8 +4101,10 @@
             </summary>
         <value>The total number of messages.</value>
         <remarks>
-            Gets the total number of messages in the folder.
-            </remarks>
+          <para>Gets the total number of messages in the folder.</para>
+          <para>Note: This value will only be set after calling <see cref="M:MailKit.MailFolder.Status(MailKit.StatusItems,System.Threading.CancellationToken)" />
+            with <see cref="F:MailKit.StatusItems.Count" /> or by opening the folder.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="CountChanged">
@@ -8982,12 +8984,14 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Get the number of recently added messages.
+            Get the number of recently added messages in the folder.
             </summary>
         <value>The number of recently added messages.</value>
         <remarks>
-            Gets the number of recently added messages.
-            </remarks>
+          <para>Gets the number of recently delivered messages in the folder.</para>
+          <para>Note: This value will only be set after calling <see cref="M:MailKit.MailFolder.Status(MailKit.StatusItems,System.Threading.CancellationToken)" />
+            with <see cref="F:MailKit.StatusItems.Recent" /> or by opening the folder.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="RecentChanged">
@@ -15033,9 +15037,10 @@
             </summary>
         <value>The number of unread messages.</value>
         <remarks>
-            This value will only be set after calling <see cref="M:MailKit.MailFolder.Status(MailKit.StatusItems,System.Threading.CancellationToken)" />
-            with <see cref="F:MailKit.StatusItems.Unread" />.
-            </remarks>
+          <para>Gets the number of unread messages in the folder.</para>
+          <para>Note: This value will only be set after calling <see cref="M:MailKit.MailFolder.Status(MailKit.StatusItems,System.Threading.CancellationToken)" />
+            with <see cref="F:MailKit.StatusItems.Unread" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Unsubscribe">
