@@ -84,6 +84,7 @@ namespace MailKit.Net.Pop3 {
 		readonly IProtocolLogger logger;
 		int inputIndex = ReadAheadSize;
 		int inputEnd = ReadAheadSize;
+		Pop3StreamMode mode;
 		bool disposed;
 		bool midline;
 
@@ -122,7 +123,11 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <value>The mode.</value>
 		public Pop3StreamMode Mode {
-			get; set;
+			get { return mode; }
+			set {
+				IsEndOfData = false;
+				mode = value;
+			}
 		}
 
 		/// <summary>
@@ -523,8 +528,6 @@ namespace MailKit.Net.Pop3 {
 		internal bool ReadLine (out byte[] buffer, out int offset, out int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
-
-			IsEndOfData = false;
 
 			unsafe {
 				fixed (byte* inbuf = input) {
