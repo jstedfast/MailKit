@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.0.0.0</version>
+        <version>1.0.1.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,12 +22,9 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed Pop3Client.GetMessageHeaders (int startIndex, int count, ...) to use 1-based sequence numbers.
-* Fixed ImapFolder.Search() and .Thread() to never return null.
-* Fixed MailFolder.MoveToAsync (UniqueId uid, ...) to move the messages rather than just copy them.
-* Fixed DIGEST-MD5 authentication not to quote certain values that shouldn't be quoted.
-* Added a workaround for GMail IMAP's broken BODY responses (issue #32).
-* Fixed the issues that were revealed by a static analysis tool.
+        <releaseNotes>* Fixed Pop3Client.GetMessages (int startIndex, int count, ...) to use 1-based sequence numbers.
+* Fixed POP3 PIPELINING support to work as intended (issue #114).
+* Added a work-around for Office365.com IMAP to avoid ImapProtocolExceptions about unexpected '[' tokens when moving or copying messages between folders (issue #115).
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>

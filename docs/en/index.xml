@@ -16,10 +16,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.1.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.0.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.1.0")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
