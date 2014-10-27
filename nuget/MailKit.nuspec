@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
@@ -25,6 +25,7 @@ Features include:
         <releaseNotes>* Fixed Pop3Client.GetMessages (int startIndex, int count, ...) to use 1-based sequence numbers.
 * Fixed POP3 PIPELINING support to work as intended (issue #114).
 * Added a work-around for Office365.com IMAP to avoid ImapProtocolExceptions about unexpected '[' tokens when moving or copying messages between folders (issue #115).
+* For security reasons (POODLE), SSLv3 has also been disabled, instead using TLSv1 or newer.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
@@ -56,9 +57,9 @@ Features include:
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
+        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\portable-netcore451+wpa81\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\portable-netcore451+wpa81\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\wpa81\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\wpa81\MailKit.xml" />
-	<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\portable-netcore451+wpa81\MailKit.dll" />
-        <file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\portable-netcore451+wpa81\MailKit.xml" />
     </files>
 </package>
