@@ -62,7 +62,7 @@ namespace MailKit.Net.Imap {
 	{
 #if NET_4_5 || __MOBILE__
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
-#else
+#elif !NETFX_CORE
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
 #endif
 		readonly IProtocolLogger logger;
