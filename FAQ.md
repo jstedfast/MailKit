@@ -8,7 +8,7 @@ clients using those protocols (as well as having other non-standard behavior).
 
 If you want to configure your GMail POP3 or IMAP settings to behave the way POP3 and IMAP are
 intended to behave according to their protocol specifications, you'll need to log in to your
-GMail account via your web browser and navigate to the `POP3 and IMAP Forwarding` tab of your
+GMail account via your web browser and navigate to the `Forwarding and POP/IMAP` tab of your
 GMail Settings page and set your options to look like this:
 
 ![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
