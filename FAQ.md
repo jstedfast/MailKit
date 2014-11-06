@@ -12,3 +12,21 @@ GMail account via your web browser and navigate to the `Forwarding and POP/IMAP`
 GMail Settings page and set your options to look like this:
 
 ![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
+
+### How can I search for messages delivered between two dates?
+
+The obvious solution is:
+
+```csharp
+var query = SearchQuery.DeliveredAfter (dateRange.BeginDate).And (SearchQuery.DeliveredBefore (dateRange.EndDate));
+var results = folder.Search (query);
+```
+
+However, it has been reported to me that this doesn't work reliably depending on the IMAP server implementation.
+
+If you find that this query doesn't get the expected results for your IMAP server, here's another solution that should always work:
+
+```csharp
+var query = SearchQuery.Not (SearchQuery.DeliveredBefore (dateRange.BeginDate).Or (SearchQuery.DeliveredAfter (dateRange.EndDate)));
+var results = folder.Search (query);
+```
