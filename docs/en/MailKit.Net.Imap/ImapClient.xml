@@ -568,6 +568,9 @@
             opening a folder using
             <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
             or any of the other variants.</para>
+          <para>Note: It is especially important to cancel the <paramref name="doneToken" /> before
+            cancelling the <paramref name="cancellationToken" /> when using SSL or TLS due to the
+            fact that <see cref="T:System.Net.Security.SslStream" /> cannot be polled.</para>
         </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="doneToken" /> must be cancellable (i.e. <see cref="P:System.Threading.CancellationToken.None" /> cannot be used).
@@ -593,6 +596,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             The server responded with an unexpected token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the IDLE extension.
             </exception>
       </Docs>
     </Member>
@@ -627,6 +633,9 @@
             opening a folder using
             <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
             or any of the other variants.</para>
+          <para>Note: It is especially important to cancel the <paramref name="doneToken" /> before
+            cancelling the <paramref name="cancellationToken" /> when using SSL or TLS due to the
+            fact that <see cref="T:System.Net.Security.SslStream" /> cannot be polled.</para>
         </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="doneToken" /> must be cancellable (i.e. <see cref="P:System.Threading.CancellationToken.None" /> cannot be used).
@@ -652,6 +661,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             The server responded with an unexpected token.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the IDLE extension.
             </exception>
       </Docs>
     </Member>

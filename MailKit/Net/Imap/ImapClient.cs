@@ -862,6 +862,9 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>A <see cref="ImapFolder"/> has not been opened.</para>
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the IDLE extension.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -888,7 +891,7 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The ImapClient is not connected.");
 
 			if ((engine.Capabilities & ImapCapabilities.Idle) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the IDLE extension.");
 
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("The ImapClient is not authenticated.");
@@ -946,6 +949,9 @@ namespace MailKit.Net.Imap {
 		/// <para>-or-</para>
 		/// <para>A <see cref="ImapFolder"/> has not been opened.</para>
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the IDLE extension.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -972,7 +978,7 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("The ImapClient is not connected.");
 
 			if ((engine.Capabilities & ImapCapabilities.Idle) == 0)
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The IMAP server does not support the IDLE extension.");
 
 			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("The ImapClient is not authenticated.");
