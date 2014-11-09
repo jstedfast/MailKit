@@ -843,6 +843,9 @@ namespace MailKit.Net.Imap {
 		/// opening a folder using
 		/// <see cref="MailKit.MailFolder.Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// or any of the other variants.</para>
+		/// <para>Note: It is especially important to cancel the <paramref name="doneToken"/> before
+		/// cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to the
+		/// fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</para>
 		/// </remarks>
 		/// <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -923,6 +926,9 @@ namespace MailKit.Net.Imap {
 		/// opening a folder using
 		/// <see cref="MailKit.MailFolder.Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// or any of the other variants.</para>
+		/// <para>Note: It is especially important to cancel the <paramref name="doneToken"/> before
+		/// cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to the
+		/// fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
