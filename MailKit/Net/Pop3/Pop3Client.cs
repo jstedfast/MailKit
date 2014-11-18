@@ -545,7 +545,8 @@ namespace MailKit.Net.Pop3 {
 		/// <para>It should be noted that when using a clear-text POP3 connection,
 		/// if the server advertizes support for the STLS extension, the client
 		/// will automatically switch into TLS mode before authenticating unless
-		/// the <paramref name="uri"/> contains a query string to disable it.</para>
+		/// the <paramref name="uri"/> contains a query string ("?starttls=false")
+		/// to disable it.</para>
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
 		/// and <see cref="Capabilities"/> properties will be populated.
 		/// </remarks>

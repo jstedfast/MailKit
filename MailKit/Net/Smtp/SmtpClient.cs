@@ -723,7 +723,8 @@ namespace MailKit.Net.Smtp {
 		/// <para>It should be noted that when using a clear-text SMTP connection,
 		/// if the server advertizes support for the STARTTLS extension, the client
 		/// will automatically switch into TLS mode before authenticating unless the
-		/// <paramref name="uri"/> contains a query string to disable it.</para>
+		/// <paramref name="uri"/> contains a query string ("?starttls=false") to
+		/// disable it.</para>
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
 		/// and <see cref="Capabilities"/> properties will be populated.
 		/// </remarks>
