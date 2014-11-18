@@ -128,6 +128,8 @@ namespace MailKit {
 
 				stream.Write (buffer, start, index - start);
 			}
+
+			stream.Flush ();
 		}
 
 		/// <summary>
@@ -162,6 +164,7 @@ namespace MailKit {
 			}
 
 			stream.Write (buf, 0, buf.Length);
+			stream.Flush ();
 		}
 
 		/// <summary>
