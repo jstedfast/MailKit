@@ -373,6 +373,9 @@ namespace MailKit.Net.Imap {
 		{
 			var type = ImapStringType.Atom;
 
+			if (value.Length == 0)
+				return ImapStringType.QString;
+
 			for (int i = 0; i < value.Length; i++) {
 				if (!IsAtom (value[i])) {
 					if (!IsQuotedSafe (value[i]))
