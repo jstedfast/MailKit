@@ -2185,8 +2185,17 @@ namespace MailKit.Net.Imap {
 									if (token.Type == ImapTokenType.CloseParen)
 										break;
 
-									if (token.Type != ImapTokenType.Atom)
+									// the header field names will generally be atoms or qstrings but may also be literals
+									switch (token.Type) {
+									case ImapTokenType.Literal:
+										engine.ReadLiteral (ic.CancellationToken);
+										break;
+									case ImapTokenType.QString:
+									case ImapTokenType.Atom:
+										break;
+									default:
 										throw ImapEngine.UnexpectedToken (token, false);
+									}
 								} while (true);
 							} else if (token.Type != ImapTokenType.Atom) {
 								throw ImapEngine.UnexpectedToken (token, false);
@@ -3387,8 +3396,17 @@ namespace MailKit.Net.Imap {
 								if (token.Type == ImapTokenType.CloseParen)
 									break;
 
-								if (token.Type != ImapTokenType.Atom)
+								// the header field names will generally be atoms or qstrings but may also be literals
+								switch (token.Type) {
+								case ImapTokenType.Literal:
+									engine.ReadLiteral (ic.CancellationToken);
+									break;
+								case ImapTokenType.QString:
+								case ImapTokenType.Atom:
+									break;
+								default:
 									throw ImapEngine.UnexpectedToken (token, false);
+								}
 							} while (true);
 						} else if (token.Type != ImapTokenType.Atom) {
 							throw ImapEngine.UnexpectedToken (token, false);
