@@ -2365,6 +2365,9 @@ namespace MailKit.Net.Imap {
 
 				if (fields != null) {
 					foreach (var field in fields) {
+						if (field == HeaderId.Unknown)
+							continue;
+
 						headers.Append (field.ToHeaderName ().ToUpperInvariant ());
 						headers.Append (' ');
 					}
