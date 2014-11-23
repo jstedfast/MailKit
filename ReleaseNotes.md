@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 1.0.2.0
+
+* Modified ProtocolLogger to flush the stream at the end of each Log().
+* Fixed IMAP SEARCH queries with empty string arguments.
+* Fixed the IMAP FETCH parser to accept qstrings and literals for header field names.
+* Improved documentation.
+
 ### MailKit 1.0.1.0
 
 * Fixed Pop3Client.GetMessages (int startIndex, int count, ...) to use 1-based sequence numbers.

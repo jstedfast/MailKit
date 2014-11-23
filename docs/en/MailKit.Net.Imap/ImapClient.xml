@@ -201,12 +201,14 @@
           <para>It should be noted that when using a clear-text IMAP connection,
             if the server advertizes support for the STARTTLS extension, the client
             will automatically switch into TLS mode before authenticating unless the
-            <paramref name="uri" /> contains a query string to disable it.</para>
+            <paramref name="uri" /> contains a query string ("?starttls=false") to
+            disable it.</para>
           <para>If the IMAP server advertizes the COMPRESS extension and either does not
             support the STARTTLS extension or the <paramref name="uri" /> explicitly disabled
             the use of the STARTTLS extension, then the client will automatically opt into
             using a compressed data connection to optimize bandwidth usage unless the
-            <paramref name="uri" /> contains a query string to explicitly disable it.</para>
+            <paramref name="uri" /> contains a query string ("?compress=false") to explicitly
+            disable it.</para>
           <para>If a successful connection is made, the <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" />
             and <see cref="P:MailKit.Net.Imap.ImapClient.Capabilities" /> properties will be populated.</para>
         </remarks>
