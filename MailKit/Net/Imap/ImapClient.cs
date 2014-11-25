@@ -764,10 +764,10 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			#if NETFX_CORE
+#if NETFX_CORE
 			socket.Dispose ();
 			socket = null;
-			#endif
+#endif
 
 			engine.Disconnect ();
 		}
