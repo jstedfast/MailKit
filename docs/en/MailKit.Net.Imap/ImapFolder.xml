@@ -1440,6 +1440,71 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;string&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;string&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
+        <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs.</param>
+        <param name="items">The message summary items to fetch.</param>
+        <param name="fields">The desired header fields.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Fetches the message summaries for the specified message UIDs.
+            </summary>
+        <returns>An enumeration of summaries for the requested messages.</returns>
+        <remarks>
+            Fetches the message summaries for the specified message UIDs.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is empty.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fetch">
       <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageSummaryItems items, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -1520,6 +1585,71 @@
         <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
         <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
         <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;MimeKit.HeaderId&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes.</param>
+        <param name="items">The message summary items to fetch.</param>
+        <param name="fields">The desired header fields.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Fetches the message summaries for the specified message indexes.
+            </summary>
+        <returns>An enumeration of summaries for the requested messages.</returns>
+        <remarks>
+            Fetches the message summaries for the specified message indexes.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="indexes" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is empty.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fetch">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;int&gt; indexes, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;string&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;string&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
+        <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
@@ -1771,6 +1901,79 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, ulong modseq, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;string&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;string&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uids" Type="System.Collections.Generic.IList&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
+        <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uids">The UIDs.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="items">The message summary items to fetch.</param>
+        <param name="fields">The desired header fields.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            </summary>
+        <returns>An enumeration of summaries for the requested messages.</returns>
+        <remarks>
+          <para>If the IMAP server supports the QRESYNC extension and the application has
+            enabled this feature via <see cref="M:MailKit.Net.Imap.ImapClient.EnableQuickResync(System.Threading.CancellationToken)" />,
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages
+            that have vanished since the specified mod-sequence value.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uids" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="uids" /> is invalid.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is empty.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fetch">
       <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;MimeKit.HeaderId&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;valuetype MimeKit.HeaderId&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -1841,6 +2044,76 @@
       </Docs>
     </Member>
     <Member MemberName="Fetch">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (System.Collections.Generic.IList&lt;int&gt; indexes, ulong modseq, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;string&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;string&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
+        <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="items">The message summary items to fetch.</param>
+        <param name="fields">The desired header fields.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+            </summary>
+        <returns>An enumeration of summaries for the requested messages.</returns>
+        <remarks>
+            Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="indexes" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> is invalid.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="fields" /> is empty.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fetch">
       <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;MimeKit.HeaderId&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;valuetype MimeKit.HeaderId&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -1855,6 +2128,73 @@
         <Parameter Name="max" Type="System.Int32" />
         <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
         <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;MimeKit.HeaderId&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="min">The minimum index.</param>
+        <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+        <param name="items">The message summary items to fetch.</param>
+        <param name="fields">The desired header fields.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Fetches the message summaries for the messages between the two indexes, inclusive.
+            </summary>
+        <returns>An enumeration of summaries for the requested messages.</returns>
+        <remarks>
+            Fetches the message summaries for the messages between the two indexes, inclusive.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="min" /> is out of range.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="max" /> is out of range.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="fields" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fields" /> is empty.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fetch">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (int min, int max, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;string&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;string&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="min" Type="System.Int32" />
+        <Parameter Name="max" Type="System.Int32" />
+        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
+        <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
@@ -1990,6 +2330,78 @@
         <Parameter Name="modseq" Type="System.UInt64" />
         <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
         <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;MimeKit.HeaderId&gt;" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="min">The minimum index.</param>
+        <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+        <param name="modseq">The mod-sequence value.</param>
+        <param name="items">The message summary items to fetch.</param>
+        <param name="fields">The desired header fields.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            </summary>
+        <returns>An enumeration of summaries for the requested messages.</returns>
+        <remarks>
+            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <para>
+            <paramref name="min" /> is out of range.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="max" /> is out of range.</para>
+        </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="fields" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="fields" /> is empty.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+          <para>-or-</para>
+          <para>The folder is not currently open.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Fetch">
+      <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt; Fetch (int min, int max, ulong modseq, MailKit.MessageSummaryItems items, System.Collections.Generic.HashSet&lt;string&gt; fields, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;class MailKit.IMessageSummary&gt; Fetch(int32 min, int32 max, unsigned int64 modseq, valuetype MailKit.MessageSummaryItems items, class System.Collections.Generic.HashSet`1&lt;string&gt; fields, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;MailKit.IMessageSummary&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="min" Type="System.Int32" />
+        <Parameter Name="max" Type="System.Int32" />
+        <Parameter Name="modseq" Type="System.UInt64" />
+        <Parameter Name="items" Type="MailKit.MessageSummaryItems" />
+        <Parameter Name="fields" Type="System.Collections.Generic.HashSet&lt;System.String&gt;" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>

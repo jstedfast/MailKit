@@ -570,6 +570,8 @@
             opening a folder using
             <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
             or any of the other variants.</para>
+          <para>While the IDLE command is running, no other commands may be issued until the
+            <paramref name="doneToken" /> is cancelled.</para>
           <para>Note: It is especially important to cancel the <paramref name="doneToken" /> before
             cancelling the <paramref name="cancellationToken" /> when using SSL or TLS due to the
             fact that <see cref="T:System.Net.Security.SslStream" /> cannot be polled.</para>
@@ -635,6 +637,8 @@
             opening a folder using
             <see cref="M:MailKit.MailFolder.Open(MailKit.FolderAccess,System.Threading.CancellationToken)" />
             or any of the other variants.</para>
+          <para>While the IDLE command is running, no other commands may be issued until the
+            <paramref name="doneToken" /> is cancelled.</para>
           <para>Note: It is especially important to cancel the <paramref name="doneToken" /> before
             cancelling the <paramref name="cancellationToken" /> when using SSL or TLS due to the
             fact that <see cref="T:System.Net.Security.SslStream" /> cannot be polled.</para>
