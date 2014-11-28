@@ -845,6 +845,8 @@ namespace MailKit.Net.Imap {
 		/// opening a folder using
 		/// <see cref="MailKit.MailFolder.Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// or any of the other variants.</para>
+		/// <para>While the IDLE command is running, no other commands may be issued until the
+		/// <paramref name="doneToken"/> is cancelled.</para>
 		/// <para>Note: It is especially important to cancel the <paramref name="doneToken"/> before
 		/// cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to the
 		/// fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</para>
@@ -931,6 +933,8 @@ namespace MailKit.Net.Imap {
 		/// opening a folder using
 		/// <see cref="MailKit.MailFolder.Open(FolderAccess,System.Threading.CancellationToken)"/>
 		/// or any of the other variants.</para>
+		/// <para>While the IDLE command is running, no other commands may be issued until the
+		/// <paramref name="doneToken"/> is cancelled.</para>
 		/// <para>Note: It is especially important to cancel the <paramref name="doneToken"/> before
 		/// cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to the
 		/// fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</para>
