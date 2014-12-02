@@ -469,5 +469,28 @@ namespace MailKit {
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
+
+		/// <summary>
+		/// Occurs when a message is successfully sent via the transport.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MessageSent"/> event will be emitted each time a message is successfully sent.
+		/// </remarks>
+		public event EventHandler<MessageSentEventArgs> MessageSent;
+
+		/// <summary>
+		/// Raise the message sent event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the message sent event.
+		/// </remarks>
+		/// <param name="e">The message sent event args.</param>
+		protected virtual void OnMessageSent (MessageSentEventArgs e)
+		{
+			var handler = MessageSent;
+
+			if (handler != null)
+				handler (this, e);
+		}
 	}
 }

@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -134,5 +135,13 @@ namespace MailKit {
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Occurs when a message is successfully sent via the transport.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="MessageSent"/> event will be emitted each time a message is successfully sent.
+		/// </remarks>
+		event EventHandler<MessageSentEventArgs> MessageSent;
 	}
 }

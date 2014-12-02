@@ -1195,6 +1195,7 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.AuthenticationRequired:
 				throw new UnauthorizedAccessException (response.Response);
 			case SmtpStatusCode.Ok:
+				OnMessageSent (new MessageSentEventArgs (message, response.Response));
 				break;
 			}
 		}
