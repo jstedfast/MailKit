@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.0.2.0</version>
+        <version>1.0.3.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,15 +22,14 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Modified ProtocolLogger to flush the stream at the end of each Log().
-* Fixed IMAP SEARCH queries with empty string arguments.
-* Fixed the IMAP FETCH parser to accept qstrings and literals for header field names.
+        <releaseNotes>* Added a new ImapFolder.Fetch() overload that takes a HashSet&lt;string&gt; of header fields to fetch instead of a HashSet&lt;HeaderId&gt; for developers that need the ability to request custom headers not defined in the HeaderId enum.
+* Added an SmtpClient.MessageSent event and an OnMessageSent() method that can be overridden.
 * Improved documentation.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.0.0.0" />
+            <dependency id="MimeKit" version="1.0.2.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

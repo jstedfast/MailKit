@@ -16,10 +16,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.2.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.3.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.2.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.3.0")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
@@ -85,6 +85,7 @@
       <Type Name="MessageFlagsChangedEventArgs" Kind="Class" />
       <Type Name="MessageLabelsChangedEventArgs" Kind="Class" />
       <Type Name="MessagesArrivedEventArgs" Kind="Class" />
+      <Type Name="MessageSentEventArgs" Kind="Class" />
       <Type Name="MessageSorter" Kind="Class" />
       <Type Name="MessageSummary" Kind="Class" />
       <Type Name="MessageSummaryItems" Kind="Enumeration" />
