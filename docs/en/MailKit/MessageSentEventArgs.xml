@@ -1,0 +1,84 @@
+<Type Name="MessageSentEventArgs" FullName="MailKit.MessageSentEventArgs">
+  <TypeSignature Language="C#" Value="public class MessageSentEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageSentEventArgs extends System.EventArgs" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.EventArgs</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Event args used when a message is successfully sent.
+            </summary>
+    <remarks>
+            Event args used when message is successfully sent.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MessageSentEventArgs (MimeKit.MimeMessage message, string response);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MimeKit.MimeMessage message, string response) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="response" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message that was just sent.</param>
+        <param name="response">The response from the server.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.MessageSentEventArgs" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.MessageSentEventArgs" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Message">
+      <MemberSignature Language="C#" Value="public MimeKit.MimeMessage Message { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MimeKit.MimeMessage Message" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MimeKit.MimeMessage</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the message that was just sent.
+            </summary>
+        <value>The message.</value>
+        <remarks>
+            Gets the message that was just sent.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Response">
+      <MemberSignature Language="C#" Value="public string Response { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Response" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the server's response.
+            </summary>
+        <value>The response.</value>
+        <remarks>
+            Gets the server's response.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
