@@ -547,7 +547,10 @@ namespace MailKit.Net.Imap {
 					break;
 
 				var name = ReadStringToken (engine, cancellationToken);
-				var value = ReadStringToken (engine, cancellationToken);
+
+				// Note: technically, the value should also be a 'string' token and not an 'nstring',
+				// but issue #124 reveals a server that is sending NIL for boundary values.
+				var value = ReadNStringToken (engine, false, cancellationToken) ?? string.Empty;
 
 				builder.Append ("; ").Append (name).Append ('=');
 
