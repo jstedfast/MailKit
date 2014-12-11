@@ -108,7 +108,10 @@ namespace MailKit {
 		/// Gets the Content-Disposition of the body part, if available.
 		/// </summary>
 		/// <remarks>
-		/// Gets the Content-Disposition of the body part, if available.
+		/// <para>Gets the Content-Disposition of the body part, if available.</para>
+		/// <para>The Content-Disposition value is only retrieved if the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is used when fetching
+		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The content disposition.</value>
 		public ContentDisposition ContentDisposition {
@@ -119,7 +122,10 @@ namespace MailKit {
 		/// Gets the Content-Language of the body part, if available.
 		/// </summary>
 		/// <remarks>
-		/// Gets the Content-Language of the body part, if available.
+		/// <para>Gets the Content-Language of the body part, if available.</para>
+		/// <para>The Content-Language value is only retrieved if the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is used when fetching
+		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The content language.</value>
 		public string[] ContentLanguage {
@@ -130,7 +136,10 @@ namespace MailKit {
 		/// Gets the Content-Location of the body part, if available.
 		/// </summary>
 		/// <remarks>
-		/// Gets the Content-Location of the body part, if available.
+		/// <para>Gets the Content-Location of the body part, if available.</para>
+		/// <para>The Content-Location value is only retrieved if the
+		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is used when fetching
+		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The content location.</value>
 		public Uri ContentLocation {
@@ -141,7 +150,11 @@ namespace MailKit {
 		/// Determines whether or not the body part is an attachment.
 		/// </summary>
 		/// <remarks>
-		/// Determines whether or not the body part is an attachment.
+		/// <para>Determines whether or not the body part is an attachment based on the value of
+		/// the Content-Disposition.</para>
+		/// <para>Since the value of the Content-Disposition header is needed, it is necessary to
+		/// include the <see cref="MessageSummaryItems.BodyStructure"/> flag when fetching
+		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if thie part is an attachment; otherwise, <c>false</c>.</value>
 		public bool IsAttachment {
