@@ -68,6 +68,7 @@ namespace MailKit.Net.Smtp {
 #elif !NETFX_CORE
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
 #endif
+		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 
@@ -376,11 +377,11 @@ namespace MailKit.Net.Smtp {
 
 				try {
 #if !NETFX_CORE
-					message = Encoding.UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+					message = UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else
-					message = Encoding.UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
+					message = UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
-				} catch {
+				} catch (DecoderFallbackException) {
 #if !NETFX_CORE
 					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
 #else

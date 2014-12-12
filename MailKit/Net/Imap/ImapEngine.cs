@@ -91,6 +91,7 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	class ImapEngine : IDisposable
 	{
+		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		static int TagPrefixIndex;
 
@@ -587,8 +588,8 @@ namespace MailKit.Net.Imap {
 #endif
 
 				try {
-					return Encoding.UTF8.GetString (buf, 0, count);
-				} catch {
+					return UTF8.GetString (buf, 0, count);
+				} catch (DecoderFallbackException) {
 					return Latin1.GetString (buf, 0, count);
 				}
 			}

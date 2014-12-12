@@ -61,6 +61,7 @@ namespace MailKit.Net.Pop3 {
 	/// </summary>
 	class Pop3Engine
 	{
+		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		readonly List<Pop3Command> queue;
 		Pop3Stream stream;
@@ -299,8 +300,8 @@ namespace MailKit.Net.Pop3 {
 #endif
 
 				try {
-					return Encoding.UTF8.GetString (buf, 0, count);
-				} catch {
+					return UTF8.GetString (buf, 0, count);
+				} catch (DecoderFallbackException) {
 					return Latin1.GetString (buf, 0, count);
 				}
 			}
