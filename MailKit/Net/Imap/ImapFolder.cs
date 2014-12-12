@@ -3954,16 +3954,16 @@ namespace MailKit.Net.Imap {
 			return Engine.ParseMessage (stream, true, cancellationToken);
 		}
 
-		static string GetBodyPartQuery (BodyPart part, bool headersOnly, out string[] tags)
+		static string GetBodyPartQuery (string partSpec, bool headersOnly, out string[] tags)
 		{
 			string query;
 
 			if (headersOnly) {
 				tags = new string[1];
 
-				if (part.PartSpecifier.Length > 0) {
-					query = string.Format ("BODY.PEEK[{0}.MIME]", part.PartSpecifier);
-					tags[0] = part.PartSpecifier + ".MIME";
+				if (partSpec.Length > 0) {
+					query = string.Format ("BODY.PEEK[{0}.MIME]", partSpec);
+					tags[0] = partSpec + ".MIME";
 				} else {
 					query = "BODY.PEEK[HEADER]";
 					tags[0] = "HEADER";
@@ -3971,9 +3971,9 @@ namespace MailKit.Net.Imap {
 			} else {
 				tags = new string[2];
 
-				if (part.PartSpecifier.Length > 0) {
-					tags[0] = part.PartSpecifier + ".MIME";
-					tags[1] = part.PartSpecifier;
+				if (partSpec.Length > 0) {
+					tags[0] = partSpec + ".MIME";
+					tags[1] = partSpec;
 				} else {
 					tags[0] = "HEADER";
 					tags[1] = "TEXT";
@@ -4075,11 +4075,104 @@ namespace MailKit.Net.Imap {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
+			return GetBodyPart (uid, part.PartSpecifier, headersOnly, cancellationToken);
+		}
+
+		/// <summary>
+		/// Gets the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
+		/// <returns>The body part.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="partSpecifier">The body part specifier.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return GetBodyPart (uid, partSpecifier, false, cancellationToken);
+		}
+
+		/// <summary>
+		/// Gets the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
+		/// <returns>The body part.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="partSpecifier">The body part specifier.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uid.Id == 0)
+				throw new ArgumentException ("The uid is invalid.", "uid");
+
+			if (partSpecifier == null)
+				throw new ArgumentNullException ("partSpecifier");
+
 			CheckState (true, false);
 
 			string[] tags;
 
-			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid.Id, GetBodyPartQuery (part, headersOnly, out tags));
+			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid.Id, GetBodyPartQuery (partSpecifier, headersOnly, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
@@ -4106,7 +4199,7 @@ namespace MailKit.Net.Imap {
 
 			var entity = Engine.ParseEntity (chained, true, cancellationToken);
 
-			if (part.PartSpecifier.Length == 0) {
+			if (partSpecifier.Length == 0) {
 				for (int i = entity.Headers.Count; i > 0; i--) {
 					var header = entity.Headers[i - 1];
 
@@ -4208,11 +4301,104 @@ namespace MailKit.Net.Imap {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
+			return GetBodyPart (index, part.PartSpecifier, headersOnly, cancellationToken);
+		}
+
+		/// <summary>
+		/// Gets the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
+		/// <returns>The body part.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="partSpecifier">The body part specifier.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public MimeEntity GetBodyPart (int index, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return GetBodyPart (index, partSpecifier, false, cancellationToken);
+		}
+
+		/// <summary>
+		/// Gets the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
+		/// <returns>The body part.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="partSpecifier">The body part specifier.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="partSpecifier"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <para>-or-</para>
+		/// <para>The folder is not currently open.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public MimeEntity GetBodyPart (int index, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (partSpecifier == null)
+				throw new ArgumentNullException ("partSpecifier");
+
 			CheckState (true, false);
 
 			string[] tags;
 
-			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (part, headersOnly, out tags));
+			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (partSpecifier, headersOnly, out tags));
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
@@ -4239,7 +4425,7 @@ namespace MailKit.Net.Imap {
 
 			var entity = Engine.ParseEntity (chained, true, cancellationToken);
 
-			if (part.PartSpecifier.Length == 0) {
+			if (partSpecifier.Length == 0) {
 				for (int i = entity.Headers.Count; i > 0; i--) {
 					var header = entity.Headers[i - 1];
 
