@@ -41,6 +41,9 @@ using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Encoding = Portable.Text.Encoding;
 using Socket = Windows.Networking.Sockets.StreamSocket;
+using EncoderExceptionFallback = Portable.Text.EncoderExceptionFallback;
+using DecoderExceptionFallback = Portable.Text.DecoderExceptionFallback;
+using DecoderFallbackException = Portable.Text.DecoderFallbackException;
 #else
 using System.Net.Sockets;
 using System.Net.Security;

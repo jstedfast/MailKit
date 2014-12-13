@@ -33,6 +33,9 @@ using System.Collections.Generic;
 
 #if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
+using EncoderExceptionFallback = Portable.Text.EncoderExceptionFallback;
+using DecoderExceptionFallback = Portable.Text.DecoderExceptionFallback;
+using DecoderFallbackException = Portable.Text.DecoderFallbackException;
 #endif
 
 using MimeKit;
