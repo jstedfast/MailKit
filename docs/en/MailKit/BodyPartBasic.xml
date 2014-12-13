@@ -72,8 +72,11 @@
             </summary>
         <value>The content disposition.</value>
         <remarks>
-            Gets the Content-Disposition of the body part, if available.
-            </remarks>
+          <para>Gets the Content-Disposition of the body part, if available.</para>
+          <para>The Content-Disposition value is only retrieved if the
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> flag is used when fetching
+            summary information from an <see cref="T:MailKit.IMailFolder" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentId">
@@ -112,8 +115,11 @@
             </summary>
         <value>The content language.</value>
         <remarks>
-            Gets the Content-Language of the body part, if available.
-            </remarks>
+          <para>Gets the Content-Language of the body part, if available.</para>
+          <para>The Content-Language value is only retrieved if the
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> flag is used when fetching
+            summary information from an <see cref="T:MailKit.IMailFolder" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentLocation">
@@ -132,8 +138,11 @@
             </summary>
         <value>The content location.</value>
         <remarks>
-            Gets the Content-Location of the body part, if available.
-            </remarks>
+          <para>Gets the Content-Location of the body part, if available.</para>
+          <para>The Content-Location value is only retrieved if the
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> flag is used when fetching
+            summary information from an <see cref="T:MailKit.IMailFolder" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="ContentMd5">
@@ -216,8 +225,12 @@
         <value>
           <c>true</c> if thie part is an attachment; otherwise, <c>false</c>.</value>
         <remarks>
-            Determines whether or not the body part is an attachment.
-            </remarks>
+          <para>Determines whether or not the body part is an attachment based on the value of
+            the Content-Disposition.</para>
+          <para>Since the value of the Content-Disposition header is needed, it is necessary to
+            include the <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> flag when fetching
+            summary information from an <see cref="T:MailKit.IMailFolder" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Octets">

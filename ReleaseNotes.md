@@ -1,6 +1,13 @@
 # Release Notes
 
-### MailKit 1.0.3.0
+### MailKit 1.0.4
+
+* Modified the IMAP BODYSTRUCTURE parser to allow NIL tokens for
+  Content-Type and Content-Disposition parameter values. (issue #124)
+* Added ImapFolder.GetBodyPart() overrides to allow fetching body parts
+  based on a part specifier string. (issue #130)
+
+### MailKit 1.0.3
 
 * Added a new ImapFolder.Fetch() overload that takes a HashSet<string>
   of header fields to fetch instead of a HashSet<HeaderId> for
@@ -9,7 +16,7 @@
 * Added an SmtpClient.MessageSent event and an OnMessageSent() method
   that can be overridden.
 
-### MailKit 1.0.2.0
+### MailKit 1.0.2
 
 * Modified ProtocolLogger to flush the stream at the end of each Log().
 * Fixed IMAP SEARCH queries with empty string arguments.
@@ -17,7 +24,7 @@
   header field names.
 * Improved documentation.
 
-### MailKit 1.0.1.0
+### MailKit 1.0.1
 
 * Fixed Pop3Client.GetMessages (int startIndex, int count, ...) to use
   1-based sequence numbers.
