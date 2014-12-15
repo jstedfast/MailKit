@@ -552,7 +552,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Connect to the specified server.
+		/// Establishes a connection to the specified IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
@@ -730,6 +730,147 @@ namespace MailKit.Net.Imap {
 			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
 		}
+
+#if !NETFX_CORE
+		/// <summary>
+		/// Establishes a connection to the specified IMAP server using the provided socket.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
+		/// in the uri is "imap", a clear-text connection is assumed. However, if the
+		/// schema in the uri is "imaps", an SSL connection is made using the
+		/// <see cref="MailService.ClientCertificates"/>.</para>
+		/// <para>It should be noted that when using a clear-text IMAP connection,
+		/// if the server advertizes support for the STARTTLS extension, the client
+		/// will automatically switch into TLS mode before authenticating unless the
+		/// <paramref name="uri"/> contains a query string ("?starttls=false") to
+		/// disable it.</para>
+		/// <para>If the IMAP server advertizes the COMPRESS extension and either does not
+		/// support the STARTTLS extension or the <paramref name="uri"/> explicitly disabled
+		/// the use of the STARTTLS extension, then the client will automatically opt into
+		/// using a compressed data connection to optimize bandwidth usage unless the
+		/// <paramref name="uri"/> contains a query string ("?compress=false") to explicitly
+		/// disable it.</para>
+		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// and <see cref="Capabilities"/> properties will be populated.</para>
+		/// </remarks>
+		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
+		/// be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
+		/// <param name="socket">The socket to use for the connection.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="socket"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uri"/> is not an absolute URI.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="socket"/> is not connected.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void Connect (Uri uri, Socket socket, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException ("The uri must be absolute.", "uri");
+
+			if (socket == null)
+				throw new ArgumentNullException ("socket");
+
+			if (!socket.Connected)
+				throw new ArgumentException ("The socket is not connected.", "socket");
+
+			CheckDisposed ();
+
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
+
+			if (IsConnected)
+				throw new InvalidOperationException ("The ImapClient is already connected.");
+
+			var imaps = uri.Scheme.ToLowerInvariant () == "imaps";
+			var query = uri.ParsedQuery ();
+			Stream stream;
+			string value;
+
+			var starttls = !imaps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+			var compress = !imaps && (!query.TryGetValue ("compress", out value) || Convert.ToBoolean (value));
+
+			if (imaps) {
+				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
+				stream = ssl;
+			} else {
+				stream = new NetworkStream (socket, true);
+			}
+
+			if (stream.CanTimeout) {
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
+			}
+
+			logger.LogConnect (uri);
+
+			engine.Connect (uri, new ImapStream (stream, socket, logger), cancellationToken);
+
+			// Only query the CAPABILITIES if the greeting didn't include them.
+			if (engine.CapabilitiesVersion == 0)
+				engine.QueryCapabilities (cancellationToken);
+
+			if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
+				var ic = engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
+
+				engine.Wait (ic);
+
+				if (ic.Result == ImapCommandResult.Ok) {
+					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+					tls.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
+					engine.Stream.Stream = tls;
+
+					// Query the CAPABILITIES again if the server did not include an
+					// untagged CAPABILITIES response to the STARTTLS command.
+					if (engine.CapabilitiesVersion == 1)
+						engine.QueryCapabilities (cancellationToken);
+				}
+			} else if (compress && (engine.Capabilities & ImapCapabilities.Compress) != 0) {
+				var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
+
+				engine.Wait (ic);
+
+				if (ic.Result == ImapCommandResult.Ok) {
+					var unzip = new DeflateStream (stream, CompressionMode.Decompress);
+					var zip = new DeflateStream (stream, CompressionMode.Compress);
+
+					engine.Stream.Stream = new DuplexStream (unzip, zip);
+
+					// Query the CAPABILITIES again if the server did not include an
+					// untagged CAPABILITIES response to the COMPRESS command.
+					if (engine.CapabilitiesVersion == 1)
+						engine.QueryCapabilities (cancellationToken);
+				}
+			}
+
+			engine.Disconnected += OnEngineDisconnected;
+			OnConnected ();
+		}
+#endif
 
 		/// <summary>
 		/// Disconnect the service.

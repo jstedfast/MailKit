@@ -885,6 +885,139 @@ namespace MailKit.Net.Smtp {
 			OnConnected ();
 		}
 
+#if !NETFX_CORE
+		/// <summary>
+		/// Establishes a connection to the specified SMTP server using the provided socket.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establishes a connection to an SMTP or SMTP/S server. If the schema
+		/// in the uri is "smtp", a clear-text connection is assumed. However, if the
+		/// schema in the uri is "smtps", an SSL connection is made using the
+		/// <see cref="MailService.ClientCertificates"/>.</para>
+		/// <para>It should be noted that when using a clear-text SMTP connection,
+		/// if the server advertizes support for the STARTTLS extension, the client
+		/// will automatically switch into TLS mode before authenticating unless the
+		/// <paramref name="uri"/> contains a query string ("?starttls=false") to
+		/// disable it.</para>
+		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// and <see cref="Capabilities"/> properties will be populated.
+		/// </remarks>
+		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
+		/// be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
+		/// <param name="socket">The socket to use for the connection.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="socket"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="uri"/> is not an absolute URI.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="socket"/> is not connected.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="SmtpClient"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// An SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol error occurred.
+		/// </exception>
+		public void Connect (Uri uri, Socket socket, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException ("The uri must be absolute.", "uri");
+
+			if (socket == null)
+				throw new ArgumentNullException ("socket");
+
+			if (!socket.Connected)
+				throw new ArgumentException ("The socket is not connected.", "socket");
+
+			CheckDisposed ();
+
+			if (IsConnected)
+				throw new InvalidOperationException ("The SmtpClient is already connected.");
+
+			capabilities = SmtpCapabilities.None;
+			AuthenticationMechanisms.Clear ();
+			MaxSize = 0;
+
+			var smtps = uri.Scheme.ToLowerInvariant () == "smtps";
+			var query = uri.ParsedQuery ();
+			SmtpResponse response = null;
+			string value;
+
+			var starttls = !smtps && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+
+			this.socket = socket;
+
+			if (smtps) {
+				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
+				stream = ssl;
+			} else {
+				stream = new NetworkStream (socket, true);
+			}
+
+			if (stream.CanTimeout) {
+				stream.WriteTimeout = timeout;
+				stream.ReadTimeout = timeout;
+			}
+
+			host = uri.Host;
+
+			logger.LogConnect (uri);
+
+			try {
+				// read the greeting
+				response = ReadResponse (cancellationToken);
+
+				if (response.StatusCode != SmtpStatusCode.ServiceReady)
+					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+				// Send EHLO and get a list of supported extensions
+				Ehlo (cancellationToken);
+
+				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
+					response = SendCommand ("STARTTLS", cancellationToken);
+					if (response.StatusCode != SmtpStatusCode.ServiceReady)
+						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+					tls.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
+					stream = tls;
+
+					// Send EHLO again and get the new list of supported extensions
+					Ehlo (cancellationToken);
+				}
+
+				connected = true;
+			} catch {
+				stream.Dispose ();
+				stream = null;
+				this.socket = null;
+				throw;
+			}
+
+			OnConnected ();
+		}
+#endif
+
 		/// <summary>
 		/// Disconnect the service.
 		/// </summary>
