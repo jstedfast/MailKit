@@ -42,31 +42,34 @@ namespace MailKit.Net.Smtp {
 		None                = 0,
 
 		/// <summary>
-		/// The server supports the BINARYMIME extension (rfc3030).
+		/// The server supports the SIZE extension (rfc1870) and may have a maximum
+		/// message size limitation (see <see cref="SmtpClient.MaxSize"/>).
 		/// </summary>
-		BinaryMime          = (1 << 0),
+		Size                = (1 << 0),
 
 		/// <summary>
-		/// The server supports the CHUNKING extension (rfc3030), allowing clients
-		/// to upload messages in chunks.
+		/// The server supports the DSN extension (rfc1891), allowing clients to
+		/// specify which (if any) recipients they would like to receive delivery
+		/// notifications for.
 		/// </summary>
-		Chunking            = (1 << 1),
+		Dsn                 = (1 << 1),
+
+		/// <summary>
+		/// The server supports the ENHANCEDSTATUSCODES extension (rfc2034).
+		/// </summary>
+		EnhancedStatusCodes = (1 << 2),
+
+		/// <summary>
+		/// The server supports the AUTH extension (rfc2554), allowing clients to
+		/// authenticate via supported SASL mechanisms.
+		/// </summary>
+		Authentication      = (1 << 3),
 
 		/// <summary>
 		/// The server supports the 8BITMIME extension (rfc2821), allowing clients
 		/// to send messages using the "8bit" Content-Transfer-Encoding.
 		/// </summary>
-		EightBitMime        = (1 << 2),
-
-		/// <summary>
-		/// The server supports the ENHANCEDSTATUSCODES extension (rfc2034).
-		/// </summary>
-		EnhancedStatusCodes = (1 << 3),
-
-		/// <summary>
-		/// The server supports SASL AUTH extension.
-		/// </summary>
-		Authentication      = (1 << 4),
+		EightBitMime        = (1 << 4),
 
 		/// <summary>
 		/// The server supports the PIPELINING extension (rfc2920), allowing clients
@@ -75,20 +78,25 @@ namespace MailKit.Net.Smtp {
 		Pipelining          = (1 << 5),
 
 		/// <summary>
-		/// The server supports the SIZE extensions (rfc1870) and may have a maximum
-		/// message size limitation (see <see cref="SmtpClient.MaxSize"/>).
+		/// The server supports the BINARYMIME extension (rfc3030).
 		/// </summary>
-		Size                = (1 << 6),
+		BinaryMime          = (1 << 6),
+
+		/// <summary>
+		/// The server supports the CHUNKING extension (rfc3030), allowing clients
+		/// to upload messages in chunks.
+		/// </summary>
+		Chunking            = (1 << 7),
 
 		/// <summary>
 		/// The server supports the STARTTLS extension (rfc3207), allowing clients
 		/// to switch to an encrypted SSL/TLS connection after connecting.
 		/// </summary>
-		StartTLS            = (1 << 7),
+		StartTLS            = (1 << 8),
 
 		/// <summary>
 		/// The server supports the SMTPUTF8 extension (rfc6531).
 		/// </summary>
-		UTF8                = (1 << 8),
+		UTF8                = (1 << 9),
 	}
 }

@@ -125,6 +125,7 @@
     <Compile Include="BodyPartMultipart.cs" />
     <Compile Include="BodyPartText.cs" />
     <Compile Include="CommandException.cs" />
+    <Compile Include="DeliveryStatusNotification.cs" />
     <Compile Include="DuplexStream.cs" />
     <Compile Include="Envelope.cs" />
     <Compile Include="FolderAccess.cs" />

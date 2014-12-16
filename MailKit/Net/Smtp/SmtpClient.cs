@@ -544,6 +544,8 @@ namespace MailKit.Net.Smtp {
 
 						if (uint.TryParse (capability.Substring (index), out size))
 							MaxSize = size;
+					} else if (capability == "DSN") {
+						capabilities |= SmtpCapabilities.Dsn;
 					} else if (capability == "BINARYMIME") {
 						capabilities |= SmtpCapabilities.BinaryMime;
 					} else if (capability == "CHUNKING") {
@@ -1238,19 +1240,6 @@ namespace MailKit.Net.Smtp {
 			return PrepareMimeEntity (message.Body);
 		}
 
-		static string GetMailFromCommand (MailboxAddress mailbox, SmtpExtension extensions)
-		{
-			var utf8 = (extensions & SmtpExtension.UTF8) != 0 ? "SMTPUTF8 " : string.Empty;
-
-			if ((extensions & SmtpExtension.BinaryMime) != 0)
-				return string.Format ("MAIL FROM:<{0}> {1}BODY=BINARYMIME", mailbox.Address, utf8);
-
-			if ((extensions & SmtpExtension.EightBitMime) != 0)
-				return string.Format ("MAIL FROM:<{0}> {1}BODY=8BITMIME", mailbox.Address, utf8);
-
-			return string.Format ("MAIL FROM:<{0}>", mailbox.Address);
-		}
-
 		static void ProcessMailFromResponse (SmtpResponse response, MailboxAddress mailbox)
 		{
 			switch (response.StatusCode) {
@@ -1266,9 +1255,41 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void MailFrom (MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
+		/// <summary>
+		/// Get the envelope identifier to be used with delivery status notifications.
+		/// </summary>
+		/// <remarks>
+		/// <para>The envelope identifier, if non-empty, is useful in determining which message
+		/// a delivery status notification was issued for.</para>
+		/// <para>The envelope identifier should be unique and may be up to 100 characters in
+		/// length, but must consist only of printable ASCII characters and no white space.</para>
+		/// <para>For more information, see rfc3461, section 4.4.</para>
+		/// </remarks>
+		/// <returns>The envelope identifier.</returns>
+		/// <param name="message">The message.</param>
+		protected virtual string GetEnvelopeId (MimeMessage message)
 		{
-			var command = GetMailFromCommand (mailbox, extensions);
+			return null;
+		}
+
+		void MailFrom (MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
+		{
+			var utf8 = (extensions & SmtpExtension.UTF8) != 0 ? " SMTPUTF8" : string.Empty;
+			var command = string.Format ("MAIL FROM:<{0}>{1}", mailbox.Address, utf8);
+
+			if ((extensions & SmtpExtension.BinaryMime) != 0)
+				command += " BODY=BINARYMIME";
+			else if ((extensions & SmtpExtension.EightBitMime) != 0)
+				command += " BODY=8BITMIME";
+
+			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
+				var envid = GetEnvelopeId (message);
+
+				if (!string.IsNullOrEmpty (envid))
+					command += " ENVID=" + envid;
+
+				// TODO: RET parameter?
+			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
 				QueueCommand (SmtpCommand.MailFrom, command);
@@ -1296,9 +1317,49 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void RcptTo (MailboxAddress mailbox, CancellationToken cancellationToken)
+		/// <summary>
+		/// Get the types of delivery status notification desired for the specified recipient mailbox.
+		/// </summary>
+		/// <remarks>
+		/// Gets the types of delivery status notification desired for the specified recipient mailbox.
+		/// </remarks>
+		/// <returns>The desired delivery status notification type.</returns>
+		/// <param name="message">The message being sent.</param>
+		/// <param name="mailbox">The mailbox.</param>
+		protected virtual DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
+		{
+			return null;
+		}
+
+		static string GetNotifyString (DeliveryStatusNotification notify)
+		{
+			string value = string.Empty;
+
+			if (notify == DeliveryStatusNotification.Never)
+				return "NEVER";
+
+			if ((notify & DeliveryStatusNotification.Success) != 0)
+				value += "SUCCESS,";
+
+			if ((notify & DeliveryStatusNotification.Failure) != 0)
+				value += "FAILURE,";
+
+			if ((notify & DeliveryStatusNotification.Delay) != 0)
+				value += "DELAY";
+
+			return value.TrimEnd (',');
+		}
+
+		void RcptTo (MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
 		{
 			var command = string.Format ("RCPT TO:<{0}>", mailbox.Address);
+
+			if ((capabilities & SmtpCapabilities.Dsn) != 0) {
+				var notify = GetDeliveryStatusNotifications (message, mailbox);
+
+				if (notify.HasValue)
+					command += " NOTIFY=" + GetNotifyString (notify.Value);
+			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
 				QueueCommand (SmtpCommand.RcptTo, command);
@@ -1378,9 +1439,9 @@ namespace MailKit.Net.Smtp {
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
-				MailFrom (sender, extensions, cancellationToken);
+				MailFrom (message, sender, extensions, cancellationToken);
 				foreach (var recipient in recipients)
-					RcptTo (recipient, cancellationToken);
+					RcptTo (message, recipient, cancellationToken);
 
 				// Note: if PIPELINING is supported, this will flush all outstanding
 				// MAIL FROM and RCPT TO commands to the server and then process all
