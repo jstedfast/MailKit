@@ -13,6 +13,38 @@ GMail Settings page and set your options to look like this:
 
 ![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
 
+### How can I log in to a GMail account using OAuth 2.0?
+
+The first thing you need to do is follow [Google's instructions](https://developers.google.com/accounts/docs/OAuth2) 
+for obtaining OAuth 2.0 credentials for your application.
+
+Once you've done that, the easiest way to obtain an access token is to use Google's [Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
+
+```csharp
+var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
+var credential = new ServiceAccountCredential (new ServiceAccountCredential.Initializer ("your-developer-id@developer.gserviceaccount.com") {
+    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
+    Scopes = new[] { "https://mail.google.com/" },
+    User = "username@gmail.com"
+}.FromCertificate (certificate));
+
+bool result = await credential.RequestAccessTokenAsync (cancel.Token);
+
+// Note: result will be true if the access token was received successfully
+```
+
+Now that you have an access token (`credential.Token.AccessToken`), you can use it with MailKit as if it were
+the password:
+
+```csharp
+using (var client = new ImapClient ()) {
+    client.Connect ("imap.gmail.com", 993, true);
+    
+    // use the access token as the password string
+    client.Authenticate ("username@gmail.com", credential.Token.AccessToken);
+}
+```
+
 ### How can I search for messages delivered between two dates?
 
 The obvious solution is:
