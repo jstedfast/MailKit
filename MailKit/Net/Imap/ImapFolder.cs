@@ -292,16 +292,30 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
 			ic.RegisterUntaggedHandler ("FETCH", QResyncFetch);
 
-			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+			if (access == FolderAccess.ReadWrite) {
+				// Note: if the server does not respond with a PERMANENTFLAGS response,
+				// then we need to assume all flags are permanent.
+				PermanentFlags = SettableFlags | MessageFlags.UserDefined;
+			} else {
+				PermanentFlags = MessageFlags.None;
+			}
 
-			ProcessResponseCodes (ic, null);
+			try {
+				Engine.QueueCommand (ic);
+				Engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
-				throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
+				ProcessResponseCodes (ic, null);
 
-			if (Engine.Selected != null && Engine.Selected != this)
+				if (ic.Result != ImapCommandResult.Ok)
+					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
+			} catch {
+				PermanentFlags = MessageFlags.None;
+			}
+
+			if (Engine.Selected != null && Engine.Selected != this) {
 				Engine.Selected.Access = FolderAccess.None;
+				PermanentFlags = MessageFlags.None;
+			}
 
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
@@ -351,17 +365,32 @@ namespace MailKit.Net.Imap {
 
 			var condstore = (Engine.Capabilities & ImapCapabilities.CondStore) != 0 ? " (CONDSTORE)" : string.Empty;
 			var command = string.Format ("{0} %F{1}\r\n", SelectOrExamine (access), condstore);
-			var ic = Engine.QueueCommand (cancellationToken, this, command, this);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command, this);
 
-			Engine.Wait (ic);
+			if (access == FolderAccess.ReadWrite) {
+				// Note: if the server does not respond with a PERMANENTFLAGS response,
+				// then we need to assume all flags are permanent.
+				PermanentFlags = SettableFlags | MessageFlags.UserDefined;
+			} else {
+				PermanentFlags = MessageFlags.None;
+			}
 
-			ProcessResponseCodes (ic, null);
+			try {
+				Engine.QueueCommand (ic);
+				Engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
-				throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
+				ProcessResponseCodes (ic, null);
 
-			if (Engine.Selected != null && Engine.Selected != this)
+				if (ic.Result != ImapCommandResult.Ok)
+					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
+			} catch {
+				PermanentFlags = MessageFlags.None;
+			}
+
+			if (Engine.Selected != null && Engine.Selected != this) {
 				Engine.Selected.Access = FolderAccess.None;
+				PermanentFlags = MessageFlags.None;
+			}
 
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
