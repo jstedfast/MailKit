@@ -10,7 +10,7 @@
           <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2014 Xamarin Inc. (www.xamarin.com)")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCopyright("Copyright © 2013-2015 Xamarin Inc. (www.xamarin.com)")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
