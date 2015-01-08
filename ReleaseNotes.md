@@ -1,5 +1,13 @@
 # Release Notes
 
+### MailKit 1.0.5
+
+* Added Connect() overloads which takes a Socket argument (issue #128).
+* Added support for SMTP Delivery Status Notifications (issue #136).
+* Modified the ImapFolder logic such that if the IMAP server does not
+  send a PERMANENTFLAGS resp-code when SELECTing the folder, then it
+  will assume that all flags are permanent (issue #140).
+
 ### MailKit 1.0.4
 
 * Modified the IMAP BODYSTRUCTURE parser to allow NIL tokens for

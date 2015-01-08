@@ -243,6 +243,76 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.Sockets.Socket socket, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Uri uri, class System.Net.Sockets.Socket socket, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
+            be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
+        <param name="socket">The socket to use for the connection.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Establishes a connection to the specified SMTP server using the provided socket.
+            </summary>
+        <remarks>
+          <para>Establishes a connection to an SMTP or SMTP/S server. If the schema
+            in the uri is "smtp", a clear-text connection is assumed. However, if the
+            schema in the uri is "smtps", an SSL connection is made using the
+            <see cref="P:MailKit.MailService.ClientCertificates" />.</para>
+          <para>It should be noted that when using a clear-text SMTP connection,
+            if the server advertizes support for the STARTTLS extension, the client
+            will automatically switch into TLS mode before authenticating unless the
+            <paramref name="uri" /> contains a query string ("?starttls=false") to
+            disable it.</para>
+            If a successful connection is made, the <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" />
+            and <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" /> properties will be populated.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uri" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="socket" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uri" /> is not an absolute URI.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="socket" /> is not connected.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpCommandException">
+            An SMTP command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Smtp.SmtpProtocolException">
+            An SMTP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Disconnect">
       <MemberSignature Language="C#" Value="public override void Disconnect (bool quit, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Disconnect(bool quit, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -299,6 +369,60 @@
             Releases the unmanaged resources used by the <see cref="T:MailKit.Net.Smtp.SmtpClient" /> and
             optionally releases the managed resources.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDeliveryStatusNotifications">
+      <MemberSignature Language="C#" Value="protected virtual Nullable&lt;MailKit.DeliveryStatusNotification&gt; GetDeliveryStatusNotifications (MimeKit.MimeMessage message, MimeKit.MailboxAddress mailbox);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance valuetype System.Nullable`1&lt;valuetype MailKit.DeliveryStatusNotification&gt; GetDeliveryStatusNotifications(class MimeKit.MimeMessage message, class MimeKit.MailboxAddress mailbox) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Nullable&lt;MailKit.DeliveryStatusNotification&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+        <Parameter Name="mailbox" Type="MimeKit.MailboxAddress" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message being sent.</param>
+        <param name="mailbox">The mailbox.</param>
+        <summary>
+            Get the types of delivery status notification desired for the specified recipient mailbox.
+            </summary>
+        <returns>The desired delivery status notification type.</returns>
+        <remarks>
+            Gets the types of delivery status notification desired for the specified recipient mailbox.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnvelopeId">
+      <MemberSignature Language="C#" Value="protected virtual string GetEnvelopeId (MimeKit.MimeMessage message);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance string GetEnvelopeId(class MimeKit.MimeMessage message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MimeKit.MimeMessage" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message.</param>
+        <summary>
+            Get the envelope identifier to be used with delivery status notifications.
+            </summary>
+        <returns>The envelope identifier.</returns>
+        <remarks>
+          <para>The envelope identifier, if non-empty, is useful in determining which message
+            a delivery status notification was issued for.</para>
+          <para>The envelope identifier should be unique and may be up to 100 characters in
+            length, but must consist only of printable ASCII characters and no white space.</para>
+          <para>For more information, see rfc3461, section 4.4.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsConnected">

@@ -25,7 +25,7 @@
   <Members>
     <Member MemberName="Authentication">
       <MemberSignature Language="C#" Value="Authentication" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Authentication = int32(16)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Authentication = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -35,13 +35,14 @@
       </ReturnValue>
       <Docs>
         <summary>
-            The server supports SASL AUTH extension.
+            The server supports the AUTH extension (rfc2554), allowing clients to
+            authenticate via supported SASL mechanisms.
             </summary>
       </Docs>
     </Member>
     <Member MemberName="BinaryMime">
       <MemberSignature Language="C#" Value="BinaryMime" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities BinaryMime = int32(1)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities BinaryMime = int32(64)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -57,7 +58,7 @@
     </Member>
     <Member MemberName="Chunking">
       <MemberSignature Language="C#" Value="Chunking" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Chunking = int32(2)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Chunking = int32(128)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -72,9 +73,27 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Dsn">
+      <MemberSignature Language="C#" Value="Dsn" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Dsn = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Smtp.SmtpCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the DSN extension (rfc1891), allowing clients to
+            specify which (if any) recipients they would like to receive delivery
+            notifications for.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="EightBitMime">
       <MemberSignature Language="C#" Value="EightBitMime" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities EightBitMime = int32(4)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities EightBitMime = int32(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -91,7 +110,7 @@
     </Member>
     <Member MemberName="EnhancedStatusCodes">
       <MemberSignature Language="C#" Value="EnhancedStatusCodes" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities EnhancedStatusCodes = int32(8)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities EnhancedStatusCodes = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -140,7 +159,7 @@
     </Member>
     <Member MemberName="Size">
       <MemberSignature Language="C#" Value="Size" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Size = int32(64)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities Size = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -150,14 +169,14 @@
       </ReturnValue>
       <Docs>
         <summary>
-            The server supports the SIZE extensions (rfc1870) and may have a maximum
+            The server supports the SIZE extension (rfc1870) and may have a maximum
             message size limitation (see <see cref="P:MailKit.Net.Smtp.SmtpClient.MaxSize" />).
             </summary>
       </Docs>
     </Member>
     <Member MemberName="StartTLS">
       <MemberSignature Language="C#" Value="StartTLS" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities StartTLS = int32(128)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities StartTLS = int32(256)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -174,7 +193,7 @@
     </Member>
     <Member MemberName="UTF8">
       <MemberSignature Language="C#" Value="UTF8" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities UTF8 = int32(256)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Smtp.SmtpCapabilities UTF8 = int32(512)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>

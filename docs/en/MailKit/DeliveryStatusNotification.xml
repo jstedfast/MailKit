@@ -1,0 +1,93 @@
+<Type Name="DeliveryStatusNotification" FullName="MailKit.DeliveryStatusNotification">
+  <TypeSignature Language="C#" Value="public enum DeliveryStatusNotification" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DeliveryStatusNotification extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Flags</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>
+            Delivery status notification types.
+            </summary>
+    <remarks>
+            A set of flags that may be bitwise-or'd together to specify
+            when a delivery status notification should be sent for a
+            particlar recipient.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Delay">
+      <MemberSignature Language="C#" Value="Delay" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.DeliveryStatusNotification Delay = int32(4)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.DeliveryStatusNotification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Send a notification when the delivery to the recipient has
+            been delayed for an unusual amount fo time.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Failure">
+      <MemberSignature Language="C#" Value="Failure" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.DeliveryStatusNotification Failure = int32(2)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.DeliveryStatusNotification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Send a notification on failure to deliver to the recipient.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Never">
+      <MemberSignature Language="C#" Value="Never" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.DeliveryStatusNotification Never = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.DeliveryStatusNotification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Never send delivery status notifications.
+            </summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Success">
+      <MemberSignature Language="C#" Value="Success" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.DeliveryStatusNotification Success = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.DeliveryStatusNotification</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Send a notification on successful delivery to the recipient.
+            </summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -189,7 +189,7 @@
             be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Connect to the specified server.
+            Establishes a connection to the specified IMAP server.
             </summary>
         <remarks>
           <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
@@ -232,6 +232,79 @@
             </exception>
         <exception cref="T:System.ArgumentException">
             The <paramref name="uri" /> is not an absolute URI.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.Sockets.Socket socket, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Uri uri, class System.Net.Sockets.Socket socket, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
+            be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
+        <param name="socket">The socket to use for the connection.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Establishes a connection to the specified IMAP server using the provided socket.
+            </summary>
+        <remarks>
+          <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
+            in the uri is "imap", a clear-text connection is assumed. However, if the
+            schema in the uri is "imaps", an SSL connection is made using the
+            <see cref="P:MailKit.MailService.ClientCertificates" />.</para>
+          <para>It should be noted that when using a clear-text IMAP connection,
+            if the server advertizes support for the STARTTLS extension, the client
+            will automatically switch into TLS mode before authenticating unless the
+            <paramref name="uri" /> contains a query string ("?starttls=false") to
+            disable it.</para>
+          <para>If the IMAP server advertizes the COMPRESS extension and either does not
+            support the STARTTLS extension or the <paramref name="uri" /> explicitly disabled
+            the use of the STARTTLS extension, then the client will automatically opt into
+            using a compressed data connection to optimize bandwidth usage unless the
+            <paramref name="uri" /> contains a query string ("?compress=false") to explicitly
+            disable it.</para>
+          <para>If a successful connection is made, the <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" />
+            and <see cref="P:MailKit.Net.Imap.ImapClient.Capabilities" /> properties will be populated.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uri" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="socket" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uri" /> is not an absolute URI.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="socket" /> is not connected.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
             </exception>
       </Docs>
     </Member>

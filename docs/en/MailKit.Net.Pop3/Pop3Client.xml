@@ -204,7 +204,7 @@
             Establishes a connection to the specified POP3 server.
             </summary>
         <remarks>
-          <para>Establishes a connection to an POP3 or POP3/S server. If the schema
+          <para>Establishes a connection to a POP3 or POP3/S server. If the schema
             in the uri is "pop", a clear-text connection is made and defaults to using
             port 110 if no port is specified in the URI. However, if the schema in the
             uri is "pops", an SSL connection is made using the
@@ -244,6 +244,76 @@
             </exception>
         <exception cref="T:System.ArgumentException">
             The <paramref name="uri" /> is not an absolute URI.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.Sockets.Socket socket, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Uri uri, class System.Net.Sockets.Socket socket, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
+            be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
+        <param name="socket">The socket to use for the connection.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Establishes a connection to the specified POP3 server using the provided socket.
+            </summary>
+        <remarks>
+          <para>Establishes a connection to a POP3 or POP3/S server. If the schema
+            in the uri is "pop", a clear-text connection is assumed. However, if the
+            schema in the uri is "pops", an SSL connection is made using the
+            <see cref="P:MailKit.MailService.ClientCertificates" />.</para>
+          <para>It should be noted that when using a clear-text POP3 connection,
+            if the server advertizes support for the STLS extension, the client
+            will automatically switch into TLS mode before authenticating unless
+            the <paramref name="uri" /> contains a query string ("?starttls=false")
+            to disable it.</para>
+            If a successful connection is made, the <see cref="P:MailKit.Net.Pop3.Pop3Client.AuthenticationMechanisms" />
+            and <see cref="P:MailKit.Net.Pop3.Pop3Client.Capabilities" /> properties will be populated.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="uri" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="socket" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="uri" /> is not an absolute URI.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="socket" /> is not connected.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            A POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
             </exception>
       </Docs>
     </Member>

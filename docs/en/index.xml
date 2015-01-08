@@ -16,10 +16,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.4.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.5.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.4.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.5.0")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
@@ -58,6 +58,7 @@
       <Type Name="BodyPartMultipart" Kind="Class" />
       <Type Name="BodyPartText" Kind="Class" />
       <Type Name="CommandException" Kind="Class" />
+      <Type Name="DeliveryStatusNotification" Kind="Enumeration" />
       <Type Name="Envelope" Kind="Class" />
       <Type Name="FolderAccess" Kind="Enumeration" />
       <Type Name="FolderAttributes" Kind="Enumeration" />
