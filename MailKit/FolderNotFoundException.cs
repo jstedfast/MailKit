@@ -55,9 +55,6 @@ namespace MailKit {
 		/// </exception>
 		protected FolderNotFoundException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-
 			FolderName = info.GetString ("FolderName");
 		}
 #endif

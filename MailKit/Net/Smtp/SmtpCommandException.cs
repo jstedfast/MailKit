@@ -88,14 +88,8 @@ namespace MailKit.Net.Smtp {
 		/// </remarks>
 		/// <param name="info">The serialization info.</param>
 		/// <param name="context">The streaming context.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="info"/> is <c>null</c>.
-		/// </exception>
 		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-
 			var text = info.GetString ("Mailbox");
 			MailboxAddress mailbox;
 

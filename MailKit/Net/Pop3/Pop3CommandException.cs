@@ -53,9 +53,6 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="context">The streaming context.</param>
 		protected Pop3CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
-			if (info == null)
-				throw new ArgumentNullException ("info");
-
 			StatusText = info.GetString ("StatusText");
 		}
 #endif
