@@ -1,5 +1,10 @@
 # MailKit
 
+<a href="https://scan.coverity.com/projects/3202">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/3202/badge.svg"/>
+</a>
+
 ## What is MailKit?
 
 MailKit is a cross-platform mail client library built on top of [MimeKit](https://github.com/jstedfast/MimeKit).
