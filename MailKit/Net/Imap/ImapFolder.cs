@@ -3798,6 +3798,7 @@ namespace MailKit.Net.Imap {
 					case ImapTokenType.QString:
 					case ImapTokenType.Atom:
 						stream = new MemoryStream (Encoding.UTF8.GetBytes ((string) token.Value), false);
+						streams[specifier] = stream;
 						break;
 					default:
 						throw ImapEngine.UnexpectedToken (token, false);
