@@ -139,8 +139,8 @@ First, you'll need to clone MailKit, MimeKit, Bouncy Castle, and Portable.Text.E
     git clone https://github.com/jstedfast/bc-csharp.git
     git clone https://github.com/jstedfast/Portable.Text.Encoding.git
 
-Currently, MailKit (through its use of MimeKit) depends on the visual-studio-2010 branch of bc-csharp for
-the Visual Studio 2010 project files that I've added (to replace the Visual Studio 2003 project files).
+Currently, MailKit (through its use of MimeKit) depends on the vs2010 branch of bc-csharp for the
+Visual Studio 2010 project files that I've added (to replace the Visual Studio 2003 project files).
 To switch to that branch,
 
     cd bc-csharp
