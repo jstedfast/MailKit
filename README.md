@@ -144,7 +144,7 @@ the Visual Studio 2010 project files that I've added (to replace the Visual Stud
 To switch to that branch,
 
     cd bc-csharp
-    git checkout -b visual-studio-2010 origin/visual-studio-2010
+    git checkout -b vs2010 origin/vs2010
 
 In the top-level MailKit source directory, there are three solution files: MailKit.sln, MailKit.Net40.sln and MailKit.Mobile.sln.
 
