@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.0.6.0</version>
+        <version>1.0.6.1</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -31,7 +31,7 @@ Note: If you are not yet ready to port your iOS application to the Unified API, 
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.0.6.0" />
+            <dependency id="MimeKit" version="1.0.6.1" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
@@ -43,16 +43,16 @@ Note: If you are not yet ready to port your iOS application to the Unified API, 
             <frameworkAssembly assemblyName="System" targetFramework="MonoAndroid0.0" />
             <frameworkAssembly assemblyName="System.Core" targetFramework="MonoAndroid0.0" />
             <frameworkAssembly assemblyName="System.Data" targetFramework="MonoAndroid0.0" />
-            <frameworkAssembly assemblyName="System" targetFramework="MonoTouch0.0" />
-            <frameworkAssembly assemblyName="System.Core" targetFramework="MonoTouch0.0" />
-            <frameworkAssembly assemblyName="System.Data" targetFramework="MonoTouch0.0" />
+            <frameworkAssembly assemblyName="System" targetFramework="Xamarin.iOS10" />
+            <frameworkAssembly assemblyName="System.Core" targetFramework="Xamarin.iOS10" />
+            <frameworkAssembly assemblyName="System.Data" targetFramework="Xamarin.iOS10" />
         </frameworkAssemblies>
     </metadata>
     <files>
         <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.dll" target="lib\MonoAndroid\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.xml" target="lib\MonoAndroid\MailKit.xml" />
-        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.dll" target="lib\MonoTouch\MailKit.dll" />
-        <file src="..\MailKit\bin\Release\lib\MonoTouch\MailKit.xml" target="lib\MonoTouch\MailKit.xml" />
+        <file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.dll" target="lib\Xamarin.iOS10\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.xml" target="lib\Xamarin.iOS10\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
