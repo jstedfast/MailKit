@@ -15,4 +15,9 @@ packages:
     - MailKit, Version=1.0.6.1
   android:
     - MailKit, Version=1.0.6.1
+samples:
+  - name: "Android Sample"
+    path: ../samples/ImapClientDemo.Android/ImapClientDemo.Android.sln
+  - name: "iOS Sample"
+    path: ../samples/ImapClientDemo.iOS/ImapClientDemo.iOS.sln
 no_build: true
