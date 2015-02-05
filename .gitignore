@@ -6,3 +6,4 @@ obj
 bin
 *.tree
 *.zip
+packages/
