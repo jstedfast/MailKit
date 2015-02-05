@@ -39,8 +39,10 @@ namespace ImapClientDemo.iOS
         // Recursive function to load all folders and their subfolders
         async Task LoadChildFolders (Section foldersSection, IMailFolder imapFolder)
         {
-            foldersSection.Add (new StyledStringElement (imapFolder.FullName, () =>
-                OpenFolder (imapFolder)));
+            if (!string.IsNullOrWhiteSpace (imapFolder.FullName)) {    
+                foldersSection.Add (new StyledStringElement (imapFolder.FullName, () =>
+                    OpenFolder (imapFolder)));
+            }
 
             var subfolders = await imapFolder.GetSubfoldersAsync ();
 
