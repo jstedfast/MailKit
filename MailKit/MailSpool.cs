@@ -334,6 +334,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public abstract int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -372,6 +373,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task<int> GetMessageSizeAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
@@ -569,6 +571,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public abstract HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -610,6 +613,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task<HeaderList> GetMessageHeadersAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
@@ -740,6 +744,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public abstract IList<HeaderList> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -783,6 +788,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task<IList<HeaderList>> GetMessageHeadersAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
@@ -1011,6 +1017,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public abstract MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -1052,6 +1059,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task<MimeMessage> GetMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
@@ -1182,6 +1190,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public abstract IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -1225,6 +1234,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task<IList<MimeMessage>> GetMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
@@ -1454,6 +1464,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public abstract void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -1497,6 +1508,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task DeleteMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
@@ -1631,6 +1643,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public abstract void DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -1676,6 +1689,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public virtual Task DeleteMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)

@@ -286,6 +286,14 @@ namespace MailKit.Net.Pop3 {
 			return okText;
 		}
 
+		void LoadUids ()
+		{
+			if (dict.Count > 0)
+				return;
+
+			GetMessageUids ();
+		}
+
 		#region IMailService implementation
 
 		/// <summary>
@@ -1544,6 +1552,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			int seqid;
@@ -1556,6 +1565,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
+
+			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -1845,6 +1856,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			int seqid;
@@ -1857,6 +1869,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
+
+			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -1952,6 +1966,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override IList<HeaderList> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
@@ -1965,6 +1980,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
+
+			LoadUids ();
 
 			var seqids = new int[uids.Count];
 
@@ -2167,6 +2184,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			int seqid;
@@ -2179,6 +2197,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
+
+			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -2274,6 +2294,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
@@ -2287,6 +2308,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
+
+			LoadUids ();
 
 			var seqids = new int[uids.Count];
 
@@ -2472,6 +2495,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			int seqid;
@@ -2484,6 +2508,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
+
+			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -2581,6 +2607,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
 		public override void DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
@@ -2594,6 +2621,8 @@ namespace MailKit.Net.Pop3 {
 
 			if (engine.State != Pop3EngineState.Transaction)
 				throw new UnauthorizedAccessException ();
+
+			LoadUids ();
 
 			var seqids = new int[uids.Count];
 
