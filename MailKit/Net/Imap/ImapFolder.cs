@@ -805,26 +805,37 @@ namespace MailKit.Net.Imap {
 		{
 			CheckState (false, false);
 
-			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator + "%" : "%";
+			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator : string.Empty;
 			var command = subscribedOnly ? "LSUB" : "LIST";
+			var children = new List<IMailFolder> ();
 			var list = new List<ImapFolder> ();
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, command + " \"\" %S\r\n", pattern);
+			var ic = new ImapCommand (Engine, cancellationToken, null, command + " \"\" %S\r\n", pattern + "%");
 			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
 
-			foreach (var folder in list)
+			// Note: Some broken IMAP servers (*cough* SmarterMail 13.0 *cough*) return folders
+			// that are not children of the folder we requested, so we need to filter those
+			// folders out of the list we'll be returning to our caller.
+			//
+			// See https://github.com/jstedfast/MailKit/issues/149 for more details.
+			foreach (var folder in list) {
+				if (folder.FullName != pattern + folder.Name)
+					continue;
+
 				folder.ParentFolder = this;
+				children.Add (folder);
+			}
 
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create (subscribedOnly ? "LSUB" : "LIST", ic);
 
-			return list;
+			return children;
 		}
 
 		/// <summary>
