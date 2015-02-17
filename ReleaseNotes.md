@@ -1,5 +1,19 @@
 # Release Notes
 
+### MailKit 1.0.7
+
+* Marked Pop3Client methods that take UIDs as [Obsolete]. It is suggested that
+  the equivalent methods that take indexes be used instead and that UID-to-index
+  mapping is done by the developer. This takes the burden off of the Pop3Client
+  to maintain a mapping of UIDs to indexes that it cannot easily maintain.
+* Fixed SmtpCommandException to only serialize the Mailbox property when it is
+  non-null. (issue #148)
+* Fixed IMAP support to accept a UIDVALIDITY value of 0 (even though it is
+  technically illegal) to work around a bug in SmarterMail 13.0. (issue #150)
+* Fixed ImapFolder.GetSubfolders() to filter out non-child folders from the list
+  that it returns (once again, a work-around for a SmarterMail 13.0 bug).
+  (issue #149)
+
 ### MailKit 1.0.6
 
 * Fixed some issues revealed by source analysis.

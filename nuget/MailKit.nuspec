@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.0.6.1</version>
+        <version>1.0.7.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,16 +22,17 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed some issues revealed by source analysis.
-* Migrated the iOS assemblies to Xamarin.iOS Unified API for 64-bit support.
-* Improved documentation.
+        <releaseNotes>* Marked Pop3Client methods that take UIDs as [Obsolete]. It is suggested that the equivalent methods that take indexes be used instead and that UID-to-index mapping is done by the developer. This takes the burden off of the Pop3Client to maintain a mapping of UIDs to indexes that it cannot easily maintain.
+* Fixed SmtpCommandException to only serialize the Mailbox property when it is non-null. (issue #148)
+* Fixed IMAP support to accept a UIDVALIDITY value of 0 (even though it is technically illegal) to work around a bug in SmarterMail 13.0. (issue #150)
+* Fixed ImapFolder.GetSubfolders() to filter out non-child folders from the list that it returns (once again, a work-around for a SmarterMail 13.0 bug). (issue #149)
 
 Note: If you are not yet ready to port your iOS application to the Unified API, you will need to stick with the 1.0.5 release. The Classic MonoTouch API is no longer supported.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.0.6.1" />
+            <dependency id="MimeKit" version="1.0.7.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
