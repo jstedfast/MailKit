@@ -1098,7 +1098,9 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.UidValidity:
 				var uidvalidity = (UidValidityResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
+				// Note: we allow '0' here because some servers have been known to send "* OK [UIDVALIDITY 0]" when the folder
+				// has no messages. See https://github.com/jstedfast/MailKit/issues/150 for details.
+				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number argument to 'UIDVALIDITY' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
