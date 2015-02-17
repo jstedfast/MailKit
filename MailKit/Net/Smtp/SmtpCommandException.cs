@@ -151,8 +151,10 @@ namespace MailKit.Net.Smtp {
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
+			if (Mailbox != null)
+				info.AddValue ("Mailbox", Mailbox.ToString ());
+
 			info.AddValue ("ErrorCode", (int) ErrorCode);
-			info.AddValue ("Mailbox", Mailbox.ToString ());
 			info.AddValue ("StatusCode", StatusCode);
 
 			base.GetObjectData (info, context);
