@@ -1369,9 +1369,40 @@ namespace MailKit.Net.Smtp {
 			ProcessRcptToResponse (SendCommand (command, cancellationToken), mailbox);
 		}
 
-		void Data (FormatOptions options, bool binary, MimeMessage message, CancellationToken cancellationToken)
+		void Bdat (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
 		{
-			var response = SendCommand (binary ? "BDAT" : "DATA", cancellationToken);
+			long size;
+
+			using (var measure = new MeasuringStream ()) {
+				message.WriteTo (options, measure, cancellationToken);
+				size = measure.Length;
+			}
+
+			var bytes = Encoding.UTF8.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
+
+			Poll (SelectMode.SelectWrite, cancellationToken);
+			stream.Write (bytes, 0, bytes.Length);
+			logger.LogClient (bytes, 0, bytes.Length);
+
+			message.WriteTo (options, stream, cancellationToken);
+			stream.Flush ();
+
+			var response = ReadResponse (cancellationToken);
+
+			switch (response.StatusCode) {
+			default:
+				throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
+			case SmtpStatusCode.AuthenticationRequired:
+				throw new UnauthorizedAccessException (response.Response);
+			case SmtpStatusCode.Ok:
+				OnMessageSent (new MessageSentEventArgs (message, response.Response));
+				break;
+			}
+		}
+
+		void Data (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
+		{
+			var response = SendCommand ("DATA", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -1448,7 +1479,10 @@ namespace MailKit.Net.Smtp {
 				// of their responses.
 				FlushCommandQueue (sender, recipients, cancellationToken);
 
-				Data (format, (extensions & SmtpExtension.BinaryMime) != 0, message, cancellationToken);
+				if ((extensions & SmtpExtension.BinaryMime) != 0)
+					Bdat (format, message, cancellationToken);
+				else
+					Data (format, message, cancellationToken);
 			} catch (UnauthorizedAccessException) {
 				// do not disconnect
 				throw;
