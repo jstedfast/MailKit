@@ -520,7 +520,9 @@ namespace MailKit.Net.Smtp {
 
 				var lines = response.Response.Split ('\n');
 				for (int i = 0; i < lines.Length; i++) {
-					var capability = lines[i].Trim ();
+					// Outlook.com replies with "250-8bitmime" instead of "250-8BITMIME"
+					// (strangely, it correctly capitalizes all other extensions...)
+					var capability = lines[i].Trim ().ToUpperInvariant ();
 
 					if (capability.StartsWith ("AUTH", StringComparison.Ordinal)) {
 						int index = 4;
