@@ -1369,9 +1369,9 @@ namespace MailKit.Net.Smtp {
 			ProcessRcptToResponse (SendCommand (command, cancellationToken), mailbox);
 		}
 
-		void Data (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
+		void Data (FormatOptions options, bool binary, MimeMessage message, CancellationToken cancellationToken)
 		{
-			var response = SendCommand ("DATA", cancellationToken);
+			var response = SendCommand (binary ? "BDAT" : "DATA", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -1448,7 +1448,7 @@ namespace MailKit.Net.Smtp {
 				// of their responses.
 				FlushCommandQueue (sender, recipients, cancellationToken);
 
-				Data (format, message, cancellationToken);
+				Data (format, (extensions & SmtpExtension.BinaryMime) != 0, message, cancellationToken);
 			} catch (UnauthorizedAccessException) {
 				// do not disconnect
 				throw;
