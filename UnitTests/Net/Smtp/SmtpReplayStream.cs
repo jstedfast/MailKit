@@ -52,6 +52,7 @@ namespace UnitTests.Net.Smtp {
 
 	class SmtpReplayStream : Stream
 	{
+		readonly MemoryStream sent = new MemoryStream ();
 		readonly IList<SmtpReplayCommand> commands;
 		SmtpReplayState state;
 		Stream stream;
@@ -124,16 +125,22 @@ namespace UnitTests.Net.Smtp {
 
 			Assert.AreNotEqual (SmtpReplayState.SendResponse, state, "Trying to write when a command has already been given.");
 
-			var command = Encoding.UTF8.GetString (buffer, offset, count);
+			sent.Write (buffer, offset, count);
 
-			if (state == SmtpReplayState.WaitForCommand) {
-				Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
+			if (sent.Length >= commands[index].Command.Length) {
+				var command = Encoding.UTF8.GetString (sent.GetBuffer (), 0, (int) sent.Length);
 
-				stream = GetResourceStream (commands[index].Resource);
-				state = SmtpReplayState.SendResponse;
-			} else if (command == "\r\n.\r\n") {
-				stream = GetResourceStream (commands[index].Resource);
-				state = SmtpReplayState.SendResponse;
+				if (state == SmtpReplayState.WaitForCommand) {
+					Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
+
+					stream = GetResourceStream (commands[index].Resource);
+					state = SmtpReplayState.SendResponse;
+				} else if (command == "\r\n.\r\n") {
+					stream = GetResourceStream (commands[index].Resource);
+					state = SmtpReplayState.SendResponse;
+				}
+
+				sent.SetLength (0);
 			}
 		}
 
