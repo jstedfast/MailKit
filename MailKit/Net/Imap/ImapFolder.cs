@@ -310,6 +310,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
 			} catch {
 				PermanentFlags = MessageFlags.None;
+				throw;
 			}
 
 			if (Engine.Selected != null && Engine.Selected != this) {
@@ -385,6 +386,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
 			} catch {
 				PermanentFlags = MessageFlags.None;
+				throw;
 			}
 
 			if (Engine.Selected != null && Engine.Selected != this) {
