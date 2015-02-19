@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 1.0.8
+
+* Fixed the SMTP BINARYMIME extension support to work properly. (issue #151)
+* Fixed ImapFolder.Open() to not set the PermanentFlags to None if another
+  folder was open (preventing SetFlags/AddFlags/RemoveFlags from functioning
+  properly). (issue #153)
+
 ### MailKit 1.0.7
 
 * Marked Pop3Client methods that take UIDs as [Obsolete]. It is suggested that
