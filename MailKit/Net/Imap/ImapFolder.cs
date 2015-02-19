@@ -314,8 +314,9 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (Engine.Selected != null && Engine.Selected != this) {
+				Engine.Selected.PermanentFlags = MessageFlags.None;
+				Engine.Selected.AcceptedFlags = MessageFlags.None;
 				Engine.Selected.Access = FolderAccess.None;
-				PermanentFlags = MessageFlags.None;
 			}
 
 			Engine.State = ImapEngineState.Selected;
@@ -390,8 +391,9 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (Engine.Selected != null && Engine.Selected != this) {
+				Engine.Selected.PermanentFlags = MessageFlags.None;
+				Engine.Selected.AcceptedFlags = MessageFlags.None;
 				Engine.Selected.Access = FolderAccess.None;
-				PermanentFlags = MessageFlags.None;
 			}
 
 			Engine.State = ImapEngineState.Selected;
