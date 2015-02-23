@@ -29,7 +29,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Collections;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -5533,7 +5532,7 @@ namespace MailKit.Net.Imap {
 			return ModifyFlags (indexes, modseq, flags, userFlags, silent ? "FLAGS.SILENT" : "FLAGS", cancellationToken);
 		}
 
-		static string LabelListToString (IList<string> labels, IList<object> args)
+		static string LabelListToString (IList<string> labels, ICollection<object> args)
 		{
 			var list = new StringBuilder ("(");
 
@@ -5554,7 +5553,7 @@ namespace MailKit.Net.Imap {
 					break;
 				default:
 					list.Append ("%S");
-					args.Add (labels[i]);
+					args.Add (ImapEncoding.Encode (labels[i]));
 					break;
 				}
 			}
