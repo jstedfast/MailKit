@@ -1,5 +1,21 @@
 ## Frequently Asked Questions
 
+### How can I get a protocol log for IMAP/POP3/SMTP to see what is going wrong?
+
+All of MailKit's client implementations have a constructor that takes a nifty `IProtocolLogger`
+interface for logging client/server communications. Out of the box, you can use the
+handy `ProtocolLogger` class. Here are some examples of how to use it:
+
+```csharp
+// log to a file called 'imap.log'
+var client = new ImapClient (new ProtocolLogger ("imap.log"));
+```
+
+```csharp
+// log to standard output (i.e. the console)
+var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
+```
+
 ### GMail isn't showing me all of my POP3 or IMAP messages. Is this a bug in MailKit?
 
 No, this is just a problem with your GMail POP3 and/or IMAP settings. By default, GMail's POP3
