@@ -1027,6 +1027,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapResponseCode ParseResponseCode (CancellationToken cancellationToken)
 		{
+			uint validity = Selected != null && Selected.UidValidity.HasValue ? Selected.UidValidity.Value.Id : 0;
 			ImapResponseCode code;
 			ImapToken token;
 			string atom;
@@ -1163,7 +1164,7 @@ namespace MailKit.Net.Imap {
 				token = Stream.ReadToken (cancellationToken);
 
 				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out append.UidSet)) {
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, n32, out append.UidSet)) {
 					Debug.WriteLine ("Expected nz-number or uid-set as second argument to 'APPENDUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
@@ -1182,14 +1183,14 @@ namespace MailKit.Net.Imap {
 
 				token = Stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out copy.SrcUidSet)) {
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, validity, out copy.SrcUidSet)) {
 					Debug.WriteLine ("Expected uid-set as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out copy.DestUidSet)) {
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, n32, out copy.DestUidSet)) {
 					Debug.WriteLine ("Expected uid-set as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
@@ -1221,7 +1222,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.Modified:
 				var modified = (ModifiedResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out modified.UidSet)) {
+				if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, validity, out modified.UidSet)) {
 					Debug.WriteLine ("Expected uid-set argument to 'MODIFIED' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}

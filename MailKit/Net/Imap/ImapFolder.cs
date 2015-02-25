@@ -1442,12 +1442,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
 
-			if (UidValidity.HasValue) {
-				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-				if (append != null && append.UidValidity == UidValidity.Value)
-					return append.UidSet[0];
-			}
+			if (append != null)
+				return append.UidSet[0];
 
 			return null;
 		}
@@ -1523,12 +1521,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
 
-			if (UidValidity.HasValue) {
-				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-				if (append != null && append.UidValidity == UidValidity.Value)
-					return append.UidSet[0];
-			}
+			if (append != null)
+				return append.UidSet[0];
 
 			return null;
 		}
@@ -1649,12 +1645,10 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
-				if (UidValidity.HasValue) {
-					var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-					if (append != null && append.UidValidity == UidValidity.Value)
-						return append.UidSet;
-				}
+				if (append != null)
+					return append.UidSet;
 
 				return new UniqueId[0];
 			}
@@ -1773,12 +1767,10 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
-				if (UidValidity.HasValue) {
-					var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
+				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
 
-					if (append != null && append.UidValidity == UidValidity.Value)
-						return append.UidSet;
-				}
+				if (append != null)
+					return append.UidSet;
 
 				return new UniqueId[0];
 			}
@@ -1877,12 +1869,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("COPY", ic);
 
-			if (destination.UidValidity.HasValue) {
-				var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
 
-				if (copy != null && copy.UidValidity == destination.UidValidity.Value)
-					return copy.DestUidSet;
-			}
+			if (copy != null)
+				return copy.DestUidSet;
 
 			return new UniqueId[0];
 		}
@@ -1978,12 +1968,10 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("MOVE", ic);
 
-			if (destination.UidValidity.HasValue) {
-				var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
+			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
 
-				if (copy != null && copy.UidValidity == destination.UidValidity.Value)
-					return copy.DestUidSet;
-			}
+			if (copy != null)
+				return copy.DestUidSet;
 
 			return new UniqueId[0];
 		}
@@ -6614,6 +6602,7 @@ namespace MailKit.Net.Imap {
 
 		static void ESearchMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
+			uint validity = ic.Folder.UidValidity.HasValue ? ic.Folder.UidValidity.Value.Id : 0;
 			var token = engine.ReadToken (ic.CancellationToken);
 			IList<UniqueId> uids = null;
 			uint min, max, count;
@@ -6686,7 +6675,7 @@ namespace MailKit.Net.Imap {
 						throw ImapEngine.UnexpectedToken (token, false);
 					break;
 				case "ALL":
-					if (!ImapUtils.TryParseUidSet ((string) token.Value, out uids))
+					if (!ImapUtils.TryParseUidSet ((string) token.Value, validity, out uids))
 						throw ImapEngine.UnexpectedToken (token, false);
 					break;
 				default:
@@ -7388,6 +7377,7 @@ namespace MailKit.Net.Imap {
 		internal void OnVanished (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
+			uint validity = UidValidity.HasValue ? UidValidity.Value.Id : 0;
 			IList<UniqueId> vanished;
 			bool earlier = false;
 
@@ -7410,7 +7400,7 @@ namespace MailKit.Net.Imap {
 				token = engine.ReadToken (cancellationToken);
 			}
 
-			if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, out vanished))
+			if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, validity, out vanished))
 				throw ImapEngine.UnexpectedToken (token, false);
 
 			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));

@@ -214,8 +214,9 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns><c>true</c> if the UIDs were successfully parsed, otherwise <c>false</c>.</returns>
 		/// <param name="atom">The atom string.</param>
+		/// <param name="validity">The UidValidity.</param>
 		/// <param name="uids">The UIDs.</param>
-		public static bool TryParseUidSet (string atom, out IList<UniqueId> uids)
+		public static bool TryParseUidSet (string atom, uint validity, out IList<UniqueId> uids)
 		{
 			var ranges = atom.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 			var list = new List<UniqueId> ();
@@ -236,9 +237,9 @@ namespace MailKit.Net.Imap {
 						return false;
 
 					for (uint uid = min; uid <= max; uid++)
-						list.Add (new UniqueId (uid));
+						list.Add (new UniqueId (validity, uid));
 				} else if (minmax.Length == 1) {
-					list.Add (new UniqueId (min));
+					list.Add (new UniqueId (validity, min));
 				} else {
 					return false;
 				}
