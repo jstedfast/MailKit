@@ -245,7 +245,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = ImapUtils.ParseThreads (engine, CancellationToken.None);
+							threads = ImapUtils.ParseThreads (engine, 0, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;

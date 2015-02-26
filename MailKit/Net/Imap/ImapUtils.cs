@@ -1110,7 +1110,7 @@ namespace MailKit.Net.Imap {
 			return new ReadOnlyCollection<string> (labels);
 		}
 
-		static MessageThread ParseThread (ImapEngine engine, CancellationToken cancellationToken)
+		static MessageThread ParseThread (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			MessageThread thread, node, child;
@@ -1119,7 +1119,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid))
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			node = thread = new MessageThread (new UniqueId (uid));
+			node = thread = new MessageThread (new UniqueId (uidValidity, uid));
 
 			do {
 				token = engine.ReadToken (cancellationToken);
@@ -1128,13 +1128,13 @@ namespace MailKit.Net.Imap {
 					break;
 
 				if (token.Type == ImapTokenType.OpenParen) {
-					child = ParseThread (engine, cancellationToken);
+					child = ParseThread (engine, uidValidity, cancellationToken);
 					node.Add (child);
 				} else {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid))
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					child = new MessageThread (new UniqueId (uid));
+					child = new MessageThread (new UniqueId (uidValidity, uid));
 					node.Add (child);
 					node = child;
 				}
@@ -1148,8 +1148,9 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The threads.</returns>
 		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="uidValidiuty">The UIDVALIDITY of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public static IList<MessageThread> ParseThreads (ImapEngine engine, CancellationToken cancellationToken)
+		public static IList<MessageThread> ParseThreads (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
 		{
 			var threads = new List<MessageThread> ();
 			ImapToken token;
@@ -1165,7 +1166,7 @@ namespace MailKit.Net.Imap {
 				if (token.Type != ImapTokenType.OpenParen)
 					throw ImapEngine.UnexpectedToken (token, false);
 
-				threads.Add (ParseThread (engine, cancellationToken));
+				threads.Add (ParseThread (engine, uidValidity, cancellationToken));
 			} while (true);
 
 			return threads;

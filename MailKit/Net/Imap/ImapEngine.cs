@@ -1027,7 +1027,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapResponseCode ParseResponseCode (CancellationToken cancellationToken)
 		{
-			uint validity = Selected != null && Selected.UidValidity.HasValue ? Selected.UidValidity.Value.Id : 0;
+			uint validity = Selected != null ? Selected.UidValidity : 0;
 			ImapResponseCode code;
 			ImapToken token;
 			string atom;
@@ -1106,7 +1106,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				uidvalidity.UidValidity = new UniqueId (n32);
+				uidvalidity.UidValidity = n32;
 
 				token = Stream.ReadToken (cancellationToken);
 				break;
@@ -1159,7 +1159,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				append.UidValidity = new UniqueId (n32);
+				append.UidValidity = n32;
 
 				token = Stream.ReadToken (cancellationToken);
 
@@ -1179,7 +1179,7 @@ namespace MailKit.Net.Imap {
 					throw UnexpectedToken (token, false);
 				}
 
-				copy.UidValidity = new UniqueId (n32);
+				copy.UidValidity = n32;
 
 				token = Stream.ReadToken (cancellationToken);
 
@@ -1331,7 +1331,7 @@ namespace MailKit.Net.Imap {
 						folder.UpdateUidNext (new UniqueId (value));
 						break;
 					case "UIDVALIDITY":
-						folder.UpdateUidValidity (new UniqueId (value));
+						folder.UpdateUidValidity (value);
 						break;
 					case "UNSEEN":
 						folder.UpdateUnread ((int) value);

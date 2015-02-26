@@ -190,7 +190,7 @@ namespace MailKit {
 		/// <para>The <see cref="UidValidity"/> will only be set after the folder has been opened.</para>
 		/// </remarks>
 		/// <value>The UID validity.</value>
-		UniqueId? UidValidity { get; }
+		uint UidValidity { get; }
 
 		/// <summary>
 		/// Get the UID that the next message that is added to the folder will be assigned.

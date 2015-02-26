@@ -224,7 +224,7 @@ namespace MailKit.Net.Imap {
 
 	class UidValidityResponseCode : ImapResponseCode
 	{
-		public UniqueId UidValidity;
+		public uint UidValidity;
 
 		internal UidValidityResponseCode (ImapResponseCodeType type) : base (type, false)
 		{

@@ -241,7 +241,7 @@ namespace MailKit {
 		/// <para>This value will only be set after the folder has been opened.</para>
 		/// </remarks>
 		/// <value>The UID validity.</value>
-		public UniqueId? UidValidity {
+		public uint UidValidity {
 			get; protected set;
 		}
 
