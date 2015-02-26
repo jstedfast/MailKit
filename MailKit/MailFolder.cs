@@ -1604,7 +1604,7 @@ namespace MailKit {
 		/// Append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified message to the folder.
+		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
@@ -1640,7 +1640,7 @@ namespace MailKit {
 		/// Asynchronously append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified message to the folder.
+		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
@@ -1683,7 +1683,7 @@ namespace MailKit {
 		/// Append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified message to the folder.
+		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
@@ -1720,7 +1720,7 @@ namespace MailKit {
 		/// Asynchronously append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified message to the folder.
+		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="message">The message.</param>
@@ -1764,7 +1764,7 @@ namespace MailKit {
 		/// Append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified message to the folder.
+		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -1805,7 +1805,7 @@ namespace MailKit {
 		/// Asynchronously append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified message to the folder.
+		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -1859,7 +1859,7 @@ namespace MailKit {
 		/// Append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified message to the folder.
+		/// Appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -1901,7 +1901,7 @@ namespace MailKit {
 		/// Asynchronously append the specified message to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified message to the folder.
+		/// Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
 		/// </remarks>
 		/// <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -1956,7 +1956,7 @@ namespace MailKit {
 		/// Append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified messages to the folder.
+		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
@@ -1999,7 +1999,7 @@ namespace MailKit {
 		/// Asynchronously append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder.
+		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
@@ -2060,7 +2060,7 @@ namespace MailKit {
 		/// Append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified messages to the folder.
+		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
@@ -2106,7 +2106,7 @@ namespace MailKit {
 		/// Asynchronously append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder.
+		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="messages">The array of messages to append to the folder.</param>
@@ -2173,7 +2173,7 @@ namespace MailKit {
 		/// Append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified messages to the folder.
+		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -2221,7 +2221,7 @@ namespace MailKit {
 		/// Asynchronously append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder.
+		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -2293,7 +2293,7 @@ namespace MailKit {
 		/// Append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Appends the specified messages to the folder.
+		/// Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>
@@ -2344,7 +2344,7 @@ namespace MailKit {
 		/// Asynchronously append the specified messages to the folder.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously appends the specified messages to the folder.
+		/// Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
 		/// </remarks>
 		/// <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
 		/// <param name="options">The formatting options.</param>

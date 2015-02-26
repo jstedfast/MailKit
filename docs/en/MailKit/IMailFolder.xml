@@ -1200,7 +1200,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Appends the specified message to the folder.
+            Appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1228,7 +1228,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Appends the specified messages to the folder.
+            Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -1258,7 +1258,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Appends the specified message to the folder.
+            Appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1288,7 +1288,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Appends the specified messages to the folder.
+            Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -1318,7 +1318,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Appends the specified message to the folder.
+            Appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1348,7 +1348,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Appends the specified messages to the folder.
+            Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -1380,7 +1380,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Appends the specified message to the folder.
+            Appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1412,7 +1412,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Appends the specified messages to the folder.
+            Appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -1440,7 +1440,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Asynchronously appends the specified message to the folder.
+            Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1468,7 +1468,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Asynchronously appends the specified messages to the folder.
+            Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -1498,7 +1498,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Asynchronously appends the specified message to the folder.
+            Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1528,7 +1528,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Asynchronously appends the specified messages to the folder.
+            Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -1558,7 +1558,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Asynchronously appends the specified message to the folder.
+            Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1588,7 +1588,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Asynchronously appends the specified messages to the folder.
+            Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -1620,7 +1620,7 @@
             </summary>
         <returns>The UID of the appended message, if available; otherwise, <c>null</c>.</returns>
         <remarks>
-            Asynchronously appends the specified message to the folder.
+            Asynchronously appends the specified message to the folder and returns the UniqueId assigned to the message.
             </remarks>
       </Docs>
     </Member>
@@ -1652,7 +1652,7 @@
             </summary>
         <returns>The UIDs of the appended messages, if available; otherwise an empty array.</returns>
         <remarks>
-            Asynchronously appends the specified messages to the folder.
+            Asynchronously appends the specified messages to the folder and returns the UniqueIds assigned to the messages.
             </remarks>
       </Docs>
     </Member>
@@ -7795,14 +7795,14 @@
       </Docs>
     </Member>
     <Member MemberName="UidValidity">
-      <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.UniqueId&gt; UidValidity { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; UidValidity" />
+      <MemberSignature Language="C#" Value="public uint UidValidity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 UidValidity" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Nullable&lt;MailKit.UniqueId&gt;</ReturnType>
+        <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>

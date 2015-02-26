@@ -45,6 +45,28 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UniqueId (uint validity, uint id);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int32 validity, unsigned int32 id) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="validity" Type="System.UInt32" />
+        <Parameter Name="id" Type="System.UInt32" />
+      </Parameters>
+      <Docs>
+        <param name="validity">The uid validity.</param>
+        <param name="id">The unique identifier.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.UniqueId" /> struct.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.UniqueId" /> with the specified validity and value.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="CompareTo">
       <MemberSignature Language="C#" Value="public int CompareTo (MailKit.UniqueId other);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 CompareTo(valuetype MailKit.UniqueId other) cil managed" />
@@ -383,6 +405,25 @@
         <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.UniqueId" />.</returns>
         <remarks>
             Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.UniqueId" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Validity">
+      <MemberSignature Language="C#" Value="public readonly uint Validity;" />
+      <MemberSignature Language="ILAsm" Value=".field public initonly unsigned int32 Validity" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.UInt32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The validity, if non-zero.
+            </summary>
+        <remarks>
+            The UidValidity of the containing folder.
             </remarks>
       </Docs>
     </Member>
