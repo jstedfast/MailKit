@@ -1,5 +1,16 @@
 # Release Notes
 
+### MailKit 1.0.9
+
+* Modified UniqueId to contain a Validity value. This allows ImapFolder.Append(),
+  CopyTo(), and MoveTo() to provide the caller with a way to make sure that the
+  UIDs are (still) valid in the destination folder at a future point in time.
+* Modified ImapFolder.UidValidity to be a uint instead of a UniqueId which not
+  only makes more sense but also simplifies comparison.
+* Fixed GMail Label APIs to use the modified UTF-7 encoding logic meant for
+  folder names as it appears that GMail wants label names to be encoded in this
+  way. (issue #154)
+
 ### MailKit 1.0.8
 
 * Fixed the SMTP BINARYMIME extension support to work properly. (issue #151)
