@@ -91,10 +91,31 @@ namespace MailKit.Net.Imap {
 		Literal
 	}
 
-	class ImapIdleContext : IDisposable
+	/// <summary>
+	/// An IMAP IDLE context.
+	/// </summary>
+	/// <remarks>
+	/// <para>An IMAP IDLE command does not work like normal commands. Unlike most commands,
+	/// the IDLE command does not end until the client sends a separate "DONE" command.</para>
+	/// <para>In order to facilitate this, the way this works is that the consumer of MailKit's
+	/// IMAP APIs provides a 'doneToken' which signals to the command-processing loop to
+	/// send the "DONE" command. Since, like every other IMAP command, it is also necessary to
+	/// provide a means of cancelling the IDLE command, it becomes necessary to link the
+	/// 'doneToken' and the 'cancellationToken' together.</para>
+	/// </remarks>
+	sealed class ImapIdleContext : IDisposable
 	{
 		readonly CancellationTokenSource source;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapIdleContext"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.Net.Imap.ImapIdleContext"/>.
+		/// </remarks>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="doneToken">The done token.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
 		public ImapIdleContext (ImapEngine engine, CancellationToken doneToken, CancellationToken cancellationToken)
 		{
 			source = CancellationTokenSource.CreateLinkedTokenSource (doneToken, cancellationToken);
@@ -103,30 +124,80 @@ namespace MailKit.Net.Imap {
 			Engine = engine;
 		}
 
+		/// <summary>
+		/// Get the engine.
+		/// </summary>
+		/// <remarks>
+		/// Gets the engine.
+		/// </remarks>
+		/// <value>The engine.</value>
 		public ImapEngine Engine {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Get the cancellation token.
+		/// </summary>
+		/// <remarks>
+		/// Get the cancellation token.
+		/// </remarks>
+		/// <value>The cancellation token.</value>
 		public CancellationToken CancellationToken {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Get the linked token.
+		/// </summary>
+		/// <remarks>
+		/// Gets the linked token.
+		/// </remarks>
+		/// <value>The linked token.</value>
 		public CancellationToken LinkedToken {
 			get { return source.Token; }
 		}
 
+		/// <summary>
+		/// Get the done token.
+		/// </summary>
+		/// <remarks>
+		/// Gets the done token.
+		/// </remarks>
+		/// <value>The done token.</value>
 		public CancellationToken DoneToken {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Get whether or not cancellation has been requested.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not cancellation has been requested.
+		/// </remarks>
+		/// <value><c>true</c> if cancellation has been requested; otherwise, <c>false</c>.</value>
 		public bool IsCancellationRequested {
 			get { return CancellationToken.IsCancellationRequested; }
 		}
 
+		/// <summary>
+		/// Get whether or not the IDLE command should be ended.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the IDLE command should be ended.
+		/// </remarks>
+		/// <value><c>true</c> if the IDLE command should end; otherwise, <c>false</c>.</value>
 		public bool IsDoneRequested {
 			get { return DoneToken.IsCancellationRequested; }
 		}
 
+		/// <summary>
+		/// Releases all resource used by the <see cref="MailKit.Net.Imap.ImapIdleContext"/> object.
+		/// </summary>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="MailKit.Net.Imap.ImapIdleContext"/>. The
+		/// <see cref="Dispose"/> method leaves the <see cref="MailKit.Net.Imap.ImapIdleContext"/> in an unusable state. After
+		/// calling <see cref="Dispose"/>, you must release all references to the
+		/// <see cref="MailKit.Net.Imap.ImapIdleContext"/> so the garbage collector can reclaim the memory that the
+		/// <see cref="MailKit.Net.Imap.ImapIdleContext"/> was occupying.</remarks>
 		public void Dispose ()
 		{
 			source.Dispose ();
@@ -136,12 +207,23 @@ namespace MailKit.Net.Imap {
 	/// <summary>
 	/// An IMAP literal object.
 	/// </summary>
+	/// <remarks>
+	/// The literal can be a string, byte[], Stream, or a MimeMessage.
+	/// </remarks>
 	class ImapLiteral
 	{
 		public readonly ImapLiteralType Type;
 		public readonly object Literal;
 		readonly FormatOptions format;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapLiteral"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.Net.Imap.ImapLiteral"/>.
+		/// </remarks>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="literal">The literal.</param>
 		public ImapLiteral (FormatOptions options, object literal)
 		{
 			format = options;
@@ -163,8 +245,11 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the length of the literal, in bytes.
+		/// Get the length of the literal, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the length of the literal, in bytes.
+		/// </remarks>
 		/// <value>The length.</value>
 		public long Length {
 			get {
@@ -189,8 +274,11 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Writes the literal to the specified stream.
+		/// Write the literal to the specified stream.
 		/// </summary>
+		/// <remarks>
+		/// Writes the literal to the specified stream.
+		/// </remarks>
 		/// <param name="stream">The stream.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public void WriteTo (ImapStream stream, CancellationToken cancellationToken)
@@ -224,6 +312,11 @@ namespace MailKit.Net.Imap {
 	/// <summary>
 	/// A partial IMAP command.
 	/// </summary>
+	/// <remarks>
+	/// IMAP commands that contain literal strings are broken up into multiple parts
+	/// in case the IMAP server does not support the LITERAL+ extension. These parts
+	/// are then sent individually as we receive "+" responses from the server.
+	/// </remarks>
 	class ImapCommandPart
 	{
 		public readonly byte[] Command;
@@ -262,6 +355,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.Net.Imap.ImapCommand"/>.
+		/// </remarks>
 		/// <param name="engine">The IMAP engine that will be sending the command.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="folder">The IMAP folder that the command operates on.</param>
@@ -349,6 +445,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.Net.Imap.ImapCommand"/>.
+		/// </remarks>
 		/// <param name="engine">The IMAP engine that will be sending the command.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="folder">The IMAP folder that the command operates on.</param>
@@ -466,10 +565,12 @@ namespace MailKit.Net.Imap {
 		public bool Step ()
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
+			int timeout = Engine.Stream.ReadTimeout;
 			var idle = UserData as ImapIdleContext;
 			var result = ImapCommandResult.None;
 			ImapToken token;
 
+			// construct and write the command tag if this is the initial state
 			if (current == 0) {
 				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
 
@@ -482,9 +583,12 @@ namespace MailKit.Net.Imap {
 
 				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
 
+				// if the server doesn't support LITERAL+, we'll need to wait for a "+" response
+				// before writing out the any literals...
 				if (!supportsLiteralPlus || parts[current].Literal == null)
 					break;
 
+				// otherwise, we can write out any and all literal tokens we have...
 				parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 
 				if (current + 1 >= parts.Count)
@@ -498,8 +602,6 @@ namespace MailKit.Net.Imap {
 			// now we need to read the response...
 			do {
 				if (Engine.State == ImapEngineState.Idle) {
-					int timeout = Engine.Stream.ReadTimeout;
-
 					try {
 						Engine.Stream.ReadTimeout = -1;
 
@@ -546,10 +648,8 @@ namespace MailKit.Net.Imap {
 						case "BAD": result = ImapCommandResult.Bad; break;
 						case "OK": result = ImapCommandResult.Ok; break;
 						case "NO": result = ImapCommandResult.No; break;
+						default: throw ImapEngine.UnexpectedToken (token, false);
 						}
-
-						if (result == ImapCommandResult.None)
-							throw ImapEngine.UnexpectedToken (token, false);
 
 						token = Engine.ReadToken (CancellationToken);
 						if (token.Type == ImapTokenType.OpenBracket) {
