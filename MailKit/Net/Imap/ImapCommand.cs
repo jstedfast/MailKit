@@ -403,7 +403,7 @@ namespace MailKit.Net.Imap {
 							break;
 						case 'F': // an ImapFolder
 							var utf7 = ((ImapFolder) args[argc++]).EncodedName;
-							AppendString (options, builder, utf7);
+							AppendString (options, true, builder, utf7);
 							break;
 						case 'L':
 							var literal = new ImapLiteral (options, args[argc++]);
@@ -424,7 +424,10 @@ namespace MailKit.Net.Imap {
 								builder.WriteByte ((byte) ')');
 							break;
 						case 'S': // a string which may need to be quoted or made into a literal
-							AppendString (options, builder, (string) args[argc++]);
+							AppendString (options, true, builder, (string) args[argc++]);
+							break;
+						case 'Q': // similar to %S but string must be quoted at a minimum
+							AppendString (options, false, builder, (string) args[argc++]);
 							break;
 						case 's': // a safe atom string
 							buf = Encoding.ASCII.GetBytes ((string) args[argc++]);
@@ -468,9 +471,9 @@ namespace MailKit.Net.Imap {
 			return (c < 128 || Engine.UTF8Enabled) && !char.IsControl (c);
 		}
 
-		ImapStringType GetStringType (string value)
+		ImapStringType GetStringType (string value, bool allowAtom)
 		{
-			var type = ImapStringType.Atom;
+			var type = allowAtom ? ImapStringType.Atom : ImapStringType.QString;
 
 			if (value.Length == 0)
 				return ImapStringType.QString;
@@ -487,11 +490,11 @@ namespace MailKit.Net.Imap {
 			return type;
 		}
 
-		void AppendString (FormatOptions options, MemoryStream builder, string value)
+		void AppendString (FormatOptions options, bool allowAtom, MemoryStream builder, string value)
 		{
 			byte[] buf;
 
-			switch (GetStringType (value)) {
+			switch (GetStringType (value, allowAtom)) {
 			case ImapStringType.Literal:
 				var literal = Encoding.UTF8.GetBytes (value);
 				var length = literal.Length.ToString ();

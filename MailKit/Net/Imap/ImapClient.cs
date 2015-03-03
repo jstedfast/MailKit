@@ -46,6 +46,7 @@ using SslProtocols = System.Security.Authentication.SslProtocols;
 #endif
 
 using MailKit.Security;
+using MimeKit.Utils;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -314,6 +315,128 @@ namespace MailKit.Net.Imap {
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					EnableUTF8 (cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		static void Id (ImapEngine engine, ImapCommand ic, int index)
+		{
+			var token = engine.ReadToken (ic.CancellationToken);
+			var implementation = new ImapImplementation ();
+
+			ic.UserData = implementation;
+
+			if (token.Type == ImapTokenType.Nil)
+				return;
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			token = engine.PeekToken (ic.CancellationToken);
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				var property = ImapUtils.ReadStringToken (engine, ic.CancellationToken);
+				var value = ImapUtils.ReadNStringToken (engine, false, ic.CancellationToken);
+
+				implementation.Properties[property] = value;
+
+				token = engine.PeekToken (ic.CancellationToken);
+			}
+
+			// read the ')' token
+			token = engine.ReadToken (ic.CancellationToken);
+		}
+
+		/// <summary>
+		/// Identify the client implementation to the server and obtain the server implementation details.
+		/// </summary>
+		/// <remarks>
+		/// <para>Passes along the client implementation details to the server while also obtaining implementation
+		/// details from the server.</para>
+		/// <para>If the <paramref name="clientImplementation"/> is null or no properties have been set, no
+		/// identifying information will be sent to the server.</para>
+		/// <para>Security Implications</para>
+		/// <para>This command has the danger of violating the privacy of users if misused. Clients should
+		/// notify users that they send the ID command.</para>
+		/// <para>It is highly desirable that implementations provide a method of disabling ID support, perhaps by
+		/// not calling this method at all, or by passing <c>null</c> as the <paramref name="clientImplementation"/>
+		/// argument.</para>
+		/// <para>Implementors must exercise extreme care in adding properties to the <paramref name="clientImplementation"/>.
+		/// Some properties, such as a processor ID number, Ethernet address, or other unique (or mostly unique) identifier
+		/// would allow tracking of users in ways that violate user privacy expectations and may also make it easier for
+		/// attackers to exploit security holes in the client.</para>
+		/// </remarks>
+		/// <returns>The implementation details of the server.</returns>
+		/// <param name="clientImplementation">The client implementation.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new InvalidOperationException ("The ImapClient must be connected before you can send an ID command.");
+
+			if (engine.IsProcessingCommands)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
+
+			if ((engine.Capabilities & ImapCapabilities.Id) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the ID extension.");
+
+			var command = new StringBuilder ("ID ");
+			var args = new List<object> ();
+
+			if (clientImplementation != null && clientImplementation.Properties.Count > 0) {
+				command.Append ('(');
+				foreach (var property in clientImplementation.Properties) {
+					command.Append ("%Q %Q ");
+					args.Add (property.Key);
+					args.Add (property.Value);
+				}
+				command[command.Length - 1] = ')';
+				command.Append ("\r\n");
+			} else {
+				command.Append ("NIL\r\n");
+			}
+
+			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
+			ic.RegisterUntaggedHandler ("ID", Id);
+
+			engine.QueueCommand (ic);
+			engine.Wait (ic);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("ID", ic);
+
+			return (ImapImplementation) ic.UserData;
+		}
+
+		/// <summary>
+		/// Asynchronously identify the client implementation to the server and obtain the server implementation details.
+		/// </summary>
+		/// <remarks>
+		/// <para>Passes along the client implementation details to the server while also obtaining implementation
+		/// details from the server.</para>
+		/// <para>If the <paramref name="clientImplementation"/> is null or no properties have been set, no
+		/// identifying information will be sent to the server.</para>
+		/// <para>Security Implications</para>
+		/// <para>This command has the danger of violating the privacy of users if misused. Clients should
+		/// notify users that they send the ID command.</para>
+		/// <para>It is highly desirable that implementations provide a method of disabling ID support, perhaps by
+		/// not calling this method at all, or by passing <c>null</c> as the <paramref name="clientImplementation"/>
+		/// argument.</para>
+		/// <para>Implementors must exercise extreme care in adding properties to the <paramref name="clientImplementation"/>.
+		/// Some properties, such as a processor ID number, Ethernet address, or other unique (or mostly unique) identifier
+		/// would allow tracking of users in ways that violate user privacy expectations and may also make it easier for
+		/// attackers to exploit security holes in the client.</para>
+		/// </remarks>
+		/// <returns>The implementation details of the server.</returns>
+		/// <param name="clientImplementation">The client implementation.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Identify (clientImplementation, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}

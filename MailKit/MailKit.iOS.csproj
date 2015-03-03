@@ -62,6 +62,7 @@
     <Compile Include="Net\Imap\ImapEncoding.cs" />
     <Compile Include="Net\Imap\ImapEngine.cs" />
     <Compile Include="Net\Imap\ImapFolder.cs" />
+    <Compile Include="Net\Imap\ImapImplementation.cs" />
     <Compile Include="Net\Imap\ImapProtocolException.cs" />
     <Compile Include="Net\Imap\ImapResponseCode.cs" />
     <Compile Include="Net\Imap\ImapSearchQueryOptimizer.cs" />

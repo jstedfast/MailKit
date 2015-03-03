@@ -476,7 +476,7 @@ namespace MailKit.Net.Imap {
 			list.Add (folder);
 		}
 
-		static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
+		internal static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -491,7 +491,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static string ReadNStringToken (ImapEngine engine, bool rfc2047, CancellationToken cancellationToken)
+		internal static string ReadNStringToken (ImapEngine engine, bool rfc2047, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			string value;
