@@ -409,6 +409,9 @@
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the ENABLE command with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="EnableUTF8">
@@ -449,6 +452,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the ENABLE command with a NO or BAD response.
             </exception>
       </Docs>
     </Member>
@@ -491,6 +497,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the ENABLE command with a NO or BAD response.
             </exception>
       </Docs>
     </Member>
@@ -668,6 +677,9 @@
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the ID command with a NO or BAD response.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="IdentifyAsync">
@@ -724,6 +736,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the ID command with a NO or BAD response.
             </exception>
       </Docs>
     </Member>

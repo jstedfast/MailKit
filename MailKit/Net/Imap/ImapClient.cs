@@ -198,6 +198,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the ENABLE command with a NO or BAD response.
+		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
@@ -251,6 +254,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the ENABLE command with a NO or BAD response.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
@@ -307,6 +313,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the ENABLE command with a NO or BAD response.
+		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
@@ -355,6 +364,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the ID command with a NO or BAD response.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
@@ -442,6 +454,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the ID command with a NO or BAD response.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
