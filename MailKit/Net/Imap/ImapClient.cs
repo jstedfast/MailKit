@@ -319,34 +319,6 @@ namespace MailKit.Net.Imap {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
-		static void Id (ImapEngine engine, ImapCommand ic, int index)
-		{
-			var token = engine.ReadToken (ic.CancellationToken);
-			var implementation = new ImapImplementation ();
-
-			ic.UserData = implementation;
-
-			if (token.Type == ImapTokenType.Nil)
-				return;
-
-			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
-
-			token = engine.PeekToken (ic.CancellationToken);
-
-			while (token.Type != ImapTokenType.CloseParen) {
-				var property = ImapUtils.ReadStringToken (engine, ic.CancellationToken);
-				var value = ImapUtils.ReadNStringToken (engine, false, ic.CancellationToken);
-
-				implementation.Properties[property] = value;
-
-				token = engine.PeekToken (ic.CancellationToken);
-			}
-
-			// read the ')' token
-			token = engine.ReadToken (ic.CancellationToken);
-		}
-
 		/// <summary>
 		/// Identify the client implementation to the server and obtain the server implementation details.
 		/// </summary>
@@ -369,6 +341,24 @@ namespace MailKit.Net.Imap {
 		/// <returns>The implementation details of the server.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is processing another command.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ID extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
 		public ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
@@ -388,9 +378,15 @@ namespace MailKit.Net.Imap {
 			if (clientImplementation != null && clientImplementation.Properties.Count > 0) {
 				command.Append ('(');
 				foreach (var property in clientImplementation.Properties) {
-					command.Append ("%Q %Q ");
+					command.Append ("%Q ");
 					args.Add (property.Key);
-					args.Add (property.Value);
+
+					if (property.Value != null) {
+						command.Append ("%Q ");
+						args.Add (property.Value);
+					} else {
+						command.Append ("NIL ");
+					}
 				}
 				command[command.Length - 1] = ')';
 				command.Append ("\r\n");
@@ -399,7 +395,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
-			ic.RegisterUntaggedHandler ("ID", Id);
+			ic.RegisterUntaggedHandler ("ID", ImapUtils.ParseImplementation);
 
 			engine.QueueCommand (ic);
 			engine.Wait (ic);
@@ -432,6 +428,24 @@ namespace MailKit.Net.Imap {
 		/// <returns>The implementation details of the server.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="ImapClient"/> is processing another command.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ID extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
 		public Task<ImapImplementation> IdentifyAsync (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {

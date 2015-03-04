@@ -383,6 +383,40 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Parses an untagged ID response.
+		/// </summary>
+		/// <param name="engine">The IMAP engine.</param>
+		/// <param name="ic">The IMAP command.</param>
+		/// <param name="index">The index.</param>
+		public static void ParseImplementation (ImapEngine engine, ImapCommand ic, int index)
+		{
+			var token = engine.ReadToken (ic.CancellationToken);
+			var implementation = new ImapImplementation ();
+
+			ic.UserData = implementation;
+
+			if (token.Type == ImapTokenType.Nil)
+				return;
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			token = engine.PeekToken (ic.CancellationToken);
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				var property = ImapUtils.ReadStringToken (engine, ic.CancellationToken);
+				var value = ImapUtils.ReadNStringToken (engine, false, ic.CancellationToken);
+
+				implementation.Properties[property] = value;
+
+				token = engine.PeekToken (ic.CancellationToken);
+			}
+
+			// read the ')' token
+			engine.ReadToken (ic.CancellationToken);
+		}
+
+		/// <summary>
 		/// Parses an untagged LIST or LSUB response.
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
@@ -476,7 +510,7 @@ namespace MailKit.Net.Imap {
 			list.Add (folder);
 		}
 
-		internal static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
+		static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -491,7 +525,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal static string ReadNStringToken (ImapEngine engine, bool rfc2047, CancellationToken cancellationToken)
+		static string ReadNStringToken (ImapEngine engine, bool rfc2047, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 			string value;
@@ -955,7 +989,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 			}
 
-			if (!DateUtils.TryParseDateTime (value, out date))
+			if (!DateUtils.TryParse (value, out date))
 				return null;
 
 			return date;
@@ -1148,7 +1182,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The threads.</returns>
 		/// <param name="engine">The IMAP engine.</param>
-		/// <param name="uidValidiuty">The UIDVALIDITY of the folder.</param>
+		/// <param name="uidValidity">The UIDVALIDITY of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static IList<MessageThread> ParseThreads (ImapEngine engine, uint uidValidity, CancellationToken cancellationToken)
 		{

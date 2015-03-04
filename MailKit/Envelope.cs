@@ -473,7 +473,7 @@ namespace MailKit {
 			if (nstring != null) {
 				DateTimeOffset value;
 
-				if (!DateUtils.TryParseDateTime (nstring, out value))
+				if (!DateUtils.TryParse (nstring, out value))
 					return false;
 
 				date = value;

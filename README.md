@@ -43,6 +43,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * LITERAL+
     * IDLE
     * NAMESPACE
+    * ID
     * CHILDREN
     * LOGINDISABLED
     * STARTTLS
