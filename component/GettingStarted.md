@@ -103,7 +103,7 @@ namespace TestClient {
 		public static void Main (string[] args)
 		{
 			using (var client = new ImapClient ()) {
-				client.Connect ("imap.friends.com", 995, true);
+				client.Connect ("imap.friends.com", 993, true);
 
 				// Note: since we don't have an OAuth2 token, disable
 				// the XOAUTH2 authentication mechanism.
