@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle, Version=1.8.5539.14431, Culture=neutral, PublicKeyToken=eec3120e64a3fcba, processorArchitecture=MSIL">
+    <Reference Include="BouncyCastle, Version=1.8.5545.16716, Culture=neutral, PublicKeyToken=eec3120e64a3fcba, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MimeKit.1.0.8.0\lib\net45\BouncyCastle.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.0.9.0\lib\net45\BouncyCastle.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -42,11 +42,11 @@
     </Reference>
     <Reference Include="MailKit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MailKit.1.0.9.0\lib\net45\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.1.0.10.0\lib\net45\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MimeKit.1.0.8.0\lib\net45\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.0.9.0\lib\net45\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
