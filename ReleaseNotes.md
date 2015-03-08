@@ -1,5 +1,9 @@
 # Release Notes
 
+### MailKit 1.0.10
+
+* Added support for the IMAP ID extension.
+
 ### MailKit 1.0.9
 
 * Modified UniqueId to contain a Validity value. This allows ImapFolder.Append(),
