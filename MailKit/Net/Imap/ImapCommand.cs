@@ -568,7 +568,7 @@ namespace MailKit.Net.Imap {
 		public bool Step ()
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
-			int timeout = Engine.Stream.ReadTimeout;
+			int timeout = Engine.Stream.CanTimeout ? Engine.Stream.ReadTimeout : -1;
 			var idle = UserData as ImapIdleContext;
 			var result = ImapCommandResult.None;
 			ImapToken token;
@@ -606,12 +606,16 @@ namespace MailKit.Net.Imap {
 			do {
 				if (Engine.State == ImapEngineState.Idle) {
 					try {
-						Engine.Stream.ReadTimeout = -1;
+						if (Engine.Stream.CanTimeout)
+							Engine.Stream.ReadTimeout = -1;
 
 						token = Engine.ReadToken (idle.LinkedToken);
-						Engine.Stream.ReadTimeout = timeout;
+
+						if (Engine.Stream.CanTimeout)
+							Engine.Stream.ReadTimeout = timeout;
 					} catch (OperationCanceledException) {
-						Engine.Stream.ReadTimeout = timeout;
+						if (Engine.Stream.CanTimeout)
+							Engine.Stream.ReadTimeout = timeout;
 
 						if (idle.IsCancellationRequested)
 							throw;
