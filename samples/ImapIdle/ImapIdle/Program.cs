@@ -41,15 +41,12 @@ namespace ImapIdle {
 			var logger = new ProtocolLogger (Console.OpenStandardError ());
 
 			using (var client = new ImapClient (logger)) {
-				var credentials = new NetworkCredential ("username@gmail.com", "password");
-				var uri = new Uri ("imaps://imap.gmail.com");
-
-				client.Connect (uri);
+				client.Connect ("imap.gmail.com", 993, true);
 
 				// Remove the XOAUTH2 authentication mechanism since we don't have an OAuth2 token.
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-				client.Authenticate (credentials);
+				client.Authenticate ("username@gmail.com", "password");
 
 				client.Inbox.Open (FolderAccess.ReadOnly);
 
