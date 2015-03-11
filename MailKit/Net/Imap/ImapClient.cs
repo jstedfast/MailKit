@@ -1286,7 +1286,9 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ("An ImapFolder has not been opened.");
 
 			return Task.Factory.StartNew (() => {
-				Idle (doneToken, cancellationToken);
+				lock (SyncRoot) {
+					Idle (doneToken, cancellationToken);
+				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Default);
 		}
 
