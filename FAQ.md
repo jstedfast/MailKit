@@ -78,3 +78,20 @@ If you find that this query doesn't get the expected results for your IMAP serve
 var query = SearchQuery.Not (SearchQuery.DeliveredBefore (dateRange.BeginDate).Or (SearchQuery.DeliveredAfter (dateRange.EndDate)));
 var results = folder.Search (query);
 ```
+
+### I'm getting an InvalidOperationException that says, "The ImapClient is currently busy processing a command." What does that mean?
+
+What this means is that you are trying to use the `ImapClient` and/or one of its `ImapFolder`s from multiple threads.
+To avoid this situation, you'll need to lock the `SyncRoot` property of the `ImapClient` and `ImapFolder` objects
+when performing operations on them.
+
+For example:
+
+```csharp
+lock (client.SyncRoot) {
+    client.NoOp ();
+}
+```
+
+Note: Locking the `SyncRoot` is only necessary when using the synchronous API's. All `Async()` method variants
+already do this locking for you.
