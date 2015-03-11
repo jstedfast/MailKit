@@ -183,6 +183,10 @@ namespace ImapIdle {
 				}
 			}
 
+			/// <summary>
+			/// Sets the timeout source.
+			/// </summary>
+			/// <param name="source">The timeout source.</param>
 			public void SetTimeoutSource (CancellationTokenSource source)
 			{
 				lock (mutex) {
@@ -204,11 +208,11 @@ namespace ImapIdle {
 				//
 				// For GMail, we use a 9 minute interval because they do not seem to keep the connection alive for more than ~10 minutes.
 				while (!idle.IsCancellationRequested) {
-					// Note: In .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
+					// Note: Starting with .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
 					// takes a TimeSpan argument, thus eliminating the need to create a timer.
 					using (var timeout = new CancellationTokenSource ()) {
 						using (var timer = new System.Timers.Timer (9 * 60 * 1000)) {
-							// End the IDLE command after 29 minutes... (most servers will disconnect the client after 30 minutes)
+							// End the IDLE command when the timer expires.
 							timer.Elapsed += (sender, e) => timeout.Cancel ();
 							timer.AutoReset = false;
 							timer.Enabled = true;
