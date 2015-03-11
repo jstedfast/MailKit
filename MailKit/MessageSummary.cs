@@ -25,9 +25,11 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using MimeKit;
+using MimeKit.Utils;
 
 namespace MailKit {
 	/// <summary>
@@ -74,6 +76,178 @@ namespace MailKit {
 		/// <value>The body structure of the message.</value>
 		public BodyPart Body {
 			get; set;
+		}
+
+		static BodyPart GetMultipartRelatedRoot (BodyPartMultipart related)
+		{
+			string start = related.ContentType.Parameters["start"];
+			string contentId;
+
+			if (start == null)
+				return related.BodyParts.Count > 0 ? related.BodyParts[0] : null;
+
+			if ((contentId = MimeUtils.EnumerateReferences (start).FirstOrDefault ()) == null)
+				contentId = start;
+
+			var cid = new Uri (string.Format ("cid:{0}", contentId));
+
+			for (int i = 0; i < related.BodyParts.Count; i++) {
+				var basic = related.BodyParts[i] as BodyPartBasic;
+
+				if (basic != null && (basic.ContentId == contentId || basic.ContentLocation == cid))
+					return basic;
+
+				var multipart = related.BodyParts[i] as BodyPartMultipart;
+
+				if (multipart != null && multipart.ContentLocation == cid)
+					return multipart;
+			}
+
+			return null;
+		}
+
+		static bool TryGetMultipartAlternativeBody (BodyPartMultipart multipart, bool html, out BodyPartText body)
+		{
+			// walk the multipart/alternative children backwards from greatest level of faithfulness to the least faithful
+			for (int i = multipart.BodyParts.Count - 1; i >= 0; i--) {
+				var multi = multipart.BodyParts[i] as BodyPartMultipart;
+				BodyPartText text = null;
+
+				if (multi != null) {
+					if (multi.ContentType.Matches ("multipart", "related")) {
+						text = GetMultipartRelatedRoot (multi) as BodyPartText;
+					} else if (multi.ContentType.Matches ("multipart", "alternative")) {
+						// Note: nested multipart/alternatives make no sense... yet here we are.
+						if (TryGetMultipartAlternativeBody (multi, html, out body))
+							return true;
+					}
+				} else {
+					text = multipart.BodyParts[i] as BodyPartText;
+				}
+
+				if (text != null && (html ? text.IsHtml : text.IsPlain)) {
+					body = text;
+					return true;
+				}
+			}
+
+			body = null;
+
+			return false;
+		}
+
+		static bool TryGetMessageBody (BodyPartMultipart multipart, bool html, out BodyPartText body)
+		{
+			BodyPartMultipart multi;
+			BodyPartText text;
+
+			if (multipart.ContentType.Matches ("multipart", "alternative"))
+				return TryGetMultipartAlternativeBody (multipart, html, out body);
+
+			if (!multipart.ContentType.Matches ("multipart", "related")) {
+				// Note: This is probably a multipart/mixed... and if not, we can still treat it like it is.
+				for (int i = 0; i < multipart.BodyParts.Count; i++) {
+					multi = multipart.BodyParts[i] as BodyPartMultipart;
+
+					// descend into nested multiparts, if there are any...
+					if (multi != null) {
+						if (TryGetMessageBody (multi, html, out body))
+							return true;
+
+						// The text body should never come after a multipart.
+						break;
+					}
+
+					text = multipart.BodyParts[i] as BodyPartText;
+
+					// Look for the first non-attachment text part (realistically, the body text will
+					// preceed any attachments, but I'm not sure we can rely on that assumption).
+					if (text != null && !text.IsAttachment) {
+						if (html ? text.IsHtml : text.IsPlain) {
+							body = text;
+							return true;
+						}
+
+						// Note: the first text/* part in a multipart/mixed is the text body.
+						// If it's not in the format we're looking for, then it doesn't exist.
+						break;
+					}
+				}
+			} else {
+				// Note: If the multipart/related root document is HTML, then this is the droid we are looking for.
+				var root = GetMultipartRelatedRoot (multipart);
+
+				text = root as BodyPartText;
+
+				if (text != null) {
+					body = (html ? text.IsHtml : text.IsPlain) ? text : null;
+					return body != null;
+				}
+
+				// maybe the root is another multipart (like multipart/alternative)?
+				multi = root as BodyPartMultipart;
+
+				if (multi != null)
+					return TryGetMessageBody (multi, html, out body);
+			}
+
+			body = null;
+
+			return false;
+		}
+
+		/// <summary>
+		/// Gets the text body part of the message if it exists.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the text/plain body part of the message.</para>
+		/// </remarks>
+		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
+		public BodyPartText TextBody {
+			get {
+				var multipart = Body as BodyPartMultipart;
+
+				if (multipart != null) {
+					BodyPartText plain;
+
+					if (TryGetMessageBody (multipart, false, out plain))
+						return plain;
+				} else {
+					var text = Body as BodyPartText;
+
+					if (text != null && text.IsPlain)
+						return text;
+				}
+
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Gets the html body part of the message if it exists.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the text/html body part of the message.</para>
+		/// </remarks>
+		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
+		public BodyPartText HtmlBody {
+			get {
+				var multipart = Body as BodyPartMultipart;
+
+				if (multipart != null) {
+					BodyPartText html;
+
+					if (TryGetMessageBody (multipart, true, out html))
+						return html;
+				} else {
+					var text = Body as BodyPartText;
+
+					if (text != null && text.IsHtml)
+						return text;
+				}
+
+				return null;
+			}
 		}
 
 		/// <summary>
