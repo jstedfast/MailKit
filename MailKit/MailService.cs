@@ -67,10 +67,13 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets an object that can be used to synchronize access to the folder.
+		/// Gets an object that can be used to synchronize access to the service.
 		/// </summary>
 		/// <remarks>
-		/// Gets an object that can be used to synchronize access to the folder.
+		/// <para>Gets an object that can be used to synchronize access to the service.</para>
+		/// <para>When mixing usage of Async and non-Async methods or even just using non-Async methods
+		/// from multiple threads, it is important to lock the <see cref="SyncRoot"/> object for
+		/// thread safety.</para>
 		/// </remarks>
 		/// <value>The sync root.</value>
 		public abstract object SyncRoot {

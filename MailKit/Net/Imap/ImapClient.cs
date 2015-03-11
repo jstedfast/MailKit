@@ -110,10 +110,13 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the lock object used by the default Async methods.
+		/// Gets an object that can be used to synchronize access to the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// Gets the lock object used by the default Async methods.
+		/// <para>Gets an object that can be used to synchronize access to the IMAP server.</para>
+		/// <para>When mixing usage of Async and non-Async methods or even just using non-Async methods
+		/// from multiple threads, it is important to lock the <see cref="SyncRoot"/> object for
+		/// thread safety.</para>
 		/// </remarks>
 		/// <value>The lock object.</value>
 		public override object SyncRoot {
