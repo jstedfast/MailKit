@@ -70,8 +70,9 @@ namespace MailKit {
 		/// <see cref="BodyPartMessage"/>, <see cref="BodyPartBasic"/>,
 		/// or <see cref="BodyPartMultipart"/>.</para>
 		/// <para>This property will only be set if the
-		/// <see cref="MessageSummaryItems.Body"/> flag is passed to
-		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
+		/// <see cref="MessageSummaryItems.BodyStructure"/> or
+		/// <see cref="MessageSummaryItems.Body"/> flag is used
+		/// when fetching summary information from a <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The body structure of the message.</value>
 		public BodyPart Body {
@@ -201,6 +202,9 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the text/plain body part of the message.</para>
+		/// <para>In order for this to work properly, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText TextBody {
@@ -228,6 +232,9 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the text/html body part of the message.</para>
+		/// <para>In order for this to work properly, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
 		public BodyPartText HtmlBody {
@@ -248,6 +255,70 @@ namespace MailKit {
 
 				return null;
 			}
+		}
+
+		static IEnumerable<BodyPartBasic> EnumerateBodyParts (BodyPart entity)
+		{
+			if (entity == null)
+				yield break;
+
+			var multipart = entity as BodyPartMultipart;
+
+			if (multipart != null) {
+				foreach (var subpart in multipart.BodyParts) {
+					foreach (var part in EnumerateBodyParts (subpart))
+						yield return part;
+				}
+
+				yield break;
+			}
+
+			var msgpart = entity as BodyPartMessage;
+
+			if (msgpart != null) {
+				var message = msgpart.Body;
+
+				if (message != null) {
+					foreach (var part in EnumerateBodyParts (message))
+						yield return part;
+				}
+
+				yield break;
+			}
+
+			yield return (BodyPartBasic) entity;
+		}
+
+		/// <summary>
+		/// Gets the body parts of the message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
+		/// <see cref="BodyPartBasic"/> objects.</para>
+		/// <para>In order for this to work, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> or
+		/// <see cref="MessageSummaryItems.Body"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// </remarks>
+		/// <value>The body parts.</value>
+		public IEnumerable<BodyPartBasic> BodyParts {
+			get { return EnumerateBodyParts (Body); }
+		}
+
+		/// <summary>
+		/// Gets the attachments.
+		/// </summary>
+		/// <remarks>
+		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
+		/// <see cref="BodyPartBasic"/> objects that have a Content-Disposition
+		/// header set to <c>"attachment"</c>.</para>
+		/// <para>In order for this to work properly, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// </remarks>
+		/// <value>The attachments.</value>
+		public IEnumerable<BodyPartBasic> Attachments {
+			get { return EnumerateBodyParts (Body).Where (part => part.IsAttachment); }
 		}
 
 		/// <summary>
