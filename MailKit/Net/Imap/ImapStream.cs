@@ -332,7 +332,7 @@ namespace MailKit.Net.Imap {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("Pop3Stream");
+				throw new ObjectDisposedException ("ImapStream");
 		}
 
 		/// <summary>

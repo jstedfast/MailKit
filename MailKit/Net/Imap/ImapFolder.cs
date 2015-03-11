@@ -2258,8 +2258,8 @@ namespace MailKit.Net.Imap {
 								throw;
 
 							// Note: GMail's IMAP implementation sometimes replies with completely broken BODY values
-							// (see issue #32 for examples), so to work around this nonsense, we need to drop the
-							// remainder of this line.
+							// (see issue #32 for the `BODY ("ALTERNATIVE")` example), so to work around this nonsense,
+							// we need to drop the remainder of this line.
 							do {
 								token = engine.PeekToken (ic.CancellationToken);
 
