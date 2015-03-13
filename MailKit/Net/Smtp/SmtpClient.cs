@@ -74,6 +74,7 @@ namespace MailKit.Net.Smtp {
 		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		const int MaxLineLength = 998;
 
 		enum SmtpCommand {
 			MailFrom,
@@ -1188,11 +1189,11 @@ namespace MailKit.Net.Smtp {
 			ContentEncoding encoding;
 
 			if ((capabilities & SmtpCapabilities.BinaryMime) != 0)
-				encoding = part.GetBestEncoding (EncodingConstraint.None);
+				encoding = part.GetBestEncoding (EncodingConstraint.None, MaxLineLength);
 			else if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
-				encoding = part.GetBestEncoding (EncodingConstraint.EightBit);
+				encoding = part.GetBestEncoding (EncodingConstraint.EightBit, MaxLineLength);
 			else
-				encoding = part.GetBestEncoding (EncodingConstraint.SevenBit);
+				encoding = part.GetBestEncoding (EncodingConstraint.SevenBit, MaxLineLength);
 
 			if (encoding == ContentEncoding.SevenBit)
 				return encoding;
