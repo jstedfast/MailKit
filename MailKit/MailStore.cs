@@ -92,10 +92,11 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the Inbox folder.
+		/// Get the Inbox folder.
 		/// </summary>
 		/// <remarks>
-		/// The Inbox folder is the default folder and always exists.
+		/// <para>The Inbox folder is the default folder and always exists on the mail store.</para>
+		/// <para>Note: This property will only be set once the client has been authenticated.</para>
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
 		public abstract IMailFolder Inbox {
