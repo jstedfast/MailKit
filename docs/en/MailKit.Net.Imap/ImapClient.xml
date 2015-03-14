@@ -891,8 +891,41 @@
             </summary>
         <value>The Inbox folder.</value>
         <remarks>
-            The Inbox folder is the default folder and always exists.
-            </remarks>
+          <para>The Inbox folder is the default folder and always exists on the server.</para>
+          <para>Note: This property will only be available after the client has been authenticated.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="IsAuthenticated">
+      <MemberSignature Language="C#" Value="public override bool IsAuthenticated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAuthenticated" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get whether or not the client is currently authenticated with the IMAP server.
+            </summary>
+        <value>
+          <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        <remarks>
+          <para>Gets whether or not the client is currently authenticated with the IMAP server.</para>
+          <para>To authenticate with the mail server, use
+            <see cref="!:Authenticate(System.String,System.String,System.Threading.CancellationToken)" />
+            or <see cref="!:Authenticate(System.Net.ICredential,System.Threading.CancellationToken)" />.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="IsConnected">
@@ -914,6 +947,26 @@
         <remarks>
             When an <see cref="T:MailKit.Net.Imap.ImapProtocolException" /> is caught, the connection state of the
             <see cref="T:MailKit.Net.Imap.ImapClient" /> should be checked before continuing.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsIdle">
+      <MemberSignature Language="C#" Value="public bool IsIdle { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIdle" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get whether or not the client is currently in the IDLE state.
+            </summary>
+        <value>To be added.</value>
+        <remarks>
+            Gets whether or not the client is currently in the IDLE state.
             </remarks>
       </Docs>
     </Member>
@@ -1071,12 +1124,14 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the lock object used by the default Async methods.
+            Gets an object that can be used to synchronize access to the IMAP server.
             </summary>
         <value>The lock object.</value>
         <remarks>
-            Gets the lock object used by the default Async methods.
-            </remarks>
+          <para>Gets an object that can be used to synchronize access to the IMAP server.</para>
+          <para>When using the non-Async methods from multiple threads, it is important to lock the
+            <see cref="P:MailKit.Net.Imap.ImapClient.SyncRoot" /> object for thread safety when using the synchronous methods.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="ThreadingAlgorithms">

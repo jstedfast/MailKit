@@ -48,6 +48,31 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="Attachments">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.BodyPartBasic&gt; Attachments { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.BodyPartBasic&gt; Attachments" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.BodyPartBasic&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the attachments.
+            </summary>
+        <value>The attachments.</value>
+        <remarks>
+          <para>Traverses over the <see cref="P:MailKit.MessageSummary.Body" />, enumerating all of the
+            <see cref="T:MailKit.BodyPartBasic" /> objects that have a Content-Disposition
+            header set to <c>"attachment"</c>.</para>
+          <para>In order for this to work properly, it is necessary to include
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> when fetching
+            summary information from a <see cref="T:MailKit.IMailFolder" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Body">
       <MemberSignature Language="C#" Value="public MailKit.BodyPart Body { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPart Body" />
@@ -68,8 +93,34 @@
             <see cref="T:MailKit.BodyPartMessage" />, <see cref="T:MailKit.BodyPartBasic" />,
             or <see cref="T:MailKit.BodyPartMultipart" />.</para>
           <para>This property will only be set if the
-            <see cref="F:MailKit.MessageSummaryItems.Body" /> flag is passed to
-            <see cref="M:MailKit.IMailFolder.Fetch(System.Collections.Generic.IList{MailKit.UniqueId},MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> or
+            <see cref="F:MailKit.MessageSummaryItems.Body" /> flag is used
+            when fetching summary information from a <see cref="T:MailKit.IMailFolder" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BodyParts">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;MailKit.BodyPartBasic&gt; BodyParts { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.BodyPartBasic&gt; BodyParts" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.BodyPartBasic&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the body parts of the message.
+            </summary>
+        <value>The body parts.</value>
+        <remarks>
+          <para>Traverses over the <see cref="P:MailKit.MessageSummary.Body" />, enumerating all of the
+            <see cref="T:MailKit.BodyPartBasic" /> objects.</para>
+          <para>In order for this to work, it is necessary to include
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> or
+            <see cref="F:MailKit.MessageSummaryItems.Body" /> when fetching
+            summary information from a <see cref="T:MailKit.IMailFolder" />.</para>
         </remarks>
       </Docs>
     </Member>
@@ -212,6 +263,29 @@
           <para>This property will only be set if the
             <see cref="M:MailKit.IMailFolder.Fetch(System.Collections.Generic.IList{MailKit.UniqueId},MailKit.MessageSummaryItems,System.Collections.Generic.HashSet{MimeKit.HeaderId},System.Threading.CancellationToken)" />.
             method is used.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HtmlBody">
+      <MemberSignature Language="C#" Value="public MailKit.BodyPartText HtmlBody { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPartText HtmlBody" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.BodyPartText</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the html body part of the message if it exists.
+            </summary>
+        <value>The html body if it exists; otherwise, <c>null</c>.</value>
+        <remarks>
+          <para>Gets the text/html body part of the message.</para>
+          <para>In order for this to work properly, it is necessary to include
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> when fetching
+            summary information from a <see cref="T:MailKit.IMailFolder" />.</para>
         </remarks>
       </Docs>
     </Member>
@@ -610,6 +684,29 @@
           <para>This property will only be set if the
             <see cref="F:MailKit.MessageSummaryItems.References" /> flag is passed to
             <see cref="M:MailKit.IMailFolder.Fetch(System.Collections.Generic.IList{MailKit.UniqueId},MailKit.MessageSummaryItems,System.Threading.CancellationToken)" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TextBody">
+      <MemberSignature Language="C#" Value="public MailKit.BodyPartText TextBody { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.BodyPartText TextBody" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.BodyPartText</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets the text body part of the message if it exists.
+            </summary>
+        <value>The text body if it exists; otherwise, <c>null</c>.</value>
+        <remarks>
+          <para>Gets the text/plain body part of the message.</para>
+          <para>In order for this to work properly, it is necessary to include
+            <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> when fetching
+            summary information from a <see cref="T:MailKit.IMailFolder" />.</para>
         </remarks>
       </Docs>
     </Member>

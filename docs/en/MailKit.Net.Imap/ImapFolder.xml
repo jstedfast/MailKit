@@ -5291,12 +5291,14 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets an object that can be used to synchronize access to the folder.
+            Gets an object that can be used to synchronize access to the IMAP server.
             </summary>
-        <value>The sync root.</value>
+        <value>The lock object.</value>
         <remarks>
-            Gets an object that can be used to synchronize access to the folder.
-            </remarks>
+          <para>Gets an object that can be used to synchronize access to the IMAP server.</para>
+          <para>When using the non-Async methods from multiple threads, it is important to lock the
+            <see cref="P:MailKit.Net.Imap.ImapFolder.SyncRoot" /> object for thread safety when using the synchronous methods.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Thread">

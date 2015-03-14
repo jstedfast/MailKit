@@ -1893,6 +1893,30 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="IsAuthenticated">
+      <MemberSignature Language="C#" Value="public override bool IsAuthenticated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAuthenticated" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get whether or not the client is currently authenticated with the POP3 server.
+            </summary>
+        <value>
+          <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+        <remarks>
+          <para>Gets whether or not the client is currently authenticated with the POP3 server.</para>
+          <para>To authenticate with the mail server, use
+            <see cref="!:Authenticate(string, string, System.Threading.CancellationToken)" />
+            or <see cref="!:Authenticate(ICredential, System.Threading.CancellationToken)" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="IsConnected">
       <MemberSignature Language="C#" Value="public override bool IsConnected { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool IsConnected" />
@@ -2192,12 +2216,14 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Gets the lock object used by the default Async methods.
+            Gets an object that can be used to synchronize access to the POP3 server.
             </summary>
         <value>The lock object.</value>
         <remarks>
-            Gets the lock object used by the default Async methods.
-            </remarks>
+          <para>Gets an object that can be used to synchronize access to the POP3 server.</para>
+          <para>When using the non-Async methods from multiple threads, it is important to lock the
+            <see cref="P:MailKit.Net.Pop3.Pop3Client.SyncRoot" /> object for thread safety when using the synchronous methods.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Timeout">

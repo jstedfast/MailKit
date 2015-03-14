@@ -264,9 +264,9 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets whether or not the client is currently authenticated with the SMTP server.</para>
-		/// <para>To authenticate with the mail server, use
-		/// <see cref="Authenticate(string, string, System.Threading.CancellationToken)"/>
-		/// or <see cref="Authenticate(ICredential, System.Threading.CancellationToken)"/>.</para>
+		/// <para>To authenticate with the SMTP server, use
+		/// <see cref="MailService.Authenticate(String,String,CancellationToken)"/>
+		/// or <see cref="Authenticate(ICredentials,CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsAuthenticated {

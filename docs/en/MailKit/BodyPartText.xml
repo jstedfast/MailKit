@@ -58,6 +58,48 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="IsHtml">
+      <MemberSignature Language="C#" Value="public bool IsHtml { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsHtml" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets whether or not this text part contains HTML.
+            </summary>
+        <value>
+          <c>true</c> if the text is html; otherwise, <c>false</c>.</value>
+        <remarks>
+            Checks whether or not the text part's Content-Type is text/html.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsPlain">
+      <MemberSignature Language="C#" Value="public bool IsPlain { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPlain" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Gets whether or not this text part contains plain text.
+            </summary>
+        <value>
+          <c>true</c> if the text is html; otherwise, <c>false</c>.</value>
+        <remarks>
+            Checks whether or not the text part's Content-Type is text/plain.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Lines">
       <MemberSignature Language="C#" Value="public uint Lines { get; set; }" />
       <MemberSignature Language="ILAsm" Value=".property instance unsigned int32 Lines" />

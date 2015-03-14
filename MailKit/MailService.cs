@@ -134,8 +134,8 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Gets whether or not the client is currently authenticated with the mail server.</para>
 		/// <para>To authenticate with the mail server, use
-		/// <see cref="Authenticate(string, string, System.Threading.CancellationToken)"/>,
-		/// <see cref="Authenticate(ICredential, System.Threading.CancellationToken)"/>,
+		/// <see cref="Authenticate(String,String,CancellationToken)"/>,
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>,
 		/// or any of the Async alternatives.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>

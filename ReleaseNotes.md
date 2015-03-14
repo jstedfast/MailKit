@@ -1,5 +1,18 @@
 # Release Notes
 
+### MailKit 1.0.11
+
+* Make sure that the IMAP stream supports timeouts before using them (fixes a
+  regression introduced in 1.0.10).
+* Added BodyParts and Attachments convenience properties to MessageSummary.
+* Added TextBody and HtmlBody convenience properties to MessageSummary.
+* Added ImapClient.IsAuthenticated, Pop3Client.IsAuthenticated and
+  SmtpClient.IsAuthenticated properties.
+* Changed the ImapClient.Inbox property to throw InvalidOperationException if
+  you try to access it before authenticating instead of returning null.
+* Added an ImapClient.IsIdle property to check if the ImapClient is currently
+  in the IDLE state.
+
 ### MailKit 1.0.10
 
 * Added support for the IMAP ID extension.
