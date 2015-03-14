@@ -226,6 +226,12 @@ namespace MailKit.Net.Pop3 {
 				throw new InvalidOperationException ("The Pop3Client is not connected.");
 		}
 
+		void CheckAuthenticated ()
+		{
+			if (!IsAuthenticated)
+				throw new UnauthorizedAccessException ("The Pop3Client has not been authenticated.");
+		}
+
 #if !NETFX_CORE
 		static bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
@@ -344,6 +350,20 @@ namespace MailKit.Net.Pop3 {
 			get { return engine.IsConnected; }
 		}
 
+		/// <summary>
+		/// Get whether or not the client is currently authenticated with the POP3 server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the client is currently authenticated with the POP3 server.</para>
+		/// <para>To authenticate with the mail server, use
+		/// <see cref="Authenticate(string, string, System.Threading.CancellationToken)"/>
+		/// or <see cref="Authenticate(ICredential, System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		public override bool IsAuthenticated {
+			get { return engine.State == Pop3EngineState.Transaction; }
+		}
+
 		void ProbeCapabilities (CancellationToken cancellationToken)
 		{
 			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0) {
@@ -412,7 +432,7 @@ namespace MailKit.Net.Pop3 {
 			if (!IsConnected)
 				throw new InvalidOperationException ("The Pop3Client must be connected before you can authenticate.");
 
-			if (engine.State == Pop3EngineState.Transaction)
+			if (IsAuthenticated)
 				throw new InvalidOperationException ("The Pop3Client is already authenticated.");
 
 			CheckDisposed ();
@@ -872,9 +892,8 @@ namespace MailKit.Net.Pop3 {
 		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new InvalidOperationException ("You must be authenticated before you can issue a NOOP command.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			SendCommand (cancellationToken, "NOOP");
 		}
@@ -1240,9 +1259,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
@@ -1316,9 +1333,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
@@ -1414,9 +1429,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
@@ -1564,9 +1577,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			LoadUids ();
 
@@ -1613,9 +1624,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
@@ -1656,9 +1665,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			var sizes = new List<int> ();
 
@@ -1868,9 +1875,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			LoadUids ();
 
@@ -1917,9 +1922,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
@@ -1979,9 +1982,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			LoadUids ();
 
@@ -2056,9 +2057,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			var seqids = new int[indexes.Count];
 
@@ -2126,9 +2125,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (count == 0)
 				return new HeaderList[0];
@@ -2196,9 +2193,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			LoadUids ();
 
@@ -2245,9 +2240,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
@@ -2307,9 +2300,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			LoadUids ();
 
@@ -2378,9 +2369,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			var seqids = new int[indexes.Count];
 
@@ -2442,9 +2431,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (count == 0)
 				return new MimeMessage[0];
@@ -2507,9 +2494,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			LoadUids ();
 
@@ -2557,9 +2542,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
@@ -2620,9 +2603,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			LoadUids ();
 
@@ -2711,9 +2692,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			var seqids = new int[indexes.Count];
 
@@ -2795,9 +2774,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			if (count == 0)
 				return;
@@ -2897,9 +2874,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			SendCommand (cancellationToken, "RSET");
 		}
@@ -2940,9 +2915,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			CheckDisposed ();
 			CheckConnected ();
-
-			if (engine.State != Pop3EngineState.Transaction)
-				throw new UnauthorizedAccessException ();
+			CheckAuthenticated ();
 
 			int n = GetMessageCount (CancellationToken.None);
 

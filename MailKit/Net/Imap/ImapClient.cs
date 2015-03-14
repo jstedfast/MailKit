@@ -529,6 +529,30 @@ namespace MailKit.Net.Imap {
 			get { return engine.IsConnected; }
 		}
 
+		/// <summary>
+		/// Get whether or not the client is currently authenticated with the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the client is currently authenticated with the IMAP server.</para>
+		/// <para>To authenticate with the mail server, use
+		/// <see cref="Authenticate(string, string, System.Threading.CancellationToken)"/>
+		/// or <see cref="Authenticate(ICredential, System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		public override bool IsAuthenticated {
+			get { return engine.State >= ImapEngineState.Authenticated; }
+		}
+
+		/// <summary>
+		/// Get whether or not the client is currently in the IDLE state.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the client is currently in the IDLE state.
+		/// </remarks>
+		public bool IsIdle {
+			get { return engine.State == ImapEngineState.Idle; }
+		}
+
 		static AuthenticationException CreateAuthenticationException (ImapCommand ic)
 		{
 			if (string.IsNullOrEmpty (ic.ResultText)) {
@@ -1347,11 +1371,29 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>The Inbox folder is the default folder and always exists on the server.</para>
-		/// <para>Note: This property will only be set once the client has been authenticated.</para>
+		/// <para>Note: This property will only be available after the client has been authenticated.</para>
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
 		public override IMailFolder Inbox {
-			get { return engine.Inbox; }
+			get {
+				CheckDisposed ();
+
+				if (!IsConnected)
+					throw new InvalidOperationException ("The ImapClient must be connected before you can get the Inbox.");
+
+				if (engine.State == ImapEngineState.Connected)
+					throw new InvalidOperationException ("The ImapClient must be authenticated before you can get the Inbox.");
+
+				return engine.Inbox;
+			}
 		}
 
 		/// <summary>

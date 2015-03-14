@@ -129,6 +129,21 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get whether or not the client is currently authenticated with the mail server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the client is currently authenticated with the mail server.</para>
+		/// <para>To authenticate with the mail server, use
+		/// <see cref="Authenticate(string, string, System.Threading.CancellationToken)"/>,
+		/// <see cref="Authenticate(ICredential, System.Threading.CancellationToken)"/>,
+		/// or any of the Async alternatives.</para>
+		/// </remarks>
+		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		public abstract bool IsAuthenticated {
+			get;
+		}
+
+		/// <summary>
 		/// Gets or sets the timeout for network streaming operations, in milliseconds.
 		/// </summary>
 		/// <remarks>

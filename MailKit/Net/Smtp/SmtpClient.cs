@@ -259,6 +259,20 @@ namespace MailKit.Net.Smtp {
 			get { return connected; }
 		}
 
+		/// <summary>
+		/// Get whether or not the client is currently authenticated with the SMTP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets whether or not the client is currently authenticated with the SMTP server.</para>
+		/// <para>To authenticate with the mail server, use
+		/// <see cref="Authenticate(string, string, System.Threading.CancellationToken)"/>
+		/// or <see cref="Authenticate(ICredential, System.Threading.CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
+		public override bool IsAuthenticated {
+			get { return authenticated; }
+		}
+
 #if !NETFX_CORE
 		static bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
@@ -621,7 +635,7 @@ namespace MailKit.Net.Smtp {
 			if (!IsConnected)
 				throw new InvalidOperationException ("The SmtpClient must be connected before you can authenticate.");
 
-			if (authenticated)
+			if (IsAuthenticated)
 				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
 
 			if ((capabilities & SmtpCapabilities.Authentication) == 0)
