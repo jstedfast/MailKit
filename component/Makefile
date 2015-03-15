@@ -1,5 +1,8 @@
 all:
 
+build:
+	xbuild /property:Configuration=Release /target:Rebuild ../MailKit.Mobile.sln
+
 package: ./tools/
 	mono ./tools/xamarin-component.exe package
 

@@ -10,6 +10,15 @@ summary: A cross-platform .NET library for IMAP, POP3, and SMTP.
 icons:
   - mailkit_512x512.png
   - mailkit_128x128.png
+libraries: 
+  ios-unified:
+    - ../MailKit/bin/Release/lib/Xamarin.iOS/BouncyCastle.dll
+    - ../MailKit/bin/Release/lib/Xamarin.iOS/MimeKit.dll
+    - ../MailKit/bin/Release/lib/Xamarin.iOS/MailKit.dll
+  android:
+    - ../MailKit/bin/Release/lib/MonoAndroid/BouncyCastle.dll
+    - ../MailKit/bin/Release/lib/MonoAndroid/MimeKit.dll
+    - ../MailKit/bin/Release/lib/MonoAndroid/MailKit.dll
 packages:
   ios-unified:
     - MailKit, Version=1.0.11.0
