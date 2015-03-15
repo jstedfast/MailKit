@@ -3921,7 +3921,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (!streams.TryGetValue (string.Empty, out stream))
-				return null;
+				throw new ImapCommandException ("The IMAP server did not return the requested message.");
 
 			return Engine.ParseMessage (stream, true, cancellationToken);
 		}
@@ -3983,7 +3983,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (!streams.TryGetValue (string.Empty, out stream))
-				return null;
+				throw new ImapCommandException ("The IMAP server did not return the requested message.");
 
 			return Engine.ParseMessage (stream, true, cancellationToken);
 		}
@@ -4226,7 +4226,7 @@ namespace MailKit.Net.Imap {
 
 			foreach (var tag in tags) {
 				if (!streams.TryGetValue (tag, out stream))
-					return null;
+					throw new ImapCommandException ("The IMAP server did not return the requested body part.");
 
 				chained.Add (stream);
 			}
@@ -4452,7 +4452,7 @@ namespace MailKit.Net.Imap {
 
 			foreach (var tag in tags) {
 				if (!streams.TryGetValue (tag, out stream))
-					return null;
+					throw new ImapCommandException ("The IMAP server did not return the requested body part.");
 
 				chained.Add (stream);
 			}
@@ -4547,7 +4547,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (!streams.TryGetValue (string.Empty, out stream))
-				return null;
+				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;
 		}
@@ -4627,7 +4627,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (!streams.TryGetValue (string.Empty, out stream))
-				return null;
+				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;
 		}
@@ -4716,7 +4716,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (!streams.TryGetValue (part.PartSpecifier, out stream))
-				return null;
+				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;
 		}
@@ -4804,7 +4804,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			if (!streams.TryGetValue (string.Empty, out stream))
-				return null;
+				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;
 		}
