@@ -74,7 +74,7 @@ namespace UnitTests {
 		{
 			DateTimeOffset value;
 
-			DateUtils.TryParseDateTime (date, out value);
+			DateUtils.TryParse (date, out value);
 
 			var summary = new MessageSummary (msgIndex++);
 			summary.UniqueId = new UniqueId ((uint) summary.Index);
