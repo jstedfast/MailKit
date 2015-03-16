@@ -131,6 +131,7 @@ namespace MailKit.Net.Smtp {
 				throw new ArgumentNullException ("protocolLogger");
 
 			logger = protocolLogger;
+			SendEhloAfterAuthenticate = true;
 		}
 
 		/// <summary>
@@ -206,6 +207,17 @@ namespace MailKit.Net.Smtp {
 		/// <value>The maximum message size supported by the server.</value>
 		public uint MaxSize {
 			get; private set;
+		}
+
+		/// <summary>
+		/// Do we automatically send an EHLO after authentication?
+		/// </summary>
+		/// <remarks>
+		/// Required for some mail providers that meddle with the
+		/// authentication status when EHLO is sent after authentication.
+		/// </remarks>
+		public bool SendEhloAfterAuthenticate {
+			get; set;
 		}
 
 		void CheckDisposed ()
@@ -685,7 +697,8 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
-					Ehlo (cancellationToken);
+					if (SendEhloAfterAuthenticate)
+						Ehlo(cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
 					return;
