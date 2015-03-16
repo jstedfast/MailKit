@@ -33,6 +33,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 #endif
 
+using MailKit.Security;
+
 namespace MailKit {
 	/// <summary>
 	/// An interface for message services such as SMTP, POP3, or IMAP.
@@ -101,9 +103,17 @@ namespace MailKit {
 		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
 		/// property will be populated.
 		/// </remarks>
-		/// <param name="uri">The server URI.</param>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="host"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously connect to the specified mail server.
@@ -112,13 +122,15 @@ namespace MailKit {
 		/// Asynchronously connects to the specified mail server.
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
-		/// <param name="uri">The server URI.</param>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="uri"/> is <c>null</c>.
+		/// The <paramref name="host"/> is <c>null</c>.
 		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="uri"/> is not an absolute URI.
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailService"/> has been disposed.
@@ -135,7 +147,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task ConnectAsync (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
+		Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Authenticate using the supplied credentials.

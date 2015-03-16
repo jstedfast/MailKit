@@ -81,6 +81,10 @@ namespace MailKit.Net.Pop3 {
 			nextId = 1;
 		}
 
+		internal string Host {
+			get; private set;
+		}
+
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
@@ -188,9 +192,10 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Takes posession of the <see cref="Pop3Stream"/> and reads the greeting.
 		/// </remarks>
+		/// <param name="host">The host that the engine will be connected to.</param>
 		/// <param name="pop3">The pop3 stream.</param>
 		/// <param name="cancellationToken">The cancellation token</param>
-		public void Connect (Pop3Stream pop3, CancellationToken cancellationToken)
+		public void Connect (string host, Pop3Stream pop3, CancellationToken cancellationToken)
 		{
 			if (stream != null)
 				stream.Dispose ();
@@ -200,6 +205,7 @@ namespace MailKit.Net.Pop3 {
 			State = Pop3EngineState.Disconnected;
 			ApopToken = null;
 			stream = pop3;
+			Host = host;
 
 			// read the pop3 server greeting
 			var greeting = ReadLine (cancellationToken).TrimEnd ();
@@ -256,6 +262,8 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		public void Disconnect ()
 		{
+			Host = null;
+
 			if (stream != null) {
 				stream.Dispose ();
 				stream = null;

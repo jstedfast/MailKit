@@ -139,7 +139,7 @@
         <value>The supported authentication mechanisms.</value>
         <remarks>
             The authentication mechanisms are queried durring the
-            <see cref="M:MailKit.IMailService.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            <see cref="!:Connect(Uri,CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -161,13 +161,13 @@
         <remarks>
           <para>Some servers may require the client SSL certificates in order
             to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="M:MailKit.IMailService.Connect(System.Uri,System.Threading.CancellationToken)" />.</para>
+          <para>This property should be set before calling <see cref="!:Connect(Uri,CancellationToken)" />.</para>
         </remarks>
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public void Connect (string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -176,11 +176,15 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uri">The server URI.</param>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Connect to the server specified in the URI.
@@ -189,11 +193,17 @@
             If a successful connection is made, the <see cref="P:MailKit.IMailService.AuthenticationMechanisms" />
             property will be populated.
             </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="host" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="ConnectAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ConnectAsync (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task ConnectAsync(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ConnectAsync (string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task ConnectAsync(string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -202,11 +212,15 @@
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uri">The server URI.</param>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
             Asynchronously connect to the specified mail server.
@@ -216,10 +230,10 @@
             Asynchronously connects to the specified mail server.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-            The <paramref name="uri" /> is <c>null</c>.
+            The <paramref name="host" /> is <c>null</c>.
             </exception>
-        <exception cref="T:System.ArgumentException">
-            The <paramref name="uri" /> is not an absolute URI.
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.IMailService" /> has been disposed.

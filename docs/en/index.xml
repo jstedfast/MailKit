@@ -148,6 +148,7 @@
       <Type Name="SaslMechanismPlain" Kind="Class" />
       <Type Name="SaslMechanismScramBase" Kind="Class" />
       <Type Name="SaslMechanismScramSha1" Kind="Class" />
+      <Type Name="SecureSocketOptions" Kind="Enumeration" />
     </Namespace>
   </Types>
   <Title>MailKit</Title>

@@ -339,8 +339,8 @@
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public abstract void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -356,7 +356,7 @@
         <param name="uri">The server URI.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Establishes a connection to the specified mail server.
+            Establish a connection to the specified mail server.
             </summary>
         <remarks>
             Establishes a connection to the specified mail server.
@@ -385,8 +385,61 @@
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (string hostName, int port = 0, bool useSsl = false, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(string hostName, int32 port, bool useSsl, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public abstract void Connect (string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Connect(string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Establish a connection to the specified mail server.
+            </summary>
+        <remarks>
+            Establishes a connection to the specified mail server.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="host" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="host" /> is a zero-length string.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public void Connect (string host, int port, bool useSsl, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(string host, int32 port, bool useSsl, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -401,25 +454,25 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="hostName">The host name of the server.</param>
-        <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
+        <param name="host">The host to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
         <param name="useSsl">
           <value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Establishes a connection to the specified mail server.
+            Establish a connection to the specified mail server.
             </summary>
         <remarks>
             Establishes a connection to the specified mail server.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-            The <paramref name="hostName" /> is <c>null</c>.
+            The <paramref name="host" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="port" /> is out of range (<value>0</value> to <value>65535</value>, inclusive).
             </exception>
         <exception cref="T:System.ArgumentException">
-            The <paramref name="hostName" /> is a zero-length string.
+            The <paramref name="host" /> is a zero-length string.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.MailService" /> has been disposed.
@@ -439,8 +492,8 @@
       </Docs>
     </Member>
     <Member MemberName="ConnectAsync">
-      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task ConnectAsync (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task ConnectAsync(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ConnectAsync (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task ConnectAsync(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -456,7 +509,7 @@
         <param name="uri">The server URI.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously establishes a connection to the specified mail server.
+            Asynchronously establish a connection to the specified mail server.
             </summary>
         <returns>An asynchronous task context.</returns>
         <remarks>
@@ -486,8 +539,62 @@
       </Docs>
     </Member>
     <Member MemberName="ConnectAsync">
-      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ConnectAsync (string hostName, int port = 0, bool useSsl = false, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task ConnectAsync(string hostName, int32 port, bool useSsl, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task ConnectAsync (string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task ConnectAsync(string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously establish a connection to the specified mail server.
+            </summary>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            Asynchronously establishes a connection to the specified mail server.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="host" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="host" /> is a zero-length string.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailService" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailService" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ConnectAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task ConnectAsync (string host, int port, bool useSsl, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task ConnectAsync(string host, int32 port, bool useSsl, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -502,26 +609,26 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="hostName">The host name of the server.</param>
-        <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
+        <param name="host">The host to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
         <param name="useSsl">
           <value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously establishes a connection to the specified mail server.
+            Asynchronously establish a connection to the specified mail server.
             </summary>
         <returns>An asynchronous task context.</returns>
         <remarks>
             Asynchronously establishes a connection to the specified mail server.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-            The <paramref name="hostName" /> is <c>null</c>.
+            The <paramref name="host" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="port" /> is out of range (<value>0</value> to <value>65535</value>, inclusive).
             </exception>
         <exception cref="T:System.ArgumentException">
-            The <paramref name="hostName" /> is a zero-length string.
+            The <paramref name="host" /> is a zero-length string.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.MailService" /> has been disposed.
@@ -727,7 +834,7 @@
           <para>Gets whether or not the client is currently authenticated with the mail server.</para>
           <para>To authenticate with the mail server, use
             <see cref="M:MailKit.MailService.Authenticate(System.String,System.String,System.Threading.CancellationToken)" />,
-            <see cref="!:Authenticate(ICredential, System.Threading.CancellationToken)" />,
+            <see cref="M:MailKit.MailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />,
             or any of the Async alternatives.</para>
         </remarks>
       </Docs>

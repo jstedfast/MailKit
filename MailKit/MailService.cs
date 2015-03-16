@@ -34,6 +34,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 #endif
 
+using MailKit.Security;
+
 namespace MailKit {
 	/// <summary>
 	/// An abstract mail service implementation.
@@ -156,7 +158,96 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Establish a connection to the specified mail server.
+		/// </summary>
+		/// <remarks>
 		/// Establishes a connection to the specified mail server.
+		/// </remarks>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="host"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="host"/> is a zero-length string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously establish a connection to the specified mail server.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously establishes a connection to the specified mail server.
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="host"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// The <paramref name="host"/> is a zero-length string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (host == null)
+				throw new ArgumentNullException ("host");
+
+			if (host.Length == 0)
+				throw new ArgumentException ("The host name cannot be empty.", "host");
+
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					Connect (host, port, options, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
 		/// Establishes a connection to the specified mail server.
@@ -184,10 +275,50 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken));
+		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+
+			if (!uri.IsAbsoluteUri)
+				throw new ArgumentException ("The uri must be absolute.", "uri");
+
+			var protocol = uri.Scheme.ToLowerInvariant ();
+			var query = uri.ParsedQuery ();
+			SecureSocketOptions options;
+			string value;
+
+			// Note: early versions of MailKit used "pop3" and "pop3s"
+			if (protocol == "pop3s")
+				protocol = "pops";
+			else if (protocol == "pop3")
+				protocol = "pop";
+
+			if (protocol == Protocol + "s") {
+				options = SecureSocketOptions.SslOnConnect;
+			} else if (protocol != Protocol) {
+				throw new ArgumentException ("Unknown URI scheme.", "uri");
+			} else if (query.TryGetValue ("starttls", out value)) {
+				switch (value.ToLowerInvariant ()) {
+				default:
+					options = SecureSocketOptions.StartTlsWhenAvailable;
+					break;
+				case "always": case "true": case "yes":
+					options = SecureSocketOptions.StartTls;
+					break;
+				case "never": case "false": case "no":
+					options = SecureSocketOptions.None;
+					break;
+				}
+			} else {
+				options = SecureSocketOptions.StartTlsWhenAvailable;
+			}
+
+			Connect (uri.Host, uri.Port, options, cancellationToken);
+		}
 
 		/// <summary>
-		/// Asynchronously establishes a connection to the specified mail server.
+		/// Asynchronously establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously establishes a connection to the specified mail server.
@@ -216,7 +347,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task ConnectAsync (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		public Task ConnectAsync (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
@@ -232,23 +363,23 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Establishes a connection to the specified mail server.
+		/// Establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
 		/// Establishes a connection to the specified mail server.
 		/// </remarks>
-		/// <param name="hostName">The host name of the server.</param>
-		/// <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
+		/// <param name="host">The host to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="hostName"/> is <c>null</c>.
+		/// The <paramref name="host"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is out of range (<value>0</value> to <value>65535</value>, inclusive).
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="hostName"/> is a zero-length string.
+		/// The <paramref name="host"/> is a zero-length string.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -265,42 +396,39 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public void Connect (string hostName, int port = 0, bool useSsl = false, CancellationToken cancellationToken = default (CancellationToken))
+		public void Connect (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (hostName == null)
-				throw new ArgumentNullException ("hostName");
+			if (host == null)
+				throw new ArgumentNullException ("host");
 
-			if (hostName.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "hostName");
+			if (host.Length == 0)
+				throw new ArgumentException ("The host name cannot be empty.", "host");
 
 			if (port < 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port");
 
-			string format = port > 0 ? "{0}{1}://{2}:{3}" : "{0}{1}://{2}";
-			string url = string.Format (format, Protocol, useSsl ? "s" : string.Empty, hostName, port);
-
-			Connect (new Uri (url), cancellationToken);
+			Connect (host, port, useSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTlsWhenAvailable, cancellationToken);
 		}
 
 		/// <summary>
-		/// Asynchronously establishes a connection to the specified mail server.
+		/// Asynchronously establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously establishes a connection to the specified mail server.
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
-		/// <param name="hostName">The host name of the server.</param>
-		/// <param name="port">The server port to connect to. If the specified port is <value>0</value>, then the default port will be used.</param>
+		/// <param name="host">The host to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="hostName"/> is <c>null</c>.
+		/// The <paramref name="host"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="port"/> is out of range (<value>0</value> to <value>65535</value>, inclusive).
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="hostName"/> is a zero-length string.
+		/// The <paramref name="host"/> is a zero-length string.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
@@ -317,21 +445,18 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public Task ConnectAsync (string hostName, int port = 0, bool useSsl = false, CancellationToken cancellationToken = default (CancellationToken))
+		public Task ConnectAsync (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (hostName == null)
-				throw new ArgumentNullException ("hostName");
+			if (host == null)
+				throw new ArgumentNullException ("host");
 
-			if (hostName.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "hostName");
+			if (host.Length == 0)
+				throw new ArgumentException ("The host name cannot be empty.", "host");
 
 			if (port < 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port");
 
-			string format = port > 0 ? "{0}{1}://{2}:{3}" : "{0}{1}://{2}";
-			string url = string.Format (format, Protocol, useSsl ? "s" : string.Empty, hostName, port);
-
-			return ConnectAsync (new Uri (url), cancellationToken);
+			return ConnectAsync (host, port, useSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTlsWhenAvailable, cancellationToken);
 		}
 
 		/// <summary>

@@ -90,7 +90,6 @@ namespace MailKit.Net.Pop3 {
 		int timeout = 100000;
 		bool disposed, utf8;
 		MimeParser parser;
-		string host;
 		int total;
 
 		/// <summary>
@@ -437,7 +436,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 
-			var uri = new Uri ("pop://" + host);
+			var uri = new Uri ("pop://" + engine.Host);
 			string authMessage = string.Empty;
 			string userName, password;
 			NetworkCredential cred;
@@ -543,10 +542,10 @@ namespace MailKit.Net.Pop3 {
 			OnAuthenticated (authMessage);
 		}
 
-		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
+		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken)
 		{
-			if (hostName == null)
-				throw new ArgumentNullException ("hostName");
+			if (host == null)
+				throw new ArgumentNullException ("host");
 
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
@@ -554,40 +553,84 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 
 			probed = ProbedCapabilities.None;
-			host = hostName;
 
-			engine.Connect (new Pop3Stream (replayStream, null, logger), cancellationToken);
+			engine.Connect (host, new Pop3Stream (replayStream, null, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
 		}
 
+		static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
+		{
+			switch (options) {
+			default:
+				if (port == 0)
+					port = 110;
+				break;
+			case SecureSocketOptions.Auto:
+				switch (port) {
+				case 0: port = 110; goto default;
+				case 995: options = SecureSocketOptions.SslOnConnect; break;
+				default: options = SecureSocketOptions.StartTlsWhenAvailable; break;
+				}
+				break;
+			case SecureSocketOptions.SslOnConnect:
+				if (port == 0)
+					port = 995;
+				break;
+			}
+
+			switch (options) {
+			case SecureSocketOptions.StartTlsWhenAvailable:
+				uri = new Uri ("pop://" + host + ":" + port + "/?starttls=when-available");
+				starttls = true;
+				break;
+			case SecureSocketOptions.StartTls:
+				uri = new Uri ("pop://" + host + ":" + port + "/?starttls=always");
+				starttls = true;
+				break;
+			case SecureSocketOptions.SslOnConnect:
+				uri = new Uri ("pops://" + host + ":" + port);
+				starttls = false;
+				break;
+			default:
+				uri = new Uri ("pop://" + host + ":" + port);
+				starttls = false;
+				break;
+			}
+		}
+
 		/// <summary>
-		/// Establishes a connection to the specified POP3 server.
+		/// Establish a connection to the specified POP3 or POP3/S server.
 		/// </summary>
 		/// <remarks>
-		/// <para>Establishes a connection to a POP3 or POP3/S server. If the schema
-		/// in the uri is "pop", a clear-text connection is made and defaults to using
-		/// port 110 if no port is specified in the URI. However, if the schema in the
-		/// uri is "pops", an SSL connection is made using the
-		/// <see cref="MailService.ClientCertificates"/> and defaults to port 995 unless a port
-		/// is specified in the URI.</para>
-		/// <para>It should be noted that when using a clear-text POP3 connection,
-		/// if the server advertizes support for the STLS extension, the client
-		/// will automatically switch into TLS mode before authenticating unless
-		/// the <paramref name="uri"/> contains a query string ("?starttls=false")
-		/// to disable it.</para>
-		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// and <see cref="Capabilities"/> properties will be populated.
+		/// <para>Establishes a connection to the specified POP3 or POP3/S server.</para>
+		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
+		/// <paramref name="options"/> parameter is used to determine the default port to
+		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
+		/// is <c>995</c>. All other values will use a default port of <c>110</c>.</para>
+		/// <para>If the <paramref name="options"/> has a value of
+		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
+		/// to determine the default security options. If the <paramref name="port"/> has a value
+		/// of <c>995</c>, then the default options used will be
+		/// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
+		/// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
+		/// <para>Once a connection is established, properties such as
+		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
+		/// populated.</para>
 		/// </remarks>
-		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
-		/// be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// The <paramref name="uri"/> is <c>null</c>.
+		/// <paramref name="host"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="uri"/> is not an absolute URI.
+		/// The <paramref name="host"/> is a zero-length string.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -598,6 +641,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <paramref name="options"/> was set to
+		/// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
+		/// and the POP3 server does not support the STLS extension.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -607,27 +655,27 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uri == null)
-				throw new ArgumentNullException ("uri");
+			if (host == null)
+				throw new ArgumentNullException ("host");
 
-			if (!uri.IsAbsoluteUri)
-				throw new ArgumentException ("The uri must be absolute.", "uri");
+			if (host.Length == 0)
+				throw new ArgumentException ("The host name cannot be empty.", "host");
+
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port");
 
 			CheckDisposed ();
 
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
 
-			var scheme = uri.Scheme.ToLowerInvariant ();
-			var pops = scheme == "pops" || scheme == "pop3s";
-			var port = uri.Port > 0 ? uri.Port : (pops ? 995 : 110);
-			var query = uri.ParsedQuery ();
 			Stream stream;
-			string value;
+			bool starttls;
+			Uri uri;
 
-			var starttls = !pops && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
@@ -652,21 +700,22 @@ namespace MailKit.Net.Pop3 {
 			}
 
 			if (socket == null)
-				throw new IOException (string.Format ("Failed to resolve host: {0}", uri.Host));
+				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 
-			if (pops) {
+			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
 			}
 #else
+			var protection = options == SecureSocketOptions.SslOnConnect ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket;
 			socket = new StreamSocket ();
 
 			try {
 				cancellationToken.ThrowIfCancellationRequested ();
-				socket.ConnectAsync (new HostName (uri.DnsSafeHost), port.ToString (), pops ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket)
+				socket.ConnectAsync (new HostName (host), port.ToString (), protection)
 					.AsTask (cancellationToken)
 					.GetAwaiter ()
 					.GetResult ();
@@ -685,29 +734,36 @@ namespace MailKit.Net.Pop3 {
 				stream.ReadTimeout = timeout;
 			}
 
-			host = uri.Host;
-
 			logger.LogConnect (uri);
 
-			engine.Connect (new Pop3Stream (stream, socket, logger), cancellationToken);
-			engine.QueryCapabilities (cancellationToken);
+			engine.Connect (host, new Pop3Stream (stream, socket, logger), cancellationToken);
 
-			if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
-				SendCommand (cancellationToken, "STLS");
+			try {
+				engine.QueryCapabilities (cancellationToken);
+
+				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & Pop3Capabilities.StartTLS) == 0)
+					throw new NotSupportedException ("The POP3 server does not support the STLS extension.");
+				
+				if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
+					SendCommand (cancellationToken, "STLS");
 
 #if !NETFX_CORE
-				var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-				tls.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
-				engine.Stream.Stream = tls;
+					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+					engine.Stream.Stream = tls;
 #else
-				socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (uri.DnsSafeHost))
-					.AsTask (cancellationToken)
-					.GetAwaiter ()
-					.GetResult ();
+					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
+						.AsTask (cancellationToken)
+						.GetAwaiter ()
+						.GetResult ();
 #endif
 
-				// re-issue a CAPA command
-				engine.QueryCapabilities (cancellationToken);
+					// re-issue a CAPA command
+					engine.QueryCapabilities (cancellationToken);
+				}
+			} catch {
+				engine.Disconnect ();
+				throw;
 			}
 
 			engine.Disconnected += OnEngineDisconnected;
@@ -716,40 +772,53 @@ namespace MailKit.Net.Pop3 {
 
 #if !NETFX_CORE
 		/// <summary>
-		/// Establishes a connection to the specified POP3 server using the provided socket.
+		/// Establish a connection to the specified POP3 or POP3/S server using the provided socket.
 		/// </summary>
 		/// <remarks>
-		/// <para>Establishes a connection to a POP3 or POP3/S server. If the schema
-		/// in the uri is "pop", a clear-text connection is assumed. However, if the
-		/// schema in the uri is "pops", an SSL connection is made using the
-		/// <see cref="MailService.ClientCertificates"/>.</para>
-		/// <para>It should be noted that when using a clear-text POP3 connection,
-		/// if the server advertizes support for the STLS extension, the client
-		/// will automatically switch into TLS mode before authenticating unless
-		/// the <paramref name="uri"/> contains a query string ("?starttls=false")
-		/// to disable it.</para>
-		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// and <see cref="Capabilities"/> properties will be populated.
+		/// <para>Establishes a connection to the specified POP3 or POP3/S server using
+		/// the provided socket.</para>
+		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
+		/// <paramref name="options"/> parameter is used to determine the default port to
+		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
+		/// is <c>995</c>. All other values will use a default port of <c>110</c>.</para>
+		/// <para>If the <paramref name="options"/> has a value of
+		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
+		/// to determine the default security options. If the <paramref name="port"/> has a value
+		/// of <c>995</c>, then the default options used will be
+		/// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
+		/// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
+		/// <para>Once a connection is established, properties such as
+		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
+		/// populated.</para>
 		/// </remarks>
-		/// <param name="uri">The server URI. The <see cref="System.Uri.Scheme"/> should either
-		/// be "pop" to make a clear-text connection or "pops" to make an SSL connection.</param>
 		/// <param name="socket">The socket to use for the connection.</param>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uri"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
 		/// <para><paramref name="socket"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="host"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uri"/> is not an absolute URI.</para>
-		/// <para>-or-</para>
 		/// <para><paramref name="socket"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// The <paramref name="host"/> is a zero-length string.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// The <see cref="Pop3Client"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <paramref name="options"/> was set to
+		/// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
+		/// and the POP3 server does not support the STLS extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -763,36 +832,37 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, Socket socket, CancellationToken cancellationToken = default (CancellationToken))
+		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (uri == null)
-				throw new ArgumentNullException ("uri");
-
-			if (!uri.IsAbsoluteUri)
-				throw new ArgumentException ("The uri must be absolute.", "uri");
-
 			if (socket == null)
 				throw new ArgumentNullException ("socket");
 
 			if (!socket.Connected)
 				throw new ArgumentException ("The socket is not connected.", "socket");
 
+			if (host == null)
+				throw new ArgumentNullException ("host");
+
+			if (host.Length == 0)
+				throw new ArgumentException ("The host name cannot be empty.", "host");
+
+			if (port < 0 || port > 65535)
+				throw new ArgumentOutOfRangeException ("port");
+
 			CheckDisposed ();
 
 			if (IsConnected)
 				throw new InvalidOperationException ("The Pop3Client is already connected.");
 
-			var scheme = uri.Scheme.ToLowerInvariant ();
-			var pops = scheme == "pops" || scheme == "pop3s";
-			var query = uri.ParsedQuery ();
 			Stream stream;
-			string value;
+			bool starttls;
+			Uri uri;
 
-			var starttls = !pops && (!query.TryGetValue ("starttls", out value) || Convert.ToBoolean (value));
+			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
-			if (pops) {
+			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -804,22 +874,29 @@ namespace MailKit.Net.Pop3 {
 				stream.ReadTimeout = timeout;
 			}
 
-			host = uri.Host;
-
 			logger.LogConnect (uri);
 
-			engine.Connect (new Pop3Stream (stream, socket, logger), cancellationToken);
-			engine.QueryCapabilities (cancellationToken);
+			engine.Connect (host, new Pop3Stream (stream, socket, logger), cancellationToken);
 
-			if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
-				SendCommand (cancellationToken, "STLS");
-
-				var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-				tls.AuthenticateAsClient (uri.Host, ClientCertificates, DefaultSslProtocols, true);
-				engine.Stream.Stream = tls;
-
-				// re-issue a CAPA command
+			try {
 				engine.QueryCapabilities (cancellationToken);
+
+				if (options == SecureSocketOptions.StartTls && (engine.Capabilities & Pop3Capabilities.StartTLS) == 0)
+					throw new NotSupportedException ("The POP3 server does not support the STLS extension.");
+
+				if (starttls && (engine.Capabilities & Pop3Capabilities.StartTLS) != 0) {
+					SendCommand (cancellationToken, "STLS");
+
+					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+					engine.Stream.Stream = tls;
+
+					// re-issue a CAPA command
+					engine.QueryCapabilities (cancellationToken);
+				}
+			} catch {
+				engine.Disconnect ();
+				throw;
 			}
 
 			engine.Disconnected += OnEngineDisconnected;

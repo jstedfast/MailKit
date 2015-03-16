@@ -37,7 +37,7 @@
             </summary>
         <remarks>
             Before you can send messages with the <see cref="T:MailKit.Net.Smtp.SmtpClient" />, you must first call
-            the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method. Depending on the server,
+            the <see cref="!:Connect(Uri,CancellationToken)" /> method. Depending on the server,
             you may also need to authenticate using the
             <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
@@ -60,7 +60,7 @@
             </summary>
         <remarks>
             Before you can send messages with the <see cref="T:MailKit.Net.Smtp.SmtpClient" />, you must first call
-            the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method. Depending on the server,
+            the <see cref="!:Connect(Uri,CancellationToken)" /> method. Depending on the server,
             you may also need to authenticate using the
             <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
@@ -149,7 +149,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            The authentication mechanisms are queried durring the <see cref="!:Connect(Uri,CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -170,7 +170,7 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection has been made via
-            the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and may change as a side-effect
+            the <see cref="!:Connect(Uri,CancellationToken)" /> method and may change as a side-effect
             of the <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentException">
@@ -179,8 +179,8 @@
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public override void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override void Connect (string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -189,36 +189,54 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
-            be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Establishes a connection to the specified SMTP server.
+            Establishes a connection to the specified SMTP or SMTP/S server.
             </summary>
         <remarks>
-          <para>Establishes a connection to an SMTP or SMTP/S server. If the schema
-            in the uri is "smtp", a clear-text connection is made and defaults to using
-            port 25 if no port is specified in the URI. However, if the schema in the
-            uri is "smtps", an SSL connection is made using the
-            <see cref="P:MailKit.MailService.ClientCertificates" /> and defaults to port 465 unless
-            a port is specified in the URI.</para>
-          <para>It should be noted that when using a clear-text SMTP connection,
-            if the server advertizes support for the STARTTLS extension, the client
-            will automatically switch into TLS mode before authenticating unless the
-            <paramref name="uri" /> contains a query string ("?starttls=false") to
-            disable it.</para>
-            If a successful connection is made, the <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" />
-            and <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" /> properties will be populated.
-            </remarks>
+          <para>Establishes a connection to the specified SMTP or SMTP/S server.</para>
+          <para>If the <paramref name="port" /> has a value of <c>0</c>, then the
+            <paramref name="options" /> parameter is used to determine the default port to
+            connect to. The default port used with <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />
+            is <c>465</c>. All other values will use a default port of <c>25</c>.</para>
+          <para>If the <paramref name="options" /> has a value of
+            <see cref="F:MailKit.Security.SecureSocketOptions.Auto" />, then the <paramref name="port" /> is used
+            to determine the default security options. If the <paramref name="port" /> has a value
+            of <c>465</c>, then the default options used will be
+            <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />. All other values will use
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable" />.</para>
+          <para>Once a connection is established, properties such as
+            <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" /> and <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" /> will be
+            populated.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
-          <para>The <paramref name="uri" /> is <c>null</c>.</para>
-        </exception>
+          <paramref name="host" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="host" /> is a zero-length string.
+            </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is already connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <paramref name="options" /> was set to
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTls" />
+            and the SMTP server does not support the STARTTLS extension.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled.
@@ -226,26 +244,17 @@
         <exception cref="T:System.IO.IOException">
             An I/O error occurred.
             </exception>
-        <exception cref="T:MailKit.Net.Smtp.SmtpException">
-            An SMTP protocol error occurred.
-            </exception>
-        <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is already connected.
-            </exception>
         <exception cref="T:MailKit.Net.Smtp.SmtpCommandException">
             An SMTP command failed.
             </exception>
         <exception cref="T:MailKit.Net.Smtp.SmtpProtocolException">
             An SMTP protocol error occurred.
             </exception>
-        <exception cref="T:System.ArgumentException">
-            The <paramref name="uri" /> is not an absolute URI.
-            </exception>
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.Sockets.Socket socket, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Uri uri, class System.Net.Sockets.Socket socket, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public void Connect (System.Net.Sockets.Socket socket, string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Net.Sockets.Socket socket, string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -254,50 +263,63 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
         <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
-            be "smtp" to make a clear-text connection or "smtps" to make an SSL connection.</param>
         <param name="socket">The socket to use for the connection.</param>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Establishes a connection to the specified SMTP server using the provided socket.
+            Establish a connection to the specified SMTP or SMTP/S server using the provided socket.
             </summary>
         <remarks>
-          <para>Establishes a connection to an SMTP or SMTP/S server. If the schema
-            in the uri is "smtp", a clear-text connection is assumed. However, if the
-            schema in the uri is "smtps", an SSL connection is made using the
-            <see cref="P:MailKit.MailService.ClientCertificates" />.</para>
-          <para>It should be noted that when using a clear-text SMTP connection,
-            if the server advertizes support for the STARTTLS extension, the client
-            will automatically switch into TLS mode before authenticating unless the
-            <paramref name="uri" /> contains a query string ("?starttls=false") to
-            disable it.</para>
-            If a successful connection is made, the <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" />
-            and <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" /> properties will be populated.
-            </remarks>
+          <para>Establishes a connection to the specified SMTP or SMTP/S server.</para>
+          <para>If the <paramref name="port" /> has a value of <c>0</c>, then the
+            <paramref name="options" /> parameter is used to determine the default port to
+            connect to. The default port used with <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />
+            is <c>465</c>. All other values will use a default port of <c>25</c>.</para>
+          <para>If the <paramref name="options" /> has a value of
+            <see cref="F:MailKit.Security.SecureSocketOptions.Auto" />, then the <paramref name="port" /> is used
+            to determine the default security options. If the <paramref name="port" /> has a value
+            of <c>465</c>, then the default options used will be
+            <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />. All other values will use
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable" />.</para>
+          <para>Once a connection is established, properties such as
+            <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" /> and <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" /> will be
+            populated.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
-            <paramref name="uri" /> is <c>null</c>.</para>
+            <paramref name="socket" /> is <c>null</c>.</para>
           <para>-or-</para>
           <para>
-            <paramref name="socket" /> is <c>null</c>.</para>
+            <paramref name="host" /> is <c>null</c>.</para>
         </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
+            </exception>
         <exception cref="T:System.ArgumentException">
           <para>
-            <paramref name="uri" /> is not an absolute URI.</para>
-          <para>-or-</para>
-          <para>
             <paramref name="socket" /> is not connected.</para>
-        </exception>
+          <para>-or-</para>
+            The <paramref name="host" /> is a zero-length string.
+            </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Smtp.SmtpClient" /> is already connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <paramref name="options" /> was set to
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTls" />
+            and the SMTP server does not support the STARTTLS extension.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled.
@@ -443,9 +465,9 @@
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
         <remarks>
           <para>Gets whether or not the client is currently authenticated with the SMTP server.</para>
-          <para>To authenticate with the mail server, use
-            <see cref="!:Authenticate(string, string, System.Threading.CancellationToken)" />
-            or <see cref="!:Authenticate(ICredential, System.Threading.CancellationToken)" />.</para>
+          <para>To authenticate with the SMTP server, use
+            <see cref="M:MailKit.MailService.Authenticate(System.String,System.String,System.Threading.CancellationToken)" />
+            or <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
         </remarks>
       </Docs>
     </Member>
@@ -510,7 +532,7 @@
         <value>The maximum message size supported by the server.</value>
         <remarks>
           <para>The maximum message size will not be known until a successful
-            connection has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method
+            connection has been made via the <see cref="!:Connect(Uri,CancellationToken)" /> method
             and may change as a side-effect of the <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />
             method.</para>
           <para>Note: This value is only relevant if the <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" />

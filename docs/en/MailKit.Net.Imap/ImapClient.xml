@@ -37,7 +37,7 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you must first
-            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and authenticate with
+            call the <see cref="!:Connect(Uri,CancellationToken)" /> method and authenticate with
             the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
@@ -59,7 +59,7 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you must first
-            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and authenticate with
+            call the <see cref="!:Connect(Uri,CancellationToken)" /> method and authenticate with
             the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
@@ -141,7 +141,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method.
+            The authentication mechanisms are queried as part of the <see cref="!:Connect(Uri,CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -162,7 +162,7 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection has been made via
-            the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> method and may change as a side-effect
+            the <see cref="!:Connect(Uri,CancellationToken)" /> method and may change as a side-effect
             of the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentException">
@@ -170,9 +170,9 @@
             </exception>
       </Docs>
     </Member>
-    <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public override void Connect (Uri uri, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(class System.Uri uri, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+    <Member MemberName="Compress">
+      <MemberSignature Language="C#" Value="public void Compress (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Compress(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -181,45 +181,145 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
-            be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Establishes a connection to the specified IMAP server.
+            Enable compression over the IMAP connection.
             </summary>
         <remarks>
-          <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
-            in the uri is "imap", a clear-text connection is made and defaults to using
-            port 143 if no port is specified in the URI. However, if the schema in the
-            uri is "imaps", an SSL connection is made using the
-            <see cref="P:MailKit.MailService.ClientCertificates" /> and defaults to port 993 unless a port
-            is specified in the URI.</para>
-          <para>It should be noted that when using a clear-text IMAP connection,
-            if the server advertizes support for the STARTTLS extension, the client
-            will automatically switch into TLS mode before authenticating unless the
-            <paramref name="uri" /> contains a query string ("?starttls=false") to
-            disable it.</para>
-          <para>If the IMAP server advertizes the COMPRESS extension and either does not
-            support the STARTTLS extension or the <paramref name="uri" /> explicitly disabled
-            the use of the STARTTLS extension, then the client will automatically opt into
-            using a compressed data connection to optimize bandwidth usage unless the
-            <paramref name="uri" /> contains a query string ("?compress=false") to explicitly
-            disable it.</para>
-          <para>If a successful connection is made, the <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" />
-            and <see cref="P:MailKit.Net.Imap.ImapClient.Capabilities" /> properties will be populated.</para>
+            If the IMAP server supports the COMPRESS extension, it is possible at any point
+            after connecting to enable compression to reduce network bandwidth usage.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the QRESYNC extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the ENABLE command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CompressAsync">
+      <MemberSignature Language="C#" Value="public System.Threading.Tasks.Task CompressAsync (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.Tasks.Task CompressAsync(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously enable compression over the IMAP connection.
+            </summary>
+        <returns>An asynchronous task context.</returns>
+        <remarks>
+            If the IMAP server supports the COMPRESS extension, it is possible at any point
+            after connecting to enable compression to reduce network bandwidth usage.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the UTF8=ACCEPT extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied to the ENABLE command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            An IMAP protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Connect">
+      <MemberSignature Language="C#" Value="public override void Connect (string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Connect(string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Establish a connection to the specified IMAP server.
+            </summary>
+        <remarks>
+          <para>Establishes a connection to the specified IMAP or IMAP/S server.</para>
+          <para>If the <paramref name="port" /> has a value of <c>0</c>, then the
+            <paramref name="options" /> parameter is used to determine the default port to
+            connect to. The default port used with <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />
+            is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
+          <para>If the <paramref name="options" /> has a value of
+            <see cref="F:MailKit.Security.SecureSocketOptions.Auto" />, then the <paramref name="port" /> is used
+            to determine the default security options. If the <paramref name="port" /> has a value
+            of <c>993</c>, then the default options used will be
+            <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />. All other values will use
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable" />.</para>
+          <para>Once a connection is established, properties such as
+            <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" /> and <see cref="P:MailKit.Net.Imap.ImapClient.Capabilities" /> will be
+            populated.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
-            The <paramref name="uri" /> is <c>null</c>.
+          <paramref name="host" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+            The <paramref name="host" /> is a zero-length string.
             </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is already connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <paramref name="options" /> was set to
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTls" />
+            and the IMAP server does not support the STARTTLS extension.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -230,14 +330,11 @@
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
             </exception>
-        <exception cref="T:System.ArgumentException">
-            The <paramref name="uri" /> is not an absolute URI.
-            </exception>
       </Docs>
     </Member>
     <Member MemberName="Connect">
-      <MemberSignature Language="C#" Value="public void Connect (Uri uri, System.Net.Sockets.Socket socket, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Uri uri, class System.Net.Sockets.Socket socket, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public void Connect (System.Net.Sockets.Socket socket, string host, int port = 0, MailKit.Security.SecureSocketOptions options = MailKit.Security.SecureSocketOptions.Auto, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Connect(class System.Net.Sockets.Socket socket, string host, int32 port, valuetype MailKit.Security.SecureSocketOptions options, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -246,56 +343,64 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="uri" Type="System.Uri" />
         <Parameter Name="socket" Type="System.Net.Sockets.Socket" />
+        <Parameter Name="host" Type="System.String" />
+        <Parameter Name="port" Type="System.Int32" />
+        <Parameter Name="options" Type="MailKit.Security.SecureSocketOptions" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="uri">The server URI. The <see cref="P:System.Uri.Scheme" /> should either
-            be "imap" to make a clear-text connection or "imaps" to make an SSL connection.</param>
         <param name="socket">The socket to use for the connection.</param>
+        <param name="host">The host name to connect to.</param>
+        <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+        <param name="options">The secure socket options to when connecting.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Establishes a connection to the specified IMAP server using the provided socket.
+            Establish a connection to the specified IMAP or IMAP/S server using the provided socket.
             </summary>
         <remarks>
-          <para>Establishes a connection to an IMAP or IMAP/S server. If the schema
-            in the uri is "imap", a clear-text connection is assumed. However, if the
-            schema in the uri is "imaps", an SSL connection is made using the
-            <see cref="P:MailKit.MailService.ClientCertificates" />.</para>
-          <para>It should be noted that when using a clear-text IMAP connection,
-            if the server advertizes support for the STARTTLS extension, the client
-            will automatically switch into TLS mode before authenticating unless the
-            <paramref name="uri" /> contains a query string ("?starttls=false") to
-            disable it.</para>
-          <para>If the IMAP server advertizes the COMPRESS extension and either does not
-            support the STARTTLS extension or the <paramref name="uri" /> explicitly disabled
-            the use of the STARTTLS extension, then the client will automatically opt into
-            using a compressed data connection to optimize bandwidth usage unless the
-            <paramref name="uri" /> contains a query string ("?compress=false") to explicitly
-            disable it.</para>
-          <para>If a successful connection is made, the <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" />
-            and <see cref="P:MailKit.Net.Imap.ImapClient.Capabilities" /> properties will be populated.</para>
+          <para>Establishes a connection to the specified IMAP or IMAP/S server using
+            the provided socket.</para>
+          <para>If the <paramref name="port" /> has a value of <c>0</c>, then the
+            <paramref name="options" /> parameter is used to determine the default port to
+            connect to. The default port used with <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />
+            is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
+          <para>If the <paramref name="options" /> has a value of
+            <see cref="F:MailKit.Security.SecureSocketOptions.Auto" />, then the <paramref name="port" /> is used
+            to determine the default security options. If the <paramref name="port" /> has a value
+            of <c>993</c>, then the default options used will be
+            <see cref="F:MailKit.Security.SecureSocketOptions.SslOnConnect" />. All other values will use
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTlsWhenAvailable" />.</para>
+          <para>Once a connection is established, properties such as
+            <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" /> and <see cref="P:MailKit.Net.Imap.ImapClient.Capabilities" /> will be
+            populated.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
-            <paramref name="uri" /> is <c>null</c>.</para>
+            <paramref name="socket" /> is <c>null</c>.</para>
           <para>-or-</para>
           <para>
-            <paramref name="socket" /> is <c>null</c>.</para>
+            <paramref name="host" /> is <c>null</c>.</para>
         </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
+            </exception>
         <exception cref="T:System.ArgumentException">
           <para>
-            <paramref name="uri" /> is not an absolute URI.</para>
-          <para>-or-</para>
-          <para>
             <paramref name="socket" /> is not connected.</para>
-        </exception>
+          <para>-or-</para>
+            The <paramref name="host" /> is a zero-length string.
+            </exception>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is already connected.
+            </exception>
+        <exception cref="T:System.NotSupportedException">
+          <paramref name="options" /> was set to
+            <see cref="F:MailKit.Security.SecureSocketOptions.StartTls" />
+            and the IMAP server does not support the STARTTLS extension.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -922,9 +1027,9 @@
           <c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
         <remarks>
           <para>Gets whether or not the client is currently authenticated with the IMAP server.</para>
-          <para>To authenticate with the mail server, use
-            <see cref="!:Authenticate(System.String,System.String,System.Threading.CancellationToken)" />
-            or <see cref="!:Authenticate(System.Net.ICredential,System.Threading.CancellationToken)" />.</para>
+          <para>To authenticate with the IMAP server, use
+            <see cref="M:MailKit.MailService.Authenticate(System.String,System.String,System.Threading.CancellationToken)" />
+            or <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />.</para>
         </remarks>
       </Docs>
     </Member>
@@ -1150,7 +1255,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The threading algorithms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.Uri,System.Threading.CancellationToken)" /> and
+            The threading algorithms are queried as part of the <see cref="!:Connect(Uri,CancellationToken)" /> and
             <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> methods.
             </remarks>
       </Docs>
