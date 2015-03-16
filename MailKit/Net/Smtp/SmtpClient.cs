@@ -685,7 +685,12 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
-					Ehlo (cancellationToken);
+					// Note: smtp.strato.de is a broken piece of shit that resets state if it receives
+					// an EHLO command after authenticating even though the specifications explicitly
+					// state that clients SHOULD send EHLO again after authenticating.
+					// See https://github.com/jstedfast/MailKit/issues/162 for details.
+					if (host != "smtp.strato.de")
+						Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
 					return;
