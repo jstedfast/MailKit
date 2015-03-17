@@ -435,7 +435,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Close (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			CheckState (true, false);
+			CheckState (true, expunge);
 
 			ImapCommand ic;
 
