@@ -6847,14 +6847,12 @@ namespace MailKit.Net.Imap {
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
-			var command = "UID SORT " + order + " ";
+			var command = "UID SORT ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				command += "RETURN () ";
 
-			command += charset + " ";
-
-			command += expr + "\r\n";
+			command += order + " " + charset + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
@@ -7051,12 +7049,12 @@ namespace MailKit.Net.Imap {
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
-			var command = "UID SORT " + order + " ";
+			var command = "UID SORT ";
 
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				command += "RETURN () ";
 
-			command += charset + " UID " + set + " " + expr + "\r\n";
+			command += order + " " + charset + " UID " + set + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
