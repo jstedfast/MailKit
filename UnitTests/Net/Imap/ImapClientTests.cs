@@ -227,13 +227,21 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsNotNull (created.ParentFolder, "The ParentFolder property should not be null.");
 
-				created.Open (FolderAccess.ReadWrite, CancellationToken.None);
+
+				const MessageFlags ExpectedPermanentFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.UserDefined;
+				const MessageFlags ExpectedAcceptedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen;
+				var access = created.Open (FolderAccess.ReadWrite, CancellationToken.None);
+				Assert.AreEqual (FolderAccess.ReadWrite, access, "The UnitTests folder was not opened with the expected access mode.");
+				Assert.AreEqual (ExpectedPermanentFlags, created.PermanentFlags, "The PermanentFlags do not match the expected value.");
+				Assert.AreEqual (ExpectedAcceptedFlags, created.AcceptedFlags, "The AcceptedFlags do not match the expected value.");
 
 				for (int i = 0; i < 50; i++) {
 					using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
 						var message = MimeMessage.Load (stream);
 
-						created.Append (message, MessageFlags.Seen, CancellationToken.None);
+						var uid = created.Append (message, MessageFlags.Seen, CancellationToken.None);
+						Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
+						Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
 					}
 				}
 
