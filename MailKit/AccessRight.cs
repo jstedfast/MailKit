@@ -1,0 +1,210 @@
+﻿//
+// AccessRight.cs
+//
+// Author: Jeffrey Stedfast <jeff@xamarin.com>
+//
+// Copyright (c) 2015 Xamarin Inc. (www.xamarin.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+
+using System;
+
+namespace MailKit {
+	/// <summary>
+	/// An individual Access Right to be used with ACLs.
+	/// </summary>
+	/// <remarks>
+	/// An individual Access Right meant to be used with <see cref="AccessControlList"/>.
+	/// </remarks>
+	public struct AccessRight : IEquatable<AccessRight>
+	{
+		/// <summary>
+		/// The access right for folder lookups.
+		/// </summary>
+		/// <remarks>
+		/// Allows the <see cref="MailKit.IMailFolder"/> to be visible when listing folders.
+		/// </remarks>
+		public static readonly AccessRight Lookup = new AccessRight ('l');
+
+		/// <summary>
+		/// The access right for read operations.
+		/// </summary>
+		/// <remarks>
+		/// Provides read access on the <see cref="MailKit.IMailFolder"/> such as being opened, searched, etc.
+		/// </remarks>
+		public static readonly AccessRight Read = new AccessRight ('r');
+
+		/// <summary>
+		/// The access right for adding or removing the Seen flag on messages in the folder.
+		/// </summary>
+		/// <remarks>
+		/// Provides access to add or remove the <see cref="MessageFlags.Seen"/> flag on messages within the
+		/// <see cref="MailKit.IMailFolder"/>.
+		/// </remarks>
+		public static readonly AccessRight UpdateSeen = new AccessRight ('s');
+
+		/// <summary>
+		/// The access right for adding or removing flags (other than Seen and Deleted) on messages in the folder.
+		/// </summary>
+		/// <remarks>
+		/// Provides access to add or remove the <see cref="MessageFlags"/> on messages (other than
+		/// <see cref="MessageFlags.Seen"/> and <see cref="MessageFlags.Deleted"/>) within the
+		/// <see cref="MailKit.IMailFolder"/>.
+		/// </remarks>
+		public static readonly AccessRight Write = new AccessRight ('w');
+
+		/// <summary>
+		/// The access right allowing messages to be appended or copied into the folder.
+		/// </summary>
+		/// <remarks>
+		/// Provides access to append or copy messages into the folder.
+		/// </remarks>
+		public static readonly AccessRight Insert = new AccessRight ('i');
+
+		/// <summary>
+		/// The access right allowing child folders to be created.
+		/// </summary>
+		/// <remarks>
+		/// Provides access to create child folders.
+		/// </remarks>
+		public static readonly AccessRight Create = new AccessRight ('c');
+
+		/// <summary>
+		/// The access right for adding the Deleted flag to messages and expunging them.
+		/// </summary>
+		/// <remarks>
+		/// Provides access to add the <see cref="MessageFlags.Deleted"/> flag to messages
+		/// and expunge them.
+		/// </remarks>
+		public static readonly AccessRight Delete = new AccessRight ('d');
+
+		/// <summary>
+		/// The access right for administering the ACLs of a folder.
+		/// </summary>
+		/// <remarks>
+		/// Provides administrative access to change the ACLs for the folder.
+		/// </remarks>
+		public static readonly AccessRight Administer = new AccessRight ('a');
+
+		/// <summary>
+		/// The character representing the particular access right.
+		/// </summary>
+		/// <remarks>
+		/// Represents the character value of the access right.
+		/// </remarks>
+		public readonly char Right;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.AccessRight"/> struct.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.AccessRight"/> struct.
+		/// </remarks>
+		/// <param name="right">The access right.</param>
+		public AccessRight (char right)
+		{
+			Right = right;
+		}
+
+		#region IEquatable implementation
+
+		/// <summary>
+		/// Determines whether the specified <see cref="MailKit.AccessRight"/> is equal to the current <see cref="MailKit.AccessRight"/>.
+		/// </summary>
+		/// <remarks>
+		/// Determines whether the specified <see cref="MailKit.AccessRight"/> is equal to the current <see cref="MailKit.AccessRight"/>.
+		/// </remarks>
+		/// <param name="other">The <see cref="MailKit.AccessRight"/> to compare with the current <see cref="MailKit.AccessRight"/>.</param>
+		/// <returns><c>true</c> if the specified <see cref="MailKit.AccessRight"/> is equal to the current
+		/// <see cref="MailKit.AccessRight"/>; otherwise, <c>false</c>.</returns>
+		public bool Equals (AccessRight other)
+		{
+			return other.Right == Right;
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Determines whether two access rights are equal.
+		/// </summary>
+		/// <remarks>
+		/// Determines whether two access rights are equal.
+		/// </remarks>
+		/// <returns><c>true</c> if <paramref name="right1"/> and <paramref name="right2"/> are equal; otherwise, <c>false</c>.</returns>
+		/// <param name="right1">The first access right to compare.</param>
+		/// <param name="right2">The second access right to compare.</param>
+		public static bool operator == (AccessRight right1, AccessRight right2)
+		{
+			return right1.Right == right2.Right;
+		}
+
+		/// <summary>
+		/// Determines whether two access rights are not equal.
+		/// </summary>
+		/// <remarks>
+		/// Determines whether two access rights are not equal.
+		/// </remarks>
+		/// <returns><c>true</c> if <paramref name="right1"/> and <paramref name="right2"/> are not equal; otherwise, <c>false</c>.</returns>
+		/// <param name="right1">The first access right to compare.</param>
+		/// <param name="right2">The second access right to compare.</param>
+		public static bool operator != (AccessRight right1, AccessRight right2)
+		{
+			return right1.Right != right2.Right;
+		}
+
+		/// <summary>
+		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.AccessRight"/>.
+		/// </summary>
+		/// <remarks>
+		/// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.AccessRight"/>.
+		/// </remarks>
+		/// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MailKit.AccessRight"/>.</param>
+		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current <see cref="MailKit.AccessRight"/>;
+		/// otherwise, <c>false</c>.</returns>
+		public override bool Equals (object obj)
+		{
+			return obj is AccessRight && ((AccessRight) obj).Right == Right;
+		}
+
+		/// <summary>
+		/// Serves as a hash function for a <see cref="MailKit.AccessRight"/> object.
+		/// </summary>
+		/// <remarks>
+		/// Serves as a hash function for a <see cref="MailKit.AccessRight"/> object.
+		/// </remarks>
+		/// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a hash table.</returns>
+		public override int GetHashCode ()
+		{
+			return Right.GetHashCode ();
+		}
+
+		/// <summary>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.AccessRight"/>.
+		/// </summary>
+		/// <remarks>
+		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.AccessRight"/>.
+		/// </remarks>
+		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.AccessRight"/>.</returns>
+		public override string ToString ()
+		{
+			return Right.ToString ();
+		}
+	}
+}

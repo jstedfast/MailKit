@@ -227,7 +227,6 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsNotNull (created.ParentFolder, "The ParentFolder property should not be null.");
 
-
 				const MessageFlags ExpectedPermanentFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.UserDefined;
 				const MessageFlags ExpectedAcceptedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen;
 				var access = created.Open (FolderAccess.ReadWrite, CancellationToken.None);

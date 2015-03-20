@@ -41,6 +41,9 @@ namespace MailKit.Net.Imap {
 		UidValidity,
 		Unseen,
 
+		// RESP-CODES introduced in rfc2086:
+		MyRights,
+
 		// RESP-CODES introduced in rfc2221:
 		Referral,
 
