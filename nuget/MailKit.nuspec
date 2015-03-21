@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.0.11.0</version>
+        <version>1.0.12.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,19 +22,19 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Make sure that the IMAP stream supports timeouts before using them (fixes a regression introduced in 1.0.10).
-* Added BodyParts and Attachments convenience properties to MessageSummary.
-* Added TextBody and HtmlBody convenience properties to MessageSummary.
-* Added ImapClient.IsAuthenticated, Pop3Client.IsAuthenticated and SmtpClient.IsAuthenticated properties.
-* Changed the ImapClient.Inbox property to throw InvalidOperationException if you try to access it before authenticating instead of returning null.
-* Added an ImapClient.IsIdle property to check if the ImapClient is currently in the IDLE state.
+        <releaseNotes>* Fixed ImapFolder.GetMessage(), GetBodyPart() and GetStream() to throw an ImapCommandException rather than returning null if the server did not response with the message data.
+* Added new, much more usable, Connect() methods to ImapClient, Pop3Client, and SmtpClient that take a hostname, port, and SecureSocketOptions.
+* Added a workaround for smtp.strato.de's blatant disregard for standards. (issue #162)
+* Fixed ImapFolder.Close() to require ReadWrite access if expunge is true.
+* Fixed IMAP SORT queries to inject "RETURN" before the orderBy param. (issue #164)
+* Implemented support for the IMAP ACL extension.
 
 Note: If you are not yet ready to port your iOS application to the Unified API, you will need to stick with the 1.0.5 release. The Classic MonoTouch API is no longer supported.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.0.10.0" />
+            <dependency id="MimeKit" version="1.0.11.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

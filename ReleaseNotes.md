@@ -1,5 +1,19 @@
 # Release Notes
 
+### MailKit 1.0.12
+
+* Fixed ImapFolder.GetMessage(), GetBodyPart() and GetStream() to throw an
+  ImapCommandException rather than returning null if the server did not
+  response with the message data.
+* Added new, much more usable, Connect() methods to ImapClient, Pop3Client,
+  and SmtpClient that take a hostname, port, and SecureSocketOptions.
+* Added a workaround for smtp.strato.de's blatant disregard for standards.
+  (issue #162)
+* Fixed ImapFolder.Close() to require ReadWrite access if expunge is true.
+* Fixed IMAP SORT queries to inject "RETURN" before the orderBy param.
+  (issue #164)
+* Implemented support for the IMAP ACL extension.
+
 ### MailKit 1.0.11
 
 * Make sure that the IMAP stream supports timeouts before using them (fixes a
