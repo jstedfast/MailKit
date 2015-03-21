@@ -39,6 +39,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * Supports SSL-wrapped connections via the "imaps" protocol.
   * Supports client SSL/TLS certificates.
   * Supports the following extensions:
+    * ACL
     * QUOTA
     * LITERAL+
     * IDLE
