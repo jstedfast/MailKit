@@ -660,6 +660,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets whether or not the client is currently in the IDLE state.
 		/// </remarks>
+		/// <value><c>true</c> if an IDLE command is active; otherwise, <c>false</c>.</value>
 		public bool IsIdle {
 			get { return engine.State == ImapEngineState.Idle; }
 		}

@@ -1,17 +1,24 @@
 <Type Name="AccessRights" FullName="MailKit.AccessRights">
-  <TypeSignature Language="C#" Value="public class AccessRights : System.Collections.Generic.HashSet&lt;MailKit.AccessRight&gt;" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AccessRights extends System.Collections.Generic.HashSet`1&lt;valuetype MailKit.AccessRight&gt;" />
+  <TypeSignature Language="C#" Value="public class AccessRights : System.Collections.Generic.ICollection&lt;MailKit.AccessRight&gt;, System.Collections.Generic.IEnumerable&lt;MailKit.AccessRight&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AccessRights extends System.Object implements class System.Collections.Generic.ICollection`1&lt;valuetype MailKit.AccessRight&gt;, class System.Collections.Generic.IEnumerable`1&lt;valuetype MailKit.AccessRight&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>System.Collections.Generic.HashSet&lt;MailKit.AccessRight&gt;</BaseTypeName>
+    <BaseTypeName>System.Object</BaseTypeName>
     <BaseTypeArguments>
       <BaseTypeArgument TypeParamName="!0">MailKit.AccessRight</BaseTypeArgument>
     </BaseTypeArguments>
   </Base>
-  <Interfaces />
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.ICollection&lt;MailKit.AccessRight&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;MailKit.AccessRight&gt;</InterfaceName>
+    </Interface>
+  </Interfaces>
   <Docs>
     <summary>
             A set of access rights.
@@ -79,14 +86,39 @@
       </Docs>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public void Add (char right);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(char right) cil managed" />
+      <MemberSignature Language="C#" Value="public bool Add (MailKit.AccessRight right);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Add(valuetype MailKit.AccessRight right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="right" Type="MailKit.AccessRight" />
+      </Parameters>
+      <Docs>
+        <param name="right">The access right.</param>
+        <summary>
+            Add the specified access right.
+            </summary>
+        <returns>
+          <c>true</c> if the right was added; otherwise, <c>false</c>.</returns>
+        <remarks>
+            Adds the specified access right if it is not already included.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public bool Add (char right);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Add(char right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="right" Type="System.Char" />
@@ -96,9 +128,37 @@
         <summary>
             Add the specified right.
             </summary>
+        <returns>
+          <c>true</c> if the right was added; otherwise, <c>false</c>.</returns>
         <remarks>
             Adds the right specified by the given character.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="C#" Value="public void AddRange (System.Collections.Generic.IEnumerable&lt;MailKit.AccessRight&gt; rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddRange(class System.Collections.Generic.IEnumerable`1&lt;valuetype MailKit.AccessRight&gt; rights) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rights" Type="System.Collections.Generic.IEnumerable&lt;MailKit.AccessRight&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="rights">The rights.</param>
+        <summary>
+            Add the range of specified rights.
+            </summary>
+        <remarks>
+            Adds the range of specified rights.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="rights" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -125,6 +185,241 @@
         <exception cref="T:System.ArgumentNullException">
           <paramref name="rights" /> is <c>null</c>.
             </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Clear">
+      <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Clear() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Clears the access rights.
+            </summary>
+        <remarks>
+            Removes all of the access rights.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Contains">
+      <MemberSignature Language="C#" Value="public bool Contains (MailKit.AccessRight right);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Contains(valuetype MailKit.AccessRight right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="right" Type="MailKit.AccessRight" />
+      </Parameters>
+      <Docs>
+        <param name="right">The access right.</param>
+        <summary>
+            Checks if the set of access rights contains the specified right.
+            </summary>
+        <returns>
+          <value>true</value> if the specified right exists; otherwise <value>false</value>.</returns>
+        <remarks>
+            Determines whether or not the set of access rights already contains the specified right
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CopyTo">
+      <MemberSignature Language="C#" Value="public void CopyTo (MailKit.AccessRight[] array, int arrayIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void CopyTo(valuetype MailKit.AccessRight[] array, int32 arrayIndex) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="array" Type="MailKit.AccessRight[]" />
+        <Parameter Name="arrayIndex" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="array">The array.</param>
+        <param name="arrayIndex">The array index.</param>
+        <summary>
+            Copies all of the access rights to the specified array.
+            </summary>
+        <remarks>
+            Copies all of the access rights into the array,
+            starting at the specified array index.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="array" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="arrayIndex" /> is out of range.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the number of access rights in the collection.
+            </summary>
+        <value>The count.</value>
+        <remarks>
+            Gets the number of access rights in the collection.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerator&lt;MailKit.AccessRight&gt; GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerator`1&lt;valuetype MailKit.AccessRight&gt; GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerator&lt;MailKit.AccessRight&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Get the access rights enumerator.
+            </summary>
+        <returns>The enumerator.</returns>
+        <remarks>
+            Gets the access rights enumerator.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get whether or not this set of access rights is read only.
+            </summary>
+        <value>
+          <c>true</c> if this collection is read only; otherwise, <c>false</c>.</value>
+        <remarks>
+            Gets whether or not this set of access rights is read only.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Item">
+      <MemberSignature Language="C#" Value="public MailKit.AccessRight this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.AccessRight Item(int32)" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.AccessRight</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index.</param>
+        <summary>
+            Get the access right at the specified index.
+            </summary>
+        <value>The access right at the specified index.</value>
+        <remarks>
+            Gets the access right at the specified index.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is out of range.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public bool Remove (MailKit.AccessRight right);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool Remove(valuetype MailKit.AccessRight right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="right" Type="MailKit.AccessRight" />
+      </Parameters>
+      <Docs>
+        <param name="right">The access right.</param>
+        <summary>
+            Removes the specified access right.
+            </summary>
+        <returns>
+          <value>true</value> if the access right was removed; otherwise <value>false</value>.</returns>
+        <remarks>
+            Removes the specified access right.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.Generic.ICollection&lt;MailKit.AccessRight&gt;.Add">
+      <MemberSignature Language="C#" Value="void ICollection&lt;AccessRight&gt;.Add (MailKit.AccessRight right);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Collections.Generic.ICollection&lt;MailKit.AccessRight&gt;.Add(valuetype MailKit.AccessRight right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="right" Type="MailKit.AccessRight" />
+      </Parameters>
+      <Docs>
+        <param name="right">The access right.</param>
+        <summary>
+            Add the specified access right.
+            </summary>
+        <remarks>
+            Adds the specified access right if it is not already included.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
+      <MemberSignature Language="C#" Value="System.Collections.IEnumerator IEnumerable.GetEnumerator ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.IEnumerator</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Get the access rights enumerator.
+            </summary>
+        <returns>The enumerator.</returns>
+        <remarks>
+            Gets the access rights enumerator.
+            </remarks>
       </Docs>
     </Member>
     <Member MemberName="ToString">

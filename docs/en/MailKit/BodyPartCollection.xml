@@ -181,7 +181,7 @@
       <Parameters />
       <Docs>
         <summary>
-            Gets the body part enumerator.
+            Get the body part enumerator.
             </summary>
         <returns>The enumerator.</returns>
         <remarks>
@@ -311,7 +311,7 @@
       <Parameters />
       <Docs>
         <summary>
-            Gets the body part enumerator.
+            Get the body part enumerator.
             </summary>
         <returns>The enumerator.</returns>
         <remarks>

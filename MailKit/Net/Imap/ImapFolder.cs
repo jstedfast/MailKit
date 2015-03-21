@@ -1269,7 +1269,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Add access rights for the sepcified identity.
+		/// Add access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Adds the given access rights for the specified identity.
@@ -1323,7 +1323,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Remove access rights for the sepcified identity.
+		/// Remove access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Removes the given access rights for the specified identity.
@@ -1377,7 +1377,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Set the access rights for the sepcified identity.
+		/// Set the access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Sets the access rights for the specified identity.

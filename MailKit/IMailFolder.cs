@@ -587,7 +587,7 @@ namespace MailKit {
 		Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Add access rights for the sepcified identity.
+		/// Add access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Adds the given access rights for the specified identity.
@@ -598,18 +598,19 @@ namespace MailKit {
 		void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously add access rights for the sepcified identity.
+		/// Asynchronously add access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously adds the given access rights for the specified identity.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="name">The identity name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Remove access rights for the sepcified identity.
+		/// Remove access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Removes the given access rights for the specified identity.
@@ -620,18 +621,19 @@ namespace MailKit {
 		void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously remove access rights for the sepcified identity.
+		/// Asynchronously remove access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Asynchronously removes the given access rights for the specified identity.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="name">The identity name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Set the access rights for the sepcified identity.
+		/// Set the access rights for the specified identity.
 		/// </summary>
 		/// <remarks>
 		/// Sets the access rights for the specified identity.
@@ -647,6 +649,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously sets the access rights for the specified identity.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="name">The identity name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -668,6 +671,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously removes all access rights for the given identity.
 		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
 		/// <param name="name">The identity name.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken));

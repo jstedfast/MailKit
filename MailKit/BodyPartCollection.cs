@@ -247,7 +247,7 @@ namespace MailKit {
 		#region IEnumerable implementation
 
 		/// <summary>
-		/// Gets the body part enumerator.
+		/// Get the body part enumerator.
 		/// </summary>
 		/// <remarks>
 		/// Gets the body part enumerator.
@@ -263,7 +263,7 @@ namespace MailKit {
 		#region IEnumerable implementation
 
 		/// <summary>
-		/// Gets the body part enumerator.
+		/// Get the body part enumerator.
 		/// </summary>
 		/// <remarks>
 		/// Gets the body part enumerator.
