@@ -251,6 +251,15 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mail-from-rcpt-to.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\deleteacl.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\getacl.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\listrights.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl1.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl3.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />
@@ -266,6 +275,7 @@
     <Folder Include="Net\Smtp\" />
     <Folder Include="Net\Smtp\Resources\" />
     <Folder Include="Security\" />
+    <Folder Include="Net\Imap\Resources\acl\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

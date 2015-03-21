@@ -1,0 +1,2 @@
+* ACL INBOX Fred rwipslxetad Chris lrswi
+A00000005 OK GETACL completed.

@@ -57,6 +57,8 @@ namespace UnitTests.Net.Imap {
 			ImapCapabilities.XList | ImapCapabilities.Children | ImapCapabilities.GMailExt1 | ImapCapabilities.UidPlus |
 			ImapCapabilities.Compress | ImapCapabilities.Enable | ImapCapabilities.Move | ImapCapabilities.CondStore |
 			ImapCapabilities.ESearch | ImapCapabilities.Id;
+		static readonly ImapCapabilities AclInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Acl;
+		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
 
 		static FolderAttributes GetSpecialFolderAttribute (SpecialFolder special)
 		{
@@ -265,6 +267,102 @@ namespace UnitTests.Net.Imap {
 				created.Delete (CancellationToken.None);
 
 				client.Disconnect (true, CancellationToken.None);
+			}
+		}
+
+		[Test]
+		public void TestAccessControlLists ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "acl.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "acl.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 GETACL INBOX\r\n", "acl.getacl.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 LISTRIGHTS INBOX smith\r\n", "acl.listrights.txt"));
+			commands.Add (new ImapReplayCommand ("A00000007 MYRIGHTS INBOX\r\n", "acl.myrights.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 SETACL INBOX smith +lrswida\r\n", "acl.setacl1.txt"));
+			commands.Add (new ImapReplayCommand ("A00000009 SETACL INBOX smith -lrswida\r\n", "acl.setacl2.txt"));
+			commands.Add (new ImapReplayCommand ("A00000010 SETACL INBOX smith lrswida\r\n", "acl.setacl3.txt"));
+			commands.Add (new ImapReplayCommand ("A00000011 DELETEACL INBOX smith\r\n", "acl.deleteacl.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (AclInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				try {
+					var credentials = new NetworkCredential ("username", "password");
+
+					// Note: Do not try XOAUTH2
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+					client.Authenticate (credentials, CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (AclAuthenticatedCapabilities, client.Capabilities);
+
+				var inbox = client.Inbox;
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.HasNoChildren, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
+
+				foreach (var special in Enum.GetValues (typeof (SpecialFolder)).OfType<SpecialFolder> ()) {
+					var folder = client.GetFolder (special);
+
+					if (special != SpecialFolder.Archive) {
+						var expected = GetSpecialFolderAttribute (special) | FolderAttributes.HasNoChildren;
+
+						Assert.IsNotNull (folder, "Expected non-null {0} folder.", special);
+						Assert.AreEqual (expected, folder.Attributes, "Expected {0} attributes to be \\HasNoChildren.", special);
+					} else {
+						Assert.IsNull (folder, "Expected null {0} folder.", special);
+					}
+				}
+
+				// GETACL INBOX
+				var acl = client.Inbox.GetAccessControlList ();
+				Assert.AreEqual (2, acl.Count, "The number of access controls does not match.");
+				Assert.AreEqual ("Fred", acl[0].Name, "The identifier for the first access control does not match.");
+				Assert.AreEqual ("rwipslxetad", acl[0].Rights.ToString (), "The access rights for the first access control does not match.");
+				Assert.AreEqual ("Chris", acl[1].Name, "The identifier for the second access control does not match.");
+				Assert.AreEqual ("lrswi", acl[1].Rights.ToString (), "The access rights for the second access control does not match.");
+
+				// LISTRIGHTS INBOX smith
+				var rights = client.Inbox.GetAccessRights ("smith");
+				Assert.AreEqual ("lrswipkxtecda0123456789", rights.ToString (), "The access rights do not match for user smith.");
+
+				// MYRIGHTS INBOX
+				rights = client.Inbox.GetMyAccessRights ();
+				Assert.AreEqual ("rwiptsldaex", rights.ToString (), "My access rights do not match.");
+
+				// SETACL INBOX smith +lrswida
+				client.Inbox.AddAccessRights ("smith", new AccessRights ("lrswida"));
+
+				// SETACL INBOX smith -lrswida
+				client.Inbox.RemoveAccessRights ("smith", new AccessRights ("lrswida"));
+
+				// SETACL INBOX smith lrswida
+				client.Inbox.SetAccessRights ("smith", new AccessRights ("lrswida"));
+
+				// DELETEACL INBOX smith
+				client.Inbox.RemoveAccess ("smith");
+
+				client.Disconnect (false, CancellationToken.None);
 			}
 		}
 
