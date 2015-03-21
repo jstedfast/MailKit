@@ -19,6 +19,66 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName="AddAccessRights">
+      <MemberSignature Language="C#" Value="public override void AddAccessRights (string name, MailKit.AccessRights rights, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddAccessRights(string name, class MailKit.AccessRights rights, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="rights" Type="MailKit.AccessRights" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="name">The identity name.</param>
+        <param name="rights">The access rights.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Add access rights for the sepcified identity.
+            </summary>
+        <remarks>
+            Adds the given access rights for the specified identity.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="name" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="rights" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+            No rights were specified.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the ACL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The command failed.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="AddFlags">
       <MemberSignature Language="C#" Value="public override void AddFlags (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.MessageFlags flags, System.Collections.Generic.HashSet&lt;string&gt; userFlags, bool silent, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddFlags(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, valuetype MailKit.MessageFlags flags, class System.Collections.Generic.HashSet`1&lt;string&gt; userFlags, bool silent, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -2458,6 +2518,105 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="GetAccessControlList">
+      <MemberSignature Language="C#" Value="public override MailKit.AccessControlList GetAccessControlList (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.AccessControlList GetAccessControlList(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.AccessControlList</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the complete access control list for the folder.
+            </summary>
+        <returns>The access control list.</returns>
+        <remarks>
+            Gets the complete access control list for the folder.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the ACL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The command failed.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAccessRights">
+      <MemberSignature Language="C#" Value="public override MailKit.AccessRights GetAccessRights (string name, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.AccessRights GetAccessRights(string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.AccessRights</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="name">The identifier name.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the access rights for a particular identifier.
+            </summary>
+        <returns>The access rights.</returns>
+        <remarks>
+            Gets the access rights for a particular identifier.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the ACL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The command failed.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="GetBodyPart">
       <MemberSignature Language="C#" Value="public override MimeKit.MimeEntity GetBodyPart (MailKit.UniqueId uid, MailKit.BodyPart part, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MimeKit.MimeEntity GetBodyPart(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -3051,6 +3210,53 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetMyAccessRights">
+      <MemberSignature Language="C#" Value="public override MailKit.AccessRights GetMyAccessRights (System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class MailKit.AccessRights GetMyAccessRights(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.AccessRights</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the access rights for the current authenticated user.
+            </summary>
+        <returns>The access rights.</returns>
+        <remarks>
+            Gets the access rights for the current authenticated user.
+            </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the ACL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The command failed.
             </exception>
       </Docs>
     </Member>
@@ -3739,6 +3945,117 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccess">
+      <MemberSignature Language="C#" Value="public override void RemoveAccess (string name, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveAccess(string name, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="name">The identity name.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Remove all access rights for the given identity.
+            </summary>
+        <remarks>
+            Removes all access rights for the given identity.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="name" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the ACL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The command failed.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAccessRights">
+      <MemberSignature Language="C#" Value="public override void RemoveAccessRights (string name, MailKit.AccessRights rights, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void RemoveAccessRights(string name, class MailKit.AccessRights rights, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="rights" Type="MailKit.AccessRights" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="name">The identity name.</param>
+        <param name="rights">The access rights.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Remove access rights for the sepcified identity.
+            </summary>
+        <remarks>
+            Removes the given access rights for the specified identity.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="name" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="rights" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+            No rights were specified.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the ACL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The command failed.
             </exception>
       </Docs>
     </Member>
@@ -4603,6 +4920,63 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="SetAccessRights">
+      <MemberSignature Language="C#" Value="public override void SetAccessRights (string name, MailKit.AccessRights rights, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void SetAccessRights(string name, class MailKit.AccessRights rights, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="rights" Type="MailKit.AccessRights" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="name">The identity name.</param>
+        <param name="rights">The access rights.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Set the access rights for the sepcified identity.
+            </summary>
+        <remarks>
+            Sets the access rights for the specified identity.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="name" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="rights" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.NotSupportedException">
+            The IMAP server does not support the ACL extension.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The command failed.
             </exception>
       </Docs>
     </Member>

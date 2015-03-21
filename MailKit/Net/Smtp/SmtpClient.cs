@@ -104,7 +104,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Before you can send messages with the <see cref="SmtpClient"/>, you must first call
-		/// the <see cref="Connect(Uri,CancellationToken)"/> method. Depending on the server,
+		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method. Depending on the server,
 		/// you may also need to authenticate using the
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
@@ -117,7 +117,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// Before you can send messages with the <see cref="SmtpClient"/>, you must first call
-		/// the <see cref="Connect(Uri,CancellationToken)"/> method. Depending on the server,
+		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method. Depending on the server,
 		/// you may also need to authenticate using the
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
@@ -162,7 +162,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection has been made via
-		/// the <see cref="Connect(Uri,CancellationToken)"/> method and may change as a side-effect
+		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and may change as a side-effect
 		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
@@ -197,7 +197,7 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// <para>The maximum message size will not be known until a successful
-		/// connection has been made via the <see cref="Connect(Uri,CancellationToken)"/> method
+		/// connection has been made via the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method
 		/// and may change as a side-effect of the <see cref="Authenticate(ICredentials,CancellationToken)"/>
 		/// method.</para>
 		/// <para>Note: This value is only relevant if the <see cref="Capabilities"/>
@@ -220,7 +220,7 @@ namespace MailKit.Net.Smtp {
 		/// Get the authentication mechanisms supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried durring the <see cref="Connect(Uri,CancellationToken)"/> method.
+		/// The authentication mechanisms are queried durring the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {

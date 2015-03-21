@@ -1,0 +1,152 @@
+<Type Name="AccessRights" FullName="MailKit.AccessRights">
+  <TypeSignature Language="C#" Value="public class AccessRights : System.Collections.Generic.HashSet&lt;MailKit.AccessRight&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AccessRights extends System.Collections.Generic.HashSet`1&lt;valuetype MailKit.AccessRight&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.Generic.HashSet&lt;MailKit.AccessRight&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">MailKit.AccessRight</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            A set of access rights.
+            </summary>
+    <remarks>
+            The set of access rights for a particular identity.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AccessRights ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.AccessRights" /> class.
+            </summary>
+        <remarks>
+            Creates an empty set of access rights.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AccessRights (System.Collections.Generic.IEnumerable&lt;MailKit.AccessRight&gt; rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Collections.Generic.IEnumerable`1&lt;valuetype MailKit.AccessRight&gt; rights) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="rights" Type="System.Collections.Generic.IEnumerable&lt;MailKit.AccessRight&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="rights">The access rights.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.AccessRights" /> class.
+            </summary>
+        <remarks>
+            Creates a new set of access rights.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AccessRights (string rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string rights) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="rights" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="rights">The access rights.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.AccessRights" /> class.
+            </summary>
+        <remarks>
+            Creates a new set of access rights.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Add">
+      <MemberSignature Language="C#" Value="public void Add (char right);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Add(char right) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="right" Type="System.Char" />
+      </Parameters>
+      <Docs>
+        <param name="right">The right.</param>
+        <summary>
+            Add the specified right.
+            </summary>
+        <remarks>
+            Adds the right specified by the given character.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AddRange">
+      <MemberSignature Language="C#" Value="public void AddRange (string rights);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddRange(string rights) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rights" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="rights">The rights.</param>
+        <summary>
+            Add the rights specified by the characters in the given string.
+            </summary>
+        <remarks>
+            Adds the rights specified by the characters in the given string.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="rights" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>
+            Return a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.AccessRights" />.
+            </summary>
+        <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.AccessRights" />.</returns>
+        <remarks>
+            Returns a <see cref="T:System.String" /> that represents the current <see cref="T:MailKit.AccessRights" />.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

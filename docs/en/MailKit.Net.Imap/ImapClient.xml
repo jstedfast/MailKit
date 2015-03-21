@@ -37,7 +37,7 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you must first
-            call the <see cref="!:Connect(Uri,CancellationToken)" /> method and authenticate with
+            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and authenticate with
             the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
@@ -59,7 +59,7 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you must first
-            call the <see cref="!:Connect(Uri,CancellationToken)" /> method and authenticate with
+            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and authenticate with
             the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
@@ -141,7 +141,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried as part of the <see cref="!:Connect(Uri,CancellationToken)" /> method.
+            The authentication mechanisms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -162,7 +162,7 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection has been made via
-            the <see cref="!:Connect(Uri,CancellationToken)" /> method and may change as a side-effect
+            the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and may change as a side-effect
             of the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentException">
@@ -1176,6 +1176,29 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Rights">
+      <MemberSignature Language="C#" Value="public MailKit.AccessRights Rights { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.AccessRights Rights" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.AccessRights</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the access rights supported by the IMAP server.
+            </summary>
+        <value>The rights.</value>
+        <remarks>
+            These rights are additional rights supported by the IMAP server
+            beyond the standard rights defined in
+            https://tools.ietf.org/html/rfc4314#section-2.1 and will
+            not be populated until the client is successfully connected.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="SharedNamespaces">
       <MemberSignature Language="C#" Value="public override MailKit.FolderNamespaceCollection SharedNamespaces { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance class MailKit.FolderNamespaceCollection SharedNamespaces" />
@@ -1255,7 +1278,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The threading algorithms are queried as part of the <see cref="!:Connect(Uri,CancellationToken)" /> and
+            The threading algorithms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> and
             <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> methods.
             </remarks>
       </Docs>

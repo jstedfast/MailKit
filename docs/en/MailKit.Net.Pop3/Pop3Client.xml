@@ -37,7 +37,7 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Pop3.Pop3Client" />, you must first
-            call the <see cref="!:Connect(Uri,CancellationToken)" /> method and authenticate with
+            call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and authenticate with
             the <see cref="M:MailKit.Net.Pop3.Pop3Client.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
@@ -59,7 +59,7 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Pop3.Pop3Client" />, you must first
-            call the <see cref="!:Connect(Uri,CancellationToken)" /> method and authenticate with
+            call the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and authenticate with
             the <see cref="M:MailKit.Net.Pop3.Pop3Client.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
@@ -150,7 +150,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-          <para>The authentication mechanisms are queried durring the <see cref="!:Connect(Uri,CancellationToken)" /> method.</para>
+          <para>The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method.</para>
           <para>Servers that do not support the SASL capability will typically support either the
             <c>"APOP"</c> authentication mechanism (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.Apop" />) or the ability to
             login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.User" />).</para>
@@ -174,7 +174,7 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection has been made via
-            the <see cref="!:Connect(Uri,CancellationToken)" /> method and may change as a side-effect
+            the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and may change as a side-effect
             of the <see cref="M:MailKit.Net.Pop3.Pop3Client.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentException">

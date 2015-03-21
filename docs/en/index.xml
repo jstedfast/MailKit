@@ -49,6 +49,10 @@
   <Copyright>Copyright (c) 2013-2014 Xamarin Inc. (www.xamarin.com)</Copyright>
   <Types>
     <Namespace Name="MailKit">
+      <Type Name="AccessControl" Kind="Class" />
+      <Type Name="AccessControlList" Kind="Class" />
+      <Type Name="AccessRight" Kind="Structure" />
+      <Type Name="AccessRights" Kind="Class" />
       <Type Name="AlertEventArgs" Kind="Class" />
       <Type Name="AuthenticatedEventArgs" Kind="Class" />
       <Type Name="BodyPart" Kind="Class" />

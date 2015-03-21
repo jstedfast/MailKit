@@ -97,7 +97,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you must first
-		/// call the <see cref="Connect(Uri,CancellationToken)"/> method and authenticate with
+		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
 		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
@@ -119,7 +119,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you must first
-		/// call the <see cref="Connect(Uri,CancellationToken)"/> method and authenticate with
+		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
 		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		public Pop3Client () : this (new NullProtocolLogger ())
@@ -155,7 +155,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection has been made via
-		/// the <see cref="Connect(Uri,CancellationToken)"/> method and may change as a side-effect
+		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and may change as a side-effect
 		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
@@ -307,7 +307,7 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
-		/// <para>The authentication mechanisms are queried durring the <see cref="Connect(Uri,CancellationToken)"/> method.</para>
+		/// <para>The authentication mechanisms are queried durring the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.</para>
 		/// <para>Servers that do not support the SASL capability will typically support either the
 		/// <c>"APOP"</c> authentication mechanism (<see cref="Pop3Capabilities.Apop"/>) or the ability to
 		/// login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="Pop3Capabilities.User"/>).</para>

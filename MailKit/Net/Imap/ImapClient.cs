@@ -79,7 +79,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
-		/// call the <see cref="Connect(Uri,CancellationToken)"/> method and authenticate with
+		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
 		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		public ImapClient () : this (new NullProtocolLogger ())
@@ -91,7 +91,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
-		/// call the <see cref="Connect(Uri,CancellationToken)"/> method and authenticate with
+		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
 		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
@@ -138,7 +138,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection has been made via
-		/// the <see cref="Connect(Uri,CancellationToken)"/> method and may change as a side-effect
+		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and may change as a side-effect
 		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The capabilities.</value>
@@ -589,7 +589,7 @@ namespace MailKit.Net.Imap {
 		/// Get the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> method.
+		/// The authentication mechanisms are queried as part of the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
@@ -600,7 +600,7 @@ namespace MailKit.Net.Imap {
 		/// Get the threading algorithms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The threading algorithms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> and
+		/// The threading algorithms are queried as part of the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> and
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> methods.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>

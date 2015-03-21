@@ -61,7 +61,7 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
 		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect(Uri,CancellationToken)"/>.</para>
+		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		X509CertificateCollection ClientCertificates { get; set; }
@@ -72,7 +72,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
-		/// <see cref="Connect(Uri,CancellationToken)"/> method.
+		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The supported authentication mechanisms.</value>
 		HashSet<string> AuthenticationMechanisms { get; }

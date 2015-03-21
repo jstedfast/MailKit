@@ -37,7 +37,7 @@
             </summary>
         <remarks>
             Before you can send messages with the <see cref="T:MailKit.Net.Smtp.SmtpClient" />, you must first call
-            the <see cref="!:Connect(Uri,CancellationToken)" /> method. Depending on the server,
+            the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method. Depending on the server,
             you may also need to authenticate using the
             <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
@@ -60,7 +60,7 @@
             </summary>
         <remarks>
             Before you can send messages with the <see cref="T:MailKit.Net.Smtp.SmtpClient" />, you must first call
-            the <see cref="!:Connect(Uri,CancellationToken)" /> method. Depending on the server,
+            the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method. Depending on the server,
             you may also need to authenticate using the
             <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
@@ -149,7 +149,7 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried durring the <see cref="!:Connect(Uri,CancellationToken)" /> method.
+            The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -170,7 +170,7 @@
         <value>The capabilities.</value>
         <remarks>
             The capabilities will not be known until a successful connection has been made via
-            the <see cref="!:Connect(Uri,CancellationToken)" /> method and may change as a side-effect
+            the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and may change as a side-effect
             of the <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentException">
@@ -532,7 +532,7 @@
         <value>The maximum message size supported by the server.</value>
         <remarks>
           <para>The maximum message size will not be known until a successful
-            connection has been made via the <see cref="!:Connect(Uri,CancellationToken)" /> method
+            connection has been made via the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method
             and may change as a side-effect of the <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />
             method.</para>
           <para>Note: This value is only relevant if the <see cref="P:MailKit.Net.Smtp.SmtpClient.Capabilities" />

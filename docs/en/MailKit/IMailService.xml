@@ -139,7 +139,7 @@
         <value>The supported authentication mechanisms.</value>
         <remarks>
             The authentication mechanisms are queried durring the
-            <see cref="!:Connect(Uri,CancellationToken)" /> method.
+            <see cref="M:MailKit.IMailService.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -161,7 +161,7 @@
         <remarks>
           <para>Some servers may require the client SSL certificates in order
             to allow the user to connect.</para>
-          <para>This property should be set before calling <see cref="!:Connect(Uri,CancellationToken)" />.</para>
+          <para>This property should be set before calling <see cref="M:MailKit.IMailService.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" />.</para>
         </remarks>
       </Docs>
     </Member>
