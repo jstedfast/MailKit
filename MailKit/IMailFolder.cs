@@ -525,6 +525,154 @@ namespace MailKit {
 		Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Get the complete access control list for the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets the complete access control list for the folder.
+		/// </remarks>
+		/// <returns>The access control list.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		AccessControlList GetAccessControlList (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the complete access control list for the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the complete access control list for the folder.
+		/// </remarks>
+		/// <returns>The access control list.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the access rights for a particular identifier.
+		/// </summary>
+		/// <remarks>
+		/// Gets the access rights for a particular identifier.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="name">The identifier name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the access rights for a particular identifier.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the access rights for a particular identifier.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="name">The identifier name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the access rights for the current authenticated user.
+		/// </summary>
+		/// <remarks>
+		/// Gets the access rights for the current authenticated user.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		AccessRights GetMyAccessRights (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the access rights for the current authenticated user.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the access rights for the current authenticated user.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Add access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Adds the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously add access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Remove access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Removes the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Set the access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Sets the access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Remove all access rights for the given identity.
+		/// </summary>
+		/// <remarks>
+		/// Removes all access rights for the given identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		void RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove all access rights for the given identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes all access rights for the given identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Get the quota information for the folder.
 		/// </summary>
 		/// <remarks>

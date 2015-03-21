@@ -1261,6 +1261,591 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the complete access control list for the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets the complete access control list for the folder.
+		/// </remarks>
+		/// <returns>The access control list.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract AccessControlList GetAccessControlList (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the complete access control list for the folder.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the complete access control list for the folder.
+		/// </remarks>
+		/// <returns>The access control list.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetAccessControlList (cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get the access rights for a particular identifier.
+		/// </summary>
+		/// <remarks>
+		/// Gets the access rights for a particular identifier.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="name">The identifier name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the access rights for a particular identifier.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the access rights for a particular identifier.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="name">The identifier name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetAccessRights (name, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get the access rights for the current authenticated user.
+		/// </summary>
+		/// <remarks>
+		/// Gets the access rights for the current authenticated user.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract AccessRights GetMyAccessRights (CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the access rights for the current authenticated user.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the access rights for the current authenticated user.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetMyAccessRights (cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Add access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Adds the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously add access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously adds the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (rights == null)
+				throw new ArgumentNullException ("rights");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					AddAccessRights (name, rights, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Remove access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Removes the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (rights == null)
+				throw new ArgumentNullException ("rights");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					RemoveAccessRights (name, rights, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Set the access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Sets the access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously set the access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously sets the access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (rights == null)
+				throw new ArgumentNullException ("rights");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					SetAccessRights (name, rights, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Remove all access rights for the given identity.
+		/// </summary>
+		/// <remarks>
+		/// Removes all access rights for the given identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract void RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously remove all access rights for the given identity.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously removes all access rights for the given identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="IMailStore"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					RemoveAccess (name, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
 		/// Get the quota information for the folder.
 		/// </summary>
 		/// <remarks>

@@ -1035,6 +1035,449 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("STATUS", ic);
 		}
 
+		static void UntaggedAcl (ImapEngine engine, ImapCommand ic, int index)
+		{
+			var acl = (AccessControlList) ic.UserData;
+			string name, rights;
+			ImapToken token;
+
+			// read the mailbox name
+			ReadStringToken (engine, ic.CancellationToken);
+
+			do {
+				name = ReadStringToken (engine, ic.CancellationToken);
+				rights = ReadStringToken (engine, ic.CancellationToken);
+
+				acl.Add (new AccessControl (name, rights));
+
+				token = engine.PeekToken (ic.CancellationToken);
+			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		/// <summary>
+		/// Get the complete access control list for the folder.
+		/// </summary>
+		/// <remarks>
+		/// Gets the complete access control list for the folder.
+		/// </remarks>
+		/// <returns>The access control list.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The command failed.
+		/// </exception>
+		public override AccessControlList GetAccessControlList (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
+
+			CheckState (false, false);
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, "GETACL %F\r\n", this);
+			ic.RegisterUntaggedHandler ("ACL", UntaggedAcl);
+			ic.UserData = new AccessControlList ();
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("GETACL", ic);
+
+			return (AccessControlList) ic.UserData;
+		}
+
+		static void UntaggedListRights (ImapEngine engine, ImapCommand ic, int index)
+		{
+			var access = (AccessRights) ic.UserData;
+			ImapToken token;
+
+			// read the mailbox name
+			ReadStringToken (engine, ic.CancellationToken);
+
+			// read the identity name
+			ReadStringToken (engine, ic.CancellationToken);
+
+			do {
+				var rights = ReadStringToken (engine, ic.CancellationToken);
+
+				access.AddRange (rights);
+
+				token = engine.PeekToken (ic.CancellationToken);
+			} while (token.Type != ImapTokenType.Eoln);
+		}
+
+		/// <summary>
+		/// Get the access rights for a particular identifier.
+		/// </summary>
+		/// <remarks>
+		/// Gets the access rights for a particular identifier.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="name">The identifier name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The command failed.
+		/// </exception>
+		public override AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
+
+			CheckState (false, false);
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, "LISTRIGHTS %F %S\r\n", this, name);
+			ic.RegisterUntaggedHandler ("LISTRIGHTS", UntaggedListRights);
+			ic.UserData = new AccessRights ();
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("LISTRIGHTS", ic);
+
+			return (AccessRights) ic.UserData;
+		}
+
+		static void UntaggedMyRights (ImapEngine engine, ImapCommand ic, int index)
+		{
+			var access = (AccessRights) ic.UserData;
+
+			// read the mailbox name
+			ReadStringToken (engine, ic.CancellationToken);
+
+			// read the access rights
+			access.AddRange (ReadStringToken (engine, ic.CancellationToken));
+		}
+
+		/// <summary>
+		/// Get the access rights for the current authenticated user.
+		/// </summary>
+		/// <remarks>
+		/// Gets the access rights for the current authenticated user.
+		/// </remarks>
+		/// <returns>The access rights.</returns>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The command failed.
+		/// </exception>
+		public override AccessRights GetMyAccessRights (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
+
+			CheckState (false, false);
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, "MYRIGHTS %F\r\n", this);
+			ic.RegisterUntaggedHandler ("MYRIGHTS", UntaggedMyRights);
+			ic.UserData = new AccessRights ();
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("MYRIGHTS", ic);
+
+			return (AccessRights) ic.UserData;
+		}
+
+		void ModifyAccessRights (string name, AccessRights rights, string action, CancellationToken cancellationToken)
+		{
+			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
+
+			CheckState (false, false);
+
+			var ic = Engine.QueueCommand (cancellationToken, null, "SETACL %F %S %S\r\n", this, name, action + rights);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("SETACL", ic);
+		}
+
+		/// <summary>
+		/// Add access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Adds the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// No rights were specified.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The command failed.
+		/// </exception>
+		public override void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (rights == null)
+				throw new ArgumentNullException ("rights");
+
+			if (rights.Count == 0)
+				throw new ArgumentException ("No rights were specified.", "rights");
+
+			ModifyAccessRights (name, rights, "+", cancellationToken);
+		}
+
+		/// <summary>
+		/// Remove access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Removes the given access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// No rights were specified.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The command failed.
+		/// </exception>
+		public override void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (rights == null)
+				throw new ArgumentNullException ("rights");
+
+			if (rights.Count == 0)
+				throw new ArgumentException ("No rights were specified.", "rights");
+
+			ModifyAccessRights (name, rights, "-", cancellationToken);
+		}
+
+		/// <summary>
+		/// Set the access rights for the sepcified identity.
+		/// </summary>
+		/// <remarks>
+		/// Sets the access rights for the specified identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="rights">The access rights.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The command failed.
+		/// </exception>
+		public override void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (rights == null)
+				throw new ArgumentNullException ("rights");
+
+			ModifyAccessRights (name, rights, string.Empty, cancellationToken);
+		}
+
+		/// <summary>
+		/// Remove all access rights for the given identity.
+		/// </summary>
+		/// <remarks>
+		/// Removes all access rights for the given identity.
+		/// </remarks>
+		/// <param name="name">The identity name.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the ACL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The command failed.
+		/// </exception>
+		public override void RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
+
+			CheckState (false, false);
+
+			var ic = Engine.QueueCommand (cancellationToken, null, "DELETEACL %F %S\r\n", this, name);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("DELETEACL", ic);
+		}
+
 		static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);

@@ -24,8 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace MailKit {
@@ -33,93 +31,33 @@ namespace MailKit {
 	/// An Access Control List (ACL)
 	/// </summary>
 	/// <remarks>
-	/// An Access Control List (ACL) is a set of permissions available for a particular user,
-	/// controlling whether or not that person has the ability to perform various tasks.
+	/// An Access Control List (ACL) is a list of access controls defining the permissions
+	/// various identities have available.
 	/// </remarks>
-	public class AccessControlList
+	public class AccessControlList : List<AccessControl>
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.AccessControlList"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="MailKit.AccessControlList"/> with the given name and
-		/// access rights.
+		/// Creates a new <see cref="MailKit.AccessControlList"/>.
 		/// </remarks>
-		/// <param name="name">The identifier name.</param>
-		/// <param name="rights">The access rights.</param>
+		/// <param name="controls">The list of access controls.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <paramref name="controls"/> is <c>null</c>.
 		/// </exception>
-		public AccessControlList (string name, IEnumerable<AccessRight> rights)
+		public AccessControlList (IEnumerable<AccessControl> controls) : base (controls)
 		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			Rights = new List<AccessRight> (rights);
-			Name = name;
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.AccessControlList"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="MailKit.AccessControlList"/> with the given name and
-		/// access rights.
+		/// Creates a new <see cref="MailKit.AccessControlList"/>.
 		/// </remarks>
-		/// <param name="name">The identifier name.</param>
-		/// <param name="rights">The access rights.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
-		/// </exception>
-		public AccessControlList (string name, string rights)
+		public AccessControlList ()
 		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			Rights = new List<AccessRight> (rights.Select (c => new AccessRight (c)));
-			Name = name;
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.AccessControlList"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="MailKit.AccessControlList"/> with the given name and no
-		/// access rights.
-		/// </remarks>
-		/// <param name="name">The identifier name.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
-		/// </exception>
-		public AccessControlList (string name)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			Rights = new List<AccessRight> ();
-			Name = name;
-		}
-
-		/// <summary>
-		/// The identifier name for the ACL entry.
-		/// </summary>
-		/// <remarks>
-		/// The identifier name for the ACL entry.
-		/// </remarks>
-		/// <value>The identifier name.</value>
-		public string Name {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Get the access rights.
-		/// </summary>
-		/// <remarks>
-		/// Gets the access rights.
-		/// </remarks>
-		/// <value>The access rights.</value>
-		public IList<AccessRight> Rights {
-			get; private set;
 		}
 	}
 }

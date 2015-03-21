@@ -155,6 +155,20 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
+		/// <summary>
+		/// Get the access rights supported by the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// These rights are additional rights supported by the IMAP server
+		/// beyond the standard rights defined in
+		/// https://tools.ietf.org/html/rfc4314#section-2.1 and will
+		/// not be populated until the client is successfully connected.
+		/// </remarks>
+		/// <value>The rights.</value>
+		public AccessRights Rights {
+			get { return engine.Rights; }
+		}
+
 		void CheckDisposed ()
 		{
 			if (disposed)

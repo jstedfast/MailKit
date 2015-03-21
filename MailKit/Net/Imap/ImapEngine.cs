@@ -115,6 +115,7 @@ namespace MailKit.Net.Imap {
 			CompressionAlgorithms = new HashSet<string> ();
 			SupportedContexts = new HashSet<string> ();
 			SupportedCharsets = new HashSet<string> ();
+			Rights = new AccessRights ();
 
 			PersonalNamespaces = new FolderNamespaceCollection ();
 			SharedNamespaces = new FolderNamespaceCollection ();
@@ -216,6 +217,17 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The IMAP protocol version.</value>
 		public ImapProtocolVersion ProtocolVersion {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the rights specified in the capabilities.
+		/// </summary>
+		/// <remarks>
+		/// Gets the rights specified in the capabilities.
+		/// </remarks>
+		/// <value>The rights.</value>
+		public AccessRights Rights {
 			get; private set;
 		}
 
@@ -479,6 +491,7 @@ namespace MailKit.Net.Imap {
 			ThreadingAlgorithms.Clear ();
 			SupportedCharsets.Clear ();
 			SupportedContexts.Clear ();
+			Rights.Clear ();
 
 			if (Uri != uri)
 				FolderCache.Clear ();
@@ -760,6 +773,7 @@ namespace MailKit.Net.Imap {
 			ThreadingAlgorithms.Clear ();
 			SupportedContexts.Clear ();
 			CapabilitiesVersion++;
+			Rights.Clear ();
 
 			var token = Stream.ReadToken (cancellationToken);
 
@@ -774,6 +788,9 @@ namespace MailKit.Net.Imap {
 				} else if (atom.StartsWith ("CONTEXT=", StringComparison.Ordinal)) {
 					SupportedContexts.Add (atom.Substring ("CONTEXT=".Length));
 					Capabilities |= ImapCapabilities.Context;
+				} else if (atom.StartsWith ("RIGHTS=", StringComparison.Ordinal)) {
+					var rights = atom.Substring ("RIGHTS=".Length);
+					Rights.AddRange (rights);
 				} else if (atom.StartsWith ("THREAD=", StringComparison.Ordinal)) {
 					var algorithm = atom.Substring ("THREAD=".Length);
 					switch (algorithm) {

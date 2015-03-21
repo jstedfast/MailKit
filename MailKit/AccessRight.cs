@@ -31,7 +31,11 @@ namespace MailKit {
 	/// An individual Access Right to be used with ACLs.
 	/// </summary>
 	/// <remarks>
-	/// An individual Access Right meant to be used with <see cref="AccessControlList"/>.
+	/// <para>An individual Access Right meant to be used with
+	/// <see cref="AccessControlList"/>.</para>
+	/// <para>For more information on what rights are available,
+	/// see https://tools.ietf.org/html/rfc4314#section-2.1
+	/// </para>
 	/// </remarks>
 	public struct AccessRight : IEquatable<AccessRight>
 	{
@@ -41,15 +45,15 @@ namespace MailKit {
 		/// <remarks>
 		/// Allows the <see cref="MailKit.IMailFolder"/> to be visible when listing folders.
 		/// </remarks>
-		public static readonly AccessRight Lookup = new AccessRight ('l');
+		public static readonly AccessRight LookupFolder = new AccessRight ('l');
 
 		/// <summary>
-		/// The access right for read operations.
+		/// The access right for opening a folder and getting the status.
 		/// </summary>
 		/// <remarks>
-		/// Provides read access on the <see cref="MailKit.IMailFolder"/> such as being opened, searched, etc.
+		/// Provides access for opening and getting the status of the folder.
 		/// </remarks>
-		public static readonly AccessRight Read = new AccessRight ('r');
+		public static readonly AccessRight OpenFolder = new AccessRight ('r');
 
 		/// <summary>
 		/// The access right for adding or removing the Seen flag on messages in the folder.
@@ -58,17 +62,18 @@ namespace MailKit {
 		/// Provides access to add or remove the <see cref="MessageFlags.Seen"/> flag on messages within the
 		/// <see cref="MailKit.IMailFolder"/>.
 		/// </remarks>
-		public static readonly AccessRight UpdateSeen = new AccessRight ('s');
+		public static readonly AccessRight SetMessageSeen = new AccessRight ('s');
 
 		/// <summary>
-		/// The access right for adding or removing flags (other than Seen and Deleted) on messages in the folder.
+		/// The access right for adding or removing flags (other than Seen and Deleted)
+		/// on messages in a folder.
 		/// </summary>
 		/// <remarks>
-		/// Provides access to add or remove the <see cref="MessageFlags"/> on messages (other than
-		/// <see cref="MessageFlags.Seen"/> and <see cref="MessageFlags.Deleted"/>) within the
-		/// <see cref="MailKit.IMailFolder"/>.
+		/// Provides access to add or remove the <see cref="MessageFlags"/> on messages
+		/// (other than <see cref="MessageFlags.Seen"/> and
+		/// <see cref="MessageFlags.Deleted"/>) within the folder.
 		/// </remarks>
-		public static readonly AccessRight Write = new AccessRight ('w');
+		public static readonly AccessRight SetMessageFlags = new AccessRight ('w');
 
 		/// <summary>
 		/// The access right allowing messages to be appended or copied into the folder.
@@ -76,24 +81,41 @@ namespace MailKit {
 		/// <remarks>
 		/// Provides access to append or copy messages into the folder.
 		/// </remarks>
-		public static readonly AccessRight Insert = new AccessRight ('i');
+		public static readonly AccessRight AppendMessages = new AccessRight ('i');
 
 		/// <summary>
-		/// The access right allowing child folders to be created.
+		/// The access right allowing subfolders to be created.
 		/// </summary>
 		/// <remarks>
-		/// Provides access to create child folders.
+		/// Provides access to create subfolders.
 		/// </remarks>
-		public static readonly AccessRight Create = new AccessRight ('c');
+		public static readonly AccessRight CreateFolder = new AccessRight ('k');
 
 		/// <summary>
-		/// The access right for adding the Deleted flag to messages and expunging them.
+		/// The access right for deleting a folder and/or its subfolders.
 		/// </summary>
 		/// <remarks>
-		/// Provides access to add the <see cref="MessageFlags.Deleted"/> flag to messages
-		/// and expunge them.
+		/// Provides access to delete the folder and/or any subfolders.
 		/// </remarks>
-		public static readonly AccessRight Delete = new AccessRight ('d');
+		public static readonly AccessRight DeleteFolder = new AccessRight ('x');
+
+		/// <summary>
+		/// The access right for adding or removing the Deleted flag to messages within a folder.
+		/// </summary>
+		/// <remarks>
+		/// Provides access to add or remove the <see cref="MessageFlags.Deleted"/> flag from
+		/// messages within the folder. It also provides access for setting the
+		/// <see cref="MessageFlags.Deleted"/> flag when appending a message to a folder.
+		/// </remarks>
+		public static readonly AccessRight SetMessageDeleted = new AccessRight ('t');
+
+		/// <summary>
+		/// The access right for expunging deleted messages in a folder.
+		/// </summary>
+		/// <remarks>
+		/// Provides access to expunge deleted messages in a folder.
+		/// </remarks>
+		public static readonly AccessRight ExpungeFolder = new AccessRight ('e');
 
 		/// <summary>
 		/// The access right for administering the ACLs of a folder.
