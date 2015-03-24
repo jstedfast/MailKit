@@ -838,6 +838,7 @@ namespace MailKit.Net.Imap {
 					case "METADATA":           Capabilities |= ImapCapabilities.Metadata; break;
 					case "NOTIFY":             Capabilities |= ImapCapabilities.Notify; break;
 					case "LIST-STATUS":        Capabilities |= ImapCapabilities.ListStatus; break;
+					case "SORT=DISPLAY":       Capabilities |= ImapCapabilities.SortDisplay; break;
 					case "CREATE-SPECIAL-USE": Capabilities |= ImapCapabilities.CreateSpecialUse; break;
 					case "SPECIAL-USE":        Capabilities |= ImapCapabilities.SpecialUse; break;
 					case "SEARCH=FUZZY":       Capabilities |= ImapCapabilities.FuzzySearch; break;

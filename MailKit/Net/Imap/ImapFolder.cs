@@ -7007,13 +7007,15 @@ namespace MailKit.Net.Imap {
 					builder.Append ("REVERSE ");
 
 				switch (orderBy [i].Type) {
-				case OrderByType.Arrival: builder.Append ("ARRIVAL"); break;
-				case OrderByType.Cc:      builder.Append ("CC"); break;
-				case OrderByType.Date:    builder.Append ("DATE"); break;
-				case OrderByType.From:    builder.Append ("FROM"); break;
-				case OrderByType.Size:    builder.Append ("SIZE"); break;
-				case OrderByType.Subject: builder.Append ("SUBJECT"); break;
-				case OrderByType.To:      builder.Append ("TO"); break;
+				case OrderByType.Arrival:     builder.Append ("ARRIVAL"); break;
+				case OrderByType.Cc:          builder.Append ("CC"); break;
+				case OrderByType.Date:        builder.Append ("DATE"); break;
+				case OrderByType.DisplayFrom: builder.Append ("DISPLAYFROM"); break;
+				case OrderByType.DisplayTo:   builder.Append ("DISPLAYTO"); break;
+				case OrderByType.From:        builder.Append ("FROM"); break;
+				case OrderByType.Size:        builder.Append ("SIZE"); break;
+				case OrderByType.Subject:     builder.Append ("SUBJECT"); break;
+				case OrderByType.To:          builder.Append ("TO"); break;
 				default: throw new ArgumentOutOfRangeException ();
 				}
 			}
@@ -7290,6 +7292,13 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
 
+			if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0) {
+				for (int i = 0; i < orderBy.Count; i++) {
+					if (orderBy[i].Type == OrderByType.DisplayFrom || orderBy[i].Type == OrderByType.DisplayTo)
+						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
+				}
+			}
+
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
 			var order = BuildSortOrder (orderBy);
@@ -7491,6 +7500,13 @@ namespace MailKit.Net.Imap {
 
 			if ((Engine.Capabilities & ImapCapabilities.Sort) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the SORT extension.");
+
+			if ((Engine.Capabilities & ImapCapabilities.SortDisplay) == 0) {
+				for (int i = 0; i < orderBy.Count; i++) {
+					if (orderBy[i].Type == OrderByType.DisplayFrom || orderBy[i].Type == OrderByType.DisplayTo)
+						throw new NotSupportedException ("The IMAP server does not support the SORT=DISPLAY extension.");
+				}
+			}
 
 			if (uids.Count == 0)
 				return new UniqueId[0];

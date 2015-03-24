@@ -29,7 +29,10 @@ namespace MailKit.Search {
 		Arrival,
 		Cc,
 		Date,
+		DisplayFrom,
+		DisplayTo,
 		From,
+		ModSeq,
 		Size,
 		Subject,
 		To

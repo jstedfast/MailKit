@@ -66,18 +66,18 @@ namespace MailKit.Search {
 		public static readonly OrderBy ReverseArrival = new OrderBy (OrderByType.Arrival, SortOrder.Descending);
 
 		/// <summary>
-		/// Sort results by the Cc header in ascending order.
+		/// Sort results by the first email address in the Cc header in ascending order.
 		/// </summary>
 		/// <remarks>
-		/// Sort results by the Cc header in ascending order.
+		/// Sort results by the first email address in the Cc header in ascending order.
 		/// </remarks>
 		public static readonly OrderBy Cc = new OrderBy (OrderByType.Cc, SortOrder.Ascending);
 
 		/// <summary>
-		/// Sort results by the Cc header in descending order.
+		/// Sort results by the first email address in the Cc header in descending order.
 		/// </summary>
 		/// <remarks>
-		/// Sort results by the Cc header in descending order.
+		/// Sort results by the first email address in the Cc header in descending order.
 		/// </remarks>
 		public static readonly OrderBy ReverseCc = new OrderBy (OrderByType.Cc, SortOrder.Descending);
 
@@ -98,20 +98,36 @@ namespace MailKit.Search {
 		public static readonly OrderBy ReverseDate = new OrderBy (OrderByType.Date, SortOrder.Descending);
 
 		/// <summary>
-		/// Sort results by the From header in ascending order.
+		/// Sort results by the first email address in the From header in ascending order.
 		/// </summary>
 		/// <remarks>
-		/// Sort results by the From header in ascending order.
+		/// Sort results by the first email address in the From header in ascending order.
 		/// </remarks>
 		public static readonly OrderBy From = new OrderBy (OrderByType.From, SortOrder.Ascending);
 
 		/// <summary>
-		/// Sort results by the From header in descending order.
+		/// Sort results by the first email address in the From header in descending order.
 		/// </summary>
 		/// <remarks>
-		/// Sort results by the From header in descending order.
+		/// Sort results by the first email address in the From header in descending order.
 		/// </remarks>
 		public static readonly OrderBy ReverseFrom = new OrderBy (OrderByType.From, SortOrder.Descending);
+
+		/// <summary>
+		/// Sort results by the first display name in the From header in ascending order.
+		/// </summary>
+		/// <remarks>
+		/// Sort results by the first display name in the From header in ascending order.
+		/// </remarks>
+		public static readonly OrderBy DisplayFrom = new OrderBy (OrderByType.DisplayFrom, SortOrder.Ascending);
+
+		/// <summary>
+		/// Sort results by the first display name in the From header in descending order.
+		/// </summary>
+		/// <remarks>
+		/// Sort results by the first display name in the From header in descending order.
+		/// </remarks>
+		public static readonly OrderBy ReverseDisplayFrom = new OrderBy (OrderByType.DisplayFrom, SortOrder.Descending);
 
 		/// <summary>
 		/// Sort results by the message size in ascending order.
@@ -146,19 +162,35 @@ namespace MailKit.Search {
 		public static readonly OrderBy ReverseSubject = new OrderBy (OrderByType.Subject, SortOrder.Descending);
 
 		/// <summary>
-		/// Sort results by the To header in ascending order.
+		/// Sort results by the first email address in the To header in ascending order.
 		/// </summary>
 		/// <remarks>
-		/// Sort results by the To header in ascending order.
+		/// Sort results by the first email address in the To header in ascending order.
 		/// </remarks>
 		public static readonly OrderBy To = new OrderBy (OrderByType.To, SortOrder.Ascending);
 
 		/// <summary>
-		/// Sort results by the To header in descending order.
+		/// Sort results by the first email address in the To header in descending order.
 		/// </summary>
 		/// <remarks>
-		/// Sort results by the To header in descending order.
+		/// Sort results by the first email address in the To header in descending order.
 		/// </remarks>
 		public static readonly OrderBy ReverseTo = new OrderBy (OrderByType.To, SortOrder.Descending);
+
+		/// <summary>
+		/// Sort results by the first display name in the To header in ascending order.
+		/// </summary>
+		/// <remarks>
+		/// Sort results by the first display name in the To header in ascending order.
+		/// </remarks>
+		public static readonly OrderBy DisplayTo = new OrderBy (OrderByType.DisplayTo, SortOrder.Ascending);
+
+		/// <summary>
+		/// Sort results by the first display name in the To header in descending order.
+		/// </summary>
+		/// <remarks>
+		/// Sort results by the first display name in the To header in descending order.
+		/// </remarks>
+		public static readonly OrderBy ReverseDisplayTo = new OrderBy (OrderByType.DisplayTo, SortOrder.Descending);
 	}
 }

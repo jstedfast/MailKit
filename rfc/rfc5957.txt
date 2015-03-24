@@ -1,0 +1,283 @@
+
+
+
+
+
+
+Internet Engineering Task Force (IETF)                           D. Karp
+Request for Comments: 5957                                        Zimbra
+Updates: 5256                                                  July 2010
+Category: Standards Track
+ISSN: 2070-1721
+
+
+       Display-Based Address Sorting for the IMAP4 SORT Extension
+
+Abstract
+
+   This document describes an IMAP protocol extension enabling server-
+   side message sorting on the commonly displayed portion of the From
+   and To header fields.
+
+Status of This Memo
+
+   This is an Internet Standards Track document.
+
+   This document is a product of the Internet Engineering Task Force
+   (IETF).  It represents the consensus of the IETF community.  It has
+   received public review and has been approved for publication by the
+   Internet Engineering Steering Group (IESG).  Further information on
+   Internet Standards is available in Section 2 of RFC 5741.
+
+   Information about the current status of this document, any errata,
+   and how to provide feedback on it may be obtained at
+   http://www.rfc-editor.org/info/rfc5957.
+
+Copyright Notice
+
+   Copyright (c) 2010 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+
+
+Karp               IMAP4 Display-Based Address Sorting          [Page 1]
+
+RFC 5957                                                       July 2010
+
+
+Table of Contents
+
+   1. Introduction ....................................................2
+   2. Conventions Used in This Document ...............................2
+   3. DISPLAY Sort Value for an Address ...............................2
+   4. The DISPLAYFROM and DISPLAYTO Sort Criteria .....................3
+   5. Formal Syntax ...................................................3
+   6. Security Considerations .........................................3
+   7. Internationalization Considerations .............................4
+   8. IANA Considerations .............................................4
+   9. Normative References ............................................4
+
+1.  Introduction
+
+   The [SORT] extension to the [IMAP] protocol provides a means for the
+   server-based sorting of messages.  It defines a set of sort criteria
+   and the mechanism for determining the sort value of a message for
+   each such ordering.
+
+   The [SORT] FROM and TO orderings sort messages lexically on the
+   [IMAP] addr-mailbox of the first address in the message's From and To
+   headers, respectively.  This document provides two alternative
+   orderings, DISPLAYFROM and DISPLAYTO, which sort messages based on
+   the first From or To address's [IMAP] addr-name (generally the same
+   as its [RFC5322] display-name), when present.
+
+   A server that supports the full [SORT] extension as well as both the
+   DISPLAYFROM and DISPLAYTO sort criteria indicates this by returning
+   "SORT=DISPLAY" in its CAPABILITY response.
+
+2.  Conventions Used in This Document
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+3.  DISPLAY Sort Value for an Address
+
+   For the purposes of the sort criteria defined in this document, the
+   sort value for an [IMAP] address structure is defined as follows:
+
+   o  If the address structure's [IMAP] addr-name is non-NIL, apply the
+      procedure from [RFC5255], Section 4.6.  (That is, decode any
+      [RFC2047] encoded-words and convert the resulting character string
+      into a charset valid for the currently active [RFC4790] collation,
+      with a default of UTF-8.)  If the resulting octet string is not
+      the empty string, use it as the sort value for the address.
+
+
+
+
+Karp               IMAP4 Display-Based Address Sorting          [Page 2]
+
+RFC 5957                                                       July 2010
+
+
+   o  Otherwise, if the address structure's [IMAP] addr-mailbox and
+      [IMAP] addr-host are both non-NIL, the sort value for the address
+      is addr-mailbox@addr-host.
+
+   o  Otherwise, if the address structure's [IMAP] addr-mailbox is non-
+      NIL, the sort value for the address is its addr-mailbox.
+
+   o  If none of the above conditions are met, the sort value for the
+      address is the empty string.
+
+4.  The DISPLAYFROM and DISPLAYTO Sort Criteria
+
+   This document introduces two new [SORT] sort criteria, DISPLAYFROM
+   and DISPLAYTO.  A message's sort value under these orderings MUST be
+   derived as follows:
+
+   A "derived-addr" value is created from the [IMAP] envelope structure
+   resulting from a FETCH ENVELOPE on the message.  For DISPLAYFROM, the
+   derived-addr value is the [IMAP] env-from value.  For DISPLAYTO, the
+   derived-addr value is the [IMAP] env-to value.
+
+   o  If the derived-addr value is NIL, the message's sort value is the
+      empty string.
+
+   o  Otherwise, the message's sort value is the DISPLAY sort value of
+      the first [IMAP] address in the derived-addr value.
+
+5.  Formal Syntax
+
+   The following syntax specification uses the Augmented Backus-Naur
+   Form (ABNF) notation as specified in [RFC5234].  [IMAP] defines the
+   non-terminal "capability", and [SORT] defines "sort-key".
+
+   capability    =/ "SORT=DISPLAY"
+
+   sort-key      =/ "DISPLAYFROM" / "DISPLAYTO"
+
+6.  Security Considerations
+
+   This document defines an additional IMAP4 capability.  As such, it
+   does not change the underlying security considerations of [IMAP].
+   The author believes that no new security issues are introduced with
+   this additional IMAP4 capability.
+
+
+
+
+
+
+
+
+Karp               IMAP4 Display-Based Address Sorting          [Page 3]
+
+RFC 5957                                                       July 2010
+
+
+7.  Internationalization Considerations
+
+   DISPLAYFROM and DISPLAYTO are string-based sort criteria.  As stated
+   in [SORT], the active [RFC4790] collation as per [RFC5255] MUST be
+   used when sorting such strings.
+
+   The DISPLAYFROM and DISPLAYTO orderings sort on the full decoded
+   [IMAP] addr-name, when present.  They do not attempt to parse this
+   string in a locale- or language-dependent manner in order to
+   determine and sort on some semantically meaningful substring such as
+   the surname.
+
+8.  IANA Considerations
+
+   [IMAP] capabilities are registered by publishing a Standards Track or
+   IESG-approved Experimental RFC.  This document constitutes
+   registration of the SORT=DISPLAY capability in the [IMAP]
+   capabilities registry.
+
+9.  Normative References
+
+   [IMAP]     Crispin, M., "INTERNET MESSAGE ACCESS PROTOCOL - VERSION
+              4rev1", RFC 3501, March 2003.
+
+   [RFC2047]  Moore, K., "MIME (Multipurpose Internet Mail Extensions)
+              Part Three: Message Header Extensions for Non-ASCII Text",
+              RFC 2047, November 1996.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC4790]  Newman, C., Duerst, M., and A. Gulbrandsen, "Internet
+              Application Protocol Collation Registry", RFC 4790, March
+              2007.
+
+   [RFC5234]  Crocker, D., Ed., and P. Overell, "Augmented BNF for
+              Syntax Specifications: ABNF", STD 68, RFC 5234, January
+              2008.
+
+   [RFC5255]  Newman, C., Gulbrandsen, A., and A. Melnikov, "Internet
+              Message Access Protocol Internationalization", RFC 5255,
+              June 2008.
+
+   [RFC5322]  Resnick, P., Ed., "Internet Message Format", RFC 5322,
+              October 2008.
+
+
+
+
+
+
+Karp               IMAP4 Display-Based Address Sorting          [Page 4]
+
+RFC 5957                                                       July 2010
+
+
+   [SORT]     Crispin, M. and K. Murchison, "Internet Message Access
+              Protocol - SORT and THREAD Extensions", RFC 5256, June
+              2008.
+
+Author's Address
+
+   Dan Karp
+   Zimbra
+   3401 Hillview Avenue
+   Palo Alto, CA  94304
+   USA
+
+   EMail: dkarp@zimbra.com
+   URI:   http://www.zimbra.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Karp               IMAP4 Display-Based Address Sorting          [Page 5]
+
