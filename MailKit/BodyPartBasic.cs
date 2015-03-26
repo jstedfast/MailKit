@@ -162,6 +162,28 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the name of the file.
+		/// </summary>
+		/// <remarks>
+		/// <para>First checks for the "filename" parameter on the Content-Disposition header. If
+		/// that does not exist, then the "name" parameter on the Content-Type header is used.</para>
+		/// </remarks>
+		/// <value>The name of the file.</value>
+		public string FileName {
+			get {
+				string filename = null;
+
+				if (ContentDisposition != null)
+					filename = ContentDisposition.FileName;
+
+				if (filename == null)
+					filename = ContentType.Name;
+
+				return filename != null ? filename.Trim () : null;
+			}
+		}
+
+		/// <summary>
 		/// Encodes the <see cref="BodyPart"/> into the <see cref="System.Text.StringBuilder"/>.
 		/// </summary>
 		/// <remarks>
