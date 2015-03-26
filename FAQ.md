@@ -3,7 +3,7 @@
 ## Question Index
 
 * [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLogger)
-* [Why doesn't MailKit doesn't find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
+* [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
 * [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
 * [How can I search for messages delivered between two dates?](#SearchBetween2Dates)
 * [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
@@ -24,7 +24,7 @@ var client = new ImapClient (new ProtocolLogger ("imap.log"));
 var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
 ```
 
-### <a name="GMailHiddenMessages">Why doesn't MailKit doesn't find some of my GMail POP3 or IMAP messages?</a>
+### <a name="GMailHiddenMessages">Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
 
 By default, GMail's POP3 and IMAP server does not behave like standard POP3 or IMAP servers
 and hides messages from clients using those protocols (as well as having other non-standard
