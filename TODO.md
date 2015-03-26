@@ -5,13 +5,14 @@
   * ANONYMOUS
   * GSSAPI
 * SMTP Client
-  * CHUNKING (hmmm, doesn't really seem all that useful...)
+  * CHUNKING (the BDAT command is already implemented and used by BINARYMIME but
+    perhaps the BDAT command could be used always when the server supports the
+    CHUNKING extension to avoid needing to byte-stuff the message?)
   * Throw an exception if the MimeMessage is larger than the SIZE value?
 * POP3 Client
   * Rename Pop3Client.DeleteMessage() to Pop3Client.Delete()? Less verbose...
 * IMAP4 Client
   * Extensions:
-    * ACL
     * BINARY
     * CATENATE
     * LIST-EXTENDED (Note: partially implemented already for getting the special folders)
