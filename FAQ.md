@@ -1,6 +1,14 @@
-## Frequently Asked Questions
+# Frequently Asked Questions
 
-### How can I get a protocol log for IMAP/POP3/SMTP to see what is going wrong?
+## Question Index
+
+* [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLogger)
+* [Why doesn't MailKit doesn't find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
+* [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
+* [How can I search for messages delivered between two dates?](#SearchBetween2Dates)
+* [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
+
+### <a name="ProtocolLogger">How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
 All of MailKit's client implementations have a constructor that takes a nifty `IProtocolLogger`
 interface for logging client/server communications. Out of the box, you can use the
@@ -16,11 +24,11 @@ var client = new ImapClient (new ProtocolLogger ("imap.log"));
 var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
 ```
 
-### GMail isn't showing me all of my POP3 or IMAP messages. Is this a bug in MailKit?
+### <a name="GMailHiddenMessages">Why doesn't MailKit doesn't find some of my GMail POP3 or IMAP messages?</a>
 
-No, this is just a problem with your GMail POP3 and/or IMAP settings. By default, GMail's POP3
-and IMAP server does not behave like standard POP3 or IMAP servers and hides messages from
-clients using those protocols (as well as having other non-standard behavior).
+By default, GMail's POP3 and IMAP server does not behave like standard POP3 or IMAP servers
+and hides messages from clients using those protocols (as well as having other non-standard
+behavior).
 
 If you want to configure your GMail POP3 or IMAP settings to behave the way POP3 and IMAP are
 intended to behave according to their protocol specifications, you'll need to log in to your
@@ -29,16 +37,19 @@ GMail Settings page and set your options to look like this:
 
 ![GMail POP3 and IMAP Settings](http://content.screencast.com/users/jeff.xamarin/folders/Jing/media/7d50dada-6cb0-4ab1-b117-8600fb5e07d4/00000022.png "GMail POP3 and IMAP Settings")
 
-### How can I log in to a GMail account using OAuth 2.0?
+### <a name="GMailOAuth2">How can I log in to a GMail account using OAuth 2.0?</a>
 
-The first thing you need to do is follow [Google's instructions](https://developers.google.com/accounts/docs/OAuth2) 
+The first thing you need to do is follow
+[Google's instructions](https://developers.google.com/accounts/docs/OAuth2) 
 for obtaining OAuth 2.0 credentials for your application.
 
-Once you've done that, the easiest way to obtain an access token is to use Google's [Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
+Once you've done that, the easiest way to obtain an access token is to use Google's 
+[Google.Apis.Auth](https://www.nuget.org/packages/Google.Apis.Auth/) library:
 
 ```csharp
 var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
-var credential = new ServiceAccountCredential (new ServiceAccountCredential.Initializer ("your-developer-id@developer.gserviceaccount.com") {
+var credential = new ServiceAccountCredential (new ServiceAccountCredential
+    .Initializer ("your-developer-id@developer.gserviceaccount.com") {
     // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
     Scopes = new[] { "https://mail.google.com/" },
     User = "username@gmail.com"
@@ -61,29 +72,34 @@ using (var client = new ImapClient ()) {
 }
 ```
 
-### How can I search for messages delivered between two dates?
+### <a name="SearchBetween2Dates">How can I search for messages delivered between two dates?</a>
 
 The obvious solution is:
 
 ```csharp
-var query = SearchQuery.DeliveredAfter (dateRange.BeginDate).And (SearchQuery.DeliveredBefore (dateRange.EndDate));
+var query = SearchQuery.DeliveredAfter (dateRange.BeginDate)
+    .And (SearchQuery.DeliveredBefore (dateRange.EndDate));
 var results = folder.Search (query);
 ```
 
 However, it has been reported to me that this doesn't work reliably depending on the IMAP server implementation.
 
-If you find that this query doesn't get the expected results for your IMAP server, here's another solution that should always work:
+If you find that this query doesn't get the expected results for your IMAP server, here's another solution that
+should always work:
 
 ```csharp
-var query = SearchQuery.Not (SearchQuery.DeliveredBefore (dateRange.BeginDate).Or (SearchQuery.DeliveredAfter (dateRange.EndDate)));
+var query = SearchQuery.Not (SearchQuery.DeliveredBefore (dateRange.BeginDate)
+    .Or (SearchQuery.DeliveredAfter (dateRange.EndDate)));
 var results = folder.Search (query);
 ```
 
-### I'm getting an InvalidOperationException that says, "The ImapClient is currently busy processing a command." What does that mean?
+### <a name="ImapClientBusy">What does "The ImapClient is currently busy processing a command." mean?</a>
 
-What this means is that you are trying to use the `ImapClient` and/or one of its `ImapFolder`s from multiple threads.
-To avoid this situation, you'll need to lock the `SyncRoot` property of the `ImapClient` and `ImapFolder` objects
-when performing operations on them.
+If you get an InvalidOperationException with the message, "The ImapClient is currently busy processing a
+command.", it means that you are trying to use the `ImapClient` and/or one of its `ImapFolder`s from multiple
+threads.
+To avoid this situation, you'll need to lock the `SyncRoot` property of the `ImapClient` and `ImapFolder`
+objects when performing operations on them.
 
 For example:
 
