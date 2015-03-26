@@ -2,13 +2,13 @@
 
 ## Question Index
 
-* [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLogger)
+* [How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?](#ProtocolLog)
 * [Why doesn't MailKit find some of my GMail POP3 or IMAP messages?](#GMailHiddenMessages)
 * [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
 * [How can I search for messages delivered between two dates?](#SearchBetween2Dates)
 * [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
 
-### <a name="ProtocolLogger">How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
+### <a name="ProtocolLog">How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
 All of MailKit's client implementations have a constructor that takes a nifty `IProtocolLogger`
 interface for logging client/server communications. Out of the box, you can use the
