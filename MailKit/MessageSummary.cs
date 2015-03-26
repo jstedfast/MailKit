@@ -63,6 +63,17 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get a bitmask of items that have been fetched.
+		/// </summary>
+		/// <remarks>
+		/// Gets a bitmask of items that have been fetched.
+		/// </remarks>
+		/// <value>The items that have been fetched.</value>
+		internal MessageSummaryItems FetchedItems {
+			get; set;
+		}
+
+		/// <summary>
 		/// Gets the body structure of the message, if available.
 		/// </summary>
 		/// <remarks>

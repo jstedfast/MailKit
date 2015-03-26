@@ -3631,6 +3631,26 @@ namespace MailKit {
 		event EventHandler<MessageLabelsChangedEventArgs> MessageLabelsChanged;
 
 		/// <summary>
+		/// Occurs when a message summary is fetched from the folder.
+		/// </summary>
+		/// <remarks>
+		/// <para>Emitted when a message summary is fetched from the folder.</para>
+		/// <para>When multiple message summaries are being fetched from a remote folder,
+		/// it is possible that the connection will drop or some other exception will
+		/// occur, causing the Fetch method to fail, requiring the client to request the
+		/// same set of message summaries again after it reconnects. This is obviously
+		/// inefficient. To alleviate this potential problem, this event will be emitted
+		/// as soon as the <see cref="IMailFolder"/> successfully retrieves the complete
+		/// <see cref="IMessageSummary"/> for each requested message.</para>
+		/// <para>Note: The Fetch methods will return a list of all message summaries
+		/// that any information was retrieved for, regardless of whether or not all of
+		/// the requested items were fetched, therefore there may be a discrepency between
+		/// the number of times this event is emitetd and the number of summary items
+		/// returned from the Fetch method.</para>
+		/// </remarks>
+		event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
+
+		/// <summary>
 		/// Occurs when the UID validity changes.
 		/// </summary>
 		/// <remarks>

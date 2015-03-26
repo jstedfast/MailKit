@@ -166,6 +166,7 @@
     <Compile Include="MessageSentEventArgs.cs" />
     <Compile Include="MessageSorter.cs" />
     <Compile Include="MessageSummary.cs" />
+    <Compile Include="MessageSummaryFetchedEventArgs.cs" />
     <Compile Include="MessageSummaryItems.cs" />
     <Compile Include="MessagesVanishedEventArgs.cs" />
     <Compile Include="MessageThread.cs" />

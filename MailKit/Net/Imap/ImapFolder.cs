@@ -49,7 +49,10 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
 		/// </summary>
-		/// <param name="engine">The IMAP engine.</param>
+		/// <remarks>
+		/// Creates a new <see cref="ImapFolder"/> with the given attributes.
+		/// </remarks>
+		/// <param name="engine">The imap engine.</param>
 		/// <param name="encodedName">The encoded name.</param>
 		/// <param name="attrs">The folder attributes.</param>
 		/// <param name="delim">The path delimeter.</param>
@@ -2579,20 +2582,32 @@ namespace MailKit.Net.Imap {
 			} while (nread > 0);
 		}
 
-		static void FetchSummaryItems (ImapEngine engine, ImapCommand ic, int index)
+		class FetchSummaryState
+		{
+			public readonly SortedDictionary<int, IMessageSummary> Results;
+			public readonly MessageSummaryItems RequestedItems;
+
+			public FetchSummaryState (MessageSummaryItems requestedItems)
+			{
+				Results = new SortedDictionary<int, IMessageSummary> ();
+				RequestedItems = requestedItems;
+			}
+		}
+
+		void FetchSummaryItems (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			var results = (SortedDictionary<int, IMessageSummary>) ic.UserData;
+			var fetch = (FetchSummaryState) ic.UserData;
 			IMessageSummary isummary;
 			MessageSummary summary;
 
-			if (!results.TryGetValue (index, out isummary)) {
+			if (!fetch.Results.TryGetValue (index, out isummary)) {
 				summary = new MessageSummary (index);
-				results.Add (index, summary);
+				fetch.Results.Add (index, summary);
 			} else {
 				summary = (MessageSummary) isummary;
 			}
@@ -2625,6 +2640,8 @@ namespace MailKit.Net.Imap {
 					default:
 						throw ImapEngine.UnexpectedToken (token, false);
 					}
+
+					summary.FetchedItems |= MessageSummaryItems.InternalDate;
 					break;
 				case "RFC822.SIZE":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2632,10 +2649,12 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value))
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					summary.FetchedItems |= MessageSummaryItems.MessageSize;
 					summary.MessageSize = value;
 					break;
 				case "BODYSTRUCTURE":
 					summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+					summary.FetchedItems |= MessageSummaryItems.BodyStructure;
 					break;
 				case "BODY":
 					token = engine.PeekToken (ic.CancellationToken);
@@ -2689,6 +2708,7 @@ namespace MailKit.Net.Imap {
 
 						try {
 							var message = engine.ParseMessage (engine.Stream, false, ic.CancellationToken);
+							summary.FetchedItems |= MessageSummaryItems.References;
 							summary.References = message.References;
 							summary.Headers = message.Headers;
 						} catch (FormatException) {
@@ -2696,6 +2716,8 @@ namespace MailKit.Net.Imap {
 							ReadLiteralData (engine, ic.CancellationToken);
 						}
 					} else {
+						summary.FetchedItems |= MessageSummaryItems.Body;
+
 						try {
 							summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
 						} catch (ImapProtocolException ex) {
@@ -2723,9 +2745,11 @@ namespace MailKit.Net.Imap {
 					break;
 				case "ENVELOPE":
 					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
+					summary.FetchedItems |= MessageSummaryItems.Envelope;
 					break;
 				case "FLAGS":
 					summary.Flags = ImapUtils.ParseFlagsList (engine, summary.UserFlags, ic.CancellationToken);
+					summary.FetchedItems |= MessageSummaryItems.Flags;
 					break;
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2743,6 +2767,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					summary.FetchedItems |= MessageSummaryItems.ModSeq;
 					summary.ModSeq = value64;
 					break;
 				case "UID":
@@ -2752,6 +2777,7 @@ namespace MailKit.Net.Imap {
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					summary.UniqueId = new UniqueId (ic.Folder.UidValidity, value);
+					summary.FetchedItems |= MessageSummaryItems.UniqueId;
 					break;
 				case "X-GM-MSGID":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2759,6 +2785,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					summary.FetchedItems |= MessageSummaryItems.GMailMessageId;
 					summary.GMailMessageId = value64;
 					break;
 				case "X-GM-THRID":
@@ -2767,10 +2794,12 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
+					summary.FetchedItems |= MessageSummaryItems.GMailThreadId;
 					summary.GMailThreadId = value64;
 					break;
 				case "X-GM-LABELS":
 					summary.GMailLabels = ImapUtils.ParseLabelsList (engine, ic.CancellationToken);
+					summary.FetchedItems |= MessageSummaryItems.GMailLabels;
 					break;
 				default:
 					throw ImapEngine.UnexpectedToken (token, false);
@@ -2779,6 +2808,9 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
+
+			if ((fetch.RequestedItems & summary.FetchedItems) == fetch.RequestedItems)
+				OnMessageSummaryFetched (summary);
 		}
 
 		static HashSet<string> GetHeaderNames (HashSet<HeaderId> fields)
@@ -2798,7 +2830,7 @@ namespace MailKit.Net.Imap {
 			return names;
 		}
 
-		string FormatSummaryItems (MessageSummaryItems items, HashSet<string> fields)
+		string FormatSummaryItems (ref MessageSummaryItems items, HashSet<string> fields)
 		{
 			if ((items & MessageSummaryItems.BodyStructure) != 0 && (items & MessageSummaryItems.Body) != 0) {
 				// don't query both the BODY and BODYSTRUCTURE, that's just dumb...
@@ -2850,20 +2882,21 @@ namespace MailKit.Net.Imap {
 
 			if ((items & MessageSummaryItems.References) != 0 || fields != null) {
 				var headers = new StringBuilder ("BODY.PEEK[HEADER.FIELDS (");
+				bool references = false;
 
 				if (fields != null) {
 					foreach (var field in fields) {
 						var name = field.ToUpperInvariant ();
 
 						if (name == "REFERENCES")
-							items &= ~MessageSummaryItems.References;
+							references = true;
 
 						headers.Append (name);
 						headers.Append (' ');
 					}
 				}
 
-				if ((items & MessageSummaryItems.References) != 0)
+				if ((items & MessageSummaryItems.References) != 0 && !references)
 					headers.Append ("REFERENCES ");
 
 				headers[headers.Length - 1] = ')';
@@ -2940,12 +2973,13 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, null);
+			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -2955,7 +2989,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3064,12 +3098,13 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, fields);
+			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3079,7 +3114,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3145,13 +3180,14 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, null);
+			var query = FormatSummaryItems (ref items, null);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3161,7 +3197,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3287,13 +3323,14 @@ namespace MailKit.Net.Imap {
 			if (uids.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, fields);
+			var query = FormatSummaryItems (ref items, fields);
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3303,7 +3340,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3359,12 +3396,13 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, null);
+			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3374,7 +3412,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3483,12 +3521,13 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, fields);
+			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3498,7 +3537,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3561,12 +3600,13 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, null);
+			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3576,7 +3616,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3696,12 +3736,13 @@ namespace MailKit.Net.Imap {
 			if (indexes.Count == 0)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, fields);
+			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3711,7 +3752,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		static string GetFetchRange (int min, int max)
@@ -3780,12 +3821,13 @@ namespace MailKit.Net.Imap {
 			if (min == Count)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, null);
+			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3795,7 +3837,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3912,12 +3954,13 @@ namespace MailKit.Net.Imap {
 			if (min == Count)
 				return new IMessageSummary[0];
 
-			var query = FormatSummaryItems (items, fields);
+			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3927,7 +3970,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -3990,12 +4033,13 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var query = FormatSummaryItems (items, null);
+			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -4005,7 +4049,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		/// <summary>
@@ -4130,12 +4174,13 @@ namespace MailKit.Net.Imap {
 
 			CheckState (true, false);
 
-			var query = FormatSummaryItems (items, fields);
+			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var results = new SortedDictionary<int, IMessageSummary> ();
+			var state = new FetchSummaryState (items);
+
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = results;
+			ic.UserData = state;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -4145,7 +4190,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (results.Values);
+			return AsReadOnly (state.Results.Values);
 		}
 
 		static void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index)
