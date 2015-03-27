@@ -109,7 +109,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the Content-Disposition of the body part, if available.</para>
-		/// <para>The Content-Disposition value is only retrieved if the
+		/// <para>Note: The Content-Disposition value is only retrieved if the
 		/// <see cref="MessageSummaryItems.BodyStructure"/> flag is used when fetching
 		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
@@ -152,11 +152,11 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Determines whether or not the body part is an attachment based on the value of
 		/// the Content-Disposition.</para>
-		/// <para>Since the value of the Content-Disposition header is needed, it is necessary to
+		/// <para>Note: Since the value of the Content-Disposition header is needed, it is necessary to
 		/// include the <see cref="MessageSummaryItems.BodyStructure"/> flag when fetching
 		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
-		/// <value><c>true</c> if thie part is an attachment; otherwise, <c>false</c>.</value>
+		/// <value><c>true</c> if this part is an attachment; otherwise, <c>false</c>.</value>
 		public bool IsAttachment {
 			get { return ContentDisposition != null && ContentDisposition.IsAttachment; }
 		}
@@ -167,6 +167,9 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>First checks for the "filename" parameter on the Content-Disposition header. If
 		/// that does not exist, then the "name" parameter on the Content-Type header is used.</para>
+		/// <para>Note: Since the value of the Content-Disposition header is needed, it is necessary to
+		/// include the <see cref="MessageSummaryItems.BodyStructure"/> flag when fetching
+		/// summary information from an <see cref="IMailFolder"/>.</para>
 		/// </remarks>
 		/// <value>The name of the file.</value>
 		public string FileName {
