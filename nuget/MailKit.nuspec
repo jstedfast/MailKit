@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.0.12.0</version>
+        <version>1.0.13.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -16,25 +16,23 @@ Features include:
 * SASL Authentication via SCRAM-SHA-1, NTLM, DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN, and XOAUTH2.
 * A fully-cancellable SmtpClient with support for STARTTLS, 8BITMIME, BINARYMIME, ENHANCEDSTATUSCODES, SIZE, DSN, PIPELINING and SMTPUTF8.
 * A fully-cancellable Pop3Client with support for STLS, UIDL, APOP, PIPELINING, UTF8, and LANG.
-* A fully-cancellable ImapClient with support for ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, SEARCH=FUZZY, UTF8=ACCEPT, UTF8=ONLY, XLIST, and X-GM-EXT1.
+* A fully-cancellable ImapClient with support for ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS, MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-IR, COMPRESS, WITHIN, ENABLE, QRESYNC, SORT, THREAD, ESORT, SPECIAL-USE, MOVE, SORT=DISPLAY, SEARCH=FUZZY, UTF8=ACCEPT, UTF8=ONLY, XLIST, and X-GM-EXT1.
 * Client-side sorting and threading of messages (the Ordinal Subject and the Jamie Zawinski threading algorithms are supported).
 * Asynchronous versions of all methods that hit the network.
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed ImapFolder.GetMessage(), GetBodyPart() and GetStream() to throw an ImapCommandException rather than returning null if the server did not response with the message data.
-* Added new, much more usable, Connect() methods to ImapClient, Pop3Client, and SmtpClient that take a hostname, port, and SecureSocketOptions.
-* Added a workaround for smtp.strato.de's blatant disregard for standards. (issue #162)
-* Fixed ImapFolder.Close() to require ReadWrite access if expunge is true.
-* Fixed IMAP SORT queries to inject "RETURN" before the orderBy param. (issue #164)
-* Implemented support for the IMAP ACL extension.
+        <releaseNotes>* Added a FileName convenience property to BodyPartBasic which works the same way as the MimeKit.MimePart.FileName property.
+* Added a MessageSummaryFetched event to IMailFolder to better enable developers to both provide progress feedback to their users as well as enable them to better recover from exceptions (such as a dropped connection) occurring during the fetching of message summaries.
+* Added support for the IMAP SORT=DISPLAY extension.
+* Added a work-around for Cyrus IMAP 2.4.16 sending untagged SEARCH responses when untagged ESEARCH responses are expected.
 
 Note: If you are not yet ready to port your iOS application to the Unified API, you will need to stick with the 1.0.5 release. The Classic MonoTouch API is no longer supported.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.0.11.0" />
+            <dependency id="MimeKit" version="1.0.12.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

@@ -73,7 +73,7 @@
         <value>The content disposition.</value>
         <remarks>
           <para>Gets the Content-Disposition of the body part, if available.</para>
-          <para>The Content-Disposition value is only retrieved if the
+          <para>Note: The Content-Disposition value is only retrieved if the
             <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> flag is used when fetching
             summary information from an <see cref="T:MailKit.IMailFolder" />.</para>
         </remarks>
@@ -208,6 +208,30 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="FileName">
+      <MemberSignature Language="C#" Value="public string FileName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FileName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the name of the file.
+            </summary>
+        <value>The name of the file.</value>
+        <remarks>
+          <para>First checks for the "filename" parameter on the Content-Disposition header. If
+            that does not exist, then the "name" parameter on the Content-Type header is used.</para>
+          <para>Note: Since the value of the Content-Disposition header is needed, it is necessary to
+            include the <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> flag when fetching
+            summary information from an <see cref="T:MailKit.IMailFolder" />.</para>
+        </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="IsAttachment">
       <MemberSignature Language="C#" Value="public bool IsAttachment { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance bool IsAttachment" />
@@ -223,11 +247,11 @@
             Determines whether or not the body part is an attachment.
             </summary>
         <value>
-          <c>true</c> if thie part is an attachment; otherwise, <c>false</c>.</value>
+          <c>true</c> if this part is an attachment; otherwise, <c>false</c>.</value>
         <remarks>
           <para>Determines whether or not the body part is an attachment based on the value of
             the Content-Disposition.</para>
-          <para>Since the value of the Content-Disposition header is needed, it is necessary to
+          <para>Note: Since the value of the Content-Disposition header is needed, it is necessary to
             include the <see cref="F:MailKit.MessageSummaryItems.BodyStructure" /> flag when fetching
             summary information from an <see cref="T:MailKit.IMailFolder" />.</para>
         </remarks>

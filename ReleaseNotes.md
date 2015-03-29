@@ -1,5 +1,17 @@
 # Release Notes
 
+### MailKit 1.0.13
+
+* Added a FileName convenience property to BodyPartBasic which works the same
+  way as the MimeKit.MimePart.FileName property.
+* Added a MessageSummaryFetched event to IMailFolder to better enable developers
+  to both provide progress feedback to their users as well as enable them to
+  better recover from exceptions (such as a dropped connection) occurring during
+  the fetching of message summaries.
+* Added support for the IMAP SORT=DISPLAY extension.
+* Added a work-around for Cyrus IMAP 2.4.16 sending untagged SEARCH responses
+  when untagged ESEARCH responses are expected.
+
 ### MailKit 1.0.12
 
 * Fixed ImapFolder.GetMessage(), GetBodyPart() and GetStream() to throw an

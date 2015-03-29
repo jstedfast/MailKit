@@ -154,7 +154,7 @@
     </Member>
     <Member MemberName="CreateSpecialUse">
       <MemberSignature Language="C#" Value="CreateSpecialUse" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities CreateSpecialUse = int64(137438953472)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities CreateSpecialUse = int64(274877906944)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -234,7 +234,7 @@
     </Member>
     <Member MemberName="FuzzySearch">
       <MemberSignature Language="C#" Value="FuzzySearch" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities FuzzySearch = int64(549755813888)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities FuzzySearch = int64(1099511627776)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -250,7 +250,7 @@
     </Member>
     <Member MemberName="GMailExt1">
       <MemberSignature Language="C#" Value="GMailExt1" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int64(35184372088832)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities GMailExt1 = int64(70368744177664)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -442,7 +442,7 @@
     </Member>
     <Member MemberName="Move">
       <MemberSignature Language="C#" Value="Move" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Move = int64(2199023255552)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities Move = int64(4398046511104)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -474,7 +474,7 @@
     </Member>
     <Member MemberName="MultiSearch">
       <MemberSignature Language="C#" Value="MultiSearch" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MultiSearch = int64(1099511627776)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities MultiSearch = int64(2199023255552)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -616,9 +616,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="SortDisplay">
+      <MemberSignature Language="C#" Value="SortDisplay" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SortDisplay = int64(137438953472)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Net.Imap.ImapCapabilities</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The server supports the SORT=DISPLAY extension defined in rfc5957.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="SpecialUse">
       <MemberSignature Language="C#" Value="SpecialUse" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SpecialUse = int64(274877906944)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities SpecialUse = int64(549755813888)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -714,7 +730,7 @@
     </Member>
     <Member MemberName="UTF8Accept">
       <MemberSignature Language="C#" Value="UTF8Accept" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UTF8Accept = int64(4398046511104)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UTF8Accept = int64(8796093022208)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -730,7 +746,7 @@
     </Member>
     <Member MemberName="UTF8Only">
       <MemberSignature Language="C#" Value="UTF8Only" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UTF8Only = int64(8796093022208)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities UTF8Only = int64(17592186044416)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -762,7 +778,7 @@
     </Member>
     <Member MemberName="XList">
       <MemberSignature Language="C#" Value="XList" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int64(17592186044416)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.Net.Imap.ImapCapabilities XList = int64(35184372088832)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>

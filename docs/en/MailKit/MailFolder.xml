@@ -9132,6 +9132,25 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="MessageSummaryFetched">
+      <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessageSummaryFetchedEventArgs&gt; MessageSummaryFetched;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessageSummaryFetchedEventArgs&gt; MessageSummaryFetched" />
+      <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.EventHandler&lt;MailKit.MessageSummaryFetchedEventArgs&gt;</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Occurs when a message summary is fetched from the folder.
+            </summary>
+        <remarks>
+            Emitted when a message summary is fetched from the folder.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="MessagesVanished">
       <MemberSignature Language="C#" Value="public event EventHandler&lt;MailKit.MessagesVanishedEventArgs&gt; MessagesVanished;" />
       <MemberSignature Language="ILAsm" Value=".event class System.EventHandler`1&lt;class MailKit.MessagesVanishedEventArgs&gt; MessagesVanished" />
@@ -9807,6 +9826,41 @@
         <remarks>
             Raises the messages arrived event.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OnMessageSummaryFetched">
+      <MemberSignature Language="C#" Value="protected virtual void OnMessageSummaryFetched (MailKit.IMessageSummary message);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance void OnMessageSummaryFetched(class MailKit.IMessageSummary message) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="message" Type="MailKit.IMessageSummary" />
+      </Parameters>
+      <Docs>
+        <param name="message">The message summary.</param>
+        <summary>
+            Raise the message summary fetched event.
+            </summary>
+        <remarks>
+          <para>Raises the message summary fetched event.</para>
+          <para>When multiple message summaries are being fetched from a remote folder,
+            it is possible that the connection will drop or some other exception will
+            occur, causing the Fetch method to fail, requiring the client to request the
+            same set of message summaries again after it reconnects. This is obviously
+            inefficient. To alleviate this potential problem, this event will be emitted
+            as soon as the <see cref="T:MailKit.IMailFolder" /> successfully retrieves the complete
+            <see cref="T:MailKit.IMessageSummary" /> for each requested message.</para>
+          <para>Note: The Fetch methods will return a list of all message summaries
+            that any information was retrieved for, regardless of whether or not all of
+            the requested items were fetched, therefore there may be a discrepency between
+            the number of times this event is emitetd and the number of summary items
+            returned from the Fetch method.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="OnMessagesVanished">

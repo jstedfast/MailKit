@@ -51,10 +51,10 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Sort results by the Cc header in ascending order.
+            Sort results by the first email address in the Cc header in ascending order.
             </summary>
         <remarks>
-            Sort results by the Cc header in ascending order.
+            Sort results by the first email address in the Cc header in ascending order.
             </remarks>
       </Docs>
     </Member>
@@ -77,6 +77,44 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="DisplayFrom">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy DisplayFrom;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy DisplayFrom" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the first display name in the From header in ascending order.
+            </summary>
+        <remarks>
+            Sort results by the first display name in the From header in ascending order.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DisplayTo">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy DisplayTo;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy DisplayTo" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the first display name in the To header in ascending order.
+            </summary>
+        <remarks>
+            Sort results by the first display name in the To header in ascending order.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="From">
       <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy From;" />
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy From" />
@@ -89,10 +127,10 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Sort results by the From header in ascending order.
+            Sort results by the first email address in the From header in ascending order.
             </summary>
         <remarks>
-            Sort results by the From header in ascending order.
+            Sort results by the first email address in the From header in ascending order.
             </remarks>
       </Docs>
     </Member>
@@ -127,10 +165,10 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Sort results by the Cc header in descending order.
+            Sort results by the first email address in the Cc header in descending order.
             </summary>
         <remarks>
-            Sort results by the Cc header in descending order.
+            Sort results by the first email address in the Cc header in descending order.
             </remarks>
       </Docs>
     </Member>
@@ -153,6 +191,44 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="ReverseDisplayFrom">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseDisplayFrom;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseDisplayFrom" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the first display name in the From header in descending order.
+            </summary>
+        <remarks>
+            Sort results by the first display name in the From header in descending order.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ReverseDisplayTo">
+      <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseDisplayTo;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseDisplayTo" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.OrderBy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Sort results by the first display name in the To header in descending order.
+            </summary>
+        <remarks>
+            Sort results by the first display name in the To header in descending order.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="ReverseFrom">
       <MemberSignature Language="C#" Value="public static readonly MailKit.Search.OrderBy ReverseFrom;" />
       <MemberSignature Language="ILAsm" Value=".field public static initonly class MailKit.Search.OrderBy ReverseFrom" />
@@ -165,10 +241,10 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Sort results by the From header in descending order.
+            Sort results by the first email address in the From header in descending order.
             </summary>
         <remarks>
-            Sort results by the From header in descending order.
+            Sort results by the first email address in the From header in descending order.
             </remarks>
       </Docs>
     </Member>
@@ -222,10 +298,10 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Sort results by the To header in descending order.
+            Sort results by the first email address in the To header in descending order.
             </summary>
         <remarks>
-            Sort results by the To header in descending order.
+            Sort results by the first email address in the To header in descending order.
             </remarks>
       </Docs>
     </Member>
@@ -279,10 +355,10 @@
       </ReturnValue>
       <Docs>
         <summary>
-            Sort results by the To header in ascending order.
+            Sort results by the first email address in the To header in ascending order.
             </summary>
         <remarks>
-            Sort results by the To header in ascending order.
+            Sort results by the first email address in the To header in ascending order.
             </remarks>
       </Docs>
     </Member>
