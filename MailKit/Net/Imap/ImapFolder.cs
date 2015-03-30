@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7073,12 +7074,14 @@ namespace MailKit.Net.Imap {
 		{
 			var uids = new List<UniqueId> ();
 			ImapToken token;
+			ulong modseq;
 			uint uid;
 
 			do {
 				token = engine.PeekToken (ic.CancellationToken);
 
-				if (token.Type == ImapTokenType.Eoln)
+				// keep reading UIDs until we get to the end of the line or until we get a "(MODSEQ ####)"
+				if (token.Type == ImapTokenType.Eoln || token.Type == ImapTokenType.OpenParen)
 					break;
 
 				token = engine.ReadToken (ic.CancellationToken);
@@ -7088,6 +7091,35 @@ namespace MailKit.Net.Imap {
 
 				uids.Add (new UniqueId (ic.Folder.UidValidity, uid));
 			} while (true);
+
+			if (token.Type == ImapTokenType.OpenParen) {
+				engine.ReadToken (ic.CancellationToken);
+
+				do {
+					token = engine.ReadToken (ic.CancellationToken);
+
+					if (token.Type == ImapTokenType.CloseParen)
+						break;
+
+					if (token.Type != ImapTokenType.Atom)
+						throw ImapEngine.UnexpectedToken (token, false);
+
+					var atom = (string) token.Value;
+
+					switch (atom) {
+					case "MODSEQ":
+						token = engine.ReadToken (ic.CancellationToken);
+
+						if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0) {
+							Debug.WriteLine ("Expected 64-bit nz-number as the MODSEQ value, but got: {0}", token);
+							throw engine.UnexpectedToken (token, false);
+						}
+						break;
+					}
+
+					token = engine.PeekToken (ic.CancellationToken);
+				} while (token.Type != ImapTokenType.Eoln);
+			}
 
 			ic.UserData = uids;
 		}
