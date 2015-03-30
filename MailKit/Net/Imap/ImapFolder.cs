@@ -7112,7 +7112,7 @@ namespace MailKit.Net.Imap {
 
 						if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq) || modseq == 0) {
 							Debug.WriteLine ("Expected 64-bit nz-number as the MODSEQ value, but got: {0}", token);
-							throw engine.UnexpectedToken (token, false);
+							throw ImapEngine.UnexpectedToken (token, false);
 						}
 						break;
 					}
