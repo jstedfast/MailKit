@@ -1,5 +1,9 @@
 # Release Notes
 
+### MailKit 1.0.14 (Pending)
+
+* Added logic to properly handle MODSEQ-based search responses. (issue #166)
+
 ### MailKit 1.0.13
 
 * Added a FileName convenience property to BodyPartBasic which works the same
