@@ -283,7 +283,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The URI of the IMAP server.</value>
 		public Uri Uri {
-			get; private set;
+			get; internal set;
 		}
 
 		/// <summary>
@@ -478,7 +478,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, ImapStream stream, CancellationToken cancellationToken)
+		public void Connect (ImapStream stream, CancellationToken cancellationToken)
 		{
 			if (Stream != null)
 				Stream.Dispose ();
@@ -491,10 +491,8 @@ namespace MailKit.Net.Imap {
 			ThreadingAlgorithms.Clear ();
 			SupportedCharsets.Clear ();
 			SupportedContexts.Clear ();
+			FolderCache.Clear ();
 			Rights.Clear ();
-
-			if (Uri != uri)
-				FolderCache.Clear ();
 
 			State = ImapEngineState.Connected;
 			SupportedCharsets.Add ("UTF-8");
@@ -502,7 +500,6 @@ namespace MailKit.Net.Imap {
 			QResyncEnabled = false;
 			UTF8Enabled = false;
 			Stream = stream;
-			Uri = uri;
 			Tag = 0;
 
 			try {

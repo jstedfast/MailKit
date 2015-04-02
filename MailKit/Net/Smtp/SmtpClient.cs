@@ -890,6 +890,8 @@ namespace MailKit.Net.Smtp {
 			if (socket == null)
 				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 
+			this.host = host;
+
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
@@ -920,8 +922,6 @@ namespace MailKit.Net.Smtp {
 				stream.WriteTimeout = timeout;
 				stream.ReadTimeout = timeout;
 			}
-
-			this.host = host;
 
 			logger.LogConnect (uri);
 
@@ -1063,6 +1063,7 @@ namespace MailKit.Net.Smtp {
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 			this.socket = socket;
+			this.host = host;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
@@ -1076,8 +1077,6 @@ namespace MailKit.Net.Smtp {
 				stream.WriteTimeout = timeout;
 				stream.ReadTimeout = timeout;
 			}
-
-			this.host = host;
 
 			logger.LogConnect (uri);
 

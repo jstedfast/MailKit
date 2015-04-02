@@ -832,9 +832,8 @@ namespace MailKit.Net.Imap {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
-			var uri = new Uri ("imap://" + host);
-
-			engine.Connect (uri, new ImapStream (replayStream, null, logger), cancellationToken);
+			engine.Uri = new Uri ("imap://" + host);
+			engine.Connect (new ImapStream (replayStream, null, logger), cancellationToken);
 			engine.TagPrefix = 'A';
 
 			if (engine.CapabilitiesVersion == 0)
@@ -983,6 +982,8 @@ namespace MailKit.Net.Imap {
 			if (socket == null)
 				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 
+			engine.Uri = uri;
+
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
@@ -1016,7 +1017,7 @@ namespace MailKit.Net.Imap {
 
 			logger.LogConnect (uri);
 
-			engine.Connect (uri, new ImapStream (stream, socket, logger), cancellationToken);
+			engine.Connect (new ImapStream (stream, socket, logger), cancellationToken);
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.
@@ -1147,6 +1148,8 @@ namespace MailKit.Net.Imap {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
+			engine.Uri = uri;
+
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
@@ -1162,7 +1165,7 @@ namespace MailKit.Net.Imap {
 
 			logger.LogConnect (uri);
 
-			engine.Connect (uri, new ImapStream (stream, socket, logger), cancellationToken);
+			engine.Connect (new ImapStream (stream, socket, logger), cancellationToken);
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.

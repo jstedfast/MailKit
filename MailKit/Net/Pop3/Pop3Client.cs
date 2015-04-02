@@ -235,10 +235,10 @@ namespace MailKit.Net.Pop3 {
 		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
 			if (ServerCertificateValidationCallback != null)
-				return ServerCertificateValidationCallback (engine.Host, certificate, chain, errors);
+				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
 
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (engine.Host, certificate, chain, errors);
+				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
 
 			return true;
 		}
@@ -439,7 +439,7 @@ namespace MailKit.Net.Pop3 {
 
 			CheckDisposed ();
 
-			var uri = new Uri ("pop://" + engine.Host);
+			var uri = new Uri ("pop://" + engine.Uri.Host);
 			string authMessage = string.Empty;
 			string userName, password;
 			NetworkCredential cred;
@@ -557,7 +557,8 @@ namespace MailKit.Net.Pop3 {
 
 			probed = ProbedCapabilities.None;
 
-			engine.Connect (host, new Pop3Stream (replayStream, null, logger), cancellationToken);
+			engine.Uri = new Uri ("pop://" + host);
+			engine.Connect (new Pop3Stream (replayStream, null, logger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
@@ -705,6 +706,8 @@ namespace MailKit.Net.Pop3 {
 			if (socket == null)
 				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
 
+			engine.Uri = uri;
+
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
@@ -739,7 +742,7 @@ namespace MailKit.Net.Pop3 {
 
 			logger.LogConnect (uri);
 
-			engine.Connect (host, new Pop3Stream (stream, socket, logger), cancellationToken);
+			engine.Connect (new Pop3Stream (stream, socket, logger), cancellationToken);
 
 			try {
 				engine.QueryCapabilities (cancellationToken);
@@ -863,6 +866,8 @@ namespace MailKit.Net.Pop3 {
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
+			engine.Uri = uri;
+
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
@@ -879,7 +884,7 @@ namespace MailKit.Net.Pop3 {
 
 			logger.LogConnect (uri);
 
-			engine.Connect (host, new Pop3Stream (stream, socket, logger), cancellationToken);
+			engine.Connect (new Pop3Stream (stream, socket, logger), cancellationToken);
 
 			try {
 				engine.QueryCapabilities (cancellationToken);
