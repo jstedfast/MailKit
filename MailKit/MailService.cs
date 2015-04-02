@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 #if !NETFX_CORE
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 #endif
 
@@ -92,26 +93,38 @@ namespace MailKit {
 			get;
 		}
 
-		#if !NETFX_CORE
+#if !NETFX_CORE
 		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
 		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect(Uri,CancellationToken)"/>.</para>
+		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		public X509CertificateCollection ClientCertificates {
 			get; set;
 		}
-		#endif
+
+		/// <summary>
+		/// Get or sets a callback function to validate the server certificate.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets a callback function to validate the server certificate.</para>
+		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value>The server certificate validation callback function.</value>
+		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
+			get; set;
+		}
+#endif
 
 		/// <summary>
 		/// Gets the authentication mechanisms supported by the mail server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried as part of the <see cref="Connect(Uri,CancellationToken)"/> method.
+		/// The authentication mechanisms are queried as part of the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public abstract HashSet<string> AuthenticationMechanisms {

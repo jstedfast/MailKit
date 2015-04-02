@@ -176,10 +176,13 @@ namespace MailKit.Net.Imap {
 		}
 
 #if !NETFX_CORE
-		static bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+		bool ValidateRemoteCertificate (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
 		{
+			if (ServerCertificateValidationCallback != null)
+				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
+
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
-				return ServicePointManager.ServerCertificateValidationCallback (sender, certificate, chain, errors);
+				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
 
 			return true;
 		}

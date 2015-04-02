@@ -30,6 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 #if !NETFX_CORE
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 #endif
 
@@ -65,6 +66,16 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		X509CertificateCollection ClientCertificates { get; set; }
+
+		/// <summary>
+		/// Get or sets a callback function to validate the server certificate.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets a callback function to validate the server certificate.</para>
+		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
+		/// </remarks>
+		/// <value>The server certificate validation callback function.</value>
+		RemoteCertificateValidationCallback ServerCertificateValidationCallback { get; set; }
 #endif
 
 		/// <summary>
