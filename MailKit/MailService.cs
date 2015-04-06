@@ -327,7 +327,7 @@ namespace MailKit {
 				options = SecureSocketOptions.StartTlsWhenAvailable;
 			}
 
-			Connect (uri.Host, uri.Port, options, cancellationToken);
+			Connect (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
 		}
 
 		/// <summary>
