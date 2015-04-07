@@ -496,7 +496,7 @@ namespace MailKit.Net.Pop3 {
 							pop3.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
 							pop3.Stream.Flush (cmd.CancellationToken);
 
-							var response = pop3.ReadLine (cmd.CancellationToken);
+							var response = pop3.ReadLine (cmd.CancellationToken).TrimEnd ();
 
 							cmd.Status = Pop3Engine.GetCommandStatus (response, out text);
 							cmd.StatusText = text;
