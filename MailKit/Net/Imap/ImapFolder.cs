@@ -7130,6 +7130,7 @@ namespace MailKit.Net.Imap {
 			IList<UniqueId> uids = null;
 			uint min, max, count;
 			bool uid = false;
+			ulong modseq;
 			string atom;
 			string tag;
 
@@ -7185,6 +7186,10 @@ namespace MailKit.Net.Imap {
 					throw ImapEngine.UnexpectedToken (token, false);
 
 				switch (atom) {
+				case "MODSEQ":
+					if (!ulong.TryParse ((string) token.Value, out modseq))
+						throw ImapEngine.UnexpectedToken (token, false);
+					break;
 				case "COUNT":
 					if (!uint.TryParse ((string) token.Value, out count))
 						throw ImapEngine.UnexpectedToken (token, false);
