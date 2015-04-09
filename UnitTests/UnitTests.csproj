@@ -260,6 +260,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\acl\setacl1.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\setacl2.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\setacl3.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr123.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />

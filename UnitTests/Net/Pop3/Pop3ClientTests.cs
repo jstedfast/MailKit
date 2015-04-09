@@ -437,6 +437,7 @@ namespace UnitTests.Net.Pop3 {
 			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa2.txt"));
 			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "gmail.stat.txt"));
 			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
+			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
 			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
 
 			using (var client = new Pop3Client ()) {
@@ -468,17 +469,10 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var count = client.GetMessageCount (CancellationToken.None);
-					Assert.AreEqual (1, count, "Expected 1 message");
+					Assert.AreEqual (3, count, "Expected 3 messages");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
 				}
-
-//				try {
-//					var uids = client.GetMessageUids (CancellationToken.None);
-//					Assert.AreEqual (7, uids.Length, "Expected 7 uids");
-//				} catch (Exception ex) {
-//					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
-//				}
 
 				try {
 					var message = client.GetMessage (0, CancellationToken.None);
@@ -497,6 +491,27 @@ namespace UnitTests.Net.Pop3 {
 					}
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
+				}
+
+				try {
+					var messages = client.GetMessages (new [] { 0, 1, 2 }, CancellationToken.None);
+
+					foreach (var message in messages) {
+						using (var jpeg = new MemoryStream ()) {
+							var attachment = message.Attachments.FirstOrDefault ();
+
+							attachment.ContentObject.DecodeTo (jpeg);
+							jpeg.Position = 0;
+
+							using (var md5 = new MD5CryptoServiceProvider ()) {
+								var md5sum = HexEncode (md5.ComputeHash (jpeg));
+
+								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+							}
+						}
+					}
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
 				}
 
 				try {
