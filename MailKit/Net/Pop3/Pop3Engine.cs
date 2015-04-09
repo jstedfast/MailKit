@@ -458,7 +458,7 @@ namespace MailKit.Net.Pop3 {
 			string response;
 
 			do {
-				if ((response = engine.ReadLine (pc.CancellationToken).TrimEnd ()) == ".")
+				if ((response = engine.ReadLine (pc.CancellationToken).TrimEnd ('\r', '\n')) == ".")
 					break;
 
 				int index = response.IndexOf (' ');

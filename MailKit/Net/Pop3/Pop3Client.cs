@@ -1129,7 +1129,7 @@ namespace MailKit.Net.Pop3 {
 					return;
 
 				do {
-					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ();
+					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ('\r', '\n');
 					if (response == ".")
 						break;
 
@@ -1526,7 +1526,7 @@ namespace MailKit.Net.Pop3 {
 					return;
 
 				do {
-					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ();
+					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ('\r', '\n');
 					if (response == ".")
 						break;
 
@@ -1759,7 +1759,7 @@ namespace MailKit.Net.Pop3 {
 					return;
 
 				do {
-					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ();
+					var response = engine.ReadLine (cmd.CancellationToken).TrimEnd ('\r', '\n');
 					if (response == ".")
 						break;
 
