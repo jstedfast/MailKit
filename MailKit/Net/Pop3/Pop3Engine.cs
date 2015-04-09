@@ -445,13 +445,6 @@ namespace MailKit.Net.Pop3 {
 
 		static void CapaHandler (Pop3Engine engine, Pop3Command pc, string text)
 		{
-			// clear all CAPA response capabilities (except the APOP capability)
-			engine.Capabilities &= Pop3Capabilities.Apop;
-			engine.AuthenticationMechanisms.Clear ();
-			engine.Implementation = null;
-			engine.ExpirePolicy = 0;
-			engine.LoginDelay = 0;
-
 			if (pc.Status != Pop3CommandStatus.Ok)
 				return;
 
@@ -541,6 +534,13 @@ namespace MailKit.Net.Pop3 {
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
+
+			// clear all CAPA response capabilities (except the APOP capability)
+			Capabilities &= Pop3Capabilities.Apop;
+			AuthenticationMechanisms.Clear ();
+			Implementation = null;
+			ExpirePolicy = 0;
+			LoginDelay = 0;
 
 			var pc = QueueCommand (cancellationToken, CapaHandler, "CAPA");
 
