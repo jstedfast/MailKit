@@ -315,6 +315,14 @@ namespace MailKit.Net.Pop3 {
 				buf = memory.ToArray ();
 #endif
 
+				// Trim the <CR><LF> sequence from the end of the line.
+				if (buf[count - 1] == (byte) '\n') {
+					count--;
+
+					if (buf[count - 1] == (byte) '\r')
+						count--;
+				}
+
 				try {
 					return UTF8.GetString (buf, 0, count);
 				} catch (DecoderFallbackException) {
@@ -451,7 +459,7 @@ namespace MailKit.Net.Pop3 {
 			string response;
 
 			do {
-				if ((response = engine.ReadLine (pc.CancellationToken).TrimEnd ('\r', '\n')) == ".")
+				if ((response = engine.ReadLine (pc.CancellationToken)) == ".")
 					break;
 
 				int index = response.IndexOf (' ');
