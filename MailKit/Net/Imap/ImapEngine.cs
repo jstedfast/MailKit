@@ -499,6 +499,7 @@ namespace MailKit.Net.Imap {
 			CapabilitiesVersion = 0;
 			QResyncEnabled = false;
 			UTF8Enabled = false;
+			Selected = null;
 			Stream = stream;
 			Tag = 0;
 
@@ -549,6 +550,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		public void Disconnect ()
 		{
+			Selected = null;
 			current = null;
 
 			if (Stream != null) {
