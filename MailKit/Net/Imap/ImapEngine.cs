@@ -491,7 +491,6 @@ namespace MailKit.Net.Imap {
 			ThreadingAlgorithms.Clear ();
 			SupportedCharsets.Clear ();
 			SupportedContexts.Clear ();
-			FolderCache.Clear ();
 			Rights.Clear ();
 
 			State = ImapEngineState.Connected;

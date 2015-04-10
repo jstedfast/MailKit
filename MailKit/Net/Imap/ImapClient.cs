@@ -71,6 +71,7 @@ namespace MailKit.Net.Imap {
 #if NETFX_CORE
 		StreamSocket socket;
 #endif
+		string identifier = null;
 		int timeout = 100000;
 		bool disposed;
 
@@ -682,6 +683,14 @@ namespace MailKit.Net.Imap {
 			return new AuthenticationException (ic.ResultText);
 		}
 
+		string GetSessionIdentifier (string userName)
+		{
+			var escapedUserName = Uri.EscapeUriString (userName);
+			var uri = engine.Uri;
+
+			return string.Format ("{0}://{1}@{2}:{3}", uri.Scheme, escapedUserName, uri.Host, uri.Port);
+		}
+
 		/// <summary>
 		/// Authenticate using the supplied credentials.
 		/// </summary>
@@ -740,6 +749,7 @@ namespace MailKit.Net.Imap {
 			var uri = new Uri ("imap://" + engine.Uri.Host);
 			NetworkCredential cred;
 			ImapCommand ic = null;
+			string id;
 
 			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
@@ -782,6 +792,13 @@ namespace MailKit.Net.Imap {
 
 				engine.State = ImapEngineState.Authenticated;
 
+				cred = credentials.GetCredential (uri, sasl.MechanismName);
+				id = GetSessionIdentifier (cred.UserName);
+				if (id != identifier) {
+					engine.FolderCache.Clear ();
+					identifier = id;
+				}
+
 				// Query the CAPABILITIES again if the server did not include an
 				// untagged CAPABILITIES response to the AUTHENTICATE command.
 				if (engine.CapabilitiesVersion == capabilitiesVersion)
@@ -811,6 +828,12 @@ namespace MailKit.Net.Imap {
 				throw CreateAuthenticationException (ic);
 
 			engine.State = ImapEngineState.Authenticated;
+
+			id = GetSessionIdentifier (cred.UserName);
+			if (id != identifier) {
+				engine.FolderCache.Clear ();
+				identifier = id;
+			}
 
 			// Query the CAPABILITIES again if the server did not include an
 			// untagged CAPABILITIES response to the LOGIN command.
@@ -981,7 +1004,7 @@ namespace MailKit.Net.Imap {
 
 			if (socket == null)
 				throw new IOException (string.Format ("Failed to resolve host: {0}", host));
-
+			
 			engine.Uri = uri;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
