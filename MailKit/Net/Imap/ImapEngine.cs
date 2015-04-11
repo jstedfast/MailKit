@@ -466,7 +466,6 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Takes posession of the <see cref="ImapStream"/> and reads the greeting.
 		/// </summary>
-		/// <param name="uri">The URI of the IMAP server.</param>
 		/// <param name="stream">The IMAP stream.</param>
 		/// <param name="cancellationToken">The cancellation token</param>
 		/// <exception cref="System.OperationCanceledException">
