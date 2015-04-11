@@ -62,6 +62,7 @@ namespace MailKit.Net.Imap {
 	public class ImapClient : MailStore
 	{
 		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',' };
+		const string HexAlphabet = "0123456789ABCDEF";
 #if NET_4_5 || __MOBILE__
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
 #elif !NETFX_CORE
@@ -684,6 +685,39 @@ namespace MailKit.Net.Imap {
 			return new AuthenticationException (ic.ResultText);
 		}
 
+		static bool IsHexDigit (char c)
+		{
+			return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+		}
+
+		static char HexUnescape (string pattern, ref int index)
+		{
+			char value, c;
+
+			if (pattern[index++] != '%' || !IsHexDigit (pattern[index]) || !IsHexDigit (pattern[index + 1]))
+				return '%';
+
+			c = pattern[index++];
+
+			if (c >= 'a')
+				value = (char) (((c - 'a') + 10) << 4);
+			else if (c >= 'A')
+				value = (char) (((c - 'A') + 10) << 4);
+			else
+				value = (char) ((c - '0') << 4);
+
+			c = pattern[index++];
+
+			if (c >= 'a')
+				value |= (char) ((c - 'a') + 10);
+			else if (c >= 'A')
+				value |= (char) ((c - 'A') + 10);
+			else
+				value |= (char) (c - '0');
+
+			return value;
+		}
+
 		static string UnescapeUserName (string escaped)
 		{
 			StringBuilder userName;
@@ -697,7 +731,7 @@ namespace MailKit.Net.Imap {
 
 			do {
 				userName.Append (escaped, startIndex, index - startIndex);
-				userName.Append (Uri.HexUnescape (escaped, ref index));
+				userName.Append (HexUnescape (escaped, ref index));
 				startIndex = index;
 
 				if (startIndex >= escaped.Length)
@@ -710,6 +744,11 @@ namespace MailKit.Net.Imap {
 				userName.Append (escaped, startIndex, escaped.Length - startIndex);
 
 			return userName.ToString ();
+		}
+
+		static string HexEscape (char c)
+		{
+			return "%" + HexAlphabet[(c >> 4) & 0xF] + HexAlphabet[c & 0xF];
 		}
 
 		static string EscapeUserName (string userName)
@@ -725,7 +764,7 @@ namespace MailKit.Net.Imap {
 
 			do {
 				escaped.Append (userName, startIndex, index - startIndex);
-				escaped.Append (Uri.HexEscape (userName[index++]));
+				escaped.Append (HexEscape (userName[index++]));
 				startIndex = index;
 
 				if (startIndex >= userName.Length)
