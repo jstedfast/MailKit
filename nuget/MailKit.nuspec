@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.0.13.0</version>
+        <version>1.0.14.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,17 +22,19 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Added a FileName convenience property to BodyPartBasic which works the same way as the MimeKit.MimePart.FileName property.
-* Added a MessageSummaryFetched event to IMailFolder to better enable developers to both provide progress feedback to their users as well as enable them to better recover from exceptions (such as a dropped connection) occurring during the fetching of message summaries.
-* Added support for the IMAP SORT=DISPLAY extension.
-* Added a work-around for Cyrus IMAP 2.4.16 sending untagged SEARCH responses when untagged ESEARCH responses are expected.
+        <releaseNotes>* Added a ServerCertificateValidationCallback property to all clients so that it is not necessary to set the global System.Net.ServicePointManager.ServerCertificateValidationCallback property.
+* Fixed MailService.Connect(Uri) to properly handle Uri's with Port value that had not been explicitly set. (issue #170)
+* Added logic to properly handle MODSEQ-based search responses. (issue #166 and issue #173)
+* When an ImapClient gets disconnected, if an ImapFolder was in an opened state, update its state to closed to prevent confusion once the ImapClient is reconnected.
+* Fixed a bug in Pop3Client.Authenticate() for servers that just reply with "+OK\r\n" to the SASL challenge. (issue #171)
+* Clear the POP3 capability flags if the POP3 server responds with -ERR at any time. Some servers will reply with a list of capabilities until the client is authenticated, and then reply with -ERR meaning that the client should not attempt to use previously listed capabilities. (issue #174)
 
 Note: If you are not yet ready to port your iOS application to the Unified API, you will need to stick with the 1.0.5 release. The Classic MonoTouch API is no longer supported.</releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.0.12.0" />
+            <dependency id="MimeKit" version="1.0.13.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

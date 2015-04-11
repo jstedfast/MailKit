@@ -1,8 +1,23 @@
 # Release Notes
 
-### MailKit 1.0.14 (Pending)
+### MailKit 1.0.14
 
-* Added logic to properly handle MODSEQ-based search responses. (issue #166)
+* Added a ServerCertificateValidationCallback property to all clients so that
+  it is not necessary to set the global
+  System.Net.ServicePointManager.ServerCertificateValidationCallback property.
+* Fixed MailService.Connect(Uri) to properly handle Uri's with Port value that
+  had not been explicitly set. (issue #170)
+* Added logic to properly handle MODSEQ-based search responses.
+  (issue #166 and issue #173)
+* When an ImapClient gets disconnected, if an ImapFolder was in an opened state,
+  update its state to closed to prevent confusion once the ImapClient is
+  reconnected.
+* Fixed a bug in Pop3Client.Authenticate() for servers that just reply with
+  "+OK\r\n" to the SASL challenge. (issue #171)
+* Clear the POP3 capability flags if the POP3 server responds with -ERR at
+  any time. Some servers will reply with a list of capabilities until the
+  client is authenticated, and then reply with -ERR meaning that the client
+  should not attempt to use previously listed capabilities. (issue #174)
 
 ### MailKit 1.0.13
 
