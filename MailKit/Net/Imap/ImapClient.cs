@@ -61,6 +61,7 @@ namespace MailKit.Net.Imap {
 	/// </remarks>
 	public class ImapClient : MailStore
 	{
+		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',' };
 #if NET_4_5 || __MOBILE__
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
 #elif !NETFX_CORE
@@ -683,12 +684,67 @@ namespace MailKit.Net.Imap {
 			return new AuthenticationException (ic.ResultText);
 		}
 
+		static string UnescapeUserName (string escaped)
+		{
+			StringBuilder userName;
+			int startIndex, index;
+
+			if ((index = escaped.IndexOf ('%')) == -1)
+				return escaped;
+
+			userName = new StringBuilder ();
+			startIndex = 0;
+
+			do {
+				userName.Append (escaped, startIndex, index - startIndex);
+				userName.Append (Uri.HexUnescape (escaped, ref index));
+				startIndex = index;
+
+				if (startIndex >= escaped.Length)
+					break;
+
+				index = escaped.IndexOf ('%', startIndex);
+			} while (index != -1);
+
+			if (index == -1)
+				userName.Append (escaped, startIndex, escaped.Length - startIndex);
+
+			return userName.ToString ();
+		}
+
+		static string EscapeUserName (string userName)
+		{
+			StringBuilder escaped;
+			int startIndex, index;
+
+			if ((index = userName.IndexOfAny (ReservedUriCharacters)) == -1)
+				return userName;
+
+			escaped = new StringBuilder ();
+			startIndex = 0;
+
+			do {
+				escaped.Append (userName, startIndex, index - startIndex);
+				escaped.Append (Uri.HexEscape (userName[index++]));
+				startIndex = index;
+
+				if (startIndex >= userName.Length)
+					break;
+
+				index = userName.IndexOfAny (ReservedUriCharacters, startIndex);
+			} while (index != -1);
+
+			if (index == -1)
+				escaped.Append (userName, startIndex, userName.Length - startIndex);
+
+			return escaped.ToString ();
+		}
+
 		string GetSessionIdentifier (string userName)
 		{
-			var escapedUserName = Uri.EscapeUriString (userName);
 			var uri = engine.Uri;
 
-			return string.Format ("{0}://{1}@{2}:{3}", uri.Scheme, escapedUserName, uri.Host, uri.Port);
+			return string.Format ("{0}://{1}@{2}:{3}", uri.Scheme, EscapeUserName (userName), uri.Host, uri.Port);
 		}
 
 		/// <summary>
@@ -1266,6 +1322,118 @@ namespace MailKit.Net.Imap {
 
 			engine.Disconnect ();
 		}
+
+#if ENABLE_RECONNECT
+		/// <summary>
+		/// Reconnect to the most recently connected IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Reconnects to the most recently connected IMAP server. Once a
+		/// successful connection is made, the session will then be re-authenticated
+		/// using the account name used in the previous session and the
+		/// <paramref name="password"/>.</para>
+		/// </remarks>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="password"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is already connected.</para>
+		/// <para>-or-</para>
+		/// <para>There is no previous session to restore.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The previous session was using the STARTTLS extension but the
+		/// IMAP server no longer supports it.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public void Reconnect (string password, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (password == null)
+				throw new ArgumentNullException ("password");
+
+			if (identifier == null)
+				throw new InvalidOperationException ("There is no previous session to restore.");
+
+			// Note: the identifier has the following syntax: imap(s)://userName@host:port
+			int startIndex = identifier.IndexOf (':') + 3;
+			int endIndex = identifier.IndexOf ('@');
+
+			var userName = UnescapeUserName (identifier.Substring (startIndex, endIndex - startIndex));
+
+			Connect (engine.Uri, cancellationToken);
+
+			Authenticate (userName, password, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously reconnect to the most recently connected IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously econnects to the most recently connected IMAP server.
+		/// Once a successful connection is made, the session will then be
+		/// re-authenticated using the account name used in the previous session and
+		/// the <paramref name="password"/>.</para>
+		/// </remarks>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="password"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is already connected.</para>
+		/// <para>-or-</para>
+		/// <para>There is no previous session to restore.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The previous session was using the STARTTLS extension but the
+		/// IMAP server no longer supports it.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// An IMAP protocol error occurred.
+		/// </exception>
+		public Task ReconnectAsync (string password, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					Reconnect (password, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+#endif
 
 		/// <summary>
 		/// Ping the IMAP server to keep the connection alive.
