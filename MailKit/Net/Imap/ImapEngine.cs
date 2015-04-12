@@ -128,7 +128,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the authentication mechanisms supported by the IMAP server.
+		/// Get the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The authentication mechanisms are queried durring the
@@ -140,7 +140,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the compression algorithms supported by the IMAP server.
+		/// Get the compression algorithms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The compression algorithms are populated by the
@@ -152,7 +152,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the threading algorithms supported by the IMAP server.
+		/// Get the threading algorithms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The threading algorithms are populated by the
@@ -164,7 +164,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the capabilities supported by the IMAP server.
+		/// Get the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// The capabilities will not be known until a successful connection
@@ -198,7 +198,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the capabilities version.
+		/// Get the capabilities version.
 		/// </summary>
 		/// <remarks>
 		/// Every time the engine receives an untagged CAPABILITIES
@@ -210,7 +210,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the IMAP protocol version.
+		/// Get the IMAP protocol version.
 		/// </summary>
 		/// <remarks>
 		/// Gets the IMAP protocol version.
@@ -221,7 +221,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the rights specified in the capabilities.
+		/// Get the rights specified in the capabilities.
 		/// </summary>
 		/// <remarks>
 		/// Gets the rights specified in the capabilities.
@@ -232,7 +232,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the supported charsets.
+		/// Get the supported charsets.
 		/// </summary>
 		/// <remarks>
 		/// Gets the supported charsets.
@@ -243,7 +243,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the supported contexts.
+		/// Get the supported contexts.
 		/// </summary>
 		/// <remarks>
 		/// Gets the supported contexts.
@@ -254,7 +254,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets whether or not the QRESYNC feature has been enabled.
+		/// Get whether or not the QRESYNC feature has been enabled.
 		/// </summary>
 		/// <remarks>
 		/// Gets whether or not the QRESYNC feature has been enabled.
@@ -265,7 +265,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets whether or not the UTF8=ACCEPT feature has been enabled.
+		/// Get whether or not the UTF8=ACCEPT feature has been enabled.
 		/// </summary>
 		/// <remarks>
 		/// Gets whether or not the UTF8=ACCEPT feature has been enabled.
@@ -276,7 +276,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the URI of the IMAP server.
+		/// Get the URI of the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// Gets the URI of the IMAP server.
@@ -287,7 +287,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the underlying IMAP stream.
+		/// Get the underlying IMAP stream.
 		/// </summary>
 		/// <remarks>
 		/// Gets the underlying IMAP stream.
@@ -298,7 +298,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets or sets the state of the engine.
+		/// Get or sets the state of the engine.
 		/// </summary>
 		/// <remarks>
 		/// Gets or sets the state of the engine.
@@ -309,7 +309,7 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets whether or not the engine is currently connected to a IMAP server.
+		/// Get whether or not the engine is currently connected to a IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// Gets whether or not the engine is currently connected to a IMAP server.

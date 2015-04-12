@@ -39,11 +39,7 @@ using MimeKit.IO;
 using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
-using Encoding = Portable.Text.Encoding;
 using Socket = Windows.Networking.Sockets.StreamSocket;
-using EncoderExceptionFallback = Portable.Text.EncoderExceptionFallback;
-using DecoderExceptionFallback = Portable.Text.DecoderExceptionFallback;
-using DecoderFallbackException = Portable.Text.DecoderFallbackException;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
@@ -71,31 +67,21 @@ namespace MailKit.Net.Smtp {
 #elif !NETFX_CORE
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
 #endif
-		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		const int MaxLineLength = 998;
 
 		enum SmtpCommand {
 			MailFrom,
-			RcptTo,
-
-			// TODO:
-			//Data,
+			RcptTo
 		}
 
 		readonly HashSet<string> authenticationMechanisms = new HashSet<string> ();
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
-		readonly byte[] input = new byte[4096];
 		readonly IProtocolLogger logger;
 		SmtpCapabilities capabilities;
-		int inputIndex, inputEnd;
-		MemoryBlockStream queue;
 		int timeout = 100000;
 		bool authenticated;
 		bool connected;
-		Stream stream;
-		Socket socket;
 		bool disposed;
 		string host;
 
@@ -131,6 +117,17 @@ namespace MailKit.Net.Smtp {
 				throw new ArgumentNullException ("protocolLogger");
 
 			logger = protocolLogger;
+		}
+
+		/// <summary>
+		/// Get the underlying SMTP stream.
+		/// </summary>
+		/// <remarks>
+		/// Gets the underlying SMTP stream.
+		/// </remarks>
+		/// <value>The SMTP stream.</value>
+		SmtpStream Stream {
+			get; set;
 		}
 
 		/// <summary>
@@ -238,9 +235,9 @@ namespace MailKit.Net.Smtp {
 		public override int Timeout {
 			get { return timeout; }
 			set {
-				if (IsConnected && stream.CanTimeout) {
-					stream.WriteTimeout = value;
-					stream.ReadTimeout = value;
+				if (IsConnected && Stream.CanTimeout) {
+					Stream.WriteTimeout = value;
+					Stream.ReadTimeout = value;
 				}
 
 				timeout = value;
@@ -286,143 +283,12 @@ namespace MailKit.Net.Smtp {
 		}
 #endif
 
-		static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
+		void QueueCommand (SmtpCommand type, string command, CancellationToken cancellationToken)
 		{
-			int startIndex = index;
-
-			value = 0;
-
-			while (index < endIndex && text[index] >= (byte) '0' && text[index] <= (byte) '9')
-				value = (value * 10) + (text[index++] - (byte) '0');
-
-			return index > startIndex;
-		}
-
-		void Poll (SelectMode mode, CancellationToken cancellationToken)
-		{
-			if (!cancellationToken.CanBeCanceled)
-				return;
-
-			if (socket != null) {
-#if NETFX_CORE
-				// FIXME: how do we poll a StreamSocket?
-				cancellationToken.ThrowIfCancellationRequested ();
-#else
-				do {
-					cancellationToken.ThrowIfCancellationRequested ();
-				} while (!socket.Poll (1000, mode));
-#endif
-			} else {
-				cancellationToken.ThrowIfCancellationRequested ();
-			}
-		}
-
-		SmtpResponse ReadResponse (CancellationToken cancellationToken)
-		{
-			using (var memory = new MemoryStream ()) {
-				bool complete = false;
-				bool newLine = true;
-				bool more = true;
-				int code = 0;
-				int nread;
-
-				do {
-					if (memory.Length > 0 || inputIndex == inputEnd) {
-						// make room for the next read by moving the remaining data to the beginning of the buffer
-						int left = inputEnd - inputIndex;
-
-						for (int i = 0; i < left; i++)
-							input[i] = input[inputIndex + i];
-
-						inputEnd = left;
-						inputIndex = 0;
-
-						Poll (SelectMode.SelectRead, cancellationToken);
-
-						if ((nread = stream.Read (input, inputEnd, input.Length - inputEnd)) == 0)
-							throw new SmtpProtocolException ("The SMTP server unexpectedly disconnected.");
-
-						logger.LogServer (input, inputEnd, nread);
-						inputEnd += nread;
-					}
-
-					complete = false;
-
-					do {
-						int startIndex = inputIndex;
-
-						if (newLine && inputIndex < inputEnd) {
-							int value;
-
-							if (!TryParseInt32 (input, ref inputIndex, inputEnd, out value))
-								throw new SmtpProtocolException ("Unable to parse status code returned by the server.");
-
-							if (inputIndex == inputEnd) {
-								inputIndex = startIndex;
-								break;
-							}
-
-							if (code == 0) {
-								code = value;
-							} else if (value != code) {
-								throw new SmtpProtocolException ("The status codes returned by the server did not match.");
-							}
-
-							newLine = false;
-
-							if (input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
-								more = input[inputIndex++] == (byte) '-';
-							else
-								more = false;
-
-							startIndex = inputIndex;
-						}
-
-						while (inputIndex < inputEnd && input[inputIndex] != (byte) '\r' && input[inputIndex] != (byte) '\n')
-							inputIndex++;
-
-						memory.Write (input, startIndex, inputIndex - startIndex);
-
-						if (inputIndex < inputEnd && input[inputIndex] == (byte) '\r')
-							inputIndex++;
-
-						if (inputIndex < inputEnd && input[inputIndex] == (byte) '\n') {
-							if (more)
-								memory.WriteByte (input[inputIndex]);
-							complete = true;
-							newLine = true;
-							inputIndex++;
-						}
-					} while (more && inputIndex < inputEnd);
-				} while (more || !complete);
-
-				string message = null;
-
-				try {
-#if !NETFX_CORE
-					message = UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
-#else
-					message = UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
-#endif
-				} catch (DecoderFallbackException) {
-#if !NETFX_CORE
-					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
-#else
-					message = Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
-#endif
-				}
-
-				return new SmtpResponse ((SmtpStatusCode) code, message);
-			}
-		}
-
-		void QueueCommand (SmtpCommand type, string command)
-		{
-			if (queue == null)
-				queue = new MemoryBlockStream ();
-
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
-			queue.Write (bytes, 0, bytes.Length);
+
+			// Note: queued commands will be buffered by the stream
+			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
 			queued.Add (type);
 		}
 
@@ -434,19 +300,14 @@ namespace MailKit.Net.Smtp {
 			try {
 				var responses = new List<SmtpResponse> ();
 				int rcpt = 0;
-				int nread;
 
-				queue.Position = 0;
-				while ((nread = queue.Read (input, 0, input.Length)) > 0) {
-					Poll (SelectMode.SelectWrite, cancellationToken);
-					stream.Write (input, 0, nread);
-					logger.LogClient (input, 0, nread);
-				}
+				// Note: queued commands are buffered by the stream
+				Stream.Flush (cancellationToken);
 
 				// Note: we need to read all responses from the server before we can process
 				// them in case any of them have any errors so that we can RSET the state.
 				for (int i = 0; i < queued.Count; i++)
-					responses.Add (ReadResponse (cancellationToken));
+					responses.Add (Stream.ReadResponse (cancellationToken));
 
 				for (int i = 0; i < queued.Count; i++) {
 					switch (queued [i]) {
@@ -459,7 +320,6 @@ namespace MailKit.Net.Smtp {
 					}
 				}
 			} finally {
-				queue.SetLength (0);
 				queued.Clear ();
 			}
 		}
@@ -468,11 +328,10 @@ namespace MailKit.Net.Smtp {
 		{
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
 
-			Poll (SelectMode.SelectWrite, cancellationToken);
-			stream.Write (bytes, 0, bytes.Length);
-			logger.LogClient (bytes, 0, bytes.Length);
+			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
+			Stream.Flush (cancellationToken);
 
-			return ReadResponse (cancellationToken);
+			return Stream.ReadResponse (cancellationToken);
 		}
 
 		SmtpResponse SendEhlo (bool ehlo, CancellationToken cancellationToken)
@@ -486,11 +345,11 @@ namespace MailKit.Net.Smtp {
 			if (!string.IsNullOrEmpty (LocalDomain)) {
 				if (!IPAddress.TryParse (LocalDomain, out ip))
 					domain = LocalDomain;
-			} else if (socket != null) {
-				var ipEndPoint = socket.LocalEndPoint as IPEndPoint;
+			} else if (Stream.Socket != null) {
+				var ipEndPoint = Stream.Socket.LocalEndPoint as IPEndPoint;
 
 				if (ipEndPoint == null)
-					domain = ((DnsEndPoint) socket.LocalEndPoint).Host;
+					domain = ((DnsEndPoint) Stream.Socket.LocalEndPoint).Host;
 				else
 					ip = ipEndPoint.Address;
 			} else {
@@ -716,16 +575,15 @@ namespace MailKit.Net.Smtp {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
+			Stream = new SmtpStream (replayStream, null, logger);
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
-			stream = replayStream;
 			host = hostName;
-			socket = null;
 			MaxSize = 0;
 
 			try {
 				// read the greeting
-				var response = ReadResponse (cancellationToken);
+				var response = Stream.ReadResponse (cancellationToken);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -735,8 +593,8 @@ namespace MailKit.Net.Smtp {
 
 				connected = true;
 			} catch {
-				stream.Dispose ();
-				stream = null;
+				Stream.Dispose ();
+				Stream = null;
 				throw;
 			}
 
@@ -859,6 +717,7 @@ namespace MailKit.Net.Smtp {
 			MaxSize = 0;
 
 			SmtpResponse response;
+			Stream stream;
 			bool starttls;
 			Uri uri;
 
@@ -866,6 +725,7 @@ namespace MailKit.Net.Smtp {
 
 #if !NETFX_CORE
 			var ipAddresses = Dns.GetHostAddresses (host);
+			Socket socket = null;
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
 				socket = new Socket (ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -901,7 +761,7 @@ namespace MailKit.Net.Smtp {
 			}
 #else
 			var protection = options == SecureSocketOptions.SslOnConnect ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket;
-			socket = new StreamSocket ();
+			var socket = new StreamSocket ();
 
 			try {
 				cancellationToken.ThrowIfCancellationRequested ();
@@ -911,7 +771,6 @@ namespace MailKit.Net.Smtp {
 					.GetResult ();
 			} catch {
 				socket.Dispose ();
-				socket = null;
 				throw;
 			}
 
@@ -925,9 +784,11 @@ namespace MailKit.Net.Smtp {
 
 			logger.LogConnect (uri);
 
+			Stream = new SmtpStream (stream, socket, logger);
+
 			try {
 				// read the greeting
-				response = ReadResponse (cancellationToken);
+				response = Stream.ReadResponse (cancellationToken);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -960,9 +821,8 @@ namespace MailKit.Net.Smtp {
 
 				connected = true;
 			} catch {
-				stream.Dispose ();
-				stream = null;
-				socket = null;
+				Stream.Dispose ();
+				Stream = null;
 				throw;
 			}
 
@@ -1057,12 +917,12 @@ namespace MailKit.Net.Smtp {
 			MaxSize = 0;
 
 			SmtpResponse response;
+			Stream stream;
 			bool starttls;
 			Uri uri;
 
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
-			this.socket = socket;
 			this.host = host;
 
 			if (options == SecureSocketOptions.SslOnConnect) {
@@ -1080,9 +940,11 @@ namespace MailKit.Net.Smtp {
 
 			logger.LogConnect (uri);
 
+			Stream = new SmtpStream (stream, socket, logger);
+
 			try {
 				// read the greeting
-				response = ReadResponse (cancellationToken);
+				response = Stream.ReadResponse (cancellationToken);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -1108,9 +970,8 @@ namespace MailKit.Net.Smtp {
 
 				connected = true;
 			} catch {
-				stream.Dispose ();
-				stream = null;
-				this.socket = null;
+				Stream.Dispose ();
+				Stream = null;
 				throw;
 			}
 
@@ -1191,19 +1052,10 @@ namespace MailKit.Net.Smtp {
 			connected = false;
 			host = null;
 
-			if (stream != null) {
-				stream.Dispose ();
-				stream = null;
+			if (Stream != null) {
+				Stream.Dispose ();
+				Stream = null;
 			}
-
-#if NETFX_CORE
-			if (socket != null) {
-				socket.Dispose ();
-				socket = null;
-			}
-#else
-			socket = null;
-#endif
 
 			OnDisconnected ();
 		}
@@ -1390,7 +1242,7 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
-				QueueCommand (SmtpCommand.MailFrom, command);
+				QueueCommand (SmtpCommand.MailFrom, command, cancellationToken);
 				return;
 			}
 
@@ -1460,7 +1312,7 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
-				QueueCommand (SmtpCommand.RcptTo, command);
+				QueueCommand (SmtpCommand.RcptTo, command, cancellationToken);
 				return;
 			}
 
@@ -1478,14 +1330,11 @@ namespace MailKit.Net.Smtp {
 
 			var bytes = Encoding.UTF8.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 
-			Poll (SelectMode.SelectWrite, cancellationToken);
-			stream.Write (bytes, 0, bytes.Length);
-			logger.LogClient (bytes, 0, bytes.Length);
+			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
+			message.WriteTo (options, Stream, cancellationToken);
+			Stream.Flush (cancellationToken);
 
-			message.WriteTo (options, stream, cancellationToken);
-			stream.Flush ();
-
-			var response = ReadResponse (cancellationToken);
+			var response = Stream.ReadResponse (cancellationToken);
 
 			switch (response.StatusCode) {
 			default:
@@ -1505,16 +1354,16 @@ namespace MailKit.Net.Smtp {
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-			using (var filtered = new FilteredStream (stream)) {
+			using (var filtered = new FilteredStream (Stream)) {
 				filtered.Add (new SmtpDataFilter ());
 				message.WriteTo (options, filtered, cancellationToken);
 				filtered.Flush ();
 			}
 
-			Poll (SelectMode.SelectWrite, cancellationToken);
-			stream.Write (EndData, 0, EndData.Length);
+			Stream.Write (EndData, 0, EndData.Length, cancellationToken);
+			Stream.Flush (cancellationToken);
 
-			response = ReadResponse (cancellationToken);
+			response = Stream.ReadResponse (cancellationToken);
 
 			switch (response.StatusCode) {
 			default:
@@ -1737,8 +1586,6 @@ namespace MailKit.Net.Smtp {
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
-				if (queue != null)
-					queue.Dispose ();
 				disposed = true;
 				Disconnect ();
 			}
