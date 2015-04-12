@@ -89,6 +89,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapStream"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="ImapStream"/>.
+		/// </remarks>
 		/// <param name="source">The underlying network stream.</param>
 		/// <param name="socket">The underlying network socket.</param>
 		/// <param name="protocolLogger">The protocol logger.</param>
@@ -101,81 +104,111 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the underlying network stream.
+		/// Get or sets the underlying network stream.
 		/// </summary>
+		/// <remarks>
+		/// Gets or sets the underlying network stream.
+		/// </remarks>
 		/// <value>The underlying network stream.</value>
 		public Stream Stream {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gets the underlying network socket.
+		/// Get the underlying network socket.
 		/// </summary>
+		/// <remarks>
+		/// Gets the underlying network socket.
+		/// </remarks>
 		/// <value>The underlying network socket.</value>
 		public Socket Socket {
 			get; private set;
 		}
 
 		/// <summary>
-		/// Gets or sets the mode used for reading.
+		/// Get or sets the mode used for reading.
 		/// </summary>
+		/// <remarks>
+		/// Gets or sets the mode used for reading.
+		/// </remarks>
 		/// <value>The mode.</value>
 		public ImapStreamMode Mode {
 			get; set;
 		}
 
 		/// <summary>
-		/// Gets the length of the literal.
+		/// Get the length of the literal.
 		/// </summary>
+		/// <remarks>
+		/// Gets the length of the literal.
+		/// </remarks>
 		/// <value>The length of the literal.</value>
 		public int LiteralLength {
 			get { return literalDataLeft; }
 		}
 
 		/// <summary>
-		/// Gets whether or not the stream is connected.
+		/// Get whether or not the stream is connected.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the stream is connected.
+		/// </remarks>
 		/// <value><c>true</c> if the stream is connected; otherwise, <c>false</c>.</value>
 		public bool IsConnected {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gets whether the stream supports reading.
+		/// Get whether the stream supports reading.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether the stream supports reading.
+		/// </remarks>
 		/// <value><c>true</c> if the stream supports reading; otherwise, <c>false</c>.</value>
 		public override bool CanRead {
 			get { return Stream.CanRead; }
 		}
 
 		/// <summary>
-		/// Gets whether the stream supports writing.
+		/// Get whether the stream supports writing.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether the stream supports writing.
+		/// </remarks>
 		/// <value><c>true</c> if the stream supports writing; otherwise, <c>false</c>.</value>
 		public override bool CanWrite {
 			get { return Stream.CanWrite; }
 		}
 
 		/// <summary>
-		/// Gets whether the stream supports seeking.
+		/// Get whether the stream supports seeking.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether the stream supports seeking.
+		/// </remarks>
 		/// <value><c>true</c> if the stream supports seeking; otherwise, <c>false</c>.</value>
 		public override bool CanSeek {
 			get { return false; }
 		}
 
 		/// <summary>
-		/// Gets whether the stream supports I/O timeouts.
+		/// Get whether the stream supports I/O timeouts.
 		/// </summary>
+		/// <remarks>
+		/// Gets whether the stream supports I/O timeouts.
+		/// </remarks>
 		/// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
 		public override bool CanTimeout {
 			get { return Stream.CanTimeout; }
 		}
 
 		/// <summary>
-		/// Gets or sets a value, in miliseconds, that determines how long the stream will attempt to read before timing out.
+		/// Get or set a value, in milliseconds, that determines how long the stream will attempt to read before timing out.
 		/// </summary>
-		/// <returns>A value, in miliseconds, that determines how long the stream will attempt to read before timing out.</returns>
+		/// <remarks>
+		/// Gets or sets a value, in milliseconds, that determines how long the stream will attempt to read before timing out.
+		/// </remarks>
+		/// <returns>A value, in milliseconds, that determines how long the stream will attempt to read before timing out.</returns>
 		/// <value>The read timeout.</value>
 		public override int ReadTimeout {
 			get { return Stream.ReadTimeout; }
@@ -183,9 +216,12 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets or sets a value, in miliseconds, that determines how long the stream will attempt to write before timing out.
+		/// Get or set a value, in milliseconds, that determines how long the stream will attempt to write before timing out.
 		/// </summary>
-		/// <returns>A value, in miliseconds, that determines how long the stream will attempt to write before timing out.</returns>
+		/// <remarks>
+		/// Gets or sets a value, in milliseconds, that determines how long the stream will attempt to write before timing out.
+		/// </remarks>
+		/// <returns>A value, in milliseconds, that determines how long the stream will attempt to write before timing out.</returns>
 		/// <value>The write timeout.</value>
 		public override int WriteTimeout {
 			get { return Stream.WriteTimeout; }
@@ -193,8 +229,11 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets or sets the position within the current stream.
+		/// Get or set the position within the current stream.
 		/// </summary>
+		/// <remarks>
+		/// Gets or sets the position within the current stream.
+		/// </remarks>
 		/// <returns>The current position within the stream.</returns>
 		/// <value>The position of the stream.</value>
 		/// <exception cref="System.IO.IOException">
@@ -212,8 +251,11 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Gets the length in bytes of the stream.
+		/// Get the length of the stream, in bytes.
 		/// </summary>
+		/// <remarks>
+		/// Gets the length of the stream, in bytes.
+		/// </remarks>
 		/// <returns>A long value representing the length of the stream in bytes.</returns>
 		/// <value>The length of the stream.</value>
 		/// <exception cref="System.NotSupportedException">
