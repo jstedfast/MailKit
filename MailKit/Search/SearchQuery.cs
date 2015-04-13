@@ -518,7 +518,32 @@ namespace MailKit.Search {
 		/// <para>-or-</para>
 		/// <para><paramref name="text"/> is empty.</para>
 		/// </exception>
+		[Obsolete ("Use HeaderContains(string, string) instead.")]
 		public static HeaderSearchQuery Header (string field, string text)
+		{
+			return HeaderContains (field, text);
+		}
+
+		/// <summary>
+		/// Matches messages where the specified header contains the specified text.
+		/// </summary>
+		/// <remarks>
+		/// Matches messages where the specified header contains the specified text.
+		/// </remarks>
+		/// <returns>A <see cref="HeaderSearchQuery"/>.</returns>
+		/// <param name="field">The header field to match against.</param>
+		/// <param name="text">The text to match against.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="field"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="text"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="field"/> is empty.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="text"/> is empty.</para>
+		/// </exception>
+		public static HeaderSearchQuery HeaderContains (string field, string text)
 		{
 			if (field == null)
 				throw new ArgumentNullException ("field");
