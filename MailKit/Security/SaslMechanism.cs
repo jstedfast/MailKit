@@ -44,7 +44,7 @@ namespace MailKit.Security {
 		/// The supported authentication mechanisms in order of strongest to weakest.
 		/// </summary>
 		/// <remarks>
-		/// Use by the various clients when authenticating via SASL to determine
+		/// Used by the various clients when authenticating via SASL to determine
 		/// which order the SASL mechanisms supported by the server should be tried.
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {

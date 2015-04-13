@@ -217,7 +217,14 @@ namespace MailKit.Net.Smtp {
 		/// Get the authentication mechanisms supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried durring the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
+		/// <para>The authentication mechanisms are queried as part of the
+		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+		/// method.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms in
+		/// <see cref="Authenticate(string,string,CancellationToken)"/> or
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
+		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling either of the Authenticate() methods.</para>
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
@@ -457,6 +464,9 @@ namespace MailKit.Net.Smtp {
 		/// authenticate.</para>
 		/// <para>If, on the other hand, authentication is not supported, then
 		/// this method simply returns without attempting to authenticate.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

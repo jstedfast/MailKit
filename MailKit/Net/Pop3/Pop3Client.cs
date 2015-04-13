@@ -310,10 +310,21 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the authentication mechanisms supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
-		/// <para>The authentication mechanisms are queried durring the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.</para>
-		/// <para>Servers that do not support the SASL capability will typically support either the
-		/// <c>"APOP"</c> authentication mechanism (<see cref="Pop3Capabilities.Apop"/>) or the ability to
-		/// login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="Pop3Capabilities.User"/>).</para>
+		/// <para>The authentication mechanisms are queried as part of the
+		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+		/// method.</para>
+		/// <para>Servers that do not support the SASL capability will typically
+		/// support either the <c>"APOP"</c> authentication mechanism
+		/// (<see cref="Pop3Capabilities.Apop"/>) or the ability to login using the
+		/// <c>"USER"</c> and <c>"PASS"</c> commands
+		/// (<see cref="Pop3Capabilities.User"/>).</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms in
+		/// <see cref="Authenticate(string,string,CancellationToken)"/> or
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
+		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling either of the Authenticate() methods.</para>
+		/// <para>In the case of the APOP authentication mechanism, remove it from
+		/// the <see cref="Capabilities"/> instead.</para>
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
@@ -396,6 +407,9 @@ namespace MailKit.Net.Pop3 {
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the USER and PASS commands are used as a fallback.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

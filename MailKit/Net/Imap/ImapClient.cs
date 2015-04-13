@@ -595,7 +595,14 @@ namespace MailKit.Net.Imap {
 		/// Get the authentication mechanisms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried as part of the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
+		/// <para>The authentication mechanisms are queried as part of the
+		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+		/// method.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms in
+		/// <see cref="Authenticate(string,string,CancellationToken)"/> or
+		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
+		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling either of the Authenticate() methods.</para>
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
@@ -606,8 +613,9 @@ namespace MailKit.Net.Imap {
 		/// Get the threading algorithms supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The threading algorithms are queried as part of the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> and
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> methods.
+		/// The threading algorithms are queried as part of the
+		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+		/// and <see cref="Authenticate(ICredentials,CancellationToken)"/> methods.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
@@ -790,13 +798,16 @@ namespace MailKit.Net.Imap {
 		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
+		/// <para>If the IMAP server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
 		/// in order of greatest security to weakest security. Once a SASL
 		/// authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then LOGIN command is used as a fallback.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

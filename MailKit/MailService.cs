@@ -476,13 +476,16 @@ namespace MailKit {
 		/// Authenticates using the supplied credentials.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
 		/// in order of greatest security to weakest security. Once a SASL
 		/// authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -516,13 +519,16 @@ namespace MailKit {
 		/// Asynchronously authenticates using the supplied credentials.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
 		/// in order of greatest security to weakest security. Once a SASL
 		/// authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="credentials">The user's credentials.</param>
@@ -567,13 +573,16 @@ namespace MailKit {
 		/// Authenticates using the specified user name and password.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
 		/// in order of greatest security to weakest security. Once a SASL
 		/// authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
@@ -621,13 +630,16 @@ namespace MailKit {
 		/// Asynchronously authenticates using the specified user name and password.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
 		/// in order of greatest security to weakest security. Once a SASL
 		/// authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="userName">The user name.</param>
