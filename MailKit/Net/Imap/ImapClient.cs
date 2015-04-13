@@ -82,8 +82,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
-		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
-		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method
+		/// and authenticate with the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		public ImapClient () : this (new NullProtocolLogger ())
 		{
@@ -94,8 +94,8 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
-		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
-		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method
+		/// and authenticate with the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -599,7 +599,7 @@ namespace MailKit.Net.Imap {
 		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
 		/// method.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms in
-		/// <see cref="Authenticate(string,string,CancellationToken)"/> or
+		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/> or
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
 		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
 		/// calling either of the Authenticate() methods.</para>
@@ -660,7 +660,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Gets whether or not the client is currently authenticated with the IMAP server.</para>
 		/// <para>To authenticate with the IMAP server, use
-		/// <see cref="MailService.Authenticate(String,String,CancellationToken)"/>
+		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/>
 		/// or <see cref="Authenticate(ICredentials,CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>

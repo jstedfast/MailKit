@@ -319,7 +319,7 @@ namespace MailKit.Net.Pop3 {
 		/// <c>"USER"</c> and <c>"PASS"</c> commands
 		/// (<see cref="Pop3Capabilities.User"/>).</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms in
-		/// <see cref="Authenticate(string,string,CancellationToken)"/> or
+		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/> or
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
 		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
 		/// calling either of the Authenticate() methods.</para>

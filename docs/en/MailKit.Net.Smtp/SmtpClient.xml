@@ -97,6 +97,9 @@
             authenticate.</para>
           <para>If, on the other hand, authentication is not supported, then
             this method simply returns without attempting to authenticate.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms,
+            simply remove them from the the <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" /> hash
+            set before calling the Authenticate() method.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="credentials" /> is <c>null</c>.
@@ -149,8 +152,15 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method.
-            </remarks>
+          <para>The authentication mechanisms are queried as part of the
+            <see cref="M:MailKit.Net.Smtp.SmtpClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" />
+            method.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms in
+            <see cref="M:MailKit.MailService.Authenticate(System.String,System.String,System.Threading.CancellationToken)" /> or
+            <see cref="M:MailKit.Net.Smtp.SmtpClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />, simply remove
+            them from the the <see cref="P:MailKit.Net.Smtp.SmtpClient.AuthenticationMechanisms" /> hash set before
+            calling either of the Authenticate() methods.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Capabilities">

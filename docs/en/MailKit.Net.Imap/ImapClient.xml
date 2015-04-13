@@ -37,8 +37,8 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you must first
-            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and authenticate with
-            the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method
+            and authenticate with the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
       </Docs>
     </Member>
@@ -59,8 +59,8 @@
             </summary>
         <remarks>
             Before you can retrieve messages with the <see cref="T:MailKit.Net.Imap.ImapClient" />, you must first
-            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method and authenticate with
-            the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
+            call the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method
+            and authenticate with the <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> method.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="protocolLogger" /> is <c>null</c>.
@@ -88,13 +88,16 @@
             Authenticate using the supplied credentials.
             </summary>
         <remarks>
-          <para>If the server supports one or more SASL authentication mechanisms, then
-            the SASL mechanisms that both the client and server support are tried
+          <para>If the IMAP server supports one or more SASL authentication mechanisms,
+            then the SASL mechanisms that both the client and server support are tried
             in order of greatest security to weakest security. Once a SASL
             authentication mechanism is found that both client and server support,
             the credentials are used to authenticate.</para>
           <para>If the server does not support SASL or if no common SASL mechanisms
             can be found, then LOGIN command is used as a fallback.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms,
+            simply remove them from the the <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" /> hash
+            set before calling the Authenticate() method.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="credentials" /> is <c>null</c>.
@@ -141,8 +144,15 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The authentication mechanisms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method.
-            </remarks>
+          <para>The authentication mechanisms are queried as part of the
+            <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" />
+            method.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms in
+            <see cref="M:MailKit.MailService.Authenticate(System.String,System.String,System.Threading.CancellationToken)" /> or
+            <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />, simply remove
+            them from the the <see cref="P:MailKit.Net.Imap.ImapClient.AuthenticationMechanisms" /> hash set before
+            calling either of the Authenticate() methods.</para>
+        </remarks>
       </Docs>
     </Member>
     <Member MemberName="Capabilities">
@@ -1279,8 +1289,9 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-            The threading algorithms are queried as part of the <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> and
-            <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> methods.
+            The threading algorithms are queried as part of the
+            <see cref="M:MailKit.Net.Imap.ImapClient.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" />
+            and <see cref="M:MailKit.Net.Imap.ImapClient.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" /> methods.
             </remarks>
       </Docs>
     </Member>

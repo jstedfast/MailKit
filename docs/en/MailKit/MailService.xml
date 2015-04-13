@@ -63,13 +63,16 @@
             Authenticates using the supplied credentials.
             </summary>
         <remarks>
-          <para>If the server supports one or more SASL authentication mechanisms, then
-            the SASL mechanisms that both the client and server support are tried
+          <para>If the server supports one or more SASL authentication mechanisms,
+            then the SASL mechanisms that both the client and server support are tried
             in order of greatest security to weakest security. Once a SASL
             authentication mechanism is found that both client and server support,
             the credentials are used to authenticate.</para>
           <para>If the server does not support SASL or if no common SASL mechanisms
             can be found, then the default login command is used as a fallback.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms,
+            simply remove them from the the <see cref="P:MailKit.MailService.AuthenticationMechanisms" /> hash
+            set before calling the Authenticate() method.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="credentials" /> is <c>null</c>.
@@ -120,13 +123,16 @@
             Authenticates using the specified user name and password.
             </summary>
         <remarks>
-          <para>If the server supports one or more SASL authentication mechanisms, then
-            the SASL mechanisms that both the client and server support are tried
+          <para>If the server supports one or more SASL authentication mechanisms,
+            then the SASL mechanisms that both the client and server support are tried
             in order of greatest security to weakest security. Once a SASL
             authentication mechanism is found that both client and server support,
             the credentials are used to authenticate.</para>
           <para>If the server does not support SASL or if no common SASL mechanisms
             can be found, then the default login command is used as a fallback.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms,
+            simply remove them from the the <see cref="P:MailKit.MailService.AuthenticationMechanisms" /> hash
+            set before calling the Authenticate() method.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -180,13 +186,16 @@
             </summary>
         <returns>An asynchronous task context.</returns>
         <remarks>
-          <para>If the server supports one or more SASL authentication mechanisms, then
-            the SASL mechanisms that both the client and server support are tried
+          <para>If the server supports one or more SASL authentication mechanisms,
+            then the SASL mechanisms that both the client and server support are tried
             in order of greatest security to weakest security. Once a SASL
             authentication mechanism is found that both client and server support,
             the credentials are used to authenticate.</para>
           <para>If the server does not support SASL or if no common SASL mechanisms
             can be found, then the default login command is used as a fallback.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms,
+            simply remove them from the the <see cref="P:MailKit.MailService.AuthenticationMechanisms" /> hash
+            set before calling the Authenticate() method.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="credentials" /> is <c>null</c>.
@@ -238,13 +247,16 @@
             </summary>
         <returns>An asynchronous task context.</returns>
         <remarks>
-          <para>If the server supports one or more SASL authentication mechanisms, then
-            the SASL mechanisms that both the client and server support are tried
+          <para>If the server supports one or more SASL authentication mechanisms,
+            then the SASL mechanisms that both the client and server support are tried
             in order of greatest security to weakest security. Once a SASL
             authentication mechanism is found that both client and server support,
             the credentials are used to authenticate.</para>
           <para>If the server does not support SASL or if no common SASL mechanisms
             can be found, then the default login command is used as a fallback.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms,
+            simply remove them from the the <see cref="P:MailKit.MailService.AuthenticationMechanisms" /> hash
+            set before calling the Authenticate() method.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>

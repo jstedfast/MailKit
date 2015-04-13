@@ -221,7 +221,7 @@ namespace MailKit.Net.Smtp {
 		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
 		/// method.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms in
-		/// <see cref="Authenticate(string,string,CancellationToken)"/> or
+		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/> or
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
 		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
 		/// calling either of the Authenticate() methods.</para>

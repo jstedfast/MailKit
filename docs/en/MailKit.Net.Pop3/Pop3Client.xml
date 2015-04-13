@@ -98,6 +98,9 @@
             the credentials are used to authenticate.</para>
           <para>If the server does not support SASL or if no common SASL mechanisms
             can be found, then the USER and PASS commands are used as a fallback.</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms,
+            simply remove them from the the <see cref="P:MailKit.Net.Pop3.Pop3Client.AuthenticationMechanisms" /> hash
+            set before calling the Authenticate() method.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="credentials" /> is <c>null</c>.
@@ -150,10 +153,21 @@
             </summary>
         <value>The authentication mechanisms.</value>
         <remarks>
-          <para>The authentication mechanisms are queried durring the <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" /> method.</para>
-          <para>Servers that do not support the SASL capability will typically support either the
-            <c>"APOP"</c> authentication mechanism (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.Apop" />) or the ability to
-            login using the <c>"USER"</c> and <c>"PASS"</c> commands (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.User" />).</para>
+          <para>The authentication mechanisms are queried as part of the
+            <see cref="M:MailKit.Net.Pop3.Pop3Client.Connect(System.String,System.Int32,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)" />
+            method.</para>
+          <para>Servers that do not support the SASL capability will typically
+            support either the <c>"APOP"</c> authentication mechanism
+            (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.Apop" />) or the ability to login using the
+            <c>"USER"</c> and <c>"PASS"</c> commands
+            (<see cref="F:MailKit.Net.Pop3.Pop3Capabilities.User" />).</para>
+          <para>Note: To prevent the usage of certain authentication mechanisms in
+            <see cref="M:MailKit.MailService.Authenticate(System.String,System.String,System.Threading.CancellationToken)" /> or
+            <see cref="M:MailKit.Net.Pop3.Pop3Client.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)" />, simply remove
+            them from the the <see cref="P:MailKit.Net.Pop3.Pop3Client.AuthenticationMechanisms" /> hash set before
+            calling either of the Authenticate() methods.</para>
+          <para>In the case of the APOP authentication mechanism, remove it from
+            the <see cref="P:MailKit.Net.Pop3.Pop3Client.Capabilities" /> instead.</para>
         </remarks>
       </Docs>
     </Member>
