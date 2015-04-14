@@ -831,8 +831,13 @@ namespace MailKit.Net.Imap {
 			if (type.Matches ("message", "rfc822")) {
 				var mesg = new BodyPartMessage ();
 
-				// Note: GMail's support for message/rfc822 body parts is broken. Essentially,
-				// GMail treats message/rfc822 parts as if they were basic body parts.
+				// Note: GMail (and potentially other IMAP servers) will send body-part-basic
+				// expressions instead of body-part-msg expressions when they encounter
+				// message/rfc822 MIME parts that are illegally encoded using base64 (or
+				// quoted-printable?). According to rfc3501, IMAP servers are REQUIRED to
+				// send body-part-msg expressions for message/rfc822 parts, however, it is
+				// understandable why GMail (and other IMAP servers?) do what they do in this
+				// particular case.
 				//
 				// For examples, see issue #32 and issue #59.
 				//
@@ -841,7 +846,7 @@ namespace MailKit.Net.Imap {
 				// which gets handled below.
 				token = engine.PeekToken (cancellationToken);
 
-				if (!engine.IsGMail || token.Type == ImapTokenType.OpenParen) {
+				if (token.Type == ImapTokenType.OpenParen) {
 					mesg.Envelope = ParseEnvelope (engine, cancellationToken);
 					mesg.Body = ParseBody (engine, path, cancellationToken);
 					mesg.Lines = ReadNumber (engine, cancellationToken);
