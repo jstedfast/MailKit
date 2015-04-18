@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 using System.Drawing;
-using System.Threading;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using MailKit;

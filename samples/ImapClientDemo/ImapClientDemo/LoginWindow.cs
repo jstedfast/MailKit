@@ -1,13 +1,6 @@
 ﻿using System;
 using System.Net;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Drawing;
 using System.Threading;
-using System.ComponentModel;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace ImapClientDemo
