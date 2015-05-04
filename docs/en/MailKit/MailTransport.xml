@@ -105,8 +105,14 @@
             Sends the specified message.
             </summary>
         <remarks>
-            Sends the specified message.
-            </remarks>
+          <para>Sends the specified message.</para>
+          <para>The sender address is determined by checking the following
+            message headers (in order of precedence): Resent-Sender,
+            Resent-From, Sender, and From.</para>
+          <para>If either the Resent-Sender or Resent-From addresses are present,
+            the recipients are collected from the Resent-To, Resent-Cc, and
+            Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="message" /> is <c>null</c>.
             </exception>
@@ -160,8 +166,14 @@
             Sends the specified message.
             </summary>
         <remarks>
-            Sends the specified message.
-            </remarks>
+          <para>Sends the specified message.</para>
+          <para>The sender address is determined by checking the following
+            message headers (in order of precedence): Resent-Sender,
+            Resent-From, Sender, and From.</para>
+          <para>If either the Resent-Sender or Resent-From addresses are present,
+            the recipients are collected from the Resent-To, Resent-Cc, and
+            Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="options" /> is <c>null</c>.</para>
@@ -357,8 +369,14 @@
             </summary>
         <returns>An asynchronous task context.</returns>
         <remarks>
-            Asynchronously sends the specified message.
-            </remarks>
+          <para>Asynchronously sends the specified message.</para>
+          <para>The sender address is determined by checking the following
+            message headers (in order of precedence): Resent-Sender,
+            Resent-From, Sender, and From.</para>
+          <para>If either the Resent-Sender or Resent-From addresses are present,
+            the recipients are collected from the Resent-To, Resent-Cc, and
+            Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="message" /> is <c>null</c>.
             </exception>
@@ -413,8 +431,14 @@
             </summary>
         <returns>An asynchronous task context.</returns>
         <remarks>
-            Asynchronously sends the specified message.
-            </remarks>
+          <para>Asynchronously sends the specified message.</para>
+          <para>The sender address is determined by checking the following
+            message headers (in order of precedence): Resent-Sender,
+            Resent-From, Sender, and From.</para>
+          <para>If either the Resent-Sender or Resent-From addresses are present,
+            the recipients are collected from the Resent-To, Resent-Cc, and
+            Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="options" /> is <c>null</c>.</para>

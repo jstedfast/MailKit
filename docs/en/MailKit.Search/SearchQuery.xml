@@ -710,6 +710,51 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use HeaderContains(string, string) instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>MailKit.Search.HeaderSearchQuery</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="System.String" />
+        <Parameter Name="text" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="field">The header field to match against.</param>
+        <param name="text">The text to match against.</param>
+        <summary>
+            Matches messages where the specified header contains the specified text.
+            </summary>
+        <returns>A <see cref="T:MailKit.Search.HeaderSearchQuery" />.</returns>
+        <remarks>
+            Matches messages where the specified header contains the specified text.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <para>
+            <paramref name="field" /> is <c>null</c>.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="text" /> is <c>null</c>.</para>
+        </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>
+            <paramref name="field" /> is empty.</para>
+          <para>-or-</para>
+          <para>
+            <paramref name="text" /> is empty.</para>
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="HeaderContains">
+      <MemberSignature Language="C#" Value="public static MailKit.Search.HeaderSearchQuery HeaderContains (string field, string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class MailKit.Search.HeaderSearchQuery HeaderContains(string field, string text) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>MailKit.Search.HeaderSearchQuery</ReturnType>
       </ReturnValue>

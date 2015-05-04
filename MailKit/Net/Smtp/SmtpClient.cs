@@ -1456,7 +1456,13 @@ namespace MailKit.Net.Smtp {
 		/// Send the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Sends the message by uploading it to an SMTP server.
+		/// <para>Sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>

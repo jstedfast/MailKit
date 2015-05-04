@@ -54,7 +54,13 @@ namespace MailKit {
 		/// Sends the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Sends the specified message.
+		/// <para>Sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -95,7 +101,13 @@ namespace MailKit {
 		/// Asynchronously sends the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously sends the specified message.
+		/// <para>Asynchronously sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="message">The message.</param>
@@ -252,7 +264,13 @@ namespace MailKit {
 		/// Sends the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Sends the specified message.
+		/// <para>Sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
@@ -296,7 +314,13 @@ namespace MailKit {
 		/// Asynchronously sends the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously sends the specified message.
+		/// <para>Asynchronously sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="options">The formatting options.</param>
