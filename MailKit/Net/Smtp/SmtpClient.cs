@@ -40,6 +40,7 @@ using Windows.Networking;
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Socket = Windows.Networking.Sockets.StreamSocket;
+using Encoding = Portable.Text.Encoding;
 #else
 using System.Net.Sockets;
 using System.Net.Security;
@@ -374,10 +375,10 @@ namespace MailKit.Net.Smtp {
 #else
 			if (!string.IsNullOrEmpty (LocalDomain))
 				command += LocalDomain;
-			if (socket.Information.LocalAddress.IPInformation != null)
-				command += "[" + socket.Information.LocalAddress.IPInformation + "]";
+			if (Stream.Socket.Information.LocalAddress.IPInformation != null)
+				command += "[" + Stream.Socket.Information.LocalAddress.IPInformation + "]";
 			else
-				command += socket.Information.LocalAddress.CanonicalName;
+				command += Stream.Socket.Information.LocalAddress.CanonicalName;
 #endif
 
 			return SendCommand (command, cancellationToken);
