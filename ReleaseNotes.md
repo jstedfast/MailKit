@@ -1,5 +1,12 @@
 # Release Notes
 
+### MailKit 1.0.15
+
+* Added SearchQuery.HeaderContains() and obsoleted SearchQuery.Header() for
+  API consistentcy.
+* Added workaround for GMail's broken FETCH command parser that does not accept
+  aliases. (issue #183)
+
 ### MailKit 1.0.14
 
 * Added a ServerCertificateValidationCallback property to all clients so that

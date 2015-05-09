@@ -16,10 +16,10 @@
           <AttributeName>System.Reflection.AssemblyDescription("A cross-platform mail client library.")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.14.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyFileVersion("1.0.15.0")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.14.0")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("1.0.15.0")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyProduct("MailKit")</AttributeName>
@@ -41,9 +41,6 @@
         </Attribute>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.Guid("2fe79b66-d107-45da-9493-175f59c4a53c")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.0", FrameworkDisplayName="")</AttributeName>
         </Attribute>
       </Attributes>
     </Assembly>
