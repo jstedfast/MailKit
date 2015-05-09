@@ -2838,15 +2838,17 @@ namespace MailKit.Net.Imap {
 				items &= ~MessageSummaryItems.Body;
 			}
 
-			// first, eliminate the aliases...
-			if (items == MessageSummaryItems.All)
-				return "ALL";
+			if (!Engine.IsGMail) {
+				// first, eliminate the aliases...
+				if (items == MessageSummaryItems.All)
+					return "ALL";
 
-			if (items == MessageSummaryItems.Full)
-				return "FULL";
+				if (items == MessageSummaryItems.Full)
+					return "FULL";
 
-			if (items == MessageSummaryItems.Fast)
-				return "FAST";
+				if (items == MessageSummaryItems.Fast)
+					return "FAST";
+			}
 
 			var tokens = new List<string> ();
 
