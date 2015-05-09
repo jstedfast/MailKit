@@ -3,7 +3,7 @@
 ### MailKit 1.0.15
 
 * Added SearchQuery.HeaderContains() and obsoleted SearchQuery.Header() for
-  API consistentcy.
+  API consistency.
 * Added workaround for GMail's broken FETCH command parser that does not accept
   aliases. (issue #183)
 
