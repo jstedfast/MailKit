@@ -1349,8 +1349,23 @@ namespace MailKit.Net.Pop3 {
 		/// to the number of available messages on the POP3 server.</para>
 		/// </remarks>
 		/// <value>The message count.</value>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
 		public override int Count {
-			get { return total; }
+			get {
+				CheckDisposed ();
+				CheckConnected ();
+				CheckAuthenticated ();
+
+				return total;
+			}
 		}
 
 		/// <summary>
@@ -1365,8 +1380,23 @@ namespace MailKit.Net.Pop3 {
 		/// <see cref="GetMessageUids(CancellationToken)"/> will fail.</para>
 		/// </remarks>
 		/// <value><c>true</c> if supports UIDs; otherwise, <c>false</c>.</value>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
 		public override bool SupportsUids {
-			get { return (engine.Capabilities & Pop3Capabilities.UIDL) != 0; }
+			get {
+				CheckDisposed ();
+				CheckConnected ();
+				CheckAuthenticated ();
+
+				return (engine.Capabilities & Pop3Capabilities.UIDL) != 0;
+			}
 		}
 
 		/// <summary>
@@ -1404,8 +1434,6 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
-
-			UpdateMessageCount (cancellationToken);
 
 			return total;
 		}
@@ -3035,9 +3063,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			int n = GetMessageCount (CancellationToken.None);
-
-			for (int i = 0; i < n; i++)
+			for (int i = 0; i < Count; i++)
 				yield return GetMessage (i, CancellationToken.None);
 
 			yield break;

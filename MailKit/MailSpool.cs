@@ -60,6 +60,15 @@ namespace MailKit {
 		/// to the number of available messages in the spool.</para>
 		/// </remarks>
 		/// <value>The message count.</value>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
 		public abstract int Count {
 			get;
 		}
@@ -76,6 +85,15 @@ namespace MailKit {
 		/// <see cref="GetMessageUids(CancellationToken)"/> will fail.</para>
 		/// </remarks>
 		/// <value><c>true</c> if supports uids; otherwise, <c>false</c>.</value>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="InvalidOperationException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="System.UnauthorizedAccessException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
 		public abstract bool SupportsUids {
 			get;
 		}
