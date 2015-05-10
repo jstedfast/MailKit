@@ -52,6 +52,19 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the number of messages available in the message spool.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the number of messages available in the message spool.</para>
+		/// <para>Once authenticated, the <see cref="Count"/> property will be set
+		/// to the number of available messages in the spool.</para>
+		/// </remarks>
+		/// <value>The message count.</value>
+		public abstract int Count {
+			get;
+		}
+
+		/// <summary>
 		/// Get whether or not the service supports referencing messages by UIDs.
 		/// </summary>
 		/// <remarks>

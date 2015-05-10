@@ -377,12 +377,40 @@ namespace MailKit.Net.Pop3 {
 			get { return engine.State == Pop3EngineState.Transaction; }
 		}
 
+		void UpdateMessageCount (CancellationToken cancellationToken)
+		{
+			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+				if (cmd.Status != Pop3CommandStatus.Ok)
+					return;
+
+				// the response should be "<count> <total size>"
+				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+				if (tokens.Length < 2) {
+					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the STAT command.");
+					return;
+				}
+
+				if (!int.TryParse (tokens[0], out total)) {
+					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
+					return;
+				}
+			}, "STAT");
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			if (pc.Status != Pop3CommandStatus.Ok)
+				throw CreatePop3Exception (pc);
+
+			if (pc.Exception != null)
+				throw pc.Exception;
+		}
+
 		void ProbeCapabilities (CancellationToken cancellationToken)
 		{
 			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0) {
-				// first, get the message count...
-				GetMessageCount (cancellationToken);
-
 				// if the message count is > 0, we can probe the UIDL command
 				if (total > 0) {
 					try {
@@ -482,6 +510,7 @@ namespace MailKit.Net.Pop3 {
 
 				if (engine.State == Pop3EngineState.Transaction) {
 					engine.QueryCapabilities (cancellationToken);
+					UpdateMessageCount (cancellationToken);
 					ProbeCapabilities (cancellationToken);
 					OnAuthenticated (authMessage);
 					return;
@@ -535,6 +564,7 @@ namespace MailKit.Net.Pop3 {
 
 					engine.State = Pop3EngineState.Transaction;
 					engine.QueryCapabilities (cancellationToken);
+					UpdateMessageCount (cancellationToken);
 					ProbeCapabilities (cancellationToken);
 					OnAuthenticated (authMessage);
 					return;
@@ -555,6 +585,7 @@ namespace MailKit.Net.Pop3 {
 
 			engine.State = Pop3EngineState.Transaction;
 			engine.QueryCapabilities (cancellationToken);
+			UpdateMessageCount (cancellationToken);
 			ProbeCapabilities (cancellationToken);
 			OnAuthenticated (authMessage);
 		}
@@ -1310,6 +1341,19 @@ namespace MailKit.Net.Pop3 {
 		#region IMailSpool implementation
 
 		/// <summary>
+		/// Get the number of messages available in the message spool.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the number of messages available on the POP3 server.</para>
+		/// <para>Once authenticated, the <see cref="Count"/> property will be set
+		/// to the number of available messages on the POP3 server.</para>
+		/// </remarks>
+		/// <value>The message count.</value>
+		public override int Count {
+			get { return total; }
+		}
+
+		/// <summary>
 		/// Gets whether or not the <see cref="Pop3Client"/> supports referencing messages by UIDs.
 		/// </summary>
 		/// <remarks>
@@ -1354,39 +1398,14 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use the Count property instead.")]
 		public override int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
-					return;
-
-				// the response should be "<count> <total size>"
-				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-				if (tokens.Length < 2) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the STAT command.");
-					return;
-				}
-
-				if (!int.TryParse (tokens[0], out total)) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an invalid response to the STAT command.");
-					return;
-				}
-			}, "STAT");
-
-			while (engine.Iterate () < pc.Id) {
-				// continue processing commands
-			}
-
-			if (pc.Status != Pop3CommandStatus.Ok)
-				throw CreatePop3Exception (pc);
-
-			if (pc.Exception != null)
-				throw pc.Exception;
+			UpdateMessageCount (cancellationToken);
 
 			return total;
 		}

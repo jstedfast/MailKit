@@ -106,12 +106,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
-				try {
-					var count = client.GetMessageCount (CancellationToken.None);
-					Assert.AreEqual (1, count, "Expected 1 message");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Count: {0}", ex);
-				}
+				Assert.AreEqual (1, client.Count, "Expected 1 message");
 
 				try {
 					var message = client.GetMessage (0, CancellationToken.None);
@@ -170,12 +165,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
 				Assert.AreEqual (-1, client.ExpirePolicy);
 
-				try {
-					var count = client.GetMessageCount (CancellationToken.None);
-					Assert.AreEqual (1, count, "Expected 1 message");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Count: {0}", ex);
-				}
+				Assert.AreEqual (1, client.Count, "Expected 1 message");
 
 				try {
 					var message = client.GetMessage (0, CancellationToken.None);
@@ -230,7 +220,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
 
 				try {
-					var count = client.GetMessageCount (CancellationToken.None);
+					var sizes = client.GetMessageSizes (CancellationToken.None);
 					Assert.Fail ("Expected UnauthorizedAccessException");
 				} catch (UnauthorizedAccessException) {
 					// we expect this exception...
@@ -395,12 +385,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 
-				try {
-					var count = client.GetMessageCount (CancellationToken.None);
-					Assert.AreEqual (7, count, "Expected 7 messages");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
-				}
+				Assert.AreEqual (7, client.Count, "Expected 7 messages");
 
 				try {
 					var uids = client.GetMessageUids (CancellationToken.None);
@@ -467,12 +452,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (GMailCapa2, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
 
-				try {
-					var count = client.GetMessageCount (CancellationToken.None);
-					Assert.AreEqual (3, count, "Expected 3 messages");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageCount: {0}", ex);
-				}
+				Assert.AreEqual (3, client.Count, "Expected 3 messages");
 
 				try {
 					var message = client.GetMessage (0, CancellationToken.None);
