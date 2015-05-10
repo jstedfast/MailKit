@@ -127,6 +127,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use the Count property instead.")]
 		public abstract int GetMessageCount (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -158,6 +159,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		[Obsolete ("Use the Count property instead.")]
 		public virtual Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return Task.Factory.StartNew (() => {
