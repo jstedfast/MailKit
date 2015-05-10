@@ -241,8 +241,7 @@ namespace TestClient {
 
 				client.Authenticate ("joey", "password");
 
-				int count = client.GetMessageCount ();
-				for (int i = 0; i < count; i++) {
+				for (int i = 0; i < client.Count; i++) {
 					var message = client.GetMessage (i);
 					Console.WriteLine ("Subject: {0}", message.Subject);
 				}
