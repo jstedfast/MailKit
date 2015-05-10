@@ -35,7 +35,7 @@
     </Reference>
     <Reference Include="MailKit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MailKit.1.0.15.0\lib\net40\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.1.0.16.0\lib\net40\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
