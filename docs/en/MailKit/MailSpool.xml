@@ -45,6 +45,37 @@
             </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public abstract int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the number of messages available in the message spool.
+            </summary>
+        <value>The message count.</value>
+        <remarks>
+          <para>Gets the number of messages available in the message spool.</para>
+          <para>Once authenticated, the <see cref="P:MailKit.MailSpool.Count" /> property will be set
+            to the number of available messages in the spool.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="DeleteAllMessages">
       <MemberSignature Language="C#" Value="public abstract void DeleteAllMessages (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void DeleteAllMessages(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -988,6 +1019,11 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use the Count property instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1033,6 +1069,11 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use the Count property instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Threading.Tasks.Task&lt;System.Int32&gt;</ReturnType>
       </ReturnValue>
@@ -2606,6 +2647,15 @@
             along with <see cref="M:MailKit.MailSpool.GetMessageUid(System.Int32,System.Threading.CancellationToken)" /> and
             <see cref="M:MailKit.MailSpool.GetMessageUids(System.Threading.CancellationToken)" /> will fail.</para>
         </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">

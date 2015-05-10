@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 1.0.16
+
+* Modified the Pop3Client to immediately query for the message count once the
+  client is authenticated. This allows the Pop3Client to now have a Count
+  property that replaces the need for calling GetMessageCount(). (issue #184)
+
 ### MailKit 1.0.15
 
 * Added SearchQuery.HeaderContains() and obsoleted SearchQuery.Header() for

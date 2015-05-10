@@ -354,6 +354,37 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="Count">
+      <MemberSignature Language="C#" Value="public override int Count { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Count" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the number of messages available in the message spool.
+            </summary>
+        <value>The message count.</value>
+        <remarks>
+          <para>Gets the number of messages available on the POP3 server.</para>
+          <para>Once authenticated, the <see cref="P:MailKit.Net.Pop3.Pop3Client.Count" /> property will be set
+            to the number of available messages on the POP3 server.</para>
+        </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="DeleteAllMessages">
       <MemberSignature Language="C#" Value="public override void DeleteAllMessages (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void DeleteAllMessages(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -1132,6 +1163,11 @@
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use the Count property instead.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2239,6 +2275,15 @@
             along with <see cref="M:MailKit.Net.Pop3.Pop3Client.GetMessageUid(System.Int32,System.Threading.CancellationToken)" /> and
             <see cref="M:MailKit.Net.Pop3.Pop3Client.GetMessageUids(System.Threading.CancellationToken)" /> will fail.</para>
         </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SyncRoot">
