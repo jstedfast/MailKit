@@ -3063,7 +3063,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			for (int i = 0; i < Count; i++)
+			for (int i = 0; i < total; i++)
 				yield return GetMessage (i, CancellationToken.None);
 
 			yield break;
