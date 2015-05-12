@@ -973,7 +973,7 @@ namespace MailKit.Net.Smtp {
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
-					stream = tls;
+					Stream.Stream = tls;
 
 					// Send EHLO again and get the new list of supported extensions
 					Ehlo (cancellationToken);
