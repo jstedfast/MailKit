@@ -818,7 +818,7 @@ namespace MailKit.Net.Smtp {
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
-					stream = tls;
+					Stream.Stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
 						.AsTask (cancellationToken)
