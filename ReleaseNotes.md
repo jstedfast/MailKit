@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.0.17
+
+* Fixed a STARTTLS regression in SmtpClient that was introduced in 1.0.15.
+  (issue #187)
+
 ### MailKit 1.0.16
 
 * Modified the Pop3Client to immediately query for the message count once the
