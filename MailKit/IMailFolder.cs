@@ -1965,6 +1965,78 @@ namespace MailKit {
 		Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Get a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Gets a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Stream GetStream (UniqueId uid, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Gets a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Stream GetStream (int index, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets a substream of the body part. If the starting offset is beyond
+		/// the end of the body part, an empty stream is returned. If the number of
+		/// bytes desired extends beyond the end of the body part, a truncated stream
+		/// will be returned.
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The desired body part.</param>
+		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<Stream> GetStreamAsync (int index, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Add a set of flags to the specified message.
 		/// </summary>
 		/// <remarks>

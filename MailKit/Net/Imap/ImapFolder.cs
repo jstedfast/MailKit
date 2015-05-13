@@ -5135,6 +5135,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The desired body part.</param>
+		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -5171,7 +5172,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (UniqueId uid, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -5190,7 +5191,16 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", uid.Id, part.PartSpecifier, offset, count);
+			var partSpecifier = part.PartSpecifier;
+
+			if (contentOnly) {
+				if (!string.IsNullOrEmpty (partSpecifier))
+					partSpecifier += ".TEXT";
+				else
+					partSpecifier = "TEXT";
+			}
+
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", uid.Id, partSpecifier, offset, count);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
@@ -5224,6 +5234,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The stream.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The desired body part.</param>
+		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -5259,7 +5270,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -5278,7 +5289,16 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", index + 1, part.PartSpecifier, offset, count);
+			var partSpecifier = part.PartSpecifier;
+
+			if (contentOnly) {
+				if (!string.IsNullOrEmpty (partSpecifier))
+					partSpecifier += ".TEXT";
+				else
+					partSpecifier = "TEXT";
+			}
+
+			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", index + 1, partSpecifier, offset, count);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
