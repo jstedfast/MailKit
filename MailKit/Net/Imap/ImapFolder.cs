@@ -5216,7 +5216,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			if (!streams.TryGetValue (part.PartSpecifier, out stream))
+			if (!streams.TryGetValue (partSpecifier, out stream))
 				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;
@@ -5314,7 +5314,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			if (!streams.TryGetValue (string.Empty, out stream))
+			if (!streams.TryGetValue (partSpecifier, out stream))
 				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;
