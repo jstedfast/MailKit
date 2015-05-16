@@ -7235,15 +7235,7 @@ namespace MailKit.Net.Imap {
 				token = engine.ReadToken (ic.CancellationToken);
 			} while (true);
 
-			if (!uid && uids != null) {
-				var indexes = new int[uids.Count];
-				for (int i = 0; i < uids.Count; i++)
-					indexes[i] = (int) uids[i].Id - 1;
-
-				ic.UserData = indexes;
-			} else {
-				ic.UserData = uids ?? new UniqueId[0];
-			}
+			ic.UserData = uids ?? new UniqueId[0];
 		}
 
 		/// <summary>
