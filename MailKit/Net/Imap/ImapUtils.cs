@@ -1081,6 +1081,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public static MessageFlags ParseFlagsList (ImapEngine engine, HashSet<string> userFlags, CancellationToken cancellationToken)
 		{
+			var specials = engine.IsGMail ? ImapStream.GMailLabelSpecials : ImapStream.AtomSpecials;
 			var token = engine.ReadToken (cancellationToken);
 			var flags = MessageFlags.None;
 
@@ -1089,7 +1090,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 			}
 
-			token = engine.ReadToken (cancellationToken);
+			token = engine.ReadToken (specials, cancellationToken);
 
 			while (token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.Flag) {
 				string flag = (string) token.Value;
@@ -1107,7 +1108,7 @@ namespace MailKit.Net.Imap {
 					break;
 				}
 
-				token = engine.ReadToken (cancellationToken);
+				token = engine.ReadToken (specials, cancellationToken);
 			}
 
 			if (token.Type != ImapTokenType.CloseParen) {

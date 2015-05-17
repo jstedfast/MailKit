@@ -577,11 +577,11 @@ namespace MailKit.Net.Imap {
 			return atom == "NIL" ? new ImapToken (ImapTokenType.Nil, atom) : new ImapToken (ImapTokenType.Atom, atom);
 		}
 
-		unsafe ImapToken ReadFlagToken (byte* inbuf, CancellationToken cancellationToken)
+		unsafe ImapToken ReadFlagToken (byte* inbuf, string specials, CancellationToken cancellationToken)
 		{
 			inputIndex++;
 
-			var flag = "\\" + ReadAtomString (inbuf, true, AtomSpecials, cancellationToken);
+			var flag = "\\" + ReadAtomString (inbuf, true, specials, cancellationToken);
 
 			return new ImapToken (ImapTokenType.Flag, flag);
 		}
@@ -738,7 +738,7 @@ namespace MailKit.Net.Imap {
 						return ReadLiteralToken (inbuf, cancellationToken);
 
 					if (c == '\\')
-						return ReadFlagToken (inbuf, cancellationToken);
+						return ReadFlagToken (inbuf, specials, cancellationToken);
 
 					if (c != '+' && IsAtom (*inptr, specials))
 						return ReadAtomToken (inbuf, specials, cancellationToken);
