@@ -628,7 +628,7 @@ namespace MailKit.Net.Imap {
 					token = Engine.ReadToken (CancellationToken);
 				}
 
-				if (token.Type == ImapTokenType.Plus) {
+				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
 					// we've gotten a continuation response from the server
 					var text = Engine.ReadLine (CancellationToken).Trim ();
 

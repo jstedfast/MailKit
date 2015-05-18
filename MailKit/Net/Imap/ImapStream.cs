@@ -740,7 +740,7 @@ namespace MailKit.Net.Imap {
 					if (c == '\\')
 						return ReadFlagToken (inbuf, specials, cancellationToken);
 
-					if (c != '+' && IsAtom (*inptr, specials))
+					if (IsAtom (*inptr, specials))
 						return ReadAtomToken (inbuf, specials, cancellationToken);
 
 					// special character token

@@ -39,7 +39,6 @@ namespace MailKit.Net.Imap {
 		OpenParen     = (int) '(',
 		CloseParen    = (int) ')',
 		Asterisk      = (int) '*',
-		Plus          = (int) '+',
 		OpenBracket   = (int) '[',
 		CloseBracket  = (int) ']',
 	}
@@ -70,7 +69,6 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.OpenParen:    return "'('";
 			case ImapTokenType.CloseParen:   return "')'";
 			case ImapTokenType.Asterisk:     return "'*'";
-			case ImapTokenType.Plus:         return "'+'";
 			case ImapTokenType.OpenBracket:  return "'['";
 			case ImapTokenType.CloseBracket: return "']'";
 			default:                         return string.Format ("[{0}: '{1}']", Type, Value);
