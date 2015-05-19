@@ -42,6 +42,15 @@ namespace MailKit {
 	public interface IMessageSummary : IThreadable, ISortable
 	{
 		/// <summary>
+		/// Get a bitmask of fields that have been populated.
+		/// </summary>
+		/// <remarks>
+		/// Gets a bitmask of fields that have been populated.
+		/// </remarks>
+		/// <value>The fields that have been populated.</value>
+		MessageSummaryItems Fields { get; }
+
+		/// <summary>
 		/// Gets the body structure of the message, if available.
 		/// </summary>
 		/// <remarks>

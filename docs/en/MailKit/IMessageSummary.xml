@@ -74,6 +74,26 @@
         </remarks>
       </Docs>
     </Member>
+    <Member MemberName="Fields">
+      <MemberSignature Language="C#" Value="public MailKit.MessageSummaryItems Fields { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.MessageSummaryItems Fields" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.MessageSummaryItems</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get a bitmask of fields that have been populated.
+            </summary>
+        <value>The fields that have been populated.</value>
+        <remarks>
+            Gets a bitmask of fields that have been populated.
+            </remarks>
+      </Docs>
+    </Member>
     <Member MemberName="Flags">
       <MemberSignature Language="C#" Value="public Nullable&lt;MailKit.MessageFlags&gt; Flags { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Nullable`1&lt;valuetype MailKit.MessageFlags&gt; Flags" />

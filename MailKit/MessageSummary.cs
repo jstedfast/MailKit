@@ -63,14 +63,14 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get a bitmask of items that have been fetched.
+		/// Get a bitmask of fields that have been populated.
 		/// </summary>
 		/// <remarks>
-		/// Gets a bitmask of items that have been fetched.
+		/// Gets a bitmask of fields that have been populated.
 		/// </remarks>
-		/// <value>The items that have been fetched.</value>
-		internal MessageSummaryItems FetchedItems {
-			get; set;
+		/// <value>The fields that have been populated.</value>
+		public MessageSummaryItems Fields {
+			get; internal set;
 		}
 
 		/// <summary>

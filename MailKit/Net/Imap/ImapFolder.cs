@@ -2642,7 +2642,7 @@ namespace MailKit.Net.Imap {
 						throw ImapEngine.UnexpectedToken (token, false);
 					}
 
-					summary.FetchedItems |= MessageSummaryItems.InternalDate;
+					summary.Fields |= MessageSummaryItems.InternalDate;
 					break;
 				case "RFC822.SIZE":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2650,12 +2650,12 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value))
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					summary.FetchedItems |= MessageSummaryItems.MessageSize;
+					summary.Fields |= MessageSummaryItems.MessageSize;
 					summary.MessageSize = value;
 					break;
 				case "BODYSTRUCTURE":
 					summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
-					summary.FetchedItems |= MessageSummaryItems.BodyStructure;
+					summary.Fields |= MessageSummaryItems.BodyStructure;
 					break;
 				case "BODY":
 					token = engine.PeekToken (ic.CancellationToken);
@@ -2709,7 +2709,7 @@ namespace MailKit.Net.Imap {
 
 						try {
 							var message = engine.ParseMessage (engine.Stream, false, ic.CancellationToken);
-							summary.FetchedItems |= MessageSummaryItems.References;
+							summary.Fields |= MessageSummaryItems.References;
 							summary.References = message.References;
 							summary.Headers = message.Headers;
 						} catch (FormatException) {
@@ -2717,7 +2717,7 @@ namespace MailKit.Net.Imap {
 							ReadLiteralData (engine, ic.CancellationToken);
 						}
 					} else {
-						summary.FetchedItems |= MessageSummaryItems.Body;
+						summary.Fields |= MessageSummaryItems.Body;
 
 						try {
 							summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
@@ -2746,11 +2746,11 @@ namespace MailKit.Net.Imap {
 					break;
 				case "ENVELOPE":
 					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
-					summary.FetchedItems |= MessageSummaryItems.Envelope;
+					summary.Fields |= MessageSummaryItems.Envelope;
 					break;
 				case "FLAGS":
 					summary.Flags = ImapUtils.ParseFlagsList (engine, summary.UserFlags, ic.CancellationToken);
-					summary.FetchedItems |= MessageSummaryItems.Flags;
+					summary.Fields |= MessageSummaryItems.Flags;
 					break;
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2768,7 +2768,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.CloseParen)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					summary.FetchedItems |= MessageSummaryItems.ModSeq;
+					summary.Fields |= MessageSummaryItems.ModSeq;
 					summary.ModSeq = value64;
 					break;
 				case "UID":
@@ -2778,7 +2778,7 @@ namespace MailKit.Net.Imap {
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					summary.UniqueId = new UniqueId (ic.Folder.UidValidity, value);
-					summary.FetchedItems |= MessageSummaryItems.UniqueId;
+					summary.Fields |= MessageSummaryItems.UniqueId;
 					break;
 				case "X-GM-MSGID":
 					token = engine.ReadToken (ic.CancellationToken);
@@ -2786,7 +2786,7 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					summary.FetchedItems |= MessageSummaryItems.GMailMessageId;
+					summary.Fields |= MessageSummaryItems.GMailMessageId;
 					summary.GMailMessageId = value64;
 					break;
 				case "X-GM-THRID":
@@ -2795,12 +2795,12 @@ namespace MailKit.Net.Imap {
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
 						throw ImapEngine.UnexpectedToken (token, false);
 
-					summary.FetchedItems |= MessageSummaryItems.GMailThreadId;
+					summary.Fields |= MessageSummaryItems.GMailThreadId;
 					summary.GMailThreadId = value64;
 					break;
 				case "X-GM-LABELS":
 					summary.GMailLabels = ImapUtils.ParseLabelsList (engine, ic.CancellationToken);
-					summary.FetchedItems |= MessageSummaryItems.GMailLabels;
+					summary.Fields |= MessageSummaryItems.GMailLabels;
 					break;
 				default:
 					throw ImapEngine.UnexpectedToken (token, false);
@@ -2810,7 +2810,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			if ((fetch.RequestedItems & summary.FetchedItems) == fetch.RequestedItems)
+			if ((fetch.RequestedItems & summary.Fields) == fetch.RequestedItems)
 				OnMessageSummaryFetched (summary);
 		}
 
@@ -2927,7 +2927,13 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message UIDs.
+		/// <para>Fetches the message summaries for the specified message UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -2999,7 +3005,13 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message UIDs.
+		/// <para>Fetches the message summaries for the specified message UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -3047,7 +3059,13 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message UIDs.
+		/// <para>Fetches the message summaries for the specified message UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -3124,6 +3142,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MailFolder.MessagesVanished"/> events for messages
@@ -3207,6 +3233,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MailFolder.MessagesVanished"/> events for messages
@@ -3262,6 +3296,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// <para>If the IMAP server supports the QRESYNC extension and the application has
 		/// enabled this feature via <see cref="ImapClient.EnableQuickResync(CancellationToken)"/>,
 		/// then this method will emit <see cref="MailFolder.MessagesVanished"/> events for messages
@@ -3350,7 +3392,13 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes.
+		/// <para>Fetches the message summaries for the specified message indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -3422,7 +3470,13 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes.
+		/// <para>Fetches the message summaries for the specified message indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -3470,7 +3524,13 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes.
+		/// <para>Fetches the message summaries for the specified message indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -3547,7 +3607,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -3626,7 +3693,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -3678,7 +3752,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -3772,7 +3853,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -3847,7 +3935,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -3897,7 +3992,14 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -3980,7 +4082,15 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes (inclusive) that have a higher mod-sequence value than the one
+		/// specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -4059,7 +4169,15 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes (inclusive) that have a higher mod-sequence value than the one
+		/// specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -4113,7 +4231,15 @@ namespace MailKit.Net.Imap {
 		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes (inclusive) that have a higher mod-sequence value than the one
+		/// specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the IMAP server may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for a
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
