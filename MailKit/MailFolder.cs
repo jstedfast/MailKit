@@ -4552,7 +4552,8 @@ namespace MailKit {
 		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
 		/// <para>Asynchronously fetches the message summaries for the specified message UIDs that
@@ -5101,7 +5102,8 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message indexes.
+		/// Fetch the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
 		/// <para>Fetches the message summaries for the specified message indexes that
@@ -5154,7 +5156,8 @@ namespace MailKit {
 		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message indexes.
+		/// Asynchronously fetch the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
 		/// <para>Asynchronously fetches the message summaries for the specified message
@@ -5223,7 +5226,8 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message indexes.
+		/// Fetch the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
 		/// <para>Fetches the message summaries for the specified message indexes that
@@ -5276,11 +5280,12 @@ namespace MailKit {
 		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message indexes.
+		/// Asynchronously fetch the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// <para>Asynchronously fetches the message summaries for the messages between
-		/// the two indexes, inclusive.</para>
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// indexes that have a higher mod-sequence value than the one specified.</para>
 		/// <para>It should be noted that if another client has modified any message
 		/// in the folder, the mail service may choose to return information that was
 		/// not explicitly requested. It is therefore important to be prepared to

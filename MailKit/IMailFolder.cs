@@ -1188,7 +1188,13 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message UIDs.
+		/// <para>Fetches the message summaries for the specified message UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1200,7 +1206,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message UIDs.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1212,7 +1225,13 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message UIDs.
+		/// <para>Fetches the message summaries for the specified message UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1225,7 +1244,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message UIDs.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1238,7 +1264,13 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message UIDs.
+		/// <para>Fetches the message summaries for the specified message UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1251,7 +1283,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message UIDs.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// UIDs.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1261,13 +1300,22 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the specified message UIDs that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
+		/// have vanished since the specified mod-sequence value.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1277,13 +1325,22 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Asynchronously fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
+		/// have vanished since the specified mod-sequence value.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1293,13 +1350,22 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the specified message UIDs that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
+		/// have vanished since the specified mod-sequence value.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1310,13 +1376,22 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Asynchronously fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
+		/// have vanished since the specified mod-sequence value.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1327,13 +1402,22 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the specified message UIDs that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
+		/// have vanished since the specified mod-sequence value.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1344,13 +1428,22 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
+		/// <para>Asynchronously fetches the message summaries for the specified message UIDs that
+		/// have a higher mod-sequence value than the one specified.</para>
 		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="IMailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that have vanished
-		/// since the specified mod-sequence value.</para>
+		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
+		/// have vanished since the specified mod-sequence value.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="uids">The UIDs.</param>
@@ -1364,7 +1457,13 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes.
+		/// <para>Fetches the message summaries for the specified message indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1376,7 +1475,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message indexes.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1388,7 +1494,13 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes.
+		/// <para>Fetches the message summaries for the specified message indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1401,7 +1513,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message indexes.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1414,7 +1533,13 @@ namespace MailKit {
 		/// Fetch the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes.
+		/// <para>Fetches the message summaries for the specified message indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1427,7 +1552,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the specified message indexes.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message indexes.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// indexes.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1437,10 +1569,18 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the specified message indexes that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1450,10 +1590,18 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the specified message indexes that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// indexes that have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1463,10 +1611,18 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the specified message indexes that have a
+		/// higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1477,10 +1633,18 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the specified message indexes
+		/// that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// indexes that have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1491,10 +1655,18 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the specified message indexes that
+		/// have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1505,10 +1677,18 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the specified message indexes
+		/// that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+		/// <para>Asynchronously fetches the message summaries for the specified message
+		/// indexes that have a higher mod-sequence value than the one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="indexes">The indexes.</param>
@@ -1522,7 +1702,14 @@ namespace MailKit {
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1535,7 +1722,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Asynchronously fetches the message summaries for the messages between
+		/// the two indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1548,7 +1742,14 @@ namespace MailKit {
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1562,7 +1763,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Asynchronously fetches the message summaries for the messages between
+		/// the two indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1576,7 +1784,14 @@ namespace MailKit {
 		/// Fetch the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1590,7 +1805,14 @@ namespace MailKit {
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the messages between the two indexes, inclusive.
+		/// <para>Asynchronously fetches the message summaries for the messages between
+		/// the two indexes, inclusive.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1601,10 +1823,19 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the messages between the two indexes (inclusive)
+		/// that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes (inclusive) that have a higher mod-sequence value than the one
+		/// specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1615,10 +1846,19 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the messages between the two indexes
+		/// (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Asynchronously fetches the message summaries for the messages between
+		/// the two indexes (inclusive) that have a higher mod-sequence value than the
+		/// one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1629,10 +1869,19 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the messages between the two indexes (inclusive)
+		/// that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes (inclusive) that have a higher mod-sequence value than the one
+		/// specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1644,10 +1893,19 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the messages between the two indexes
+		/// (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Asynchronously fetches the message summaries for the messages between
+		/// the two indexes (inclusive) that have a higher mod-sequence value than the
+		/// one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1659,10 +1917,19 @@ namespace MailKit {
 		Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// Fetch the message summaries for the messages between the two indexes (inclusive)
+		/// that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Fetches the message summaries for the messages between the two
+		/// indexes (inclusive) that have a higher mod-sequence value than the one
+		/// specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>
@@ -1674,10 +1941,19 @@ namespace MailKit {
 		IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// Asynchronously fetch the message summaries for the messages between the two indexes
+		/// (inclusive) that have a higher mod-sequence value than the one specified.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+		/// <para>Asynchronously fetches the message summaries for the messages between
+		/// the two indexes (inclusive) that have a higher mod-sequence value than the
+		/// one specified.</para>
+		/// <para>It should be noted that if another client has modified any message
+		/// in the folder, the mail service may choose to return information that was
+		/// not explicitly requested. It is therefore important to be prepared to
+		/// handle both additional fields on a <see cref="IMessageSummary"/> for
+		/// messages that were requested as well as summaries for messages that were
+		/// not requested at all.</para>
 		/// </remarks>
 		/// <returns>An enumeration of summaries for the requested messages.</returns>
 		/// <param name="min">The minimum index.</param>

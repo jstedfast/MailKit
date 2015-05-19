@@ -5541,7 +5541,8 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the specified message indexes.
+            Fetch the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
@@ -5615,7 +5616,8 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the specified message indexes.
+            Fetch the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
@@ -6794,7 +6796,8 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            Asynchronously fetch the message summaries for the specified message UIDs that have a
+            higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
@@ -6875,7 +6878,8 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the specified message indexes.
+            Asynchronously fetch the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
@@ -6949,12 +6953,13 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the specified message indexes.
+            Asynchronously fetch the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-          <para>Asynchronously fetches the message summaries for the messages between
-            the two indexes, inclusive.</para>
+          <para>Asynchronously fetches the message summaries for the specified message
+            indexes that have a higher mod-sequence value than the one specified.</para>
           <para>It should be noted that if another client has modified any message
             in the folder, the mail service may choose to return information that was
             not explicitly requested. It is therefore important to be prepared to
