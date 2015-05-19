@@ -4746,8 +4746,14 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message UIDs.
-            </remarks>
+          <para>Fetches the message summaries for the specified message UIDs.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -4805,8 +4811,14 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Fetches the message summaries for the specified message indexes.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -4866,8 +4878,14 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message UIDs.
-            </remarks>
+          <para>Fetches the message summaries for the specified message UIDs.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="uids" /> is <c>null</c>.</para>
@@ -4931,8 +4949,14 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message UIDs.
-            </remarks>
+          <para>Fetches the message summaries for the specified message UIDs.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="uids" /> is <c>null</c>.</para>
@@ -4992,14 +5016,23 @@
         <param name="items">The message summary items to fetch.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            Fetch the message summaries for the specified message UIDs that have a
+            higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
+          <para>Fetches the message summaries for the specified message UIDs that
+            have a higher mod-sequence value than the one specified.</para>
           <para>If the mail store supports quick resynchronization and the application has
             enabled this feature via <see cref="M:MailKit.MailStore.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that
+            have vanished since the specified mod-sequence value.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
@@ -5063,8 +5096,14 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Fetches the message summaries for the specified message indexes.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -5128,8 +5167,14 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Fetches the message summaries for the specified message indexes.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -5189,12 +5234,20 @@
         <param name="items">The message summary items to fetch.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+            Fetch the message summaries for the specified message indexes that have a
+            higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Fetches the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -5257,8 +5310,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the messages between the two indexes, inclusive.
-            </remarks>
+          <para>Fetches the message summaries for the messages between the two
+            indexes, inclusive.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -5317,14 +5377,23 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            Fetch the message summaries for the specified message UIDs that have a
+            higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
+          <para>Fetches the message summaries for the specified message UIDs that
+            have a higher mod-sequence value than the one specified.</para>
           <para>If the mail store supports quick resynchronization and the application has
             enabled this feature via <see cref="M:MailKit.MailStore.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that
+            have vanished since the specified mod-sequence value.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5390,14 +5459,23 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            Fetch the message summaries for the specified message UIDs that have a
+            higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
+          <para>Fetches the message summaries for the specified message UIDs that
+            have a higher mod-sequence value than the one specified.</para>
           <para>If the mail store supports quick resynchronization and the application has
             enabled this feature via <see cref="M:MailKit.MailStore.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that
+            have vanished since the specified mod-sequence value.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5467,8 +5545,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Fetches the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -5534,8 +5619,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Fetches the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -5601,8 +5693,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the messages between the two indexes, inclusive.
-            </remarks>
+          <para>Fetches the message summaries for the messages between the two
+            indexes, inclusive.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -5668,8 +5767,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the messages between the two indexes, inclusive.
-            </remarks>
+          <para>Fetches the message summaries for the messages between the two
+            indexes, inclusive.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -5731,12 +5837,21 @@
         <param name="items">The message summary items to fetch.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            Fetch the message summaries for the messages between the two indexes (inclusive)
+            that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Fetches the message summaries for the messages between the two
+            indexes (inclusive) that have a higher mod-sequence value than the one
+            specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -5800,12 +5915,21 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            Fetch the message summaries for the messages between the two indexes (inclusive)
+            that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Fetches the message summaries for the messages between the two
+            indexes (inclusive) that have a higher mod-sequence value than the one
+            specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -5872,12 +5996,21 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            Fetch the message summaries for the messages between the two indexes (inclusive)
+            that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Fetches the message summaries for the messages between the two
+            indexes (inclusive) that have a higher mod-sequence value than the one
+            specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -5942,8 +6075,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message UIDs.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            UIDs.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
             </exception>
@@ -6001,8 +6141,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            indexes.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -6062,8 +6209,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message UIDs.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            UIDs.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="uids" /> is <c>null</c>.</para>
@@ -6127,8 +6281,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message UIDs.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            UIDs.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="uids" /> is <c>null</c>.</para>
@@ -6188,14 +6349,23 @@
         <param name="items">The message summary items to fetch.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            Asynchronously fetch the message summaries for the specified message UIDs that have a
+            higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
+          <para>Asynchronously fetches the message summaries for the specified message UIDs that
+            have a higher mod-sequence value than the one specified.</para>
           <para>If the mail store supports quick resynchronization and the application has
             enabled this feature via <see cref="M:MailKit.MailStore.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that
+            have vanished since the specified mod-sequence value.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uids" /> is <c>null</c>.
@@ -6259,8 +6429,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            indexes.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -6324,8 +6501,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            indexes.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -6385,12 +6569,20 @@
         <param name="items">The message summary items to fetch.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
+            Asynchronously fetch the message summaries for the specified message indexes that
+            have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message indexes that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            indexes that have a higher mod-sequence value than the one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indexes" /> is <c>null</c>.
             </exception>
@@ -6453,8 +6645,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the messages between the two indexes, inclusive.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the messages between
+            the two indexes, inclusive.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -6513,14 +6712,23 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the specified message UIDs that have a higher mod-sequence value than the one specified.
+            Asynchronously fetch the message summaries for the specified message UIDs that have a
+            higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
+          <para>Asynchronously fetches the message summaries for the specified message UIDs that
+            have a higher mod-sequence value than the one specified.</para>
           <para>If the mail store supports quick resynchronization and the application has
             enabled this feature via <see cref="M:MailKit.MailStore.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that
+            have vanished since the specified mod-sequence value.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -6590,10 +6798,18 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
+          <para>Asynchronously fetches the message summaries for the specified message UIDs that
+            have a higher mod-sequence value than the one specified.</para>
           <para>If the mail store supports quick resynchronization and the application has
             enabled this feature via <see cref="M:MailKit.MailStore.EnableQuickResync(System.Threading.CancellationToken)" />,
-            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that have vanished
-            since the specified mod-sequence value.</para>
+            then this method will emit <see cref="E:MailKit.MailFolder.MessagesVanished" /> events for messages that
+            have vanished since the specified mod-sequence value.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -6663,8 +6879,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the specified message
+            indexes that have a higher mod-sequence value than the one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -6730,8 +6953,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the specified message indexes.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the messages between
+            the two indexes, inclusive.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="indexes" /> is <c>null</c>.</para>
@@ -6797,8 +7027,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the messages between the two indexes, inclusive.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the messages between
+            the two indexes, inclusive.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -6864,8 +7101,15 @@
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the messages between the two indexes, inclusive.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the messages between
+            the two indexes, inclusive.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -6927,12 +7171,21 @@
         <param name="items">The message summary items to fetch.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            Asynchronously fetch the message summaries for the messages between the two indexes
+            (inclusive) that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the messages between
+            the two indexes (inclusive) that have a higher mod-sequence value than the
+            one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -6996,12 +7249,21 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            Asynchronously fetch the message summaries for the messages between the two indexes
+            (inclusive) that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the messages between
+            the two indexes (inclusive) that have a higher mod-sequence value than the
+            one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
@@ -7068,12 +7330,21 @@
         <param name="fields">The desired header fields.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Asynchronously fetch the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
+            Asynchronously fetch the message summaries for the messages between the two indexes
+            (inclusive) that have a higher mod-sequence value than the one specified.
             </summary>
         <returns>An enumeration of summaries for the requested messages.</returns>
         <remarks>
-            Asynchronously fetches the message summaries for the messages between the two indexes (inclusive) that have a higher mod-sequence value than the one specified.
-            </remarks>
+          <para>Asynchronously fetches the message summaries for the messages between
+            the two indexes (inclusive) that have a higher mod-sequence value than the
+            one specified.</para>
+          <para>It should be noted that if another client has modified any message
+            in the folder, the mail service may choose to return information that was
+            not explicitly requested. It is therefore important to be prepared to
+            handle both additional fields on a <see cref="T:MailKit.IMessageSummary" /> for
+            messages that were requested as well as summaries for messages that were
+            not requested at all.</para>
+        </remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="min" /> is out of range.</para>
