@@ -307,6 +307,7 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				var responses = new List<SmtpResponse> ();
+				Exception rex = null;
 				int rcpt = 0;
 
 				// Note: queued commands are buffered by the stream
@@ -314,11 +315,17 @@ namespace MailKit.Net.Smtp {
 
 				// Note: we need to read all responses from the server before we can process
 				// them in case any of them have any errors so that we can RSET the state.
-				for (int i = 0; i < queued.Count; i++)
-					responses.Add (Stream.ReadResponse (cancellationToken));
+				try {
+					for (int i = 0; i < queued.Count; i++)
+						responses.Add (Stream.ReadResponse (cancellationToken));
+				} catch (Exception ex) {
+					// Note: save this exception for later (it may be related to
+					// an error response for a MAIL FROM or RCPT TO command).
+					rex = ex;
+				}
 
-				for (int i = 0; i < queued.Count; i++) {
-					switch (queued [i]) {
+				for (int i = 0; i < responses.Count; i++) {
+					switch (queued[i]) {
 					case SmtpCommand.MailFrom:
 						ProcessMailFromResponse (responses[i], sender);
 						break;
@@ -327,6 +334,9 @@ namespace MailKit.Net.Smtp {
 						break;
 					}
 				}
+
+				if (rex != null)
+					throw new SmtpProtocolException ("Error reading a response from the SMTP server.", rex);
 			} finally {
 				queued.Clear ();
 			}
