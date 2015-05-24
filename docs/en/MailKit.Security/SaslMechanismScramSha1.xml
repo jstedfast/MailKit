@@ -4,6 +4,7 @@
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>MailKit.Security.SaslMechanismScramBase</BaseTypeName>
@@ -24,6 +25,7 @@
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="uri" Type="System.Uri" />
@@ -46,6 +48,7 @@
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.KeyedHashAlgorithm</ReturnType>
@@ -70,6 +73,7 @@
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
@@ -97,6 +101,7 @@
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

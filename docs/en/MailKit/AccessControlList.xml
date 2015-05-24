@@ -4,6 +4,7 @@
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Collections.Generic.List&lt;MailKit.AccessControl&gt;</BaseTypeName>
@@ -28,6 +29,7 @@
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -45,6 +47,7 @@
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="controls" Type="System.Collections.Generic.IEnumerable&lt;MailKit.AccessControl&gt;" />

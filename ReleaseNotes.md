@@ -1,5 +1,23 @@
 # Release Notes
 
+### MailKit 1.2.0
+
+* Added new ImapFolder.GetStream() overloads that allow fetching only the TEXT
+  stream.
+* Fixed ImapFolder.Search() to always treat the search results as UIDs even
+  when the server (such as AOL) does not include the required UID tag in the
+  ESEARCH response. (issue #191)
+* Fixed ImapClient to set the engine.Uri even for Windows*81 profiles (fixes
+  a NullReferenceException for the various Windows*81 profiles). (issue #192)
+* Work around a GMail bug where it does not quote flags containing []'s.
+  (issue #193)
+* Fixed the IMAP code to accept GMail label names that start with a '+'.
+  (issue #195)
+* Delay throwing ProtocolException due to an unexpected disconnect when reading
+  responses to PIPELINE'd SMTP commands in case one of the responses to those
+  commands contains an error code that might hint at why the server disconnected.
+  (issue #194)
+
 ### MailKit 1.0.17
 
 * Fixed a STARTTLS regression in SmtpClient that was introduced in 1.0.15.
