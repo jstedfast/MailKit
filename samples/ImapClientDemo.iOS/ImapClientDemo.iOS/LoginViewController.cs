@@ -80,7 +80,7 @@ namespace ImapClientDemo.iOS
 
             try {
 				if (Mail.Client.IsConnected)
-					await Mail.Client.Disconnect (true);
+					await Mail.Client.DisconnectAsync (true);
 
                 // Connect to server
                 await Mail.Client.ConnectAsync (hostEntry.Value, port, sslCheckbox.Value);

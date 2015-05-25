@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using HtmlAgilityPack;
-using MailKit;
 using MimeKit;
+using MimeKit.Text;
+
+using MailKit;
 
 namespace ImapClientDemo
 {
@@ -32,171 +33,148 @@ namespace ImapClientDemo
 			Render (e.Folder, e.UniqueId, e.Body);
 		}
 
-		async void RenderRelated (IMailFolder folder, UniqueId uid, BodyPartMultipart related)
+		class MultipartRelatedImageContext
 		{
-			var start = related.ContentType.Parameters["start"];
-			BodyPartText root = null;
+			readonly MultipartRelated related;
 
-			if (!string.IsNullOrEmpty (start)) {
-				// if the 'start' parameter is set, it overrides the default behavior of using the first
-				// body part as the main document.
-				root = related.BodyParts.OfType<BodyPartText> ().FirstOrDefault (x => x.ContentId == start);
-			} else if (related.BodyParts.Count > 0) {
-				// this will generally either be a text/html part (which is what we are looking for) or a multipart/alternative
-				var multipart = related.BodyParts[0] as BodyPartMultipart;
+			public MultipartRelatedImageContext (MultipartRelated related)
+			{
+				this.related = related;
+			}
 
-				if (multipart != null) {
-					if (multipart.ContentType.Matches ("multipart", "alternative") && multipart.BodyParts.Count > 0) {
-						// find the last text/html part (which will be the closest to what the sender saw in their WYSIWYG editor)
-						// or, failing that, the last text part.
-						for (int i = multipart.BodyParts.Count; i > 0; i--) {
-							var bodyPart = multipart.BodyParts[i - 1] as BodyPartText;
+			string GetDataUri (MimePart attachment)
+			{
+				using (var memory = new MemoryStream ()) {
+					attachment.ContentObject.DecodeTo (memory);
+					var buffer = memory.GetBuffer ();
+					var length = (int) memory.Length;
+					var base64 = Convert.ToBase64String (buffer, 0, length);
 
-							if (bodyPart == null)
+					return string.Format ("data:{0};base64,{1}", attachment.ContentType.MimeType, base64);
+				}
+			}
+
+			public void HtmlTagCallback (HtmlTagContext ctx, HtmlWriter htmlWriter)
+			{
+				if (ctx.TagId != HtmlTagId.Image || ctx.IsEndTag) {
+					ctx.WriteTag (htmlWriter, true);
+					return;
+				}
+
+				// write the IMG tag, but don't write out the attributes.
+				ctx.WriteTag (htmlWriter, false);
+
+				// manually write the attributes so that we can replace the SRC attributes
+				foreach (var attribute in ctx.Attributes) {
+					if (attribute.Id == HtmlAttributeId.Src) {
+						int index;
+						Uri uri;
+
+						// parse the <img src=...> attribute value into a Uri
+						if (Uri.IsWellFormedUriString (attribute.Value, UriKind.Absolute))
+							uri = new Uri (attribute.Value, UriKind.Absolute);
+						else
+							uri = new Uri (attribute.Value, UriKind.Relative);
+
+						// locate the index of the attachment within the multipart/related (if it exists)
+						if ((index = related.IndexOf (uri)) != -1) {
+							var attachment = related[index] as MimePart;
+
+							if (attachment == null) {
+								// the body part is not a basic leaf part (IOW it's a multipart or message-part)
+								htmlWriter.WriteAttribute (attribute);
 								continue;
-
-							if (bodyPart.ContentType.Matches ("text", "html")) {
-								root = bodyPart;
-								break;
 							}
 
-							if (root == null)
-								root = bodyPart;
+							var data = GetDataUri (attachment);
+
+							htmlWriter.WriteAttributeName (attribute.Name);
+							htmlWriter.WriteAttributeValue (data);
+						} else {
+							htmlWriter.WriteAttribute (attribute);
 						}
 					}
-				} else {
-					root = related.BodyParts[0] as BodyPartText;
 				}
 			}
+		}
 
-			if (root == null)
-				return;
+		void RenderMultipartRelated (MultipartRelated related)
+		{
+			var root = related.Root;
+			var multipart = root as Multipart;
+			var text = root as TextPart;
 
-			var text = await folder.GetBodyPartAsync (uid, root) as TextPart;
+			if (multipart != null) {
+				// Note: the root document can sometimes be a multipart/alternative.
+				// A multipart/alternative is just a collection of alternate views.
+				// The last part is the format that most closely matches what the
+				// user saw in his or her email client's WYSIWYG editor.
+				for (int i = multipart.Count; i > 0; i--) {
+					var body = multipart[i - 1] as TextPart;
 
-			if (text != null && text.ContentType.Matches ("text", "html")) {
-				var doc = new HtmlAgilityPack.HtmlDocument ();
-				var saved = new Dictionary<MimePart, string> ();
-				TextPart html;
-
-				doc.LoadHtml (text.Text);
-
-				// find references to related MIME parts and replace them with links to links to the saved attachments
-				foreach (var img in doc.DocumentNode.SelectNodes ("//img[@src]")) {
-					var src = img.Attributes["src"];
-					int index;
-					Uri uri;
-
-					if (src == null || src.Value == null)
+					if (body == null)
 						continue;
 
-					// parse the <img src=...> attribute value into a Uri
-					if (Uri.IsWellFormedUriString (src.Value, UriKind.Absolute))
-						uri = new Uri (src.Value, UriKind.Absolute);
-					else
-						uri = new Uri (src.Value, UriKind.Relative);
-
-					// locate the index of the attachment within the multipart/related (if it exists)
-					if ((index = related.BodyParts.IndexOf (uri)) != -1) {
-						var bodyPart = related.BodyParts[index] as BodyPartBasic;
-
-						if (bodyPart == null) {
-							// the body part is not a basic leaf part (IOW it's a multipart or message-part)
-							continue;
-						}
-
-						var attachment = await folder.GetBodyPartAsync (uid, bodyPart) as MimePart;
-
-						// make sure the referenced part is a MimePart (as opposed to another Multipart or MessagePart)
-						if (attachment == null)
-							continue;
-
-						string fileName;
-
-						// save the attachment (if we haven't already saved it)
-						if (!saved.TryGetValue (attachment, out fileName)) {
-							fileName = attachment.FileName;
-
-							if (string.IsNullOrEmpty (fileName))
-								fileName = Guid.NewGuid ().ToString ();
-
-							if (!Directory.Exists (uid.ToString ()))
-								Directory.CreateDirectory (uid.ToString ());
-
-							fileName = Path.Combine (uid.ToString (), fileName);
-
-							using (var stream = File.Create (fileName))
-								attachment.ContentObject.DecodeTo (stream);
-
-							saved.Add (attachment, fileName);
-						}
-
-						// replace the <img src=...> value with the local file name
-						src.Value = "file://" + Path.GetFullPath (fileName);
+					// our preferred mime-type is text/html
+					if (body.ContentType.Matches ("text", "html")) {
+						text = body;
+						break;
 					}
+
+					if (text == null)
+						text = body;
 				}
-
-				if (saved.Count > 0) {
-					// we had to make some modifications to the original html part, so create a new
-					// (temporary) text/html part to render
-					html = new TextPart ("html");
-					using (var writer = new StringWriter ()) {
-						doc.Save (writer);
-
-						html.Text = writer.GetStringBuilder ().ToString ();
-					}
-				} else {
-					html = text;
-				}
-
-				RenderText (html);
-			} else if (text != null) {
-				RenderText (text);
 			}
+
+			// check if we have a text/html document
+			if (text != null) {
+				if (text.ContentType.Matches ("text", "html")) {
+					// replace image src urls that refer to related MIME parts with "data:" urls
+					// Note: we could also save the related MIME part content to disk and use
+					// file:// urls instead.
+					var ctx = new MultipartRelatedImageContext (related);
+					var converter = new HtmlToHtml () { HtmlTagCallback = ctx.HtmlTagCallback };
+					var html = converter.Convert (text.Text);
+
+					webBrowser.DocumentText = html;
+				} else {
+					RenderText (text);
+				}
+			} else {
+				// we don't know how to render this type of content
+				return;
+			}
+		}
+
+		async void RenderMultipartRelated (IMailFolder folder, UniqueId uid, BodyPartMultipart bodyPart)
+		{
+			// download the entire multipart/related for simplicity since we'll probably end up needing all of the image attachments anyway...
+			var related = await folder.GetBodyPartAsync (uid, bodyPart) as MultipartRelated;
+
+			RenderMultipartRelated (related);
 		}
 
 		void RenderText (TextPart text)
 		{
 			string html;
 
-			if (!text.ContentType.Matches ("text", "html")) {
-				var builder = new StringBuilder ("<html><body><p>");
-				var plain = text.Text;
-
-				for (int i = 0; i < plain.Length; i++) {
-					switch (plain[i]) {
-					case ' ': builder.Append ("&nbsp;"); break;
-					case '"': builder.Append ("&quot;"); break;
-					case '&': builder.Append ("&amp;"); break;
-					case '<': builder.Append ("&lt;"); break;
-					case '>': builder.Append ("&gt;"); break;
-					case '\r': break;
-					case '\n': builder.Append ("<p>"); break;
-					case '\t':
-						for (int j = 0; j < 8; j++)
-							builder.Append ("&nbsp;");
-						break;
-					default:
-						if (char.IsControl (plain[i]) || plain[i] > 127) {
-							int unichar;
-
-							if (i + 1 < plain.Length && char.IsSurrogatePair (plain[i], plain[i + 1]))
-								unichar = char.ConvertToUtf32 (plain[i], plain[i + 1]);
-							else
-								unichar = plain[i];
-
-							builder.AppendFormat ("&#{0};", unichar);
-						} else {
-							builder.Append (plain[i]);
-						}
-						break;
-					}
-				}
-
-				builder.Append ("</body></html>");
-				html = builder.ToString ();
-			} else {
+			if (text.IsHtml) {
+				// the text content is already in HTML format
 				html = text.Text;
+			} else if (text.IsFlowed) {
+				var converter = new FlowedToHtml ();
+				string delsp;
+
+				// the delsp parameter specifies whether or not to delete spaces at the end of flowed lines
+				if (!text.ContentType.Parameters.TryGetValue ("delsp", out delsp))
+					delsp = "no";
+
+				if (string.Compare (delsp, "yes", StringComparison.OrdinalIgnoreCase) == 0)
+					converter.DeleteSpace = true;
+
+				html = converter.Convert (text.Text);
+			} else {
+				html = new TextToHtml ().Convert (text.Text);
 			}
 
 			webBrowser.DocumentText = html;
@@ -214,7 +192,7 @@ namespace ImapClientDemo
 			var multipart = body as BodyPartMultipart;
 
 			if (multipart != null && body.ContentType.Matches ("multipart", "related")) {
-				RenderRelated (folder, uid, multipart);
+				RenderMultipartRelated (folder, uid, multipart);
 				return;
 			}
 
