@@ -41,6 +41,8 @@ using DecoderFallbackException = Portable.Text.DecoderFallbackException;
 using MimeKit;
 
 namespace MailKit.Net.Imap {
+	delegate ImapFolder CreateImapFolderDelegate (ImapFolderConstructorArgs args);
+
 	/// <summary>
 	/// The state of the <see cref="ImapEngine"/>.
 	/// </summary>
@@ -99,6 +101,7 @@ namespace MailKit.Net.Imap {
 		static int TagPrefixIndex;
 
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
+		readonly CreateImapFolderDelegate createImapFolder;
 		readonly List<ImapCommand> queue;
 		internal char TagPrefix;
 		ImapCommand current;
@@ -107,7 +110,7 @@ namespace MailKit.Net.Imap {
 		bool disposed;
 		int nextId;
 
-		public ImapEngine ()
+		public ImapEngine (CreateImapFolderDelegate createImapFolderDelegate)
 		{
 			ThreadingAlgorithms = new HashSet<ThreadingAlgorithm> ();
 			FolderCache = new Dictionary<string, ImapFolder> ();
@@ -122,6 +125,7 @@ namespace MailKit.Net.Imap {
 			OtherNamespaces = new FolderNamespaceCollection ();
 
 			ProtocolVersion = ImapProtocolVersion.Unknown;
+			createImapFolder = createImapFolderDelegate;
 			Capabilities = ImapCapabilities.None;
 			queue = new List<ImapCommand> ();
 			nextId = 1;
@@ -441,6 +445,13 @@ namespace MailKit.Net.Imap {
 		}
 
 		#endregion
+
+		internal ImapFolder CreateImapFolder (string encodedName, FolderAttributes attributes, char delim)
+		{
+			var args = new ImapFolderConstructorArgs (this, encodedName, attributes, delim);
+
+			return createImapFolder (args);
+		}
 
 		internal static ImapProtocolException UnexpectedToken (ImapToken token, bool greeting)
 		{
@@ -927,7 +938,7 @@ namespace MailKit.Net.Imap {
 
 						namespaces[n].Add (new FolderNamespace (delim, DecodeMailboxName (path)));
 						if (!FolderCache.TryGetValue (path, out folder)) {
-							folder = new ImapFolder (this, path, FolderAttributes.None, delim);
+							folder = CreateImapFolder (path, FolderAttributes.None, delim);
 							FolderCache.Add (path, folder);
 						}
 
@@ -1663,7 +1674,7 @@ namespace MailKit.Net.Imap {
 				Wait (ic);
 
 				if (!FolderCache.TryGetValue (encodedName, out parent)) {
-					parent = new ImapFolder (this, encodedName, FolderAttributes.NonExistent, folder.DirectorySeparator);
+					parent = CreateImapFolder (encodedName, FolderAttributes.NonExistent, folder.DirectorySeparator);
 					FolderCache.Add (encodedName, parent);
 				} else if (parent.ParentFolder == null && !parent.IsNamespace) {
 					list.Add (parent);

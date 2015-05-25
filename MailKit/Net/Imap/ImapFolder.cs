@@ -51,36 +51,39 @@ namespace MailKit.Net.Imap {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapFolder"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new <see cref="ImapFolder"/> with the given attributes.
+		/// <para>Creates a new <see cref="ImapFolder"/>.</para>
+		/// <para>If you subclass <see cref="ImapFolder"/>, you will also need to subclass
+		/// <see cref="ImapClient"/> and override the
+		/// <see cref="ImapClient.CreateImapFolder(ImapFolderConstructorArgs)"/>
+		/// method in order to return a new instance of your ImapFolder subclass.</para>
 		/// </remarks>
-		/// <param name="engine">The imap engine.</param>
-		/// <param name="encodedName">The encoded name.</param>
-		/// <param name="attrs">The folder attributes.</param>
-		/// <param name="delim">The path delimeter.</param>
-		internal ImapFolder (ImapEngine engine, string encodedName, FolderAttributes attrs, char delim)
+		/// <param name="args">The constructor arguments.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="args"/> is <c>null</c>.
+		/// </exception>
+		public ImapFolder (ImapFolderConstructorArgs args)
 		{
-			FullName = engine.DecodeMailboxName (encodedName);
-			Name = GetBaseName (FullName, delim);
-			DirectorySeparator = delim;
-			EncodedName = encodedName;
-			Attributes = attrs;
-			Engine = engine;
+			if (args == null)
+				throw new ArgumentNullException ("args");
 
-			engine.Disconnected += (sender, e) => {
+			DirectorySeparator = args.DirectorySeparator;
+			EncodedName = args.EncodedName;
+			Attributes = args.Attributes;
+			FullName = args.FullName;
+			Engine = args.Engine;
+			Name = args.Name;
+
+			Engine.Disconnected += (sender, e) => {
 				Access = FolderAccess.None;
 			};
 		}
 
-		static string GetBaseName (string fullName, char delim)
-		{
-			var names = fullName.Split (new [] { delim }, StringSplitOptions.RemoveEmptyEntries);
-
-			return names.Length > 0 ? names[names.Length - 1] : fullName;
-		}
-
 		/// <summary>
-		/// Get the engine.
+		/// Get the IMAP command engine.
 		/// </summary>
+		/// <remarks>
+		/// Gets the IMAP command engine.
+		/// </remarks>
 		/// <value>The engine.</value>
 		internal ImapEngine Engine {
 			get; private set;
@@ -89,6 +92,9 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Get the encoded name of the folder.
 		/// </summary>
+		/// <remarks>
+		/// Gets the encoded name of the folder.
+		/// </remarks>
 		/// <value>The encoded name.</value>
 		internal string EncodedName {
 			get; private set;

@@ -20,6 +20,33 @@
             </remarks>
   </Docs>
   <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ImapFolder (MailKit.Net.Imap.ImapFolderConstructorArgs args);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.Net.Imap.ImapFolderConstructorArgs args) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="args" Type="MailKit.Net.Imap.ImapFolderConstructorArgs" />
+      </Parameters>
+      <Docs>
+        <param name="args">The constructor arguments.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.Net.Imap.ImapFolder" /> class.
+            </summary>
+        <remarks>
+          <para>Creates a new <see cref="T:MailKit.Net.Imap.ImapFolder" />.</para>
+          <para>If you subclass <see cref="T:MailKit.Net.Imap.ImapFolder" />, you will also need to subclass
+            <see cref="T:MailKit.Net.Imap.ImapClient" /> and override the
+            <see cref="M:MailKit.Net.Imap.ImapClient.CreateImapFolder(MailKit.Net.Imap.ImapFolderConstructorArgs)" />
+            method in order to return a new instance of your ImapFolder subclass.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="args" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="AddAccessRights">
       <MemberSignature Language="C#" Value="public override void AddAccessRights (string name, MailKit.AccessRights rights, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void AddAccessRights(string name, class MailKit.AccessRights rights, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />

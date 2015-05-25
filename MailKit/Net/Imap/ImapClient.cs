@@ -107,7 +107,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("protocolLogger");
 
 			// FIXME: should this take a ParserOptions argument?
-			engine = new ImapEngine ();
+			engine = new ImapEngine (CreateImapFolder);
 			engine.Alert += OnEngineAlert;
 			logger = protocolLogger;
 		}
@@ -176,6 +176,23 @@ namespace MailKit.Net.Imap {
 		{
 			if (disposed)
 				throw new ObjectDisposedException ("ImapClient");
+		}
+
+		/// <summary>
+		/// Instantiate a new <see cref="ImapFolder"/>.
+		/// </summary>
+		/// <remarks>
+		/// <para>Creates a new <see cref="ImapFolder"/> instance.</para>
+		/// <para>Note: This method's purpose is to allow subclassing <see cref="ImapFolder"/>.</para>
+		/// </remarks>
+		/// <returns>The IMAP folder instance.</returns>
+		/// <param name="args">The constructior arguments.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="args"/> is <c>null</c>.
+		/// </exception>
+		protected virtual ImapFolder CreateImapFolder (ImapFolderConstructorArgs args)
+		{
+			return new ImapFolder (args);
 		}
 
 #if !NETFX_CORE

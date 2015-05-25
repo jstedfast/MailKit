@@ -111,7 +111,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
-					using (var engine = new ImapEngine ()) {
+					using (var engine = new ImapEngine (null)) {
 						BodyPartText basic;
 						BodyPart body;
 
@@ -149,7 +149,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
-					using (var engine = new ImapEngine ()) {
+					using (var engine = new ImapEngine (null)) {
 						Envelope envelope;
 
 						engine.SetStream (tokenizer);
@@ -200,7 +200,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
-					using (var engine = new ImapEngine ()) {
+					using (var engine = new ImapEngine (null)) {
 						BodyPartMultipart multipart;
 						BodyPart body;
 
@@ -239,7 +239,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
 				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
-					using (var engine = new ImapEngine ()) {
+					using (var engine = new ImapEngine (null)) {
 						IList<MessageThread> threads;
 
 						engine.SetStream (tokenizer);

@@ -503,7 +503,7 @@ namespace MailKit.Net.Imap {
 				attrs |= (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked));
 				folder.UpdateAttributes (attrs);
 			} else {
-				folder = new ImapFolder (engine, encodedName, attrs, delim);
+				folder = engine.CreateImapFolder (encodedName, attrs, delim);
 				engine.FolderCache.Add (encodedName, folder);
 			}
 

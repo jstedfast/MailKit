@@ -113,6 +113,7 @@
       <Type Name="ImapClient" Kind="Class" />
       <Type Name="ImapCommandException" Kind="Class" />
       <Type Name="ImapFolder" Kind="Class" />
+      <Type Name="ImapFolderConstructorArgs" Kind="Class" />
       <Type Name="ImapImplementation" Kind="Class" />
       <Type Name="ImapProtocolException" Kind="Class" />
     </Namespace>
