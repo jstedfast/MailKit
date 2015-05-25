@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -62,16 +61,15 @@ namespace ImapClientDemo.iOS
                     await Mail.Client.AuthenticateAsync (username.Value, password.Value);
 
                     // Show the folders view controller
-                    foldersViewController = new FoldersViewController();
+                    foldersViewController = new FoldersViewController ();
                     NavigationController.PushViewController (foldersViewController, true);
-
                 } catch (Exception aex) {
                     Console.WriteLine (aex);
-                    Mail.MessageBox ("Authentication Error", "Failed to Authenticate to server");
+                    Mail.MessageBox ("Authentication Error", "Failed to Authenticate to server.");
                 }
             } catch (Exception cex) {
                 Console.WriteLine (cex);
-                Mail.MessageBox ("Connection Error", "Failed to connect to server");
+                Mail.MessageBox ("Connection Error", "Failed to connect to server.");
             }
         }
     }

@@ -1,14 +1,14 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using MonoTouch.Dialog;
 
 using Foundation;
 using UIKit;
+
 using MailKit;
-using System.Threading.Tasks;
 
 namespace ImapClientDemo.iOS
 {
@@ -37,14 +37,14 @@ namespace ImapClientDemo.iOS
         }
 
         // Recursive function to load all folders and their subfolders
-        async Task LoadChildFolders (Section foldersSection, IMailFolder imapFolder)
+        async Task LoadChildFolders (Section foldersSection, IMailFolder folder)
         {
-            if (!string.IsNullOrWhiteSpace (imapFolder.FullName)) {    
-                foldersSection.Add (new StyledStringElement (imapFolder.FullName, () =>
-                    OpenFolder (imapFolder)));
+            if (!folder.IsNamespace) {    
+                foldersSection.Add (new StyledStringElement (folder.FullName, () =>
+                    OpenFolder (folder)));
             }
 
-            var subfolders = await imapFolder.GetSubfoldersAsync ();
+            var subfolders = await folder.GetSubfoldersAsync ();
 
             foreach (var sf in subfolders)
                 await LoadChildFolders (foldersSection, sf);

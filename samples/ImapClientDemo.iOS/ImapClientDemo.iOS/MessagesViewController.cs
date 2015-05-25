@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +6,7 @@ using MonoTouch.Dialog;
 
 using Foundation;
 using UIKit;
+
 using MailKit;
 
 namespace ImapClientDemo.iOS
