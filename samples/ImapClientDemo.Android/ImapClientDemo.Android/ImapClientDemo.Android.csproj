@@ -45,15 +45,15 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
-    <Reference Include="BouncyCastle">
-      <HintPath>..\packages\MimeKit.1.0.6.1\lib\MonoAndroid\BouncyCastle.dll</HintPath>
-    </Reference>
-    <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.1.0.6.1\lib\MonoAndroid\MimeKit.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.1.0.6.1\lib\MonoAndroid\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.1.2.0.0\lib\MonoAndroid\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle">
+      <HintPath>..\packages\MimeKit.1.2.1.0\lib\MonoAndroid\BouncyCastle.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\packages\MimeKit.1.2.1.0\lib\MonoAndroid\MimeKit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -63,8 +63,8 @@
     <Compile Include="LoginActivity.cs" />
     <Compile Include="Mail.cs" />
     <Compile Include="FoldersActivity.cs" />
-    <Compile Include="MessagesActivity.cs" />
-    <Compile Include="ViewMessageActivity.cs" />
+    <Compile Include="MessageListActivity.cs" />
+    <Compile Include="MessageViewActivity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
