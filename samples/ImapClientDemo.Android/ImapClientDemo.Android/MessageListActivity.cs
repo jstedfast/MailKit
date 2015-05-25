@@ -41,7 +41,7 @@ using MailKit;
 
 namespace ImapClientDemo
 {
-    [Activity (Label = "Messages")]			
+    [Activity (Label = "Messages")]
     public class MessageListActivity : Activity
     {
         ListView listView;
@@ -56,7 +56,7 @@ namespace ImapClientDemo
             SetContentView (Resource.Layout.MessagesLayout);
 
             listView = FindViewById<ListView> (Resource.Id.listView);
-           
+
             adapter = new MessageListAdapter (this);
             listView.Adapter = adapter;
 
@@ -103,7 +103,7 @@ namespace ImapClientDemo
             }
 
             public override int Count {
-                get { return Messages.Count; }                   
+                get { return Messages.Count; }
             }
 
             public override IMessageSummary this [int index] {
