@@ -21,7 +21,6 @@
     <ConsolePause>false</ConsolePause>
     <MtouchArch>i386</MtouchArch>
     <MtouchLink>None</MtouchLink>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchDebug>true</MtouchDebug>
     <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchProfiling>true</MtouchProfiling>
@@ -36,7 +35,6 @@
     <MtouchArch>i386</MtouchArch>
     <MtouchLink>None</MtouchLink>
     <CodesignKey>iPhone Developer</CodesignKey>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,6 +75,9 @@
     <CodesignKey>iPhone Distribution</CodesignKey>
     <CodesignProvision>Automatic:AdHoc</CodesignProvision>
     <BuildIpa>true</BuildIpa>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchI18n>
+    </MtouchI18n>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>full</DebugType>
@@ -95,16 +96,16 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
+    <Reference Include="MonoTouch.Dialog-1" />
     <Reference Include="BouncyCastle">
-      <HintPath>..\packages\MimeKit.1.0.6.1\lib\Xamarin.iOS10\BouncyCastle.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.2.0.0\lib\Xamarin.iOS10\BouncyCastle.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.1.0.6.1\lib\Xamarin.iOS10\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.2.0.0\lib\Xamarin.iOS10\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.1.0.6.1\lib\Xamarin.iOS10\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.1.2.0.0\lib\Xamarin.iOS10\MailKit.dll</HintPath>
     </Reference>
-    <Reference Include="MonoTouch.Dialog-1" />
   </ItemGroup>
   <ItemGroup>
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
@@ -123,8 +124,9 @@
     <Compile Include="Mail.cs" />
     <Compile Include="LoginViewController.cs" />
     <Compile Include="FoldersViewController.cs" />
-    <Compile Include="MessagesViewController.cs" />
-    <Compile Include="ViewMessageViewController.cs" />
+    <Compile Include="MessageListViewController.cs" />
+    <Compile Include="MessageViewController.cs" />
+    <Compile Include="MultipartRelatedUrlCache.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

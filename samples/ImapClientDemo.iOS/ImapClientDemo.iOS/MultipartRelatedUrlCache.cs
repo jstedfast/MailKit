@@ -1,5 +1,5 @@
 ﻿//
-// Main.cs
+// MultipartRelatedUrlCache.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -25,22 +25,46 @@
 //
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 
 using Foundation;
-using UIKit;
 
-namespace ImapClientDemo.iOS
-{
-    public class Application
-    {
-        // This is the main entry point of the application.
-        static void Main (string[] args)
-        {
-            // if you want to use a different Application Delegate class from "AppDelegate"
-            // you can specify it here.
-            UIApplication.Main (args, null, "AppDelegate");
-        }
-    }
+using MimeKit;
+
+namespace ImapClientDemo.iOS {
+	public class MultipartRelatedUrlCache : NSUrlCache
+	{
+		readonly MultipartRelated related;
+
+		public MultipartRelatedUrlCache (MultipartRelated related)
+		{
+			this.related = related;
+		}
+
+		public override NSCachedUrlResponse CachedResponseForRequest (NSUrlRequest request)
+		{
+			var uri = (Uri) request.Url;
+			int index;
+
+			if ((index = related.IndexOf (uri)) != -1) {
+				var part = related[index] as MimePart;
+
+				if (part != null) {
+					var mimeType = part.ContentType.MimeType;
+					var charset = part.ContentType.Charset;
+					NSUrlResponse response;
+					NSData data;
+
+					using (var content = part.ContentObject.Open ())
+						data = NSData.FromStream (content);
+
+					response = new NSUrlResponse (request.Url, mimeType, (int) (uint)data.Length, charset);
+
+					return new NSCachedUrlResponse (response, data);
+				}
+			}
+
+			return base.CachedResponseForRequest (request);
+		}
+	}
 }

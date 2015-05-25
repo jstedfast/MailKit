@@ -1,5 +1,5 @@
 ﻿//
-// Main.cs
+// MessageViewController.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
@@ -25,22 +25,36 @@
 //
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+
+using MonoTouch.Dialog;
 
 using Foundation;
 using UIKit;
 
+using MimeKit;
+
 namespace ImapClientDemo.iOS
 {
-    public class Application
+    public class MessageViewController : DialogViewController
     {
-        // This is the main entry point of the application.
-        static void Main (string[] args)
+        public MessageViewController (MimeMessage msg) : base (UITableViewStyle.Grouped, null, true)
         {
-            // if you want to use a different Application Delegate class from "AppDelegate"
-            // you can specify it here.
-            UIApplication.Main (args, null, "AppDelegate");
+            Root = new RootElement ("Details") {
+                new Section {
+                    new StyledMultilineElement (msg.Subject),
+                    new StyledMultilineElement ("From:", msg.From.ToString ()),
+                    new StyledStringElement (msg.Date.LocalDateTime.ToString ()) {
+                        Font = UIFont.SystemFontOfSize (12f)
+                    },
+                },
+                new Section {
+                    new StyledMultilineElement (msg.TextBody) {
+                        Font = UIFont.SystemFontOfSize (12f)
+                    }
+                },
+            };
         }
     }
 }
