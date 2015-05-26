@@ -29,17 +29,17 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle, Version=1.8.5622.19235, Culture=neutral, PublicKeyToken=eec3120e64a3fcba, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MimeKit.1.2.0.0\lib\net40\BouncyCastle.dll</HintPath>
+    <Reference Include="BouncyCastle, Version=1.8.5623.19633, Culture=neutral, PublicKeyToken=eec3120e64a3fcba, processorArchitecture=MSIL">
+      <HintPath>..\packages\MimeKit.1.2.1.0\lib\net40\BouncyCastle.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MailKit, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MailKit.1.2.0.0\lib\net40\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.1.2.1.0\lib\net40\MailKit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MimeKit, Version=1.2.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MimeKit.1.2.0.0\lib\net40\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.1.2.1.0\lib\net40\MimeKit.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
