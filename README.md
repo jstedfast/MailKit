@@ -436,6 +436,18 @@ simply send me a Pull Request and I will try to review your changes in a timely 
 If you'd like to contribute but don't have any particular features in mind to work on, check out the issue
 tracker and look for something that might pique your interest!
 
+## Donate
+
+MailKit is a personal open source project that I have put thousands of hours into perfecting with the
+goal of making it not only the very best email framework for .NET, but the best email framework for
+any programming language. I need your help to achieve this.
+
+<a href="http://www.pledgie.com/campaigns/29300" target="_blank">
+  <img src="http://www.pledgie.com/campaigns/29300.png?skin_name=chrome"
+       alt="Click here to lend your support to MimeKit and MailKit by making a donation via pledgie.com!"
+       border="0" />
+</a>
+
 ## Reporting Bugs
 
 Have a bug or a feature request? [Please open a new issue](https://github.com/jstedfast/MailKit/issues).
