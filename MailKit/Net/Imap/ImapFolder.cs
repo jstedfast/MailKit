@@ -53,8 +53,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Creates a new <see cref="ImapFolder"/>.</para>
 		/// <para>If you subclass <see cref="ImapFolder"/>, you will also need to subclass
-		/// <see cref="ImapClient"/> and override the
-		/// <see cref="ImapClient.CreateImapFolder(ImapFolderConstructorArgs)"/>
+		/// <see cref="ImapClient"/> and override the <see cref="ImapClient.CreateImapFolder"/>
 		/// method in order to return a new instance of your ImapFolder subclass.</para>
 		/// </remarks>
 		/// <param name="args">The constructor arguments.</param>

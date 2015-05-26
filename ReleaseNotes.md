@@ -1,5 +1,9 @@
 # Release Notes
 
+### MailKit 1.2.1
+
+* Added hooks to allow subclassing ImapFolder.
+
 ### MailKit 1.2.0
 
 * Added new ImapFolder.GetStream() overloads that allow fetching only the TEXT

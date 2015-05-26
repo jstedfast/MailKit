@@ -1,0 +1,102 @@
+<Type Name="ImapFolderConstructorArgs" FullName="MailKit.Net.Imap.ImapFolderConstructorArgs">
+  <TypeSignature Language="C#" Value="public sealed class ImapFolderConstructorArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ImapFolderConstructorArgs extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            Constructor arguments for <see cref="T:MailKit.Net.Imap.ImapFolder" />.
+            </summary>
+    <remarks>
+            Constructor arguments for <see cref="T:MailKit.Net.Imap.ImapFolder" />.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="C#" Value="public MailKit.FolderAttributes Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype MailKit.FolderAttributes Attributes" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the folder attributes.
+            </summary>
+        <value>The folder attributes.</value>
+        <remarks>
+            Gets the folder attributes.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DirectorySeparator">
+      <MemberSignature Language="C#" Value="public char DirectorySeparator { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char DirectorySeparator" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Char</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the directory separator.
+            </summary>
+        <value>The directory separator.</value>
+        <remarks>
+            Gets the directory separator.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FullName">
+      <MemberSignature Language="C#" Value="public string FullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the full name of the folder.
+            </summary>
+        <value>The full name of the folder.</value>
+        <remarks>
+            This is the equivalent of the full path of a file on a file system.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="C#" Value="public string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the name of the folder.
+            </summary>
+        <value>The name of the folder.</value>
+        <remarks>
+            This is the equivalent of the file name of a file on the file system.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>
