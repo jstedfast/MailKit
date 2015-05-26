@@ -1521,6 +1521,9 @@ namespace MailKit.Net.Imap {
 			ImapFolder quotaRoot;
 			FolderQuota quota;
 
+			if (ImapUtils.IsInbox (encodedName))
+				encodedName = "INBOX";
+
 			if (!engine.FolderCache.TryGetValue (encodedName, out quotaRoot)) {
 				// Note: this shouldn't happen because the quota root should
 				// be one of the parent folders which will all have been added

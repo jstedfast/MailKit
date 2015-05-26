@@ -417,6 +417,16 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Determines whether the specified mailbox is the Inbox.
+		/// </summary>
+		/// <returns><c>true</c> if the specified mailbox name is the Inbox; otherwise, <c>false</c>.</returns>
+		/// <param name="mailboxName">The mailbox name.</param>
+		public static bool IsInbox (string mailboxName)
+		{
+			return string.Compare (mailboxName, "INBOX", StringComparison.OrdinalIgnoreCase) == 0;
+		}
+
+		/// <summary>
 		/// Parses an untagged LIST or LSUB response.
 		/// </summary>
 		/// <param name="engine">The IMAP engine.</param>
@@ -498,6 +508,9 @@ namespace MailKit.Net.Imap {
 			default:
 				throw ImapEngine.UnexpectedToken (token, false);
 			}
+
+			if (IsInbox (encodedName))
+				encodedName = "INBOX";
 
 			if (engine.FolderCache.TryGetValue (encodedName, out folder)) {
 				attrs |= (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked));

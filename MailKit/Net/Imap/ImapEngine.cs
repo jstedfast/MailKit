@@ -936,7 +936,11 @@ namespace MailKit.Net.Imap {
 							delim = '\0';
 						}
 
+						if (ImapUtils.IsInbox (path))
+							path = "INBOX";
+
 						namespaces[n].Add (new FolderNamespace (delim, DecodeMailboxName (path)));
+
 						if (!FolderCache.TryGetValue (path, out folder)) {
 							folder = CreateImapFolder (path, FolderAttributes.None, delim);
 							FolderCache.Add (path, folder);
@@ -1320,6 +1324,9 @@ namespace MailKit.Net.Imap {
 				throw UnexpectedToken (token, false);
 			}
 
+			if (ImapUtils.IsInbox (name))
+				name = "INBOX";
+
 			if (!FolderCache.TryGetValue (name, out folder)) {
 				// FIXME: what should we do in this situation?
 			}
@@ -1661,6 +1668,9 @@ namespace MailKit.Net.Imap {
 					encodedName = string.Empty;
 				}
 
+				if (ImapUtils.IsInbox (encodedName))
+					encodedName = "INBOX";
+
 				if (FolderCache.TryGetValue (encodedName, out parent)) {
 					folder.SetParentFolder (parent);
 					continue;
@@ -1853,6 +1863,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="encodedName">The encoded name.</param>
 		public string DecodeMailboxName (string encodedName)
 		{
+			if (ImapUtils.IsInbox (encodedName))
+				return "INBOX";
+
 			return UTF8Enabled ? encodedName : ImapEncoding.Decode (encodedName);
 		}
 
@@ -1863,6 +1876,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="mailboxName">The encoded mailbox name.</param>
 		public string EncodeMailboxName (string mailboxName)
 		{
+			if (ImapUtils.IsInbox (mailboxName))
+				return "INBOX";
+
 			return UTF8Enabled ? mailboxName : ImapEncoding.Encode (mailboxName);
 		}
 
