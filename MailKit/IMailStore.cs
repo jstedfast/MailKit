@@ -116,6 +116,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
 		void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -150,6 +153,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
 		/// </exception>
 		Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken));
 
@@ -208,11 +214,17 @@ namespace MailKit {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The namespace folder could not be found.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
 		/// </exception>
 		IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
@@ -240,11 +252,17 @@ namespace MailKit {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The namespace folder could not be found.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
 		/// </exception>
 		Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
@@ -272,6 +290,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
 		IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
@@ -297,6 +318,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
 		/// </exception>
 		Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default (CancellationToken));
 

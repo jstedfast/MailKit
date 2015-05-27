@@ -1886,14 +1886,17 @@ namespace MailKit.Net.Imap {
 			QueueCommand (ic);
 			Wait (ic);
 
-			LookupParentFolders (list, cancellationToken);
-
 			ProcessResponseCodes (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			return list.Count > 0 ? list[0] : null;
+			if (list.Count == 0)
+				throw new FolderNotFoundException (path);
+
+			LookupParentFolders (list, cancellationToken);
+
+			return list[0];
 		}
 
 		/// <summary>
@@ -1909,23 +1912,26 @@ namespace MailKit.Net.Imap {
 		public IEnumerable<ImapFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (@namespace.Path);
-			var pattern = encodedName.Length > 0 ? encodedName + @namespace.DirectorySeparator : string.Empty;
 			var command = subscribedOnly ? "LSUB" : "LIST";
 			var list = new List<ImapFolder> ();
+			ImapFolder folder;
 
-			var ic = new ImapCommand (this, cancellationToken, null, command + " \"\" %S\r\n", pattern + "*");
+			if (!GetCachedFolder (encodedName, out folder))
+				throw new FolderNotFoundException (@namespace.Path);
+
+			var ic = new ImapCommand (this, cancellationToken, null, command + " %F \"*\"\r\n", folder);
 			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
 			ic.UserData = list;
 
 			QueueCommand (ic);
 			Wait (ic);
 
-			LookupParentFolders (list, cancellationToken);
-
 			ProcessResponseCodes (ic);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create (command, ic);
+
+			LookupParentFolders (list, cancellationToken);
 
 			return list;
 		}

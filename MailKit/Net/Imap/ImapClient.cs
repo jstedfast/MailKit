@@ -1920,6 +1920,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The namespace folder could not be found.
+		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
@@ -1973,6 +1976,15 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the IDLE command with a NO or BAD response.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server responded with an unexpected token.
 		/// </exception>
 		public override IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken))
 		{
