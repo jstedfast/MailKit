@@ -48,6 +48,7 @@ namespace MailKit.Net.Imap {
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		const string QuotedSpecials = " \t()<>@,;:\\\"/[]?=";
+		static int InboxLength = "INBOX".Length;
 
 		static readonly string[] Months = {
 			"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -417,6 +418,30 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Canonicalize the name of the mailbox.
+		/// </summary>
+		/// <remarks>
+		/// Canonicalizes the name of the mailbox by replacing various
+		/// capitalizations of "INBOX" with the literal "INBOX" string.
+		/// </remarks>
+		/// <returns>The mailbox name.</returns>
+		/// <param name="mailboxName">The encoded mailbox name.</param>
+		/// <param name="directorySeparator">The directory separator.</param>
+		public static string CanonicalizeMailboxName (string mailboxName, char directorySeparator)
+		{
+			if (!mailboxName.StartsWith ("INBOX", StringComparison.OrdinalIgnoreCase))
+				return mailboxName;
+
+			if (mailboxName.Length > InboxLength && mailboxName[InboxLength] == directorySeparator)
+				return "INBOX" + mailboxName.Substring (InboxLength);
+
+			if (mailboxName.Length == InboxLength)
+				return "INBOX";
+
+			return mailboxName;
+		}
+
+		/// <summary>
 		/// Determines whether the specified mailbox is the Inbox.
 		/// </summary>
 		/// <returns><c>true</c> if the specified mailbox name is the Inbox; otherwise, <c>false</c>.</returns>
@@ -470,7 +495,7 @@ namespace MailKit.Net.Imap {
 					// XLIST flags:
 				case "\\AllMail":       attrs |= FolderAttributes.All; break;
 				case "\\Important":     attrs |= FolderAttributes.Flagged; break;
-				case "\\Inbox":         break;
+				case "\\Inbox":         attrs |= FolderAttributes.Inbox; break;
 				case "\\Spam":          attrs |= FolderAttributes.Junk; break;
 				case "\\Starred":       attrs |= FolderAttributes.Flagged; break;
 				}
@@ -509,15 +534,12 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 			}
 
-			if (IsInbox (encodedName))
-				encodedName = "INBOX";
-
-			if (engine.FolderCache.TryGetValue (encodedName, out folder)) {
+			if (engine.GetCachedFolder (encodedName, out folder)) {
 				attrs |= (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked));
 				folder.UpdateAttributes (attrs);
 			} else {
 				folder = engine.CreateImapFolder (encodedName, attrs, delim);
-				engine.FolderCache.Add (encodedName, folder);
+				engine.CacheFolder (folder);
 			}
 
 			list.Add (folder);

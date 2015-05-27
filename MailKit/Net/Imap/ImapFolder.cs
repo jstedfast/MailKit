@@ -837,8 +837,11 @@ namespace MailKit.Net.Imap {
 			//
 			// See https://github.com/jstedfast/MailKit/issues/149 for more details.
 			var prefix = FullName.Length > 0 ? FullName + DirectorySeparator : string.Empty;
+			prefix = ImapUtils.CanonicalizeMailboxName (prefix, DirectorySeparator);
 			foreach (var folder in list) {
-				if (folder.FullName != prefix + folder.Name)
+				var canonicalFullName = ImapUtils.CanonicalizeMailboxName (folder.FullName, folder.DirectorySeparator);
+
+				if (canonicalFullName != prefix + folder.Name)
 					continue;
 
 				folder.ParentFolder = this;
@@ -904,7 +907,7 @@ namespace MailKit.Net.Imap {
 			var list = new List<ImapFolder> ();
 			ImapFolder subfolder;
 
-			if (Engine.FolderCache.TryGetValue (encodedName, out subfolder))
+			if (Engine.GetCachedFolder (encodedName, out subfolder))
 				return subfolder;
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
@@ -1522,10 +1525,7 @@ namespace MailKit.Net.Imap {
 			ImapFolder quotaRoot;
 			FolderQuota quota;
 
-			if (ImapUtils.IsInbox (encodedName))
-				encodedName = "INBOX";
-
-			if (!engine.FolderCache.TryGetValue (encodedName, out quotaRoot)) {
+			if (!engine.GetCachedFolder (encodedName, out quotaRoot)) {
 				// Note: this shouldn't happen because the quota root should
 				// be one of the parent folders which will all have been added
 				// to the folder cache by thsi point.

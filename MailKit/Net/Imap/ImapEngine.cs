@@ -91,6 +91,29 @@ namespace MailKit.Net.Imap {
 		Handled
 	}
 
+	class ImapFolderNameComparer : IEqualityComparer<string>
+	{
+		public char DirectorySeparator;
+
+		public ImapFolderNameComparer (char directorySeparator)
+		{
+			DirectorySeparator = directorySeparator;
+		}
+
+		public bool Equals (string x, string y)
+		{
+			x = ImapUtils.CanonicalizeMailboxName (x, DirectorySeparator);
+			y = ImapUtils.CanonicalizeMailboxName (y, DirectorySeparator);
+
+			return x == y;
+		}
+
+		public int GetHashCode (string obj)
+		{
+			return ImapUtils.CanonicalizeMailboxName (obj, DirectorySeparator).GetHashCode ();
+		}
+	}
+
 	/// <summary>
 	/// An IMAP command engine.
 	/// </summary>
@@ -102,6 +125,7 @@ namespace MailKit.Net.Imap {
 
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
 		readonly CreateImapFolderDelegate createImapFolder;
+		readonly ImapFolderNameComparer cacheComparer;
 		readonly List<ImapCommand> queue;
 		internal char TagPrefix;
 		ImapCommand current;
@@ -112,8 +136,10 @@ namespace MailKit.Net.Imap {
 
 		public ImapEngine (CreateImapFolderDelegate createImapFolderDelegate)
 		{
+			cacheComparer = new ImapFolderNameComparer ('.');
+
+			FolderCache = new Dictionary<string, ImapFolder> (cacheComparer);
 			ThreadingAlgorithms = new HashSet<ThreadingAlgorithm> ();
-			FolderCache = new Dictionary<string, ImapFolder> ();
 			AuthenticationMechanisms = new HashSet<string> ();
 			CompressionAlgorithms = new HashSet<string> ();
 			SupportedContexts = new HashSet<string> ();
@@ -936,14 +962,11 @@ namespace MailKit.Net.Imap {
 							delim = '\0';
 						}
 
-						if (ImapUtils.IsInbox (path))
-							path = "INBOX";
-
 						namespaces[n].Add (new FolderNamespace (delim, DecodeMailboxName (path)));
 
-						if (!FolderCache.TryGetValue (path, out folder)) {
+						if (!GetCachedFolder (path, out folder)) {
 							folder = CreateImapFolder (path, FolderAttributes.None, delim);
-							FolderCache.Add (path, folder);
+							CacheFolder (folder);
 						}
 
 						folder.UpdateIsNamespace (true);
@@ -1324,10 +1347,7 @@ namespace MailKit.Net.Imap {
 				throw UnexpectedToken (token, false);
 			}
 
-			if (ImapUtils.IsInbox (name))
-				name = "INBOX";
-
-			if (!FolderCache.TryGetValue (name, out folder)) {
+			if (!GetCachedFolder (name, out folder)) {
 				// FIXME: what should we do in this situation?
 			}
 
@@ -1640,6 +1660,29 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Cache the specified folder.
+		/// </summary>
+		/// <param name="folder">The folder.</param>
+		public void CacheFolder (ImapFolder folder)
+		{
+			if ((folder.Attributes & FolderAttributes.Inbox) != 0)
+				cacheComparer.DirectorySeparator = folder.DirectorySeparator;
+
+			FolderCache.Add (folder.EncodedName, folder);
+		}
+
+		/// <summary>
+		/// Gets the cached folder.
+		/// </summary>
+		/// <returns><c>true</c> if the folder was retreived from the cache; otherwise, <c>false</c>.</returns>
+		/// <param name="encodedName">The encoded folder name.</param>
+		/// <param name="folder">The cached folder.</param>
+		public bool GetCachedFolder (string encodedName, out ImapFolder folder)
+		{
+			return FolderCache.TryGetValue (encodedName, out folder);
+		}
+
+		/// <summary>
 		/// Looks up and sets the <see cref="MailFolder.ParentFolder"/> property of each of the folders.
 		/// </summary>
 		/// <param name="folders">The IMAP folders.</param>
@@ -1668,10 +1711,7 @@ namespace MailKit.Net.Imap {
 					encodedName = string.Empty;
 				}
 
-				if (ImapUtils.IsInbox (encodedName))
-					encodedName = "INBOX";
-
-				if (FolderCache.TryGetValue (encodedName, out parent)) {
+				if (GetCachedFolder (encodedName, out parent)) {
 					folder.SetParentFolder (parent);
 					continue;
 				}
@@ -1683,9 +1723,9 @@ namespace MailKit.Net.Imap {
 				QueueCommand (ic);
 				Wait (ic);
 
-				if (!FolderCache.TryGetValue (encodedName, out parent)) {
+				if (!GetCachedFolder (encodedName, out parent)) {
 					parent = CreateImapFolder (encodedName, FolderAttributes.NonExistent, folder.DirectorySeparator);
-					FolderCache.Add (encodedName, parent);
+					CacheFolder (parent);
 				} else if (parent.ParentFolder == null && !parent.IsNamespace) {
 					list.Add (parent);
 				}
@@ -1746,7 +1786,7 @@ namespace MailKit.Net.Imap {
 
 			ImapFolder folder;
 
-			if (!FolderCache.TryGetValue ("INBOX", out folder)) {
+			if (!GetCachedFolder ("INBOX", out folder)) {
 				var list = new List<ImapFolder> ();
 
 				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
@@ -1836,7 +1876,7 @@ namespace MailKit.Net.Imap {
 			var list = new List<ImapFolder> ();
 			ImapFolder folder;
 
-			if (FolderCache.TryGetValue (encodedName, out folder))
+			if (GetCachedFolder (encodedName, out folder))
 				return folder;
 
 			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
@@ -1863,9 +1903,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="encodedName">The encoded name.</param>
 		public string DecodeMailboxName (string encodedName)
 		{
-			if (ImapUtils.IsInbox (encodedName))
-				return "INBOX";
-
 			return UTF8Enabled ? encodedName : ImapEncoding.Decode (encodedName);
 		}
 
@@ -1876,9 +1913,6 @@ namespace MailKit.Net.Imap {
 		/// <param name="mailboxName">The encoded mailbox name.</param>
 		public string EncodeMailboxName (string mailboxName)
 		{
-			if (ImapUtils.IsInbox (mailboxName))
-				return "INBOX";
-
 			return UTF8Enabled ? mailboxName : ImapEncoding.Encode (mailboxName);
 		}
 

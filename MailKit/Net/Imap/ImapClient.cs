@@ -1890,7 +1890,7 @@ namespace MailKit.Net.Imap {
 			var encodedName = engine.EncodeMailboxName (@namespace.Path);
 			ImapFolder folder;
 
-			if (engine.FolderCache.TryGetValue (encodedName, out folder))
+			if (engine.GetCachedFolder (encodedName, out folder))
 				return folder;
 
 			throw new FolderNotFoundException (@namespace.Path);
