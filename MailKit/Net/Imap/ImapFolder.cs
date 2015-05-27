@@ -836,8 +836,9 @@ namespace MailKit.Net.Imap {
 			// folders out of the list we'll be returning to our caller.
 			//
 			// See https://github.com/jstedfast/MailKit/issues/149 for more details.
+			var prefix = FullName.Length > 0 ? FullName + DirectorySeparator : string.Empty;
 			foreach (var folder in list) {
-				if (folder.FullName != pattern + folder.Name)
+				if (folder.FullName != prefix + folder.Name)
 					continue;
 
 				folder.ParentFolder = this;
