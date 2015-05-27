@@ -608,7 +608,7 @@ namespace MailKit.Net.Imap {
 			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
-			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
+			if (IsNamespace || (Attributes & FolderAttributes.Inbox) != 0)
 				throw new InvalidOperationException ("Cannot rename this folder.");
 
 			CheckState (false, false);
@@ -679,7 +679,7 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Delete (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (IsNamespace || FullName.ToUpperInvariant () == "INBOX")
+			if (IsNamespace || (Attributes & FolderAttributes.Inbox) != 0)
 				throw new InvalidOperationException ("Cannot delete this folder.");
 
 			CheckState (false, false);

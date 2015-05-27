@@ -53,9 +53,6 @@ namespace MailKit.Net.Imap {
 			EncodedName = encodedName;
 			Attributes = attributes;
 			Engine = engine;
-
-			if (ImapUtils.IsInbox (encodedName))
-				Attributes |= FolderAttributes.Inbox;
 		}
 
 		ImapFolderConstructorArgs ()

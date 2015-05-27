@@ -534,6 +534,9 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (token, false);
 			}
 
+			if (IsInbox (encodedName))
+				attrs |= FolderAttributes.Inbox;
+
 			if (engine.GetCachedFolder (encodedName, out folder)) {
 				attrs |= (folder.Attributes & ~(FolderAttributes.Marked | FolderAttributes.Unmarked));
 				folder.UpdateAttributes (attrs);
