@@ -1897,6 +1897,40 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get all of the folders within the specified namespace.
+		/// </summary>
+		/// <remarks>
+		/// Gets all of the folders within the specified namespace.
+		/// </remarks>
+		/// <returns>The subfolders.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		public IEnumerable<ImapFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken)
+		{
+			var encodedName = EncodeMailboxName (@namespace.Path);
+			var pattern = encodedName.Length > 0 ? encodedName + @namespace.DirectorySeparator : string.Empty;
+			var command = subscribedOnly ? "LSUB" : "LIST";
+			var list = new List<ImapFolder> ();
+
+			var ic = new ImapCommand (this, cancellationToken, null, command + " \"\" %S\r\n", pattern + "*");
+			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
+			ic.UserData = list;
+
+			QueueCommand (ic);
+			Wait (ic);
+
+			LookupParentFolders (list, cancellationToken);
+
+			ProcessResponseCodes (ic);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create (command, ic);
+
+			return list;
+		}
+
+		/// <summary>
 		/// Decodes the name of the mailbox.
 		/// </summary>
 		/// <returns>The mailbox name.</returns>

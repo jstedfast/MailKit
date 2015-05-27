@@ -1897,6 +1897,58 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get all of the folders within the specified namespace.
+		/// </summary>
+		/// <remarks>
+		/// Gets all of the folders within the specified namespace.
+		/// </remarks>
+		/// <returns>The folders.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>The <see cref="ImapClient"/> is not connected.</para>
+		/// <para>-or-</para>
+		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied to the IDLE command with a NO or BAD response.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
+		public override IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (@namespace == null)
+				throw new ArgumentNullException ("namespace");
+
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new InvalidOperationException ("The ImapClient is not connected.");
+
+			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
+				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+
+			foreach (var folder in engine.GetFolders (@namespace, subscribedOnly, cancellationToken))
+				yield return folder;
+
+			yield break;
+		}
+
+		/// <summary>
 		/// Get the folder for the specified path.
 		/// </summary>
 		/// <remarks>
