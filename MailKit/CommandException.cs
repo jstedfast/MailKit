@@ -39,12 +39,12 @@ namespace MailKit {
 	/// <see cref="CommandException"/> is typically non-fatal (meaning that it does
 	/// not force the client to disconnect).
 	/// </remarks>
-	#if !NETFX_CORE
+#if !NETFX_CORE
 	[Serializable]
-	#endif
+#endif
 	public abstract class CommandException : Exception
 	{
-		#if !NETFX_CORE
+#if !NETFX_CORE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
 		/// </summary>
@@ -56,7 +56,7 @@ namespace MailKit {
 		protected CommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
 		}
-		#endif
+#endif
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
