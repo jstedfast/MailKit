@@ -100,7 +100,7 @@ namespace MailKit.Net.Smtp {
 
 			value = info.GetString ("ErrorCode");
 			if (!Enum.TryParse (value, out code))
-				SmtpErrorCode = SmtpErrorCode.MessageNotAccepted;
+				ErrorCode = SmtpErrorCode.MessageNotAccepted;
 			else
 				ErrorCode = code;
 
