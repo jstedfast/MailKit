@@ -126,5 +126,29 @@ namespace MailKit {
 		public string FolderName {
 			get; private set;
 		}
+
+#if !NETFX_CORE
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
+		/// with information about the exception.
+		/// </summary>
+		/// <remarks>
+		/// Serializes the state of the <see cref="FolderNotFoundException"/>.
+		/// </remarks>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("FolderName", FolderName);
+
+			base.GetObjectData (info, context);
+		}
+#endif
 	}
 }
