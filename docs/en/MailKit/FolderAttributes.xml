@@ -125,9 +125,25 @@
             </summary>
       </Docs>
     </Member>
+    <Member MemberName="Inbox">
+      <MemberSignature Language="C#" Value="Inbox" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.FolderAttributes Inbox = int32(8192)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>MailKit.FolderAttributes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            The folder is the special "Inbox" folder.
+            </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Junk">
       <MemberSignature Language="C#" Value="Junk" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.FolderAttributes Junk = int32(8192)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.FolderAttributes Junk = int32(16384)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -247,7 +263,7 @@
     </Member>
     <Member MemberName="Sent">
       <MemberSignature Language="C#" Value="Sent" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.FolderAttributes Sent = int32(16384)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.FolderAttributes Sent = int32(32768)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>
@@ -281,7 +297,7 @@
     </Member>
     <Member MemberName="Trash">
       <MemberSignature Language="C#" Value="Trash" />
-      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.FolderAttributes Trash = int32(32768)" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype MailKit.FolderAttributes Trash = int32(65536)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.0.0</AssemblyVersion>

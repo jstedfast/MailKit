@@ -499,12 +499,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -532,12 +533,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1108,12 +1110,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1140,12 +1143,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1190,8 +1194,6 @@ namespace MailKit {
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the STATUS command.
@@ -1233,8 +1235,6 @@ namespace MailKit {
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the STATUS command.
@@ -2022,12 +2022,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2059,12 +2060,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2111,12 +2113,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2157,12 +2160,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3030,12 +3034,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3086,12 +3091,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3143,12 +3149,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3192,12 +3199,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3253,12 +3261,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3309,12 +3318,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3368,12 +3378,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3417,12 +3428,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3478,12 +3490,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3530,12 +3543,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3584,12 +3598,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3630,12 +3645,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3685,12 +3701,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3737,12 +3754,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3791,12 +3809,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3837,12 +3856,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3899,12 +3919,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3949,12 +3970,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4013,12 +4035,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4065,12 +4088,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4132,12 +4156,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4184,12 +4209,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4256,12 +4282,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="IMailStore"/> does not support mod-sequences.
@@ -4315,12 +4342,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="IMailStore"/> does not support mod-sequences.
@@ -4389,12 +4417,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="IMailStore"/> does not support mod-sequences.
@@ -4450,12 +4479,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="IMailStore"/> does not support mod-sequences.
@@ -4527,12 +4557,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="IMailStore"/> does not support mod-sequences.
@@ -4588,12 +4619,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="IMailStore"/> does not support mod-sequences.
@@ -4656,12 +4688,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4706,12 +4739,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4770,12 +4804,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4822,12 +4857,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4889,12 +4925,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4941,12 +4978,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5009,12 +5047,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -5064,12 +5103,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -5134,12 +5174,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5188,12 +5229,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5258,12 +5300,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5312,12 +5355,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5377,12 +5421,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5426,12 +5471,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5496,12 +5542,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5550,12 +5597,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5623,12 +5671,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5677,12 +5726,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5748,12 +5798,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -5803,12 +5854,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -5879,12 +5931,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -5939,12 +5992,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -6018,12 +6072,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -6078,12 +6133,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -6136,12 +6192,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6172,12 +6229,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6215,12 +6273,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6251,12 +6310,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6301,12 +6361,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6341,12 +6402,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6392,12 +6454,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6433,12 +6496,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6483,12 +6547,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6523,12 +6588,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6577,12 +6643,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6618,12 +6685,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6677,12 +6745,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6723,12 +6792,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6781,12 +6851,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6826,12 +6897,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6892,12 +6964,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6945,12 +7018,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7010,12 +7084,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7062,12 +7137,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7132,12 +7208,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7183,12 +7260,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7249,12 +7327,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7299,12 +7378,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7357,12 +7437,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7400,12 +7481,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7443,12 +7528,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7487,12 +7576,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7534,12 +7627,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7582,12 +7679,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7643,12 +7744,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7689,12 +7794,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7744,12 +7853,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7787,12 +7900,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7830,12 +7947,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7874,12 +7995,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7921,12 +8046,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7969,12 +8098,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8030,12 +8163,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8076,12 +8213,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8129,12 +8270,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8170,12 +8315,16 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8211,12 +8360,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8253,12 +8403,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8298,12 +8449,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8344,12 +8496,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8400,12 +8553,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8444,12 +8598,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8503,12 +8658,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8555,12 +8711,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8621,12 +8778,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8671,12 +8829,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8736,12 +8895,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8788,12 +8948,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8854,12 +9015,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8904,12 +9066,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -8967,12 +9130,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -9017,12 +9181,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -9078,12 +9243,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -9126,12 +9292,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -9181,12 +9348,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9224,12 +9392,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9267,12 +9436,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9311,12 +9481,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9358,12 +9529,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9406,12 +9578,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9464,12 +9637,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9510,12 +9684,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9562,12 +9737,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9605,12 +9781,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9648,12 +9825,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9692,12 +9870,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9739,12 +9918,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9787,12 +9967,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9845,12 +10026,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9891,12 +10073,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9941,12 +10124,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -9982,12 +10166,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -10023,12 +10208,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -10065,12 +10251,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -10110,12 +10297,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -10156,12 +10344,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -10209,12 +10398,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -10253,12 +10443,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -10309,12 +10500,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10361,12 +10553,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10424,12 +10617,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10474,12 +10668,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10536,12 +10731,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10588,12 +10784,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10651,12 +10848,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10701,12 +10899,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10761,12 +10960,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10811,12 +11011,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10869,12 +11070,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10917,12 +11119,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -10972,12 +11175,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11018,12 +11222,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11067,12 +11272,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11114,12 +11320,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11175,12 +11382,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11221,12 +11429,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11270,12 +11479,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11317,12 +11527,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11376,12 +11587,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11420,12 +11632,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11467,12 +11680,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11512,12 +11726,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11576,12 +11791,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -11627,12 +11843,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -11697,12 +11914,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -11748,12 +11966,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -11816,12 +12035,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -11865,12 +12085,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -11926,12 +12147,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -11972,12 +12194,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12021,12 +12244,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12068,12 +12292,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12129,12 +12354,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12175,12 +12401,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12224,12 +12451,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12271,12 +12499,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12330,12 +12559,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12374,12 +12604,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12421,12 +12652,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12466,12 +12698,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12527,12 +12760,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -12578,12 +12812,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -12645,12 +12880,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -12696,12 +12932,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -12761,12 +12998,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -12810,12 +13048,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open in read-write mode.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open in read-write mode.</para>
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="MailFolder"/> does not support mod-sequences.
@@ -12865,12 +13104,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12904,12 +13144,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -12963,12 +13204,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13012,12 +13254,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13075,12 +13318,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13122,12 +13366,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13194,12 +13439,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13250,12 +13496,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13317,12 +13564,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13362,12 +13610,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13425,12 +13674,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13478,12 +13728,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -13833,12 +14084,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		public abstract IEnumerator<MimeMessage> GetEnumerator ();
 
@@ -13852,12 +14104,13 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>The <see cref="IMailStore"/> is not connected.</para>
 		/// <para>-or-</para>
 		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
 		/// </exception>
 		IEnumerator IEnumerable.GetEnumerator ()
 		{

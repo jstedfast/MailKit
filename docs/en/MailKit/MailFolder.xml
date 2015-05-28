@@ -246,8 +246,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -260,6 +258,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -309,8 +310,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -323,6 +322,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -372,8 +374,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -386,6 +386,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -430,8 +433,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -444,6 +445,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -490,8 +494,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -504,6 +506,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -555,8 +560,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -569,6 +572,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -621,8 +627,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -638,6 +642,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -689,8 +696,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -703,6 +708,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -755,8 +763,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -772,6 +778,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -818,8 +827,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -832,6 +839,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -886,8 +896,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -903,6 +911,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -957,8 +968,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -974,6 +983,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1019,8 +1031,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1033,6 +1043,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1083,8 +1096,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1097,6 +1108,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1147,8 +1161,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1161,6 +1173,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1206,8 +1221,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1220,6 +1233,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1267,8 +1283,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1281,6 +1295,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1333,8 +1350,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1347,6 +1362,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1399,8 +1417,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -1416,6 +1432,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1468,8 +1487,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1482,6 +1499,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1534,8 +1554,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -1551,6 +1569,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1598,8 +1619,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1612,6 +1631,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1666,8 +1688,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -1683,6 +1703,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1737,8 +1760,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -1754,6 +1775,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1801,8 +1825,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1815,6 +1837,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1868,8 +1893,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1882,6 +1905,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1935,8 +1961,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1949,6 +1973,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1996,8 +2023,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2010,6 +2035,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2066,8 +2094,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -2083,6 +2109,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2139,8 +2168,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -2156,6 +2183,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2204,8 +2234,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2218,6 +2246,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2272,8 +2303,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2286,6 +2315,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2340,8 +2372,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2354,6 +2384,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2402,8 +2435,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2416,6 +2447,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2472,8 +2506,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -2489,6 +2521,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -2545,8 +2580,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -2562,6 +2595,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -3599,8 +3635,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3613,6 +3647,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3646,8 +3683,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3660,6 +3695,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3694,8 +3732,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3708,6 +3744,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3743,8 +3782,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3757,6 +3794,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3803,8 +3843,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -3820,6 +3858,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3869,8 +3910,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -3886,6 +3925,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3937,8 +3979,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3951,6 +3991,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3996,8 +4039,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4010,6 +4051,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -4056,8 +4100,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -4073,6 +4115,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -4125,8 +4170,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -4142,6 +4185,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -4194,8 +4240,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4208,6 +4252,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -4254,8 +4301,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4268,6 +4313,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -4612,8 +4660,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4626,6 +4672,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4674,8 +4723,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4688,6 +4735,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4726,8 +4776,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4740,6 +4788,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4789,8 +4840,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4803,6 +4852,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4855,8 +4907,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4869,6 +4919,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -4921,8 +4974,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4935,6 +4986,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -4993,8 +5047,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5007,6 +5059,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5065,8 +5120,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5079,6 +5132,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5139,8 +5195,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.IMailStore" /> does not support mod-sequences.
@@ -5156,6 +5210,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5214,8 +5271,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5228,6 +5283,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5286,8 +5344,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5300,6 +5356,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5356,8 +5415,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -5373,6 +5430,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5429,8 +5489,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5443,6 +5501,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5509,8 +5570,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.IMailStore" /> does not support mod-sequences.
@@ -5526,6 +5585,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5592,8 +5654,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.IMailStore" /> does not support mod-sequences.
@@ -5609,6 +5669,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5671,8 +5734,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5685,6 +5746,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5747,8 +5811,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5761,6 +5823,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5822,8 +5887,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5836,6 +5899,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5897,8 +5963,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5911,6 +5975,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5971,8 +6038,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -5988,6 +6053,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6053,8 +6121,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -6070,6 +6136,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6135,8 +6204,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -6152,6 +6219,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6205,8 +6275,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6219,6 +6287,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6272,8 +6343,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6286,6 +6355,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6345,8 +6417,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6359,6 +6429,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6418,8 +6491,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6432,6 +6503,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6492,8 +6566,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.IMailStore" /> does not support mod-sequences.
@@ -6509,6 +6581,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6568,8 +6643,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6582,6 +6655,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6641,8 +6717,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6655,6 +6729,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6711,8 +6788,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -6728,6 +6803,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6784,8 +6862,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6798,6 +6874,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6864,8 +6943,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.IMailStore" /> does not support mod-sequences.
@@ -6881,6 +6958,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6947,8 +7027,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.IMailStore" /> does not support mod-sequences.
@@ -6964,6 +7042,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7026,8 +7107,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7040,6 +7119,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7102,8 +7184,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7116,6 +7196,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7177,8 +7260,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7191,6 +7272,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7252,8 +7336,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7266,6 +7348,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7326,8 +7411,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -7343,6 +7426,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7408,8 +7494,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -7425,6 +7509,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7490,8 +7577,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -7507,6 +7592,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7794,8 +7882,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7808,6 +7894,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7851,8 +7940,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7865,6 +7952,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7911,8 +8001,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7925,6 +8013,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -7971,8 +8062,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -7985,6 +8074,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8028,8 +8120,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8042,6 +8132,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8085,8 +8178,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8099,6 +8190,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8145,8 +8239,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8159,6 +8251,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8205,8 +8300,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8219,6 +8312,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8249,9 +8345,10 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -8289,8 +8386,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8303,6 +8398,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8341,8 +8439,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8355,6 +8451,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8393,8 +8492,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8407,6 +8504,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8445,8 +8545,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8459,6 +8557,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8707,8 +8808,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8721,6 +8820,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8773,8 +8875,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8787,6 +8887,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8844,8 +8947,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8858,6 +8959,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8915,8 +9019,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -8929,6 +9031,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -8989,8 +9094,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9003,6 +9106,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9063,8 +9169,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9077,6 +9181,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9129,8 +9236,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9143,6 +9248,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9195,8 +9303,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9209,6 +9315,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9266,8 +9375,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9280,6 +9387,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9337,8 +9447,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9351,6 +9459,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9411,8 +9522,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9425,6 +9534,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9485,8 +9597,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -9499,6 +9609,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -9950,8 +10063,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -9967,6 +10078,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -10019,8 +10133,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -10036,6 +10148,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -10087,8 +10202,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -10101,6 +10214,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -10146,8 +10262,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -10160,6 +10274,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -10206,8 +10323,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -10223,6 +10338,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -10275,8 +10393,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the UIDPLUS extension.
@@ -10292,6 +10408,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -10344,8 +10463,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -10358,6 +10475,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -10404,8 +10524,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -10418,6 +10536,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11322,8 +11443,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11336,6 +11455,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11385,8 +11507,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11399,6 +11519,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11448,8 +11571,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11462,6 +11583,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11506,8 +11630,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11520,6 +11642,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11566,8 +11691,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11580,6 +11703,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11631,8 +11757,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11645,6 +11769,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11697,8 +11824,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -11714,6 +11839,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11765,8 +11893,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11779,6 +11905,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11831,8 +11960,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -11848,6 +11975,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11894,8 +12024,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -11908,6 +12036,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -11962,8 +12093,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -11979,6 +12108,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12033,8 +12165,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -12050,6 +12180,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12095,8 +12228,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12109,6 +12240,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12159,8 +12293,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12173,6 +12305,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12223,8 +12358,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12237,6 +12370,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12282,8 +12418,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12296,6 +12430,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12343,8 +12480,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12357,6 +12492,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12409,8 +12547,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12423,6 +12559,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12475,8 +12614,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -12492,6 +12629,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12544,8 +12684,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12558,6 +12696,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12610,8 +12751,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -12627,6 +12766,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12674,8 +12816,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12688,6 +12828,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12742,8 +12885,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -12759,6 +12900,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12813,8 +12957,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -12830,6 +12972,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12877,8 +13022,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12891,6 +13034,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -12944,8 +13090,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -12958,6 +13102,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13011,8 +13158,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13025,6 +13170,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13072,8 +13220,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13086,6 +13232,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13142,8 +13291,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -13159,6 +13306,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13215,8 +13365,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -13232,6 +13380,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13280,8 +13431,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13294,6 +13443,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13348,8 +13500,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13362,6 +13512,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13416,8 +13569,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13430,6 +13581,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13478,8 +13632,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13492,6 +13644,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13548,8 +13703,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -13565,6 +13718,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13621,8 +13777,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -13638,6 +13792,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -13824,8 +13981,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13838,6 +13993,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -13892,8 +14050,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13906,6 +14062,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -13959,8 +14118,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -13973,6 +14130,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -14038,8 +14198,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14052,6 +14210,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -14093,8 +14254,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14107,6 +14266,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -14161,8 +14323,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14175,6 +14335,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -14228,8 +14391,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14242,6 +14403,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -14307,8 +14471,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14321,6 +14483,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -14479,8 +14644,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14493,6 +14656,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14540,8 +14706,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14554,6 +14718,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14601,8 +14768,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14615,6 +14780,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14657,8 +14825,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14671,6 +14837,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14714,8 +14883,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14728,6 +14895,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14777,8 +14947,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14791,6 +14959,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14841,8 +15012,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -14858,6 +15027,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14907,8 +15079,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -14921,6 +15091,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -14971,8 +15144,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -14988,6 +15159,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15032,8 +15206,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15046,6 +15218,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15098,8 +15273,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -15115,6 +15288,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15167,8 +15343,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -15184,6 +15358,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15226,8 +15403,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15240,6 +15415,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15288,8 +15466,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15302,6 +15478,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15350,8 +15529,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15364,6 +15541,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15407,8 +15587,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15421,6 +15599,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15465,8 +15646,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15479,6 +15658,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15529,8 +15711,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15543,6 +15723,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15593,8 +15776,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -15610,6 +15791,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15660,8 +15844,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15674,6 +15856,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15724,8 +15909,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -15741,6 +15924,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15786,8 +15972,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15800,6 +15984,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15852,8 +16039,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -15869,6 +16054,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15921,8 +16109,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -15938,6 +16124,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -15982,8 +16171,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -15996,6 +16183,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16047,8 +16237,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -16061,6 +16249,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16112,8 +16303,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -16126,6 +16315,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16171,8 +16363,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -16185,6 +16375,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16239,8 +16432,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -16256,6 +16447,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16310,8 +16504,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -16327,6 +16519,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16372,8 +16567,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -16386,6 +16579,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16438,8 +16634,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -16452,6 +16646,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16504,8 +16701,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -16518,6 +16713,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16564,8 +16762,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -16578,6 +16774,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16632,8 +16831,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -16649,6 +16846,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16703,8 +16903,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.MailFolder" /> does not support mod-sequences.
@@ -16720,6 +16918,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -16889,8 +17090,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the STATUS command.
@@ -16948,8 +17147,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the STATUS command.
@@ -17146,9 +17343,10 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Thread">
@@ -17196,8 +17394,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -17210,6 +17406,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -17270,8 +17469,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -17284,6 +17481,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -17332,8 +17532,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -17346,6 +17544,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -17406,8 +17607,6 @@
           <para>The <see cref="T:MailKit.IMailStore" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.IMailStore" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -17420,6 +17619,9 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>

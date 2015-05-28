@@ -38,7 +38,8 @@
         <remarks>
           <para>Creates a new <see cref="T:MailKit.Net.Imap.ImapFolder" />.</para>
           <para>If you subclass <see cref="T:MailKit.Net.Imap.ImapFolder" />, you will also need to subclass
-            <see cref="T:MailKit.Net.Imap.ImapClient" /> and override the <see cref="M:MailKit.Net.Imap.ImapClient.CreateImapFolder(MailKit.Net.Imap.ImapFolderConstructorArgs)" />
+            <see cref="T:MailKit.Net.Imap.ImapClient" /> and override the
+            <see cref="M:MailKit.Net.Imap.ImapClient.CreateImapFolder(MailKit.Net.Imap.ImapFolderConstructorArgs)" />
             method in order to return a new instance of your ImapFolder subclass.</para>
         </remarks>
         <exception cref="T:System.ArgumentNullException">
@@ -155,8 +156,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -169,6 +168,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -220,8 +222,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -234,6 +234,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -288,8 +291,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -305,6 +306,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -359,8 +363,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -376,6 +378,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -429,8 +434,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -443,6 +446,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -496,8 +502,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -510,6 +514,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -566,8 +573,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -580,6 +585,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -636,8 +644,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -650,6 +656,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -949,8 +958,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -963,6 +970,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1063,8 +1073,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the UIDPLUS extension.
@@ -1080,6 +1088,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1131,8 +1142,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1145,6 +1154,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1282,8 +1294,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1296,6 +1306,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1344,8 +1357,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1361,6 +1372,9 @@
             </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the UIDPLUS extension.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -1413,8 +1427,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1427,6 +1439,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1479,8 +1494,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1493,6 +1506,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1551,8 +1567,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1565,6 +1579,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1623,8 +1640,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1637,6 +1652,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1697,8 +1715,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -1714,6 +1730,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1772,8 +1791,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1786,6 +1803,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1844,8 +1864,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -1858,6 +1876,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1914,8 +1935,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -1931,6 +1950,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1987,8 +2009,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2001,6 +2021,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2067,8 +2090,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -2084,6 +2105,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2150,8 +2174,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -2167,6 +2189,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2229,8 +2254,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -2246,6 +2269,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2308,8 +2334,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -2325,6 +2349,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2386,8 +2413,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2400,6 +2425,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2461,8 +2489,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2475,6 +2501,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2535,8 +2564,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -2552,6 +2579,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2617,8 +2647,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -2634,6 +2662,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2699,8 +2730,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -2716,6 +2745,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2860,8 +2892,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2874,6 +2904,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2917,8 +2950,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2931,6 +2962,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -2974,8 +3008,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2988,6 +3020,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3031,8 +3066,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3045,6 +3078,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3091,8 +3127,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3105,6 +3139,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3151,8 +3188,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3165,6 +3200,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3211,8 +3249,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3225,6 +3261,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3271,8 +3310,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3285,6 +3322,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3315,9 +3355,10 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -3358,8 +3399,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3372,6 +3411,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3410,8 +3452,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3424,6 +3464,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3574,8 +3617,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3588,6 +3629,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3640,8 +3684,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3654,6 +3696,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3714,8 +3759,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3728,6 +3771,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3788,8 +3834,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -3802,6 +3846,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -3980,8 +4027,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the UIDPLUS extension.
@@ -3997,6 +4042,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4052,8 +4100,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4066,6 +4112,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4342,8 +4391,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4356,6 +4403,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4407,8 +4457,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4421,6 +4469,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4475,8 +4526,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -4492,6 +4541,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4546,8 +4598,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -4563,6 +4613,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4616,8 +4669,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4630,6 +4681,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4683,8 +4737,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4697,6 +4749,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4753,8 +4808,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4767,6 +4820,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4823,8 +4879,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4837,6 +4891,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -4940,8 +4997,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -4954,6 +5009,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5008,8 +5066,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5022,6 +5078,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5075,8 +5134,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5089,6 +5146,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5154,8 +5214,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5168,6 +5226,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -5275,8 +5336,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5289,6 +5348,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5338,8 +5400,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5352,6 +5412,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5404,8 +5467,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -5421,6 +5482,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5473,8 +5537,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.NotSupportedException">
             The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not support mod-sequences.
@@ -5490,6 +5552,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5541,8 +5606,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5555,6 +5618,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5606,8 +5672,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5620,6 +5684,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5674,8 +5741,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5688,6 +5753,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5742,8 +5810,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open in read-write mode.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5756,6 +5822,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open in read-write mode.
             </exception>
       </Docs>
     </Member>
@@ -5854,8 +5923,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5981,8 +6048,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -5995,6 +6060,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -6055,8 +6123,6 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder is not currently open.</para>
         </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -6069,6 +6135,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The folder is not currently open.
             </exception>
       </Docs>
     </Member>

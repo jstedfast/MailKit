@@ -42,6 +42,9 @@
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.Guid("2fe79b66-d107-45da-9493-175f59c4a53c")</AttributeName>
         </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.0", FrameworkDisplayName="")</AttributeName>
+        </Attribute>
       </Attributes>
     </Assembly>
   </Assemblies>
@@ -69,6 +72,7 @@
       <Type Name="FolderNamespace" Kind="Class" />
       <Type Name="FolderNamespaceCollection" Kind="Class" />
       <Type Name="FolderNotFoundException" Kind="Class" />
+      <Type Name="FolderNotOpenException" Kind="Class" />
       <Type Name="FolderQuota" Kind="Class" />
       <Type Name="FolderRenamedEventArgs" Kind="Class" />
       <Type Name="IMailFolder" Kind="Interface" />

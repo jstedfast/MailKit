@@ -112,6 +112,9 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="EnableQuickResyncAsync">
@@ -161,6 +164,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
             </exception>
       </Docs>
     </Member>
@@ -282,6 +288,15 @@
         <exception cref="T:MailKit.FolderNotFoundException">
             The folder could not be found.
             </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetFolderAsync">
@@ -325,6 +340,117 @@
             </exception>
         <exception cref="T:MailKit.FolderNotFoundException">
             The folder could not be found.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFolders">
+      <MemberSignature Language="C#" Value="public abstract System.Collections.Generic.IEnumerable&lt;MailKit.IMailFolder&gt; GetFolders (MailKit.FolderNamespace namespace, bool subscribedOnly = false, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMailFolder&gt; GetFolders(class MailKit.FolderNamespace namespace, bool subscribedOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;MailKit.IMailFolder&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespace" Type="MailKit.FolderNamespace" />
+        <Parameter Name="subscribedOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="namespace">The namespace.</param>
+        <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get all of the folders within the specified namespace.
+            </summary>
+        <returns>The folders.</returns>
+        <remarks>
+            Gets all of the folders within the specified namespace.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="namespace" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailStore" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailStore" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetFoldersAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMailFolder&gt;&gt; GetFoldersAsync (MailKit.FolderNamespace namespace, bool subscribedOnly = false, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IEnumerable`1&lt;class MailKit.IMailFolder&gt;&gt; GetFoldersAsync(class MailKit.FolderNamespace namespace, bool subscribedOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IEnumerable&lt;MailKit.IMailFolder&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="namespace" Type="MailKit.FolderNamespace" />
+        <Parameter Name="subscribedOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="namespace">The namespace.</param>
+        <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get all of the folders within the specified namespace.
+            </summary>
+        <returns>The folders.</returns>
+        <remarks>
+            Asynchronously gets all of the folders within the specified namespace.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="namespace" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailStore" /> has been disposed.
+            </exception>
+        <exception cref="T:System.InvalidOperationException">
+          <para>The <see cref="T:MailKit.MailStore" /> is not connected.</para>
+          <para>-or-</para>
+          <para>The <see cref="T:MailKit.MailStore" /> is not authenticated.</para>
+        </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
             </exception>
       </Docs>
     </Member>
