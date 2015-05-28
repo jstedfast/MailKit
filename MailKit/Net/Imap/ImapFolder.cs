@@ -118,9 +118,6 @@ namespace MailKit.Net.Imap {
 			if (Engine.IsDisposed)
 				throw new ObjectDisposedException ("ImapClient");
 
-			if (Engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
-
 			if (!Engine.IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
 

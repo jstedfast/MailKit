@@ -350,9 +350,6 @@ namespace MailKit.Net.Imap {
 			if (engine.State > ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("QRESYNC needs to be enabled immediately after authenticating.");
 
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
-
 			if ((engine.Capabilities & ImapCapabilities.QuickResync) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the QRESYNC extension.");
 
@@ -406,9 +403,6 @@ namespace MailKit.Net.Imap {
 
 			if (engine.State > ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("UTF8=ACCEPT needs to be enabled immediately after authenticating.");
-
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if ((engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the UTF8=ACCEPT extension.");
@@ -513,9 +507,6 @@ namespace MailKit.Net.Imap {
 
 			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient must be connected before you can send an ID command.");
-
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if ((engine.Capabilities & ImapCapabilities.Id) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ID extension.");
@@ -717,30 +708,30 @@ namespace MailKit.Net.Imap {
 
 		static char HexUnescape (string pattern, ref int index)
 		{
-			char value, c;
+			uint value, c;
 
 			if (pattern[index++] != '%' || !IsHexDigit (pattern[index]) || !IsHexDigit (pattern[index + 1]))
 				return '%';
 
+			c = (uint) pattern[index++];
+
+			if (c >= 'a')
+				value = (((c - 'a') + 10) << 4);
+			else if (c >= 'A')
+				value = (((c - 'A') + 10) << 4);
+			else
+				value = ((c - '0') << 4);
+
 			c = pattern[index++];
 
 			if (c >= 'a')
-				value = (char) (((c - 'a') + 10) << 4);
+				value |= ((c - 'a') + 10);
 			else if (c >= 'A')
-				value = (char) (((c - 'A') + 10) << 4);
+				value |= ((c - 'A') + 10);
 			else
-				value = (char) ((c - '0') << 4);
+				value |= (c - '0');
 
-			c = pattern[index++];
-
-			if (c >= 'a')
-				value |= (char) ((c - 'a') + 10);
-			else if (c >= 'A')
-				value |= (char) ((c - 'A') + 10);
-			else
-				value |= (char) (c - '0');
-
-			return value;
+			return (char) value;
 		}
 
 		static string UnescapeUserName (string escaped)
@@ -864,9 +855,6 @@ namespace MailKit.Net.Imap {
 
 			if (engine.State >= ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("The ImapClient is already authenticated.");
-
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var uri = new Uri ("imap://" + engine.Uri.Host);
@@ -1369,9 +1357,6 @@ namespace MailKit.Net.Imap {
 				return;
 
 			if (quit) {
-				if (engine.IsProcessingCommands)
-					throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
-
 				try {
 					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
 
@@ -1532,9 +1517,6 @@ namespace MailKit.Net.Imap {
 		{
 			CheckDisposed ();
 
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
-
 			if (!engine.IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
 
@@ -1618,9 +1600,6 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
 
 			CheckDisposed ();
-
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if (!engine.IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
@@ -1707,9 +1686,6 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
 
 			CheckDisposed ();
-
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if (!engine.IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");
@@ -1992,9 +1968,6 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("path");
 
 			CheckDisposed ();
-
-			if (engine.IsProcessingCommands)
-				throw new InvalidOperationException ("The ImapClient is currently busy processing a command.");
 
 			if (!IsConnected)
 				throw new InvalidOperationException ("The ImapClient is not connected.");

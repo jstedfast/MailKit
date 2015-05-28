@@ -217,13 +217,13 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Indicates whether or not the engine is processing commands.
+		/// Indicates whether or not the engine is busy processing commands.
 		/// </summary>
 		/// <remarks>
-		/// Indicates whether or not the engine is processing commands.
+		/// Indicates whether or not the engine is busy processing commands.
 		/// </remarks>
-		/// <value><c>true</c> if th e engine is processing commands; otherwise, <c>false</c>.</value>
-		internal bool IsProcessingCommands {
+		/// <value><c>true</c> if th e engine is busy processing commands; otherwise, <c>false</c>.</value>
+		internal bool IsBusy {
 			get { return current != null; }
 		}
 
@@ -1552,7 +1552,10 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ();
 
 			if (queue.Count == 0)
-				return 0;
+				throw new InvalidOperationException ("The IMAP command queue is empty.");
+
+			if (IsBusy)
+				throw new InvalidOperationException ("The ImapClient is currently busy processing a command in another thread. Lock the SyncRoot property to properly synchronize your threads.");
 
 			current = queue[0];
 			queue.RemoveAt (0);
