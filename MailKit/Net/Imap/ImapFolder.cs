@@ -128,7 +128,7 @@ namespace MailKit.Net.Imap {
 				var access = rw ? FolderAccess.ReadWrite : FolderAccess.ReadOnly;
 
 				if (!IsOpen || Access < access)
-					throw FolderNotOpenException.Create (this, access);
+					throw new FolderNotOpenException (FullName, access);
 			}
 		}
 

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2015 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2015 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,9 @@
 //
 
 using System;
+#if !NETFX_CORE
+using System.Runtime.Serialization;
+#endif
 
 namespace MailKit {
 	/// <summary>
@@ -37,28 +40,57 @@ namespace MailKit {
 	/// method will throw a <see cref="FolderNotOpenException"/> if the folder is not
 	/// current open.
 	/// </remarks>
+#if !NETFX_CORE
+	[Serializable]
+#endif
 	public class FolderNotOpenException : InvalidOperationException
 	{
+#if !NETFX_CORE
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.FolderNotOpenException"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Deserializes a <see cref="FolderNotOpenException"/>.
+		/// </remarks>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		protected FolderNotOpenException (SerializationInfo info, StreamingContext context) : base (info, context)
+		{
+			var value = info.GetString ("FolderAccess");
+			FolderAccess access;
+
+			if (!Enum.TryParse (value, out access))
+				FolderAccess = FolderAccess.ReadOnly;
+			else
+				FolderAccess = access;
+
+			FolderName = info.GetString ("FolderName");
+		}
+#endif
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotOpenException"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new <see cref="FolderNotOpenException"/>.
 		/// </remarks>
-		/// <param name="folder">The folder.</param>
+		/// <param name="folderName">The folder name.</param>
 		/// <param name="access">The minimum folder access required by the operation.</param>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">The inner exception.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folder"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <c>null</c>.
 		/// </exception>
-		public FolderNotOpenException (IMailFolder folder, FolderAccess access, string message, Exception innerException) : base (message, innerException)
+		public FolderNotOpenException (string folderName, FolderAccess access, string message, Exception innerException) : base (message, innerException)
 		{
-			if (folder == null)
-				throw new ArgumentNullException ("folder");
+			if (folderName == null)
+				throw new ArgumentNullException ("folderName");
 
+			FolderName = folderName;
 			FolderAccess = access;
-			Folder = folder;
 		}
 
 		/// <summary>
@@ -67,35 +99,19 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="FolderNotOpenException"/>.
 		/// </remarks>
-		/// <param name="folder">The folder.</param>
-		/// <param name="message">The error message.</param>
-		/// <param name="innerException">The inner exception.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folder"/> is <c>null</c>.
-		/// </exception>
-		public FolderNotOpenException (IMailFolder folder, string message, Exception innerException) : this (folder, FolderAccess.ReadOnly, message, innerException)
-		{
-		}
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.FolderNotOpenException"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="FolderNotOpenException"/>.
-		/// </remarks>
-		/// <param name="folder">The folder.</param>
+		/// <param name="folderName">The folder name.</param>
 		/// <param name="access">The minimum folder access required by the operation.</param>
 		/// <param name="message">The error message.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folder"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <c>null</c>.
 		/// </exception>
-		public FolderNotOpenException (IMailFolder folder, FolderAccess access, string message) : base (message)
+		public FolderNotOpenException (string folderName, FolderAccess access, string message) : base (message)
 		{
-			if (folder == null)
-				throw new ArgumentNullException ("folder");
+			if (folderName == null)
+				throw new ArgumentNullException ("folderName");
 
+			FolderName = folderName;
 			FolderAccess = access;
-			Folder = folder;
 		}
 
 		/// <summary>
@@ -104,36 +120,23 @@ namespace MailKit {
 		/// <remarks>
 		/// Creates a new <see cref="FolderNotOpenException"/>.
 		/// </remarks>
-		/// <param name="folder">The folder.</param>
-		/// <param name="message">The error message.</param>
+		/// <param name="folderName">The folder name.</param>
+		/// <param name="access">The minimum folder access required by the operation.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="folder"/> is <c>null</c>.
+		/// <paramref name="folderName"/> is <c>null</c>.
 		/// </exception>
-		public FolderNotOpenException (IMailFolder folder, string message) : this (folder, FolderAccess.ReadOnly, message)
+		public FolderNotOpenException (string folderName, FolderAccess access) : this (folderName, access, GetDefaultMessage (access))
 		{
-		}
-
-		internal static FolderNotOpenException Create (IMailFolder folder, FolderAccess access)
-		{
-			string message;
-
-			if (access == FolderAccess.ReadWrite) {
-				message = string.Format ("The '{0}' folder is not currently open in read-write mode.", folder.FullName);
-			} else {
-				message = string.Format ("The '{0}' folder is not currently open.", folder.FullName);
-			}
-
-			return new FolderNotOpenException (folder, access, message);
 		}
 
 		/// <summary>
-		/// Get the folder that the operation could not be completed on.
+		/// Get the name of the folder.
 		/// </summary>
 		/// <remarks>
-		/// Gets the folder that an operation could not be completed on.
+		/// Gets the name of the folder.
 		/// </remarks>
-		/// <value>The folder.</value>
-		public IMailFolder Folder {
+		/// <value>The name of the folder.</value>
+		public string FolderName {
 			get; private set;
 		}
 
@@ -147,5 +150,38 @@ namespace MailKit {
 		public FolderAccess FolderAccess {
 			get; private set;
 		}
+
+		static string GetDefaultMessage (FolderAccess access)
+		{
+			if (access == FolderAccess.ReadWrite)
+				return "The folder is not currently open in read-write mode.";
+
+			return "The folder is not currently open.";
+		}
+
+#if !NETFX_CORE
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
+		/// with information about the exception.
+		/// </summary>
+		/// <remarks>
+		/// Serializes the state of the <see cref="FolderNotOpenException"/>.
+		/// </remarks>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("FolderAccess", FolderAccess.ToString ());
+			info.AddValue ("FolderName", FolderName);
+
+			base.GetObjectData (info, context);
+		}
+#endif
 	}
 }
