@@ -7,6 +7,7 @@
 * [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
 * [How can I search for messages delivered between two dates?](#SearchBetween2Dates)
 * [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
+* [ImapFolder.MoveTo() throws InvalidOperationException: "The folder is not currently open."](#ImapMoveToFolderNotOpen)
 
 ### <a name="ProtocolLog">How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
@@ -111,3 +112,14 @@ lock (client.SyncRoot) {
 
 Note: Locking the `SyncRoot` is only necessary when using the synchronous API's. All `Async()` method variants
 already do this locking for you.
+
+### <a name="ImapMoveToFolderNotOpen">ImapFolder.MoveTo() throws InvalidOperationException: "The folder is not currently open."</a>
+
+If you get this exception, it's probably because you thought you had to open the destination folder that you
+pass as an argument to the MoveTo() method. When you opened that destination folder, you also inadvertantly
+closed the source folder which is why you are getting this exception.
+
+The IMAP server can only have a single folder open at a time. Whenever you open a folder, you automatically
+close the previously opened folder.
+
+When moving messages from one folder to another, you only need to have the source folder open.
