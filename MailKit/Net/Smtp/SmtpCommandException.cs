@@ -90,13 +90,22 @@ namespace MailKit.Net.Smtp {
 		/// <param name="context">The streaming context.</param>
 		protected SmtpCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
-			var text = info.GetString ("Mailbox");
 			MailboxAddress mailbox;
+			SmtpErrorCode code;
+			string value;
 
-			if (!string.IsNullOrEmpty (text) && MailboxAddress.TryParse (text, out mailbox))
+			value = info.GetString ("Mailbox");
+			if (!string.IsNullOrEmpty (value) && MailboxAddress.TryParse (value, out mailbox))
 				Mailbox = mailbox;
 
+			value = info.GetString ("ErrorCode");
+			if (!Enum.TryParse (value, out code))
+				SmtpErrorCode = SmtpErrorCode.MessageNotAccepted;
+			else
+				ErrorCode = code;
+
 			ErrorCode = (SmtpErrorCode) info.GetInt32 ("ErrorCode");
+
 			StatusCode = info.GetInt32 ("StatusCode");
 		}
 #endif
@@ -154,7 +163,7 @@ namespace MailKit.Net.Smtp {
 			if (Mailbox != null)
 				info.AddValue ("Mailbox", Mailbox.ToString ());
 
-			info.AddValue ("ErrorCode", (int) ErrorCode);
+			info.AddValue ("ErrorCode", ErrorCode.ToString ());
 			info.AddValue ("StatusCode", StatusCode);
 
 			base.GetObjectData (info, context);
