@@ -34,6 +34,7 @@ using System.Collections.Generic;
 
 using MimeKit;
 using MimeKit.IO;
+using MimeKit.Cryptography;
 
 #if NETFX_CORE
 using Windows.Networking;
@@ -1124,15 +1125,44 @@ namespace MailKit.Net.Smtp {
 			UTF8         = 1 << 2,
 		}
 
-		ContentEncoding GetFinalEncoding (MimePart part)
+		class ContentTransferEncodingVisitor : MimeVisitor
 		{
-			if ((capabilities & SmtpCapabilities.BinaryMime) != 0) {
-				// no need to re-encode...
-				return part.ContentTransferEncoding;
+			readonly SmtpCapabilities Capabilities;
+
+			public ContentTransferEncodingVisitor (SmtpCapabilities capabilities)
+			{
+				Capabilities = capabilities;
 			}
 
-			if ((capabilities & SmtpCapabilities.EightBitMime) != 0) {
+			public SmtpExtension SmtpExtensions {
+				get; private set;
+			}
+
+			protected override void VisitMultipartSigned (MultipartSigned signed)
+			{
+				// do not descend into multipart/signed parts
+			}
+
+			ContentEncoding GetFinalEncoding (MimePart part)
+			{
+				if ((Capabilities & SmtpCapabilities.BinaryMime) != 0) {
+					// no need to re-encode...
+					return part.ContentTransferEncoding;
+				}
+
+				if ((Capabilities & SmtpCapabilities.EightBitMime) != 0) {
+					switch (part.ContentTransferEncoding) {
+					case ContentEncoding.Default:
+					case ContentEncoding.Binary:
+						break;
+					default:
+						// all other Content-Transfer-Encodings are safe to transmit...
+						return part.ContentTransferEncoding;
+					}
+				}
+
 				switch (part.ContentTransferEncoding) {
+				case ContentEncoding.EightBit:
 				case ContentEncoding.Default:
 				case ContentEncoding.Binary:
 					break;
@@ -1140,75 +1170,40 @@ namespace MailKit.Net.Smtp {
 					// all other Content-Transfer-Encodings are safe to transmit...
 					return part.ContentTransferEncoding;
 				}
-			}
 
-			switch (part.ContentTransferEncoding) {
-			case ContentEncoding.EightBit:
-			case ContentEncoding.Default:
-			case ContentEncoding.Binary:
-				break;
-			default:
-				// all other Content-Transfer-Encodings are safe to transmit...
-				return part.ContentTransferEncoding;
-			}
+				ContentEncoding encoding;
 
-			ContentEncoding encoding;
+				if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
+					encoding = part.GetBestEncoding (EncodingConstraint.None, MaxLineLength);
+				else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+					encoding = part.GetBestEncoding (EncodingConstraint.EightBit, MaxLineLength);
+				else
+					encoding = part.GetBestEncoding (EncodingConstraint.SevenBit, MaxLineLength);
 
-			if ((capabilities & SmtpCapabilities.BinaryMime) != 0)
-				encoding = part.GetBestEncoding (EncodingConstraint.None, MaxLineLength);
-			else if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
-				encoding = part.GetBestEncoding (EncodingConstraint.EightBit, MaxLineLength);
-			else
-				encoding = part.GetBestEncoding (EncodingConstraint.SevenBit, MaxLineLength);
+				if (encoding == ContentEncoding.SevenBit)
+					return encoding;
 
-			if (encoding == ContentEncoding.SevenBit)
+				part.ContentTransferEncoding = encoding;
+
 				return encoding;
-
-			part.ContentTransferEncoding = encoding;
-
-			return encoding;
-		}
-
-		SmtpExtension PrepareMimeEntity (MimeEntity entity)
-		{
-			if (entity is MessagePart) {
-				var message = ((MessagePart) entity).Message;
-				return PrepareMimeEntity (message);
 			}
 
-			if (entity is Multipart) {
-				if (entity.ContentType.Matches ("multipart", "signed"))
-					return SmtpExtension.None;
-
-				var extensions = SmtpExtension.None;
-				var multipart = (Multipart) entity;
-
-				foreach (var child in multipart)
-					extensions |= PrepareMimeEntity (child);
-
-				return extensions;
+			protected override void VisitMimePart (MimePart entity)
+			{
+				switch (GetFinalEncoding (entity)) {
+				case ContentEncoding.EightBit:
+					// if the server supports the 8BITMIME extension, use it...
+					if ((Capabilities & SmtpCapabilities.EightBitMime) != 0) {
+						SmtpExtensions |= SmtpExtension.EightBitMime;
+					} else {
+						SmtpExtensions |= SmtpExtension.BinaryMime;
+					}
+					break;
+				case ContentEncoding.Binary:
+					SmtpExtensions |= SmtpExtension.BinaryMime;
+					break;
+				}
 			}
-
-			switch (GetFinalEncoding ((MimePart) entity)) {
-			case ContentEncoding.EightBit:
-				// if the server supports the 8BITMIME extension, use it...
-				if ((capabilities & SmtpCapabilities.EightBitMime) != 0)
-					return SmtpExtension.EightBitMime;
-
-				return SmtpExtension.BinaryMime;
-			case ContentEncoding.Binary:
-				return SmtpExtension.BinaryMime;
-			default:
-				return SmtpExtension.None;
-			}
-		}
-
-		SmtpExtension PrepareMimeEntity (MimeMessage message)
-		{
-			if (message.Body == null)
-				throw new ArgumentException ("Message does not contain a body.");
-
-			return PrepareMimeEntity (message.Body);
 		}
 
 		static void ProcessMailFromResponse (SmtpResponse response, MailboxAddress mailbox)
@@ -1430,7 +1425,10 @@ namespace MailKit.Net.Smtp {
 			if (format.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
-			var extensions = PrepareMimeEntity (message);
+			var visitor = new ContentTransferEncodingVisitor (capabilities);
+			visitor.Visit (message);
+
+			var extensions = visitor.SmtpExtensions;
 
 			if (format.International)
 				extensions |= SmtpExtension.UTF8;
