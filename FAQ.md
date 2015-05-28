@@ -7,7 +7,8 @@
 * [How can I log in to a GMail account using OAuth 2.0?](#GMailOAuth2)
 * [How can I search for messages delivered between two dates?](#SearchBetween2Dates)
 * [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
-* [ImapFolder.MoveTo() throws InvalidOperationException: "The folder is not currently open."](#ImapMoveToFolderNotOpen)
+* [Why do I get InvalidOperationException: "The folder is not currently open."?](#FolderNotOpenException)
+* [ImapFolder.MoveTo() does not move the message out of the source folder. Why not?](#MoveDoesNotMove)
 
 ### <a name="ProtocolLog">How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
@@ -113,13 +114,38 @@ lock (client.SyncRoot) {
 Note: Locking the `SyncRoot` is only necessary when using the synchronous API's. All `Async()` method variants
 already do this locking for you.
 
-### <a name="ImapMoveToFolderNotOpen">ImapFolder.MoveTo() throws InvalidOperationException: "The folder is not currently open."</a>
+### <a name="FolderNotOpenException">Why do I get InvalidOperationException: "The folder is not currently open."?</a>
 
 If you get this exception, it's probably because you thought you had to open the destination folder that you
-pass as an argument to the MoveTo() method. When you opened that destination folder, you also inadvertantly
-closed the source folder which is why you are getting this exception.
+passed as an argument to one of the CopyTo() or MoveTo() methods. When you opened that destination folder, you
+also inadvertantly closed the source folder which is why you are getting this exception.
 
 The IMAP server can only have a single folder open at a time. Whenever you open a folder, you automatically
 close the previously opened folder.
 
-When moving messages from one folder to another, you only need to have the source folder open.
+When copying or moving messages from one folder to another, you only need to have the source folder open.
+
+### <a name="MoveDoesNotMove">ImapFolder.MoveTo() does not move the message out of the source folder. Why not?</a>
+
+If you look at the source code for the `ImapFolder.MoveTo()` method, what you'll notice is that
+there are several code paths depending on the features that the IMAP server supports.
+
+If the IMAP server supports the `MOVE` extension, then MailKit's `MoveTo()` method will use the
+`MOVE` command. I suspect that your server does not support the `MOVE` command or you probably
+wouldn't be seeing what you are seeing.
+
+When the IMAP server does not support the `MOVE` command, MailKit has to use the `COPY` command to
+copy the message(s) to the destination folder. Once the `COPY` command has completed, it will then
+mark the messages that you asked it to move for deletion by setting the `\Deleted` flag on those
+messages.
+
+If the server supports the `UIDPLUS` extension, then MailKit will attempt to `EXPUNG`E the subset of
+messages that it just marked for deletion, however, if the `UIDPLUS` extension is not supported by the
+IMAP server, then it cannot safely expunge just that subset of messages and so it simply stops there.
+
+My guess is that your server supports neither `MOVE` nor `UIDPLUS` and that is why clients like Outlook
+continue to see the messages in your folder. I believe, however, that Outlook has a setting to show
+deleted messages with a strikeout (which you probably have disabled).
+
+So to answer your question more succinctly: After calling `folder.MoveTo (...);`, if you are confident
+that the messages marked for deletion should be expunged, call `folder.Expunge ();`
