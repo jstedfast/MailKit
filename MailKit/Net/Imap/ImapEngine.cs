@@ -1905,11 +1905,11 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets all of the folders within the specified namespace.
 		/// </remarks>
-		/// <returns>The subfolders.</returns>
+		/// <returns>The list of folders.</returns>
 		/// <param name="namespace">The namespace.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public IEnumerable<ImapFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken)
+		public IList<ImapFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (@namespace.Path);
 			var command = subscribedOnly ? "LSUB" : "LIST";
