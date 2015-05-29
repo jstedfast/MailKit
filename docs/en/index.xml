@@ -42,9 +42,6 @@
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.Guid("2fe79b66-d107-45da-9493-175f59c4a53c")</AttributeName>
         </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.Versioning.TargetFramework(".NETFramework,Version=v4.0", FrameworkDisplayName="")</AttributeName>
-        </Attribute>
       </Attributes>
     </Assembly>
   </Assemblies>
@@ -105,6 +102,8 @@
       <Type Name="NullProtocolLogger" Kind="Class" />
       <Type Name="ProtocolException" Kind="Class" />
       <Type Name="ProtocolLogger" Kind="Class" />
+      <Type Name="ServiceNotAuthenticatedException" Kind="Class" />
+      <Type Name="ServiceNotConnectedException" Kind="Class" />
       <Type Name="SpecialFolder" Kind="Enumeration" />
       <Type Name="StatusItems" Kind="Enumeration" />
       <Type Name="ThreadingAlgorithm" Kind="Enumeration" />

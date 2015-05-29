@@ -485,8 +485,11 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="credentials"/> is <c>null</c>.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="SmtpClient"/> is not connected or is already authenticated.
+		/// The <see cref="SmtpClient"/> is already authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The SMTP server does not support authentication.
@@ -517,7 +520,7 @@ namespace MailKit.Net.Smtp {
 			CheckDisposed ();
 
 			if (!IsConnected)
-				throw new InvalidOperationException ("The SmtpClient must be connected before you can authenticate.");
+				throw new ServiceNotConnectedException ("The SmtpClient must be connected before you can authenticate.");
 
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("The SmtpClient is already authenticated.");
@@ -1040,7 +1043,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="SmtpClient"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1060,7 +1063,7 @@ namespace MailKit.Net.Smtp {
 			CheckDisposed ();
 
 			if (!IsConnected)
-				throw new InvalidOperationException ("The SmtpClient is not connected.");
+				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
 			var response = SendCommand ("NOOP", cancellationToken);
 
@@ -1410,7 +1413,7 @@ namespace MailKit.Net.Smtp {
 			CheckDisposed ();
 
 			if (!IsConnected)
-				throw new InvalidOperationException ("The SmtpClient is not connected.");
+				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
 			var format = options.Clone ();
 			format.International = format.International || sender.IsInternational || recipients.Any (x => x.IsInternational);
@@ -1484,9 +1487,10 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="SmtpClient"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -1549,9 +1553,10 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="SmtpClient"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>

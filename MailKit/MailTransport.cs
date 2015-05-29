@@ -70,9 +70,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -118,9 +119,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -172,9 +174,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -220,9 +223,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -283,9 +287,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -334,9 +339,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -397,9 +403,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
@@ -448,9 +455,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailTransport"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailTransport"/> is not connected.</para>
-		/// <para>-or-</para>
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>

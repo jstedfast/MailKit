@@ -101,8 +101,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailService"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailService"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// Quick resynchronization needs to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support quick resynchronization.
@@ -139,8 +145,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailService"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailService"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// Quick resynchronization needs to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support quick resynchronization.
@@ -206,13 +218,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailService"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailService"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="IMailService"/> is not authenticated.</para>
-		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailService"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailService"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The namespace folder could not be found.
@@ -244,13 +257,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="IMailStore"/> is not authenticated.</para>
-		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailService"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailService"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The namespace folder could not be found.

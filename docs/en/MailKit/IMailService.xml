@@ -46,6 +46,9 @@
             If the service supports authentication, then the credentials are used
             to authenticate. Otherwise, this method simply returns.
             </remarks>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AuthenticateAsync">
@@ -86,7 +89,7 @@
             The <see cref="T:MailKit.IMailService" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.IMailService" /> is not connected or is already authenticated.
+            The <see cref="T:MailKit.IMailService" /> is already authenticated.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -102,6 +105,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -206,6 +212,21 @@
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="port" /> is not between <c>0</c> and <c>65535</c>.
             </exception>
+        <exception cref="T:System.InvalidOperationException">
+            The <see cref="T:MailKit.IMailService" /> is already connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command was rejected by the mail server.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            The server responded with an unexpected token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="ConnectAsync">
@@ -305,6 +326,24 @@
         <remarks>
             If <paramref name="quit" /> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
             </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.IMailService" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command was rejected by the mail server.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            The server responded with an unexpected token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DisconnectAsync">
@@ -334,6 +373,21 @@
             </remarks>
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.IMailService" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command was rejected by the mail server.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            The server responded with an unexpected token.
             </exception>
       </Docs>
     </Member>
@@ -402,6 +456,24 @@
         <remarks>
             Mail servers, if left idle for too long, will automatically drop the connection.
             </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.IMailService" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command was rejected by the mail server.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            The server responded with an unexpected token.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="NoOpAsync">
@@ -446,6 +518,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             The server responded with an unexpected token.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailService" /> is not authenticated.
             </exception>
       </Docs>
     </Member>

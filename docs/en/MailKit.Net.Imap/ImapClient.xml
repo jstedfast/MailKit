@@ -110,7 +110,7 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected or is already authenticated.
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is already authenticated.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -129,6 +129,9 @@
             </exception>
         <exception cref="T:MailKit.Security.AuthenticationException">
             Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -213,7 +216,7 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            Compression must be enabled before a folder has been selected.
             </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the QRESYNC extension.
@@ -225,10 +228,13 @@
             An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied to the ENABLE command with a NO or BAD response.
+            The server replied to the COMPRESS command with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -260,10 +266,10 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            Compression must be enabled before a folder has been selected.
             </exception>
         <exception cref="T:System.NotSupportedException">
-            The IMAP server does not support the UTF8=ACCEPT extension.
+            The IMAP server does not support the COMPRESS extension.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -272,10 +278,13 @@
             An I/O error occurred.
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
-            The server replied to the ENABLE command with a NO or BAD response.
+            The server replied to the COMPRESS command with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             An IMAP protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -551,7 +560,7 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            Quick resynchronization needs to be enabled before selecting a folder.
             </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the QRESYNC extension.
@@ -567,6 +576,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied to the ENABLE command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -596,7 +611,7 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            UTF8=ACCEPT needs to be enabled before selecting a folder.
             </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the UTF8=ACCEPT extension.
@@ -612,6 +627,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied to the ENABLE command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -642,7 +663,7 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected, not authenticated, or a folder has been selected.
+            UTF8=ACCEPT needs to be enabled before selecting a folder.
             </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the UTF8=ACCEPT extension.
@@ -658,6 +679,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied to the ENABLE command with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -698,6 +725,12 @@
         <exception cref="T:MailKit.FolderNotFoundException">
             The folder could not be found.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetFolder">
@@ -737,6 +770,12 @@
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
         </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetFolder">
@@ -789,6 +828,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             The server responded with an unexpected token.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -843,6 +888,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             The server responded with an unexpected token.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -905,6 +956,9 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied to the ID command with a NO or BAD response.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="IdentifyAsync">
@@ -966,6 +1020,9 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied to the ID command with a NO or BAD response.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Idle">
@@ -1012,12 +1069,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>A <see cref="T:MailKit.Net.Imap.ImapFolder" /> has not been opened.</para>
-        </exception>
+            A <see cref="T:MailKit.Net.Imap.ImapFolder" /> has not been opened.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -1032,6 +1085,12 @@
             </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the IDLE extension.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1080,12 +1139,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-          <para>-or-</para>
-          <para>A <see cref="T:MailKit.Net.Imap.ImapFolder" /> has not been opened.</para>
-        </exception>
+            A <see cref="T:MailKit.Net.Imap.ImapFolder" /> has not been opened.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -1100,6 +1155,12 @@
             </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the IDLE extension.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1131,6 +1192,12 @@
           <para>-or-</para>
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
         </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="IsAuthenticated">
@@ -1242,6 +1309,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
             The server responded with an unexpected token.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>

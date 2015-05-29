@@ -77,7 +77,7 @@
             The <see cref="T:MailKit.MailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.MailStore" /> is not connected, not authenticated, or a folder has been selected.
+            Quick resynchronization needs to be enabled before selecting a folder.
             </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support quick resynchronization.
@@ -93,6 +93,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailService" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -130,7 +136,7 @@
             The <see cref="T:MailKit.MailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.MailStore" /> is not connected, not authenticated, or a folder has been selected.
+            Quick resynchronization needs to be enabled before selecting a folder.
             </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support quick resynchronization.
@@ -146,6 +152,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailService" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -352,6 +364,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailService" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetFoldersAsync">
@@ -405,6 +423,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailService" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailService" /> is not authenticated.
             </exception>
       </Docs>
     </Member>

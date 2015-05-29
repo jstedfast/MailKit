@@ -1,6 +1,6 @@
 <Type Name="FolderNotOpenException" FullName="MailKit.FolderNotOpenException">
   <TypeSignature Language="C#" Value="public class FolderNotOpenException : InvalidOperationException" />
-  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit FolderNotOpenException extends System.InvalidOperationException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit FolderNotOpenException extends System.InvalidOperationException" />
   <AssemblyInfo>
     <AssemblyName>MailKit</AssemblyName>
     <AssemblyVersion>1.2.0.0</AssemblyVersion>
@@ -23,19 +23,44 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public FolderNotOpenException (MailKit.IMailFolder folder, string message);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IMailFolder folder, string message) cil managed" />
+      <MemberSignature Language="C#" Value="protected FolderNotOpenException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="folder" Type="MailKit.IMailFolder" />
-        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="folder">The folder.</param>
-        <param name="message">The error message.</param>
+        <param name="info">The serialization info.</param>
+        <param name="context">The streaming context.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.FolderNotOpenException" /> class.
+            </summary>
+        <remarks>
+            Deserializes a <see cref="T:MailKit.FolderNotOpenException" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="info" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public FolderNotOpenException (string folderName, MailKit.FolderAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string folderName, valuetype MailKit.FolderAccess access) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="folderName" Type="System.String" />
+        <Parameter Name="access" Type="MailKit.FolderAccess" />
+      </Parameters>
+      <Docs>
+        <param name="folderName">The folder name.</param>
+        <param name="access">The minimum folder access required by the operation.</param>
         <summary>
             Initializes a new instance of the <see cref="T:MailKit.FolderNotOpenException" /> class.
             </summary>
@@ -43,24 +68,24 @@
             Creates a new <see cref="T:MailKit.FolderNotOpenException" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-          <paramref name="folder" /> is <c>null</c>.
+          <paramref name="folderName" /> is <c>null</c>.
             </exception>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public FolderNotOpenException (MailKit.IMailFolder folder, MailKit.FolderAccess access, string message);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IMailFolder folder, valuetype MailKit.FolderAccess access, string message) cil managed" />
+      <MemberSignature Language="C#" Value="public FolderNotOpenException (string folderName, MailKit.FolderAccess access, string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string folderName, valuetype MailKit.FolderAccess access, string message) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="folder" Type="MailKit.IMailFolder" />
+        <Parameter Name="folderName" Type="System.String" />
         <Parameter Name="access" Type="MailKit.FolderAccess" />
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="folder">The folder.</param>
+        <param name="folderName">The folder name.</param>
         <param name="access">The minimum folder access required by the operation.</param>
         <param name="message">The error message.</param>
         <summary>
@@ -70,52 +95,25 @@
             Creates a new <see cref="T:MailKit.FolderNotOpenException" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-          <paramref name="folder" /> is <c>null</c>.
+          <paramref name="folderName" /> is <c>null</c>.
             </exception>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public FolderNotOpenException (MailKit.IMailFolder folder, string message, Exception innerException);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IMailFolder folder, string message, class System.Exception innerException) cil managed" />
+      <MemberSignature Language="C#" Value="public FolderNotOpenException (string folderName, MailKit.FolderAccess access, string message, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string folderName, valuetype MailKit.FolderAccess access, string message, class System.Exception innerException) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="folder" Type="MailKit.IMailFolder" />
-        <Parameter Name="message" Type="System.String" />
-        <Parameter Name="innerException" Type="System.Exception" />
-      </Parameters>
-      <Docs>
-        <param name="folder">The folder.</param>
-        <param name="message">The error message.</param>
-        <param name="innerException">The inner exception.</param>
-        <summary>
-            Initializes a new instance of the <see cref="T:MailKit.FolderNotOpenException" /> class.
-            </summary>
-        <remarks>
-            Creates a new <see cref="T:MailKit.FolderNotOpenException" />.
-            </remarks>
-        <exception cref="T:System.ArgumentNullException">
-          <paramref name="folder" /> is <c>null</c>.
-            </exception>
-      </Docs>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public FolderNotOpenException (MailKit.IMailFolder folder, MailKit.FolderAccess access, string message, Exception innerException);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class MailKit.IMailFolder folder, valuetype MailKit.FolderAccess access, string message, class System.Exception innerException) cil managed" />
-      <MemberType>Constructor</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>1.2.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Parameters>
-        <Parameter Name="folder" Type="MailKit.IMailFolder" />
+        <Parameter Name="folderName" Type="System.String" />
         <Parameter Name="access" Type="MailKit.FolderAccess" />
         <Parameter Name="message" Type="System.String" />
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="folder">The folder.</param>
+        <param name="folderName">The folder name.</param>
         <param name="access">The minimum folder access required by the operation.</param>
         <param name="message">The error message.</param>
         <param name="innerException">The inner exception.</param>
@@ -126,28 +124,8 @@
             Creates a new <see cref="T:MailKit.FolderNotOpenException" />.
             </remarks>
         <exception cref="T:System.ArgumentNullException">
-          <paramref name="folder" /> is <c>null</c>.
+          <paramref name="folderName" /> is <c>null</c>.
             </exception>
-      </Docs>
-    </Member>
-    <Member MemberName="Folder">
-      <MemberSignature Language="C#" Value="public MailKit.IMailFolder Folder { get; }" />
-      <MemberSignature Language="ILAsm" Value=".property instance class MailKit.IMailFolder Folder" />
-      <MemberType>Property</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>1.2.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>MailKit.IMailFolder</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>
-            Get the folder that the operation could not be completed on.
-            </summary>
-        <value>The folder.</value>
-        <remarks>
-            Gets the folder that an operation could not be completed on.
-            </remarks>
       </Docs>
     </Member>
     <Member MemberName="FolderAccess">
@@ -168,6 +146,55 @@
         <remarks>
             Gets the minimum folder access required by the operation.
             </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FolderName">
+      <MemberSignature Language="C#" Value="public string FolderName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FolderName" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+            Get the name of the folder.
+            </summary>
+        <value>The name of the folder.</value>
+        <remarks>
+            Gets the name of the folder.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetObjectData">
+      <MemberSignature Language="C#" Value="public override void GetObjectData (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GetObjectData(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">The serialization info.</param>
+        <param name="context">The streaming context.</param>
+        <summary>
+            When overridden in a derived class, sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" />
+            with information about the exception.
+            </summary>
+        <remarks>
+            Serializes the state of the <see cref="T:MailKit.FolderNotOpenException" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="info" /> is <c>null</c>.
+            </exception>
       </Docs>
     </Member>
   </Members>

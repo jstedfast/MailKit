@@ -125,8 +125,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -145,6 +143,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -191,8 +192,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -214,6 +213,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -259,8 +261,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -279,6 +279,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -329,8 +332,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -352,6 +353,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -393,8 +397,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -413,6 +415,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -460,8 +465,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -483,6 +486,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -529,8 +535,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -549,6 +553,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -600,8 +607,6 @@
             The <see cref="T:MailKit.MailTransport" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.MailTransport" /> is not connected.</para>
-          <para>-or-</para>
           <para>A sender has not been specified.</para>
           <para>-or-</para>
           <para>No recipients have been specified.</para>
@@ -623,6 +628,9 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol exception occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailTransport" /> is not connected.
             </exception>
       </Docs>
     </Member>

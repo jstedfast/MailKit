@@ -1,0 +1,107 @@
+<Type Name="ServiceNotAuthenticatedException" FullName="MailKit.ServiceNotAuthenticatedException">
+  <TypeSignature Language="C#" Value="public class ServiceNotAuthenticatedException : InvalidOperationException" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ServiceNotAuthenticatedException extends System.InvalidOperationException" />
+  <AssemblyInfo>
+    <AssemblyName>MailKit</AssemblyName>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.InvalidOperationException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>
+            The exception that is thrown when the <see cref="T:MailKit.IMailService" /> is not authenticated.
+            </summary>
+    <remarks>
+            This exception is thrown when an operation on a service could not be completed
+            due to the service not being authenticated.
+            </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceNotAuthenticatedException ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.ServiceNotAuthenticatedException" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ServiceNotAuthenticatedException" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceNotAuthenticatedException (string message);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="message">The error message.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.ServiceNotAuthenticatedException" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ServiceNotAuthenticatedException" />.
+            </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected ServiceNotAuthenticatedException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Serialization.SerializationInfo info, valuetype System.Runtime.Serialization.StreamingContext context) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="info" Type="System.Runtime.Serialization.SerializationInfo" />
+        <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
+      </Parameters>
+      <Docs>
+        <param name="info">The serialization info.</param>
+        <param name="context">The streaming context.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.ServiceNotAuthenticatedException" /> class.
+            </summary>
+        <remarks>
+            Deserializes a <see cref="T:MailKit.ServiceNotAuthenticatedException" />.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="info" /> is <c>null</c>.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ServiceNotAuthenticatedException (string message, Exception innerException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string message, class System.Exception innerException) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="message" Type="System.String" />
+        <Parameter Name="innerException" Type="System.Exception" />
+      </Parameters>
+      <Docs>
+        <param name="message">The error message.</param>
+        <param name="innerException">The inner exception.</param>
+        <summary>
+            Initializes a new instance of the <see cref="T:MailKit.ServiceNotAuthenticatedException" /> class.
+            </summary>
+        <remarks>
+            Creates a new <see cref="T:MailKit.ServiceNotAuthenticatedException" />.
+            </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

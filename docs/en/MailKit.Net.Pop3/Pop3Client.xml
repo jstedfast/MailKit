@@ -110,7 +110,7 @@
           <paramref name="credentials" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected or is already authenticated.
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is already authenticated.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -138,6 +138,9 @@
             </exception>
         <exception cref="T:MailKit.Security.AuthenticationException">
             Authentication using the supplied credentials has failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -392,6 +395,12 @@
         <exception cref="T:System.UnauthorizedAccessException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteAllMessages">
@@ -438,6 +447,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -493,6 +508,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -560,6 +581,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessages">
@@ -616,6 +643,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -682,6 +715,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessages">
@@ -736,6 +775,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -823,10 +868,8 @@
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has already been authenticated.</para>
-        </exception>
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has already been authenticated.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -841,6 +884,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -872,10 +918,8 @@
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has already been authenticated.</para>
-        </exception>
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has already been authenticated.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -890,6 +934,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -964,6 +1011,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetLanguages">
@@ -1012,6 +1065,9 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetLanguagesAsync">
@@ -1059,6 +1115,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -1113,6 +1172,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1179,6 +1244,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageCount">
@@ -1232,6 +1303,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1291,6 +1368,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1356,6 +1439,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -1409,6 +1498,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1475,6 +1570,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -1531,6 +1632,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1590,6 +1697,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1655,6 +1768,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessages">
@@ -1712,6 +1831,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
@@ -1765,6 +1890,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1828,6 +1959,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
@@ -1873,6 +2010,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1932,6 +2075,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
@@ -1981,6 +2130,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2117,6 +2272,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Protocol">
@@ -2188,6 +2349,12 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLanguage">
@@ -2241,6 +2408,9 @@
             </exception>
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
       </Docs>
     </Member>
@@ -2297,6 +2467,9 @@
         <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
             A POP3 protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SupportsUids">
@@ -2331,6 +2504,12 @@
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
             </exception>
         <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
             </exception>
       </Docs>

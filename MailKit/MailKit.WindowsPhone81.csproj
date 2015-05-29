@@ -242,6 +242,8 @@
     <Compile Include="NullProtocolLogger.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
+    <Compile Include="ServiceNotAuthenticatedException.cs" />
+    <Compile Include="ServiceNotConnectedException.cs" />
     <Compile Include="SpecialFolder.cs" />
     <Compile Include="StatusItems.cs" />
     <Compile Include="ThreadingAlgorithm.cs" />

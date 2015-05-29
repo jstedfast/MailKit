@@ -121,8 +121,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// Quick resynchronization needs to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support quick resynchronization.
@@ -159,8 +165,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="MailStore"/> is not connected, not authenticated, or a folder has been selected.
+		/// Quick resynchronization needs to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support quick resynchronization.
@@ -201,10 +213,11 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailStore"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="MailStore"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		public abstract IMailFolder GetFolder (SpecialFolder folder);
 
@@ -222,10 +235,11 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailStore"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="MailStore"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
@@ -248,10 +262,11 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailStore"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="MailStore"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -283,10 +298,11 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailStore"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="MailStore"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -327,10 +343,11 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailStore"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="MailStore"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -364,10 +381,11 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailStore"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="MailStore"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="MailStore"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.

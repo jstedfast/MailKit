@@ -106,6 +106,12 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -170,7 +176,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -236,7 +248,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -308,7 +326,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -380,7 +404,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -448,7 +478,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -516,7 +552,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -587,7 +629,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -658,7 +706,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -972,7 +1026,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1021,6 +1081,15 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
             </exception>
       </Docs>
     </Member>
@@ -1090,7 +1159,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1156,7 +1231,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1198,10 +1279,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The <see cref="P:MailKit.MailFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.</para>
-        </exception>
+            The <see cref="P:MailKit.MailFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -1213,6 +1292,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1242,10 +1327,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder cannot be deleted (it is either a namespace or the Inbox).</para>
-        </exception>
+            The folder cannot be deleted (it is either a namespace or the Inbox).
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -1257,6 +1340,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1308,7 +1397,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1374,7 +1469,13 @@
             The IMAP server does not support the UIDPLUS extension.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1441,7 +1542,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1508,7 +1615,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1581,7 +1694,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1654,7 +1773,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1732,7 +1857,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1805,7 +1936,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1878,7 +2015,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1952,7 +2095,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2023,7 +2172,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2107,7 +2262,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2191,7 +2352,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2271,7 +2438,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2351,7 +2524,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2427,7 +2606,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2503,7 +2688,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2581,7 +2772,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2664,7 +2861,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2747,7 +2950,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2796,6 +3005,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2849,6 +3064,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2906,7 +3127,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2964,7 +3191,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3022,7 +3255,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3080,7 +3319,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3141,7 +3386,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3202,7 +3453,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3263,7 +3520,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3324,7 +3587,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3357,7 +3626,13 @@
           <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
         </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3413,7 +3688,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3466,7 +3747,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3515,6 +3802,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3565,6 +3858,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3631,7 +3930,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3698,7 +4003,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3773,7 +4084,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3848,7 +4165,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3904,6 +4227,12 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">
@@ -3948,6 +4277,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4044,7 +4379,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4114,7 +4455,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4164,6 +4511,12 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Open">
@@ -4209,10 +4562,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The QRESYNC feature has not been enabled.</para>
-        </exception>
+            The QRESYNC feature has not been enabled.
+            </exception>
         <exception cref="T:System.NotSupportedException">
             The IMAP server does not support the QRESYNC extension.
             </exception>
@@ -4227,6 +4578,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4279,6 +4636,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4340,6 +4703,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4405,7 +4774,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4471,7 +4846,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4543,7 +4924,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4615,7 +5002,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4683,7 +5076,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4751,7 +5150,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4822,7 +5227,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4893,7 +5304,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4941,10 +5358,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder cannot be renamed (it is either a namespace or the Inbox).</para>
-        </exception>
+            The folder cannot be renamed (it is either a namespace or the Inbox).
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -4956,6 +5371,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5011,7 +5432,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5080,7 +5507,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5148,7 +5581,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5228,7 +5667,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5287,6 +5732,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5350,7 +5801,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5414,7 +5871,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5484,7 +5947,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5554,7 +6023,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5620,7 +6095,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5686,7 +6167,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5755,7 +6242,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5824,7 +6317,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open in read-write mode.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5879,6 +6378,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5936,6 +6441,12 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Subscribe">
@@ -5977,6 +6488,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6062,7 +6579,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6137,7 +6660,13 @@
             The server replied with a NO or BAD response.
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
-            The folder is not currently open.
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6180,6 +6709,12 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>

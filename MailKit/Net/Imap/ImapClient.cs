@@ -178,6 +178,18 @@ namespace MailKit.Net.Imap {
 				throw new ObjectDisposedException ("ImapClient");
 		}
 
+		void CheckConnected ()
+		{
+			if (!IsConnected)
+				throw new ServiceNotConnectedException ("The ImapClient is not connected.");
+		}
+
+		void CheckAuthenticated ()
+		{
+			if (!IsAuthenticated)
+				throw new ServiceNotAuthenticatedException ("The ImapClient is not authenticated.");
+		}
+
 		/// <summary>
 		/// Instantiate a new <see cref="ImapFolder"/>.
 		/// </summary>
@@ -219,11 +231,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the QRESYNC extension.
+		/// <exception cref="System.InvalidOperationException">
+		/// Compression must be enabled before a folder has been selected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -232,7 +244,7 @@ namespace MailKit.Net.Imap {
 		/// An I/O error occurred.
 		/// </exception>
 		/// <exception cref="ImapCommandException">
-		/// The server replied to the ENABLE command with a NO or BAD response.
+		/// The server replied to the COMPRESS command with a NO or BAD response.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
@@ -240,9 +252,7 @@ namespace MailKit.Net.Imap {
 		public void Compress (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient must be connected before you can enable compression.");
+			CheckConnected ();
 
 			if ((engine.Capabilities & ImapCapabilities.Compress) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the COMPRESS extension.");
@@ -278,11 +288,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// Compression must be enabled before a folder has been selected.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UTF8=ACCEPT extension.
+		/// The IMAP server does not support the COMPRESS extension.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -291,7 +304,7 @@ namespace MailKit.Net.Imap {
 		/// An I/O error occurred.
 		/// </exception>
 		/// <exception cref="ImapCommandException">
-		/// The server replied to the ENABLE command with a NO or BAD response.
+		/// The server replied to the COMPRESS command with a NO or BAD response.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
@@ -322,8 +335,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// Quick resynchronization needs to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the QRESYNC extension.
@@ -343,11 +362,10 @@ namespace MailKit.Net.Imap {
 		public override void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
 
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient must be connected before you can enable QRESYNC.");
-
-			if (engine.State > ImapEngineState.Authenticated)
+			if (engine.State != ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("QRESYNC needs to be enabled immediately after authenticating.");
 
 			if ((engine.Capabilities & ImapCapabilities.QuickResync) == 0)
@@ -376,8 +394,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// UTF8=ACCEPT needs to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UTF8=ACCEPT extension.
@@ -397,11 +421,10 @@ namespace MailKit.Net.Imap {
 		public void EnableUTF8 (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
 
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient must be connected before you can enable UTF8=ACCEPT.");
-
-			if (engine.State > ImapEngineState.Authenticated)
+			if (engine.State != ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("UTF8=ACCEPT needs to be enabled immediately after authenticating.");
 
 			if ((engine.Capabilities & ImapCapabilities.UTF8Accept) == 0)
@@ -431,8 +454,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is not connected, not authenticated, or a folder has been selected.
+		/// UTF8=ACCEPT needs to be enabled before selecting a folder.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UTF8=ACCEPT extension.
@@ -483,8 +512,8 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is processing another command.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ID extension.
@@ -504,9 +533,7 @@ namespace MailKit.Net.Imap {
 		public ImapImplementation Identify (ImapImplementation clientImplementation, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient must be connected before you can send an ID command.");
+			CheckConnected ();
 
 			if ((engine.Capabilities & ImapCapabilities.Id) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ID extension.");
@@ -570,8 +597,8 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is processing another command.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ID extension.
@@ -825,8 +852,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is not connected or is already authenticated.
+		/// The <see cref="ImapClient"/> is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -849,9 +879,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("credentials");
 
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient must be connected before you can authenticate.");
+			CheckConnected ();
 
 			if (engine.State >= ImapEngineState.Authenticated)
 				throw new InvalidOperationException ("The ImapClient is already authenticated.");
@@ -1394,10 +1422,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is already connected.</para>
-		/// <para>-or-</para>
-		/// <para>There is no previous session to restore.</para>
+		/// There is no previous session to restore.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1454,10 +1483,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is already connected.</para>
-		/// <para>-or-</para>
-		/// <para>There is no previous session to restore.</para>
+		/// There is no previous session to restore.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1496,10 +1526,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1516,12 +1547,8 @@ namespace MailKit.Net.Imap {
 		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
-
-			if (!engine.IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
-
-			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			var ic = engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
 
@@ -1572,12 +1599,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>A <see cref="ImapFolder"/> has not been opened.</para>
+		/// A <see cref="ImapFolder"/> has not been opened.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the IDLE extension.
@@ -1600,15 +1629,11 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
 
 			CheckDisposed ();
-
-			if (!engine.IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			if ((engine.Capabilities & ImapCapabilities.Idle) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the IDLE extension.");
-
-			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
 
 			if (engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("An ImapFolder has not been opened.");
@@ -1658,12 +1683,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>A <see cref="ImapFolder"/> has not been opened.</para>
+		/// A <see cref="ImapFolder"/> has not been opened.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the IDLE extension.
@@ -1686,15 +1713,11 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
 
 			CheckDisposed ();
-
-			if (!engine.IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			if ((engine.Capabilities & ImapCapabilities.Idle) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the IDLE extension.");
-
-			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
 
 			if (engine.State != ImapEngineState.Selected)
 				throw new InvalidOperationException ("An ImapFolder has not been opened.");
@@ -1765,20 +1788,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		public override IMailFolder Inbox {
 			get {
 				CheckDisposed ();
-
-				if (!IsConnected)
-					throw new InvalidOperationException ("The ImapClient must be connected before you can get the Inbox.");
-
-				if (engine.State == ImapEngineState.Connected)
-					throw new InvalidOperationException ("The ImapClient must be authenticated before you can get the Inbox.");
+				CheckConnected ();
+				CheckAuthenticated ();
 
 				return engine.Inbox;
 			}
@@ -1801,20 +1821,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		public override IMailFolder GetFolder (SpecialFolder folder)
 		{
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
-
-			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			switch (folder) {
 			case SpecialFolder.All:     return engine.All;
@@ -1842,10 +1859,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotFoundException">
 		/// The folder could not be found.
@@ -1856,12 +1874,8 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("namespace");
 
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
-
-			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			var encodedName = engine.EncodeMailboxName (@namespace.Path);
 			ImapFolder folder;
@@ -1888,10 +1902,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1914,12 +1929,8 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("namespace");
 
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
-
-			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			foreach (var folder in engine.GetFolders (@namespace, subscribedOnly, cancellationToken))
 				yield return folder;
@@ -1942,10 +1953,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1968,12 +1980,8 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("path");
 
 			CheckDisposed ();
-
-			if (!IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
-
-			if (engine.State != ImapEngineState.Authenticated && engine.State != ImapEngineState.Selected)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+			CheckConnected ();
+			CheckAuthenticated ();
 
 			return engine.GetFolder (path, cancellationToken);
 		}

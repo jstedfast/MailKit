@@ -119,10 +119,10 @@ namespace MailKit.Net.Imap {
 				throw new ObjectDisposedException ("ImapClient");
 
 			if (!Engine.IsConnected)
-				throw new InvalidOperationException ("The ImapClient is not connected.");
+				throw new ServiceNotConnectedException ("The ImapClient is not connected.");
 
 			if (Engine.State < ImapEngineState.Authenticated)
-				throw new InvalidOperationException ("The ImapClient is not authenticated.");
+				throw new ServiceNotAuthenticatedException ("The ImapClient is not authenticated.");
 
 			if (open) {
 				var access = rw ? FolderAccess.ReadWrite : FolderAccess.ReadOnly;
@@ -252,10 +252,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The QRESYNC feature has not been enabled.</para>
+		/// The QRESYNC feature has not been enabled.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the QRESYNC extension.
@@ -349,8 +353,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -422,12 +429,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder is not currently open.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -486,10 +495,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="MailFolder.DirectorySeparator"/> is nil, and thus child folders cannot be created.</para>
+		/// The <see cref="MailFolder.DirectorySeparator"/> is nil, and thus child folders cannot be created.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -576,10 +589,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder cannot be renamed (it is either a namespace or the Inbox).</para>
+		/// The folder cannot be renamed (it is either a namespace or the Inbox).
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -659,10 +676,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The folder cannot be deleted (it is either a namespace or the Inbox).</para>
+		/// The folder cannot be deleted (it is either a namespace or the Inbox).
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -713,8 +734,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -755,8 +779,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -799,8 +826,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -873,8 +903,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is either not connected or not authenticated.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -938,12 +971,13 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -989,10 +1023,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the STATUS command.
@@ -1076,10 +1111,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ACL extension.
@@ -1153,10 +1189,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ACL extension.
@@ -1220,10 +1257,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ACL extension.
@@ -1299,10 +1337,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ACL extension.
@@ -1353,10 +1392,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ACL extension.
@@ -1404,10 +1444,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ACL extension.
@@ -1449,10 +1490,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the ACL extension.
@@ -1585,10 +1627,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the QUOTA extension.
@@ -1645,10 +1688,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the QUOTA extension.
@@ -1712,12 +1756,13 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1770,12 +1815,13 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2275,12 +2321,13 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UIDPLUS extension.
@@ -2367,12 +2414,13 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UIDPLUS extension.
@@ -2461,12 +2509,13 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2534,13 +2583,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2965,12 +3015,13 @@ namespace MailKit.Net.Imap {
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3045,13 +3096,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3100,13 +3152,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3189,13 +3242,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -3284,13 +3338,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -3349,13 +3404,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -3438,13 +3494,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3519,13 +3576,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3574,13 +3632,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3659,13 +3718,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -3749,13 +3809,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -3810,13 +3871,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -3908,13 +3970,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3996,13 +4059,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4054,13 +4118,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4143,13 +4208,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -4237,13 +4303,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -4301,13 +4368,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -4536,13 +4604,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4599,13 +4668,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4697,13 +4767,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4742,13 +4813,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4792,13 +4864,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4837,13 +4910,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4927,13 +5001,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4972,13 +5047,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5022,13 +5098,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5067,13 +5144,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5163,13 +5241,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5244,13 +5323,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5331,13 +5411,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5430,13 +5511,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5562,13 +5644,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5619,13 +5702,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5669,13 +5753,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5720,13 +5805,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -5777,13 +5863,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -5832,13 +5919,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -5927,13 +6015,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5984,13 +6073,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6034,13 +6124,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6085,13 +6176,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -6142,13 +6234,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -6197,13 +6290,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The <see cref="ImapFolder"/> does not support mod-sequences.
@@ -6319,13 +6413,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6375,13 +6470,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6429,13 +6525,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6484,13 +6581,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6542,13 +6640,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6598,13 +6697,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6694,13 +6794,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6750,13 +6851,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6804,13 +6906,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6859,13 +6962,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6917,13 +7021,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6973,13 +7078,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7460,13 +7566,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7555,13 +7662,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7659,13 +7767,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7765,13 +7874,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7876,13 +7986,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -7970,13 +8081,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -8231,13 +8343,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="ImapClient"/> is not authenticated.</para>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		public override IEnumerator<MimeMessage> GetEnumerator ()
 		{

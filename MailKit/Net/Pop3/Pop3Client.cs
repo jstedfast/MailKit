@@ -222,13 +222,13 @@ namespace MailKit.Net.Pop3 {
 		void CheckConnected ()
 		{
 			if (!IsConnected)
-				throw new InvalidOperationException ("The Pop3Client is not connected.");
+				throw new ServiceNotConnectedException ("The Pop3Client is not connected.");
 		}
 
 		void CheckAuthenticated ()
 		{
 			if (!IsAuthenticated)
-				throw new UnauthorizedAccessException ("The Pop3Client has not been authenticated.");
+				throw new ServiceNotAuthenticatedException ("The Pop3Client has not been authenticated.");
 		}
 
 #if !NETFX_CORE
@@ -447,8 +447,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="Pop3Client"/> is not connected or is already authenticated.
+		/// The <see cref="Pop3Client"/> is already authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -474,7 +477,7 @@ namespace MailKit.Net.Pop3 {
 				throw new ArgumentNullException ("credentials");
 
 			if (!IsConnected)
-				throw new InvalidOperationException ("The Pop3Client must be connected before you can authenticate.");
+				throw new ServiceNotConnectedException ("The Pop3Client must be connected before you can authenticate.");
 
 			if (IsAuthenticated)
 				throw new InvalidOperationException ("The Pop3Client is already authenticated.");
@@ -1004,8 +1007,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="Pop3Client"/> is not connected or authenticated.
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1049,10 +1055,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="Pop3Client"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="Pop3Client"/> has already been authenticated.</para>
+		/// The <see cref="Pop3Client"/> has already been authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1099,10 +1106,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="Pop3Client"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="Pop3Client"/> has already been authenticated.</para>
+		/// The <see cref="Pop3Client"/> has already been authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1141,7 +1149,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1212,7 +1220,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1257,7 +1265,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1311,7 +1319,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1352,10 +1360,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		public override int Count {
@@ -1383,10 +1391,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		public override bool SupportsUids {
@@ -1410,10 +1418,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1454,10 +1462,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1550,10 +1558,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1695,10 +1703,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1748,10 +1756,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1789,10 +1797,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1990,10 +1998,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2046,10 +2054,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2096,10 +2104,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2172,10 +2180,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2240,10 +2248,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2308,10 +2316,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2364,10 +2372,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2414,10 +2422,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2484,10 +2492,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2546,10 +2554,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2609,10 +2617,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2666,10 +2674,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2717,10 +2725,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -2810,10 +2818,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2892,10 +2900,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2962,10 +2970,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2998,10 +3006,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -3039,10 +3047,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		/// <exception cref="InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="Pop3Client"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="Pop3Client"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">

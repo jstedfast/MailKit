@@ -144,6 +144,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddAccessRightsAsync">
@@ -203,6 +209,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -261,6 +273,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -326,6 +344,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -390,6 +414,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -448,6 +478,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -509,6 +545,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -575,6 +617,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -646,6 +694,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -711,6 +765,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -782,6 +842,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -842,6 +908,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -915,6 +987,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlags">
@@ -987,6 +1065,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlagsAsync">
@@ -1046,6 +1130,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1112,6 +1202,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlagsAsync">
@@ -1177,6 +1273,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlagsAsync">
@@ -1236,6 +1338,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1298,6 +1406,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1365,6 +1479,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1436,6 +1556,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlagsAsync">
@@ -1502,6 +1628,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1573,6 +1705,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlagsAsync">
@@ -1634,6 +1772,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1707,6 +1851,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddFlagsAsync">
@@ -1779,6 +1929,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabels">
@@ -1840,6 +1996,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1909,6 +2071,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabels">
@@ -1977,6 +2145,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabels">
@@ -2038,6 +2212,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2113,6 +2293,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabels">
@@ -2187,6 +2373,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabelsAsync">
@@ -2249,6 +2441,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2319,6 +2517,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabelsAsync">
@@ -2388,6 +2592,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabelsAsync">
@@ -2450,6 +2660,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2525,6 +2741,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AddLabelsAsync">
@@ -2599,6 +2821,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -2648,6 +2876,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2707,6 +2941,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2890,6 +3130,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -2953,6 +3199,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3141,6 +3393,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AppendAsync">
@@ -3199,6 +3457,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3382,6 +3646,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AppendAsync">
@@ -3445,6 +3715,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3651,6 +3927,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CheckAsync">
@@ -3698,6 +3980,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3748,6 +4036,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CloseAsync">
@@ -3797,6 +4091,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3861,6 +4161,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -3929,6 +4235,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -3995,6 +4307,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -4054,6 +4372,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4118,6 +4442,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4189,6 +4519,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CopyToAsync">
@@ -4256,6 +4592,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CopyToAsync">
@@ -4316,6 +4658,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4676,6 +5024,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Expunge">
@@ -4739,6 +5093,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="ExpungeAsync">
@@ -4791,6 +5151,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4855,6 +5221,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4923,6 +5295,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -4989,6 +5367,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5063,6 +5447,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5135,6 +5525,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5214,6 +5610,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5287,6 +5689,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5359,6 +5767,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5434,6 +5848,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5504,6 +5924,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5589,6 +6015,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5673,6 +6105,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5749,6 +6187,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -5827,6 +6271,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5903,6 +6353,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -5978,6 +6434,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6056,6 +6518,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6140,6 +6608,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Fetch">
@@ -6223,6 +6697,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -6291,6 +6771,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -6358,6 +6844,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6433,6 +6925,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -6506,6 +7004,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6585,6 +7089,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -6658,6 +7168,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6733,6 +7249,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -6807,6 +7329,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -6877,6 +7405,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -6962,6 +7496,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -7046,6 +7586,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -7122,6 +7668,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -7200,6 +7752,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -7276,6 +7834,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -7351,6 +7915,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -7429,6 +7999,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -7513,6 +8089,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="FetchAsync">
@@ -7595,6 +8177,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -7686,6 +8274,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetAccessControlListAsync">
@@ -7733,6 +8327,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -7787,6 +8387,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetAccessRightsAsync">
@@ -7839,6 +8445,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -7898,6 +8510,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
@@ -7955,6 +8573,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -8017,6 +8641,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPart">
@@ -8078,6 +8708,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPartAsync">
@@ -8136,6 +8772,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPartAsync">
@@ -8193,6 +8835,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -8255,6 +8903,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetBodyPartAsync">
@@ -8316,6 +8970,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -8348,6 +9008,12 @@
         </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -8402,6 +9068,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessage">
@@ -8454,6 +9126,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -8508,6 +9186,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageAsync">
@@ -8561,6 +9245,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMyAccessRights">
@@ -8609,6 +9299,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMyAccessRightsAsync">
@@ -8656,6 +9352,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -8707,6 +9409,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetQuotaAsync">
@@ -8756,6 +9464,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -8824,6 +9538,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStream">
@@ -8890,6 +9610,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -8963,6 +9689,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStream">
@@ -9034,6 +9766,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -9110,6 +9848,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStream">
@@ -9185,6 +9929,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStreamAsync">
@@ -9252,6 +10002,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStreamAsync">
@@ -9318,6 +10074,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -9391,6 +10153,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStreamAsync">
@@ -9462,6 +10230,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -9538,6 +10312,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStreamAsync">
@@ -9613,6 +10393,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolder">
@@ -9666,6 +10452,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -9721,6 +10513,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfolders">
@@ -9766,6 +10564,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetSubfoldersAsync">
@@ -9810,6 +10614,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -10082,6 +10892,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -10152,6 +10968,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -10218,6 +11040,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -10277,6 +11105,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -10341,6 +11175,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -10412,6 +11252,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MoveToAsync">
@@ -10479,6 +11325,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MoveToAsync">
@@ -10539,6 +11391,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -10917,6 +11775,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Open">
@@ -10962,10 +11826,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The quick resynchronization feature has not been enabled.</para>
-        </exception>
+            The quick resynchronization feature has not been enabled.
+            </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the quick resynchronization feature.
             </exception>
@@ -10980,6 +11842,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11029,6 +11897,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="OpenAsync">
@@ -11074,10 +11948,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The quick resynchronization feature has not been enabled.</para>
-        </exception>
+            The quick resynchronization feature has not been enabled.
+            </exception>
         <exception cref="T:System.NotSupportedException">
             The mail store does not support the quick resynchronization feature.
             </exception>
@@ -11092,6 +11964,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11230,6 +12108,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveAccessAsync">
@@ -11282,6 +12166,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11340,6 +12230,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11400,6 +12296,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -11458,6 +12360,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11523,6 +12431,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -11587,6 +12501,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -11645,6 +12565,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11706,6 +12632,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11772,6 +12704,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11843,6 +12781,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -11908,6 +12852,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -11979,6 +12929,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -12039,6 +12995,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -12112,6 +13074,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlags">
@@ -12184,6 +13152,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlagsAsync">
@@ -12243,6 +13217,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -12309,6 +13289,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlagsAsync">
@@ -12374,6 +13360,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlagsAsync">
@@ -12433,6 +13425,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -12495,6 +13493,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -12562,6 +13566,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -12633,6 +13643,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlagsAsync">
@@ -12699,6 +13715,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -12770,6 +13792,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlagsAsync">
@@ -12831,6 +13859,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -12904,6 +13938,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveFlagsAsync">
@@ -12976,6 +14016,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabels">
@@ -13037,6 +14083,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -13106,6 +14158,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabels">
@@ -13174,6 +14232,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabels">
@@ -13235,6 +14299,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -13310,6 +14380,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabels">
@@ -13384,6 +14460,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabelsAsync">
@@ -13446,6 +14528,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -13516,6 +14604,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabelsAsync">
@@ -13585,6 +14679,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabelsAsync">
@@ -13647,6 +14747,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -13722,6 +14828,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="RemoveLabelsAsync">
@@ -13795,6 +14907,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -13997,6 +15115,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Search">
@@ -14066,6 +15190,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Search">
@@ -14133,6 +15263,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -14214,6 +15350,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SearchAsync">
@@ -14269,6 +15411,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -14339,6 +15487,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SearchAsync">
@@ -14406,6 +15560,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -14487,6 +15647,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetAccessRights">
@@ -14544,6 +15710,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -14604,6 +15776,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -14659,6 +15837,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -14722,6 +15906,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -14784,6 +15974,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -14840,6 +16036,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -14898,6 +16100,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -14962,6 +16170,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15031,6 +16245,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -15094,6 +16314,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15163,6 +16389,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -15221,6 +16453,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15292,6 +16530,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -15362,6 +16606,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlagsAsync">
@@ -15418,6 +16668,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15482,6 +16738,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlagsAsync">
@@ -15545,6 +16807,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlagsAsync">
@@ -15602,6 +16870,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15661,6 +16935,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15726,6 +17006,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15795,6 +17081,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlagsAsync">
@@ -15859,6 +17151,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -15928,6 +17226,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlagsAsync">
@@ -15987,6 +17291,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -16058,6 +17368,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetFlagsAsync">
@@ -16128,6 +17444,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabels">
@@ -16186,6 +17508,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -16253,6 +17581,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabels">
@@ -16319,6 +17653,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabels">
@@ -16378,6 +17718,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -16451,6 +17797,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabels">
@@ -16523,6 +17875,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabelsAsync">
@@ -16582,6 +17940,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -16650,6 +18014,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabelsAsync">
@@ -16717,6 +18087,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabelsAsync">
@@ -16777,6 +18153,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -16850,6 +18232,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetLabelsAsync">
@@ -16922,6 +18310,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open in read-write mode.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetQuota">
@@ -16976,6 +18370,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SetQuotaAsync">
@@ -17029,6 +18429,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -17106,6 +18512,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="StatusAsync">
@@ -17163,6 +18575,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Subscribe">
@@ -17204,6 +18622,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -17247,6 +18671,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -17347,6 +18777,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Thread">
@@ -17409,6 +18845,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -17485,6 +18927,12 @@
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="ThreadAsync">
@@ -17547,6 +18995,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -17622,6 +19076,12 @@
             </exception>
         <exception cref="T:MailKit.FolderNotOpenException">
             The folder is not currently open.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -17775,6 +19235,12 @@
         <exception cref="T:MailKit.CommandException">
             The command failed.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="UnsubscribeAsync">
@@ -17817,6 +19283,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
