@@ -82,6 +82,7 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		readonly Dictionary<string, int> dict = new Dictionary<string, int> ();
+		readonly MimeParser parser = new MimeParser (Stream.Null);
 		readonly IProtocolLogger logger;
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
@@ -90,7 +91,6 @@ namespace MailKit.Net.Pop3 {
 #endif
 		int timeout = 100000;
 		bool disposed, utf8;
-		MimeParser parser;
 		int total;
 
 		/// <summary>
@@ -1876,145 +1876,172 @@ namespace MailKit.Net.Pop3 {
 			return sizes;
 		}
 
-		Stream GetStreamForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
+		abstract class DownloadContext<T>
 		{
-			var stream = new MemoryBlockStream ();
-			Pop3Command pc;
+			protected readonly Pop3Engine Engine;
 
-			Pop3CommandHandler handler = (pop3, cmd, text) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
+			protected DownloadContext (Pop3Engine engine)
+			{
+				Downloaded = new List<T> ();
+				Engine = engine;
+			}
+
+			public IList<T> Downloaded {
+				get; private set;
+			}
+
+			protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
+
+			void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text)
+			{
+				if (pc.Status != Pop3CommandStatus.Ok)
 					return;
 
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
-					pop3.Stream.CopyTo (stream, 4096);
-					stream.Position = 0;
+					Downloaded.Add (Parse (pop3.Stream, pc.CancellationToken));
+				} catch (FormatException ex) {
+					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
+					pop3.Stream.CopyTo (Stream.Null, 4096);
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
-			};
-
-			if (headersOnly)
-				pc = engine.QueueCommand (cancellationToken, handler, "TOP {0} 0", seqid);
-			else
-				pc = engine.QueueCommand (cancellationToken, handler, "RETR {0}", seqid);
-
-			while (engine.Iterate () < pc.Id) {
-				// continue processing commands
 			}
 
-			if (pc.Status != Pop3CommandStatus.Ok)
-				throw CreatePop3Exception (pc);
+			Pop3Command QueueCommand (int seqid, bool headersOnly, CancellationToken cancellationToken)
+			{
+				if (headersOnly)
+					return Engine.QueueCommand (cancellationToken, OnDataReceived, "TOP {0} 0", seqid);
 
-			if (pc.Exception != null)
-				throw pc.Exception;
+				return Engine.QueueCommand (cancellationToken, OnDataReceived, "RETR {0}", seqid);
+			}
 
-			return stream;
+			public void Download (int seqid, bool headersOnly, CancellationToken cancellationToken)
+			{
+				var pc = QueueCommand (seqid, headersOnly, cancellationToken);
+
+				while (Engine.Iterate () < pc.Id) {
+					// continue processing commands
+				}
+
+				if (pc.Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (pc);
+
+				if (pc.Exception != null)
+					throw pc.Exception;
+			}
+
+			public void Download (IList<int> seqids, bool headersOnly, CancellationToken cancellationToken)
+			{
+				if ((Engine.Capabilities & Pop3Capabilities.Pipelining) == 0) {
+					for (int i = 0; i < seqids.Count; i++)
+						Download (seqids[i], headersOnly, cancellationToken);
+
+					return;
+				}
+
+				var commands = new Pop3Command[seqids.Count];
+				Pop3Command pc = null;
+
+				for (int i = 0; i < seqids.Count; i++)
+					commands[i] = QueueCommand (seqids[i], headersOnly, cancellationToken);
+
+				pc = commands[commands.Length - 1];
+
+				while (Engine.Iterate () < pc.Id) {
+					// continue processing commands
+				}
+
+				for (int i = 0; i < commands.Length; i++) {
+					if (commands[i].Status != Pop3CommandStatus.Ok)
+						throw CreatePop3Exception (commands[i]);
+
+					if (commands[i].Exception != null)
+						throw commands[i].Exception;
+				}
+			}
 		}
 
-		MimeMessage ParseMessage (CancellationToken cancellationToken)
+		class DownloadStreamContext : DownloadContext<Stream>
 		{
-			if (parser == null)
-				parser = new MimeParser (ParserOptions.Default, engine.Stream);
-			else
-				parser.SetStream (ParserOptions.Default, engine.Stream);
+			public DownloadStreamContext (Pop3Engine engine) : base (engine)
+			{
+			}
 
-			return parser.ParseMessage (cancellationToken);
+			protected override Stream Parse (Pop3Stream data, CancellationToken cancellationToken)
+			{
+				cancellationToken.ThrowIfCancellationRequested ();
+
+				var stream = new MemoryBlockStream ();
+				var buffer = new byte[4096];
+				int nread;
+
+				while ((nread = data.Read (buffer, 0, buffer.Length, cancellationToken)) > 0)
+					stream.Write (buffer, 0, nread);
+
+				stream.Position = 0;
+
+				return stream;
+			}
+		}
+
+		//class DownloadHeaderContext : DownloadContext<HeaderList>
+		//{
+		//	readonly MimeParser parser;
+		//
+		//	public DownloadHeaderContext (Pop3Engine engine, MimeParser parser) : base (engine)
+		//	{
+		//		this.parser = parser;
+		//	}
+		//
+		//	protected override HeaderList Parse (Pop3Stream data, CancellationToken cancellationToken)
+		//	{
+		//		parser.SetStream (ParserOptions.Default, data);
+		//		return parser.ParseHeaders (cancellationToken);
+		//	}
+		//}
+
+		class DownloadMessageContext : DownloadContext<MimeMessage>
+		{
+			readonly MimeParser parser;
+
+			public DownloadMessageContext (Pop3Engine engine, MimeParser parser) : base (engine)
+			{
+				this.parser = parser;
+			}
+
+			protected override MimeMessage Parse (Pop3Stream data, CancellationToken cancellationToken)
+			{
+				parser.SetStream (ParserOptions.Default, data);
+				return parser.ParseMessage (cancellationToken);
+			}
+		}
+
+		Stream GetStreamForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
+		{
+			var ctx = new DownloadStreamContext (engine);
+
+			ctx.Download (seqid, headersOnly, cancellationToken);
+
+			return ctx.Downloaded[0];
 		}
 
 		MimeMessage GetMessageForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
 		{
-			MimeMessage message = null;
-			Pop3Command pc;
+			var ctx = new DownloadMessageContext (engine, parser);
 
-			Pop3CommandHandler handler = (pop3, cmd, text) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
-					return;
+			ctx.Download (seqid, headersOnly, cancellationToken);
 
-				try {
-					pop3.Stream.Mode = Pop3StreamMode.Data;
-
-					message = ParseMessage (cancellationToken);
-				} catch (FormatException ex) {
-					// consume any remaining data and capture the exception...
-					cmd.Exception = CreatePop3ParseException (ex, "Failed to parse the message.");
-					pop3.Stream.CopyTo (Stream.Null, 4096);
-				} finally {
-					pop3.Stream.Mode = Pop3StreamMode.Line;
-				}
-			};
-
-			if (headersOnly)
-				pc = engine.QueueCommand (cancellationToken, handler, "TOP {0} 0", seqid);
-			else
-				pc = engine.QueueCommand (cancellationToken, handler, "RETR {0}", seqid);
-
-			while (engine.Iterate () < pc.Id) {
-				// continue processing commands
-			}
-
-			if (pc.Status != Pop3CommandStatus.Ok)
-				throw CreatePop3Exception (pc);
-
-			if (pc.Exception != null)
-				throw pc.Exception;
-
-			return message;
+			return ctx.Downloaded[0];
 		}
 
 		IList<MimeMessage> GetMessagesForSequenceIds (IList<int> seqids, bool headersOnly, CancellationToken cancellationToken)
 		{
-			var messages = new List<MimeMessage> ();
+			var ctx = new DownloadMessageContext (engine, parser);
 
-			if ((Capabilities & Pop3Capabilities.Pipelining) == 0) {
-				for (int i = 0; i < seqids.Count; i++)
-					messages.Add (GetMessageForSequenceId (seqids[i], headersOnly, cancellationToken));
+			ctx.Download (seqids, headersOnly, cancellationToken);
 
-				return messages;
-			}
-
-			var commands = new Pop3Command[seqids.Count];
-			Pop3Command pc = null;
-
-			Pop3CommandHandler handler = (pop3, cmd, text) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
-					return;
-
-				try {
-					pop3.Stream.Mode = Pop3StreamMode.Data;
-
-					messages.Add (ParseMessage (cancellationToken));
-				} catch (FormatException ex) {
-					// consume any remaining data and capture the exception...
-					cmd.Exception = CreatePop3ParseException (ex, "Failed to parse message.");
-					pop3.Stream.CopyTo (Stream.Null, 4096);
-				} finally {
-					pop3.Stream.Mode = Pop3StreamMode.Line;
-				}
-			};
-
-			for (int i = 0; i < seqids.Count; i++) {
-				if (headersOnly)
-					pc = engine.QueueCommand (cancellationToken, handler, "TOP {0} 0", seqids[i]);
-				else
-					pc = engine.QueueCommand (cancellationToken, handler, "RETR {0}", seqids[i]);
-
-				commands[i] = pc;
-			}
-
-			while (engine.Iterate () < pc.Id) {
-				// continue processing commands
-			}
-
-			for (int i = 0; i < commands.Length; i++) {
-				if (commands[i].Status != Pop3CommandStatus.Ok)
-					throw CreatePop3Exception (commands[i]);
-
-				if (commands[i].Exception != null)
-					throw commands[i].Exception;
-			}
-
-			return messages;
+			return ctx.Downloaded;
 		}
 
 		/// <summary>
