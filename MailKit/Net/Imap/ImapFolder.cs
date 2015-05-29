@@ -5385,15 +5385,92 @@ namespace MailKit.Net.Imap {
 		/// Gets a substream of the specified body part.
 		/// </summary>
 		/// <remarks>
-		/// Fetches a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
+		/// <para>Gets a substream of the specified message.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="section">The desired section of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="section"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (uid.Id == 0)
+				throw new ArgumentException ("The uid is invalid.", "uid");
+
+			if (section == null)
+				throw new ArgumentNullException ("section");
+
+			CheckState (true, false);
+
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}])\r\n", uid.Id, section);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("FETCH", ic);
+
+			stream = streams.Values.FirstOrDefault ();
+
+			if (stream == null)
+				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+
+			return stream;
+		}
+
+		/// <summary>
+		/// Gets a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets a substream of the specified message. If the starting offset is beyond
+		/// the end of the specified section of the message, an empty stream is returned. If
+		/// the number of bytes desired extends beyond the end of the section, a truncated
+		/// stream will be returned.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -5401,7 +5478,7 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
+		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="offset"/> is negative.</para>
@@ -5432,13 +5509,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
 
-			if (part == null)
-				throw new ArgumentNullException ("part");
+			if (section == null)
+				throw new ArgumentNullException ("section");
 
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset");
@@ -5451,16 +5528,7 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var partSpecifier = part.PartSpecifier;
-
-			if (contentOnly) {
-				if (!string.IsNullOrEmpty (partSpecifier))
-					partSpecifier += ".TEXT";
-				else
-					partSpecifier = "TEXT";
-			}
-
-			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", uid.Id, partSpecifier, offset, count);
+			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", uid.Id, section, offset, count);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
@@ -5476,30 +5544,109 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			if (!streams.TryGetValue (partSpecifier, out stream))
+			stream = streams.Values.FirstOrDefault ();
+
+			if (stream == null)
 				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;
 		}
 
 		/// <summary>
-		/// Gets a substream of the specified body part.
+		/// Gets a substream of the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Fetches a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
+		/// <para>Gets a substream of the specified message.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
 		/// <returns>The stream.</returns>
 		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="section">The desired section of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="section"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (section == null)
+				throw new ArgumentNullException ("section");
+
+			CheckState (true, false);
+
+			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}])\r\n", index + 1, section);
+			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var streams = new Dictionary<string, Stream> ();
+			Stream stream;
+
+			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
+			ic.UserData = streams;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Result != ImapCommandResult.Ok)
+				throw ImapCommandException.Create ("FETCH", ic);
+
+			stream = streams.Values.FirstOrDefault ();
+
+			if (stream == null)
+				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+
+			return stream;
+		}
+
+		/// <summary>
+		/// Gets a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets a substream of the specified message. If the starting offset is beyond
+		/// the end of the specified section of the message, an empty stream is returned. If
+		/// the number of bytes desired extends beyond the end of the section, a truncated
+		/// stream will be returned.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
+		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="index"/> is out of range.</para>
@@ -5532,13 +5679,13 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
-			if (part == null)
-				throw new ArgumentNullException ("part");
+			if (section == null)
+				throw new ArgumentNullException ("section");
 
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset");
@@ -5551,16 +5698,7 @@ namespace MailKit.Net.Imap {
 			if (count == 0)
 				return new MemoryStream ();
 
-			var partSpecifier = part.PartSpecifier;
-
-			if (contentOnly) {
-				if (!string.IsNullOrEmpty (partSpecifier))
-					partSpecifier += ".TEXT";
-				else
-					partSpecifier = "TEXT";
-			}
-
-			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", index + 1, partSpecifier, offset, count);
+			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", index + 1, section, offset, count);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var streams = new Dictionary<string, Stream> ();
 			Stream stream;
@@ -5576,7 +5714,9 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			if (!streams.TryGetValue (partSpecifier, out stream))
+			stream = streams.Values.FirstOrDefault ();
+
+			if (stream == null)
 				throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
 			return stream;

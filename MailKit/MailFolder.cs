@@ -7145,7 +7145,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return GetStream (uid, part, false, offset, count, cancellationToken);
+			return GetStream (uid, part, offset, count, cancellationToken);
 		}
 
 		/// <summary>
@@ -7267,7 +7267,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return GetStream (index, part, false, offset, count, cancellationToken);
+			return GetStream (index, part, offset, count, cancellationToken);
 		}
 
 		/// <summary>
@@ -7341,31 +7341,22 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Get a substream of the specified body part.
+		/// Get a substream of the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Gets a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
+		/// <para>Gets a substream of the specified message.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="offset"/> is negative.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="count"/> is negative.</para>
+		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -7391,34 +7382,25 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously get a substream of the specified body part.
+		/// Asynchronously get a substream of the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously gets a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
+		/// <para>Asynchronously gets a substream of the specified message.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
 		/// <returns>The stream.</returns>
 		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="offset"/> is negative.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="count"/> is negative.</para>
+		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
@@ -7444,46 +7426,42 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (part == null)
-				throw new ArgumentNullException ("part");
-
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+			if (section == null)
+				throw new ArgumentNullException ("section");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (uid, part, contentOnly, offset, count, cancellationToken);
+					return GetStream (uid, section, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
 		/// <summary>
-		/// Get a substream of the specified body part.
+		/// Get a substream of the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Gets a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
+		/// <para>Gets a substream of the specified message. If the starting offset is beyond
+		/// the end of the specified section of the message, an empty stream is returned. If
+		/// the number of bytes desired extends beyond the end of the section, a truncated
+		/// stream will be returned.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
 		/// <returns>The stream.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
+		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="index"/> is out of range.</para>
-		/// <para>-or-</para>
 		/// <para><paramref name="offset"/> is negative.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="count"/> is negative.</para>
@@ -7512,30 +7490,32 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously get a substream of the specified body part.
+		/// Asynchronously get a substream of the specified message.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously gets a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
+		/// <para>Asynchronously gets a substream of the specified message. If the starting
+		/// offset is beyond the end of the specified section of the message, an empty stream
+		/// is returned. If the number of bytes desired extends beyond the end of the section,
+		/// a truncated stream will be returned.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
 		/// </remarks>
 		/// <returns>The stream.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="contentOnly"><c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+		/// <param name="uid">The UID of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="uid"/> is invalid.
+		/// </exception>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
+		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="index"/> is out of range.</para>
-		/// <para>-or-</para>
 		/// <para><paramref name="offset"/> is negative.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="count"/> is negative.</para>
@@ -7564,13 +7544,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, bool contentOnly, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
-
-			if (part == null)
-				throw new ArgumentNullException ("part");
+			if (section == null)
+				throw new ArgumentNullException ("section");
 
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset");
@@ -7580,7 +7557,233 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (index, part, contentOnly, offset, count, cancellationToken);
+					return GetStream (uid, section, offset, count, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets a substream of the specified message.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="section"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously gets a substream of the specified message.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="section"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (section == null)
+				throw new ArgumentNullException ("section");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetStream (index, section, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get a substream of the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets a substream of the specified message. If the starting offset is beyond
+		/// the end of the specified section of the message, an empty stream is returned. If
+		/// the number of bytes desired extends beyond the end of the section, a truncated
+		/// stream will be returned.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="section"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="index"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="offset"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="count"/> is negative.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get a substream of the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously gets a substream of the specified message. If the starting
+		/// offset is beyond the end of the specified section of the message, an empty stream
+		/// is returned. If the number of bytes desired extends beyond the end of the section,
+		/// a truncated stream will be returned.</para>
+		/// <para>For more information about how to construct the <paramref name="section"/>,
+		/// see Section 6.4.5 of RFC3501.</para>
+		/// </remarks>
+		/// <returns>The stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="section">The desired section of the message.</param>
+		/// <param name="offset">The starting offset of the first desired byte.</param>
+		/// <param name="count">The number of bytes desired.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="section"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="index"/> is out of range.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="offset"/> is negative.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="count"/> is negative.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (section == null)
+				throw new ArgumentNullException ("section");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetStream (index, section, offset, count, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}

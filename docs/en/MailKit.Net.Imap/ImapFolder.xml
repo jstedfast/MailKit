@@ -3868,6 +3868,126 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (MailKit.UniqueId uid, string section, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, string section, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+        <Parameter Name="section" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="uid">The UID of the message.</param>
+        <param name="section">The desired section of the message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets a substream of the specified body part.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+          <para>Gets a substream of the specified message.</para>
+          <para>For more information about how to construct the <paramref name="section" />,
+            see Section 6.4.5 of RFC3501.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentException">
+          <paramref name="uid" /> is invalid.
+            </exception>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="section" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (int index, string section, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, string section, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="section" Type="System.String" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the message.</param>
+        <param name="section">The desired section of the message.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Gets a substream of the specified message.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+          <para>Gets a substream of the specified message.</para>
+          <para>For more information about how to construct the <paramref name="section" />,
+            see Section 6.4.5 of RFC3501.</para>
+        </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="section" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is out of range.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapProtocolException">
+            The server's response contained unexpected tokens.
+            </exception>
+        <exception cref="T:MailKit.Net.Imap.ImapCommandException">
+            The server replied with a NO or BAD response.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
       <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (MailKit.UniqueId uid, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
@@ -4014,11 +4134,10 @@
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (MailKit.UniqueId uid, MailKit.BodyPart part, bool contentOnly, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, class MailKit.BodyPart part, bool contentOnly, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (MailKit.UniqueId uid, string section, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(valuetype MailKit.UniqueId uid, string section, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
         <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -4026,35 +4145,34 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="uid" Type="MailKit.UniqueId" />
-        <Parameter Name="part" Type="MailKit.BodyPart" />
-        <Parameter Name="contentOnly" Type="System.Boolean" />
+        <Parameter Name="section" Type="System.String" />
         <Parameter Name="offset" Type="System.Int32" />
         <Parameter Name="count" Type="System.Int32" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="uid">The UID of the message.</param>
-        <param name="part">The desired body part.</param>
-        <param name="contentOnly">
-          <c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+        <param name="section">The desired section of the message.</param>
         <param name="offset">The starting offset of the first desired byte.</param>
         <param name="count">The number of bytes desired.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Gets a substream of the specified body part.
+            Gets a substream of the specified message.
             </summary>
         <returns>The stream.</returns>
         <remarks>
-            Fetches a substream of the body part. If the starting offset is beyond
-            the end of the body part, an empty stream is returned. If the number of
-            bytes desired extends beyond the end of the body part, a truncated stream
-            will be returned.
-            </remarks>
+          <para>Gets a substream of the specified message. If the starting offset is beyond
+            the end of the specified section of the message, an empty stream is returned. If
+            the number of bytes desired extends beyond the end of the section, a truncated
+            stream will be returned.</para>
+          <para>For more information about how to construct the <paramref name="section" />,
+            see Section 6.4.5 of RFC3501.</para>
+        </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="uid" /> is invalid.
             </exception>
         <exception cref="T:System.ArgumentNullException">
-          <paramref name="part" /> is <c>null</c>.
+          <paramref name="section" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
@@ -4066,11 +4184,15 @@
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-        </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -4083,23 +4205,13 @@
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
             </exception>
-        <exception cref="T:MailKit.FolderNotOpenException">
-            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
-            </exception>
-        <exception cref="T:MailKit.ServiceNotConnectedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
-            </exception>
-        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
-            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetStream">
-      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (int index, MailKit.BodyPart part, bool contentOnly, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, class MailKit.BodyPart part, bool contentOnly, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (int index, string section, int offset, int count, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, string section, int32 offset, int32 count, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.0.0</AssemblyVersion>
         <AssemblyVersion>1.2.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
@@ -4107,32 +4219,31 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="part" Type="MailKit.BodyPart" />
-        <Parameter Name="contentOnly" Type="System.Boolean" />
+        <Parameter Name="section" Type="System.String" />
         <Parameter Name="offset" Type="System.Int32" />
         <Parameter Name="count" Type="System.Int32" />
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
         <param name="index">The index of the message.</param>
-        <param name="part">The desired body part.</param>
-        <param name="contentOnly">
-          <c>true</c> if only the content of the body part is desired; otherwise, <c>false</c>.</param>
+        <param name="section">The desired section of the message.</param>
         <param name="offset">The starting offset of the first desired byte.</param>
         <param name="count">The number of bytes desired.</param>
         <param name="cancellationToken">The cancellation token.</param>
         <summary>
-            Gets a substream of the specified body part.
+            Gets a substream of the specified message.
             </summary>
         <returns>The stream.</returns>
         <remarks>
-            Fetches a substream of the body part. If the starting offset is beyond
-            the end of the body part, an empty stream is returned. If the number of
-            bytes desired extends beyond the end of the body part, a truncated stream
-            will be returned.
-            </remarks>
+          <para>Gets a substream of the specified message. If the starting offset is beyond
+            the end of the specified section of the message, an empty stream is returned. If
+            the number of bytes desired extends beyond the end of the section, a truncated
+            stream will be returned.</para>
+          <para>For more information about how to construct the <paramref name="section" />,
+            see Section 6.4.5 of RFC3501.</para>
+        </remarks>
         <exception cref="T:System.ArgumentNullException">
-          <paramref name="part" /> is <c>null</c>.
+          <paramref name="section" /> is <c>null</c>.
             </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
@@ -4147,11 +4258,15 @@
         <exception cref="T:System.ObjectDisposedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
-        <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.</para>
-          <para>-or-</para>
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.</para>
-        </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotOpenException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -4163,15 +4278,6 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
-            </exception>
-        <exception cref="T:MailKit.FolderNotOpenException">
-            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> is not currently open.
-            </exception>
-        <exception cref="T:MailKit.ServiceNotConnectedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
-            </exception>
-        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
-            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
