@@ -2139,6 +2139,59 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public override System.IO.Stream GetStream (int index, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.IO.Stream GetStream(int32 index, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="headersOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the message.</param>
+        <param name="headersOnly">
+          <c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the message or header stream at the specified index.
+            </summary>
+        <returns>The message or header stream.</returns>
+        <remarks>
+            Gets the message or header stream at the specified index.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Pop3.Pop3Client" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3CommandException">
+            The POP3 command failed.
+            </exception>
+        <exception cref="T:MailKit.Net.Pop3.Pop3ProtocolException">
+            A POP3 protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Implementation">
       <MemberSignature Language="C#" Value="public string Implementation { get; }" />
       <MemberSignature Language="ILAsm" Value=".property instance string Implementation" />

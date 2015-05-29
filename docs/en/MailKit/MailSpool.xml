@@ -77,6 +77,9 @@
         <exception cref="T:System.UnauthorizedAccessException">
             The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteAllMessages">
@@ -123,6 +126,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -171,6 +180,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -223,6 +238,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -287,6 +308,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessageAsync">
@@ -339,6 +366,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -404,6 +437,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessages">
@@ -460,6 +499,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -526,6 +571,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessages">
@@ -580,6 +631,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -638,6 +695,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -705,6 +768,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="DeleteMessagesAsync">
@@ -761,6 +830,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -803,6 +878,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -854,6 +935,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -917,6 +1004,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageAsync">
@@ -967,6 +1060,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1030,6 +1129,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageCount">
@@ -1081,6 +1186,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageCountAsync">
@@ -1131,6 +1242,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1187,6 +1304,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1252,6 +1375,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -1302,6 +1431,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1365,6 +1500,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeaders">
@@ -1418,6 +1559,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1474,6 +1621,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1539,6 +1692,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeadersAsync">
@@ -1589,6 +1748,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1652,6 +1817,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageHeadersAsync">
@@ -1705,6 +1876,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1761,6 +1938,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1826,6 +2009,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessages">
@@ -1879,6 +2068,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -1935,6 +2130,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2000,6 +2201,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessagesAsync">
@@ -2054,6 +2261,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSize">
@@ -2104,6 +2317,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2164,6 +2383,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizeAsync">
@@ -2214,6 +2439,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2274,6 +2505,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizes">
@@ -2320,6 +2557,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageSizesAsync">
@@ -2365,6 +2608,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -2421,6 +2670,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUidAsync">
@@ -2476,6 +2731,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUids">
@@ -2526,6 +2787,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="GetMessageUidsAsync">
@@ -2563,6 +2830,118 @@
             </exception>
         <exception cref="T:System.NotSupportedException">
             The mail spool does not support UIDs.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStream">
+      <MemberSignature Language="C#" Value="public abstract System.IO.Stream GetStream (int index, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.IO.Stream GetStream(int32 index, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="headersOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the message.</param>
+        <param name="headersOnly">
+          <c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the message or header stream at the specified index.
+            </summary>
+        <returns>The message or header stream.</returns>
+        <remarks>
+            Gets the message or header stream at the specified index.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStreamAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.IO.Stream&gt; GetStreamAsync (int index, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.IO.Stream&gt; GetStreamAsync(int32 index, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.IO.Stream&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="index" Type="System.Int32" />
+        <Parameter Name="headersOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="index">The index of the message.</param>
+        <param name="headersOnly">
+          <c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the message or header stream at the specified index.
+            </summary>
+        <returns>The message or header stream.</returns>
+        <remarks>
+            Asynchronously gets the message or header stream at the specified index.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="index" /> is not a valid message index.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
@@ -2623,6 +3002,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="ResetAsync">
@@ -2671,6 +3056,12 @@
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
             </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="SupportsUids">
@@ -2705,6 +3096,9 @@
             The <see cref="T:MailKit.MailSpool" /> is not connected.
             </exception>
         <exception cref="T:System.UnauthorizedAccessException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
@@ -2749,6 +3143,12 @@
             </exception>
         <exception cref="T:MailKit.ProtocolException">
             A protocol error occurred.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
             </exception>
       </Docs>
     </Member>

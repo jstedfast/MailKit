@@ -50,6 +50,7 @@ using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
 #endif
 
 using MimeKit;
+using MimeKit.IO;
 
 using MailKit.Security;
 
@@ -1875,6 +1876,41 @@ namespace MailKit.Net.Pop3 {
 			return sizes;
 		}
 
+		Stream GetStreamForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
+		{
+			var stream = new MemoryBlockStream ();
+			Pop3Command pc;
+
+			Pop3CommandHandler handler = (pop3, cmd, text) => {
+				if (cmd.Status != Pop3CommandStatus.Ok)
+					return;
+
+				try {
+					pop3.Stream.Mode = Pop3StreamMode.Data;
+					pop3.Stream.CopyTo (stream, 4096);
+				} finally {
+					pop3.Stream.Mode = Pop3StreamMode.Line;
+				}
+			};
+
+			if (headersOnly)
+				pc = engine.QueueCommand (cancellationToken, handler, "TOP {0} 0", seqid);
+			else
+				pc = engine.QueueCommand (cancellationToken, handler, "RETR {0}", seqid);
+
+			while (engine.Iterate () < pc.Id) {
+				// continue processing commands
+			}
+
+			if (pc.Status != Pop3CommandStatus.Ok)
+				throw CreatePop3Exception (pc);
+
+			if (pc.Exception != null)
+				throw pc.Exception;
+
+			return stream;
+		}
+
 		MimeMessage ParseMessage (CancellationToken cancellationToken)
 		{
 			if (parser == null)
@@ -2596,6 +2632,52 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = startIndex + i + 1;
 
 			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
+		}
+
+		/// <summary>
+		/// Get the message or header stream at the specified index.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message or header stream at the specified index.
+		/// </remarks>
+		/// <returns>The message or header stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			if (index < 0 || index >= total)
+				throw new ArgumentOutOfRangeException ("index");
+
+			return GetStreamForSequenceId (index + 1, headersOnly, cancellationToken);
 		}
 
 		/// <summary>

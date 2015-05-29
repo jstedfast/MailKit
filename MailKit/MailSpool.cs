@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Threading;
 using System.Collections;
 using System.Threading.Tasks;
@@ -66,7 +67,7 @@ namespace MailKit {
 		/// <exception cref="InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		public abstract int Count {
@@ -91,7 +92,7 @@ namespace MailKit {
 		/// <exception cref="InvalidOperationException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		public abstract bool SupportsUids {
@@ -109,10 +110,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -141,10 +142,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -185,10 +186,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -224,10 +225,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -266,10 +267,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -301,10 +302,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -349,10 +350,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -388,10 +389,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -434,10 +435,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -469,10 +470,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -507,10 +508,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -538,10 +539,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -583,10 +584,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -625,10 +626,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -674,10 +675,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -709,10 +710,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -756,10 +757,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -800,10 +801,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -857,10 +858,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -897,10 +898,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -947,10 +948,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -984,10 +985,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1029,10 +1030,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1071,10 +1072,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1120,10 +1121,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1155,10 +1156,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1202,10 +1203,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1246,10 +1247,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1303,10 +1304,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1343,10 +1344,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1393,10 +1394,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1430,10 +1431,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1458,6 +1459,85 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get the message or header stream at the specified index.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message or header stream at the specified index.
+		/// </remarks>
+		/// <returns>The message or header stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the message or header stream at the specified index.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the message or header stream at the specified index.
+		/// </remarks>
+		/// <returns>The message or header stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is not a valid message index.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailSpool"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailSpool"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailSpool"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task<Stream> GetStreamAsync (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetStream (index, headersOnly, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
 		/// Mark the specified message for deletion.
 		/// </summary>
 		/// <remarks>
@@ -1476,10 +1556,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1520,10 +1600,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1570,10 +1650,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1607,10 +1687,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1655,10 +1735,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1701,10 +1781,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
@@ -1759,10 +1839,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1801,10 +1881,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1852,10 +1932,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1891,10 +1971,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1930,10 +2010,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -1963,10 +2043,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2002,10 +2082,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2035,10 +2115,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2072,10 +2152,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
@@ -2102,10 +2182,10 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
+		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailSpool"/> is not connected.
 		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
+		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="MailSpool"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">

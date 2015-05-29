@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -430,6 +431,30 @@ namespace MailKit {
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the message or header stream at the specified index.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message or header stream at the specified index.
+		/// </remarks>
+		/// <returns>The message or header stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the message or header stream at the specified index.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the message or header stream at the specified index.
+		/// </remarks>
+		/// <returns>The message or header stream.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<Stream> GetStreamAsync (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Mark the specified message for deletion.
