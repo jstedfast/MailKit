@@ -35,9 +35,10 @@ using System.Security.Cryptography;
 
 using NUnit.Framework;
 
+using MimeKit;
+using MailKit;
 using MailKit.Net.Pop3;
 using MailKit.Security;
-using MimeKit;
 
 namespace UnitTests.Net.Pop3 {
 	[TestFixture]
@@ -221,113 +222,113 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var sizes = client.GetMessageSizes (CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Count: {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					var sizes = client.GetMessageSizes (CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					var size = client.GetMessageSize ("uid", CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageSize(uid): {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					var size = client.GetMessageSize (0, CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageSize(int): {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					var uids = client.GetMessageUids (CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					var uid = client.GetMessageUid (0, CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageUid: {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					var message = client.GetMessage ("uid", CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage(uid): {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					var message = client.GetMessage (0, CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage(int): {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					client.DeleteMessage ("uid", CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in DeleteMessage(uid): {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					client.DeleteMessage (0, CancellationToken.None);
-					Assert.Fail ("Expected UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in DeleteMessage(int): {0}", ex);
 				}
 
-				Assert.IsTrue (client.IsConnected, "UnauthorizedAccessException should not cause a disconnect.");
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					client.Disconnect (true, CancellationToken.None);
