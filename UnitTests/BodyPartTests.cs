@@ -24,9 +24,13 @@
 // THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 using NUnit.Framework;
 
+using MimeKit;
 using MimeKit.Utils;
+
 using MailKit;
 
 // Note: These tests are for BodyPart and Envelope's custom format. While the format is similar
@@ -112,6 +116,91 @@ namespace UnitTests {
 			Assert.IsInstanceOfType (typeof (BodyPartMessage), multipart.BodyParts[2], "The type of the third child does not match.");
 
 			// FIXME: assert more stuff
+		}
+
+		static ContentType CreateContentType (string type, string subtype, string partSpecifier)
+		{
+			var contentType = new ContentType (type, subtype);
+			contentType.Parameters.Add ("part-specifier", partSpecifier);
+			return contentType;
+		}
+
+		static BodyPartMessage CreateMessage (string type, string subtype, string partSpecifier, BodyPart body)
+		{
+			var message = new BodyPartMessage { ContentType = CreateContentType (type, subtype, partSpecifier) };
+			message.Body = body;
+			return message;
+		}
+
+		static BodyPartMultipart CreateMultipart (string type, string subtype, string partSpecifier, params BodyPart[] bodyParts)
+		{
+			var multipart = new BodyPartMultipart { ContentType = CreateContentType (type, subtype, partSpecifier) };
+			foreach (var bodyPart in bodyParts)
+				multipart.BodyParts.Add (bodyPart);
+			return multipart;
+		}
+
+		static BodyPartBasic CreateBasic (string type, string subtype, string partSpecifier)
+		{
+			return new BodyPartBasic { ContentType = CreateContentType (type, subtype, partSpecifier) };
+		}
+
+		static BodyPartBasic CreateText (string type, string subtype, string partSpecifier)
+		{
+			return new BodyPartText { ContentType = CreateContentType (type, subtype, partSpecifier) };
+		}
+
+		static void VerifyPartSpecifier (BodyPart part)
+		{
+			var expected = part.ContentType.Parameters["part-specifier"];
+
+			Assert.AreEqual (expected, part.PartSpecifier, "The part-specifier does not match for {0}", part.ContentType.MimeType);
+
+			var message = part as BodyPartMessage;
+			if (message != null) {
+				VerifyPartSpecifier (message.Body);
+				return;
+			}
+
+			var multipart = part as BodyPartMultipart;
+			if (multipart != null) {
+				for (int i = 0; i < multipart.BodyParts.Count; i++)
+					VerifyPartSpecifier (multipart.BodyParts[i]);
+				return;
+			}
+		}
+
+		[Test]
+		public void TestComplexPartSpecifiersExampleRfc3501 ()
+		{
+			BodyPart body = CreateMultipart ("MULTIPART", "MIXED", "",
+				CreateText ("TEXT", "PLAIN", "1"),
+				CreateBasic ("APPLICATION", "OCTET-STREAM", "2"),
+				CreateMessage ("MESSAGE", "RFC822", "3",
+					CreateMultipart ("MULTIPART", "MIXED", "3",
+						CreateText ("TEXT", "PLAIN", "3.1"),
+						CreateBasic ("APPLICATION", "OCTET-STREAM", "3.2")
+					)
+				),
+				CreateMultipart ("MULTIPART", "MIXED", "4",
+					CreateBasic ("IMAGE", "GIF", "4.1"),
+					CreateMessage ("MESSAGE", "RFC822", "4.2",
+						CreateMultipart ("MULTIPART", "MIXED", "4.2",
+							CreateText ("TEXT", "PLAIN", "4.2.1"),
+							CreateMultipart ("MULTIPART", "ALTERNATIVE", "4.2.2",
+								CreateText ("TEXT", "PLAIN", "4.2.2.1"),
+								CreateText ("TEXT", "RICHTEXT", "4.2.2.2")
+							)
+						)
+					)
+				)
+			);
+
+			var encoded = body.ToString ();
+
+			Assert.IsTrue (BodyPart.TryParse (encoded, out body));
+
+			VerifyPartSpecifier (body);
 		}
 	}
 }
