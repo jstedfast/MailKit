@@ -2957,6 +2957,234 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="GetStreams">
+      <MemberSignature Language="C#" Value="public abstract System.Collections.Generic.IList&lt;System.IO.Stream&gt; GetStreams (System.Collections.Generic.IList&lt;int&gt; indexes, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class System.IO.Stream&gt; GetStreams(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.IO.Stream&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="headersOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="headersOnly">
+          <c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the message or header streams at the specified indexes.
+            </summary>
+        <returns>The message or header streams.</returns>
+        <remarks>
+            Get the message or header streams at the specified indexes.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No indexes were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStreams">
+      <MemberSignature Language="C#" Value="public abstract System.Collections.Generic.IList&lt;System.IO.Stream&gt; GetStreams (int startIndex, int count, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.Generic.IList`1&lt;class System.IO.Stream&gt; GetStreams(int32 startIndex, int32 count, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IList&lt;System.IO.Stream&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="headersOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first stream to get.</param>
+        <param name="count">The number of streams to get.</param>
+        <param name="headersOnly">
+          <c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Get the message or header streams within the specified range.
+            </summary>
+        <returns>The message or header streams.</returns>
+        <remarks>
+            Gets the message or header streams within the specified range.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="startIndex" /> and <paramref name="count" /> do not specify
+            a valid range of messages.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStreamsAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.IO.Stream&gt;&gt; GetStreamsAsync (System.Collections.Generic.IList&lt;int&gt; indexes, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class System.IO.Stream&gt;&gt; GetStreamsAsync(class System.Collections.Generic.IList`1&lt;int32&gt; indexes, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.IO.Stream&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="indexes" Type="System.Collections.Generic.IList&lt;System.Int32&gt;" />
+        <Parameter Name="headersOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="indexes">The indexes of the messages.</param>
+        <param name="headersOnly">
+          <c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the message or header streams at the specified indexes.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Asynchronously get the message or header streams at the specified indexes.
+            </remarks>
+        <exception cref="T:System.ArgumentNullException">
+          <paramref name="indexes" /> is <c>null</c>.
+            </exception>
+        <exception cref="T:System.ArgumentException">
+          <para>One or more of the <paramref name="indexes" /> are invalid.</para>
+          <para>-or-</para>
+          <para>No indexes were specified.</para>
+        </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="GetStreamsAsync">
+      <MemberSignature Language="C#" Value="public virtual System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.IO.Stream&gt;&gt; GetStreamsAsync (int startIndex, int count, bool headersOnly, System.Threading.CancellationToken cancellationToken = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Threading.Tasks.Task`1&lt;class System.Collections.Generic.IList`1&lt;class System.IO.Stream&gt;&gt; GetStreamsAsync(int32 startIndex, int32 count, bool headersOnly, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.Tasks.Task&lt;System.Collections.Generic.IList&lt;System.IO.Stream&gt;&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="startIndex" Type="System.Int32" />
+        <Parameter Name="count" Type="System.Int32" />
+        <Parameter Name="headersOnly" Type="System.Boolean" />
+        <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
+      </Parameters>
+      <Docs>
+        <param name="startIndex">The index of the first stream to get.</param>
+        <param name="count">The number of streams to get.</param>
+        <param name="headersOnly">
+          <c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+        <param name="cancellationToken">The cancellation token.</param>
+        <summary>
+            Asynchronously get the message or header streams within the specified range.
+            </summary>
+        <returns>The messages.</returns>
+        <remarks>
+            Asynchronously gets the message or header streams within the specified range.
+            </remarks>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="startIndex" /> and <paramref name="count" /> do not specify
+            a valid range of messages.
+            </exception>
+        <exception cref="T:System.ObjectDisposedException">
+            The <see cref="T:MailKit.MailSpool" /> has been disposed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.MailSpool" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.MailSpool" /> is not authenticated.
+            </exception>
+        <exception cref="T:System.OperationCanceledException">
+            The operation was canceled via the cancellation token.
+            </exception>
+        <exception cref="T:System.IO.IOException">
+            An I/O error occurred.
+            </exception>
+        <exception cref="T:MailKit.CommandException">
+            The command failed.
+            </exception>
+        <exception cref="T:MailKit.ProtocolException">
+            A protocol error occurred.
+            </exception>
+      </Docs>
+    </Member>
     <Member MemberName="Reset">
       <MemberSignature Language="C#" Value="public abstract void Reset (System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset(valuetype System.Threading.CancellationToken cancellationToken) cil managed" />

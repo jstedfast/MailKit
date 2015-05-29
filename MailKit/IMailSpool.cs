@@ -457,6 +457,56 @@ namespace MailKit {
 		Task<Stream> GetStreamAsync (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Get the message or header streams at the specified index.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message or header streams at the specified index.
+		/// </remarks>
+		/// <returns>The message or header streams.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<Stream> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the message or header streams at the specified indexes.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the message or header streams at the specified indexes.
+		/// </remarks>
+		/// <returns>The message or header streams.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the message or header streams within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message or header streams within the specified range.
+		/// </remarks>
+		/// <returns>The message or header streams.</returns>
+		/// <param name="startIndex">The index of the first stream to get.</param>
+		/// <param name="count">The number of streams to get.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IList<Stream> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the message or header streams within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the message or header streams within the specified range.
+		/// </remarks>
+		/// <returns>The messages.</returns>
+		/// <param name="startIndex">The index of the first stream to get.</param>
+		/// <param name="count">The number of streams to get.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
 		/// Mark the specified message for deletion.
 		/// </summary>
 		/// <remarks>

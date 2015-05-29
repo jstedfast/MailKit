@@ -1879,18 +1879,33 @@ namespace MailKit.Net.Pop3 {
 		abstract class DownloadContext<T>
 		{
 			protected readonly Pop3Engine Engine;
+			T[] downloaded;
+			int index;
 
 			protected DownloadContext (Pop3Engine engine)
 			{
-				Downloaded = new List<T> ();
 				Engine = engine;
 			}
 
-			public IList<T> Downloaded {
-				get; private set;
+			protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
+
+			void Reset (int capacity)
+			{
+				index = 0;
+
+				if (downloaded == null) {
+					downloaded = new T[capacity];
+					return;
+				}
+
+				if (capacity != downloaded.Length)
+					Array.Resize (ref downloaded, capacity);
 			}
 
-			protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
+			void Add (T item)
+			{
+				downloaded[index++] = item;
+			}
 
 			void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text)
 			{
@@ -1899,7 +1914,7 @@ namespace MailKit.Net.Pop3 {
 
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
-					Downloaded.Add (Parse (pop3.Stream, pc.CancellationToken));
+					Add (Parse (pop3.Stream, pc.CancellationToken));
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
 					pop3.Stream.CopyTo (Stream.Null, 4096);
@@ -1916,7 +1931,7 @@ namespace MailKit.Net.Pop3 {
 				return Engine.QueueCommand (cancellationToken, OnDataReceived, "RETR {0}", seqid);
 			}
 
-			public void Download (int seqid, bool headersOnly, CancellationToken cancellationToken)
+			void DownloadItem (int seqid, bool headersOnly, CancellationToken cancellationToken)
 			{
 				var pc = QueueCommand (seqid, headersOnly, cancellationToken);
 
@@ -1931,13 +1946,26 @@ namespace MailKit.Net.Pop3 {
 					throw pc.Exception;
 			}
 
-			public void Download (IList<int> seqids, bool headersOnly, CancellationToken cancellationToken)
+			public T Download (int seqid, bool headersOnly, CancellationToken cancellationToken)
 			{
+				downloaded = new T[1];
+				index = 0;
+
+				DownloadItem (seqid, headersOnly, cancellationToken);
+
+				return downloaded[0];
+			}
+
+			public IList<T> Download (IList<int> seqids, bool headersOnly, CancellationToken cancellationToken)
+			{
+				downloaded = new T[seqids.Count];
+				index = 0;
+
 				if ((Engine.Capabilities & Pop3Capabilities.Pipelining) == 0) {
 					for (int i = 0; i < seqids.Count; i++)
-						Download (seqids[i], headersOnly, cancellationToken);
+						DownloadItem (seqids[i], headersOnly, cancellationToken);
 
-					return;
+					return downloaded;
 				}
 
 				var commands = new Pop3Command[seqids.Count];
@@ -1959,6 +1987,8 @@ namespace MailKit.Net.Pop3 {
 					if (commands[i].Exception != null)
 						throw commands[i].Exception;
 				}
+
+				return downloaded;
 			}
 		}
 
@@ -1985,21 +2015,21 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		//class DownloadHeaderContext : DownloadContext<HeaderList>
-		//{
-		//	readonly MimeParser parser;
-		//
-		//	public DownloadHeaderContext (Pop3Engine engine, MimeParser parser) : base (engine)
-		//	{
-		//		this.parser = parser;
-		//	}
-		//
-		//	protected override HeaderList Parse (Pop3Stream data, CancellationToken cancellationToken)
-		//	{
-		//		parser.SetStream (ParserOptions.Default, data);
-		//		return parser.ParseHeaders (cancellationToken);
-		//	}
-		//}
+		class DownloadHeaderContext : DownloadContext<HeaderList>
+		{
+			readonly MimeParser parser;
+
+			public DownloadHeaderContext (Pop3Engine engine, MimeParser parser) : base (engine)
+			{
+				this.parser = parser;
+			}
+
+			protected override HeaderList Parse (Pop3Stream data, CancellationToken cancellationToken)
+			{
+				parser.SetStream (ParserOptions.Default, data);
+				return parser.ParseMessage (cancellationToken).Headers;
+			}
+		}
 
 		class DownloadMessageContext : DownloadContext<MimeMessage>
 		{
@@ -2015,33 +2045,6 @@ namespace MailKit.Net.Pop3 {
 				parser.SetStream (ParserOptions.Default, data);
 				return parser.ParseMessage (cancellationToken);
 			}
-		}
-
-		Stream GetStreamForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
-		{
-			var ctx = new DownloadStreamContext (engine);
-
-			ctx.Download (seqid, headersOnly, cancellationToken);
-
-			return ctx.Downloaded[0];
-		}
-
-		MimeMessage GetMessageForSequenceId (int seqid, bool headersOnly, CancellationToken cancellationToken)
-		{
-			var ctx = new DownloadMessageContext (engine, parser);
-
-			ctx.Download (seqid, headersOnly, cancellationToken);
-
-			return ctx.Downloaded[0];
-		}
-
-		IList<MimeMessage> GetMessagesForSequenceIds (IList<int> seqids, bool headersOnly, CancellationToken cancellationToken)
-		{
-			var ctx = new DownloadMessageContext (engine, parser);
-
-			ctx.Download (seqids, headersOnly, cancellationToken);
-
-			return ctx.Downloaded;
 		}
 
 		/// <summary>
@@ -2100,7 +2103,9 @@ namespace MailKit.Net.Pop3 {
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
-			return GetMessageForSequenceId (seqid, true, cancellationToken).Headers;
+			var ctx = new DownloadHeaderContext (engine, parser);
+
+			return ctx.Download (seqid, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -2145,7 +2150,9 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
-			return GetMessageForSequenceId (index + 1, true, cancellationToken).Headers;
+			var ctx = new DownloadHeaderContext (engine, parser);
+
+			return ctx.Download (index + 1, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -2215,13 +2222,9 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = seqid;
 			}
 
-			var messages = GetMessagesForSequenceIds (seqids, true, cancellationToken);
-			var headers = new HeaderList[messages.Count];
+			var ctx = new DownloadHeaderContext (engine, parser);
 
-			for (int i = 0; i < headers.Length; i++)
-				headers[i] = messages[i].Headers;
-
-			return headers;
+			return ctx.Download (seqids, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -2286,13 +2289,9 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = indexes[i] + 1;
 			}
 
-			var messages = GetMessagesForSequenceIds (seqids, true, cancellationToken);
-			var headers = new HeaderList[messages.Count];
+			var ctx = new DownloadHeaderContext (engine, parser);
 
-			for (int i = 0; i < headers.Length; i++)
-				headers[i] = messages[i].Headers;
-
-			return headers;
+			return ctx.Download (seqids, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -2353,13 +2352,9 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < count; i++)
 				seqids[i] = startIndex + i + 1;
 
-			var messages = GetMessagesForSequenceIds (seqids, true, cancellationToken);
-			var headers = new HeaderList[messages.Count];
+			var ctx = new DownloadHeaderContext (engine, parser);
 
-			for (int i = 0; i < headers.Length; i++)
-				headers[i] = messages[i].Headers;
-
-			return headers;
+			return ctx.Download (seqids, true, cancellationToken);
 		}
 
 		/// <summary>
@@ -2418,7 +2413,9 @@ namespace MailKit.Net.Pop3 {
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
-			return GetMessageForSequenceId (seqid, false, cancellationToken);
+			var ctx = new DownloadMessageContext (engine, parser);
+
+			return ctx.Download (seqid, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -2463,7 +2460,9 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
-			return GetMessageForSequenceId (index + 1, false, cancellationToken);
+			var ctx = new DownloadMessageContext (engine, parser);
+
+			return ctx.Download (index + 1, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -2533,7 +2532,9 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = seqid;
 			}
 
-			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
+			var ctx = new DownloadMessageContext (engine, parser);
+
+			return ctx.Download (seqids, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -2598,7 +2599,9 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = indexes[i] + 1;
 			}
 
-			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
+			var ctx = new DownloadMessageContext (engine, parser);
+
+			return ctx.Download (seqids, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -2659,7 +2662,9 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < count; i++)
 				seqids[i] = startIndex + i + 1;
 
-			return GetMessagesForSequenceIds (seqids, false, cancellationToken);
+			var ctx = new DownloadMessageContext (engine, parser);
+
+			return ctx.Download (seqids, false, cancellationToken);
 		}
 
 		/// <summary>
@@ -2705,7 +2710,141 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
-			return GetStreamForSequenceId (index + 1, headersOnly, cancellationToken);
+			var ctx = new DownloadStreamContext (engine);
+
+			return ctx.Download (index + 1, headersOnly, cancellationToken);
+		}
+
+		/// <summary>
+		/// Get the message or header streams at the specified indexes.
+		/// </summary>
+		/// <remarks>
+		/// Get the message or header streams at the specified indexes.
+		/// </remarks>
+		/// <returns>The message or header streams.</returns>
+		/// <param name="indexes">The indexes of the messages.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="indexes"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+		/// <para>-or-</para>
+		/// <para>No indexes were specified.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<Stream> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (indexes == null)
+				throw new ArgumentNullException ("indexes");
+
+			if (indexes.Count == 0)
+				throw new ArgumentException ("No indexes specified.", "indexes");
+
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			var seqids = new int[indexes.Count];
+
+			for (int i = 0; i < indexes.Count; i++) {
+				if (indexes[i] < 0 || indexes[i] >= total)
+					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+
+				seqids[i] = indexes[i] + 1;
+			}
+
+			var ctx = new DownloadStreamContext (engine);
+
+			return ctx.Download (seqids, headersOnly, cancellationToken);
+		}
+
+		/// <summary>
+		/// Get the message or header streams within the specified range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the message or header streams within the specified range.
+		/// </remarks>
+		/// <returns>The message or header streams.</returns>
+		/// <param name="startIndex">The index of the first stream to get.</param>
+		/// <param name="count">The number of streams to get.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range of messages.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="Pop3Client"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="Pop3Client"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="Pop3Client"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The POP3 server does not support the UIDL extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="Pop3CommandException">
+		/// The POP3 command failed.
+		/// </exception>
+		/// <exception cref="Pop3ProtocolException">
+		/// A POP3 protocol error occurred.
+		/// </exception>
+		public override IList<Stream> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (startIndex < 0 || startIndex >= total)
+				throw new ArgumentOutOfRangeException ("startIndex");
+
+			if (count < 0 || count > (total - startIndex))
+				throw new ArgumentOutOfRangeException ("count");
+
+			CheckDisposed ();
+			CheckConnected ();
+			CheckAuthenticated ();
+
+			if (count == 0)
+				return new Stream[0];
+
+			var seqids = new int[count];
+
+			for (int i = 0; i < count; i++)
+				seqids[i] = startIndex + i + 1;
+
+			var ctx = new DownloadStreamContext (engine);
+
+			return ctx.Download (seqids, headersOnly, cancellationToken);
 		}
 
 		/// <summary>
