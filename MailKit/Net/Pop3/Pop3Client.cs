@@ -1888,6 +1888,7 @@ namespace MailKit.Net.Pop3 {
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
 					pop3.Stream.CopyTo (stream, 4096);
+					stream.Position = 0;
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}
