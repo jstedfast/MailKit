@@ -1093,6 +1093,42 @@
             </exception>
       </Docs>
     </Member>
+    <Member MemberName="CommitStream">
+      <MemberSignature Language="C#" Value="protected virtual System.IO.Stream CommitStream (System.IO.Stream stream, MailKit.UniqueId uid);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.IO.Stream CommitStream(class System.IO.Stream stream, valuetype MailKit.UniqueId uid) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+        <Parameter Name="uid" Type="MailKit.UniqueId" />
+      </Parameters>
+      <Docs>
+        <param name="stream">The stream.</param>
+        <param name="uid">The unique identifier of the message.</param>
+        <summary>
+            Commit a stream returned by <see cref="M:MailKit.Net.Imap.ImapFolder.CreateStream(System.Nullable{MailKit.UniqueId},System.String,System.Int32,System.Int32)" />.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+          <para>Commits a stream returned by <see cref="M:MailKit.Net.Imap.ImapFolder.CreateStream(System.Nullable{MailKit.UniqueId},System.String,System.Int32,System.Int32)" />.</para>
+          <para>This method is called only after both the message data has successfully
+            been written to the stream returned by <see cref="M:MailKit.Net.Imap.ImapFolder.CreateStream(System.Nullable{MailKit.UniqueId},System.String,System.Int32,System.Int32)" /> and a
+            <see cref="T:MailKit.UniqueId" /> has been obtained for the associated message.</para>
+          <para>For subclasses implementing caching, this method should be used for
+            committing the stream to their cache.</para>
+          <para>Note: Subclass implementations may take advantage of the fact that
+            <see cref="M:MailKit.Net.Imap.ImapFolder.CommitStream(System.IO.Stream,MailKit.UniqueId)" /> allows returning a new <see cref="T:System.IO.Stream" />
+            reference if they move a file on the file system and wish to return a new
+            <see cref="T:System.IO.FileStream" /> based on the new path, for example.</para>
+        </remarks>
+        <altmember cref="M:MailKit.Net.Imap.ImapFolder.CreateStream(System.Nullable{MailKit.UniqueId},System.String,System.Int32,System.Int32)" />
+      </Docs>
+    </Member>
     <Member MemberName="CopyTo">
       <MemberSignature Language="C#" Value="public override System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; CopyTo (System.Collections.Generic.IList&lt;MailKit.UniqueId&gt; uids, MailKit.IMailFolder destination, System.Threading.CancellationToken cancellationToken = null);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; CopyTo(class System.Collections.Generic.IList`1&lt;valuetype MailKit.UniqueId&gt; uids, class MailKit.IMailFolder destination, valuetype System.Threading.CancellationToken cancellationToken) cil managed" />
@@ -1299,6 +1335,51 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateStream">
+      <MemberSignature Language="C#" Value="protected virtual System.IO.Stream CreateStream (Nullable&lt;MailKit.UniqueId&gt; uid, string section, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig newslot virtual instance class System.IO.Stream CreateStream(valuetype System.Nullable`1&lt;valuetype MailKit.UniqueId&gt; uid, string section, int32 offset, int32 length) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IO.Stream</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="uid" Type="System.Nullable&lt;MailKit.UniqueId&gt;" />
+        <Parameter Name="section" Type="System.String" />
+        <Parameter Name="offset" Type="System.Int32" />
+        <Parameter Name="length" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="uid">The unique identifier of the message, if available.</param>
+        <param name="section">The section of the message that is being fetched.</param>
+        <param name="offset">The starting offset of the message section being fetched.</param>
+        <param name="length">The length of the stream being fetched, measured in bytes.</param>
+        <summary>
+            Create a backing stream for use with the GetMessage, GetBodyPart, and GetStream methods.
+            </summary>
+        <returns>The stream.</returns>
+        <remarks>
+          <para>Allows subclass implementations to override the type of stream
+            created for use with the GetMessage, GetBodyPart and GetStream methods.</para>
+          <para>This could be useful for subclass implementations that intend to implement
+            support for caching and/or for subclass implementations that want to use
+            temporary file streams instead of memory-based streams for larger amounts of
+            message data.</para>
+          <para>Subclasses that implement caching using this API should wait for
+            <see cref="M:MailKit.Net.Imap.ImapFolder.CommitStream(System.IO.Stream,MailKit.UniqueId)" /> before adding the stream to their cache.</para>
+          <para>Streams returned by this method SHOULD clean up any allocated resources
+            such as deleting temporary files from the file system.</para>
+          <para>Note: The <paramref name="uid" /> will not be available for the variations
+            GetMessage(), GetBodyPart() and GetStream() methods that take a message index
+            rather than a <see cref="T:MailKit.UniqueId" />. It may also not be available if the IMAP
+            server response does not specify the <c>UID</c> value prior to sending the
+            <c>literal-string</c> token containing the message stream.</para>
+        </remarks>
+        <altmember cref="M:MailKit.Net.Imap.ImapFolder.CommitStream(System.IO.Stream,MailKit.UniqueId)" />
       </Docs>
     </Member>
     <Member MemberName="Delete">
