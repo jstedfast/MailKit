@@ -273,20 +273,21 @@ namespace MailKit.Net.Pop3 {
 
 		void Poll (SelectMode mode, CancellationToken cancellationToken)
 		{
-			#if NETFX_CORE
+#if NETFX_CORE
 			cancellationToken.ThrowIfCancellationRequested ();
-			#else
+#else
 			if (!cancellationToken.CanBeCanceled)
 				return;
 
 			if (Socket != null) {
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
-				} while (!Socket.Poll (1000, mode));
+					// wait 1/4 second and then re-check for cancellation
+				} while (!Socket.Poll (250000, mode));
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
-			#endif
+#endif
 		}
 
 		unsafe int ReadAhead (CancellationToken cancellationToken)

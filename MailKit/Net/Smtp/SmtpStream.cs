@@ -243,7 +243,8 @@ namespace MailKit.Net.Smtp {
 			if (Socket != null) {
 				do {
 					cancellationToken.ThrowIfCancellationRequested ();
-				} while (!Socket.Poll (1000, mode));
+					// wait 1/4 second and then re-check for cancellation
+				} while (!Socket.Poll (250000, mode));
 			} else {
 				cancellationToken.ThrowIfCancellationRequested ();
 			}
