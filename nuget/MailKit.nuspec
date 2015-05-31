@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.2.1.0</version>
+        <version>1.2.2.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,13 +22,20 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Added hooks to allow subclassing ImapFolder.
+        <releaseNotes>* Added ImapClient.GetFolders(FolderNamespace, ...) to allow getting the full (recursive) list of folders for a particular namespace.
+* Added a FolderAttributes.Inbox flag that gets set on the Inbox folder.
+* Fixed the IMAP code to properly treat the INBOX folder name case-insensitively.
+* Added ServiceNotConnectedException, ServiceNotAuthenticatedException, and FolderNotOpenException as a more specific errors than InvalidOperationException. (Note: they all subclass InvalidOperationException so old code continues to work).
+* Added Pop3Client.GetStream() to allow fetching messages or headers as an unparsed stream. (issue #198)
+* Fixed usage of Socket.Poll() to not loop 1000 times per second.
+* Added more ImapFolder.GetStream() overloads.
+* Added ImapFolder.CreateStream() and CommitStream() protected methods which are meant for subclasses that intend to implement caching.
 </releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.2.1.0" />
+            <dependency id="MimeKit" version="1.2.2.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

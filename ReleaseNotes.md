@@ -1,5 +1,21 @@
 # Release Notes
 
+### MailKit 1.2.2
+
+* Added ImapClient.GetFolders(FolderNamespace, ...) to allow getting the full
+  (recursive) list of folders for a particular namespace.
+* Added a FolderAttributes.Inbox flag that gets set on the Inbox folder.
+* Fixed the IMAP code to properly treat the INBOX folder name case-insensitively.
+* Added ServiceNotConnectedException, ServiceNotAuthenticatedException, and
+  FolderNotOpenException as a more specific errors than InvalidOperationException.
+  (Note: they all subclass InvalidOperationException so old code continues to work).
+* Added Pop3Client.GetStream() to allow fetching messages or headers as an unparsed
+  stream. (issue #198)
+* Fixed usage of Socket.Poll() to not loop 1000 times per second.
+* Added more ImapFolder.GetStream() overloads.
+* Added ImapFolder.CreateStream() and CommitStream() protected methods which are meant
+  for subclasses that intend to implement caching.
+
 ### MailKit 1.2.1
 
 * Added hooks to allow subclassing ImapFolder.
