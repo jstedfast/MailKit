@@ -48,7 +48,7 @@ namespace MailKit {
 		/// The bit mask of settable flags.
 		/// </summary>
 		/// <remarks>
-		/// Only flags in list of settable flags may be set on a message by the client.
+		/// Only flags in the list of settable flags may be set on a message by the client.
 		/// </remarks>
 		protected static readonly MessageFlags SettableFlags = MessageFlags.Answered | MessageFlags.Deleted |
 			MessageFlags.Draft | MessageFlags.Flagged | MessageFlags.Seen;

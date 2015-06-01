@@ -6056,9 +6056,6 @@ namespace MailKit.Net.Imap {
 			if ((flags & SettableFlags) == 0 && emptyUserFlags)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			if ((flags & PermanentFlags) == 0 && (emptyUserFlags || (PermanentFlags & MessageFlags.UserDefined) == 0))
-				return;
-
 			ModifyFlags (uids, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
 
@@ -6422,13 +6419,8 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			bool emptyUserFlags = userFlags == null || userFlags.Count == 0;
-
-			if ((flags & SettableFlags) == 0 && emptyUserFlags)
+			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
-
-			if ((flags & PermanentFlags) == 0 && (emptyUserFlags || (PermanentFlags & MessageFlags.UserDefined) == 0))
-				return;
 
 			ModifyFlags (indexes, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
