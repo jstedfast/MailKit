@@ -157,7 +157,7 @@ namespace MailKit.Net.Imap {
 			ParentFolder = parent;
 		}
 
-		void ProcessResponseCodes (ImapCommand ic, string paramName)
+		void ProcessResponseCodes (ImapCommand ic, IMailFolder folder)
 		{
 			bool tryCreate = false;
 
@@ -198,12 +198,8 @@ namespace MailKit.Net.Imap {
 				}
 			}
 
-			if (tryCreate) {
-				if (paramName == null)
-					throw new ArgumentException ("The folder does not exist.");
-
-				throw new ArgumentException ("The destination folder does not exist.", paramName);
-			}
+			if (tryCreate && folder != null)
+				throw new FolderNotFoundException (folder.FullName);
 		}
 
 		#region IMailFolder implementation
@@ -257,6 +253,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// The QRESYNC feature has not been enabled.
@@ -317,7 +316,7 @@ namespace MailKit.Net.Imap {
 				Engine.QueueCommand (ic);
 				Engine.Wait (ic);
 
-				ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, this);
 
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
@@ -359,6 +358,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -397,7 +399,7 @@ namespace MailKit.Net.Imap {
 				Engine.QueueCommand (ic);
 				Engine.Wait (ic);
 
-				ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, this);
 
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
@@ -595,6 +597,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// The folder cannot be renamed (it is either a namespace or the Inbox).
 		/// </exception>
@@ -642,7 +647,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, null);
+			ProcessResponseCodes (ic, this);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("RENAME", ic);
@@ -708,7 +713,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, null);
+			ProcessResponseCodes (ic, this);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("DELETE", ic);
@@ -1029,6 +1034,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the STATUS command.
 		/// </exception>
@@ -1075,7 +1083,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, null);
+			ProcessResponseCodes (ic, this);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("STATUS", ic);
@@ -1814,14 +1822,14 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
-		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1895,10 +1903,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -1941,7 +1956,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, null);
+			ProcessResponseCodes (ic, this);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
@@ -1974,10 +1989,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2020,7 +2042,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, null);
+			ProcessResponseCodes (ic, this);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
@@ -2083,10 +2105,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2144,7 +2173,7 @@ namespace MailKit.Net.Imap {
 
 				Engine.Wait (ic);
 
-				ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, this);
 
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
@@ -2202,10 +2231,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="ImapClient"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="ImapFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2320,14 +2356,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open.
-		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// <paramref name="destination"/> does not exist.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UIDPLUS extension.
@@ -2370,7 +2409,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, "destination");
+			ProcessResponseCodes (ic, destination);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("COPY", ic);
@@ -2413,14 +2452,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
 		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
-		/// </exception>
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="ImapClient"/> is not connected.
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// <paramref name="destination"/> does not exist.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The IMAP server does not support the UIDPLUS extension.
@@ -2471,7 +2513,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, "destination");
+			ProcessResponseCodes (ic, destination);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("MOVE", ic);
@@ -2517,6 +2559,12 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// <paramref name="destination"/> does not exist.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -2549,7 +2597,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, "destination");
+			ProcessResponseCodes (ic, destination);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("COPY", ic);
@@ -2588,6 +2636,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// <paramref name="destination"/> does not exist.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
@@ -2630,7 +2681,7 @@ namespace MailKit.Net.Imap {
 
 			Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, "destination");
+			ProcessResponseCodes (ic, destination);
 
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("MOVE", ic);
