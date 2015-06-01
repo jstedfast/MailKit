@@ -4715,8 +4715,8 @@ namespace MailKit.Net.Imap {
 
 					uid = new UniqueId (UidValidity, value);
 
-					foreach (var item in sections)
-						sections[item.Key] = CommitStream (item.Value, uid.Value);
+					foreach (var key in sections.Keys.ToArray ())
+						sections[key] = CommitStream (sections[key], uid.Value);
 
 					labels.UniqueId = uid.Value;
 					flags.UniqueId = uid.Value;
