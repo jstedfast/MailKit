@@ -530,6 +530,7 @@ namespace MailKit.Net.Smtp {
 			var uri = new Uri ("smtp://" + host);
 			SaslException authException = null;
 			SmtpResponse response;
+			SaslMechanism sasl;
 			bool tried = false;
 			string challenge;
 			string command;
@@ -538,7 +539,9 @@ namespace MailKit.Net.Smtp {
 				if (!AuthenticationMechanisms.Contains (authmech))
 					continue;
 
-				var sasl = SaslMechanism.Create (authmech, uri, credentials);
+				if ((sasl = SaslMechanism.Create (authmech, uri, credentials)) == null)
+					continue;
+
 				tried = true;
 
 				cancellationToken.ThrowIfCancellationRequested ();

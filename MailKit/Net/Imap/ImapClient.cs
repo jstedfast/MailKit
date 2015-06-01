@@ -888,13 +888,15 @@ namespace MailKit.Net.Imap {
 			var uri = new Uri ("imap://" + engine.Uri.Host);
 			NetworkCredential cred;
 			ImapCommand ic = null;
+			SaslMechanism sasl;
 			string id;
 
 			foreach (var authmech in SaslMechanism.AuthMechanismRank) {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
 					continue;
 
-				var sasl = SaslMechanism.Create (authmech, uri, credentials);
+				if ((sasl = SaslMechanism.Create (authmech, uri, credentials)) == null)
+					continue;
 
 				cancellationToken.ThrowIfCancellationRequested ();
 

@@ -523,10 +523,13 @@ namespace MailKit.Net.Pop3 {
 
 			if ((engine.Capabilities & Pop3Capabilities.Sasl) != 0) {
 				foreach (var authmech in SaslMechanism.AuthMechanismRank) {
+					SaslMechanism sasl;
+
 					if (!engine.AuthenticationMechanisms.Contains (authmech))
 						continue;
 
-					var sasl = SaslMechanism.Create (authmech, uri, credentials);
+					if ((sasl = SaslMechanism.Create (authmech, uri, credentials)) == null)
+						continue;
 
 					cancellationToken.ThrowIfCancellationRequested ();
 
