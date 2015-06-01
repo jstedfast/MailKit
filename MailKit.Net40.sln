@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net40", "..\MimeKit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "..\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Data.Sqlite", "..\MimeKit\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj", "{F26434C1-BA3D-41FB-B560-C009CB72B1B6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,10 +25,6 @@ Global
 		{DB3A2478-4742-452B-80C1-F672B64285AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB3A2478-4742-452B-80C1-F672B64285AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB3A2478-4742-452B-80C1-F672B64285AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F26434C1-BA3D-41FB-B560-C009CB72B1B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MailKit\MailKit.Net40.csproj
