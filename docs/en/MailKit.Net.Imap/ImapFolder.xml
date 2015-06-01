@@ -756,10 +756,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -774,6 +772,15 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -825,10 +832,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -843,6 +848,15 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -888,10 +902,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -906,6 +918,15 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -962,10 +983,8 @@
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.Net.Imap.ImapClient" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -980,6 +999,15 @@
             </exception>
         <exception cref="T:MailKit.Net.Imap.ImapCommandException">
             The server replied with a NO or BAD response.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -1203,6 +1231,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+          <paramref name="destination" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -1274,6 +1305,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+          <paramref name="destination" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -4574,6 +4608,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+          <paramref name="destination" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="MoveTo">
@@ -4650,6 +4687,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+          <paramref name="destination" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Open">
@@ -4703,6 +4743,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -4771,6 +4814,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -5564,6 +5610,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -6633,6 +6682,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.Net.Imap.ImapClient" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.Net.Imap.ImapFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>

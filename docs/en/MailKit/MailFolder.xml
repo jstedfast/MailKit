@@ -2883,6 +2883,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -2948,6 +2951,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -2990,10 +2996,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3008,6 +3012,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3059,10 +3072,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3077,6 +3088,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3135,6 +3155,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3206,6 +3229,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Append">
@@ -3250,10 +3276,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3268,6 +3292,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3324,10 +3357,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3342,6 +3373,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3398,6 +3438,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3464,6 +3507,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AppendAsync">
@@ -3506,10 +3552,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3524,6 +3568,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3575,10 +3628,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3593,6 +3644,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3651,6 +3711,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3722,6 +3785,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="AppendAsync">
@@ -3766,10 +3832,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3784,6 +3848,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -3840,10 +3913,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>Internationalized formatting was requested but has not been enabled.</para>
-        </exception>
+            Internationalized formatting was requested but has not been enabled.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -3858,6 +3929,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -4748,10 +4828,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The <see cref="P:MailKit.MailFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.</para>
-        </exception>
+            The <see cref="P:MailKit.MailFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -4763,6 +4841,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4804,10 +4888,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The <see cref="P:MailKit.MailFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.</para>
-        </exception>
+            The <see cref="P:MailKit.MailFolder.DirectorySeparator" /> is nil, and thus child folders cannot be created.
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -4819,6 +4901,12 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
       </Docs>
     </Member>
@@ -4848,10 +4936,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder cannot be deleted (it is either a namespace or the Inbox).</para>
-        </exception>
+            The folder cannot be deleted (it is either a namespace or the Inbox).
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -4863,6 +4949,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -4893,10 +4988,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder cannot be deleted (it is either a namespace or the Inbox).</para>
-        </exception>
+            The folder cannot be deleted (it is either a namespace or the Inbox).
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -4908,6 +5001,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -11993,6 +12095,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="Open">
@@ -12061,6 +12166,9 @@
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
             </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
+            </exception>
       </Docs>
     </Member>
     <Member MemberName="OpenAsync">
@@ -12114,6 +12222,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -12182,6 +12293,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -15172,10 +15286,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder cannot be renamed (it is either a namespace or the Inbox).</para>
-        </exception>
+            The folder cannot be renamed (it is either a namespace or the Inbox).
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -15187,6 +15299,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -15235,10 +15356,8 @@
             The <see cref="T:MailKit.IMailStore" /> has been disposed.
             </exception>
         <exception cref="T:System.InvalidOperationException">
-          <para>The <see cref="T:MailKit.IMailStore" /> is either not connected or not authenticated.</para>
-          <para>-or-</para>
-          <para>The folder cannot be renamed (it is either a namespace or the Inbox).</para>
-        </exception>
+            The folder cannot be renamed (it is either a namespace or the Inbox).
+            </exception>
         <exception cref="T:System.OperationCanceledException">
             The operation was canceled via the cancellation token.
             </exception>
@@ -15250,6 +15369,15 @@
             </exception>
         <exception cref="T:MailKit.CommandException">
             The command failed.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotConnectedException">
+            The <see cref="T:MailKit.IMailStore" /> is not connected.
+            </exception>
+        <exception cref="T:MailKit.ServiceNotAuthenticatedException">
+            The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>
@@ -18666,7 +18794,7 @@
             The bit mask of settable flags.
             </summary>
         <remarks>
-            Only flags in list of settable flags may be set on a message by the client.
+            Only flags in the list of settable flags may be set on a message by the client.
             </remarks>
       </Docs>
     </Member>
@@ -18729,6 +18857,9 @@
             </exception>
         <exception cref="T:MailKit.ServiceNotAuthenticatedException">
             The <see cref="T:MailKit.IMailStore" /> is not authenticated.
+            </exception>
+        <exception cref="T:MailKit.FolderNotFoundException">
+            The <see cref="T:MailKit.MailFolder" /> does not exist.
             </exception>
       </Docs>
     </Member>

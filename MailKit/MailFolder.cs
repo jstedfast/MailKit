@@ -609,10 +609,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="DirectorySeparator"/> is nil, and thus child folders cannot be created.</para>
+		/// The <see cref="DirectorySeparator"/> is nil, and thus child folders cannot be created.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -647,10 +651,14 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>The <see cref="DirectorySeparator"/> is nil, and thus child folders cannot be created.</para>
+		/// The <see cref="DirectorySeparator"/> is nil, and thus child folders cannot be created.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2326,6 +2334,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -2364,6 +2375,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2412,6 +2426,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -2451,6 +2468,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2495,10 +2515,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2536,10 +2563,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2591,10 +2625,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2633,10 +2674,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2697,6 +2745,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -2742,6 +2793,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2810,6 +2864,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -2858,6 +2915,9 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2923,10 +2983,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -2971,10 +3038,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3046,10 +3120,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -3097,10 +3178,17 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
 		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotFoundException">
+		/// The <see cref="MailFolder"/> does not exist.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
-		/// <para>The <see cref="IMailStore"/> is either not connected or not authenticated.</para>
-		/// <para>-or-</para>
-		/// <para>Internationalized formatting was requested but has not been enabled.</para>
+		/// Internationalized formatting was requested but has not been enabled.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
