@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.2.2.0</version>
+        <version>1.2.3.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,20 +22,15 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Added ImapClient.GetFolders(FolderNamespace, ...) to allow getting the full (recursive) list of folders for a particular namespace.
-* Added a FolderAttributes.Inbox flag that gets set on the Inbox folder.
-* Fixed the IMAP code to properly treat the INBOX folder name case-insensitively.
-* Added ServiceNotConnectedException, ServiceNotAuthenticatedException, and FolderNotOpenException as a more specific errors than InvalidOperationException. (Note: they all subclass InvalidOperationException so old code continues to work).
-* Added Pop3Client.GetStream() to allow fetching messages or headers as an unparsed stream. (issue #198)
-* Fixed usage of Socket.Poll() to not loop 1000 times per second.
-* Added more ImapFolder.GetStream() overloads.
-* Added ImapFolder.CreateStream() and CommitStream() protected methods which are meant for subclasses that intend to implement caching.
+        <releaseNotes>* Fixed ImapFolder.AddFlags() to throw FolderNotOpenException if the folder is not opened in read-write mode. (issue #202)
+* Fixed ImapFolder.GetMessage/BodyPart/Stream() to not modify a dictionary while looping over it. (issue #201)
+* Fixed ImapFolder to throw FolderNotFoundException instead of ArgumentException when the command fails due to the folder not existing.
 </releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.2.2.0" />
+            <dependency id="MimeKit" version="1.2.3.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
@@ -55,8 +50,8 @@ Features include:
     <files>
         <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.dll" target="lib\MonoAndroid\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.xml" target="lib\MonoAndroid\MailKit.xml" />
-        <file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.dll" target="lib\Xamarin.iOS10\MailKit.dll" />
-        <file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.xml" target="lib\Xamarin.iOS10\MailKit.xml" />
+        <file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.dll" target="lib\xamarinios10\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.xml" target="lib\xamarinios10\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.dll" target="lib\net40\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net45\MailKit.dll" />

@@ -1,5 +1,14 @@
 # Release Notes
 
+### MailKit 1.2.3
+
+* Fixed ImapFolder.AddFlags() to throw FolderNotOpenException if the folder is not
+  opened in read-write mode. (issue #202)
+* Fixed ImapFolder.GetMessage/BodyPart/Stream() to not modify a dictionary while
+  looping over it. (issue #201)
+* Fixed ImapFolder to throw FolderNotFoundException instead of ArgumentException
+  when the command fails due to the folder not existing.
+
 ### MailKit 1.2.2
 
 * Added ImapClient.GetFolders(FolderNamespace, ...) to allow getting the full
