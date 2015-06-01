@@ -75,7 +75,9 @@ namespace MailKit {
 		/// Gets the Content-Transfer-Encoding of the body part.
 		/// </summary>
 		/// <remarks>
-		/// Gets the Content-Transfer-Encoding of the body part.
+		/// <para>Gets the Content-Transfer-Encoding of the body part.</para>
+		/// <para>Hint: Use <see cref="MimeKit.Utils.MimeUtils.TryParse(string,ContentEncoding)"/>
+		/// to parse this value into a usable <see cref="MimeKit.ContentEncoding"/>.</para>
 		/// </remarks>
 		/// <value>The content transfer encoding.</value>
 		public string ContentTransferEncoding {
