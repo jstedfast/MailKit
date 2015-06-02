@@ -38,6 +38,7 @@ namespace MailKit.Net.Smtp {
 	/// <remarks>
 	/// An enumeration of the possible error codes that may be reported by a <see cref="SmtpCommandException"/>.
 	/// </remarks>
+	/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 	public enum SmtpErrorCode {
 		/// <summary>
 		/// The message was not accepted for delivery. This may happen if
@@ -74,6 +75,7 @@ namespace MailKit.Net.Smtp {
 	/// The exception that is thrown when an SMTP command fails. Unlike a <see cref="SmtpProtocolException"/>,
 	/// a <see cref="SmtpCommandException"/> does not require the <see cref="SmtpClient"/> to be reconnected.
 	/// </remarks>
+	/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 #if !NETFX_CORE
 	[Serializable]
 #endif
@@ -178,6 +180,7 @@ namespace MailKit.Net.Smtp {
 		/// exception without necessarily needing to display the raw
 		/// exception message to the user.
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// <value>The status code.</value>
 		public SmtpErrorCode ErrorCode {
 			get; private set;
@@ -192,6 +195,7 @@ namespace MailKit.Net.Smtp {
 		/// <see cref="SmtpErrorCode.RecipientNotAccepted"/> and may be used
 		/// to help the user decide how to proceed.
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// <value>The mailbox.</value>
 		public MailboxAddress Mailbox {
 			get; private set;
@@ -204,6 +208,7 @@ namespace MailKit.Net.Smtp {
 		/// The raw SMTP status code that resulted in the <see cref="SmtpCommandException"/>
 		/// being thrown.
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// <value>The status code.</value>
 		public int StatusCode {
 			get; private set;

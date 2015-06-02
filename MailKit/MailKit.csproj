@@ -192,6 +192,7 @@
     <Folder Include="Search\" />
     <Folder Include="Security\" />
     <Folder Include="Security\Ntlm\" />
+    <Folder Include="Examples\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -203,4 +204,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="Examples\SmtpExamples.cs" />
+  </ItemGroup>
 </Project>

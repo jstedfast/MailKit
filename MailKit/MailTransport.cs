@@ -62,6 +62,7 @@ namespace MailKit {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -73,6 +74,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -80,9 +84,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -122,6 +123,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -129,9 +133,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -177,6 +178,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -184,9 +188,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -226,6 +227,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -233,9 +237,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -276,6 +277,7 @@ namespace MailKit {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -290,6 +292,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -297,9 +302,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
@@ -342,6 +344,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -349,9 +354,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
@@ -406,6 +408,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -413,9 +418,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
@@ -458,6 +460,9 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="MailTransport"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
@@ -465,9 +470,6 @@ namespace MailKit {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>

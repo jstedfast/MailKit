@@ -34,6 +34,7 @@ namespace MailKit.Net.Smtp {
 	/// Capabilities are read as part of the response to the EHLO command that
 	/// is issued during the connection phase of the <see cref="SmtpClient"/>.
 	/// </remarks>
+	/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 	[Flags]
 	public enum SmtpCapabilities {
 		/// <summary>

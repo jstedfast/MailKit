@@ -38,6 +38,7 @@ namespace MailKit.Net.Smtp {
 	/// <see cref="SmtpProtocolException"/> is typically fatal and requires the <see cref="SmtpClient"/>
 	/// to be reconnected.
 	/// </remarks>
+	/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 #if !NETFX_CORE
 	[Serializable]
 #endif

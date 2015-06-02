@@ -55,12 +55,20 @@ namespace MailKit.Net.Smtp {
 	/// An SMTP client that can be used to send email messages.
 	/// </summary>
 	/// <remarks>
-	/// The <see cref="SmtpClient"/> class supports both the "smtp" and "smtps"
+	/// <para>The <see cref="SmtpClient"/> class supports both the "smtp" and "smtps"
 	/// protocols. The "smtp" protocol makes a clear-text connection to the SMTP
 	/// server and does not use SSL or TLS unless the SMTP server supports the
-	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol,
-	/// however, connects to the SMTP server using an SSL-wrapped connection.
+	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol, however,
+	/// connects to the SMTP server using an SSL-wrapped connection.</para>
+	/// <para>The connection established by the
+	/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+	/// method may be re-used if an application wishes to send multiple messages
+	/// to the same SMTP server. Since connecting and authenticating can be expensive
+	/// operations, re-using a connection can significantly improve performance when
+	/// sending a large number of messages to the same SMTP server over a short
+	/// period of time.</para>
 	/// </remarks>
+	/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessages"/>
 	public class SmtpClient : MailTransport
 	{
 #if NET_4_5 || __MOBILE__
@@ -95,6 +103,7 @@ namespace MailKit.Net.Smtp {
 		/// you may also need to authenticate using the
 		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
+		/// <example language="C#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		public SmtpClient () : this (new NullProtocolLogger ())
 		{
 		}
@@ -112,6 +121,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="protocolLogger"/> is <c>null</c>.
 		/// </exception>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
 		public SmtpClient (IProtocolLogger protocolLogger)
 		{
 			if (protocolLogger == null)
@@ -163,6 +173,7 @@ namespace MailKit.Net.Smtp {
 		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and may change as a side-effect
 		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
 		/// Capabilities cannot be enabled, they may only be disabled.
@@ -479,6 +490,7 @@ namespace MailKit.Net.Smtp {
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
 		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -686,7 +698,15 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
+		/// <alert class="note"><para>The connection established by the
+		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+		/// method may be re-used if an application wishes to send multiple messages
+		/// to the same SMTP server. Since connecting and authenticating can be expensive
+		/// operations, re-using a connection can significantly improve performance when
+		/// sending a large number of messages to the same SMTP server over a short
+		/// period of time.</para></alert>
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="options">The secure socket options to when connecting.</param>
@@ -1012,6 +1032,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1225,7 +1246,7 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.MailboxUnavailable:
 				throw new SmtpCommandException (SmtpErrorCode.SenderNotAccepted, response.StatusCode, mailbox, response.Response);
 			case SmtpStatusCode.AuthenticationRequired:
-				throw new UnauthorizedAccessException (response.Response);
+				throw new ServiceNotAuthenticatedException (response.Response);
 			default:
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			}
@@ -1241,6 +1262,7 @@ namespace MailKit.Net.Smtp {
 		/// length, but must consist only of printable ASCII characters and no white space.</para>
 		/// <para>For more information, see rfc3461, section 4.4.</para>
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
 		/// <returns>The envelope identifier.</returns>
 		/// <param name="message">The message.</param>
 		protected virtual string GetEnvelopeId (MimeMessage message)
@@ -1287,7 +1309,7 @@ namespace MailKit.Net.Smtp {
 			case SmtpStatusCode.MailboxBusy:
 				throw new SmtpCommandException (SmtpErrorCode.RecipientNotAccepted, response.StatusCode, mailbox, response.Response);
 			case SmtpStatusCode.AuthenticationRequired:
-				throw new UnauthorizedAccessException (response.Response);
+				throw new ServiceNotAuthenticatedException (response.Response);
 			default:
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			}
@@ -1299,6 +1321,7 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Gets the types of delivery status notification desired for the specified recipient mailbox.
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
 		/// <returns>The desired delivery status notification type.</returns>
 		/// <param name="message">The message being sent.</param>
 		/// <param name="mailbox">The mailbox.</param>
@@ -1366,7 +1389,7 @@ namespace MailKit.Net.Smtp {
 			default:
 				throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
 			case SmtpStatusCode.AuthenticationRequired:
-				throw new UnauthorizedAccessException (response.Response);
+				throw new ServiceNotAuthenticatedException (response.Response);
 			case SmtpStatusCode.Ok:
 				OnMessageSent (new MessageSentEventArgs (message, response.Response));
 				break;
@@ -1395,7 +1418,7 @@ namespace MailKit.Net.Smtp {
 			default:
 				throw new SmtpCommandException (SmtpErrorCode.MessageNotAccepted, response.StatusCode, response.Response);
 			case SmtpStatusCode.AuthenticationRequired:
-				throw new UnauthorizedAccessException (response.Response);
+				throw new ServiceNotAuthenticatedException (response.Response);
 			case SmtpStatusCode.Ok:
 				OnMessageSent (new MessageSentEventArgs (message, response.Response));
 				break;
@@ -1459,7 +1482,7 @@ namespace MailKit.Net.Smtp {
 					Bdat (format, message, cancellationToken);
 				else
 					Data (format, message, cancellationToken);
-			} catch (UnauthorizedAccessException) {
+			} catch (ServiceNotAuthenticatedException) {
 				// do not disconnect
 				throw;
 			} catch (SmtpCommandException) {
@@ -1483,6 +1506,7 @@ namespace MailKit.Net.Smtp {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
+		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1497,19 +1521,19 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="SmtpClient"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
 		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
-		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -1563,19 +1587,19 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="SmtpClient"/> is not connected.
 		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
 		/// <exception cref="System.InvalidOperationException">
 		/// <para>A sender has not been specified.</para>
 		/// <para>-or-</para>
 		/// <para>No recipients have been specified.</para>
 		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation has been canceled.
-		/// </exception>
-		/// <exception cref="System.UnauthorizedAccessException">
-		/// Authentication is required before sending a message.
-		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// Internationalized formatting was requested but is not supported by the server.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
