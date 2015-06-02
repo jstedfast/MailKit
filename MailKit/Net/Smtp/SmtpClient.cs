@@ -60,8 +60,7 @@ namespace MailKit.Net.Smtp {
 	/// server and does not use SSL or TLS unless the SMTP server supports the
 	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol, however,
 	/// connects to the SMTP server using an SSL-wrapped connection.</para>
-	/// <para>The connection established by the
-	/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+	/// <para>The connection established by the <see cref="Overload:Connect"/>
 	/// method may be re-used if an application wishes to send multiple messages
 	/// to the same SMTP server. Since connecting and authenticating can be expensive
 	/// operations, re-using a connection can significantly improve performance when

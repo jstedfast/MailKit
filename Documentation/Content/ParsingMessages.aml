@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="ParsingMessages" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>
+        One of the more common operations that MimeKit is meant for is parsing
+        email messages from arbitrary streams. There are two ways of accomplishing
+        this task.
+      </para>
+      <autoOutline />
+    </introduction>
+
+    <!-- Optional procedures followed by optional code example but must have
+         at least one procedure or code example -->
+    <section address="LoadMessage">
+      <title>Using the Load methods</title>
+      <content>
+        <para>The easiest way is to use one of the Load methods on
+        <codeEntityReference>T:MimeKit.MimeMessage</codeEntityReference>.</para>
+        <code language="c#" source="Examples\MimeMessageLoad.cs" />
+      </content>
+    </section>
+    
+    <section address="MimeParser">
+      <title>Using MimeParser directly</title>
+      <content>
+        <para>The second way is to use the
+        <codeEntityReference>T:MimeKit.MimeParser</codeEntityReference> class.
+        For the most part, using the MimeParser directly is not necessary unless
+        you wish to parse a Unix mbox file stream. However, this is how you would
+        do it:</para>
+        <code language="c#" source="Examples\MimeParserParseMessage.cs" />
+        <para>For Unix mbox file streams, you would use the parser like this:</para>
+        <code language="c#" source="Examples\MimeParserMbox.cs" />
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="CreatingMessages"/>
+      <link xlink:href="WorkingWithMessages"/>
+      
+      <!--<codeEntityReference autoUpgrade="true">M:MimeKit.MimeParser.ParseMessage(System.Threading.CancellationToken)</codeEntityReference>
+      <codeEntityReference autoUpgrade="true">M:MimeKit.MimeMessage.Load(System.IO.Stream,System.Threading.CancellationToken)</codeEntityReference>-->
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

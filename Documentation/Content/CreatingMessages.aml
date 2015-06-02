@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="CreatingMessages" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>MimeKit provides a number of ways to create messages.</para>
+      <autoOutline />
+    </introduction>
+
+    <section address="CreatingSimpleMessage">
+      <title>Creating a Simple Message</title>
+      <content>
+        <para>
+          Creating MIME messages using MimeKit is really trivial.
+        </para>
+        <code language="c#" source="Examples\CreateSimpleMessage.cs"/>
+        <para>
+          A <codeEntityReference>T:MimeKit.TextPart</codeEntityReference> is a leaf-node
+          MIME part with a text media-type. The first argument to the TextPart constructor
+          specifies the media-subtype, in this case, <literal>plain</literal>. Another
+          media subtype you are probably familiar with is the <literal>html</literal>
+          subtype. Some other examples include <literal>enriched</literal>,
+          <literal>rtf</literal>, and <literal>xml</literal>.
+        </para>
+        <para>
+          The <codeEntityReference>P:MimeKit.TextPart.Text</codeEntityReference> property
+          is the easiest way to both get and set the string content of the MIME part.
+        </para>
+      </content>
+    </section>
+
+    <section address="CreateMessageWithAttachments">
+      <title>Creating a Message with Attachments</title>
+      <content>
+        <para>
+          Attachments are just like any other
+          <codeEntityReference>T:MimeKit.MimePart</codeEntityReference>, the only difference
+          is that they typically have a <literal>Content-Disposition</literal> header with a
+          value of <literal>attachment</literal> instead of <literal>inline</literal> or no
+          <literal>Content-Disposition</literal> header at all.
+        </para>
+        <code language="c#" source="Examples\CreateMultipartMixed.cs"/>
+        <para>
+          Of course, that is just a simple example. A lot of modern mail clients such as Outlook
+          or Thunderbird will send out both a <literal>text/html</literal> and a
+          <literal>text/plain</literal> version of the message text. To do this, you'd create a
+          <codeEntityReference>T:MimeKit.TextPart</codeEntityReference> for each part and then
+          add them to a <literal>multipart/alternative</literal> like so:
+        </para>
+        <code language="c#" source="Examples\CreateMultipartAlternative.cs"/>
+      </content>
+    </section>
+
+    <section address="UsingBodyBuilder">
+      <title>Using a BodyBuilder</title>
+      <content>
+        <para>
+          If you are used to <codeEntityReference>N:System.Net.Mail</codeEntityReference>'s API
+          for creating messages, you will probably find using a
+          <codeEntityReference>T:MimeKit.BodyBuilder</codeEntityReference> much more friendly
+          than manually creating the tree of MIME parts. Here's how you could create a message
+          body using a <codeEntityReference>T:MimeKit.BodyBuilder</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\BodyBuilder.cs"/>
+      </content>
+    </section>
+
+    <section address="SystemNetMail">
+      <title>Importing from System.Net.Mail</title>
+      <content>
+        <para>
+          To make things even simpler still, MimeKit allows you to explicitly cast
+          a <codeEntityReference>T:System.Net.Mail.MailMessage</codeEntityReference>
+          to a <codeEntityReference>T:MimeKit.MimeMessage</codeEntityReference>.
+        </para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ParsingMessages"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

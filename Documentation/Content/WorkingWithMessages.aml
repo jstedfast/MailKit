@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="WorkingWithMessages" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <para>MimeKit provies a number of ways to get the data you want from a message.</para>
+      <autoOutline />
+    </introduction>
+
+    <section address="MessageStructure">
+      <title>The Message Structure</title>
+      <content>
+        <para>
+          A common misunderstanding about email is that there is a well-defined
+          message body and then a list of attachments. This is not really the case.
+          The reality is that MIME is a tree structure of content, much like a file
+          system.
+        </para>
+        <para>
+          Luckily, MIME does define a set of general rules for how mail clients
+          should interpret this tree structure of MIME parts. The
+          <literal>Content-Disposition</literal> header is meant to provide hints to
+          the receiving client as to which parts are meant to be displayed as part of
+          the message body and which are meant to be interpreted as attachments.
+        </para>
+        <para>
+          The <literal>Content-Disposition</literal> header will generally have
+          one of two values: <literal>inline</literal> or
+          <literal>attachment</literal>.
+        </para>
+        <para>
+          The meaning of these values should be fairly obvious. If the value is
+          <literal>attachment</literal>, then the content of said MIME part is meant
+          to be presented as a file attachment separate from the core message. However,
+          if the value is <literal>inline</literal>, then the content of that MIME part
+          is meant to be displayed inline within the mail client's rendering of the
+          core message body. If the <literal>Content-Disposition</literal> header does
+          not exist, then it should be treated as if the value were
+          <literal>inline</literal>.
+        </para>
+        <para>
+          Technically, every part that lacks a <literal>Content-Disposition</literal>
+          header or that is marked as <literal>inline</literal>, then, is part of the
+          core message body.
+        </para>
+        <para>There's a bit more to it than that, though.</para>
+        <para>
+          Modern MIME messages will often contain a
+          <literal>multipart/alternative</literal> MIME container which will generally
+          contain a <literal>text/plain</literal> and <literal>text/html</literal> version
+          of the text that the sender wrote. The <literal>text/html</literal> version is
+          typically formatted much closer to what the sender saw in his or her WYSIWYG
+          editor than the <literal>text/plain</literal> version.
+        </para>
+        <para>
+          The reason for sending the message text in both formats is that not
+          all mail clients are capable of displaying HTML.
+        </para>
+        <para>
+          The receiving client should only display one of the alternative views
+          contained within the <literal>multipart/alternative</literal> container.
+          Since alternative views are listed in order of least faithful to most
+          faithful with what the sender saw in his or her WYSIWYG editor, the
+          receiving client should walk over the list of alternative views starting
+          at the end and working backwards until it finds a part that it is capable
+          of displaying.
+        </para>
+        <para>
+          Example:<markup><pre>
+multipart/alternative
+  text/plain
+  text/html</pre></markup>
+        </para>
+        <para>
+          As seen in the example above, the <literal>text/html</literal> part is
+          listed last because it is the most faithful to what the sender saw in his or
+          her WYSIWYG editor when writing the message.
+        </para>
+        <para>
+          To make matters even more complicated, sometimes modern mail clients
+          will use a <literal>multipart/related</literal> MIME container instead of a
+          simple <literal>text/html</literal> part in order to embed images and other
+          multimedia content within the HTML.
+        </para>
+        <para>Example:<markup><pre>
+multipart/alternative
+  text/plain
+  multipart/related
+    text/html
+    image/jpeg
+    video/mp4
+    image/png</pre></markup>
+        </para>
+        <para>
+          In the example above, one of the alternative views is a
+          <literal>multipart/related</literal> container which contains an HTML
+          version of the message body that references the sibling video and images.
+        </para>
+        <para>
+          Now that you have a rough idea of how a message is structured and how
+          to interpret various MIME entities, the next step is learning how to traverse
+          the MIME tree using MimeKit.
+        </para>
+      </content>
+    </section>
+
+    <section address="TraversingMessages">
+      <title>Traversing a Message</title>
+      <content>
+        <para>
+          The <codeEntityReference>P:MimeKit.MimeMessage.Body</codeEntityReference>
+          is the top-level MIME entity of the message. Generally, it will either be a
+          <codeEntityReference>T:MimeKit.TextPart</codeEntityReference> or a
+          <codeEntityReference>T:MimeKit.Multipart</codeEntityReference>.
+        </para>
+        <para>
+          There are 3 ways of iterating over the tree structure of a message using MimeKit.
+          The first way is to recursively traverse the MIME structure like this:
+        </para>
+        <code language="c#" source="Examples\RecursivelyTraverse.cs"/>
+        <para>
+          A second way, which is a bit cleaner and doesn't require recursive methods, is
+          to use a <codeEntityReference>T:MimeKit.MimeIterator</codeEntityReference>:
+        </para>
+        <code language="c#" source="Examples\MimeIterator.cs" />
+        <para>
+          And finally, for those that prefer to use the
+          <externalLink>
+            <linkText>visitor pattern</linkText>
+            <linkUri>http://en.wikipedia.org/wiki/Visitor_pattern</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>, MimeKit includes the
+          <codeEntityReference>T:MimeKit.MimeVisitor</codeEntityReference> class for
+          visiting each node in the MIME tree structure.
+        </para>
+      </content>
+    </section>
+
+    <section address="TextBodyAndHtmlBody">
+      <title>Using the TextBody and HtmlBody Properties</title>
+      <content>
+        <para>
+          To simplify the common task of getting the text of a message, MimeKit includes
+          two properties that can help you get the <literal>text/plain</literal> or
+          <literal>text/html</literal> version of the message body. These are
+          <codeEntityReference>P:MimeKit.MimeMessage.TextBody</codeEntityReference> and
+          <codeEntityReference>P:MimeKit.MimeMessage.HtmlBody</codeEntityReference>,
+          respectively.
+        </para>
+        <para>
+          Keep in mind, however, that at least with the
+          <codeEntityReference>P:MimeKit.MimeMessage.HtmlBody</codeEntityReference>
+          property, it may be that the HTML part is a child of a
+          <literal>multipart/related</literal>, allowing it to refer to images and other
+          types of media that are also contained within that
+          <literal>multipart/related</literal> entity. This property is really only a
+          convenience property and is not a really good substitute for traversing the
+          MIME structure yourself so that you may properly interpret related content.
+        </para>
+      </content>
+    </section>
+
+    <section address="EnumeratingBodyParts">
+      <title>Enumerating Body Parts</title>
+      <content>
+        <para>
+          Sometimes traversing the body of a message is overkill when all you really
+          need to do is something quick &amp; dirty. For this reason, MimeKit provides
+          the <codeEntityReference>P:MimeKit.MimeMessage.BodyParts</codeEntityReference>
+          and <codeEntityReference>P:MimeKit.MimeMessage.Attachments</codeEntityReference>
+          properties which flatten out the hierarchy and allow you to iterate over all
+          of the body parts (or attachments) in depth-first order.
+        </para>
+        <code language="c#" source="Examples\EnumeratingAttachments.cs" />
+      </content>
+    </section>
+
+    <section address="DecodingContent">
+      <title>Getting the Decoded Content of a MimePart</title>
+      <content>
+        <para>
+          At some point, you're going to want to extract the decoded content of a
+          <codeEntityReference>T:MimeKit.MimePart</codeEntityReference> (such as an image)
+          and save it to disk or feed it to a UI control to display it.
+        </para>
+        <para>
+          Once you've found the <codeEntityReference>T:MimeKit.MimePart</codeEntityReference>
+          object that you'd like to extract the content of, here's how you can save the
+          decoded content to a file:
+        </para>
+        <code language="c#" source="Examples\DecodingContent.cs"/>
+        <para>
+          You can also get access to the original raw content by "opening" the
+          <codeEntityReference>P:MimeKit.MimePart.ContentObject</codeEntityReference>.
+          This might be useful if you want to pass the content off to a UI control that
+          can do its own loading from a stream.
+        </para>
+        <code language="c#" source="Examples\OpeningContent.cs"/>
+        <para>
+          There are a number of useful filters that can be applied to a
+          <codeEntityReference>T:MimeKit.IO.FilteredStream</codeEntityReference>, so if you
+          find this type of interface appealing, I would suggest taking a look at the available
+          filters in the <codeEntityReference>N:MimeKit.IO.Filters</codeEntityReference>
+          namespace or even write your own! The possibilities are limited only by your
+          imagination.
+        </para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="ParsingMessages"/>
+      
+      <!--<codeEntityReference>P:MimeKit.MimeMessage.TextBody</codeEntityReference>
+      <codeEntityReference>P:MimeKit.MimeMessage.HtmlBody</codeEntityReference>
+      <codeEntityReference autoUpgrade="true">M:MimeKit.MimeMessage.GetTextBody(MimeKit.Text.TextFormat)</codeEntityReference>
+      <codeEntityReference>P:MimeKit.MimeMessage.BodyParts</codeEntityReference>
+      <codeEntityReference>P:MimeKit.MimeMessage.Attachments</codeEntityReference>
+      <codeEntityReference>T:MimeKit.MimeIterator</codeEntityReference>-->
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

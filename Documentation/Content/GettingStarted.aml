@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="GettingStarted" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <autoOutline />
+    </introduction>
+
+    <section address="InstallingViaNuGet">
+      <title>Adding MailKit to your project via NuGet</title>
+      <content>
+        <para>
+          In <application>Visual Studio</application>'s
+          <externalLink>
+            <linkText>Package Manager Console</linkText>
+            <linkUri>http://docs.nuget.org/docs/start-here/using-the-package-manager-console</linkUri>
+          </externalLink>, simply enter the following command:
+        </para>
+        <para>
+          <command>Install-Package MailKit</command>
+        </para>
+      </content>
+    </section>
+
+    <section address="BuildingFromSource">
+      <title>Building MailKit from Source</title>
+      <content>
+        <para>
+          First, you'll need to clone <application>MailKit</application>,
+          <application>MimeKit</application>,
+          <application>Bouncy Castle</application> and
+          <application>Portable.Text.Encoding</application> from the
+          <externalLink>
+            <linkText>GitHub</linkText>
+            <linkUri>https://github.com/jstedfast</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> repository:
+        </para>
+        <para>
+          <command>git clone https://github.com/jstedfast/MailKit.git</command>
+        </para>
+        <para>
+          <command>git clone https://github.com/jstedfast/MimeKit.git</command>
+        </para>
+        <para>
+          <command>git clone https://github.com/jstedfast/bc-csharp.git</command>
+        </para>
+        <para>
+          <command>git clone https://github.com/jstedfast/Portable.Text.Encoding.git</command>
+        </para>
+        <para>
+          Currently, <application>MimeKit</application> depends on the vs2010 branch of
+          bc-csharp for the <application>Visual Studio 2010</application> project files
+          that I've added (to replace the <application>Visual Studio 2003</application>
+          project files). To switch to that branch,
+        </para>
+        <para>
+          <command>cd bc-csharp</command>
+        </para>
+        <para>
+          <command>git checkout -b vs2010 origin/vs2010</command>
+        </para>
+        <para>
+          In the top-level <application>MailKit</application> source directory, there
+          are several solution files:
+        </para>
+        <list class="bullet">
+          <listItem>
+            <para>
+              <application>MailKit.sln</application> includes projects for .NET 4.0,
+              .NET 4.5, Xamarin.Android, Xamarin.iOS, and the unit tests.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <application>MailKit.Mobile.sln</application> just includes the
+              Xamarin.Android and Xamarin.iOS projects.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              <application>MailKit.Net40.sln</application> just includes the
+              .NET 4.0 project.
+            </para>
+          </listItem>
+        </list>
+        <para>
+          If you don't have the Xamarin products, you'll probably want to open the
+          <application>MailKit.Net40.sln</application> instead of
+          <application>MailKit.sln</application>.
+        </para>
+        <para>
+          Once you've opened the appropriate <application>MailKit</application> solution
+          file in either <application>Xamarin Studio</application> or
+          <application>Visual Studio</application> (either will work), you can simply
+          choose the Debug or Release build configuration and then build.
+        </para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="CreatingMessages"/>
+      <link xlink:href="ParsingMessages"/>
+      <link xlink:href="WorkingWithMessages"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

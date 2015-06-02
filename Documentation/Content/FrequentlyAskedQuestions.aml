@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="FrequentlyAskedQuestions" revisionNumber="1">
+  <developerConceptualDocument
+    xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+
+    <introduction>
+      <autoOutline />
+    </introduction>
+
+    <section address="MessageBody">
+      <title>How do I get the message body?</title>
+      <content>
+        <para>
+          (Note: for the TL;DR version, skip to the end)
+        </para>
+        <para>
+          MIME is a tree structure of parts. There are multiparts which contain other parts
+          (even other multiparts). There are message parts which contain messages. And finally,
+          there are leaf-node parts which contain content.
+        </para>
+        <para>
+          There are a few common message structures:
+        </para>
+        <list class="ordered">
+          <listItem address="MessageBodyExample1">
+            <para>
+              The message contains only a <literal>text/plain</literal> or
+              <literal>text/html</literal> part (easy, just use that).
+            </para>
+          </listItem>
+          <listItem address="MessageBodyExample2">
+            <para>
+              The message contains a <literal>multipart/alternative</literal>
+              which will typically look a bit like this:<markup><pre>
+multipart/alternative
+  text/plain
+  text/html</pre></markup>
+            </para>
+          </listItem>
+          <listItem address="MessageBodyExample3">
+            <para>
+              Same as above, but the html part is inside a <literal>multipart/related</literal> so
+              that it can embed images:<markup><pre>
+multipart/alternative
+  text/plain
+  multipart/related
+    text/html
+    image/jpeg
+    image/png</pre></markup>
+            </para>
+          </listItem>
+          <listItem address="MessageBodyExample4">
+            <para>
+              The message contains a textual body part as well as some attachments:<markup><pre>
+multipart/mixed
+  text/plain
+  application/octet-stream
+  application/zip</pre></markup>
+            </para>
+          </listItem>
+          <listItem address="MessageBodyExample5">
+            <para>
+              The same as above, but with the first part replaced with either
+              <link xlink:href="FrequentlyAskedQuestions#MessageBodyExample2">#2</link> or
+              <link xlink:href="FrequentlyAskedQuestions#MessageBodyExample3">#3</link>
+              To illustrate:<markup><pre>
+multipart/mixed
+  multipart/alternative
+    text/plain
+    text/html
+  application/octet-stream
+  application/zip</pre></markup>
+            </para>
+            <para>
+              Or:<markup><pre>
+multipart/mixed
+  multipart/alternative
+    text/plain
+    multipart/related
+      text/html
+      image/jpeg
+      image/png
+  application/octet-stream
+  application/zip</pre></markup>
+            </para>
+          </listItem>
+        </list>
+        <para>
+          For your convenience, the <codeEntityReference>T:MimeKit.MimeMessage</codeEntityReference>
+          class has 2 properties that you may find useful:
+          <codeEntityReference>P:MimeKit.MimeMessage.TextBody</codeEntityReference> and
+          <codeEntityReference>P:MimeKit.MimeMessage.HtmlBody</codeEntityReference>.
+        </para>
+        <para>
+          For more information, see <link xlink:href="WorkingWithMessages"/>.
+        </para>
+      </content>
+    </section>
+
+    <section address="EmailAddresses">
+      <title>How do I get the email addresses in the From, To, and Cc headers?</title>
+      <content>
+        <para>
+          The <codeEntityReference>P:MimeKit.MimeMessage.From</codeEntityReference>,
+          <codeEntityReference>P:MimeKit.MimeMessage.To</codeEntityReference>, and
+          <codeEntityReference>P:MimeKit.MimeMessage.Cc</codeEntityReference>
+          properties of a <codeEntityReference>T:MimeKit.MimeMessage</codeEntityReference>
+          are all of type <codeEntityReference>T:MimeKit.InternetAddressList</codeEntityReference>.
+          An <codeEntityReference>T:MimeKit.InternetAddressList</codeEntityReference> is a list of
+          <codeEntityReference>T:MimeKit.InternetAddress</codeEntityReference> items.
+          This is where some people start to get lost, conceptually, because
+          <codeEntityReference>T:MimeKit.InternetAddress</codeEntityReference> is an
+          abstract class that only really has a
+          <codeEntityReference>P:MimeKit.InternetAddress.Name</codeEntityReference>
+          property.
+        </para>
+        <para>
+          As you've probably already discovered, the
+          <codeEntityReference>P:MimeKit.InternetAddress.Name</codeEntityReference>
+          property contains the name of the person (if available), but what you probably
+          want is his or her email address, not their name. So how do you get it?
+        </para>
+        <para>
+          To get the email address, you'll need to figure out what subclass of address each
+          <codeEntityReference>T:MimeKit.InternetAddress</codeEntityReference> really is.
+          There are 2 direct subclasses of
+          <codeEntityReference>T:MimeKit.InternetAddress</codeEntityReference>. They are:
+          <codeEntityReference>T:MimeKit.GroupAddress</codeEntityReference> and
+          <codeEntityReference>T:MimeKit.MailboxAddress</codeEntityReference>.
+        </para>
+        <para>
+          A <codeEntityReference>T:MimeKit.GroupAddress</codeEntityReference> is a named group
+          of more <codeEntityReference>T:MimeKit.InternetAddress</codeEntityReference> items that
+          are contained within the
+          <codeEntityReference>P:MimeKit.GroupAddress.Members</codeEntityReference> property. To
+          get an idea of what a group address represents, consider the following examples:
+        </para>
+        <para>
+          <literal>
+            To: My Friends: Joey &lt;joey@friends.com&gt;, Monica &lt;monica@friends.com&gt;,
+            "Mrs. Chanandler Bong" &lt;chandler@friends.com&gt;, Ross &lt;ross@friends.com&gt;,
+            Rachel &lt;rachel@friends.com&gt;;
+          </literal>
+        </para>
+        <para>
+          In the above example, the <codeEntityReference>P:MimeKit.MimeMessage.To</codeEntityReference>
+          header's <codeEntityReference>T:MimeKit.InternetAddressList</codeEntityReference> will
+          contain only 1 item which will be a
+          <codeEntityReference>T:MimeKit.GroupAddress</codeEntityReference> with a
+          <codeEntityReference>P:MimeKit.InternetAddress.Name</codeEntityReference> value of
+          <literal>My Friends</literal>. The
+          <codeEntityReference>P:MimeKit.GroupAddress.Members</codeEntityReference> property of
+          the <codeEntityReference>T:MimeKit.GroupAddress</codeEntityReference> will contain 5
+          more <codeEntityReference>T:MimeKit.InternetAddress</codeEntityReference> items (which
+          will all be instances of <codeEntityReference>T:MimeKit.MailboxAddress</codeEntityReference>).
+        </para>
+        <para>
+          The above example, however, is not very likely to ever be seen in messages you deal with.
+          A far more common example would be the one below:
+        </para>
+        <para>
+          <literal>To: undisclosed-recipients:;</literal>
+        </para>
+        <para>
+          Most of the time, the <codeEntityReference>P:MimeKit.MimeMessage.From</codeEntityReference>,
+          <codeEntityReference>P:MimeKit.MimeMessage.To</codeEntityReference>, and
+          <codeEntityReference>P:MimeKit.MimeMessage.Cc</codeEntityReference> headers will only
+          contain mailbox addresses. As you will notice, a
+          <codeEntityReference>T:MimeKit.MailboxAddress</codeEntityReference> has an
+          <codeEntityReference>P:MimeKit.MailboxAddress.Address</codeEntityReference> property
+          which will contain the email address of the mailbox. In the following example, the
+          <codeEntityReference>P:MimeKit.MailboxAddress.Address</codeEntityReference> property
+          will contain the value <literal>john@smith.com</literal>:
+        </para>
+        <para>
+          <literal>To: John Smith &lt;john@smith.com&gt;</literal>
+        </para>
+        <para>
+          If you only care about getting a flattened list of the mailbox addresses in one of
+          the address headers, you can simply do something like this:
+        </para>
+        <code language="c#">
+foreach (var mailbox in message.To.Mailboxes)
+    Console.WriteLine ("{0}'s email address is {1}", mailbox.Name, mailbox.Address);
+        </code>
+      </content>
+    </section>
+
+    <section address="DecryptInlinePGP">
+      <title>How do I decrypt PGP messages that are embedded in the main message text?</title>
+      <content>
+        <para>
+          Some PGP-enabled mail clients, such as <application>Thunderbird</application>, embed
+          encrypted PGP blurbs within the <literal>text/plain</literal> body of the message
+          rather than using the PGP/MIME format that MimeKit prefers.
+        </para>
+        <para>
+          These messages often look something like this:
+        </para>
+        <code language="none" source="Examples\InlinePGPExample.txt"/>
+        <para>
+          To deal with these kinds of messages, MimeKit's
+          <codeEntityReference>T:MimeKit.Cryptography.OpenPgpContext</codeEntityReference>
+          includes a
+          <codeEntityReference>
+            Overload:MimeKit.Cryptography.OpenPgpContext.GetDecryptedStream
+          </codeEntityReference>
+          method which can be used to get the raw decrypted stream.
+        </para>
+        <para>
+          The method variant that has a
+          <codeEntityReference>T:MimeKit.Cryptography.DigitalSignatureCollection</codeEntityReference>
+          output parameter is useful in cases where the encrypted PGP blurb is also digitally signed,
+          allowing you to get your hands on the list of digitial signatures in order for you to verify
+          each of them.
+        </para>
+        <para>
+          To decrypt the sample message above, you could use the following code snippet:
+        </para>
+        <code language="c#" source="Examples\OpenPGPExamples.cs" region="DecryptInlinePGP"/>
+      </content>
+    </section>
+
+    <section address="ParseWebRequestFormData">
+      <title>How would I parse multipart/form-data from an HTTP web request?</title>
+      <content>
+        <para>
+          Since classes like <codeEntityReference>T:System.Web.HttpWebRequest</codeEntityReference>
+          take care of parsing the HTTP headers (which includes the <literal>Content-Type</literal> header)
+          and only offer a content stream to consume, MimeKit provides a way to deal with this using the
+          following two static methods on <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>:
+          <codeEntityReference>
+            M:MimeKit.MimeEntity.Load(MimeKit.ParserOptions,MimeKit.ContentType,System.IO.Stream,System.Threading.CancellationToken)
+          </codeEntityReference>
+          and
+          <codeEntityReference>
+            M:MimeKit.MimeEntity.Load(MimeKit.ContentType,System.IO.Stream,System.Threading.CancellationToken)
+          </codeEntityReference>
+        </para>
+        <para>
+          Here's how you might use these methods:
+        </para>
+        <code language="c#" source="Examples\MultipartFormDataExamples.cs" region="ParseMultipartFormDataSimple"/>
+        <para>
+          If the multipart/form-data HTTP response is expected to be large and you do
+          not wish for the content to be read into memory, you can use the following
+          approach:
+        </para>
+        <code language="c#" source="Examples\MultipartFormDataExamples.cs" region="ParseMultipartFormDataComplex"/>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="WorkingWithMessages"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Topics>
+  <Topic id="Introduction" visible="True" isDefault="true" />
+  <Topic id="License" visible="True" title="License Agreement"/>
+  <Topic id="GettingStarted" visible="True" title="Getting Started"/>
+  <Topic id="CreatingMessages" visible="True" title="Creating Messages"/>
+  <Topic id="ParsingMessages" visible="True" title="Parsing Messages"/>
+  <Topic id="WorkingWithMessages" visible="True" title="Working with Messages"/>
+  <Topic id="WorkingWithPGP" visible="True" title="Working with OpenPGP"/>
+  <Topic id="WorkingWithSMime" visible="True" title="Working with S/MIME"/>
+  <Topic id="FrequentlyAskedQuestions" visible="True" title="Frequently Asked Questions"/>
+</Topics>
