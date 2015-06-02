@@ -144,9 +144,14 @@
       <title>Donate</title>
       <content>
         <para>
-          MimeKit and MailKit are personal open source projects that I have put thousands of hours into perfecting with the
-          goal of making them the very best email framework for .NET, but the best email framework for any programming
-          language. I need your help to achieve this.
+          MimeKit and MailKit are personal open source projects that I have put thousands of hours into perfecting
+          by continuously improving the API based on feedback from developers like yourself, writing documentation,
+          and optimizing with the goal of making them not only the very best email framework for .NET, but the best
+          email framework for any programming language. I need your help to achieve this.
+        </para>
+        <para>
+          If MimeKit and/or MailKit have been helpful to you, please consider donating. Your contributions will be
+          greatly appreciated.
         </para>
         <markup>
           <p>
