@@ -60,14 +60,17 @@ namespace MailKit.Net.Smtp {
 	/// server and does not use SSL or TLS unless the SMTP server supports the
 	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol, however,
 	/// connects to the SMTP server using an SSL-wrapped connection.</para>
-	/// <para>The connection established by the <see cref="Overload:Connect"/>
-	/// method may be re-used if an application wishes to send multiple messages
+	/// <para>The connection established by any of the
+	/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
+	/// methods may be re-used if an application wishes to send multiple messages
 	/// to the same SMTP server. Since connecting and authenticating can be expensive
 	/// operations, re-using a connection can significantly improve performance when
 	/// sending a large number of messages to the same SMTP server over a short
 	/// period of time.</para>
 	/// </remarks>
-	/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessages"/>
+	/// <example>
+	/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessages" />
+	/// </example>
 	public class SmtpClient : MailTransport
 	{
 #if NET_4_5 || __MOBILE__
@@ -97,12 +100,15 @@ namespace MailKit.Net.Smtp {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Before you can send messages with the <see cref="SmtpClient"/>, you must first call
-		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method. Depending on the server,
-		/// you may also need to authenticate using the
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// Before you can send messages with the <see cref="SmtpClient"/>, you must first call one of
+		/// the <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a> methods.
+		/// Depending on whether the SMTP server requires authenticating or not, you may also need to
+		/// authenticate using one of the
+		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a> methods.
 		/// </remarks>
-		/// <example language="C#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessages" />
+		/// </example>
 		public SmtpClient () : this (new NullProtocolLogger ())
 		{
 		}
@@ -111,16 +117,19 @@ namespace MailKit.Net.Smtp {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpClient"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Before you can send messages with the <see cref="SmtpClient"/>, you must first call
-		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method. Depending on the server,
-		/// you may also need to authenticate using the
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// Before you can send messages with the <see cref="SmtpClient"/>, you must first call one of
+		/// the <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a> methods.
+		/// Depending on whether the SMTP server requires authenticating or not, you may also need to
+		/// authenticate using one of the
+		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a> methods.
 		/// </remarks>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="protocolLogger"/> is <c>null</c>.
 		/// </exception>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="ProtocolLogger"/>
+		/// </example>
 		public SmtpClient (IProtocolLogger protocolLogger)
 		{
 			if (protocolLogger == null)
@@ -168,11 +177,12 @@ namespace MailKit.Net.Smtp {
 		/// Get the capabilities supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made via
-		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and may change as a side-effect
-		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// The capabilities will not be known until a successful connection has been made 
+		/// and may change once the client is authenticated.
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// </example>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
 		/// Capabilities cannot be enabled, they may only be disabled.
@@ -204,10 +214,8 @@ namespace MailKit.Net.Smtp {
 		/// Get the maximum message size supported by the server.
 		/// </summary>
 		/// <remarks>
-		/// <para>The maximum message size will not be known until a successful
-		/// connection has been made via the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method
-		/// and may change as a side-effect of the <see cref="Authenticate(ICredentials,CancellationToken)"/>
-		/// method.</para>
+		/// <para>The maximum message size will not be known until a successful connection has
+		/// been made and may change once the client is authenticated.</para>
 		/// <para>Note: This value is only relevant if the <see cref="Capabilities"/>
 		/// includes the <see cref="SmtpCapabilities.Size"/> flag.</para>
 		/// </remarks>
@@ -228,14 +236,11 @@ namespace MailKit.Net.Smtp {
 		/// Get the authentication mechanisms supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// <para>The authentication mechanisms are queried as part of the
-		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
-		/// method.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms in
-		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/> or
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
-		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
-		/// calling either of the Authenticate() methods.</para>
+		/// <para>The authentication mechanisms are queried as part of the connection process.</para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms in the
+		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
+		/// method, simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// set before calling Authenticate().</para>
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
@@ -279,9 +284,9 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets whether or not the client is currently authenticated with the SMTP server.</para>
-		/// <para>To authenticate with the SMTP server, use
-		/// <see cref="MailService.Authenticate(String,String,CancellationToken)"/>
-		/// or <see cref="Authenticate(ICredentials,CancellationToken)"/>.</para>
+		/// <para>To authenticate with the SMTP server, use one of the
+		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsAuthenticated {
@@ -483,13 +488,18 @@ namespace MailKit.Net.Smtp {
 		/// security to weakest security. Once a SASL authentication mechanism is
 		/// found that both client and server support, the credentials are used to
 		/// authenticate.</para>
-		/// <para>If, on the other hand, authentication is not supported, then
-		/// this method simply returns without attempting to authenticate.</para>
+		/// <para>If, on the other hand, authentication is not supported by the SMTP
+		/// server, then this method will throw <see cref="System.NotSupportedException"/>.
+		/// The <see cref="Capabilities"/> property can be checked for the
+		/// <see cref="SmtpCapabilities.Authentication"/> flag to make sure the
+		/// SMTP server supports authentication before calling this method.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling the Authenticate() method.</para>
+		/// set before calling this method.</para>
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -697,15 +707,17 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
-		/// <alert class="note"><para>The connection established by the
-		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
-		/// method may be re-used if an application wishes to send multiple messages
+		/// <para>Note: The connection established by any of the
+		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
+		/// methods may be re-used if an application wishes to send multiple messages
 		/// to the same SMTP server. Since connecting and authenticating can be expensive
 		/// operations, re-using a connection can significantly improve performance when
 		/// sending a large number of messages to the same SMTP server over a short
-		/// period of time.</para></alert>
+		/// period of time.</para>
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="options">The secure socket options to when connecting.</param>
@@ -894,6 +906,13 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
+		/// <para>Note: The connection established by any of the
+		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
+		/// methods may be re-used if an application wishes to send multiple messages
+		/// to the same SMTP server. Since connecting and authenticating can be expensive
+		/// operations, re-using a connection can significantly improve performance when
+		/// sending a large number of messages to the same SMTP server over a short
+		/// period of time.</para>
 		/// </remarks>
 		/// <param name="socket">The socket to use for the connection.</param>
 		/// <param name="host">The host name to connect to.</param>
@@ -1031,7 +1050,9 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1261,7 +1282,9 @@ namespace MailKit.Net.Smtp {
 		/// length, but must consist only of printable ASCII characters and no white space.</para>
 		/// <para>For more information, see rfc3461, section 4.4.</para>
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+		/// </example>
 		/// <returns>The envelope identifier.</returns>
 		/// <param name="message">The message.</param>
 		protected virtual string GetEnvelopeId (MimeMessage message)
@@ -1320,7 +1343,9 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// Gets the types of delivery status notification desired for the specified recipient mailbox.
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+		/// </example>
 		/// <returns>The desired delivery status notification type.</returns>
 		/// <param name="message">The message being sent.</param>
 		/// <param name="mailbox">The mailbox.</param>
@@ -1505,7 +1530,9 @@ namespace MailKit.Net.Smtp {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// </example>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

@@ -232,7 +232,7 @@ foreach (var mailbox in message.To.Mailboxes)
       <title>How would I parse multipart/form-data from an HTTP web request?</title>
       <content>
         <para>
-          Since classes like <codeEntityReference>T:System.Web.HttpWebRequest</codeEntityReference>
+          Since classes like <codeEntityReference>T:System.Net.HttpWebRequest</codeEntityReference>
           take care of parsing the HTTP headers (which includes the <literal>Content-Type</literal> header)
           and only offer a content stream to consume, MimeKit provides a way to deal with this using the
           following two static methods on <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>:

@@ -107,6 +107,7 @@
     <None Include="Examples\OpenPGPExamples.cs" />
     <None Include="Examples\RecursivelyTraverse.cs" />
     <None Include="Examples\SMimeExamples.cs" />
+    <None Include="Examples\SmtpExamples.cs" />
     <None Include="Examples\VerifySignature.cs" />
   </ItemGroup>
   <ItemGroup>

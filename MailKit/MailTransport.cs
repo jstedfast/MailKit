@@ -62,7 +62,9 @@ namespace MailKit {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -277,7 +279,9 @@ namespace MailKit {
 		/// the recipients are collected from the Resent-To, Resent-Cc, and
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
-		/// <example language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// </example>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

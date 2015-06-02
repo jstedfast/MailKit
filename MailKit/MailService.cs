@@ -176,6 +176,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Establishes a connection to the specified mail server.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="options">The secure socket options to when connecting.</param>
@@ -265,6 +268,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Establishes a connection to the specified mail server.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageUri"/>
+		/// </example>
 		/// <param name="uri">The server URI.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -584,6 +590,9 @@ namespace MailKit {
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
 		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -690,6 +699,9 @@ namespace MailKit {
 		/// <remarks>
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
