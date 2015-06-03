@@ -100,7 +100,8 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Some servers may require the client SSL certificates in order
 		/// to allow the user to connect.</para>
-		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
+		/// <para>This property should be set before calling any of the
+		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
 		/// <value>The client SSL certificates.</value>
 		public X509CertificateCollection ClientCertificates {
@@ -112,7 +113,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets or sets a callback function to validate the server certificate.</para>
-		/// <para>This property should be set before calling <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>.</para>
+		/// <para>This property should be set before calling any of the
+		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.</para>
 		/// </remarks>
 		/// <value>The server certificate validation callback function.</value>
 		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
@@ -124,7 +126,8 @@ namespace MailKit {
 		/// Gets the authentication mechanisms supported by the mail server.
 		/// </summary>
 		/// <remarks>
-		/// The authentication mechanisms are queried as part of the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method.
+		/// The authentication mechanisms are queried as part of the
+		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> method.
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public abstract HashSet<string> AuthenticationMechanisms {
@@ -148,9 +151,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets whether or not the client is currently authenticated with the mail server.</para>
-		/// <para>To authenticate with the mail server, use
-		/// <see cref="Authenticate(String,String,CancellationToken)"/>,
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>,
+		/// <para>To authenticate with the mail server, use one of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods
 		/// or any of the Async alternatives.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
@@ -491,7 +493,9 @@ namespace MailKit {
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling the Authenticate() method.</para>
+		/// set before calling any of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -534,7 +538,9 @@ namespace MailKit {
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling the Authenticate() method.</para>
+		/// set before calling any of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="credentials">The user's credentials.</param>
@@ -588,7 +594,9 @@ namespace MailKit {
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling the Authenticate() method.</para>
+		/// set before calling any of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
@@ -648,7 +656,9 @@ namespace MailKit {
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling the Authenticate() method.</para>
+		/// set before calling any of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="userName">The user name.</param>
@@ -733,7 +743,9 @@ namespace MailKit {
 		/// <summary>
 		/// Pings the mail server to keep the connection alive.
 		/// </summary>
-		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <remarks>
+		/// Mail servers, if left idle for too long, will automatically drop the connection.
+		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.

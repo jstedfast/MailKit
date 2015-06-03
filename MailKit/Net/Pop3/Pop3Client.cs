@@ -59,10 +59,9 @@ namespace MailKit.Net.Pop3 {
 	/// A POP3 client that can be used to retrieve messages from a server.
 	/// </summary>
 	/// <remarks>
-	/// The <see cref="Pop3Client"/> class supports both the "pop3" and "pop3s"
-	/// protocols. The "pop3" protocol makes a clear-text connection to the POP3
-	/// server and does not use SSL or TLS unless the POP3 server supports the
-	/// STLS extension (as defined by rfc2595). The "pop3s" protocol,
+	/// The <see cref="Pop3Client"/> class supports both the "pop" and "pops" protocols. The "pop" protocol
+	/// makes a clear-text connection to the POP3 server and does not use SSL or TLS unless the POP3 server
+	/// supports the <a href="https://tools.ietf.org/html/rfc2595">STLS</a> extension. The "pops" protocol,
 	/// however, connects to the POP3 server using an SSL-wrapped connection.
 	/// </remarks>
 	/// <example>

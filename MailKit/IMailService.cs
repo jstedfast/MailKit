@@ -108,11 +108,12 @@ namespace MailKit {
 		int Timeout { get; set; }
 
 		/// <summary>
-		/// Connect to the server specified in the URI.
+		/// Establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
-		/// If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// property will be populated.
+		/// <para>Establish a connection to the specified mail server.</para>
+		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// property will be populated.</para>
 		/// </remarks>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
@@ -142,10 +143,12 @@ namespace MailKit {
 		void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
-		/// Asynchronously connect to the specified mail server.
+		/// Asynchronously establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously connects to the specified mail server.
+		/// <para>Asynchronously establishes a connection to the specified mail server.</para>
+		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// property will be populated.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="host">The host name to connect to.</param>
@@ -179,8 +182,15 @@ namespace MailKit {
 		/// Authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
-		/// If the service supports authentication, then the credentials are used
-		/// to authenticate. Otherwise, this method simply returns.
+		/// <para>Authenticates using the supplied credentials.</para>
+		/// <para>If the server supports one or more SASL authentication mechanisms, then
+		/// the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// </remarks>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -193,6 +203,7 @@ namespace MailKit {
 		/// Asynchronously authenticate using the supplied credentials.
 		/// </summary>
 		/// <remarks>
+		/// <para>Asynchronously authenticates using the supplied credentials.</para>
 		/// <para>If the server supports one or more SASL authentication mechanisms, then
 		/// the SASL mechanisms that both the client and server support are tried
 		/// in order of greatest security to weakest security. Once a SASL
@@ -237,7 +248,8 @@ namespace MailKit {
 		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
+		/// <para>Disconnects from the service.</para>
+		/// <para>If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</para>
 		/// </remarks>
 		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -265,7 +277,8 @@ namespace MailKit {
 		/// Asynchronously disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
+		/// <para>Asynchronously disconnects from the service.</para>
+		/// <para>If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>

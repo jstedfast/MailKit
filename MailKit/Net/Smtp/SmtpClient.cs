@@ -55,18 +55,15 @@ namespace MailKit.Net.Smtp {
 	/// An SMTP client that can be used to send email messages.
 	/// </summary>
 	/// <remarks>
-	/// <para>The <see cref="SmtpClient"/> class supports both the "smtp" and "smtps"
-	/// protocols. The "smtp" protocol makes a clear-text connection to the SMTP
-	/// server and does not use SSL or TLS unless the SMTP server supports the
-	/// STARTTLS extension (as defined by rfc3207). The "smtps" protocol, however,
-	/// connects to the SMTP server using an SSL-wrapped connection.</para>
+	/// <para>The <see cref="SmtpClient"/> class supports both the "smtp" and "smtps" protocols. The "smtp"
+	/// protocol makes a clear-text connection to the SMTP server and does not use SSL or TLS unless the SMTP
+	/// server supports the <a href="https://tools.ietf.org/html/rfc3207">STARTTLS</a> extension. The "smtps"
+	/// protocol, however, connects to the SMTP server using an SSL-wrapped connection.</para>
 	/// <para>The connection established by any of the
-	/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
-	/// methods may be re-used if an application wishes to send multiple messages
-	/// to the same SMTP server. Since connecting and authenticating can be expensive
-	/// operations, re-using a connection can significantly improve performance when
-	/// sending a large number of messages to the same SMTP server over a short
-	/// period of time.</para>
+	/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a> methods may be re-used if an
+	/// application wishes to send multiple messages to the same SMTP server. Since connecting and authenticating
+	/// can be expensive operations, re-using a connection can significantly improve performance when sending a
+	/// large number of messages to the same SMTP server over a short period of time.</para>
 	/// </remarks>
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages" />
@@ -1279,11 +1276,12 @@ namespace MailKit.Net.Smtp {
 		/// Get the envelope identifier to be used with delivery status notifications.
 		/// </summary>
 		/// <remarks>
-		/// <para>The envelope identifier, if non-empty, is useful in determining which message
-		/// a delivery status notification was issued for.</para>
-		/// <para>The envelope identifier should be unique and may be up to 100 characters in
-		/// length, but must consist only of printable ASCII characters and no white space.</para>
-		/// <para>For more information, see rfc3461, section 4.4.</para>
+		/// <para>The envelope identifier, if non-empty, is useful in determining which message a delivery
+		/// status notification was issued for.</para>
+		/// <para>The envelope identifier should be unique and may be up to 100 characters in length, but
+		/// must consist only of printable ASCII characters and no white space.</para>
+		/// <para>For more information, see
+		/// <a href="https://tools.ietf.org/html/rfc3461#section-4.4">rfc3461, section 4.4<c>/a>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
