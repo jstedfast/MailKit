@@ -39,7 +39,7 @@ namespace MailKit.Net.Smtp {
 	/// An enumeration of the possible error codes that may be reported by a <see cref="SmtpCommandException"/>.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 	/// </example>
 	public enum SmtpErrorCode {
 		/// <summary>
@@ -78,7 +78,7 @@ namespace MailKit.Net.Smtp {
 	/// a <see cref="SmtpCommandException"/> does not require the <see cref="SmtpClient"/> to be reconnected.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 	/// </example>
 #if !NETFX_CORE
 	[Serializable]
@@ -185,7 +185,7 @@ namespace MailKit.Net.Smtp {
 		/// exception message to the user.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <value>The status code.</value>
 		public SmtpErrorCode ErrorCode {
@@ -202,7 +202,7 @@ namespace MailKit.Net.Smtp {
 		/// to help the user decide how to proceed.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <value>The mailbox.</value>
 		public MailboxAddress Mailbox {
@@ -217,7 +217,7 @@ namespace MailKit.Net.Smtp {
 		/// being thrown.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <value>The status code.</value>
 		public int StatusCode {

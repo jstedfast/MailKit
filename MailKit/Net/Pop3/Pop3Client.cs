@@ -65,6 +65,9 @@ namespace MailKit.Net.Pop3 {
 	/// STLS extension (as defined by rfc2595). The "pop3s" protocol,
 	/// however, connects to the POP3 server using an SSL-wrapped connection.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	/// </example>
 	public class Pop3Client : MailSpool
 	{
 #if NET_4_5 || __MOBILE__
@@ -97,10 +100,14 @@ namespace MailKit.Net.Pop3 {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Client"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you must first
-		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
-		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you must first call
+		/// one of the <a href="Overload_MailKit_Net_Pop3_Pop3Client_Connect.htm">Connect</a> methods
+		/// and authenticate using one of the
+		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="ProtocolLogger"/>
+		/// </example>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="protocolLogger"/> is <c>null</c>.
@@ -119,9 +126,10 @@ namespace MailKit.Net.Pop3 {
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Client"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you must first
-		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and authenticate with
-		/// the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// Before you can retrieve messages with the <see cref="Pop3Client"/>, you must first call
+		/// one of the <a href="Overload_MailKit_Net_Pop3_Pop3Client_Connect.htm">Connect</a> methods
+		/// and authenticate using one of the
+		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods.
 		/// </remarks>
 		public Pop3Client () : this (new NullProtocolLogger ())
 		{
@@ -155,10 +163,12 @@ namespace MailKit.Net.Pop3 {
 		/// Gets the capabilities supported by the POP3 server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made via
-		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and may change as a side-effect
-		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// The capabilities will not be known until a successful connection has been made 
+		/// and may change once the client is authenticated.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
 		/// Capabilities cannot be enabled, they may only be disabled.
@@ -312,20 +322,18 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>The authentication mechanisms are queried as part of the
-		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
-		/// method.</para>
+		/// connection process.</para>
 		/// <para>Servers that do not support the SASL capability will typically
 		/// support either the <c>"APOP"</c> authentication mechanism
 		/// (<see cref="Pop3Capabilities.Apop"/>) or the ability to login using the
-		/// <c>"USER"</c> and <c>"PASS"</c> commands
-		/// (<see cref="Pop3Capabilities.User"/>).</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms in
-		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/> or
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
-		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
-		/// calling either of the Authenticate() methods.</para>
+		/// <c>USER</c> and <c>PASS</c> commands (<see cref="Pop3Capabilities.User"/>).
+		/// </para>
+		/// <para>Note: To prevent the usage of certain authentication mechanisms in the
+		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a>
+		/// methods, simply remove them from the the <see cref="AuthenticationMechanisms"/>
+		/// hash set before calling either of the Authenticate() methods.</para>
 		/// <para>In the case of the APOP authentication mechanism, remove it from
-		/// the <see cref="Capabilities"/> instead.</para>
+		/// the <see cref="Capabilities"/> property instead.</para>
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
@@ -359,6 +367,9 @@ namespace MailKit.Net.Pop3 {
 		/// When a <see cref="Pop3ProtocolException"/> is caught, the connection state of the
 		/// <see cref="Pop3Client"/> should be checked before continuing.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsConnected {
 			get { return engine.IsConnected; }
@@ -369,9 +380,8 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets whether or not the client is currently authenticated with the POP3 server.</para>
-		/// <para>To authenticate with the POP3 server, use
-		/// <see cref="MailService.Authenticate(String,String,CancellationToken)"/>
-		/// or <see cref="Authenticate(ICredentials,CancellationToken)"/>.</para>
+		/// <para>To authenticate with the POP3 server, use one of the
+		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsAuthenticated {
@@ -435,10 +445,11 @@ namespace MailKit.Net.Pop3 {
 		/// authentication mechanism is found that both client and server support,
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
-		/// can be found, then the USER and PASS commands are used as a fallback.</para>
+		/// can be found, then the <c>USER</c> and <c>PASS</c> commands are used as a
+		/// fallback.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms,
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling the Authenticate() method.</para>
+		/// set before calling any of the Authenticate() methods.</para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -675,6 +686,9 @@ namespace MailKit.Net.Pop3 {
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="options">The secure socket options to when connecting.</param>
@@ -968,9 +982,12 @@ namespace MailKit.Net.Pop3 {
 		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
+		/// If <paramref name="quit"/> is <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
 		/// </remarks>
-		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
+		/// <param name="quit">If set to <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1360,6 +1377,9 @@ namespace MailKit.Net.Pop3 {
 		/// <para>Once authenticated, the <see cref="Count"/> property will be set
 		/// to the number of available messages on the POP3 server.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <value>The message count.</value>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -1454,8 +1474,10 @@ namespace MailKit.Net.Pop3 {
 		/// Get the UID of the message at the specified index.
 		/// </summary>
 		/// <remarks>
-		/// Not all servers support UIDs, so you should first check
-		/// the <see cref="SupportsUids"/> property.
+		/// <para>Gets the UID of the message at the specified index.</para>
+		/// <para>Note: Not all servers support UIDs, so you should first check the <see cref="Capabilities"/>
+		/// property for the <see cref="Pop3Capabilities.UIDL"/> flag or the <see cref="SupportsUids"/>
+		/// convenience property.</para>
 		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
@@ -1554,9 +1576,13 @@ namespace MailKit.Net.Pop3 {
 		/// Get the full list of available message UIDs.
 		/// </summary>
 		/// <remarks>
-		/// Not all servers support UIDs, so you should first check
-		/// the <see cref="SupportsUids"/> property.
+		/// <para>Gets the full list of available message UIDs.</para>
+		/// <para>Note: Not all servers support UIDs, so you should first check
+		/// the <see cref="SupportsUids"/> property.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <returns>The message uids.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -2112,10 +2138,10 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Get the headers for the specified message.
+		/// Get the headers for the message at the specified index.
 		/// </summary>
 		/// <remarks>
-		/// Gets the headers for the specified message.
+		/// Gets the headers for the message at the specified index.
 		/// </remarks>
 		/// <returns>The message headers.</returns>
 		/// <param name="index">The index of the message.</param>
@@ -2231,10 +2257,14 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
-		/// Get the headers for the specified messages.
+		/// Get the headers for the messages at the specified indexes.
 		/// </summary>
 		/// <remarks>
-		/// Gets the headers for the specified messages.
+		/// <para>Gets the headers for the messages at the specified indexes.</para>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// extension, this method will likely be more efficient than using
+		/// <see cref="GetMessageHeaders(int,CancellationToken)"/> for each message because
+		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The headers for the specified messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -2301,7 +2331,11 @@ namespace MailKit.Net.Pop3 {
 		/// Get the headers of the messages within the specified range.
 		/// </summary>
 		/// <remarks>
-		/// Gets the headers of the messages within the specified range.
+		/// <para>Gets the headers of the messages within the specified range.</para>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// extension, this method will likely be more efficient than using
+		/// <see cref="GetMessageHeaders(int,CancellationToken)"/> for each message because
+		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The headers of the messages within the specified range.</returns>
 		/// <param name="startIndex">The index of the first message to get.</param>
@@ -2427,6 +2461,9 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Gets the message at the specified index.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2544,7 +2581,11 @@ namespace MailKit.Net.Pop3 {
 		/// Get the messages at the specified indexes.
 		/// </summary>
 		/// <remarks>
-		/// Get the messages at the specified indexes.
+		/// <para>Gets the messages at the specified indexes.</para>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// extension, this method will likely be more efficient than using
+		/// <see cref="GetMessage(int,CancellationToken)"/> for each message because
+		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -2611,7 +2652,11 @@ namespace MailKit.Net.Pop3 {
 		/// Get the messages within the specified range.
 		/// </summary>
 		/// <remarks>
-		/// Gets the messages within the specified range.
+		/// <para>Gets the messages within the specified range.</para>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// extension, this method will likely be more efficient than using
+		/// <see cref="GetMessage(int,CancellationToken)"/> for each message because
+		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The messages.</returns>
 		/// <param name="startIndex">The index of the first message to get.</param>
@@ -2722,7 +2767,11 @@ namespace MailKit.Net.Pop3 {
 		/// Get the message or header streams at the specified indexes.
 		/// </summary>
 		/// <remarks>
-		/// Get the message or header streams at the specified indexes.
+		/// <para>Get the message or header streams at the specified indexes.</para>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// extension, this method will likely be more efficient than using
+		/// <see cref="GetStream(int,CancellationToken)"/> for each message because
+		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -2790,7 +2839,11 @@ namespace MailKit.Net.Pop3 {
 		/// Get the message or header streams within the specified range.
 		/// </summary>
 		/// <remarks>
-		/// Gets the message or header streams within the specified range.
+		/// <para>Gets the message or header streams within the specified range.</para>
+		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// extension, this method will likely be more efficient than using
+		/// <see cref="GetStream(int,CancellationToken)"/> for each message because
+		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
 		/// <param name="startIndex">The index of the first stream to get.</param>
@@ -2918,6 +2971,9 @@ namespace MailKit.Net.Pop3 {
 		/// is cleanly disconnected
 		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">

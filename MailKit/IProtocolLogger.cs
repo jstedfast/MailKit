@@ -33,6 +33,9 @@ namespace MailKit {
 	/// <remarks>
 	/// An interface for logging protocols.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger" />
+	/// </example>
 	public interface IProtocolLogger : IDisposable
 	{
 		/// <summary>

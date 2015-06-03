@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -184,20 +184,7 @@
     <Compile Include="UniqueIdSet.cs" />
     <Compile Include="UriExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Examples\Pop3Examples.cs" />
-    <None Include="Examples\SmtpExamples.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Net\" />
-    <Folder Include="Net\Imap\" />
-    <Folder Include="Net\Pop3\" />
-    <Folder Include="Net\Smtp\" />
-    <Folder Include="Search\" />
-    <Folder Include="Security\" />
-    <Folder Include="Security\Ntlm\" />
-    <Folder Include="Examples\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <MonoDevelop>

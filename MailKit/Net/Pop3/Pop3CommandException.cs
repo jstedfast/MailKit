@@ -37,6 +37,9 @@ namespace MailKit.Net.Pop3 {
 	/// The exception that is thrown when a POP3 command fails. Unlike a <see cref="Pop3ProtocolException"/>,
 	/// a <see cref="Pop3CommandException"/> does not require the <see cref="Pop3Client"/> to be reconnected.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	/// </example>
 #if !NETFX_CORE
 	[Serializable]
 #endif

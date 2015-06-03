@@ -53,19 +53,20 @@
     </DocumentationSources>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="MimeKit" isDocumented="True">The &lt;b&gt;MimeKit&lt;/b&gt; namespace provides classes that are used to implement the core MIME parsing services of the framework.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MimeKit.Cryptography" isDocumented="True">The &lt;b&gt;MimeKit.Cryptography&lt;/b&gt; namespace provides classes that are necessary for dealing with PGP, S/MIME, and other cryptographic services.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MimeKit.Encodings" isDocumented="True">The &lt;b&gt;MimeKit.Encodings&lt;/b&gt; namespace provides classes for encoding and decoding various MIME transfer encodings.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MimeKit.IO" isDocumented="True">The &lt;b&gt;MimeKit.IO&lt;/b&gt; namespace provides classes that extend the &lt;b&gt;System.IO&lt;/b&gt; namespace.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MimeKit.IO.Filters" isDocumented="True">The &lt;b&gt;MimeKit.IO.Filters&lt;/b&gt; namespace provides filters for use with &lt;a href="T_MimeKit_IO_FilteredStream.htm"&gt;MimeKit.IO.FilteredStream&lt;/a&gt;.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MimeKit.Text" isDocumented="True">The &lt;b&gt;MimeKit.Text&lt;/b&gt; namespace provides classes that are used for converting between various text formats.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MimeKit.Tnef" isDocumented="True">The &lt;b&gt;MimeKit.Tnef&lt;/b&gt; namespace provides classes that are used for dealing with Microsoft TNEF attachments.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MimeKit.Utils" isDocumented="True">The &lt;b&gt;MimeKit.Utils&lt;/b&gt; namespace provides various utility classes.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MailKit" isDocumented="True">The &lt;b&gt;MailKit&lt;/b&gt; namespace provides classes that are used to implement the core services of the framework.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MailKit.Net.Imap" isDocumented="True">The &lt;b&gt;MailKit.Net.Imap&lt;/b&gt; namespace provides classes that are necessary for managing messages on an IMAP server.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MailKit.Net.Pop3" isDocumented="True">The &lt;b&gt;MailKit.Net.Pop3&lt;/b&gt; namespace provides classes that are necessary for downloading messages from a POP3 server.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MailKit.Net.Smtp" isDocumented="True">The &lt;b&gt;MailKit.Net.Smtp&lt;/b&gt; namespace provides classes that are necessary for sending messages to an SMTP server.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MailKit.Search" isDocumented="True">The &lt;b&gt;MailKit.Search&lt;/b&gt; namespace provides classes that are necessary for searching folders for messages matching a set of criteria.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="MailKit.Security" isDocumented="True">The &lt;b&gt;MailKit.Security&lt;/b&gt; namespace provides implementations of various SASL authentication mechanisms used by the IMAP, POP3 and SMTP clients.</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="MimeKit.Cryptography" isDocumented="True">The &lt;b&gt;MimeKit.Cryptography&lt;/b&gt; namespace provides classes that are necessary for dealing with PGP, S/MIME, and other cryptographic services.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MimeKit.Encodings" isDocumented="True">The &lt;b&gt;MimeKit.Encodings&lt;/b&gt; namespace provides classes for encoding and decoding various MIME transfer encodings.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MimeKit.IO" isDocumented="True">The &lt;b&gt;MimeKit.IO&lt;/b&gt; namespace provides classes that extend the &lt;b&gt;System.IO&lt;/b&gt; namespace.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MimeKit.IO.Filters" isDocumented="True">The &lt;b&gt;MimeKit.IO.Filters&lt;/b&gt; namespace provides filters for use with &lt;a href="T_MimeKit_IO_FilteredStream.htm"&gt;MimeKit.IO.FilteredStream&lt;/a&gt;.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MimeKit.Text" isDocumented="True">The &lt;b&gt;MimeKit.Text&lt;/b&gt; namespace provides classes that are used for converting between various text formats.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MimeKit.Tnef" isDocumented="True">The &lt;b&gt;MimeKit.Tnef&lt;/b&gt; namespace provides classes that are used for dealing with Microsoft TNEF attachments.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MimeKit.Utils" isDocumented="True">The &lt;b&gt;MimeKit.Utils&lt;/b&gt; namespace provides various utility classes.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MailKit" isDocumented="True">The &lt;b&gt;MailKit&lt;/b&gt; namespace provides classes that are used to implement the core services of the framework.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MailKit.Net.Imap" isDocumented="True">The &lt;b&gt;MailKit.Net.Imap&lt;/b&gt; namespace provides classes that are necessary for managing messages on an IMAP server.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MailKit.Net.Pop3" isDocumented="True">The &lt;b&gt;MailKit.Net.Pop3&lt;/b&gt; namespace provides classes that are necessary for downloading messages from a POP3 server.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MailKit.Net.Smtp" isDocumented="True">The &lt;b&gt;MailKit.Net.Smtp&lt;/b&gt; namespace provides classes that are necessary for sending messages to an SMTP server.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MailKit.Search" isDocumented="True">The &lt;b&gt;MailKit.Search&lt;/b&gt; namespace provides classes that are necessary for searching folders for messages matching a set of criteria.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="MailKit.Security" isDocumented="True">The &lt;b&gt;MailKit.Security&lt;/b&gt; namespace provides implementations of various SASL authentication mechanisms used by the IMAP, POP3 and SMTP clients.</NamespaceSummaryItem>
+    </NamespaceSummaries>
     <CopyrightText>
     </CopyrightText>
     <WorkingPath>obj\</WorkingPath>
@@ -105,6 +106,7 @@
     <None Include="Examples\MultipartFormDataExamples.cs" />
     <None Include="Examples\OpeningContent.cs" />
     <None Include="Examples\OpenPGPExamples.cs" />
+    <None Include="Examples\Pop3Examples.cs" />
     <None Include="Examples\RecursivelyTraverse.cs" />
     <None Include="Examples\SMimeExamples.cs" />
     <None Include="Examples\SmtpExamples.cs" />

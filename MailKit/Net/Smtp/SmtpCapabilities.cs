@@ -35,7 +35,7 @@ namespace MailKit.Net.Smtp {
 	/// is issued during the connection phase of the <see cref="SmtpClient"/>.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 	/// </example>
 	[Flags]
 	public enum SmtpCapabilities {

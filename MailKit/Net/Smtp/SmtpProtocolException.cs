@@ -39,7 +39,7 @@ namespace MailKit.Net.Smtp {
 	/// to be reconnected.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 	/// </example>
 #if !NETFX_CORE
 	[Serializable]

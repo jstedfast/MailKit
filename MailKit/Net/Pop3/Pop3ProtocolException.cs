@@ -38,6 +38,9 @@ namespace MailKit.Net.Pop3 {
 	/// <see cref="Pop3ProtocolException"/> is typically fatal and requires the <see cref="Pop3Client"/>
 	/// to be reconnected.
     /// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	/// </example>
 #if !NETFX_CORE
 	[Serializable]
 #endif

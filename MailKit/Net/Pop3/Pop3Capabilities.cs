@@ -35,6 +35,9 @@ namespace MailKit.Net.Pop3 {
 	/// is issued during the connection and authentication phases of the
 	/// <see cref="Pop3Client"/>.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	/// </example>
 	[Flags]
 	public enum Pop3Capabilities {
 		/// <summary>

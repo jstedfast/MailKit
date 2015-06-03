@@ -69,7 +69,7 @@ namespace MailKit.Net.Smtp {
 	/// period of time.</para>
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessages" />
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages" />
 	/// </example>
 	public class SmtpClient : MailTransport
 	{
@@ -107,7 +107,7 @@ namespace MailKit.Net.Smtp {
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a> methods.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessages" />
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages" />
 		/// </example>
 		public SmtpClient () : this (new NullProtocolLogger ())
 		{
@@ -128,7 +128,7 @@ namespace MailKit.Net.Smtp {
 		/// <paramref name="protocolLogger"/> is <c>null</c>.
 		/// </exception>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="ProtocolLogger"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
 		/// </example>
 		public SmtpClient (IProtocolLogger protocolLogger)
 		{
@@ -181,7 +181,7 @@ namespace MailKit.Net.Smtp {
 		/// and may change once the client is authenticated.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 		/// </example>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
@@ -239,7 +239,7 @@ namespace MailKit.Net.Smtp {
 		/// <para>The authentication mechanisms are queried as part of the connection process.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms in the
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
-		/// method, simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+		/// methods, simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
 		/// set before calling Authenticate().</para>
 		/// </remarks>
 		/// <value>The authentication mechanisms.</value>
@@ -274,6 +274,9 @@ namespace MailKit.Net.Smtp {
 		/// When a <see cref="SmtpProtocolException"/> is caught, the connection state of the
 		/// <see cref="SmtpClient"/> should be checked before continuing.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages"/>
+		/// </example>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsConnected {
 			get { return connected; }
@@ -498,7 +501,7 @@ namespace MailKit.Net.Smtp {
 		/// set before calling this method.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -716,7 +719,7 @@ namespace MailKit.Net.Smtp {
 		/// period of time.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
@@ -1048,12 +1051,12 @@ namespace MailKit.Net.Smtp {
 		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.
+		/// If <paramref name="quit"/> is <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
-		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
+		/// <param name="quit">If set to <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
@@ -1283,7 +1286,7 @@ namespace MailKit.Net.Smtp {
 		/// <para>For more information, see rfc3461, section 4.4.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
 		/// </example>
 		/// <returns>The envelope identifier.</returns>
 		/// <param name="message">The message.</param>
@@ -1344,7 +1347,7 @@ namespace MailKit.Net.Smtp {
 		/// Gets the types of delivery status notification desired for the specified recipient mailbox.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>
 		/// </example>
 		/// <returns>The desired delivery status notification type.</returns>
 		/// <param name="message">The message being sent.</param>
@@ -1531,7 +1534,7 @@ namespace MailKit.Net.Smtp {
 		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
 		/// </example>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>

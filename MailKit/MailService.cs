@@ -177,7 +177,7 @@ namespace MailKit {
 		/// Establishes a connection to the specified mail server.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
@@ -269,7 +269,7 @@ namespace MailKit {
 		/// Establishes a connection to the specified mail server.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessageUri"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageUri"/>
 		/// </example>
 		/// <param name="uri">The server URI.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -591,7 +591,7 @@ namespace MailKit {
 		/// set before calling the Authenticate() method.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <param name="userName">The user name.</param>
 		/// <param name="password">The password.</param>
@@ -700,7 +700,7 @@ namespace MailKit {
 		/// If <paramref name="quit"/> is <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="..\Documentation\Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
 		/// </example>
 		/// <param name="quit">If set to <c>true</c>, a logout/quit command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

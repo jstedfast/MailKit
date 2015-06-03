@@ -60,6 +60,9 @@ namespace MailKit {
 		/// <para>Once authenticated, the <see cref="Count"/> property will be set
 		/// to the number of available messages in the spool.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <value>The message count.</value>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailSpool"/> has been disposed.
@@ -262,6 +265,9 @@ namespace MailKit {
 		/// Not all servers support UIDs, so you should first check
 		/// the <see cref="SupportsUids"/> property.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <returns>The message uids.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1112,6 +1118,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the message at the specified index.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1820,6 +1829,9 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
