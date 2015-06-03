@@ -1,6 +1,0 @@
-<Namespace Name="MailKit.Net.Pop3">
-  <Docs>
-    <summary>A POP3 client that can be used to download email messages.</summary>
-    <remarks>A POP3 client that can be used to download email messages.</remarks>
-  </Docs>
-</Namespace>

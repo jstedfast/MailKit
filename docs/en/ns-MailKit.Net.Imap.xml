@@ -1,6 +1,0 @@
-<Namespace Name="MailKit.Net.Imap">
-  <Docs>
-    <summary>An IMAP client that can be used to manage messages on an IMAP server.</summary>
-    <remarks>An IMAP client that can be used to manage messages on an IMAP server.</remarks>
-  </Docs>
-</Namespace>

@@ -1,6 +1,0 @@
-<Namespace Name="MailKit.Search">
-  <Docs>
-    <summary>Search criteria for use with various message search APIs.</summary>
-    <remarks>Search criteria for use with various message search APIs.</remarks>
-  </Docs>
-</Namespace>
