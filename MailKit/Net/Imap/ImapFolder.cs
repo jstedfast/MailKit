@@ -1848,16 +1848,35 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			var set = ImapUtils.FormatUidSet (uids);
-
 			CheckState (true, true);
-
-			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0)
-				throw new NotSupportedException ("The IMAP server does not support the UIDPLUS extension.");
 
 			if (uids.Count == 0)
 				return;
 
+			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
+				// get the list of messages marked for deletion
+				var marked = Search (SearchQuery.Deleted, cancellationToken);
+
+				// remove all uids except the ones that will be expunged
+				for (int i = 0; i < marked.Count; i++) {
+					if (uids.Contains (marked[i])) {
+						marked.RemoveAt (i);
+						i--;
+					}
+				}
+
+				// clear the \Deleted flag on all messages except the ones that are to be expunged
+				RemoveFlags (marked, MessageFlags.Deleted, true, cancellationToken);
+
+				// expunge the folder
+				Expunge (cancellationToken);
+
+				// restore the \Deleted flags
+				AddFlags (marked, MessageFlags.Deleted, true, cancellationToken);
+				return;
+			}
+
+			var set = ImapUtils.FormatUidSet (uids);
 			var command = string.Format ("UID EXPUNGE {0}\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command);
 
@@ -2484,8 +2503,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				var copied = CopyTo (uids, destination, cancellationToken);
 				AddFlags (uids, MessageFlags.Deleted, true, cancellationToken);
-				if ((Engine.Capabilities & ImapCapabilities.UidPlus) != 0)
-					Expunge (uids, cancellationToken);
+				Expunge (uids, cancellationToken);
 				return copied;
 			}
 
