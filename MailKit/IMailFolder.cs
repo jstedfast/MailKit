@@ -732,7 +732,8 @@ namespace MailKit {
 		/// Expunge the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
+		/// <para>Expunges the folder, permanently removing all messages marked for deletion.</para>
+		/// <para>Note: Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
@@ -746,7 +747,8 @@ namespace MailKit {
 		/// Asynchronously expunge the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
+		/// <para>Asynchronously expunges the folder, permanently removing all messages marked for deletion.</para>
+		/// <para>Note: Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
@@ -761,7 +763,8 @@ namespace MailKit {
 		/// Expunge the specified uids, permanently removing them from the folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
+		/// <para>Expunges the specified uids, permanently removing them from the folder.</para>
+		/// <para>Note: Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
@@ -776,7 +779,8 @@ namespace MailKit {
 		/// Asynchronously expunge the specified uids, permanently removing them from the folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MessageExpunged"/> event will be emitted for each
+		/// <para>Asynchronously expunges the specified uids, permanently removing them from the folder.</para>
+		/// <para>Note: Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then

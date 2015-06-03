@@ -1799,10 +1799,21 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Expunges the specified uids, permanently removing them from the folder.
+		/// Expunge the specified uids, permanently removing them from the folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
+		/// <para>Expunges the specified uids, permanently removing them from the folder.</para>
+		/// <para>If the IMAP server supports the UIDPLUS extension (check the
+		/// <see cref="ImapClient.Capabilities"/> for the <see cref="ImapCapabilities.UidPlus"/>
+		/// flag), then this operation is atomic. Otherwise, MailKit implements this operation
+		/// by first searching for the full list of message uids in the folder that are marked for
+		/// deletion, unmarking the set of message uids that are not within the specified list of
+		/// uids to be be expunged, expunging the folder (thus expunging the requested uids), and
+		/// finally restoring the deleted flag on the collection of message uids that were originally
+		/// marked for deletion that were not included in the list of uids provided. For this reason,
+		/// it is advisable for clients that wish to maintain state to implement this themselves when
+		/// the IMAP server does not support the UIDPLUS extension.</para>
+		/// <para>Note: Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
 		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
@@ -1833,9 +1844,6 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UIDPLUS extension.
 		/// </exception>
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
@@ -2442,14 +2450,18 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Moves the specified messages to the destination folder.
+		/// Move the specified messages to the destination folder.
 		/// </summary>
 		/// <remarks>
-		/// <para>If the IMAP server supports the MOVE command, then the MOVE command will be used. Otherwise,
-		/// the messages will first be copied to the destination folder, then marked as \Deleted in the
-		/// originating folder, and finally, if the server supports the UIDPLUS extension, expunged. Since the
-		/// server could disconnect at any point between those 3 operations, it may be advisable to implement
-		/// your own logic for moving messages in this case in order to better handle spontanious server
+		/// <para>Moves the specified messages to the destination folder.</para>
+		/// <para>If the IMAP server supports the MOVE extension (check the <see cref="ImapClient.Capabilities"/>
+		/// property for the <see cref="ImapCapabilities.Move"/> flag), then this operation will be atomic.
+		/// Otherwise, MailKit implements this by first copying the messages to the destination folder, then
+		/// marking them for deletion in the originating folder, and finally expunging them (see
+		/// <see cref="Expunge(IList&lt;UniqueId&gt;,CancellationToken)"/> for more information about how a
+		/// subset of messages are expunged). Since the server could disconnect at any point between those 3
+		/// (or more) commands, it is advisable for clients to implement their own logic for moving messages when
+		/// the IMAP server does not support the MOVE command in order to better handle spontanious server
 		/// disconnects and other error conditions.</para>
 		/// </remarks>
 		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
@@ -2483,9 +2495,6 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open in read-write mode.
 		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the UIDPLUS extension.
-		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -2510,6 +2519,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				var indexes = Fetch (uids, MessageSummaryItems.UniqueId, cancellationToken).Select (x => x.Index).ToList ();
 				MoveTo (indexes, destination, cancellationToken);
+				Expunge (uids, cancellationToken);
 				return new UniqueId[0];
 			}
 
