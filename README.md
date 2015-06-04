@@ -456,4 +456,4 @@ Before opening a new issue, please search for existing issues to avoid submittin
 
 ## Documentation
 
-API documentation can be found at [http://jstedfast.github.io/MailKit/docs](http://jstedfast.github.io/MailKit/docs).
+API documentation can be found at [http://mimekit.net/docs](http://mimekit.net/docs).
