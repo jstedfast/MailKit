@@ -166,7 +166,7 @@ namespace MailKit.Net.Pop3 {
 		/// and may change once the client is authenticated.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
@@ -190,10 +190,13 @@ namespace MailKit.Net.Pop3 {
 		/// of the <see cref="ExpirePolicy"/> property will reflect the value advertized by the server.</para>
 		/// <para>A value of <c>-1</c> indicates that messages will never expire.</para>
 		/// <para>A value of <c>0</c> indicates that messages that have been retrieved during the current session
-		/// will be purged immediately after the connection is closed via the "QUIT" command.</para>
+		/// will be purged immediately after the connection is closed via the <c>QUIT</c> command.</para>
 		/// <para>Values larger than <c>0</c> indicate the minimum number of days that the server will retain
 		/// messages which have been retrieved.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The expiration policy.</value>
 		public int ExpirePolicy {
 			get { return engine.ExpirePolicy; }
@@ -218,6 +221,9 @@ namespace MailKit.Net.Pop3 {
 		/// If the server supports the LOGIN-DELAY capability (<see cref="Pop3Capabilities.LoginDelay"/>), this value
 		/// will be set to the minimum number of milliseconds that the client must wait between logins.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The login delay.</value>
 		public int LoginDelay {
 			get { return engine.LoginDelay; }
@@ -323,7 +329,7 @@ namespace MailKit.Net.Pop3 {
 		/// <para>The authentication mechanisms are queried as part of the
 		/// connection process.</para>
 		/// <para>Servers that do not support the SASL capability will typically
-		/// support either the <c>"APOP"</c> authentication mechanism
+		/// support either the <c>APOP</c> authentication mechanism
 		/// (<see cref="Pop3Capabilities.Apop"/>) or the ability to login using the
 		/// <c>USER</c> and <c>PASS</c> commands (<see cref="Pop3Capabilities.User"/>).
 		/// </para>
@@ -334,6 +340,9 @@ namespace MailKit.Net.Pop3 {
 		/// <para>In the case of the APOP authentication mechanism, remove it from
 		/// the <see cref="Capabilities"/> property instead.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
 			get { return engine.AuthenticationMechanisms; }
@@ -367,7 +376,7 @@ namespace MailKit.Net.Pop3 {
 		/// <see cref="Pop3Client"/> should be checked before continuing.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
 		/// </example>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsConnected {
@@ -1580,7 +1589,7 @@ namespace MailKit.Net.Pop3 {
 		/// the <see cref="SupportsUids"/> property.</para>
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadNewMessages"/>
 		/// </example>
 		/// <returns>The message uids.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2657,6 +2666,9 @@ namespace MailKit.Net.Pop3 {
 		/// <see cref="GetMessage(int,CancellationToken)"/> for each message because
 		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
+		/// </example>
 		/// <returns>The messages.</returns>
 		/// <param name="startIndex">The index of the first message to get.</param>
 		/// <param name="count">The number of messages to get.</param>
@@ -2767,9 +2779,9 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Get the message or header streams at the specified indexes.</para>
-		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>If the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
-		/// <see cref="GetStream(int,CancellationToken)"/> for each message because
+		/// <see cref="GetStream(int,bool,CancellationToken)"/> for each message because
 		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
@@ -2839,9 +2851,9 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the message or header streams within the specified range.</para>
-		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
+		/// <para>If the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
-		/// <see cref="GetStream(int,CancellationToken)"/> for each message because
+		/// <see cref="GetStream(int,bool,CancellationToken)"/> for each message because
 		/// it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
@@ -3197,6 +3209,9 @@ namespace MailKit.Net.Pop3 {
 		/// is cleanly disconnected
 		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
+		/// </example>
 		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
 		/// <param name="count">The number of messages to mark for deletion.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

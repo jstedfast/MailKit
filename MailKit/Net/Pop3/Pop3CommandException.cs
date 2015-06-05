@@ -38,7 +38,7 @@ namespace MailKit.Net.Pop3 {
 	/// a <see cref="Pop3CommandException"/> does not require the <see cref="Pop3Client"/> to be reconnected.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	/// <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
 	/// </example>
 #if !NETFX_CORE
 	[Serializable]
@@ -138,6 +138,9 @@ namespace MailKit.Net.Pop3 {
 		/// <remarks>
 		/// Gets the response status text.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
+		/// </example>
 		/// <value>The response status text.</value>
 		public string StatusText {
 			get; private set;

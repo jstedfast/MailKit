@@ -87,6 +87,12 @@
           </listItem>
           <listItem>
             <para>
+              <application>MailKit.Net45.sln</application> includes the .NET 4.5
+              project as well as the unit tests.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
               <application>MailKit.Net40.sln</application> just includes the
               .NET 4.0 project.
             </para>

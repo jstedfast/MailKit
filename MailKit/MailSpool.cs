@@ -266,7 +266,7 @@ namespace MailKit {
 		/// the <see cref="SupportsUids"/> property.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadNewMessages"/>
 		/// </example>
 		/// <returns>The message uids.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1392,6 +1392,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the messages within the specified range.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
+		/// </example>
 		/// <returns>The messages.</returns>
 		/// <param name="startIndex">The index of the first message to get.</param>
 		/// <param name="count">The number of messages to get.</param>
@@ -1550,7 +1553,10 @@ namespace MailKit {
 		/// Get the message or header streams at the specified indexes.
 		/// </summary>
 		/// <remarks>
-		/// Get the message or header streams at the specified indexes.
+		/// <para>Get the message or header streams at the specified indexes.</para>
+		/// <para>If the mail server supports pipelining, this method will likely be more
+		/// efficient than using <see cref="GetStream(int,bool,CancellationToken)"/> for
+		/// each message because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -1645,7 +1651,10 @@ namespace MailKit {
 		/// Get the message or header streams within the specified range.
 		/// </summary>
 		/// <remarks>
-		/// Gets the message or header streams within the specified range.
+		/// <para>Gets the message or header streams within the specified range.</para>
+		/// <para>If the mail server supports pipelining, this method will likely be more
+		/// efficient than using <see cref="GetStream(int,bool,CancellationToken)"/> for
+		/// each message because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
 		/// <param name="startIndex">The index of the first stream to get.</param>
@@ -2112,6 +2121,9 @@ namespace MailKit {
 		/// is cleanly disconnected
 		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
+		/// </example>
 		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
 		/// <param name="count">The number of messages to mark for deletion.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>

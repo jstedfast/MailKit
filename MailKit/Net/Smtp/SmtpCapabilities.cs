@@ -35,7 +35,7 @@ namespace MailKit.Net.Smtp {
 	/// is issued during the connection phase of the <see cref="SmtpClient"/>.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+	/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
 	/// </example>
 	[Flags]
 	public enum SmtpCapabilities {
@@ -51,7 +51,7 @@ namespace MailKit.Net.Smtp {
 		Size                = (1 << 0),
 
 		/// <summary>
-		/// The server supports the <a href="https://tools.ietf.org/html/rfc1891">DSN<c>/a> extension,
+		/// The server supports the <a href="https://tools.ietf.org/html/rfc1891">DSN</a> extension,
 		/// allowing clients to specify which (if any) recipients they would like to receive delivery
 		/// notifications for.
 		/// </summary>

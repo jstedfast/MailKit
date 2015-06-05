@@ -39,7 +39,7 @@ namespace MailKit.Net.Pop3 {
 	/// to be reconnected.
     /// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	/// <code language="c#" source="Examples\Pop3Examples.cs" region="ExceptionHandling"/>
 	/// </example>
 #if !NETFX_CORE
 	[Serializable]

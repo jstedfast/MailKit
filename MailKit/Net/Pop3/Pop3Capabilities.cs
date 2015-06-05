@@ -36,7 +36,7 @@ namespace MailKit.Net.Pop3 {
 	/// <see cref="Pop3Client"/>.
 	/// </remarks>
 	/// <example>
-	/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
 	/// </example>
 	[Flags]
 	public enum Pop3Capabilities {

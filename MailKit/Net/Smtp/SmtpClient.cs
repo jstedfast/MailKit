@@ -178,7 +178,7 @@ namespace MailKit.Net.Smtp {
 		/// and may change once the client is authenticated.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
 		/// </example>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
@@ -216,6 +216,9 @@ namespace MailKit.Net.Smtp {
 		/// <para>Note: This value is only relevant if the <see cref="Capabilities"/>
 		/// includes the <see cref="SmtpCapabilities.Size"/> flag.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The maximum message size supported by the server.</value>
 		public uint MaxSize {
 			get; private set;
@@ -239,6 +242,9 @@ namespace MailKit.Net.Smtp {
 		/// methods, simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
 		/// set before calling Authenticate().</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
 			get { return authenticationMechanisms; }
@@ -272,7 +278,7 @@ namespace MailKit.Net.Smtp {
 		/// <see cref="SmtpClient"/> should be checked before continuing.
 		/// </remarks>
 		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessages"/>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 		/// </example>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsConnected {
@@ -497,9 +503,6 @@ namespace MailKit.Net.Smtp {
 		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
 		/// set before calling this method.</para>
 		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
-		/// </example>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -1281,7 +1284,7 @@ namespace MailKit.Net.Smtp {
 		/// <para>The envelope identifier should be unique and may be up to 100 characters in length, but
 		/// must consist only of printable ASCII characters and no white space.</para>
 		/// <para>For more information, see
-		/// <a href="https://tools.ietf.org/html/rfc3461#section-4.4">rfc3461, section 4.4<c>/a>.</para>
+		/// <a href="https://tools.ietf.org/html/rfc3461#section-4.4">rfc3461, section 4.4</a>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="DeliveryStatusNotification"/>

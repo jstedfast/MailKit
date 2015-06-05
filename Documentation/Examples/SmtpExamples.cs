@@ -36,11 +36,62 @@ namespace MailKit.Examples {
 	public static class SmtpExamples
 	{
 		#region ProtocolLogger
-		public static void LogSendMessage (MimeMessage message)
+		public static void SendMessage (MimeMessage message)
 		{
 			using (var client = new SmtpClient (new ProtocolLogger ("smtp.log"))) {
+				client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
+
+				client.Authenticate ("username", "password");
+
+				client.Send (message);
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
+		#region Capabilities
+		public static void PrintCapabilities ()
+		{
+			using (var client = new SmtpClient ()) {
+				client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
+
+				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
+					var mechanisms = string.Join (", ", client.AuthenticationMechanisms);
+					Console.WriteLine ("The SMTP server supports the following SASL mechanisms: {0}", mechanisms);
+
+					// Note: if we don't want MailKit to use a particular SASL mechanism, we can disable it like this:
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+					client.Authenticate ("username", "password");
+				}
+
+				if (client.Capabilities.HasFlag (SmtpCapabilities.Size))
+					Console.WriteLine ("The SMTP server has a size restriction on messages: {0}.", client.MaxSize);
+
+				if (client.Capabilities.HasFlag (SmtpCapabilities.Dsn))
+					Console.WriteLine ("The SMTP server supports delivery-status notifications.");
+
+				if (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime))
+					Console.WriteLine ("The SMTP server supports Content-Transfer-Encoding: 8bit");
+
+				if (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime))
+					Console.WriteLine ("The SMTP server supports Content-Transfer-Encoding: binary");
+
+				if (client.Capabilities.HasFlag (SmtpCapabilities.UTF8))
+					Console.WriteLine ("The SMTP server supports UTF-8 in message headers.");
+
+				client.Disconnect (true);
+			}
+		}
+		#endregion
+
+		#region ExceptionHandling
+		public static void SendMessage (MimeMessage message)
+		{
+			using (var client = new SmtpClient ()) {
 				try {
-					client.Connect ("smtp.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+					client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 				} catch (SmtpCommandException ex) {
 					Console.WriteLine ("Error trying to connect: {0}", ex.Message);
 					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
@@ -97,54 +148,11 @@ namespace MailKit.Examples {
 		public static void SendMessage (MimeMessage message)
 		{
 			using (var client = new SmtpClient ()) {
-				try {
-					client.Connect ("smtp.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-				} catch (SmtpCommandException ex) {
-					Console.WriteLine ("Error trying to connect: {0}", ex.Message);
-					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-					return;
-				} catch (SmtpProtocolException ex) {
-					Console.WriteLine ("Protocol error while trying to connect: {0}", ex.Message);
-					return;
-				}
+				client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 
-				// Note: Not all SMTP servers support authentication, but GMail does.
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
-					try {
-						client.Authenticate ("username", "password");
-					} catch (AuthenticationException ex) {
-						Console.WriteLine ("Invalid user name or password.");
-						return;
-					} catch (SmtpCommandException ex) {
-						Console.WriteLine ("Error trying to authenticate: {0}", ex.Message);
-						Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-						return;
-					} catch (SmtpProtocolException ex) {
-						Console.WriteLine ("Protocol error while trying to authenticate: {0}", ex.Message);
-						return;
-					}
-				}
+				client.Authenticate ("username", "password");
 
-				try {
-					client.Send (message);
-				} catch (SmtpCommandException ex) {
-					Console.WriteLine ("Error sending message: {0}", ex.Message);
-					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-
-					switch (ex.ErrorCode) {
-					case SmtpErrorCode.RecipientNotAccepted:
-						Console.WriteLine ("\tRecipient not accepted: {0}", ex.Mailbox);
-						break;
-					case SmtpErrorCode.SenderNotAccepted:
-						Console.WriteLine ("\tSender not accepted: {0}", ex.Mailbox);
-						break;
-					case SmtpErrorCode.MessageNotAccepted:
-						Console.WriteLine ("\tMessage not accepted.");
-						break;
-					}
-				} catch (SmtpProtocolException ex) {
-					Console.WriteLine ("Protocol error while sending message: {0}", ex.Message);
-				}
+				client.Send (message);
 
 				client.Disconnect (true);
 			}
@@ -157,56 +165,13 @@ namespace MailKit.Examples {
 			using (var client = new SmtpClient ()) {
 				// Note: since GMail requires SSL at connection time, use the "smtps"
 				// protocol instead of "smtp".
-				var uri = new Uri ("smtps://smtp.gmail.com:993");
+				var uri = new Uri ("smtps://smtp.gmail.com:465");
 
-				try {
-					client.Connect (uri);
-				} catch (SmtpCommandException ex) {
-					Console.WriteLine ("Error trying to connect: {0}", ex.Message);
-					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-					return;
-				} catch (SmtpProtocolException ex) {
-					Console.WriteLine ("Protocol error while trying to connect: {0}", ex.Message);
-					return;
-				}
+				client.Connect (uri);
 
-				// Note: Not all SMTP servers support authentication, but GMail does.
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
-					try {
-						client.Authenticate ("username", "password");
-					} catch (AuthenticationException ex) {
-						Console.WriteLine ("Invalid user name or password.");
-						return;
-					} catch (SmtpCommandException ex) {
-						Console.WriteLine ("Error trying to authenticate: {0}", ex.Message);
-						Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-						return;
-					} catch (SmtpProtocolException ex) {
-						Console.WriteLine ("Protocol error while trying to authenticate: {0}", ex.Message);
-						return;
-					}
-				}
+				client.Authenticate ("username", "password");
 
-				try {
-					client.Send (message);
-				} catch (SmtpCommandException ex) {
-					Console.WriteLine ("Error sending message: {0}", ex.Message);
-					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-
-					switch (ex.ErrorCode) {
-					case SmtpErrorCode.RecipientNotAccepted:
-						Console.WriteLine ("\tRecipient not accepted: {0}", ex.Mailbox);
-						break;
-					case SmtpErrorCode.SenderNotAccepted:
-						Console.WriteLine ("\tSender not accepted: {0}", ex.Mailbox);
-						break;
-					case SmtpErrorCode.MessageNotAccepted:
-						Console.WriteLine ("\tMessage not accepted.");
-						break;
-					}
-				} catch (SmtpProtocolException ex) {
-					Console.WriteLine ("Protocol error while sending message: {0}", ex.Message);
-				}
+				client.Send (message);
 
 				client.Disconnect (true);
 			}
@@ -217,59 +182,16 @@ namespace MailKit.Examples {
 		public static void SendMessageWithOptions (MimeMessage message)
 		{
 			using (var client = new SmtpClient ()) {
-				try {
-					client.Connect ("smtp.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-				} catch (SmtpCommandException ex) {
-					Console.WriteLine ("Error trying to connect: {0}", ex.Message);
-					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-					return;
-				} catch (SmtpProtocolException ex) {
-					Console.WriteLine ("Protocol error while trying to connect: {0}", ex.Message);
-					return;
-				}
+				client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 
-				// Note: Not all SMTP servers support authentication, but GMail does.
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
-					try {
-						client.Authenticate ("username", "password");
-					} catch (AuthenticationException ex) {
-						Console.WriteLine ("Invalid user name or password.");
-						return;
-					} catch (SmtpCommandException ex) {
-						Console.WriteLine ("Error trying to authenticate: {0}", ex.Message);
-						Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-						return;
-					} catch (SmtpProtocolException ex) {
-						Console.WriteLine ("Protocol error while trying to authenticate: {0}", ex.Message);
-						return;
-					}
-				}
+				client.Authenticate ("username", "password");
 
 				var options = FormatOptions.Default.Clone ();
 
 				if (client.Capabilities.HasFlag (SmtpCapabilities.UTF8))
 					options.International = true;
 
-				try {
-					client.Send (message);
-				} catch (SmtpCommandException ex) {
-					Console.WriteLine ("Error sending message: {0}", ex.Message);
-					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-
-					switch (ex.ErrorCode) {
-					case SmtpErrorCode.RecipientNotAccepted:
-						Console.WriteLine ("\tRecipient not accepted: {0}", ex.Mailbox);
-						break;
-					case SmtpErrorCode.SenderNotAccepted:
-						Console.WriteLine ("\tSender not accepted: {0}", ex.Mailbox);
-						break;
-					case SmtpErrorCode.MessageNotAccepted:
-						Console.WriteLine ("\tMessage not accepted.");
-						break;
-					}
-				} catch (SmtpProtocolException ex) {
-					Console.WriteLine ("Protocol error while sending message: {0}", ex.Message);
-				}
+				client.Send (options, message);
 
 				client.Disconnect (true);
 			}
@@ -280,55 +202,12 @@ namespace MailKit.Examples {
 		public static void SendMessages (IList<MimeMessage> messages)
 		{
 			using (var client = new SmtpClient ()) {
-				try {
-					client.Connect ("smtp.gmail.com", 993, SecureSocketOptions.SslOnConnect);
-				} catch (SmtpCommandException ex) {
-					Console.WriteLine ("Error trying to connect: {0}", ex.Message);
-					Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-					return;
-				} catch (SmtpProtocolException ex) {
-					Console.WriteLine ("Protocol error while trying to connect: {0}", ex.Message);
-					return;
-				}
+				client.Connect ("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 
-				// Note: Not all SMTP servers support authentication, but GMail does.
-				if (client.Capabilities.HasFlag (SmtpCapabilities.Authentication)) {
-					try {
-						client.Authenticate ("username", "password");
-					} catch (AuthenticationException ex) {
-						Console.WriteLine ("Invalid user name or password.");
-						return;
-					} catch (SmtpCommandException ex) {
-						Console.WriteLine ("Error trying to authenticate: {0}", ex.Message);
-						Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-						return;
-					} catch (SmtpProtocolException ex) {
-						Console.WriteLine ("Protocol error while trying to authenticate: {0}", ex.Message);
-						return;
-					}
-				}
+				client.Authenticate ("username", "password");
 
 				foreach (var message in messages) {
-					try {
-						client.Send (message);
-					} catch (SmtpCommandException ex) {
-						Console.WriteLine ("Error sending message: {0}", ex.Message);
-						Console.WriteLine ("\tStatusCode: {0}", ex.StatusCode);
-
-						switch (ex.ErrorCode) {
-						case SmtpErrorCode.RecipientNotAccepted:
-							Console.WriteLine ("\tRecipient not accepted: {0}", ex.Mailbox);
-							break;
-						case SmtpErrorCode.SenderNotAccepted:
-							Console.WriteLine ("\tSender not accepted: {0}", ex.Mailbox);
-							break;
-						case SmtpErrorCode.MessageNotAccepted:
-							Console.WriteLine ("\tMessage not accepted.");
-							break;
-						}
-					} catch (SmtpProtocolException ex) {
-						Console.WriteLine ("Protocol error while sending message: {0}", ex.Message);
-					}
+					client.Send (message);
 				}
 
 				client.Disconnect (true);

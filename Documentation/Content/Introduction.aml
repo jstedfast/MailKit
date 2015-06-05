@@ -2,7 +2,7 @@
 <topic id="Introduction" revisionNumber="1">
   <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
     <introduction>
-      <para>MailKit is a popular full-featured email framework for .NET</para>
+      <para>MimeKit and MailKit are a popular fully-featured email framework for .NET</para>
     </introduction>
 
     <section>
@@ -11,8 +11,13 @@
         <list class="bullet">
           <listItem>
             <para>
-              SASL Authentication: CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, PLAIN, SCRAM-SHA-1, and XOAUTH2
+              SASL Authentication
             </para>
+            <list class="bullet">
+              <listItem>
+                <para>Supports the CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, PLAIN, SCRAM-SHA-1, and XOAUTH2 mechanisms.</para>
+              </listItem>
+            </list>
           </listItem>
           <listItem>
             <para>SMTP Client</para>
@@ -51,21 +56,32 @@
             </list>
           </listItem>
           <listItem>
+            <para>MIME Parser</para>
+            <list class="bullet">
+              <listItem>
+                <para>Flexible: allows overriding default classes for any MIME-type.</para>
+              </listItem>
+              <listItem>
+                <para>High performance: faster than any other .NET MIME parser on the market. Rivals the performance of even the fastest C++ parsers.</para>
+              </listItem>
+              <listItem>
+                <para>Robust: handles a wide variety of broken MIME formatting with ease.</para>
+              </listItem>
+              <listItem>
+                <para>Has full support for S/MIME v3.2 and OpenPGP.</para>
+              </listItem>
+            </list>
+          </listItem>
+          <listItem>
             <para>
-              All API's that might block allow canellation via <application>System.Threading.CancellationToken</application>
+              All API's that might block allow canellation via <codeEntityReference>T:System.Threading.CancellationToken</codeEntityReference>.
             </para>
           </listItem>
           <listItem>
-            <para>Provides async versions of all API's.</para>
+            <para>All API's that perform I/O have async variants.</para>
           </listItem>
           <listItem>
             <para>Client-side sorting and threading of messages.</para>
-          </listItem>
-          <listItem>
-            <para>A flexible and robust MIME parser with a modern and intuitive API that is also high-performance.</para>
-          </listItem>
-          <listItem>
-            <para>Full support for S/MIME v3.2 and OpenPGP/MIME.</para>
           </listItem>
           <listItem>
             <para>Supports .NET 4.0, .NET 4.5, Xamarin.Android, Xamarin.iOS, Windows Phone 8.1, and more.</para>

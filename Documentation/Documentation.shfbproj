@@ -42,7 +42,7 @@
     <PresentationStyle>VS2013</PresentationStyle>
     <Preliminary>False</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
-    <HelpTitle>MimeKit and MailKit Documentation</HelpTitle>
+    <HelpTitle>MimeKit Documentation</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <RootNamespaceTitle>API Reference</RootNamespaceTitle>
     <DocumentationSources>
@@ -116,7 +116,7 @@
     <ContentLayout Include="ContentLayout.content" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Examples\InlinePGPExample.txt" />
+    <None Include="Examples\InlinePGPExample.txt" />
     <Content Include="icons\Help.png" />
   </ItemGroup>
   <ItemGroup>
