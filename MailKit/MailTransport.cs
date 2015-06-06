@@ -67,6 +67,7 @@ namespace MailKit {
 		/// </example>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
@@ -96,9 +97,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			Send (FormatOptions.Default, message, cancellationToken);
+			Send (FormatOptions.Default, message, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -116,6 +117,7 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
@@ -145,14 +147,14 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					Send (message, cancellationToken);
+					Send (message, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -167,6 +169,7 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -200,9 +203,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			Send (FormatOptions.Default, message, sender, recipients, cancellationToken);
+			Send (FormatOptions.Default, message, sender, recipients, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -216,6 +219,7 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="message"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -249,7 +253,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -262,7 +266,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					Send (message, sender, recipients, cancellationToken);
+					Send (message, sender, recipients, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -285,6 +289,7 @@ namespace MailKit {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -319,7 +324,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public abstract void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously sends the specified message.
@@ -337,6 +342,7 @@ namespace MailKit {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -371,7 +377,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -381,7 +387,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					Send (options, message, cancellationToken);
+					Send (options, message, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -397,6 +403,7 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -435,7 +442,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public abstract void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously sends the specified message using the supplied sender and recipients.
@@ -449,6 +456,7 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -487,7 +495,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -503,7 +511,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					Send (options, message, sender, recipients, cancellationToken);
+					Send (options, message, sender, recipients, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}

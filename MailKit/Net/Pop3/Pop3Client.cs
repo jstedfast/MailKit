@@ -1678,49 +1678,125 @@ namespace MailKit.Net.Pop3 {
 			return dict.Keys.ToArray ();
 		}
 
-		int GetMessageSizeForSequenceId (int seqid, CancellationToken cancellationToken)
+		class MessageSizeContext
 		{
-			int size = -1;
+			protected readonly Pop3Engine Engine;
+			int[] sizes;
+			int index;
 
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
-				if (cmd.Status != Pop3CommandStatus.Ok)
+			public MessageSizeContext (Pop3Engine engine)
+			{
+				Engine = engine;
+			}
+
+			void Reset (int capacity)
+			{
+				index = 0;
+
+				if (sizes == null) {
+					sizes = new int[capacity];
+					return;
+				}
+
+				if (capacity != sizes.Length)
+					Array.Resize (ref sizes, capacity);
+			}
+
+			void Add (int size)
+			{
+				sizes[index++] = size;
+			}
+
+			void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text)
+			{
+				if (pc.Status != Pop3CommandStatus.Ok)
 					return;
 
 				var tokens = text.Split (new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-				int id;
+				int id, size;
 
 				if (tokens.Length < 2) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command.");
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an incomplete response to the LIST command.");
 					return;
 				}
 
 				if (!int.TryParse (tokens[0], out id) || id < 1) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
-					return;
-				}
-
-				if (id != seqid) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned the size for the wrong message.");
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected response to the LIST command.");
 					return;
 				}
 
 				if (!int.TryParse (tokens[1], out size) || size < 0) {
-					cmd.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command.");
+					pc.Exception = CreatePop3ParseException ("Pop3 server returned an unexpected size token to the LIST command.");
 					return;
 				}
-			}, "LIST {0}", seqid);
 
-			while (engine.Iterate () < pc.Id) {
-				// continue processing commands
+				Add (size);
 			}
 
-			if (pc.Status != Pop3CommandStatus.Ok)
-				throw CreatePop3Exception (pc);
+			Pop3Command QueueCommand (int seqid, CancellationToken cancellationToken)
+			{
+				return Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST {0}", seqid);
+			}
 
-			if (pc.Exception != null)
-				throw pc.Exception;
+			void SendCommand (int seqid, CancellationToken cancellationToken)
+			{
+				var pc = QueueCommand (seqid, cancellationToken);
 
-			return size;
+				while (Engine.Iterate () < pc.Id) {
+					// continue processing commands
+				}
+
+				if (pc.Status != Pop3CommandStatus.Ok)
+					throw CreatePop3Exception (pc);
+
+				if (pc.Exception != null)
+					throw pc.Exception;
+			}
+
+			public int GetSize (int seqid, CancellationToken cancellationToken)
+			{
+				sizes = new int[1];
+				index = 0;
+
+				SendCommand (seqid, cancellationToken);
+
+				return sizes[0];
+			}
+
+			public IList<int> GetSizes (IList<int> seqids, CancellationToken cancellationToken)
+			{
+				sizes = new int[seqids.Count];
+				index = 0;
+
+				if ((Engine.Capabilities & Pop3Capabilities.Pipelining) == 0) {
+					for (int i = 0; i < seqids.Count; i++)
+						SendCommand (seqids[i], cancellationToken);
+
+					return sizes;
+				}
+
+				var commands = new Pop3Command[seqids.Count];
+				Pop3Command pc = null;
+
+				for (int i = 0; i < seqids.Count; i++)
+					commands[i] = QueueCommand (seqids[i], cancellationToken);
+
+				pc = commands[commands.Length - 1];
+
+				while (Engine.Iterate () < pc.Id) {
+					// continue processing commands
+				}
+
+				for (int i = 0; i < commands.Length; i++) {
+					if (commands[i].Status != Pop3CommandStatus.Ok)
+						throw CreatePop3Exception (commands[i]);
+
+					if (commands[i].Exception != null)
+						throw commands[i].Exception;
+				}
+
+				return sizes;
+			}
 		}
 
 		/// <summary>
@@ -1776,7 +1852,9 @@ namespace MailKit.Net.Pop3 {
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
-			return GetMessageSizeForSequenceId (seqid, cancellationToken);
+			var ctx = new MessageSizeContext (engine);
+
+			return ctx.GetSize (seqid, cancellationToken);
 		}
 
 		/// <summary>
@@ -1821,7 +1899,9 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
-			return GetMessageSizeForSequenceId (index + 1, cancellationToken);
+			var ctx = new MessageSizeContext (engine);
+
+			return ctx.GetSize (index + 1, cancellationToken);
 		}
 
 		/// <summary>
@@ -1915,19 +1995,37 @@ namespace MailKit.Net.Pop3 {
 
 		abstract class DownloadContext<T>
 		{
-			protected readonly Pop3Engine Engine;
+			protected readonly Pop3Client Client;
+			readonly ITransferProgress Progress;
 			T[] downloaded;
+			long nread;
 			int index;
 
-			protected DownloadContext (Pop3Engine engine)
+			protected DownloadContext (Pop3Client client, ITransferProgress progress)
 			{
-				Engine = engine;
+				Progress = progress;
+				Client = client;
+			}
+
+			protected Pop3Engine Engine {
+				get { return Client.engine; }
 			}
 
 			protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
 
+			protected void Update (int n)
+			{
+				if (Progress == null)
+					return;
+
+				nread += n;
+
+				Progress.Report (nread);
+			}
+
 			void Reset (int capacity)
 			{
+				nread = 0;
 				index = 0;
 
 				if (downloaded == null) {
@@ -2031,7 +2129,7 @@ namespace MailKit.Net.Pop3 {
 
 		class DownloadStreamContext : DownloadContext<Stream>
 		{
-			public DownloadStreamContext (Pop3Engine engine) : base (engine)
+			public DownloadStreamContext (Pop3Client client, ITransferProgress progress = null) : base (client, progress)
 			{
 			}
 
@@ -2043,8 +2141,10 @@ namespace MailKit.Net.Pop3 {
 				var buffer = new byte[4096];
 				int nread;
 
-				while ((nread = data.Read (buffer, 0, buffer.Length, cancellationToken)) > 0)
+				while ((nread = data.Read (buffer, 0, buffer.Length, cancellationToken)) > 0) {
 					stream.Write (buffer, 0, nread);
+					Update (nread);
+				}
 
 				stream.Position = 0;
 
@@ -2056,15 +2156,18 @@ namespace MailKit.Net.Pop3 {
 		{
 			readonly MimeParser parser;
 
-			public DownloadHeaderContext (Pop3Engine engine, MimeParser parser) : base (engine)
+			public DownloadHeaderContext (Pop3Client client, MimeParser parser) : base (client, null)
 			{
 				this.parser = parser;
 			}
 
 			protected override HeaderList Parse (Pop3Stream data, CancellationToken cancellationToken)
 			{
-				parser.SetStream (ParserOptions.Default, data);
-				return parser.ParseMessage (cancellationToken).Headers;
+				using (var stream = new ProgressStream (data, Update)) {
+					parser.SetStream (ParserOptions.Default, stream);
+
+					return parser.ParseMessage (cancellationToken).Headers;
+				}
 			}
 		}
 
@@ -2072,15 +2175,18 @@ namespace MailKit.Net.Pop3 {
 		{
 			readonly MimeParser parser;
 
-			public DownloadMessageContext (Pop3Engine engine, MimeParser parser) : base (engine)
+			public DownloadMessageContext (Pop3Client client, MimeParser parser, ITransferProgress progress = null) : base (client, progress)
 			{
 				this.parser = parser;
 			}
 
 			protected override MimeMessage Parse (Pop3Stream data, CancellationToken cancellationToken)
 			{
-				parser.SetStream (ParserOptions.Default, data);
-				return parser.ParseMessage (cancellationToken);
+				using (var stream = new ProgressStream (data, Update)) {
+					parser.SetStream (ParserOptions.Default, stream);
+
+					return parser.ParseMessage (cancellationToken);
+				}
 			}
 		}
 
@@ -2140,7 +2246,7 @@ namespace MailKit.Net.Pop3 {
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
-			var ctx = new DownloadHeaderContext (engine, parser);
+			var ctx = new DownloadHeaderContext (this, parser);
 
 			return ctx.Download (seqid, true, cancellationToken);
 		}
@@ -2187,7 +2293,7 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
-			var ctx = new DownloadHeaderContext (engine, parser);
+			var ctx = new DownloadHeaderContext (this, parser);
 
 			return ctx.Download (index + 1, true, cancellationToken);
 		}
@@ -2259,7 +2365,7 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = seqid;
 			}
 
-			var ctx = new DownloadHeaderContext (engine, parser);
+			var ctx = new DownloadHeaderContext (this, parser);
 
 			return ctx.Download (seqids, true, cancellationToken);
 		}
@@ -2330,7 +2436,7 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = indexes[i] + 1;
 			}
 
-			var ctx = new DownloadHeaderContext (engine, parser);
+			var ctx = new DownloadHeaderContext (this, parser);
 
 			return ctx.Download (seqids, true, cancellationToken);
 		}
@@ -2397,7 +2503,7 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < count; i++)
 				seqids[i] = startIndex + i + 1;
 
-			var ctx = new DownloadHeaderContext (engine, parser);
+			var ctx = new DownloadHeaderContext (this, parser);
 
 			return ctx.Download (seqids, true, cancellationToken);
 		}
@@ -2458,7 +2564,7 @@ namespace MailKit.Net.Pop3 {
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
-			var ctx = new DownloadMessageContext (engine, parser);
+			var ctx = new DownloadMessageContext (this, parser);
 
 			return ctx.Download (seqid, false, cancellationToken);
 		}
@@ -2475,6 +2581,7 @@ namespace MailKit.Net.Pop3 {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -2499,7 +2606,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2508,7 +2615,7 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
-			var ctx = new DownloadMessageContext (engine, parser);
+			var ctx = new DownloadMessageContext (this, parser, progress);
 
 			return ctx.Download (index + 1, false, cancellationToken);
 		}
@@ -2580,7 +2687,7 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = seqid;
 			}
 
-			var ctx = new DownloadMessageContext (engine, parser);
+			var ctx = new DownloadMessageContext (this, parser);
 
 			return ctx.Download (seqids, false, cancellationToken);
 		}
@@ -2598,6 +2705,7 @@ namespace MailKit.Net.Pop3 {
 		/// <returns>The messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
@@ -2630,7 +2738,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -2651,7 +2759,7 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = indexes[i] + 1;
 			}
 
-			var ctx = new DownloadMessageContext (engine, parser);
+			var ctx = new DownloadMessageContext (this, parser, progress);
 
 			return ctx.Download (seqids, false, cancellationToken);
 		}
@@ -2673,6 +2781,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="startIndex">The index of the first message to get.</param>
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
 		/// a valid range of messages.
@@ -2701,7 +2810,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (startIndex < 0 || startIndex >= total)
 				throw new ArgumentOutOfRangeException ("startIndex");
@@ -2721,7 +2830,7 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < count; i++)
 				seqids[i] = startIndex + i + 1;
 
-			var ctx = new DownloadMessageContext (engine, parser);
+			var ctx = new DownloadMessageContext (this, parser, progress);
 
 			return ctx.Download (seqids, false, cancellationToken);
 		}
@@ -2736,6 +2845,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -2760,7 +2870,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2769,7 +2879,7 @@ namespace MailKit.Net.Pop3 {
 			if (index < 0 || index >= total)
 				throw new ArgumentOutOfRangeException ("index");
 
-			var ctx = new DownloadStreamContext (engine);
+			var ctx = new DownloadStreamContext (this, progress);
 
 			return ctx.Download (index + 1, headersOnly, cancellationToken);
 		}
@@ -2788,6 +2898,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
@@ -2820,7 +2931,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<Stream> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<Stream> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -2841,7 +2952,7 @@ namespace MailKit.Net.Pop3 {
 				seqids[i] = indexes[i] + 1;
 			}
 
-			var ctx = new DownloadStreamContext (engine);
+			var ctx = new DownloadStreamContext (this, progress);
 
 			return ctx.Download (seqids, headersOnly, cancellationToken);
 		}
@@ -2861,6 +2972,7 @@ namespace MailKit.Net.Pop3 {
 		/// <param name="count">The number of streams to get.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
 		/// a valid range of messages.
@@ -2889,7 +3001,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override IList<Stream> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<Stream> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (startIndex < 0 || startIndex >= total)
 				throw new ArgumentOutOfRangeException ("startIndex");
@@ -2909,7 +3021,7 @@ namespace MailKit.Net.Pop3 {
 			for (int i = 0; i < count; i++)
 				seqids[i] = startIndex + i + 1;
 
-			var ctx = new DownloadStreamContext (engine);
+			var ctx = new DownloadStreamContext (this, progress);
 
 			return ctx.Download (seqids, headersOnly, cancellationToken);
 		}

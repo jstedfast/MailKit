@@ -221,6 +221,7 @@
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="ISortable.cs" />
     <Compile Include="IThreadable.cs" />
+    <Compile Include="ITransferProgress.cs" />
     <Compile Include="MailFolder.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="MailSpool.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="MessageThread.cs" />
     <Compile Include="MessageThreader.cs" />
     <Compile Include="NullProtocolLogger.cs" />
+    <Compile Include="ProgressStream.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
     <Compile Include="ServiceNotAuthenticatedException.cs" />

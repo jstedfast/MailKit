@@ -1396,7 +1396,30 @@ namespace MailKit.Net.Smtp {
 			ProcessRcptToResponse (SendCommand (command, cancellationToken), mailbox);
 		}
 
-		void Bdat (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
+		class SendContext
+		{
+			readonly ITransferProgress progress;
+			readonly long? size;
+			long nwritten;
+
+			public SendContext (ITransferProgress progress, long? size)
+			{
+				this.progress = progress;
+				this.size = size;
+			}
+
+			public void Update (int n)
+			{
+				nwritten += n;
+
+				if (size.HasValue)
+					progress.Report (nwritten, size.Value);
+				else
+					progress.Report (nwritten);
+			}
+		}
+
+		void Bdat (FormatOptions options, MimeMessage message, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			long size;
 
@@ -1408,8 +1431,18 @@ namespace MailKit.Net.Smtp {
 			var bytes = Encoding.UTF8.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 
 			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
-			message.WriteTo (options, Stream, cancellationToken);
-			Stream.Flush (cancellationToken);
+
+			if (progress != null) {
+				var ctx = new SendContext (progress, size);
+
+				using (var stream = new ProgressStream (Stream, ctx.Update)) {
+					message.WriteTo (options, stream, cancellationToken);
+					stream.Flush (cancellationToken);
+				}
+			} else {
+				message.WriteTo (options, Stream, cancellationToken);
+				Stream.Flush (cancellationToken);
+			}
 
 			var response = Stream.ReadResponse (cancellationToken);
 
@@ -1424,17 +1457,31 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void Data (FormatOptions options, MimeMessage message, CancellationToken cancellationToken)
+		void Data (FormatOptions options, MimeMessage message, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			var response = SendCommand ("DATA", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-			using (var filtered = new FilteredStream (Stream)) {
-				filtered.Add (new SmtpDataFilter ());
-				message.WriteTo (options, filtered, cancellationToken);
-				filtered.Flush ();
+			if (progress != null) {
+				var ctx = new SendContext (progress, null);
+
+				using (var stream = new ProgressStream (Stream, ctx.Update)) {
+					using (var filtered = new FilteredStream (stream)) {
+						filtered.Add (new SmtpDataFilter ());
+
+						message.WriteTo (options, filtered, cancellationToken);
+						filtered.Flush ();
+					}
+				}
+			} else {
+				using (var filtered = new FilteredStream (Stream)) {
+					filtered.Add (new SmtpDataFilter ());
+
+					message.WriteTo (options, filtered, cancellationToken);
+					filtered.Flush ();
+				}
 			}
 
 			Stream.Write (EndData, 0, EndData.Length, cancellationToken);
@@ -1466,7 +1513,7 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+		void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			CheckDisposed ();
 
@@ -1507,9 +1554,9 @@ namespace MailKit.Net.Smtp {
 				FlushCommandQueue (sender, recipients, cancellationToken);
 
 				if ((extensions & SmtpExtension.BinaryMime) != 0)
-					Bdat (format, message, cancellationToken);
+					Bdat (format, message, cancellationToken, progress);
 				else
-					Data (format, message, cancellationToken);
+					Data (format, message, cancellationToken, progress);
 			} catch (ServiceNotAuthenticatedException) {
 				// do not disconnect
 				throw;
@@ -1540,6 +1587,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -1574,7 +1622,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1588,7 +1636,7 @@ namespace MailKit.Net.Smtp {
 			if (recipients.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
 
-			Send (options, message, sender, recipients, cancellationToken);
+			Send (options, message, sender, recipients, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -1602,6 +1650,7 @@ namespace MailKit.Net.Smtp {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -1640,7 +1689,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -1659,7 +1708,7 @@ namespace MailKit.Net.Smtp {
 			if (rcpts.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
 
-			Send (options, message, sender, rcpts, cancellationToken);
+			Send (options, message, sender, rcpts, cancellationToken, progress);
 		}
 
 		#endregion

@@ -802,7 +802,8 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -814,7 +815,8 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified message to the folder.
@@ -827,7 +829,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -840,7 +843,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified message to the folder.
@@ -853,7 +857,8 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -866,7 +871,8 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified message to the folder.
@@ -880,7 +886,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -894,7 +901,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified messages to the folder.
@@ -906,7 +914,8 @@ namespace MailKit {
 		/// <param name="messages">The list of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -918,7 +927,8 @@ namespace MailKit {
 		/// <param name="messages">The list of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified messages to the folder.
@@ -931,7 +941,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -944,7 +955,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified messages to the folder.
@@ -957,7 +969,8 @@ namespace MailKit {
 		/// <param name="messages">The list of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -970,7 +983,8 @@ namespace MailKit {
 		/// <param name="messages">The list of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Append the specified messages to the folder.
@@ -984,7 +998,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -998,7 +1013,8 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.
@@ -1977,7 +1993,8 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -1988,7 +2005,8 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified message.
@@ -1999,7 +2017,8 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -2010,7 +2029,8 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -2022,7 +2042,8 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -2034,7 +2055,8 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -2047,7 +2069,8 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -2060,7 +2083,8 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -2072,7 +2096,8 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -2084,7 +2109,8 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get the specified body part.
@@ -2097,7 +2123,8 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -2110,7 +2137,8 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -2126,7 +2154,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2142,7 +2171,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -2158,7 +2188,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2174,7 +2205,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified body part.
@@ -2191,7 +2223,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -2208,7 +2241,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified body part.
@@ -2225,7 +2259,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -2242,7 +2277,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -2256,7 +2292,8 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2270,7 +2307,8 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -2289,7 +2327,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2308,7 +2347,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -2322,7 +2362,8 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2336,7 +2377,8 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -2355,7 +2397,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2374,7 +2417,8 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Add a set of flags to the specified message.

@@ -54,7 +54,8 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message.
@@ -71,7 +72,8 @@ namespace MailKit {
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Send the specified message using the supplied sender and recipients.
@@ -83,7 +85,8 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		void Send (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message using the supplied sender and recipients.
@@ -96,7 +99,8 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Send the specified message.
@@ -113,7 +117,8 @@ namespace MailKit {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message.
@@ -131,7 +136,8 @@ namespace MailKit {
 		/// <param name="options">The formatting options.</param>
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Send the specified message using the supplied sender and recipients.
@@ -144,7 +150,8 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message using the supplied sender and recipients.
@@ -158,7 +165,8 @@ namespace MailKit {
 		/// <param name="sender">The mailbox address to use for sending the message.</param>
 		/// <param name="recipients">The mailbox addresses that should receive the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken));
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Occurs when a message is successfully sent via the transport.

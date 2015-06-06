@@ -1900,7 +1900,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("EXPUNGE", ic);
 		}
 
-		ImapCommand QueueAppend (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken)
+		ImapCommand QueueAppend (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset? date, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			string format = "APPEND %F";
 
@@ -1912,7 +1912,12 @@ namespace MailKit.Net.Imap {
 
 			format += " %L\r\n";
 
-			return Engine.QueueCommand (cancellationToken, null, options, format, this, message);
+			var ic = new ImapCommand (Engine, cancellationToken, null, options, format, message);
+			ic.Progress = progress;
+
+			Engine.QueueCommand (ic);
+
+			return ic;
 		}
 
 		/// <summary>
@@ -1926,6 +1931,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -1961,7 +1967,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -1983,7 +1989,7 @@ namespace MailKit.Net.Imap {
 			if (format.International && !Engine.UTF8Enabled)
 				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
 
-			var ic = QueueAppend (format, message, flags, null, cancellationToken);
+			var ic = QueueAppend (format, message, flags, null, cancellationToken, progress);
 
 			Engine.Wait (ic);
 
@@ -2012,6 +2018,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2047,7 +2054,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -2069,7 +2076,7 @@ namespace MailKit.Net.Imap {
 			if (format.International && !Engine.UTF8Enabled)
 				throw new InvalidOperationException ("The UTF8 extension has not been enabled.");
 
-			var ic = QueueAppend (format, message, flags, date, cancellationToken);
+			var ic = QueueAppend (format, message, flags, date, cancellationToken, progress);
 
 			Engine.Wait (ic);
 
@@ -2086,7 +2093,7 @@ namespace MailKit.Net.Imap {
 			return null;
 		}
 
-		ImapCommand QueueMultiAppend (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken)
+		ImapCommand QueueMultiAppend (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			var args = new List<object> ();
 			string format = "APPEND %F";
@@ -2107,7 +2114,12 @@ namespace MailKit.Net.Imap {
 
 			format += "\r\n";
 
-			return Engine.QueueCommand (cancellationToken, null, options, format, args.ToArray ());
+			var ic = new ImapCommand (Engine, cancellationToken, null, options, format, args.ToArray ());
+			ic.Progress = progress;
+
+			Engine.QueueCommand (ic);
+
+			return ic;
 		}
 
 		/// <summary>
@@ -2121,6 +2133,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="messages">The list of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2163,7 +2176,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -2200,7 +2213,7 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (format, messages, flags, null, cancellationToken);
+				var ic = QueueMultiAppend (format, messages, flags, null, cancellationToken, progress);
 
 				Engine.Wait (ic);
 
@@ -2217,6 +2230,7 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 			}
 
+			// FIXME: use an aggregate progress reporter
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < messages.Count; i++) {
@@ -2245,6 +2259,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2289,7 +2304,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
+		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -2329,7 +2344,7 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
-				var ic = QueueMultiAppend (format, messages, flags, dates, cancellationToken);
+				var ic = QueueMultiAppend (format, messages, flags, dates, cancellationToken, progress);
 
 				Engine.Wait (ic);
 
@@ -2346,6 +2361,7 @@ namespace MailKit.Net.Imap {
 				return new UniqueId[0];
 			}
 
+			// FIXME: use an aggregate progress reporter
 			var uids = new List<UniqueId> ();
 
 			for (int i = 0; i < messages.Count; i++) {
@@ -2729,12 +2745,12 @@ namespace MailKit.Net.Imap {
 			} while (nread > 0);
 		}
 
-		class FetchSummaryState
+		class FetchSummaryContext
 		{
 			public readonly SortedDictionary<int, IMessageSummary> Results;
 			public readonly MessageSummaryItems RequestedItems;
 
-			public FetchSummaryState (MessageSummaryItems requestedItems)
+			public FetchSummaryContext (MessageSummaryItems requestedItems)
 			{
 				Results = new SortedDictionary<int, IMessageSummary> ();
 				RequestedItems = requestedItems;
@@ -2748,13 +2764,13 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			var fetch = (FetchSummaryState) ic.UserData;
+			var ctx = (FetchSummaryContext) ic.UserData;
 			IMessageSummary isummary;
 			MessageSummary summary;
 
-			if (!fetch.Results.TryGetValue (index, out isummary)) {
+			if (!ctx.Results.TryGetValue (index, out isummary)) {
 				summary = new MessageSummary (index);
-				fetch.Results.Add (index, summary);
+				ctx.Results.Add (index, summary);
 			} else {
 				summary = (MessageSummary) isummary;
 			}
@@ -2956,7 +2972,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			if ((fetch.RequestedItems & summary.Fields) == fetch.RequestedItems)
+			if ((ctx.RequestedItems & summary.Fields) == ctx.RequestedItems)
 				OnMessageSummaryFetched (summary);
 		}
 
@@ -3133,10 +3149,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3146,7 +3162,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -3274,10 +3290,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("UID FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3287,7 +3303,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -3368,10 +3384,10 @@ namespace MailKit.Net.Imap {
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3381,7 +3397,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -3533,10 +3549,10 @@ namespace MailKit.Net.Imap {
 			var vanished = Engine.QResyncEnabled ? " VANISHED" : string.Empty;
 			var command = string.Format ("UID FETCH {0} {1} (CHANGEDSINCE {2}{3})\r\n", set, query, modseq, vanished);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3546,7 +3562,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -3613,10 +3629,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3626,7 +3642,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -3754,10 +3770,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1}\r\n", set, query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3767,7 +3783,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -3843,10 +3859,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -3856,7 +3872,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -3999,10 +4015,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", set, query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -4012,7 +4028,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		static string GetFetchRange (int min, int max)
@@ -4093,10 +4109,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -4106,7 +4122,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -4244,10 +4260,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1}\r\n", GetFetchRange (min, max), query);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -4257,7 +4273,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -4334,10 +4350,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, null);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -4347,7 +4363,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -4497,10 +4513,10 @@ namespace MailKit.Net.Imap {
 			var query = FormatSummaryItems (ref items, fields);
 			var command = string.Format ("FETCH {0} {1} (CHANGEDSINCE {2})\r\n", GetFetchRange (min, max), query, modseq);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
-			var state = new FetchSummaryState (items);
+			var ctx = new FetchSummaryContext (items);
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
-			ic.UserData = state;
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -4510,7 +4526,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
-			return AsReadOnly (state.Results.Values);
+			return AsReadOnly (ctx.Results.Values);
 		}
 
 		/// <summary>
@@ -4591,29 +4607,49 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static void Dispose (Dictionary<string, Stream> sections)
+		class FetchStreamContext : IDisposable
 		{
-			foreach (var section in sections) {
-				try {
-					section.Value.Dispose ();
-				} catch (IOException) {
+			public readonly Dictionary<string, Stream> Sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
+			readonly ITransferProgress Progress;
+
+			public FetchStreamContext (ITransferProgress progress)
+			{
+				Progress = progress;
+			}
+
+			public void Report (long nread, long total)
+			{
+				if (Progress == null)
+					return;
+
+				Progress.Report (nread, total);
+			}
+
+			public void Dispose ()
+			{
+				foreach (var section in Sections) {
+					try {
+						section.Value.Dispose ();
+					} catch (IOException) {
+					}
 				}
 			}
 		}
 
-		void FetchMessageBody (ImapEngine engine, ImapCommand ic, int index)
+		void FetchStream (ImapEngine engine, ImapCommand ic, int index)
 		{
-			var sections = (Dictionary<string, Stream>) ic.UserData;
 			var token = engine.ReadToken (ic.CancellationToken);
 			var labels = new MessageLabelsChangedEventArgs (index);
 			var flags = new MessageFlagsChangedEventArgs (index);
+			var ctx = (FetchStreamContext) ic.UserData;
 			var section = new StringBuilder ();
 			bool labelsChanged = false;
 			bool flagsChanged = false;
 			var buf = new byte[4096];
+			long nread = 0, size = 0;
 			UniqueId? uid = null;
 			Stream stream;
-			int nread;
+			int n;
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
@@ -4702,12 +4738,18 @@ namespace MailKit.Net.Imap {
 					switch (token.Type) {
 					case ImapTokenType.Literal:
 						length = (int) token.Value;
+						size += length;
 
 						stream = CreateStream (uid, section.ToString (), offset, length);
 
 						try {
-							while ((nread = engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken)) > 0)
-								stream.Write (buf, 0, nread);
+							while ((n = engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken)) > 0) {
+								stream.Write (buf, 0, n);
+								nread += n;
+
+								ctx.Report (nread, size);
+							}
+
 							stream.Position = 0;
 						} catch {
 							stream.Dispose ();
@@ -4718,11 +4760,14 @@ namespace MailKit.Net.Imap {
 					case ImapTokenType.Atom:
 						var buffer = Encoding.UTF8.GetBytes ((string) token.Value);
 						length = buffer.Length;
+						nread += length;
+						size += length;
 
 						stream = CreateStream (uid, section.ToString (), offset, length);
 
 						try {
 							stream.Write (buffer, 0, length);
+							ctx.Report (nread, size);
 							stream.Position = 0;
 						} catch {
 							stream.Dispose ();
@@ -4734,9 +4779,9 @@ namespace MailKit.Net.Imap {
 					}
 
 					if (uid.HasValue)
-						sections[section.ToString ()] = CommitStream (stream, uid.Value);
+						ctx.Sections[section.ToString ()] = CommitStream (stream, uid.Value);
 					else
-						sections[section.ToString ()] = stream;
+						ctx.Sections[section.ToString ()] = stream;
 
 					break;
 				case "UID":
@@ -4747,8 +4792,8 @@ namespace MailKit.Net.Imap {
 
 					uid = new UniqueId (UidValidity, value);
 
-					foreach (var key in sections.Keys.ToArray ())
-						sections[key] = CommitStream (sections[key], uid.Value);
+					foreach (var key in ctx.Sections.Keys.ToArray ())
+						ctx.Sections[key] = CommitStream (ctx.Sections[key], uid.Value);
 
 					labels.UniqueId = uid.Value;
 					flags.UniqueId = uid.Value;
@@ -4808,6 +4853,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -4835,7 +4881,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -4843,11 +4889,11 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[])\r\n", uid.Id);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -4859,12 +4905,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (string.Empty, out stream))
+				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested message.");
 
-				sections.Remove (string.Empty);
+				ctx.Sections.Remove (string.Empty);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return ParseMessage (stream, cancellationToken);
@@ -4879,6 +4925,7 @@ namespace MailKit.Net.Imap {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
@@ -4906,7 +4953,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -4914,11 +4961,11 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[])\r\n", index + 1);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -4930,12 +4977,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (string.Empty, out stream))
+				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested message.");
 
-				sections.Remove (string.Empty);
+				ctx.Sections.Remove (string.Empty);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return ParseMessage (stream, cancellationToken);
@@ -4982,6 +5029,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -5012,9 +5060,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPart (uid, part, false, cancellationToken);
+			return GetBodyPart (uid, part, false, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5028,6 +5076,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -5058,7 +5107,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -5066,7 +5115,7 @@ namespace MailKit.Net.Imap {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			return GetBodyPart (uid, part.PartSpecifier, headersOnly, cancellationToken);
+			return GetBodyPart (uid, part.PartSpecifier, headersOnly, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5079,6 +5128,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="partSpecifier">The body part specifier.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="partSpecifier"/> is <c>null</c>.
 		/// </exception>
@@ -5109,9 +5159,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken))
+		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPart (uid, partSpecifier, false, cancellationToken);
+			return GetBodyPart (uid, partSpecifier, false, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5125,6 +5175,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="partSpecifier">The body part specifier.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="partSpecifier"/> is <c>null</c>.
 		/// </exception>
@@ -5155,7 +5206,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -5168,13 +5219,13 @@ namespace MailKit.Net.Imap {
 			string[] tags;
 
 			var command = string.Format ("UID FETCH {0} ({1})\r\n", uid.Id, GetBodyPartQuery (partSpecifier, headersOnly, out tags));
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
 			ChainedStream chained;
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5189,16 +5240,16 @@ namespace MailKit.Net.Imap {
 				chained = new ChainedStream ();
 
 				foreach (var tag in tags) {
-					if (!sections.TryGetValue (tag, out stream))
+					if (!ctx.Sections.TryGetValue (tag, out stream))
 						throw new ImapCommandException ("The IMAP server did not return the requested body part.");
 
 					chained.Add (stream);
 				}
 
 				foreach (var tag in tags)
-					sections.Remove (tag);
+					ctx.Sections.Remove (tag);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			var entity = ParseEntity (chained, cancellationToken);
@@ -5225,6 +5276,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -5255,9 +5307,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPart (index, part, false, cancellationToken);
+			return GetBodyPart (index, part, false, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5271,6 +5323,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -5301,7 +5354,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public override MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -5309,7 +5362,7 @@ namespace MailKit.Net.Imap {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			return GetBodyPart (index, part.PartSpecifier, headersOnly, cancellationToken);
+			return GetBodyPart (index, part.PartSpecifier, headersOnly, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5322,6 +5375,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="partSpecifier">The body part specifier.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="partSpecifier"/> is <c>null</c>.
 		/// </exception>
@@ -5352,9 +5406,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (int index, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken))
+		public MimeEntity GetBodyPart (int index, string partSpecifier, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetBodyPart (index, partSpecifier, false, cancellationToken);
+			return GetBodyPart (index, partSpecifier, false, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -5368,6 +5422,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="partSpecifier">The body part specifier.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="partSpecifier"/> is <c>null</c>.
 		/// </exception>
@@ -5398,7 +5453,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public MimeEntity GetBodyPart (int index, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public MimeEntity GetBodyPart (int index, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -5411,13 +5466,13 @@ namespace MailKit.Net.Imap {
 			string[] tags;
 
 			var command = string.Format ("FETCH {0} ({1})\r\n", index + 1, GetBodyPartQuery (partSpecifier, headersOnly, out tags));
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
 			ChainedStream chained;
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5432,16 +5487,16 @@ namespace MailKit.Net.Imap {
 				chained = new ChainedStream ();
 
 				foreach (var tag in tags) {
-					if (!sections.TryGetValue (tag, out stream))
+					if (!ctx.Sections.TryGetValue (tag, out stream))
 						throw new ImapCommandException ("The IMAP server did not return the requested body part.");
 
 					chained.Add (stream);
 				}
 
 				foreach (var tag in tags)
-					sections.Remove (tag);
+					ctx.Sections.Remove (tag);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			var entity = ParseEntity (chained, cancellationToken);
@@ -5472,6 +5527,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -5504,7 +5560,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -5521,11 +5577,11 @@ namespace MailKit.Net.Imap {
 				return new MemoryStream ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "UID FETCH %u (BODY.PEEK[]<%d.%d>)\r\n", uid.Id, offset, count);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5537,12 +5593,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (string.Empty, out stream))
+				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
-				sections.Remove (string.Empty);
+				ctx.Sections.Remove (string.Empty);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return stream;
@@ -5562,6 +5618,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="index"/> is out of range.</para>
 		/// <para>-or-</para>
@@ -5593,7 +5650,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -5610,11 +5667,11 @@ namespace MailKit.Net.Imap {
 				return new MemoryStream ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, "FETCH %d (BODY.PEEK[]<%d.%d>)\r\n", index + 1, offset, count);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5626,12 +5683,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (string.Empty, out stream))
+				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
-				sections.Remove (string.Empty);
+				ctx.Sections.Remove (string.Empty);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return stream;
@@ -5649,6 +5706,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -5679,7 +5737,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -5690,12 +5748,12 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}])\r\n", uid.Id, section);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5707,12 +5765,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (section, out stream))
+				if (!ctx.Sections.TryGetValue (section, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
-				sections.Remove (section);
+				ctx.Sections.Remove (section);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return stream;
@@ -5735,6 +5793,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -5770,7 +5829,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -5790,12 +5849,12 @@ namespace MailKit.Net.Imap {
 				return new MemoryStream ();
 
 			var command = string.Format ("UID FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", uid.Id, section, offset, count);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5807,12 +5866,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (section, out stream))
+				if (!ctx.Sections.TryGetValue (section, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
-				sections.Remove (section);
+				ctx.Sections.Remove (section);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return stream;
@@ -5830,6 +5889,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
@@ -5860,7 +5920,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -5871,12 +5931,12 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}])\r\n", index + 1, section);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5888,12 +5948,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (section, out stream))
+				if (!ctx.Sections.TryGetValue (section, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
-				sections.Remove (section);
+				ctx.Sections.Remove (section);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return stream;
@@ -5916,6 +5976,7 @@ namespace MailKit.Net.Imap {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
@@ -5950,7 +6011,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -5970,12 +6031,12 @@ namespace MailKit.Net.Imap {
 				return new MemoryStream ();
 
 			var command = string.Format ("FETCH {0} (BODY.PEEK[{1}]<{2}.{3}>)\r\n", index + 1, section, offset, count);
-			var sections = new Dictionary<string, Stream> (StringComparer.OrdinalIgnoreCase);
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
+			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchMessageBody);
-			ic.UserData = sections;
+			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
 
@@ -5987,12 +6048,12 @@ namespace MailKit.Net.Imap {
 				if (ic.Result != ImapCommandResult.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
-				if (!sections.TryGetValue (section, out stream))
+				if (!ctx.Sections.TryGetValue (section, out stream))
 					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
 
-				sections.Remove (section);
+				ctx.Sections.Remove (section);
 			} finally {
-				Dispose (sections);
+				ctx.Dispose ();
 			}
 
 			return stream;

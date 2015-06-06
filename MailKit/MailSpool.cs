@@ -1124,6 +1124,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1148,7 +1149,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message at the specified index.
@@ -1159,6 +1160,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1183,11 +1185,11 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetMessage (index, cancellationToken);
+					return GetMessage (index, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -1302,6 +1304,7 @@ namespace MailKit {
 		/// <returns>The messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
@@ -1331,7 +1334,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages at the specified indexes.
@@ -1342,6 +1345,7 @@ namespace MailKit {
 		/// <returns>The messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
@@ -1371,7 +1375,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -1381,7 +1385,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetMessages (indexes, cancellationToken);
+					return GetMessages (indexes, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -1399,6 +1403,7 @@ namespace MailKit {
 		/// <param name="startIndex">The index of the first message to get.</param>
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
 		/// a valid range of messages.
@@ -1424,7 +1429,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages within the specified range.
@@ -1436,6 +1441,7 @@ namespace MailKit {
 		/// <param name="startIndex">The index of the first message to get.</param>
 		/// <param name="count">The number of messages to get.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
 		/// a valid range of messages.
@@ -1461,11 +1467,11 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetMessages (startIndex, count, cancellationToken);
+					return GetMessages (startIndex, count, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -1480,6 +1486,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1504,7 +1511,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header stream at the specified index.
@@ -1516,6 +1523,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is not a valid message index.
 		/// </exception>
@@ -1540,11 +1548,11 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (index, headersOnly, cancellationToken);
+					return GetStream (index, headersOnly, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -1562,6 +1570,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
@@ -1591,7 +1600,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<Stream> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams at the specified indexes.
@@ -1603,6 +1612,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="indexes"/> is <c>null</c>.
 		/// </exception>
@@ -1632,7 +1642,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -1642,7 +1652,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStreams (indexes, headersOnly, cancellationToken);
+					return GetStreams (indexes, headersOnly, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -1661,6 +1671,7 @@ namespace MailKit {
 		/// <param name="count">The number of streams to get.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
 		/// a valid range of messages.
@@ -1686,7 +1697,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<Stream> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams within the specified range.
@@ -1699,6 +1710,7 @@ namespace MailKit {
 		/// <param name="count">The number of streams to get.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be retrieved; otherwise, <c>false</c>.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
 		/// a valid range of messages.
@@ -1724,11 +1736,11 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStreams (startIndex, count, headersOnly, cancellationToken);
+					return GetStreams (startIndex, count, headersOnly, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}

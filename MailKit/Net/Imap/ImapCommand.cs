@@ -215,6 +215,7 @@ namespace MailKit.Net.Imap {
 		public readonly ImapLiteralType Type;
 		public readonly object Literal;
 		readonly FormatOptions format;
+		readonly Action<int> update;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapLiteral"/> class.
@@ -224,9 +225,11 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <param name="options">The formatting options.</param>
 		/// <param name="literal">The literal.</param>
-		public ImapLiteral (FormatOptions options, object literal)
+		/// <param name="action">The progress update action.</param>
+		public ImapLiteral (FormatOptions options, object literal, Action<int> action = null)
 		{
 			format = options;
+			update = action;
 
 			if (literal is MimeMessage) {
 				Type = ImapLiteralType.MimeMessage;
@@ -293,9 +296,11 @@ namespace MailKit.Net.Imap {
 			if (Type == ImapLiteralType.MimeMessage) {
 				var message = (MimeMessage) Literal;
 
-				message.WriteTo (format, stream, cancellationToken);
-				stream.Flush (cancellationToken);
-				return;
+				using (var s = new ProgressStream (stream, update)) {
+					message.WriteTo (format, s, cancellationToken);
+					s.Flush (cancellationToken);
+					return;
+				}
 			}
 
 			var literal = (Stream) Literal;
@@ -339,6 +344,7 @@ namespace MailKit.Net.Imap {
 		public CancellationToken CancellationToken { get; private set; }
 		public ImapCommandStatus Status { get; internal set; }
 		public ImapCommandResult Result { get; internal set; }
+		public ITransferProgress Progress { get; internal set; }
 		public Exception Exception { get; internal set; }
 		public readonly List<ImapResponseCode> RespCodes;
 		public string ResultText { get; internal set; }
@@ -350,6 +356,7 @@ namespace MailKit.Net.Imap {
 
 		readonly List<ImapCommandPart> parts = new List<ImapCommandPart> ();
 		readonly ImapEngine Engine;
+		long totalSize, nwritten;
 		int current;
 
 		/// <summary>
@@ -406,8 +413,10 @@ namespace MailKit.Net.Imap {
 							AppendString (options, true, builder, utf7);
 							break;
 						case 'L':
-							var literal = new ImapLiteral (options, args[argc++]);
+							var literal = new ImapLiteral (options, args[argc++], UpdateProgress);
 							var length = literal.Length;
+
+							totalSize += length;
 
 							if (options.International)
 								str = "UTF8 (~{" + length + plus + "}\r\n";
@@ -459,6 +468,14 @@ namespace MailKit.Net.Imap {
 		public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
 			: this (engine, cancellationToken, folder, FormatOptions.Default, format, args)
 		{
+		}
+
+		void UpdateProgress (int n)
+		{
+			nwritten += n;
+
+			if (Progress != null)
+				Progress.Report (nwritten, totalSize);
 		}
 
 		static bool IsAtom (char c)

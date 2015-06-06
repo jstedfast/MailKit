@@ -2326,6 +2326,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
@@ -2353,9 +2354,9 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Append (FormatOptions.Default, message, flags, cancellationToken);
+			return Append (FormatOptions.Default, message, flags, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -2368,6 +2369,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
@@ -2395,14 +2397,14 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (message, flags, cancellationToken);
+					return Append (message, flags, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -2418,6 +2420,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
@@ -2445,9 +2448,9 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Append (FormatOptions.Default, message, flags, date, cancellationToken);
+			return Append (FormatOptions.Default, message, flags, date, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -2461,6 +2464,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="message"/> is <c>null</c>.
 		/// </exception>
@@ -2488,14 +2492,14 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (message, flags, date, cancellationToken);
+					return Append (message, flags, date, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -2511,6 +2515,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2546,7 +2551,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -2559,6 +2564,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="flags">The message flags.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2594,7 +2600,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -2604,7 +2610,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (options, message, flags, cancellationToken);
+					return Append (options, message, flags, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -2621,6 +2627,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2656,7 +2663,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -2670,6 +2677,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags.</param>
 		/// <param name="date">The received date of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2705,7 +2713,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -2715,7 +2723,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (options, message, flags, date, cancellationToken);
+					return Append (options, message, flags, date, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -2730,6 +2738,7 @@ namespace MailKit {
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="messages"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2764,9 +2773,9 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Append (FormatOptions.Default, messages, flags, cancellationToken);
+			return Append (FormatOptions.Default, messages, flags, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -2779,6 +2788,7 @@ namespace MailKit {
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="messages"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2813,7 +2823,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -2831,7 +2841,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (messages, flags, cancellationToken);
+					return Append (messages, flags, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -2847,6 +2857,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="messages"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2883,9 +2894,9 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Append (FormatOptions.Default, messages, flags, dates, cancellationToken);
+			return Append (FormatOptions.Default, messages, flags, dates, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -2899,6 +2910,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="messages"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -2935,7 +2947,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -2956,7 +2968,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (messages, flags, dates, cancellationToken);
+					return Append (messages, flags, dates, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -2972,6 +2984,7 @@ namespace MailKit {
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -3014,7 +3027,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -3027,6 +3040,7 @@ namespace MailKit {
 		/// <param name="messages">The array of messages to append to the folder.</param>
 		/// <param name="flags">The message flags to use for each message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -3069,7 +3083,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -3090,7 +3104,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (options, messages, flags, cancellationToken);
+					return Append (options, messages, flags, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -3107,6 +3121,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -3151,7 +3166,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -3165,6 +3180,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to use for each of the messages.</param>
 		/// <param name="dates">The received dates to use for each of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="options"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
@@ -3209,7 +3225,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
 				throw new ArgumentNullException ("options");
@@ -3233,7 +3249,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return Append (options, messages, flags, dates, cancellationToken);
+					return Append (options, messages, flags, dates, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -6463,6 +6479,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -6490,7 +6507,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -6501,6 +6518,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -6528,11 +6546,11 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetMessage (uid, cancellationToken);
+					return GetMessage (uid, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -6546,6 +6564,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
@@ -6573,7 +6592,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -6584,6 +6603,7 @@ namespace MailKit {
 		/// <returns>The message.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
@@ -6611,14 +6631,14 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetMessage (index, cancellationToken);
+					return GetMessage (index, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -6633,6 +6653,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -6663,7 +6684,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6675,6 +6696,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -6705,14 +6727,14 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetBodyPart (uid, part, cancellationToken);
+					return GetBodyPart (uid, part, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -6728,6 +6750,7 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -6758,7 +6781,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6771,6 +6794,7 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -6801,14 +6825,14 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetBodyPart (uid, part, headersOnly, cancellationToken);
+					return GetBodyPart (uid, part, headersOnly, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -6823,6 +6847,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -6853,7 +6878,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6865,6 +6890,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -6895,106 +6921,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken))
-		{
-			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
-
-			if (part == null)
-				throw new ArgumentNullException ("part");
-
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetBodyPart (index, part, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
-
-		/// <summary>
-		/// Get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken));
-
-		/// <summary>
-		/// Asynchronously get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Asynchronously gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -7004,7 +6931,108 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetBodyPart (index, part, headersOnly, cancellationToken);
+					return GetBodyPart (index, part, cancellationToken, progress);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified body part.
+		/// </remarks>
+		/// <returns>The body part.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The body part.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="part"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+
+		/// <summary>
+		/// Asynchronously get the specified body part.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the specified body part.
+		/// </remarks>
+		/// <returns>The body part.</returns>
+		/// <param name="index">The index of the message.</param>
+		/// <param name="part">The body part.</param>
+		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="part"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="index"/> is out of range.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="FolderNotOpenException">
+		/// The folder is not currently open.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (part == null)
+				throw new ArgumentNullException ("part");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetBodyPart (index, part, headersOnly, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7023,6 +7051,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7055,7 +7084,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7071,6 +7100,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7103,7 +7133,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset");
@@ -7113,7 +7143,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (uid, offset, count, cancellationToken);
+					return GetStream (uid, offset, count, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7132,6 +7162,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="index"/> is out of range.</para>
 		/// <para>-or-</para>
@@ -7163,7 +7194,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7179,6 +7210,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <para><paramref name="index"/> is out of range.</para>
 		/// <para>-or-</para>
@@ -7210,7 +7242,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -7223,7 +7255,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (index, offset, count, cancellationToken);
+					return GetStream (index, offset, count, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7243,6 +7275,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7278,9 +7311,9 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStream (uid, part, offset, count, cancellationToken);
+			return GetStream (uid, part, offset, count, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -7298,6 +7331,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7333,7 +7367,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (part == null)
 				throw new ArgumentNullException ("part");
@@ -7346,7 +7380,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (uid, part, offset, count, cancellationToken);
+					return GetStream (uid, part, offset, count, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7366,6 +7400,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -7400,9 +7435,9 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStream (index, part, offset, count, cancellationToken);
+			return GetStream (index, part, offset, count, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -7420,6 +7455,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="part"/> is <c>null</c>.
 		/// </exception>
@@ -7454,7 +7490,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -7470,7 +7506,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (index, part, offset, count, cancellationToken);
+					return GetStream (index, part, offset, count, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7487,6 +7523,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7517,7 +7554,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7531,6 +7568,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7561,14 +7599,14 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (section == null)
 				throw new ArgumentNullException ("section");
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (uid, section, cancellationToken);
+					return GetStream (uid, section, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7590,6 +7628,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7625,7 +7664,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7644,6 +7683,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="uid"/> is invalid.
 		/// </exception>
@@ -7679,7 +7719,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (section == null)
 				throw new ArgumentNullException ("section");
@@ -7692,7 +7732,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (uid, section, offset, count, cancellationToken);
+					return GetStream (uid, section, offset, count, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7709,6 +7749,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
@@ -7739,7 +7780,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -7753,6 +7794,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
@@ -7783,7 +7825,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -7793,7 +7835,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (index, section, cancellationToken);
+					return GetStream (index, section, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
@@ -7815,6 +7857,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
@@ -7849,7 +7892,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -7868,6 +7911,7 @@ namespace MailKit {
 		/// <param name="offset">The starting offset of the first desired byte.</param>
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="section"/> is <c>null</c>.
 		/// </exception>
@@ -7902,7 +7946,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -7918,7 +7962,7 @@ namespace MailKit {
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
-					return GetStream (index, section, offset, count, cancellationToken);
+					return GetStream (index, section, offset, count, cancellationToken, progress);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}

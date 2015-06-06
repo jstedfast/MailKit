@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -153,6 +153,7 @@
     <Compile Include="IProtocolLogger.cs" />
     <Compile Include="ISortable.cs" />
     <Compile Include="IThreadable.cs" />
+    <Compile Include="ITransferProgress.cs" />
     <Compile Include="MailFolder.cs" />
     <Compile Include="MailService.cs" />
     <Compile Include="MailSpool.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="MessageThread.cs" />
     <Compile Include="MessageThreader.cs" />
     <Compile Include="NullProtocolLogger.cs" />
+    <Compile Include="ProgressStream.cs" />
     <Compile Include="ProtocolException.cs" />
     <Compile Include="ProtocolLogger.cs" />
     <Compile Include="ServiceNotAuthenticatedException.cs" />
