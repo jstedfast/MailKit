@@ -1864,23 +1864,27 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				// get the list of messages marked for deletion
 				var marked = Search (SearchQuery.Deleted, cancellationToken);
+				var unmark = new List<UniqueId> ();
 
 				// remove all uids except the ones that will be expunged
 				for (int i = 0; i < marked.Count; i++) {
-					if (uids.Contains (marked[i])) {
-						marked.RemoveAt (i);
-						i--;
-					}
+					if (!uids.Contains (marked[i]))
+						unmark.Add (marked[i]);
 				}
 
-				// clear the \Deleted flag on all messages except the ones that are to be expunged
-				RemoveFlags (marked, MessageFlags.Deleted, true, cancellationToken);
+				if (unmark.Count > 0) {
+					// clear the \Deleted flag on all messages except the ones that are to be expunged
+					RemoveFlags (unmark, MessageFlags.Deleted, true, cancellationToken);
+				}
 
 				// expunge the folder
 				Expunge (cancellationToken);
 
-				// restore the \Deleted flags
-				AddFlags (marked, MessageFlags.Deleted, true, cancellationToken);
+				if (unmark.Count > 0) {
+					// restore the \Deleted flags
+					AddFlags (unmark, MessageFlags.Deleted, true, cancellationToken);
+				}
+
 				return;
 			}
 
