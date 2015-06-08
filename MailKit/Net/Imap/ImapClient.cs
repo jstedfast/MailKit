@@ -1565,7 +1565,12 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Ping the IMAP server to keep the connection alive.
 		/// </summary>
-		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+		/// <remarks>
+		/// Mail servers, if left idle for too long, will automatically drop the connection.
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1635,6 +1640,9 @@ namespace MailKit.Net.Imap {
 		/// cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to the
 		/// fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		/// <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentException">

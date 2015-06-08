@@ -14530,6 +14530,9 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MessageExpunged"/> event is emitted when a message is expunged from the folder.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		public event EventHandler<MessageEventArgs> MessageExpunged;
 
 		/// <summary>
@@ -14551,7 +14554,7 @@ namespace MailKit {
 		/// Occurs when new messages arrive in the folder.
 		/// </summary>
 		/// <remarks>
-		/// Emitted when new mmessages arrive in the folder.
+		/// Emitted when new messages arrive in the folder.
 		/// </remarks>
 		public event EventHandler<MessagesArrivedEventArgs> MessagesArrived;
 
@@ -14599,6 +14602,9 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="MessageFlagsChanged"/> event is emitted when the flags for a message are changed.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		public event EventHandler<MessageFlagsChangedEventArgs> MessageFlagsChanged;
 
 		/// <summary>
@@ -14702,6 +14708,9 @@ namespace MailKit {
 		/// <remarks>
 		/// The <see cref="CountChanged"/> event is emitted whenever the <see cref="Count"/> value changes.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
+		/// </example>
 		public event EventHandler<EventArgs> CountChanged;
 
 		/// <summary>

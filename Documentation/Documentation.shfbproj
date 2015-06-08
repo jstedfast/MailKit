@@ -99,6 +99,8 @@
     <None Include="Examples\CreateSimpleMessage.cs" />
     <None Include="Examples\DecodingContent.cs" />
     <None Include="Examples\EnumeratingAttachments.cs" />
+    <None Include="Examples\ImapExamples.cs" />
+    <None Include="Examples\ImapIdleExample.cs" />
     <None Include="Examples\MimeIterator.cs" />
     <None Include="Examples\MimeMessageLoad.cs" />
     <None Include="Examples\MimeParserMbox.cs" />
