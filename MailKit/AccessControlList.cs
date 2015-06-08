@@ -34,6 +34,9 @@ namespace MailKit {
 	/// An Access Control List (ACL) is a list of access controls defining the permissions
 	/// various identities have available.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+	/// </example>
 	public class AccessControlList : List<AccessControl>
 	{
 		/// <summary>

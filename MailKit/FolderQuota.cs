@@ -31,6 +31,9 @@ namespace MailKit {
 	/// <remarks>
 	/// A <see cref="FolderQuota"/> is returned by <see cref="IMailFolder.GetQuota(System.Threading.CancellationToken)"/>.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+	/// </example>
 	public class FolderQuota
 	{
 		/// <summary>
@@ -52,6 +55,9 @@ namespace MailKit {
 		/// Gets the quota root. If the quota root is <c>null</c>, then
 		/// it suggests that the folder does not have a quota.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The quota root.</value>
 		public IMailFolder QuotaRoot {
 			get; private set;
@@ -63,6 +69,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the message limit.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The message limit.</value>
 		public uint? MessageLimit {
 			get; set;
@@ -74,6 +83,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the storage limit, in kilobytes.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The storage limit, in kilobytes.</value>
 		public uint? StorageLimit {
 			get; set;
@@ -85,6 +97,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the current message count.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The current message count.</value>
 		public uint? CurrentMessageCount {
 			get; set;
@@ -96,6 +111,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets or sets the size of the current storage, in kilobytes.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The size of the current storage, in kilobytes.</value>
 		public uint? CurrentStorageSize {
 			get; set;

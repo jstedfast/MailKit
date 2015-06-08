@@ -41,6 +41,7 @@ namespace MailKit.Examples {
 		{
 			using (var client = new Pop3Client (new ProtocolLogger ("pop3.log"))) {
 				client.Connect ("pop.gmail.com", 995, SecureSocketOptions.SslOnConnect);
+
 				client.Authenticate ("username", "password");
 
 				for (int i = 0; i < client.Count; i++) {

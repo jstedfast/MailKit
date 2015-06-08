@@ -31,7 +31,7 @@ namespace MailKit.Net.Pop3 {
 	/// Capabilities supported by a POP3 server.
 	/// </summary>
 	/// <remarks>
-	/// Capabilities are read as part of the response to the CAPA command that
+	/// Capabilities are read as part of the response to the <c>CAPA</c> command that
 	/// is issued during the connection and authentication phases of the
 	/// <see cref="Pop3Client"/>.
 	/// </remarks>

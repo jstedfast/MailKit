@@ -111,11 +111,11 @@ namespace MailKit {
 		/// <para>Enables quick resynchronization when a folder is opened using the
 		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
 		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event
-		/// is replaced with the <see cref="MailFolder.MessagesVanished"/> event.</para>
-		/// <para>This method needs to be called immediately after
-		/// <see cref="MailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
-		/// before the opening of any folders.</para>
+		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>This method needs to be called immediately after calling one of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods, before
+		/// opening any folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -154,11 +154,11 @@ namespace MailKit {
 		/// <para>Enables quick resynchronization when a folder is opened using the
 		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
 		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event
-		/// is replaced with the <see cref="MailFolder.MessagesVanished"/> event.</para>
-		/// <para>This method needs to be called immediately after
-		/// <see cref="MailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
-		/// before the opening of any folders.</para>
+		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+		/// <para>This method needs to be called immediately after calling one of the
+		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods, before
+		/// opening any folders.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>

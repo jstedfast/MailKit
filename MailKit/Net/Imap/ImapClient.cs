@@ -56,9 +56,13 @@ namespace MailKit.Net.Imap {
 	/// The <see cref="ImapClient"/> class supports both the "imap" and "imaps"
 	/// protocols. The "imap" protocol makes a clear-text connection to the IMAP
 	/// server and does not use SSL or TLS unless the IMAP server supports the
-	/// STARTTLS extension (as defined by rfc3501). The "imaps" protocol,
-	/// however, connects to the IMAP server using an SSL-wrapped connection.
+	/// <a href="https://tools.ietf.org/html/rfc3501">STARTTLS</a> extension.
+	/// The "imaps" protocol, however, connects to the IMAP server using an
+	/// SSL-wrapped connection.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+	/// </example>
 	public class ImapClient : MailStore
 	{
 		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',' };
@@ -82,9 +86,14 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
-		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method
-		/// and authenticate with the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// call one of the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
+		/// methods and then authenticate with the one of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
+		/// methods.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+		/// </example>
 		public ImapClient () : this (new NullProtocolLogger ())
 		{
 		}
@@ -94,9 +103,14 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// Before you can retrieve messages with the <see cref="ImapClient"/>, you must first
-		/// call the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method
-		/// and authenticate with the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// call one of the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
+		/// methods and then authenticate with the one of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
+		/// methods.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="ProtocolLogger"/>
+		/// </example>
 		/// <param name="protocolLogger">The protocol logger.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="protocolLogger"/> is <c>null</c>.
@@ -140,10 +154,15 @@ namespace MailKit.Net.Imap {
 		/// Get the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// The capabilities will not be known until a successful connection has been made via
-		/// the <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/> method and may change as a side-effect
-		/// of the <see cref="Authenticate(ICredentials,CancellationToken)"/> method.
+		/// The capabilities will not be known until a successful connection has been made via one of
+		/// the <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a> methods and may
+		/// change as a side-effect of calling one of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
+		/// methods.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The capabilities.</value>
 		/// <exception cref="System.ArgumentException">
 		/// Capabilities cannot be enabled, they may only be disabled.
@@ -162,11 +181,14 @@ namespace MailKit.Net.Imap {
 		/// Get the access rights supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// These rights are additional rights supported by the IMAP server
-		/// beyond the standard rights defined in
-		/// https://tools.ietf.org/html/rfc4314#section-2.1 and will
-		/// not be populated until the client is successfully connected.
+		/// These rights are additional rights supported by the IMAP server beyond the standard rights
+		/// defined in <a href="https://tools.ietf.org/html/rfc4314#section-2.1">section 2.1</a> of
+		/// <a href="https://tools.ietf.org/html/rfc4314">rfc4314</a> and will not be populated until
+		/// the client is successfully connected.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The rights.</value>
 		public AccessRights Rights {
 			get { return engine.Rights; }
@@ -224,8 +246,10 @@ namespace MailKit.Net.Imap {
 		/// Enable compression over the IMAP connection.
 		/// </summary>
 		/// <remarks>
-		/// If the IMAP server supports the COMPRESS extension, it is possible at any point
-		/// after connecting to enable compression to reduce network bandwidth usage.
+		/// <para>Enables compression over the IMAP connection.</para>
+		/// <para>If the IMAP server supports the <see cref="ImapCapabilities.Compress"/> extension,
+		/// it is possible at any point after connecting to enable compression to reduce network
+		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -280,8 +304,10 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously enable compression over the IMAP connection.
 		/// </summary>
 		/// <remarks>
-		/// If the IMAP server supports the COMPRESS extension, it is possible at any point
-		/// after connecting to enable compression to reduce network bandwidth usage.
+		/// <para>Asynchronously enables compression over the IMAP connection.</para>
+		/// <para>If the IMAP server supports the <see cref="ImapCapabilities.Compress"/> extension,
+		/// it is possible at any point after connecting to enable compression to reduce network
+		/// bandwidth usage. Ideally, this method should be called before authenticating.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -322,14 +348,16 @@ namespace MailKit.Net.Imap {
 		/// Enable the QRESYNC feature.
 		/// </summary>
 		/// <remarks>
+		/// <para>Enables the QRESYNC feature.</para>
 		/// <para>The QRESYNC extension improves resynchronization performance of folders by
 		/// querying the IMAP server for a list of changes when the folder is opened using the
 		/// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
 		/// method.</para>
 		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
 		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
-		/// <para>This method needs to be called immediately after
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, before the opening of any folders.</para>
+		/// <para>This method needs to be called immediately after calling one of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods, before
+		/// opening any folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -506,6 +534,9 @@ namespace MailKit.Net.Imap {
 		/// would allow tracking of users in ways that violate user privacy expectations and may also make it easier for
 		/// attackers to exploit security holes in the client.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <returns>The implementation details of the server.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -631,14 +662,16 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>The authentication mechanisms are queried as part of the
-		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
 		/// method.</para>
 		/// <para>Note: To prevent the usage of certain authentication mechanisms in
-		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/> or
-		/// <see cref="Authenticate(ICredentials,CancellationToken)"/>, simply remove
-		/// them from the the <see cref="AuthenticationMechanisms"/> hash set before
-		/// calling either of the Authenticate() methods.</para>
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>,
+		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash set
+		/// before authenticating.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The authentication mechanisms.</value>
 		public override HashSet<string> AuthenticationMechanisms {
 			get { return engine.AuthenticationMechanisms; }
@@ -649,9 +682,12 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// The threading algorithms are queried as part of the
-		/// <see cref="Connect(string,int,SecureSocketOptions,CancellationToken)"/>
-		/// and <see cref="Authenticate(ICredentials,CancellationToken)"/> methods.
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
+		/// and <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The authentication mechanisms.</value>
 		public HashSet<ThreadingAlgorithm> ThreadingAlgorithms {
 			get { return engine.ThreadingAlgorithms; }
@@ -694,9 +730,9 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets whether or not the client is currently authenticated with the IMAP server.</para>
-		/// <para>To authenticate with the IMAP server, use
-		/// <see cref="MailService.Authenticate(string,string,CancellationToken)"/>
-		/// or <see cref="Authenticate(ICredentials,CancellationToken)"/>.</para>
+		/// <para>To authenticate with the IMAP server, use one of the
+		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a>
+		/// methods.</para>
 		/// </remarks>
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsAuthenticated {
@@ -1066,6 +1102,9 @@ namespace MailKit.Net.Imap {
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="options">The secure socket options to when connecting.</param>
@@ -1372,9 +1411,12 @@ namespace MailKit.Net.Imap {
 		/// Disconnect the service.
 		/// </summary>
 		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.
+		/// If <paramref name="quit"/> is <c>true</c>, a <c>LOGOUT</c> command will be issued in order to disconnect cleanly.
 		/// </remarks>
-		/// <param name="quit">If set to <c>true</c>, a "LOGOUT" command will be issued in order to disconnect cleanly.</param>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+		/// </example>
+		/// <param name="quit">If set to <c>true</c>, a <c>LOGOUT</c> command will be issued in order to disconnect cleanly.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -1786,6 +1828,9 @@ namespace MailKit.Net.Imap {
 		/// <para>The Inbox folder is the default folder and always exists on the server.</para>
 		/// <para>Note: This property will only be available after the client has been authenticated.</para>
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+		/// </example>
 		/// <value>The Inbox folder.</value>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.

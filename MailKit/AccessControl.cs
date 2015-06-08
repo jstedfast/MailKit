@@ -35,6 +35,9 @@ namespace MailKit {
 	/// An Access Control is a set of permissions available for a particular identity,
 	/// controlling whether or not that identity has the ability to perform various tasks.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+	/// </example>
 	public class AccessControl
 	{
 		/// <summary>
@@ -105,6 +108,9 @@ namespace MailKit {
 		/// <remarks>
 		/// The identifier name for the access control.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The identifier name.</value>
 		public string Name {
 			get; private set;
@@ -116,6 +122,9 @@ namespace MailKit {
 		/// <remarks>
 		/// Gets the access rights.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The access rights.</value>
 		public AccessRights Rights {
 			get; private set;

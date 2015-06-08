@@ -31,6 +31,9 @@ namespace MailKit {
 	/// <remarks>
 	/// A folder access mode.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
+	/// </example>
 	public enum FolderAccess {
 		/// <summary>
 		/// The folder is not open.

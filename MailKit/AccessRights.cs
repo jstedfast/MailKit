@@ -37,7 +37,7 @@ namespace MailKit {
 	/// </remarks>
 	public class AccessRights : ICollection<AccessRight>
 	{
-		List<AccessRight> list = new List<AccessRight> ();
+		readonly List<AccessRight> list = new List<AccessRight> ();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.AccessRights"/> class.

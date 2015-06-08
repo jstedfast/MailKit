@@ -42,6 +42,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Creates a new <see cref="MailKit.Net.Imap.ImapImplementation"/>.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		public ImapImplementation ()
 		{
 			Properties = new Dictionary<string, string> ();
@@ -62,6 +65,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets the dictionary of raw identification properties.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The properties.</value>
 		public Dictionary<string, string> Properties {
 			get; private set;
@@ -73,6 +79,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets or sets the name of the program.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The program name.</value>
 		public string Name {
 			get { return GetProperty ("name"); }
@@ -85,6 +94,9 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Gets or sets the version of the program.
 		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+		/// </example>
 		/// <value>The program version.</value>
 		public string Version {
 			get { return GetProperty ("version"); }
