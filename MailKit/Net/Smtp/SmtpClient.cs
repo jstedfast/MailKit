@@ -1197,54 +1197,9 @@ namespace MailKit.Net.Smtp {
 				base.VisitMultipart (multipart);
 			}
 
-			ContentEncoding GetFinalEncoding (MimePart part)
-			{
-				if ((Capabilities & SmtpCapabilities.BinaryMime) != 0) {
-					// no need to re-encode...
-					return part.ContentTransferEncoding;
-				}
-
-				if ((Capabilities & SmtpCapabilities.EightBitMime) != 0) {
-					switch (part.ContentTransferEncoding) {
-					case ContentEncoding.Default:
-					case ContentEncoding.Binary:
-						break;
-					default:
-						// all other Content-Transfer-Encodings are safe to transmit...
-						return part.ContentTransferEncoding;
-					}
-				}
-
-				switch (part.ContentTransferEncoding) {
-				case ContentEncoding.EightBit:
-				case ContentEncoding.Default:
-				case ContentEncoding.Binary:
-					break;
-				default:
-					// all other Content-Transfer-Encodings are safe to transmit...
-					return part.ContentTransferEncoding;
-				}
-
-				ContentEncoding encoding;
-
-				if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
-					encoding = part.GetBestEncoding (EncodingConstraint.None, MaxLineLength);
-				else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
-					encoding = part.GetBestEncoding (EncodingConstraint.EightBit, MaxLineLength);
-				else
-					encoding = part.GetBestEncoding (EncodingConstraint.SevenBit, MaxLineLength);
-
-				if (encoding == ContentEncoding.SevenBit)
-					return encoding;
-
-				part.ContentTransferEncoding = encoding;
-
-				return encoding;
-			}
-
 			protected override void VisitMimePart (MimePart entity)
 			{
-				switch (GetFinalEncoding (entity)) {
+				switch (entity.ContentTransferEncoding) {
 				case ContentEncoding.EightBit:
 					// if the server supports the 8BITMIME extension, use it...
 					if ((Capabilities & SmtpCapabilities.EightBitMime) != 0) {
@@ -1533,6 +1488,15 @@ namespace MailKit.Net.Smtp {
 			if (format.International && (Capabilities & SmtpCapabilities.EightBitMime) == 0)
 				throw new NotSupportedException ("The SMTP server does not support the 8BITMIME extension.");
 
+			// prepare the message
+			if ((Capabilities & SmtpCapabilities.BinaryMime) != 0)
+				message.Prepare (EncodingConstraint.None, MaxLineLength);
+			else if ((Capabilities & SmtpCapabilities.EightBitMime) != 0)
+				message.Prepare (EncodingConstraint.EightBit, MaxLineLength);
+			else
+				message.Prepare (EncodingConstraint.SevenBit, MaxLineLength);
+
+			// figure out which SMTP extensions we need to use
 			var visitor = new ContentTransferEncodingVisitor (capabilities);
 			visitor.Visit (message);
 
