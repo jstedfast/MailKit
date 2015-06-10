@@ -500,8 +500,8 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					client.Send (CreateSimpleMessage (), CancellationToken.None);
-					Assert.Fail ("Expected an UnauthorizedAccessException");
-				} catch (UnauthorizedAccessException) {
+					Assert.Fail ("Expected an ServiceNotAuthenticatedException");
+				} catch (ServiceNotAuthenticatedException) {
 					// this is the expected exception
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
