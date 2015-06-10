@@ -1912,7 +1912,7 @@ namespace MailKit.Net.Imap {
 
 			format += " %L\r\n";
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, options, format, message);
+			var ic = new ImapCommand (Engine, cancellationToken, null, options, format, this, message);
 			ic.Progress = progress;
 
 			Engine.QueueCommand (ic);
