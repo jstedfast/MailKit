@@ -2699,8 +2699,8 @@ namespace MailKit.Net.Pop3 {
 		/// <para>Gets the messages at the specified indexes.</para>
 		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
-		/// <see cref="GetMessage(int,CancellationToken)"/> for each message because
-		/// it will batch the commands to reduce latency.</para>
+		/// <see cref="GetMessage(int,CancellationToken,ITransferProgress)"/> for each message
+		/// because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The messages.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -2771,8 +2771,8 @@ namespace MailKit.Net.Pop3 {
 		/// <para>Gets the messages within the specified range.</para>
 		/// <para>When the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
-		/// <see cref="GetMessage(int,CancellationToken)"/> for each message because
-		/// it will batch the commands to reduce latency.</para>
+		/// <see cref="GetMessage(int,CancellationToken,ITransferProgress)"/> for each message
+		/// because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
@@ -2891,8 +2891,8 @@ namespace MailKit.Net.Pop3 {
 		/// <para>Get the message or header streams at the specified indexes.</para>
 		/// <para>If the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
-		/// <see cref="GetStream(int,bool,CancellationToken)"/> for each message because
-		/// it will batch the commands to reduce latency.</para>
+		/// <see cref="GetStream(int,bool,CancellationToken,ITransferProgress)"/> for each message
+		/// because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
 		/// <param name="indexes">The indexes of the messages.</param>
@@ -2964,8 +2964,8 @@ namespace MailKit.Net.Pop3 {
 		/// <para>Gets the message or header streams within the specified range.</para>
 		/// <para>If the POP3 server supports the <see cref="Pop3Capabilities.Pipelining"/>
 		/// extension, this method will likely be more efficient than using
-		/// <see cref="GetStream(int,bool,CancellationToken)"/> for each message because
-		/// it will batch the commands to reduce latency.</para>
+		/// <see cref="GetStream(int,bool,CancellationToken,ITransferProgress)"/> for each message
+		/// because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
 		/// <param name="startIndex">The index of the first stream to get.</param>

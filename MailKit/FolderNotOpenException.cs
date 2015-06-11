@@ -36,7 +36,7 @@ namespace MailKit {
 	/// <remarks>
 	/// This exception is thrown when an operation on a folder could not be completed
 	/// due to the folder being in a closed state. For example, the
-	/// <see cref="IMailFolder.GetMessage(UniqueId,System.Threading.CancellationToken)"/>
+	/// <see cref="IMailFolder.GetMessage(UniqueId,System.Threading.CancellationToken, ITransferProgress)"/>
 	/// method will throw a <see cref="FolderNotOpenException"/> if the folder is not
 	/// current open.
 	/// </remarks>

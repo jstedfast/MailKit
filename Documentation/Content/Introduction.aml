@@ -10,12 +10,24 @@
       <content>
         <list class="bullet">
           <listItem>
-            <para>
-              SASL Authentication
-            </para>
+            <para>Security</para>
             <list class="bullet">
               <listItem>
-                <para>Supports the CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, PLAIN, SCRAM-SHA-1, and XOAUTH2 mechanisms.</para>
+                <para>SASL Authentication</para>
+                <list class="bullet">
+                  <listItem>
+                    <para>Supports the CRAM-MD5, DIGEST-MD5, LOGIN, NTLM, PLAIN, SCRAM-SHA-1, and XOAUTH2 mechanisms.</para>
+                  </listItem>
+                </list>
+              </listItem>
+              <listItem>
+                <para>Supports S/MIME v3.2.</para>
+              </listItem>
+              <listItem>
+                <para>Supports OpenPGP.</para>
+              </listItem>
+              <listItem>
+                <para>Supports DKIM-Signatures.</para>
               </listItem>
             </list>
           </listItem>
@@ -66,9 +78,6 @@
               </listItem>
               <listItem>
                 <para>Robust: handles a wide variety of broken MIME formatting with ease.</para>
-              </listItem>
-              <listItem>
-                <para>Has full support for S/MIME v3.2 and OpenPGP.</para>
               </listItem>
             </list>
           </listItem>

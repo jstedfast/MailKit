@@ -1563,7 +1563,7 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Get the message or header streams at the specified indexes.</para>
 		/// <para>If the mail server supports pipelining, this method will likely be more
-		/// efficient than using <see cref="GetStream(int,bool,CancellationToken)"/> for
+		/// efficient than using <see cref="GetStream(int,bool,CancellationToken,ITransferProgress)"/> for
 		/// each message because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>
@@ -1663,7 +1663,7 @@ namespace MailKit {
 		/// <remarks>
 		/// <para>Gets the message or header streams within the specified range.</para>
 		/// <para>If the mail server supports pipelining, this method will likely be more
-		/// efficient than using <see cref="GetStream(int,bool,CancellationToken)"/> for
+		/// efficient than using <see cref="GetStream(int,bool,CancellationToken,ITransferProgress)"/> for
 		/// each message because it will batch the commands to reduce latency.</para>
 		/// </remarks>
 		/// <returns>The message or header streams.</returns>

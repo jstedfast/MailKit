@@ -13746,7 +13746,8 @@ namespace MailKit {
 		/// Search the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="query">The search query.</param>
@@ -13787,7 +13788,8 @@ namespace MailKit {
 		/// Asynchronously search the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="query">The search query.</param>
@@ -13840,7 +13842,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="query">The search query.</param>
@@ -13891,7 +13893,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="query">The search query.</param>
@@ -13956,7 +13958,8 @@ namespace MailKit {
 		/// Search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -14005,7 +14008,8 @@ namespace MailKit {
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query.
 		/// </summary>
 		/// <remarks>
-		/// The returned array of unique identifiers can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The returned array of unique identifiers can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs in the specified sort order.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -14072,7 +14076,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -14130,7 +14134,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of matching UIDs.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -14208,7 +14212,8 @@ namespace MailKit {
 		/// Thread the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="algorithm">The threading algorithm to use.</param>
@@ -14255,7 +14260,8 @@ namespace MailKit {
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="algorithm">The threading algorithm to use.</param>
@@ -14312,7 +14318,8 @@ namespace MailKit {
 		/// Thread the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="uids">The subset of UIDs</param>
@@ -14367,7 +14374,8 @@ namespace MailKit {
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
 		/// </summary>
 		/// <remarks>
-		/// The <see cref="MessageThread.UniqueId"/> can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken)"/>.
+		/// The <see cref="MessageThread.UniqueId"/> can be used with methods such as
+		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
 		/// </remarks>
 		/// <returns>An array of message threads.</returns>
 		/// <param name="uids">The subset of UIDs</param>
