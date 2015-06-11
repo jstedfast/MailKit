@@ -34,6 +34,9 @@ namespace MailKit.Net.Imap {
 	/// Allows an IMAP client and server to share their implementation details
 	/// with each other for the purposes of debugging.
 	/// </remarks>
+	/// <example>
+	/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
+	/// </example>
 	public class ImapImplementation
 	{
 		/// <summary>
