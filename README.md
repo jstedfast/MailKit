@@ -81,7 +81,7 @@ All of the other .NET IMAP client implementations that I could find suffer from 
 problems such as ignoring unexpected untagged responses, assuming that literal string tokens will
 never be used for anything other than message bodies (when in fact they could be used for pretty
 much any string token in a response), assuming that the way to find the end of a message body in a
-FETCH response is by scanning for ") UID", and not properly handling mailbox names with international
+FETCH response is by scanning for `") UID"`, and not properly handling mailbox names with international
 characters to simply name a few.
 
 IMAP requires a LOT of time spent laboriously reading and re-reading the IMAP specifications (as well
