@@ -1,5 +1,14 @@
 # Release Notes
 
+### MailKit 1.2.4
+
+* Updated SmtpClient to use MimeMessage.Prepare() instead of implementing its own logic.
+* Added a new ITransferProgress interface and updated IMAP, POP3 and SMTP methods to
+  take an optional ITransferProgress parameter to allow for progress reporting.
+* Implemented client-side UID EXPUNGE for IMAP servers that do not support the UIDPLUS
+  extension.
+* Improved API documentation.
+
 ### MailKit 1.2.3
 
 * Fixed ImapFolder.AddFlags() to throw FolderNotOpenException if the folder is not

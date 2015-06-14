@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.2.3.0</version>
+        <version>1.2.4.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,15 +22,16 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed ImapFolder.AddFlags() to throw FolderNotOpenException if the folder is not opened in read-write mode. (issue #202)
-* Fixed ImapFolder.GetMessage/BodyPart/Stream() to not modify a dictionary while looping over it. (issue #201)
-* Fixed ImapFolder to throw FolderNotFoundException instead of ArgumentException when the command fails due to the folder not existing.
+        <releaseNotes>* Updated SmtpClient to use MimeMessage.Prepare() instead of implementing its own logic.
+* Added a new ITransferProgress interface and updated IMAP, POP3 and SMTP methods to take an optional ITransferProgress parameter to allow for progress reporting.
+* Implemented client-side UID EXPUNGE for IMAP servers that do not support the UIDPLUS extension.
+* Improved API documentation.
 </releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.2.3.0" />
+            <dependency id="MimeKit" version="1.2.4.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
