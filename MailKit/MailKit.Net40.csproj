@@ -89,7 +89,9 @@
     <Compile Include="Search\NumericSearchQuery.cs" />
     <Compile Include="Search\OrderBy.cs" />
     <Compile Include="Search\OrderByType.cs" />
+    <Compile Include="Search\SearchOptions.cs" />
     <Compile Include="Search\SearchQuery.cs" />
+    <Compile Include="Search\SearchResults.cs" />
     <Compile Include="Search\SearchTerm.cs" />
     <Compile Include="Search\SortOrder.cs" />
     <Compile Include="Search\TextSearchQuery.cs" />

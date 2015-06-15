@@ -24,8 +24,6 @@
 // THE SOFTWARE.
 //
 
-using System.Collections.Generic;
-
 namespace MailKit.Net.Imap {
 	enum ImapResponseCodeType : byte {
 		Alert,
