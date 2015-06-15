@@ -7994,31 +7994,30 @@ namespace MailKit.Net.Imap {
 				case "MODSEQ":
 					if (!ulong.TryParse ((string) token.Value, out modseq))
 						throw ImapEngine.UnexpectedToken (token, false);
+
 					results.ModSeq = modseq;
 					break;
 				case "COUNT":
 					if (!int.TryParse ((string) token.Value, out count))
 						throw ImapEngine.UnexpectedToken (token, false);
+
 					results.Count = count;
 					break;
 				case "MIN":
 					if (!uint.TryParse ((string) token.Value, out min))
 						throw ImapEngine.UnexpectedToken (token, false);
+
 					results.Min = new UniqueId (ic.Folder.UidValidity, min);
 					break;
 				case "MAX":
 					if (!uint.TryParse ((string) token.Value, out max))
 						throw ImapEngine.UnexpectedToken (token, false);
+
 					results.Max = new UniqueId (ic.Folder.UidValidity, max);
 					break;
 				case "ALL":
 					if (!UniqueIdSet.TryParse ((string) token.Value, ic.Folder.UidValidity, out uids))
 						throw ImapEngine.UnexpectedToken (token, false);
-
-					if (uids.Count > 0) {
-						results.Max = uids[uids.Count - 1];
-						results.Min = uids[0];
-					}
 
 					results.Count = uids.Count;
 					break;
@@ -8244,9 +8243,7 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="query"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
@@ -8347,8 +8344,6 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is empty.</para>
@@ -8459,7 +8454,9 @@ namespace MailKit.Net.Imap {
 		/// <paramref name="query"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the ESEARCH extension.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -8485,7 +8482,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var args = new List<string> ();
 			string charset;
@@ -8555,7 +8552,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
+		/// <para>The IMAP server does not support the ESORT extension.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -8581,7 +8578,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public SearchResults Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override SearchResults Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var args = new List<string> ();
 			string charset;
@@ -8656,12 +8653,12 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="query"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+		/// One or more of the <paramref name="uids"/> is invalid.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.
+		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+		/// <para>-or-</para>
+		/// <para>The IMAP server does not support the ESEARCH extension.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -8687,7 +8684,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
+		public override SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 			var args = new List<string> ();
@@ -8759,8 +8756,6 @@ namespace MailKit.Net.Imap {
 		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
 		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is empty.</para>
@@ -8768,7 +8763,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.NotSupportedException">
 		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
 		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
+		/// <para>The IMAP server does not support the ESORT extension.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -8794,7 +8789,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
+		public override SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 			var args = new List<string> ();
