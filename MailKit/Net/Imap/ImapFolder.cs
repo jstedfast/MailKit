@@ -2244,7 +2244,7 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				return new UniqueId[0];
 
-			return new ReadOnlyCollection<UniqueId> (uids);
+			return uids;
 		}
 
 		/// <summary>
@@ -2375,7 +2375,7 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				return new UniqueId[0];
 
-			return new ReadOnlyCollection<UniqueId> (uids);
+			return uids;
 		}
 
 		/// <summary>
@@ -6458,7 +6458,7 @@ namespace MailKit.Net.Imap {
 					for (int i = 0; i < unmodified.Length; i++)
 						unmodified[i] = (int) (modified.UidSet[i].Id - 1);
 
-					return new ReadOnlyCollection<int> (unmodified);
+					return unmodified;
 				}
 			}
 
@@ -7231,7 +7231,7 @@ namespace MailKit.Net.Imap {
 					for (int i = 0; i < unmodified.Length; i++)
 						unmodified[i] = (int) (modified.UidSet[i].Id - 1);
 
-					return new ReadOnlyCollection<int> (unmodified);
+					return unmodified;
 				}
 			}
 
