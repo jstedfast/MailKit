@@ -211,47 +211,6 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Attempts to parse an atom token as a set of UIDs.
-		/// </summary>
-		/// <returns><c>true</c> if the UIDs were successfully parsed, otherwise <c>false</c>.</returns>
-		/// <param name="atom">The atom string.</param>
-		/// <param name="validity">The UidValidity.</param>
-		/// <param name="uids">The UIDs.</param>
-		public static bool TryParseUidSet (string atom, uint validity, out IList<UniqueId> uids)
-		{
-			var ranges = atom.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			var list = new List<UniqueId> ();
-
-			uids = null;
-
-			for (int i = 0; i < ranges.Length; i++) {
-				var minmax = ranges[i].Split (':');
-				uint min;
-
-				if (!uint.TryParse (minmax[0], out min) || min == 0)
-					return false;
-
-				if (minmax.Length == 2) {
-					uint max;
-
-					if (!uint.TryParse (minmax[1], out max) || max == 0)
-						return false;
-
-					for (uint uid = min; uid <= max; uid++)
-						list.Add (new UniqueId (validity, uid));
-				} else if (minmax.Length == 1) {
-					list.Add (new UniqueId (validity, min));
-				} else {
-					return false;
-				}
-			}
-
-			uids = new ReadOnlyCollection<UniqueId> (list);
-
-			return true;
-		}
-
-		/// <summary>
 		/// Formats the array of indexes as a string suitable for use with IMAP commands.
 		/// </summary>
 		/// <returns>The index set.</returns>

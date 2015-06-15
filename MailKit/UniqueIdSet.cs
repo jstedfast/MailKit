@@ -475,5 +475,76 @@ namespace MailKit {
 
 			return builder.ToString ();
 		}
+
+		/// <summary>
+		/// Attempt to parse the specified token as a set of unique identifiers.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse the specified token as a set of unique identifiers.
+		/// </remarks>
+		/// <returns><c>true</c> if the set of unique identifiers were successfully parsed; otherwise, <c>false</c>.</returns>
+		/// <param name="token">The token containing the set of unique identifiers.</param>
+		/// <param name="validity">The UIDVALIDITY value.</param>
+		/// <param name="uids">The set of unique identifiers.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		public static bool TryParse (string token, uint validity, out UniqueIdSet uids)
+		{
+			if (token == null)
+				throw new ArgumentNullException ("token");
+
+			var ranges = token.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			var uidset = new UniqueIdSet ();
+
+			uids = null;
+
+			for (int i = 0; i < ranges.Length; i++) {
+				var minmax = ranges[i].Split (':');
+				uint min;
+
+				if (!uint.TryParse (minmax[0], out min) || min == 0)
+					return false;
+
+				if (minmax.Length == 2) {
+					uint max;
+
+					if (!uint.TryParse (minmax[1], out max) || max == 0)
+						return false;
+
+					var uid0 = new UniqueId (validity, min < max ? min : max);
+					var uid1 = new UniqueId (validity, min < max ? max : min);
+
+					uidset.ranges.Add (new UniqueIdRange (uid0, uid1));
+				} else if (minmax.Length == 1) {
+					var uid = new UniqueId (validity, min);
+
+					uidset.ranges.Add (new UniqueIdRange (uid, uid));
+				} else {
+					return false;
+				}
+			}
+
+			uids = uidset;
+
+			return true;
+		}
+
+		/// <summary>
+		/// Attempt to parse the specified token as a set of unique identifiers.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse the specified token as a set of unique identifiers.
+		/// </remarks>
+		/// <returns><c>true</c> if the set of unique identifiers were successfully parsed; otherwise, <c>false</c>.</returns>
+		/// <param name="token">The token containing the set of unique identifiers.</param>
+		/// <param name="uids">The set of unique identifiers.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		public static bool TryParse (string token, out UniqueIdSet uids)
+		{
+			return TryParse (token, 0, out uids);
+		}
 	}
 }

@@ -7928,7 +7928,7 @@ namespace MailKit.Net.Imap {
 		static void ESearchMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
-			IList<UniqueId> uids = null;
+			UniqueIdSet uids = null;
 			uint min, max, count;
 			bool uid = false;
 			ulong modseq;
@@ -8004,7 +8004,7 @@ namespace MailKit.Net.Imap {
 						throw ImapEngine.UnexpectedToken (token, false);
 					break;
 				case "ALL":
-					if (!ImapUtils.TryParseUidSet ((string) token.Value, ic.Folder.UidValidity, out uids))
+					if (!UniqueIdSet.TryParse ((string) token.Value, ic.Folder.UidValidity, out uids))
 						throw ImapEngine.UnexpectedToken (token, false);
 					break;
 				default:
@@ -8014,7 +8014,7 @@ namespace MailKit.Net.Imap {
 				token = engine.ReadToken (ic.CancellationToken);
 			} while (true);
 
-			ic.UserData = uids ?? new UniqueId[0];
+			ic.UserData = uids ?? new UniqueIdSet ();
 		}
 
 		/// <summary>
@@ -8732,7 +8732,7 @@ namespace MailKit.Net.Imap {
 		internal void OnVanished (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
-			IList<UniqueId> vanished;
+			UniqueIdSet vanished;
 			bool earlier = false;
 
 			if (token.Type == ImapTokenType.OpenParen) {
@@ -8754,7 +8754,7 @@ namespace MailKit.Net.Imap {
 				token = engine.ReadToken (cancellationToken);
 			}
 
-			if (token.Type != ImapTokenType.Atom || !ImapUtils.TryParseUidSet ((string) token.Value, UidValidity, out vanished))
+			if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, UidValidity, out vanished))
 				throw ImapEngine.UnexpectedToken (token, false);
 
 			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));

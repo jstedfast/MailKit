@@ -245,7 +245,7 @@ namespace MailKit.Net.Imap {
 
 	class AppendUidResponseCode : UidValidityResponseCode
 	{
-		public IList<UniqueId> UidSet;
+		public UniqueIdSet UidSet;
 
 		internal AppendUidResponseCode (ImapResponseCodeType type) : base (type)
 		{
@@ -254,7 +254,7 @@ namespace MailKit.Net.Imap {
 
 	class CopyUidResponseCode : UidValidityResponseCode
 	{
-		public IList<UniqueId> SrcUidSet, DestUidSet;
+		public UniqueIdSet SrcUidSet, DestUidSet;
 
 		internal CopyUidResponseCode (ImapResponseCodeType type) : base (type)
 		{
@@ -281,7 +281,7 @@ namespace MailKit.Net.Imap {
 
 	class ModifiedResponseCode : ImapResponseCode
 	{
-		public IList<UniqueId> UidSet;
+		public UniqueIdSet UidSet;
 
 		internal ModifiedResponseCode (ImapResponseCodeType type) : base (type, false)
 		{
