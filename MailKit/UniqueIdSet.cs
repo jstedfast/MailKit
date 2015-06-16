@@ -40,7 +40,7 @@ namespace MailKit {
 	public class UniqueIdSet : IList<UniqueId>
 	{
 		readonly List<UniqueIdRange> ranges;
-		int count;
+		long count;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdSet"/> class.
@@ -78,7 +78,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
-			get { return count; }
+			get { return (int) Math.Min (count, int.MaxValue); }
 		}
 
 		/// <summary>
@@ -494,40 +494,46 @@ namespace MailKit {
 			if (token == null)
 				throw new ArgumentNullException ("token");
 
-			var ranges = token.Split (new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-			var uidset = new UniqueIdSet ();
+			uids = new UniqueIdSet ();
 
-			uids = null;
+			UniqueId uid0, uid1;
+			int index = 0;
 
-			for (int i = 0; i < ranges.Length; i++) {
-				var minmax = ranges[i].Split (':');
-				uint min;
-
-				if (!uint.TryParse (minmax[0], out min) || min == 0)
+			// FIXME: this does not handle overlapping ranges
+			do {
+				if (!UniqueId.TryParse (token, ref index, validity, out uid0))
 					return false;
 
-				if (minmax.Length == 2) {
-					uint max;
+				if (index >= token.Length) {
+					uids.ranges.Add (new UniqueIdRange (uid0, uid0));
+					uids.count++;
+					return true;
+				}
 
-					if (!uint.TryParse (minmax[1], out max) || max == 0)
+				if (token[index] == ':') {
+					index++;
+
+					if (!UniqueId.TryParse (token, ref index, validity, out uid1))
 						return false;
 
-					var uid0 = new UniqueId (validity, min < max ? min : max);
-					var uid1 = new UniqueId (validity, min < max ? max : min);
-
-					uidset.ranges.Add (new UniqueIdRange (uid0, uid1));
-				} else if (minmax.Length == 1) {
-					var uid = new UniqueId (validity, min);
-
-					uidset.ranges.Add (new UniqueIdRange (uid, uid));
+					if (uid1.Id >= uid0.Id) {
+						uids.ranges.Add (new UniqueIdRange (uid0, uid1));
+						uids.count += (uid1.Id - uid0.Id) + 1;
+					} else {
+						uids.ranges.Add (new UniqueIdRange (uid1, uid0));
+						uids.count += (uid0.Id - uid1.Id) + 1;
+					}
 				} else {
-					return false;
+					uids.ranges.Add (new UniqueIdRange (uid0, uid0));
+					uids.count++;
 				}
-			}
 
-			uids = uidset;
+				if (index >= token.Length)
+					return true;
 
-			return true;
+				if (token[index++] != ',')
+					return false;
+			} while (true);
 		}
 
 		/// <summary>

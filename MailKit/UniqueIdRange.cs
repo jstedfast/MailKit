@@ -324,5 +324,65 @@ namespace MailKit {
 
 			return string.Format ("{0}:{1}", Min, Max);
 		}
+
+		/// <summary>
+		/// Attempt to parse a unique identifier range.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse a unique identifier range.
+		/// </remarks>
+		/// <returns><c>true</c> if the unique identifier range was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <param name="token">The token to parse.</param>
+		/// <param name="validity">The UIDVALIDITY value.</param>
+		/// <param name="range">The unique identifier range.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		public bool TryParse (string token, uint validity, out UniqueIdRange range)
+		{
+			if (token == null)
+				throw new ArgumentNullException ("token");
+
+			UniqueId min, max;
+			int index = 0;
+
+			if (!UniqueId.TryParse (token, ref index, validity, out min) || index + 2 >= token.Length || token[index++] != ':') {
+				range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+				return false;
+			}
+
+			if (token[index] != '*') {
+				if (!UniqueId.TryParse (token, ref index, validity, out max) || index < token.Length) {
+					range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+					return false;
+				}
+			} else if (index + 1 != token.Length) {
+				range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+				return false;
+			} else {
+				max = UniqueId.MaxValue;
+			}
+
+			range = new UniqueIdRange (min, max);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Attempt to parse a unique identifier range.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse a unique identifier range.
+		/// </remarks>
+		/// <returns><c>true</c> if the unique identifier range was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <param name="token">The token to parse.</param>
+		/// <param name="range">The unique identifier range.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		public bool TryParse (string token, out UniqueIdRange range)
+		{
+			return TryParse (token, 0, out range);
+		}
 	}
 }

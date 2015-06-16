@@ -254,5 +254,83 @@ namespace MailKit {
 		{
 			return Id.ToString ();
 		}
+
+		/// <summary>
+		/// Attempt to parse a unique identifier.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse a unique identifier.
+		/// </remarks>
+		/// <returns><c>true</c> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <param name="token">The token to parse.</param>
+		/// <param name="index">The index to start parsing.</param>
+		/// <param name="validity">The UIDVALIDITY value.</param>
+		/// <param name="uid">The unique identifier.</param>
+		internal static bool TryParse (string token, ref int index, uint validity, out UniqueId uid)
+		{
+			uint value = 0;
+
+			while (index < token.Length) {
+				char c = token[index];
+				uint v;
+
+				if (c < '0' || c > '9')
+					break;
+
+				v = (uint) (c - '0');
+
+				if (value > uint.MaxValue / 10 || (value == uint.MaxValue / 10 && v > uint.MaxValue % 10)) {
+					uid = new UniqueId (0);
+					return false;
+				}
+
+				value = (value * 10) + v;
+				index++;
+			}
+
+			uid = new UniqueId (validity, value);
+
+			return uid.Id != 0;
+		}
+
+		/// <summary>
+		/// Attempt to parse a unique identifier.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse a unique identifier.
+		/// </remarks>
+		/// <returns><c>true</c> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <param name="token">The token to parse.</param>
+		/// <param name="validity">The UIDVALIDITY value.</param>
+		/// <param name="uid">The unique identifier.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		public static bool TryParse (string token, uint validity, out UniqueId uid)
+		{
+			if (token == null)
+				throw new ArgumentNullException ("token");
+
+			int index = 0;
+
+			return TryParse (token, ref index, validity, out uid) && index == token.Length;
+		}
+
+		/// <summary>
+		/// Attempt to parse a unique identifier.
+		/// </summary>
+		/// <remarks>
+		/// Attempts to parse a unique identifier.
+		/// </remarks>
+		/// <returns><c>true</c> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
+		/// <param name="token">The token to parse.</param>
+		/// <param name="uid">The unique identifier.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		public static bool TryParse (string token, out UniqueId uid)
+		{
+			return TryParse (token, 0, out uid);
+		}
 	}
 }
