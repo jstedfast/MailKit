@@ -596,15 +596,30 @@ namespace MailKit.Net.Imap {
 			engine.ReadToken (cancellationToken);
 		}
 
-		static ContentType ParseContentType (ImapEngine engine, CancellationToken cancellationToken)
+		static bool ParseContentType (ImapEngine engine, CancellationToken cancellationToken, out ContentType contentType, out string value)
 		{
 			var type = ReadStringToken (engine, cancellationToken);
-			var subtype = ReadStringToken (engine, cancellationToken);
-			var token = engine.ReadToken (cancellationToken);
-			ContentType contentType;
+			var token = engine.PeekToken (cancellationToken);
 
-			if (token.Type == ImapTokenType.Nil)
-				return new ContentType (type, subtype);
+			value = null;
+
+			if (engine.IsGMail && token.Type == ImapTokenType.OpenParen) {
+				// Note: GMail's IMAP server implementation breaks when it encounters
+				// nested multiparts with the same boundary and returns a BODYSTRUCTURE
+				// like the example in https://github.com/jstedfast/MailKit/issues/205
+				contentType = null;
+				value = type;
+				return false;
+			}
+
+			var subtype = ReadStringToken (engine, cancellationToken);
+
+			token = engine.ReadToken (cancellationToken);
+
+			if (token.Type == ImapTokenType.Nil) {
+				contentType = new ContentType (type, subtype);
+				return true;
+			}
 
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
@@ -617,7 +632,7 @@ namespace MailKit.Net.Imap {
 			if (!ContentType.TryParse (builder.ToString (), out contentType))
 				contentType = new ContentType (type, subtype);
 
-			return contentType;
+			return true;
 		}
 
 		static ContentDisposition ParseContentDisposition (ImapEngine engine, CancellationToken cancellationToken)
@@ -737,20 +752,23 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static BodyPart ParseMultipart (ImapEngine engine, string path, CancellationToken cancellationToken)
+		static BodyPart ParseMultipart (ImapEngine engine, string path, string subtype, CancellationToken cancellationToken)
 		{
 			var prefix = path.Length > 0 ? path + "." : string.Empty;
 			var body = new BodyPartMultipart ();
 			ImapToken token;
 			int index = 1;
 
-			do {
-				body.BodyParts.Add (ParseBody (engine, prefix + index, cancellationToken));
-				token = engine.PeekToken (cancellationToken);
-				index++;
-			} while (token.Type == ImapTokenType.OpenParen);
+			// Note: if subtype is not null, then we are working around a GMail bug...
+			if (subtype == null) {
+				do {
+					body.BodyParts.Add (ParseBody (engine, prefix + index, cancellationToken));
+					token = engine.PeekToken (cancellationToken);
+					index++;
+				} while (token.Type == ImapTokenType.OpenParen);
 
-			var subtype = ReadStringToken (engine, cancellationToken);
+				subtype = ReadStringToken (engine, cancellationToken);
+			}
 
 			body.ContentType = new ContentType ("multipart", subtype);
 			body.PartSpecifier = path;
@@ -815,9 +833,17 @@ namespace MailKit.Net.Imap {
 			token = engine.PeekToken (cancellationToken);
 
 			if (token.Type == ImapTokenType.OpenParen)
-				return ParseMultipart (engine, path, cancellationToken);
+				return ParseMultipart (engine, path, null, cancellationToken);
 
-			var type = ParseContentType (engine, cancellationToken);
+			ContentType type;
+			string value;
+
+			if (!ParseContentType (engine, cancellationToken, out type, out value)) {
+				// GMail breakage... yay! What we have is a nested multipart with
+				// the same boundary as its parent.
+				return ParseMultipart (engine, path, value, cancellationToken);
+			}
+
 			var id = ReadNStringToken (engine, false, cancellationToken);
 			var desc = ReadNStringToken (engine, true, cancellationToken);
 			// Note: technically, body-fld-enc, is not allowed to be NIL, but we need to deal with broken servers...
