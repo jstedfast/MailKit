@@ -39,24 +39,27 @@ namespace MailKit {
 	/// </remarks>
 	public class UniqueIdRange : IList<UniqueId>
 	{
+		int direction;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdRange"/> class.
 		/// </summary>
 		/// <remarks>
 		/// Creates a new range of unique ids.
 		/// </remarks>
-		/// <param name="min">The first <see cref="UniqueId"/> in the range.</param>
-		/// <param name="max">The last <see cref="UniqueId"/> in the range.</param>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="min"/> is greater than <paramref name="max"/>.
-		/// </exception>
-		public UniqueIdRange (UniqueId min, UniqueId max)
+		/// <param name="start">The first <see cref="UniqueId"/> in the range.</param>
+		/// <param name="end">The last <see cref="UniqueId"/> in the range.</param>
+		public UniqueIdRange (UniqueId start, UniqueId end)
 		{
-			if (min.Id > max.Id)
-				throw new ArgumentException ();
-
-			Min = min;
-			Max = max;
+			if (start <= end) {
+				direction = 1;
+				Min = start;
+				Max = end;
+			} else {
+				direction = -1;
+				Max = start;
+				Min = end;
+			}
 		}
 
 		/// <summary>
@@ -173,8 +176,13 @@ namespace MailKit {
 
 			int index = arrayIndex;
 
-			for (uint uid = Min.Id; uid <= Max.Id; uid++, index++)
-				array[index] = new UniqueId (uid);
+			if (direction > 0) {
+				for (uint uid = Min.Id; uid <= Max.Id; uid++, index++)
+					array[index] = new UniqueId (uid);
+			} else {
+				for (uint uid = Max.Id; uid >= Min.Id; uid--, index++)
+					array[index] = new UniqueId (uid);
+			}
 		}
 
 		/// <summary>
@@ -210,7 +218,7 @@ namespace MailKit {
 			if (uid.Id < Min.Id || uid.Id > Max.Id)
 				return -1;
 
-			return (int) (uid.Id - Min.Id);
+			return direction > 0 ? (int) (uid.Id - Min.Id) : (int) (Max.Id - uid.Id);
 		}
 
 		/// <summary>
@@ -263,7 +271,9 @@ namespace MailKit {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				return new UniqueId (Min.Id + (uint) index);
+				uint uid = direction > 0 ? Min.Id + (uint) index : Max.Id - (uint) index;
+
+				return new UniqueId (uid);
 			}
 			set {
 				throw new NotSupportedException ();
@@ -283,8 +293,13 @@ namespace MailKit {
 		/// <returns>The enumerator.</returns>
 		public IEnumerator<UniqueId> GetEnumerator ()
 		{
-			for (uint uid = Min.Id; uid <= Max.Id; uid++)
-				yield return new UniqueId (uid);
+			if (direction > 0) {
+				for (uint uid = Min.Id; uid <= Max.Id; uid++)
+					yield return new UniqueId (uid);
+			} else {
+				for (uint uid = Max.Id; uid >= Min.Id; uid--)
+					yield return new UniqueId (uid);
+			}
 
 			yield break;
 		}
@@ -319,10 +334,14 @@ namespace MailKit {
 			if (Min == Max)
 				return Min.ToString ();
 
-			if (Max == UniqueId.MaxValue)
-				return string.Format ("{0}:*", Min);
+			if (direction > 0) {
+				if (Max == UniqueId.MaxValue)
+					return string.Format ("{0}:*", Min);
 
-			return string.Format ("{0}:{1}", Min, Max);
+				return string.Format ("{0}:{1}", Min, Max);
+			}
+
+			return string.Format ("{0}:{1}", Max, Min);
 		}
 
 		/// <summary>
@@ -343,16 +362,16 @@ namespace MailKit {
 			if (token == null)
 				throw new ArgumentNullException ("token");
 
-			UniqueId min, max;
+			UniqueId start, end;
 			int index = 0;
 
-			if (!UniqueId.TryParse (token, ref index, validity, out min) || index + 2 >= token.Length || token[index++] != ':') {
+			if (!UniqueId.TryParse (token, ref index, validity, out start) || index + 2 >= token.Length || token[index++] != ':') {
 				range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
 				return false;
 			}
 
 			if (token[index] != '*') {
-				if (!UniqueId.TryParse (token, ref index, validity, out max) || index < token.Length) {
+				if (!UniqueId.TryParse (token, ref index, validity, out end) || index < token.Length) {
 					range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
 					return false;
 				}
@@ -360,10 +379,10 @@ namespace MailKit {
 				range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
 				return false;
 			} else {
-				max = UniqueId.MaxValue;
+				end = UniqueId.MaxValue;
 			}
 
-			range = new UniqueIdRange (min, max);
+			range = new UniqueIdRange (start, end);
 
 			return true;
 		}

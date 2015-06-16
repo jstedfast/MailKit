@@ -40,6 +40,7 @@ namespace MailKit {
 	public class UniqueIdSet : IList<UniqueId>
 	{
 		readonly List<UniqueIdRange> ranges;
+		bool isReadOnly;
 		long count;
 
 		/// <summary>
@@ -89,7 +90,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if the set is read only; otherwise, <c>false</c>.</value>
 		public bool IsReadOnly {
-			get { return false; }
+			get { return isReadOnly; }
 		}
 
 		int BinarySearch (UniqueId uid)
@@ -185,8 +186,14 @@ namespace MailKit {
 		/// Adds the unique id to the set.
 		/// </remarks>
 		/// <param name="uid">The unique id to add.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The collection is readonly.
+		/// </exception>
 		public void Add (UniqueId uid)
 		{
+			if (IsReadOnly)
+				throw new InvalidOperationException ("The collection is readonly.");
+
 			BinaryInsert (uid);
 		}
 
@@ -197,10 +204,16 @@ namespace MailKit {
 		/// Adds all of the uids to the set.
 		/// </remarks>
 		/// <param name="uids">The collection of uids.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The collection is readonly.
+		/// </exception>
 		public void AddRange (IEnumerable<UniqueId> uids)
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
+
+			if (IsReadOnly)
+				throw new InvalidOperationException ("The collection is readonly");
 
 			foreach (var uid in uids)
 				BinaryInsert (uid);
@@ -212,8 +225,14 @@ namespace MailKit {
 		/// <remarks>
 		/// Clears the list.
 		/// </remarks>
+		/// <exception cref="System.InvalidOperationException">
+		/// The collection is readonly.
+		/// </exception>
 		public void Clear ()
 		{
+			if (IsReadOnly)
+				throw new InvalidOperationException ("The collection is readonly");
+
 			ranges.Clear ();
 			count = 0;
 		}
@@ -294,8 +313,14 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns><value>true</value> if the unique id was removed; otherwise <value>false</value>.</returns>
 		/// <param name="uid">The unique id to remove.</param>
+		/// <exception cref="System.InvalidOperationException">
+		/// The collection is readonly.
+		/// </exception>
 		public bool Remove (UniqueId uid)
 		{
+			if (IsReadOnly)
+				throw new InvalidOperationException ("The collection is readonly");
+
 			int index = BinarySearch (uid);
 
 			if (index == -1)
@@ -358,10 +383,16 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The collection is readonly.
+		/// </exception>
 		public void RemoveAt (int index)
 		{
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ("index");
+
+			if (IsReadOnly)
+				throw new InvalidOperationException ("The collection is readonly");
 
 			int offset = 0;
 
@@ -430,8 +461,8 @@ namespace MailKit {
 		public IEnumerator<UniqueId> GetEnumerator ()
 		{
 			for (int i = 0; i < ranges.Count; i++) {
-				for (uint uid = ranges[i].Min.Id; uid <= ranges[i].Max.Id; uid++)
-					yield return new UniqueId (uid);
+				foreach (var uid in ranges[i])
+					yield return uid;
 			}
 
 			yield break;
@@ -494,12 +525,11 @@ namespace MailKit {
 			if (token == null)
 				throw new ArgumentNullException ("token");
 
-			uids = new UniqueIdSet ();
+			uids = new UniqueIdSet { isReadOnly = true };
 
 			UniqueId uid0, uid1;
 			int index = 0;
 
-			// FIXME: this does not handle overlapping ranges
 			do {
 				if (!UniqueId.TryParse (token, ref index, validity, out uid0))
 					return false;
@@ -516,13 +546,9 @@ namespace MailKit {
 					if (!UniqueId.TryParse (token, ref index, validity, out uid1))
 						return false;
 
-					if (uid1.Id >= uid0.Id) {
-						uids.ranges.Add (new UniqueIdRange (uid0, uid1));
-						uids.count += (uid1.Id - uid0.Id) + 1;
-					} else {
-						uids.ranges.Add (new UniqueIdRange (uid1, uid0));
-						uids.count += (uid0.Id - uid1.Id) + 1;
-					}
+					var range = new UniqueIdRange (uid0, uid1);
+					uids.count += range.Count;
+					uids.ranges.Add (range);
 				} else {
 					uids.ranges.Add (new UniqueIdRange (uid0, uid0));
 					uids.count++;

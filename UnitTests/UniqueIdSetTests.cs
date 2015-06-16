@@ -163,5 +163,34 @@ namespace UnitTests {
 
 			Assert.AreEqual ("1:3,5:6,9:12,15,19:20", actual);
 		}
+
+		[Test]
+		public void TestParsingSimple ()
+		{
+			const string example = "1:3,5:6,9:12,15,19:20";
+			UniqueIdSet uids;
+
+			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (example, uids.ToString ());
+		}
+
+		[Test]
+		public void TestParsingReversedSet ()
+		{
+			var ids = new uint[] { 20, 19, 15, 12, 11, 10, 9, 6, 5, 3, 2, 1 };
+			const string example = "20:19,15,12:9,6:5,3:1";
+			UniqueIdSet uids;
+
+			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (example, uids.ToString ());
+			Assert.AreEqual (ids.Length, uids.Count);
+
+			var blah = new System.Text.StringBuilder ();
+			for (int i = 0; i < uids.Count; i++)
+				blah.AppendFormat ("{0},", uids[i].Id);
+
+			for (int i = 0; i < uids.Count; i++)
+				Assert.AreEqual (ids[i], uids[i].Id);
+		}
 	}
 }
