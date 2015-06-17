@@ -311,9 +311,16 @@ namespace MailKit {
 			if (token == null)
 				throw new ArgumentNullException ("token");
 
-			int index = 0;
+			uint id;
 
-			return TryParse (token, ref index, validity, out uid) && index == token.Length;
+			if (!uint.TryParse (token, out id)) {
+				uid = new UniqueId (0);
+				return false;
+			}
+
+			uid = new UniqueId (validity, id);
+
+			return true;
 		}
 
 		/// <summary>
@@ -330,7 +337,64 @@ namespace MailKit {
 		/// </exception>
 		public static bool TryParse (string token, out UniqueId uid)
 		{
-			return TryParse (token, 0, out uid);
+			if (token == null)
+				throw new ArgumentNullException ("token");
+
+			uint id;
+
+			if (!uint.TryParse (token, out id)) {
+				uid = new UniqueId (0);
+				return false;
+			}
+
+			uid = new UniqueId (id);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Parse a unique identifier.
+		/// </summary>
+		/// <remarks>
+		/// Parses a unique identifier.
+		/// </remarks>
+		/// <returns>The unique identifier.</returns>
+		/// <param name="token">A string containing the unique identifier.</param>
+		/// <param name="validity">The UIDVALIDITY.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.FormatException">
+		/// <paramref name="token"/> is not in the correct format.
+		/// </exception>
+		/// <exception cref="System.OverflowException">
+		/// The unique identifier is greater than <see cref="MaxValue"/>.
+		/// </exception>
+		public static UniqueId Parse (string token, uint validity)
+		{
+			return new UniqueId (validity, uint.Parse (token));
+		}
+
+		/// <summary>
+		/// Parse a unique identifier.
+		/// </summary>
+		/// <remarks>
+		/// Parses a unique identifier.
+		/// </remarks>
+		/// <returns>The unique identifier.</returns>
+		/// <param name="token">A string containing the unique identifier.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="token"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.FormatException">
+		/// <paramref name="token"/> is not in the correct format.
+		/// </exception>
+		/// <exception cref="System.OverflowException">
+		/// The unique identifier is greater than <see cref="MaxValue"/>.
+		/// </exception>
+		public static UniqueId Parse (string token)
+		{
+			return new UniqueId (uint.Parse (token));
 		}
 	}
 }
