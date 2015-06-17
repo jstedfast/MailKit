@@ -31,10 +31,10 @@ using System.Collections.Generic;
 
 namespace MailKit {
 	/// <summary>
-	/// A set of <see cref="UniqueId"/> items.
+	/// A set of unique identifiers.
 	/// </summary>
 	/// <remarks>
-	/// When dealing with a large number of unique ids, it may be more efficient to use a
+	/// When dealing with a large number of unique identifiers, it may be more efficient to use a
 	/// <see cref="UniqueIdSet"/> than a typical IList&lt;<see cref="UniqueId"/>&gt;.
 	/// </remarks>
 	public class UniqueIdSet : IList<UniqueId>
@@ -60,7 +60,7 @@ namespace MailKit {
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdSet"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new unique identifier set containing the specified uids.
+		/// Creates a new set of unique identifier set containing the specified uids.
 		/// </remarks>
 		/// <param name="uids">An initial set of unique ids.</param>
 		/// <param name="sort"><c>true</c> if unique identifiers should be sorted; otherwise, <c>false</c>.</param>
@@ -204,22 +204,21 @@ namespace MailKit {
 			count++;
 
 			if (ranges.Count > 0) {
-				int index = ranges.Count - 1;
-				var range = ranges[index];
+				var range = ranges[ranges.Count - 1];
 
 				if (range.Start == range.End) {
 					if (uid.Id == range.End.Id + 1 || uid.Id == range.End.Id - 1) {
-						ranges[index] = new UniqueIdRange (range.Start, uid);
+						range.End = uid;
 						return;
 					}
 				} else if (range.Start < range.End) {
 					if (uid.Id == range.End.Id + 1) {
-						ranges[index] = new UniqueIdRange (range.Start, uid);
+						range.End = uid;
 						return;
 					}
 				} else if (range.Start > range.End) {
 					if (uid.Id == range.End.Id - 1) {
-						ranges[index] = new UniqueIdRange (range.Start, uid);
+						range.End = uid;
 						return;
 					}
 				}
@@ -345,33 +344,27 @@ namespace MailKit {
 				// remove the first item in the range
 				if (range.Start != range.End) {
 					if (range.Start <= range.End)
-						ranges[index] = new UniqueIdRange (new UniqueId (uid.Id + 1), range.End);
+						range.Start = new UniqueId (uid.Id + 1);
 					else
-						ranges[index] = new UniqueIdRange (new UniqueId (uid.Id - 1), range.End);
+						range.Start = new UniqueId (uid.Id - 1);
 				} else {
 					ranges.RemoveAt (index);
 				}
 			} else if (uid == range.End) {
 				// remove the last item in the range
 				if (range.Start <= range.End)
-					ranges[index] = new UniqueIdRange (range.Start, new UniqueId (uid.Id - 1));
+					range.End = new UniqueId (uid.Id - 1);
 				else
-					ranges[index] = new UniqueIdRange (range.Start, new UniqueId (uid.Id + 1));
+					range.End = new UniqueId (uid.Id + 1);
 			} else {
 				// remove a uid from the middle of the range
-				UniqueId start, end;
-
 				if (range.Start < range.End) {
-					start = new UniqueId (uid.Id + 1);
-					end = new UniqueId (uid.Id - 1);
+					ranges.Insert (index, new UniqueIdRange (range.Start, new UniqueId (uid.Id - 1)));
+					range.Start = new UniqueId (uid.Id + 1);
 				} else {
-					start = new UniqueId (uid.Id - 1);
-					end = new UniqueId (uid.Id + 1);
+					ranges.Insert (index, new UniqueIdRange (range.Start, new UniqueId (uid.Id + 1)));
+					range.Start = new UniqueId (uid.Id - 1);
 				}
-
-				ranges[index] = new UniqueIdRange (start, range.End);
-				range = new UniqueIdRange (range.Start, end);
-				ranges.Insert (index, range);
 			}
 
 			count--;
@@ -572,6 +565,79 @@ namespace MailKit {
 					builder.Append (',');
 
 				builder.Append (ranges[i]);
+			}
+
+			return builder.ToString ();
+		}
+
+		/// <summary>
+		/// Format a generic list of unique identifiers as a string.
+		/// </summary>
+		/// <remarks>
+		/// Formats a generic list of unique identifiers as a string.
+		/// </remarks>
+		/// <returns>The string representation of the collection of unique identifiers.</returns>
+		/// <param name="uids">The unique identifiers.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="uids"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// One or more of the unique identifiers is invalid (has a value of <c>0</c>).
+		/// </exception>
+		public static string ToString (IList<UniqueId> uids)
+		{
+			if (uids == null)
+				throw new ArgumentNullException ("uids");
+
+			if (uids.Count == 0)
+				return string.Empty;
+
+			var range = uids as UniqueIdRange;
+			if (range != null)
+				return range.ToString ();
+
+			var set = uids as UniqueIdSet;
+			if (set != null)
+				return set.ToString ();
+
+			var builder = new StringBuilder ();
+			int index = 0;
+
+			while (index < uids.Count) {
+				if (uids[index].Id == 0)
+					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
+
+				uint start = uids[index].Id;
+				uint end = uids[index].Id;
+				int i = index + 1;
+
+				if (i < uids.Count) {
+					if (uids[i].Id == end + 1) {
+						end = uids[i++].Id;
+
+						while (i < uids.Count && uids[i].Id == end + 1) {
+							end++;
+							i++;
+						}
+					} else if (uids[i].Id == end - 1) {
+						end = uids[i++].Id;
+
+						while (i < uids.Count && uids[i].Id == end - 1) {
+							end--;
+							i++;
+						}
+					}
+				}
+
+				if (builder.Length > 0)
+					builder.Append (',');
+
+				if (start != end)
+					builder.AppendFormat ("{0}:{1}", start, end);
+				else
+					builder.Append (start.ToString ());
+
+				index = i;
 			}
 
 			return builder.ToString ();

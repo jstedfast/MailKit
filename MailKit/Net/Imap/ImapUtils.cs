@@ -288,58 +288,10 @@ namespace MailKit.Net.Imap {
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
 
-			var range = uids as UniqueIdRange;
-			if (range != null)
-				return range.ToString ();
-
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			var set = uids as UniqueIdSet;
-			if (set != null)
-				return set.ToString ();
-
-			var builder = new StringBuilder ();
-			int index = 0;
-
-			while (index < uids.Count) {
-				if (uids[index].Id == 0)
-					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
-
-				uint begin = uids[index].Id;
-				uint end = uids[index].Id;
-				int i = index + 1;
-
-				if (i < uids.Count) {
-					if (uids[i].Id == end + 1) {
-						end = uids[i++].Id;
-
-						while (i < uids.Count && uids[i].Id == end + 1) {
-							end++;
-							i++;
-						}
-					} else if (uids[i].Id == end - 1) {
-						end = uids[i++].Id;
-
-						while (i < uids.Count && uids[i].Id == end - 1) {
-							end--;
-							i++;
-						}
-					}
-				}
-
-				if (builder.Length > 0)
-					builder.Append (',');
-
-				if (begin != end)
-					builder.AppendFormat ("{0}:{1}", begin, end);
-				else
-					builder.Append (begin.ToString ());
-
-				index = i;
-			}
-
-			return builder.ToString ();
+			return UniqueIdSet.ToString (uids);
 		}
 
 		/// <summary>
