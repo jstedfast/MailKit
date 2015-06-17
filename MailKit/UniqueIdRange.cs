@@ -39,62 +39,77 @@ namespace MailKit {
 	/// </remarks>
 	public class UniqueIdRange : IList<UniqueId>
 	{
-		int direction;
+		static readonly UniqueIdRange Invalid = new UniqueIdRange (new UniqueId (0), new UniqueId (0));
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdRange"/> class.
 		/// </summary>
 		/// <remarks>
-		/// Creates a new range of unique ids.
+		/// Creates a new range of unique identifiers.
 		/// </remarks>
 		/// <param name="start">The first <see cref="UniqueId"/> in the range.</param>
 		/// <param name="end">The last <see cref="UniqueId"/> in the range.</param>
 		public UniqueIdRange (UniqueId start, UniqueId end)
 		{
-			if (start <= end) {
-				direction = 1;
-				Min = start;
-				Max = end;
-			} else {
-				direction = -1;
-				Max = start;
-				Min = end;
-			}
+			Start = start;
+			End = end;
 		}
 
 		/// <summary>
-		/// Gets the minimum unique id in the range.
+		/// Gets the minimum unique identifier in the range.
 		/// </summary>
 		/// <remarks>
-		/// Gets the minimum unique id in the range.
+		/// Gets the minimum unique identifier in the range.
 		/// </remarks>
-		/// <value>The minimum unique id.</value>
+		/// <value>The minimum unique identifier.</value>
 		public UniqueId Min {
+			get { return Start < End ? Start : End; }
+		}
+
+		/// <summary>
+		/// Gets the maximum unique identifier in the range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the maximum unique identifier in the range.
+		/// </remarks>
+		/// <value>The maximum unique identifier.</value>
+		public UniqueId Max {
+			get { return Start > End ? Start : End; }
+		}
+
+		/// <summary>
+		/// Get the start of the unique identifier range.
+		/// </summary>
+		/// <remarks>
+		/// Gets the start of the unique identifier range.
+		/// </remarks>
+		/// <value>The start of the range.</value>
+		public UniqueId Start {
 			get; internal set;
 		}
 
 		/// <summary>
-		/// Gets the maximum unique id in the range.
+		/// Get the end of the unique identifier range.
 		/// </summary>
 		/// <remarks>
-		/// Gets the maximum unique id in the range.
+		/// Gets the end of the unique identifier range.
 		/// </remarks>
-		/// <value>The maximum unique id.</value>
-		public UniqueId Max {
+		/// <value>The end of the range.</value>
+		public UniqueId End {
 			get; internal set;
 		}
 
 		#region ICollection implementation
 
 		/// <summary>
-		/// Get the number of unique ids in the range.
+		/// Get the number of unique identifiers in the range.
 		/// </summary>
 		/// <remarks>
-		/// Gets the number of unique ids in the range.
+		/// Gets the number of unique identifiers in the range.
 		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
-			get { return (int) (Max.Id - Min.Id) + 1; }
+			get { return (int) (Start <= End ? End.Id - Start.Id : Start.Id - End.Id) + 1; }
 		}
 
 		/// <summary>
@@ -109,13 +124,13 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Adds the unique id to the range.
+		/// Adds the unique identifier to the range.
 		/// </summary>
 		/// <remarks>
 		/// Since a <see cref="UniqueIdRange"/> is read-only, unique ids cannot
 		/// be added to the range.
 		/// </remarks>
-		/// <param name="uid">The unique id to add.</param>
+		/// <param name="uid">The unique identifier to add.</param>
 		/// <exception cref="System.NotSupportedException">
 		/// The list does not support adding items.
 		/// </exception>
@@ -144,11 +159,14 @@ namespace MailKit {
 		/// <remarks>
 		/// Determines whether or not the range contains the specified unique id.
 		/// </remarks>
-		/// <returns><value>true</value> if the specified unique id is in the range; otherwise <value>false</value>.</returns>
+		/// <returns><value>true</value> if the specified unique identifier is in the range; otherwise <value>false</value>.</returns>
 		/// <param name="uid">The unique id.</param>
 		public bool Contains (UniqueId uid)
 		{
-			return uid.Id >= Min.Id && uid.Id <= Max.Id;
+			if (Start.Id <= End.Id)
+				return uid.Id >= Start.Id && uid.Id <= End.Id;
+
+			return uid.Id <= Start.Id && uid.Id >= End.Id;
 		}
 
 		/// <summary>
@@ -176,23 +194,23 @@ namespace MailKit {
 
 			int index = arrayIndex;
 
-			if (direction > 0) {
-				for (uint uid = Min.Id; uid <= Max.Id; uid++, index++)
+			if (Start <= End) {
+				for (uint uid = Start.Id; uid <= End.Id; uid++, index++)
 					array[index] = new UniqueId (uid);
 			} else {
-				for (uint uid = Max.Id; uid >= Min.Id; uid--, index++)
+				for (uint uid = Start.Id; uid >= End.Id; uid--, index++)
 					array[index] = new UniqueId (uid);
 			}
 		}
 
 		/// <summary>
-		/// Removes the unique id from the range.
+		/// Removes the unique identifier from the range.
 		/// </summary>
 		/// <remarks>
 		/// Since a <see cref="UniqueIdRange"/> is read-only, unique ids cannot be removed.
 		/// </remarks>
-		/// <returns><value>true</value> if the unique id was removed; otherwise <value>false</value>.</returns>
-		/// <param name="uid">The unique id to remove.</param>
+		/// <returns><value>true</value> if the unique identifier was removed; otherwise <value>false</value>.</returns>
+		/// <param name="uid">The unique identifier to remove.</param>
 		/// <exception cref="System.NotSupportedException">
 		/// The list does not support removing items.
 		/// </exception>
@@ -215,17 +233,24 @@ namespace MailKit {
 		/// <param name="uid">The unique id.</param>
 		public int IndexOf (UniqueId uid)
 		{
-			if (uid.Id < Min.Id || uid.Id > Max.Id)
+			if (Start <= End) {
+				if (uid.Id < Start.Id || uid.Id > End.Id)
+					return -1;
+
+				return (int) (uid.Id - Start.Id);
+			}
+
+			if (uid.Id > Start.Id || uid.Id < End.Id)
 				return -1;
 
-			return direction > 0 ? (int) (uid.Id - Min.Id) : (int) (Max.Id - uid.Id);
+			return (int) (Start.Id - uid.Id);
 		}
 
 		/// <summary>
-		/// Inserts the specified unique id at the given index.
+		/// Inserts the specified unique identifier at the given index.
 		/// </summary>
 		/// <remarks>
-		/// Inserts the unique id at the specified index in the range.
+		/// Inserts the unique identifier at the specified index in the range.
 		/// </remarks>
 		/// <param name="index">The index to insert the unique id.</param>
 		/// <param name="uid">The unique id.</param>
@@ -238,10 +263,10 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Removes the unique id at the specified index.
+		/// Removes the unique identifier at the specified index.
 		/// </summary>
 		/// <remarks>
-		/// Removes the unique id at the specified index.
+		/// Removes the unique identifier at the specified index.
 		/// </remarks>
 		/// <param name="index">The index.</param>
 		/// <exception cref="System.NotSupportedException">
@@ -253,12 +278,12 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets or sets the unique id at the specified index.
+		/// Gets or sets the unique identifier at the specified index.
 		/// </summary>
 		/// <remarks>
-		/// Gets or sets the unique id at the specified index.
+		/// Gets or sets the unique identifier at the specified index.
 		/// </remarks>
-		/// <value>The unique id at the specified index.</value>
+		/// <value>The unique identifier at the specified index.</value>
 		/// <param name="index">The index.</param>
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
@@ -271,7 +296,7 @@ namespace MailKit {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				uint uid = direction > 0 ? Min.Id + (uint) index : Max.Id - (uint) index;
+				uint uid = Start <= End ? Start.Id + (uint) index : Start.Id - (uint) index;
 
 				return new UniqueId (uid);
 			}
@@ -293,11 +318,11 @@ namespace MailKit {
 		/// <returns>The enumerator.</returns>
 		public IEnumerator<UniqueId> GetEnumerator ()
 		{
-			if (direction > 0) {
-				for (uint uid = Min.Id; uid <= Max.Id; uid++)
+			if (Start <= End) {
+				for (uint uid = Start.Id; uid <= End.Id; uid++)
 					yield return new UniqueId (uid);
 			} else {
-				for (uint uid = Max.Id; uid >= Min.Id; uid--)
+				for (uint uid = Start.Id; uid >= End.Id; uid--)
 					yield return new UniqueId (uid);
 			}
 
@@ -331,17 +356,13 @@ namespace MailKit {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="UniqueIdRange"/>.</returns>
 		public override string ToString ()
 		{
-			if (Min == Max)
-				return Min.ToString ();
+			if (Start == End)
+				return Start.ToString ();
 
-			if (direction > 0) {
-				if (Max == UniqueId.MaxValue)
-					return string.Format ("{0}:*", Min);
+			if (Start <= End && End == UniqueId.MaxValue)
+				return string.Format ("{0}:*", Start);
 
-				return string.Format ("{0}:{1}", Min, Max);
-			}
-
-			return string.Format ("{0}:{1}", Max, Min);
+			return string.Format ("{0}:{1}", Start, End);
 		}
 
 		/// <summary>
@@ -366,17 +387,17 @@ namespace MailKit {
 			int index = 0;
 
 			if (!UniqueId.TryParse (token, ref index, validity, out start) || index + 2 >= token.Length || token[index++] != ':') {
-				range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+				range = Invalid;
 				return false;
 			}
 
 			if (token[index] != '*') {
 				if (!UniqueId.TryParse (token, ref index, validity, out end) || index < token.Length) {
-					range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+					range = Invalid;
 					return false;
 				}
 			} else if (index + 1 != token.Length) {
-				range = new UniqueIdRange (UniqueId.MinValue, UniqueId.MinValue);
+				range = Invalid;
 				return false;
 			} else {
 				end = UniqueId.MaxValue;
