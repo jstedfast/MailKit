@@ -85,7 +85,6 @@ namespace MailKit.Net.Smtp {
 
 		readonly HashSet<string> authenticationMechanisms = new HashSet<string> ();
 		readonly List<SmtpCommand> queued = new List<SmtpCommand> ();
-		readonly IProtocolLogger logger;
 		SmtpCapabilities capabilities;
 		int timeout = 100000;
 		bool authenticated;
@@ -127,12 +126,8 @@ namespace MailKit.Net.Smtp {
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ProtocolLogger"/>
 		/// </example>
-		public SmtpClient (IProtocolLogger protocolLogger)
+		public SmtpClient (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
-			if (protocolLogger == null)
-				throw new ArgumentNullException ("protocolLogger");
-
-			logger = protocolLogger;
 		}
 
 		/// <summary>
@@ -626,7 +621,7 @@ namespace MailKit.Net.Smtp {
 			if (replayStream == null)
 				throw new ArgumentNullException ("replayStream");
 
-			Stream = new SmtpStream (replayStream, null, logger);
+			Stream = new SmtpStream (replayStream, null, ProtocolLogger);
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			host = hostName;
@@ -843,9 +838,9 @@ namespace MailKit.Net.Smtp {
 				stream.ReadTimeout = timeout;
 			}
 
-			logger.LogConnect (uri);
+			ProtocolLogger.LogConnect (uri);
 
-			Stream = new SmtpStream (stream, socket, logger);
+			Stream = new SmtpStream (stream, socket, ProtocolLogger);
 
 			try {
 				// read the greeting
@@ -1006,9 +1001,9 @@ namespace MailKit.Net.Smtp {
 				stream.ReadTimeout = timeout;
 			}
 
-			logger.LogConnect (uri);
+			ProtocolLogger.LogConnect (uri);
 
-			Stream = new SmtpStream (stream, socket, logger);
+			Stream = new SmtpStream (stream, socket, ProtocolLogger);
 
 			try {
 				// read the greeting
@@ -1693,6 +1688,8 @@ namespace MailKit.Net.Smtp {
 				disposed = true;
 				Disconnect ();
 			}
+
+			base.Dispose (disposed);
 		}
 	}
 }

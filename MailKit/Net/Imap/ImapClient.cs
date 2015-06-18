@@ -72,7 +72,6 @@ namespace MailKit.Net.Imap {
 #elif !NETFX_CORE
 		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
 #endif
-		readonly IProtocolLogger logger;
 		readonly ImapEngine engine;
 #if NETFX_CORE
 		StreamSocket socket;
@@ -115,15 +114,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="protocolLogger"/> is <c>null</c>.
 		/// </exception>
-		public ImapClient (IProtocolLogger protocolLogger)
+		public ImapClient (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
-			if (protocolLogger == null)
-				throw new ArgumentNullException ("protocolLogger");
-
 			// FIXME: should this take a ParserOptions argument?
 			engine = new ImapEngine (CreateImapFolder);
 			engine.Alert += OnEngineAlert;
-			logger = protocolLogger;
 		}
 
 		/// <summary>
@@ -1033,7 +1028,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("replayStream");
 
 			engine.Uri = new Uri ("imap://" + host);
-			engine.Connect (new ImapStream (replayStream, null, logger), cancellationToken);
+			engine.Connect (new ImapStream (replayStream, null, ProtocolLogger), cancellationToken);
 			engine.TagPrefix = 'A';
 
 			if (engine.CapabilitiesVersion == 0)
@@ -1219,9 +1214,9 @@ namespace MailKit.Net.Imap {
 				stream.ReadTimeout = timeout;
 			}
 
-			logger.LogConnect (uri);
+			ProtocolLogger.LogConnect (uri);
 
-			engine.Connect (new ImapStream (stream, socket, logger), cancellationToken);
+			engine.Connect (new ImapStream (stream, socket, ProtocolLogger), cancellationToken);
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.
@@ -1367,9 +1362,9 @@ namespace MailKit.Net.Imap {
 				stream.ReadTimeout = timeout;
 			}
 
-			logger.LogConnect (uri);
+			ProtocolLogger.LogConnect (uri);
 
-			engine.Connect (new ImapStream (stream, socket, logger), cancellationToken);
+			engine.Connect (new ImapStream (stream, socket, ProtocolLogger), cancellationToken);
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.
@@ -2068,7 +2063,6 @@ namespace MailKit.Net.Imap {
 		{
 			if (disposing && !disposed) {
 				engine.Dispose ();
-				logger.Dispose ();
 
 #if NETFX_CORE
 				if (socket != null)
@@ -2077,6 +2071,8 @@ namespace MailKit.Net.Imap {
 
 				disposed = true;
 			}
+
+			base.Dispose (disposing);
 		}
 	}
 }

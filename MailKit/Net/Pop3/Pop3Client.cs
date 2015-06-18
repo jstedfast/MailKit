@@ -85,7 +85,6 @@ namespace MailKit.Net.Pop3 {
 
 		readonly Dictionary<string, int> dict = new Dictionary<string, int> ();
 		readonly MimeParser parser = new MimeParser (Stream.Null);
-		readonly IProtocolLogger logger;
 		readonly Pop3Engine engine;
 		ProbedCapabilities probed;
 #if NETFX_CORE
@@ -111,14 +110,10 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="protocolLogger"/> is <c>null</c>.
 		/// </exception>
-		public Pop3Client (IProtocolLogger protocolLogger)
+		public Pop3Client (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
-			if (protocolLogger == null)
-				throw new ArgumentNullException ("protocolLogger");
-
 			// FIXME: should this take a ParserOptions argument?
 			engine = new Pop3Engine ();
-			logger = protocolLogger;
 		}
 
 		/// <summary>
@@ -629,7 +624,7 @@ namespace MailKit.Net.Pop3 {
 			probed = ProbedCapabilities.None;
 
 			engine.Uri = new Uri ("pop://" + host);
-			engine.Connect (new Pop3Stream (replayStream, null, logger), cancellationToken);
+			engine.Connect (new Pop3Stream (replayStream, null, ProtocolLogger), cancellationToken);
 			engine.QueryCapabilities (cancellationToken);
 			engine.Disconnected += OnEngineDisconnected;
 			OnConnected ();
@@ -814,9 +809,9 @@ namespace MailKit.Net.Pop3 {
 				stream.ReadTimeout = timeout;
 			}
 
-			logger.LogConnect (uri);
+			ProtocolLogger.LogConnect (uri);
 
-			engine.Connect (new Pop3Stream (stream, socket, logger), cancellationToken);
+			engine.Connect (new Pop3Stream (stream, socket, ProtocolLogger), cancellationToken);
 
 			try {
 				engine.QueryCapabilities (cancellationToken);
@@ -956,9 +951,9 @@ namespace MailKit.Net.Pop3 {
 				stream.ReadTimeout = timeout;
 			}
 
-			logger.LogConnect (uri);
+			ProtocolLogger.LogConnect (uri);
 
-			engine.Connect (new Pop3Stream (stream, socket, logger), cancellationToken);
+			engine.Connect (new Pop3Stream (stream, socket, ProtocolLogger), cancellationToken);
 
 			try {
 				engine.QueryCapabilities (cancellationToken);
@@ -3523,11 +3518,10 @@ namespace MailKit.Net.Pop3 {
 		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
-		protected override  void Dispose (bool disposing)
+		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
 				engine.Disconnect ();
-				logger.Dispose ();
 
 #if NETFX_CORE
 				if (socket != null)
@@ -3536,6 +3530,8 @@ namespace MailKit.Net.Pop3 {
 
 				disposed = true;
 			}
+
+			base.Dispose (disposing);
 		}
 	}
 }

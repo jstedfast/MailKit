@@ -46,7 +46,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailTransport"/> class.
 		/// </remarks>
-		protected MailTransport ()
+		/// <param name="protocolLogger">The protocol logger.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// </exception>
+		protected MailTransport (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
 		}
 

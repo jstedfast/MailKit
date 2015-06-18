@@ -52,8 +52,16 @@ namespace MailKit {
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
 		/// </remarks>
-		protected MailService ()
+		/// <param name="protocolLogger">The protocol logger.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// </exception>
+		protected MailService (IProtocolLogger protocolLogger)
 		{
+			if (protocolLogger == null)
+				throw new ArgumentNullException ("protocolLogger");
+
+			ProtocolLogger = protocolLogger;
 		}
 
 		/// <summary>
@@ -91,6 +99,17 @@ namespace MailKit {
 		/// <value>The protocol.</value>
 		protected abstract string Protocol {
 			get;
+		}
+
+		/// <summary>
+		/// Get the protocol logger.
+		/// </summary>
+		/// <remarks>
+		/// Gets the protocol logger.
+		/// </remarks>
+		/// <value>The protocol logger.</value>
+		public IProtocolLogger ProtocolLogger {
+			get; private set;
 		}
 
 #if !NETFX_CORE
@@ -888,6 +907,8 @@ namespace MailKit {
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected virtual void Dispose (bool disposing)
 		{
+			if (disposing)
+				ProtocolLogger.Dispose ();
 		}
 
 		/// <summary>

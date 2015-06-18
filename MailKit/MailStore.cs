@@ -44,7 +44,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailStore"/> class.
 		/// </remarks>
-		protected MailStore ()
+		/// <param name="protocolLogger">The protocol logger.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="protocolLogger"/> is <c>null</c>.
+		/// </exception>
+		protected MailStore (IProtocolLogger protocolLogger) : base (protocolLogger)
 		{
 		}
 
