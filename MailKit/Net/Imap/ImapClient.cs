@@ -2078,5 +2078,10 @@ namespace MailKit.Net.Imap {
 				disposed = true;
 			}
 		}
+
+        public IProtocolLogger Logger()
+        {
+            return logger;
+        }
 	}
 }
