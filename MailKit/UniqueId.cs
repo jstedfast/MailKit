@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace MailKit {
 	/// <summary>
@@ -372,7 +373,7 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId Parse (string token, uint validity)
 		{
-			return new UniqueId (validity, uint.Parse (token));
+			return new UniqueId (validity, uint.Parse (token, NumberStyles.None));
 		}
 
 		/// <summary>
@@ -394,7 +395,7 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId Parse (string token)
 		{
-			return new UniqueId (uint.Parse (token));
+			return new UniqueId (uint.Parse (token, NumberStyles.None));
 		}
 	}
 }
