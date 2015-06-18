@@ -1561,7 +1561,17 @@ namespace MailKit.Net.Imap {
 		/// Ping the IMAP server to keep the connection alive.
 		/// </summary>
 		/// <remarks>
-		/// Mail servers, if left idle for too long, will automatically drop the connection.
+		/// <para>The <c>NOOP</c> command is typically used to keep the connection with the IMAP server
+		/// alive. When a client goes too long (typically 30 minutes) without sending any commands to the
+		/// IMAP server, the IMAP server will close the connection with the client, forcing the client to
+		/// reconnect before it can send any more commands.</para>
+		/// <para>The <c>NOOP</c> command also provides a great way for a client to check for new
+		/// messages.</para>
+		/// <para>When the IMAP server receives a <c>NOOP</c> command, it will reply to the client with a
+		/// list of pending updates such as <c>EXISTS</c> and <c>RECENT</c> counts on the currently
+		/// selected folder. To receive these notifications, subscribe to the
+		/// <see cref="ImapFolder.CountChanged"/> and <see cref="ImapFolder.RecentChanged"/> events,
+		/// respectively.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
