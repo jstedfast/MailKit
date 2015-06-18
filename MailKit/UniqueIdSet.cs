@@ -40,7 +40,7 @@ namespace MailKit {
 	public class UniqueIdSet : IList<UniqueId>
 	{
 		readonly List<UniqueIdRange> ranges;
-		bool isReadOnly, sorted;
+		bool sorted;
 		long count;
 
 		/// <summary>
@@ -94,7 +94,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if the set is read only; otherwise, <c>false</c>.</value>
 		public bool IsReadOnly {
-			get { return isReadOnly; }
+			get { return false; }
 		}
 
 		int BinarySearch (UniqueId uid)
@@ -234,14 +234,8 @@ namespace MailKit {
 		/// Adds the unique identifier to the set.
 		/// </remarks>
 		/// <param name="uid">The unique identifier to add.</param>
-		/// <exception cref="System.InvalidOperationException">
-		/// The collection is readonly.
-		/// </exception>
 		public void Add (UniqueId uid)
 		{
-			if (IsReadOnly)
-				throw new InvalidOperationException ("The collection is readonly.");
-
 			if (sorted)
 				BinaryInsert (uid);
 			else
@@ -255,16 +249,10 @@ namespace MailKit {
 		/// Adds all of the uids to the set.
 		/// </remarks>
 		/// <param name="uids">The collection of uids.</param>
-		/// <exception cref="System.InvalidOperationException">
-		/// The collection is readonly.
-		/// </exception>
 		public void AddRange (IEnumerable<UniqueId> uids)
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
-
-			if (IsReadOnly)
-				throw new InvalidOperationException ("The collection is readonly");
 
 			foreach (var uid in uids) {
 				if (sorted)
@@ -285,9 +273,6 @@ namespace MailKit {
 		/// </exception>
 		public void Clear ()
 		{
-			if (IsReadOnly)
-				throw new InvalidOperationException ("The collection is readonly");
-
 			ranges.Clear ();
 			count = 0;
 		}
@@ -378,14 +363,8 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns><value>true</value> if the unique identifier was removed; otherwise <value>false</value>.</returns>
 		/// <param name="uid">The unique identifier to remove.</param>
-		/// <exception cref="System.InvalidOperationException">
-		/// The collection is readonly.
-		/// </exception>
 		public bool Remove (UniqueId uid)
 		{
-			if (IsReadOnly)
-				throw new InvalidOperationException ("The collection is readonly");
-
 			int index = IndexOfRange (uid);
 
 			if (index == -1)
@@ -448,16 +427,10 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentOutOfRangeException">
 		/// <paramref name="index"/> is out of range.
 		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The collection is readonly.
-		/// </exception>
 		public void RemoveAt (int index)
 		{
 			if (index < 0 || index >= count)
 				throw new ArgumentOutOfRangeException ("index");
-
-			if (IsReadOnly)
-				throw new InvalidOperationException ("The collection is readonly");
 
 			int offset = 0;
 
@@ -661,7 +634,7 @@ namespace MailKit {
 			if (token == null)
 				throw new ArgumentNullException ("token");
 
-			uids = new UniqueIdSet { isReadOnly = true, sorted = false };
+			uids = new UniqueIdSet { sorted = false };
 
 			UniqueId start, end;
 			int index = 0;
