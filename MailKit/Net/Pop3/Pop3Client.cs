@@ -3537,5 +3537,10 @@ namespace MailKit.Net.Pop3 {
 				disposed = true;
 			}
 		}
+
+        public IProtocolLogger Logger()
+        {
+            return logger;
+        }
 	}
 }
