@@ -1,4 +1,4 @@
-﻿//
+//
 // Program.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
@@ -38,9 +38,7 @@ namespace ImapIdle {
 	{
 		public static void Main (string[] args)
 		{
-			var logger = new ProtocolLogger (Console.OpenStandardError ());
-
-			using (var client = new ImapClient (logger)) {
+			using (var client = new ImapClient (new ProtocolLogger (Console.OpenStandardError ()))) {
 				client.Connect ("imap.gmail.com", 993, true);
 
 				// Remove the XOAUTH2 authentication mechanism since we don't have an OAuth2 token.
@@ -50,21 +48,11 @@ namespace ImapIdle {
 
 				client.Inbox.Open (FolderAccess.ReadOnly);
 
-				// keep track of the messages
+				// Get the summary information of all of the messages (suitable for displaying in a message list).
 				var messages = client.Inbox.Fetch (0, -1, MessageSummaryItems.Full | MessageSummaryItems.UniqueId).ToList ();
 
-				// connect to some events...
-				client.Inbox.CountChanged += (sender, e) => {
-					// Note: the CountChanged event will fire when new messages arrive in the folder.
-					var folder = (ImapFolder) sender;
-
-					// Either new messages have arrived or the folder was expunged.
-					Console.WriteLine ("{0}: The new message count is {1}.", folder, e.Count);
-
-					// Note: your first instict may be to fetch these new messages now, but you cannot do
-					// that in an event handler (the ImapFolder is not re-entrant).
-				};
-
+				// Keep track of messages being expunged so that when the CountChanged event fires, we can tell if it's
+				// because new messages have arrived vs messages being removed (or some combination of the two).
 				client.Inbox.MessageExpunged += (sender, e) => {
 					var folder = (ImapFolder) sender;
 
@@ -82,6 +70,28 @@ namespace ImapIdle {
 					}
 				};
 
+				// Keep track of changes to the number of messages in the folder (this is how we'll tell if new messages have arrived).
+				client.Inbox.CountChanged += (sender, e) => {
+					// Note: the CountChanged event will fire when new messages arrive in the folder and/or when messages are expunged.
+					var folder = (ImapFolder) sender;
+
+					Console.WriteLine ("The number of messages in {0} has changed.", folder);
+
+					// Note: because we are keeping track of the MessageExpunged event and updating our
+					// 'messages' list, we know that if we get a CountChanged event and folder.Count is
+					// larger than messages.Count, then it means that new messages have arrived.
+					if (folder.Count > messages.Count) {
+						Console.WriteLine ("{0} new messages have arrived.", folder.Count - messages.Count);
+
+						// Note: your first instict may be to fetch these new messages now, but you cannot do
+						// that in an event handler (the ImapFolder is not re-entrant).
+						// 
+						// If this code had access to the 'done' CancellationTokenSource (see below), it could
+						// cancel that to cause the IDLE loop to end.
+					}
+				};
+
+				// Keep track of flag changes.
 				client.Inbox.MessageFlagsChanged += (sender, e) => {
 					var folder = (ImapFolder) sender;
 
@@ -90,6 +100,7 @@ namespace ImapIdle {
 
 				Console.WriteLine ("Hit any key to end the IDLE loop.");
 				using (var done = new CancellationTokenSource ()) {
+					// Note: when the 'done' CancellationTokenSource is cancelled, it ends to IDLE loop.
 					var thread = new Thread (IdleLoop);
 
 					thread.Start (new IdleState (client, done.Token));
@@ -115,7 +126,7 @@ namespace ImapIdle {
 			CancellationTokenSource timeout;
 
 			/// <summary>
-			/// Gets the cancellation token.
+			/// Get the cancellation token.
 			/// </summary>
 			/// <remarks>
 			/// <para>The cancellation token is the brute-force approach to cancelling the IDLE and/or NOOP command.</para>
@@ -127,7 +138,7 @@ namespace ImapIdle {
 			public CancellationToken CancellationToken { get; private set; }
 
 			/// <summary>
-			/// Gets the done token.
+			/// Get the done token.
 			/// </summary>
 			/// <remarks>
 			/// <para>The done token tells the <see cref="Program.IdleLoop"/> that the user has requested to end the loop.</para>
@@ -138,13 +149,13 @@ namespace ImapIdle {
 			public CancellationToken DoneToken { get; private set; }
 
 			/// <summary>
-			/// Gets the IMAP client.
+			/// Get the IMAP client.
 			/// </summary>
 			/// <value>The IMAP client.</value>
 			public ImapClient Client { get; private set; }
 
 			/// <summary>
-			/// Checks whether or not either of the CancellationToken's have been cancelled.
+			/// Check whether or not either of the CancellationToken's have been cancelled.
 			/// </summary>
 			/// <value><c>true</c> if cancellation was requested; otherwise, <c>false</c>.</value>
 			public bool IsCancellationRequested {
@@ -170,7 +181,7 @@ namespace ImapIdle {
 			}
 
 			/// <summary>
-			/// Cancels the timeout token source, forcing ImapClient.Idle() to gracefully exit.
+			/// Cancel the timeout token source, forcing ImapClient.Idle() to gracefully exit.
 			/// </summary>
 			void CancelTimeout ()
 			{
@@ -181,7 +192,7 @@ namespace ImapIdle {
 			}
 
 			/// <summary>
-			/// Sets the timeout source.
+			/// Set the timeout source.
 			/// </summary>
 			/// <param name="source">The timeout source.</param>
 			public void SetTimeoutSource (CancellationTokenSource source)
@@ -202,7 +213,7 @@ namespace ImapIdle {
 			lock (idle.Client.SyncRoot) {
 				// Note: since the IMAP server will drop the connection after 30 minutes, we must loop sending IDLE commands that
 				// last ~29 minutes or until the user has requested that they do not want to IDLE anymore.
-				//
+				// 
 				// For GMail, we use a 9 minute interval because they do not seem to keep the connection alive for more than ~10 minutes.
 				while (!idle.IsCancellationRequested) {
 					// Note: Starting with .NET 4.5, you can make this simpler by using the CancellationTokenSource .ctor that
@@ -234,7 +245,7 @@ namespace ImapIdle {
 							} catch (ImapProtocolException) {
 								// The IMAP server sent garbage in a response and the ImapClient was unable to deal with it.
 								// This should never happen in practice, but it's probably still a good idea to handle it.
-								//
+								// 
 								// Note: an ImapProtocolException almost always results in the ImapClient getting disconnected.
 								break;
 							} catch (ImapCommandException) {
