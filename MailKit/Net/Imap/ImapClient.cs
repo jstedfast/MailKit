@@ -56,7 +56,7 @@ namespace MailKit.Net.Imap {
 	/// The <see cref="ImapClient"/> class supports both the "imap" and "imaps"
 	/// protocols. The "imap" protocol makes a clear-text connection to the IMAP
 	/// server and does not use SSL or TLS unless the IMAP server supports the
-	/// <a href="https://tools.ietf.org/html/rfc3501">STARTTLS</a> extension.
+	/// <a href="https://tools.ietf.org/html/rfc3501#section-6.2.1">STARTTLS</a> extension.
 	/// The "imaps" protocol, however, connects to the IMAP server using an
 	/// SSL-wrapped connection.
 	/// </remarks>
@@ -1509,7 +1509,7 @@ namespace MailKit.Net.Imap {
 		/// Asynchronously reconnect to the most recently connected IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// <para>Asynchronously econnects to the most recently connected IMAP server.
+		/// <para>Asynchronously reconnects to the most recently connected IMAP server.
 		/// Once a successful connection is made, the session will then be
 		/// re-authenticated using the account name used in the previous session and
 		/// the <paramref name="password"/>.</para>
@@ -1572,6 +1572,8 @@ namespace MailKit.Net.Imap {
 		/// selected folder. To receive these notifications, subscribe to the
 		/// <see cref="ImapFolder.CountChanged"/> and <see cref="ImapFolder.RecentChanged"/> events,
 		/// respectively.</para>
+		/// <para>For more information about the <c>NOOP</c> command, see
+		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.1.2">rfc3501</a>.</para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
