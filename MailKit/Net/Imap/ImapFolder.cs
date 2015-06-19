@@ -966,10 +966,13 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
-		/// Forces the server to flush its state for the folder.
+		/// Force the server to sync its in-memory state with its disk state.
 		/// </summary>
 		/// <remarks>
-		/// Forces the server to flush its state for the folder.
+		/// <para>The <c>CHECK</c> command forces the IMAP server to sync its
+		/// in-memory state with its disk state.</para>
+		/// <para>For more information about the <c>CHECK</c> command, see
+		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.1">rfc350101</a>.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -1022,6 +1025,8 @@ namespace MailKit.Net.Imap {
 		/// method is to get the number of unread messages in the folder. When the folder is open, however, it is
 		/// possible to use the <see cref="ImapFolder.Search(MailKit.Search.SearchQuery, System.Threading.CancellationToken)"/>
 		/// method to query for the list of unread messages.</para>
+		/// <para>For more information about the <c>STATUS</c> command, see
+		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.3.10">rfc3501</a>.</para>
 		/// </remarks>
 		/// <param name="items">The items to update.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1752,7 +1757,11 @@ namespace MailKit.Net.Imap {
 		/// Expunges the folder, permanently removing all messages marked for deletion.
 		/// </summary>
 		/// <remarks>
-		/// <para>Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
+		/// <para>The <c>EXPUNGE</c> command permanently removes all messages in the folder
+		/// that have the <see cref="MessageFlags.Deleted"/> flag set.</para>
+		/// <para>For more information about the <c>EXPUNGE</c> command, see
+		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.3">rfc3501</a>.</para>
+		/// <para>Note: Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
 		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC
 		/// extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
@@ -1813,6 +1822,8 @@ namespace MailKit.Net.Imap {
 		/// marked for deletion that were not included in the list of uids provided. For this reason,
 		/// it is advisable for clients that wish to maintain state to implement this themselves when
 		/// the IMAP server does not support the UIDPLUS extension.</para>
+		/// <para>For more information about the <c>UID EXPUNGE</c> command, see
+		/// <a href="https://tools.ietf.org/html/rfc4315#section-2.1">rfc4315</a>.</para>
 		/// <para>Note: Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
 		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC
 		/// extension and it has been enabled via the
