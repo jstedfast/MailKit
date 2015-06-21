@@ -103,7 +103,7 @@ namespace MailKit {
 			if (offset < 0 || offset > buffer.Length)
 				throw new ArgumentOutOfRangeException ("offset");
 
-			if (count < 0 || offset + count > buffer.Length)
+			if (count < 0 || count > (buffer.Length - offset))
 				throw new ArgumentOutOfRangeException ("count");
 		}
 

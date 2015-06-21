@@ -88,7 +88,7 @@ namespace MailKit.Security.Ntlm {
 			if (startIndex < 0 || startIndex > message.Length)
 				throw new ArgumentOutOfRangeException ("startIndex");
 
-			if (length < 12 || startIndex + length > message.Length)
+			if (length < 12 || length > (message.Length - startIndex))
 				throw new ArgumentOutOfRangeException ("length");
 
 			if (!CheckHeader (message, startIndex))
