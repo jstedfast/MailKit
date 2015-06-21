@@ -7313,7 +7313,19 @@ namespace MailKit {
 		/// </exception>
 		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStream (uid, part, offset, count, cancellationToken, progress);
+			if (uid.Id == 0)
+				throw new ArgumentException ("The uid is invalid.", "uid");
+
+			if (part == null)
+				throw new ArgumentNullException ("part");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			return GetStream (uid, part.PartSpecifier, offset, count, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -7437,7 +7449,19 @@ namespace MailKit {
 		/// </exception>
 		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return GetStream (index, part, offset, count, cancellationToken, progress);
+			if (index < 0 || index >= Count)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (part == null)
+				throw new ArgumentNullException ("part");
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			return GetStream (index, part.PartSpecifier, offset, count, cancellationToken, progress);
 		}
 
 		/// <summary>
