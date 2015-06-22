@@ -1376,6 +1376,12 @@ namespace MailKit.Net.Imap {
 
 				if (folder != null) {
 					switch (atom) {
+					case "HIGHESTMODSEQ":
+						if (!ulong.TryParse ((string) token.Value, out modseq))
+							throw UnexpectedToken (token, false);
+
+						folder.UpdateHighestModSeq (modseq);
+						break;
 					case "MESSAGES":
 						if (!int.TryParse ((string) token.Value, out count))
 							throw UnexpectedToken (token, false);
@@ -1405,12 +1411,6 @@ namespace MailKit.Net.Imap {
 							throw UnexpectedToken (token, false);
 
 						folder.UpdateUnread (count);
-						break;
-					case "HIGHESTMODSEQ":
-						if (!ulong.TryParse ((string) token.Value, out modseq))
-							throw UnexpectedToken (token, false);
-
-						folder.UpdateHighestModSeq (modseq);
 						break;
 					}
 				}
