@@ -1,5 +1,14 @@
 # Release Notes
 
+### MailKit 1.2.5
+
+* Added support for extended IMAP search options (see the SearchOptions flags).
+* Added TryParse() convenience methods for UniqueIdSet, UniqueIdRange, and UniqueId.
+* Added a workaround for a GMail IMAP BODYSTRUCTURE bug. (issue #205)
+* Added a ProtocolLogger property for ImapClient, Pop3Client, and SmtpClient.
+* Fixed the ImapFolder.GetStream() methods that take a BodyPart to call the
+  proper overload.
+
 ### MailKit 1.2.4
 
 * Updated SmtpClient to use MimeMessage.Prepare() instead of implementing its own logic.
