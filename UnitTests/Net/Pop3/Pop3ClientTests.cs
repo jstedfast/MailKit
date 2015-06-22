@@ -459,7 +459,7 @@ namespace UnitTests.Net.Pop3 {
 					var message = client.GetMessage (0, CancellationToken.None);
 
 					using (var jpeg = new MemoryStream ()) {
-						var attachment = message.Attachments.FirstOrDefault ();
+						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
 						attachment.ContentObject.DecodeTo (jpeg);
 						jpeg.Position = 0;
@@ -479,7 +479,7 @@ namespace UnitTests.Net.Pop3 {
 
 					foreach (var message in messages) {
 						using (var jpeg = new MemoryStream ()) {
-							var attachment = message.Attachments.FirstOrDefault ();
+							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
 							attachment.ContentObject.DecodeTo (jpeg);
 							jpeg.Position = 0;

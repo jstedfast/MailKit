@@ -35,10 +35,13 @@ using System.Security.Cryptography;
 
 using NUnit.Framework;
 
+using MimeKit;
+using MimeKit.IO;
+using MimeKit.IO.Filters;
+
 using MailKit.Net.Imap;
 using MailKit.Search;
 using MailKit;
-using MimeKit;
 
 namespace UnitTests.Net.Imap {
 
@@ -126,7 +129,16 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt"));
 
 			for (int i = 0; i < 50; i++) {
-				using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
+				using (var stream = new MemoryStream ()) {
+					using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
+						using (var filtered = new FilteredStream (stream)) {
+							filtered.Add (new Unix2DosFilter ());
+							resource.CopyTo (filtered, 4096);
+							filtered.Flush ();
+						}
+
+						stream.Position = 0;
+					}
 					var message = MimeMessage.Load (stream);
 					long length = stream.Length;
 					string latin1;
@@ -437,7 +449,7 @@ namespace UnitTests.Net.Imap {
 				var message = client.Inbox.GetMessage (269, CancellationToken.None);
 
 				using (var jpeg = new MemoryStream ()) {
-					var attachment = message.Attachments.FirstOrDefault ();
+					var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
 					attachment.ContentObject.DecodeTo (jpeg);
 					jpeg.Position = 0;
