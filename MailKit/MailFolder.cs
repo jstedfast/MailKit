@@ -15167,6 +15167,28 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Occurs when the highest mod-sequence changes.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="HighestModSeqChanged"/> event is emitted whenever the <see cref="HighestModSeq"/> value changes.
+		/// </remarks>
+		public event EventHandler<EventArgs> HighestModSeqChanged;
+
+		/// <summary>
+		/// Raise the highest mod-sequence changed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the highest mod-sequence changed event.
+		/// </remarks>
+		protected virtual void OnHighestModSeqChanged ()
+		{
+			var handler = HighestModSeqChanged;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
 		/// Occurs when the UID validity changes.
 		/// </summary>
 		/// <remarks>

@@ -9223,6 +9223,16 @@ namespace MailKit.Net.Imap {
 			UidNext = uid;
 		}
 
+		internal void UpdateHighestModSeq (ulong modseq)
+		{
+			if (HighestModSeq == modseq)
+				return;
+
+			HighestModSeq = modseq;
+
+			OnHighestModSeqChanged ();
+		}
+
 		internal void UpdateUidValidity (uint validity)
 		{
 			if (UidValidity == validity)

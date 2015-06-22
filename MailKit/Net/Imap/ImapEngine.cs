@@ -1332,8 +1332,10 @@ namespace MailKit.Net.Imap {
 		{
 			var token = Stream.ReadToken (cancellationToken);
 			ImapFolder folder;
+			ulong modseq;
 			string name;
-			uint value;
+			int count;
+			uint uid;
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
@@ -1347,9 +1349,9 @@ namespace MailKit.Net.Imap {
 				throw UnexpectedToken (token, false);
 			}
 
-			if (!GetCachedFolder (name, out folder)) {
-				// FIXME: what should we do in this situation?
-			}
+			// Note: if the folder is null, then it probably means the user is using NOTIFY
+			// and hasn't yet requested the folder. That's ok.
+			GetCachedFolder (name, out folder);
 
 			token = Stream.ReadToken (cancellationToken);
 
@@ -1369,25 +1371,46 @@ namespace MailKit.Net.Imap {
 
 				token = Stream.ReadToken (cancellationToken);
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value))
+				if (token.Type != ImapTokenType.Atom)
 					throw UnexpectedToken (token, false);
 
 				if (folder != null) {
 					switch (atom) {
 					case "MESSAGES":
-						folder.OnExists ((int) value);
+						if (!int.TryParse ((string) token.Value, out count))
+							throw UnexpectedToken (token, false);
+
+						folder.OnExists (count);
 						break;
 					case "RECENT":
-						folder.OnRecent ((int) value);
+						if (!int.TryParse ((string) token.Value, out count))
+							throw UnexpectedToken (token, false);
+
+						folder.OnRecent (count);
 						break;
 					case "UIDNEXT":
-						folder.UpdateUidNext (new UniqueId (value));
+						if (!uint.TryParse ((string) token.Value, out uid))
+							throw UnexpectedToken (token, false);
+
+						folder.UpdateUidNext (new UniqueId (uid));
 						break;
 					case "UIDVALIDITY":
-						folder.UpdateUidValidity (value);
+						if (!uint.TryParse ((string) token.Value, out uid))
+							throw UnexpectedToken (token, false);
+
+						folder.UpdateUidValidity (uid);
 						break;
 					case "UNSEEN":
-						folder.UpdateUnread ((int) value);
+						if (!int.TryParse ((string) token.Value, out count))
+							throw UnexpectedToken (token, false);
+
+						folder.UpdateUnread (count);
+						break;
+					case "HIGHESTMODSEQ":
+						if (!ulong.TryParse ((string) token.Value, out modseq))
+							throw UnexpectedToken (token, false);
+
+						folder.UpdateHighestModSeq (modseq);
 						break;
 					}
 				}
