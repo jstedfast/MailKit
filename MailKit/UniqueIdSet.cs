@@ -317,7 +317,7 @@ namespace MailKit {
 
 			for (int i = 0; i < ranges.Count; i++) {
 				foreach (var uid in ranges[i])
-					array[index] = uid;
+					array[index++] = uid;
 			}
 		}
 

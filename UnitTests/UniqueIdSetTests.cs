@@ -25,6 +25,8 @@
 //
 
 using System;
+using System.Linq;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -279,6 +281,49 @@ namespace UnitTests {
 
 			for (int i = 0; i < uids.Count; i++)
 				Assert.AreEqual (ids[i], uids[i].Id);
+		}
+
+		[Test]
+		public void TestEnumerator ()
+		{
+			var ids = new uint[] { 20, 19, 15, 12, 11, 10, 9, 6, 5, 3, 2, 1 };
+			const string example = "20:19,15,12:9,6:5,3:1";
+			UniqueIdSet uids;
+
+			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (example, uids.ToString ());
+			Assert.AreEqual (ids.Length, uids.Count);
+
+			for (int i = 0; i < uids.Count; i++)
+				Assert.AreEqual (ids[i], uids[i].Id);
+
+			var list = new List<UniqueId> ();
+			foreach (var uid in uids)
+				list.Add (uid);
+
+			for (int i = 0; i < list.Count; i++)
+				Assert.AreEqual (ids[i], list[i].Id);
+		}
+
+		[Test]
+		public void TestCopyTo()
+		{
+			var ids = new uint[] { 20, 19, 15, 12, 11, 10, 9, 6, 5, 3, 2, 1 };
+			const string example = "20:19,15,12:9,6:5,3:1";
+			var copy = new UniqueId[12];
+			UniqueIdSet uids;
+
+			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (example, uids.ToString ());
+			Assert.AreEqual (ids.Length, uids.Count);
+
+			for (int i = 0; i < uids.Count; i++)
+				Assert.AreEqual (ids[i], uids[i].Id);
+
+			uids.CopyTo (copy, 0);
+
+			for (int i = 0; i < copy.Length; i++)
+				Assert.AreEqual (ids[i], copy[i].Id);
 		}
 	}
 }
