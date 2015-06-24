@@ -139,8 +139,15 @@ multipart/alternative
             <linkTarget>_blank</linkTarget>
           </externalLink>, MimeKit includes the
           <codeEntityReference>T:MimeKit.MimeVisitor</codeEntityReference> class for
-          visiting each node in the MIME tree structure.
+          visiting each node in the MIME tree structure. For example, the following
+          MimeVisitor subclass could be used to generate HTML to be rendered by a
+          browser control (such as <codeEntityReference>
+            T:System.Windows.Forms.WebBrowser
+          </codeEntityReference>):
         </para>
+        <code language="c#" source="Examples\MimeVisitorExamples.cs" region="HtmlPreviewVisitor"/>
+        <para>And the way you'd use this visitor might look something like this:</para>
+        <code language="c#" source="Examples\MimeVisitorExamples.cs" region="RenderMessage"/>
       </content>
     </section>
 

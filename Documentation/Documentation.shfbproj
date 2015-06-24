@@ -106,6 +106,7 @@
     <None Include="Examples\MimeMessageLoad.cs" />
     <None Include="Examples\MimeParserMbox.cs" />
     <None Include="Examples\MimeParserParseMessage.cs" />
+    <None Include="Examples\MimeVisitorExamples.cs" />
     <None Include="Examples\MultipartFormDataExamples.cs" />
     <None Include="Examples\OpeningContent.cs" />
     <None Include="Examples\OpenPGPExamples.cs" />
