@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.2.6
+
+* Fixed UniqueIdSet.CopyTo() to work properly (also fixes LINQ usage).
+* Fixed ImapFolder.Status() where StatusItems.HighestModSeq is used.
+
 ### MailKit 1.2.5
 
 * Added support for extended IMAP search options (see the SearchOptions flags).
