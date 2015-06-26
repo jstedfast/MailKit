@@ -2840,7 +2840,7 @@ namespace MailKit.Net.Imap {
 						if (token.Type != ImapTokenType.OpenBracket)
 							throw ImapEngine.UnexpectedToken (token, false);
 
-						// References were requested...
+						// References and/or other headers were requested...
 
 						do {
 							token = engine.ReadToken (ic.CancellationToken);
@@ -2882,13 +2882,15 @@ namespace MailKit.Net.Imap {
 
 						try {
 							var message = engine.ParseMessage (engine.Stream, false, ic.CancellationToken);
-							summary.Fields |= MessageSummaryItems.References;
 							summary.References = message.References;
 							summary.Headers = message.Headers;
 						} catch (FormatException) {
 							// consume any remaining literal data...
 							ReadLiteralData (engine, ic.CancellationToken);
+							summary.Headers = new HeaderList ();
 						}
+
+						summary.Fields |= MessageSummaryItems.References;
 					} else {
 						summary.Fields |= MessageSummaryItems.Body;
 
