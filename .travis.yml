@@ -1,0 +1,2 @@
+language: csharp
+solution: MailKit.Net45.sln

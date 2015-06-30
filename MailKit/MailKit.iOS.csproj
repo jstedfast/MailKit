@@ -49,7 +49,7 @@
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.iOS.csproj">
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.iOS.csproj">
       <Project>{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}</Project>
       <Name>MimeKit.iOS</Name>
     </ProjectReference>

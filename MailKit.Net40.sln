@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Net40", "MailKit\MailKit.Net40.csproj", "{DB3A2478-4742-452B-80C1-F672B64285AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net40", "..\MimeKit\MimeKit\MimeKit.Net40.csproj", "{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net40", "submodules\MimeKit\MimeKit\MimeKit.Net40.csproj", "{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "..\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

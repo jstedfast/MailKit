@@ -55,7 +55,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.Android.csproj">
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.Android.csproj">
       <Project>{004B4019-62B7-4A15-AF2C-C20968845C46}</Project>
       <Name>MimeKit.Android</Name>
     </ProjectReference>

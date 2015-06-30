@@ -5,27 +5,27 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit", "MailKit\MailKit.csproj", "{7264D469-A390-4C10-9C87-DAA37EDD3C1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit", "..\MimeKit\MimeKit\MimeKit.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit", "submodules\MimeKit\MimeKit\MimeKit.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Net40", "MailKit\MailKit.Net40.csproj", "{DB3A2478-4742-452B-80C1-F672B64285AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net40", "..\MimeKit\MimeKit\MimeKit.Net40.csproj", "{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Net40", "submodules\MimeKit\MimeKit\MimeKit.Net40.csproj", "{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "..\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Data.Sqlite", "..\MimeKit\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj", "{F26434C1-BA3D-41FB-B560-C009CB72B1B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Data.Sqlite", "submodules\MimeKit\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj", "{F26434C1-BA3D-41FB-B560-C009CB72B1B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.Android", "..\bc-csharp\crypto\BouncyCastle.Android.csproj", "{A0D302CB-8866-4AB1-98B9-F0772EABF5DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.Android", "submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.Android.csproj", "{A0D302CB-8866-4AB1-98B9-F0772EABF5DF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.Android", "MailKit\MailKit.Android.csproj", "{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Android", "..\MimeKit\MimeKit\MimeKit.Android.csproj", "{004B4019-62B7-4A15-AF2C-C20968845C46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.Android", "submodules\MimeKit\MimeKit\MimeKit.Android.csproj", "{004B4019-62B7-4A15-AF2C-C20968845C46}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit.iOS", "MailKit\MailKit.iOS.csproj", "{60B5D72B-8219-48B6-B688-AD0FE284A96A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.iOS", "..\MimeKit\MimeKit\MimeKit.iOS.csproj", "{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit.iOS", "submodules\MimeKit\MimeKit\MimeKit.iOS.csproj", "{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.iOS", "..\bc-csharp\crypto\BouncyCastle.iOS.csproj", "{0249241C-205E-4AC0-828B-90F822359B9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle.iOS", "submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.iOS.csproj", "{0249241C-205E-4AC0-828B-90F822359B9E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}"
 EndProject

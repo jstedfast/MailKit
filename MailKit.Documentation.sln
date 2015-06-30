@@ -5,9 +5,9 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit", "MailKit\MailKit.csproj", "{7264D469-A390-4C10-9C87-DAA37EDD3C1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit", "..\MimeKit\MimeKit\MimeKit.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit", "submodules\MimeKit\MimeKit\MimeKit.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "..\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentation\Documentation.shfbproj", "{59115814-A1E3-46AE-AE30-4065AE8F4CAF}"
 EndProject

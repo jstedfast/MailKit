@@ -1,0 +1,64 @@
+version: 1.2.6.{build}
+
+configuration: Debug
+platform: Any CPU
+
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: XvmOROcqgidalZg23H16UjDbAxIMkpuVXwKKPEp0bq3W5J2av35X1BsZvClM25JX
+
+install:
+  - cmd: >-
+    git submodule update --init --recursive
+
+    nuget restore MailKit.Net45.sln
+
+build:
+  project: MailKit.Net45.sln
+  verbosity: minimal
+
+test_script:
+  - ps: >-
+    $testDir = ".\UnitTests\bin\Debug\"
+
+    $tests = @("$testdir\UnitTests.dll")
+
+    foreach ($elem in $tests) {
+    	.\packages\OpenCover.4.5.3723\OpenCover.Console.exe `
+    	-register:user `
+    	-target:.\packages\NUnit.Runners.2.6.4\tools\nunit-console.exe `
+    	"-targetargs: ""$elem"" /framework:net-4.5 /noshadow" `
+    	"-filter:+[MailKit]* -[UnitTests]* -[submodules]*" `
+    	-output:opencover.xml `
+    }
+
+    $revision = git rev-parse HEAD
+
+    $branch = git rev-parse --abbrev-ref HEAD
+
+    $commitAuthor = git show --quiet --format="%aN" $revision
+
+    $commitEmail = git show --quiet --format="%aE" $revision
+
+    $commitMessage = git show --quiet --format="%s" $revision
+
+    .\packages\coveralls.net.0.5.0\csmacnz.Coveralls.exe `
+
+    --opencover -i opencover.xml `
+
+    --repoToken $Env:COVERALLS_REPO_TOKEN `
+
+    --commitId $revision `
+
+    --commitBranch $branch `
+
+    --commitAuthor $commitAuthor `
+
+    --commitEmail $commitEmail `
+
+    --commitMessage $commitMessage `
+
+    --useRelativePaths `
+
+    --basePath .\UnitTests\bin\Debug
+
