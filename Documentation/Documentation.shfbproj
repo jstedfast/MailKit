@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which assemblies to include from solution and
@@ -124,12 +124,12 @@
     <Content Include="icons\Help.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\bc-csharp\crypto\BouncyCastle.csproj">
+    <ProjectReference Include="..\submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.csproj">
       <Name>BouncyCastle</Name>
       <Project>{4c235092-820c-4deb-9074-d356fb797d8b}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\MimeKit\MimeKit\MimeKit.csproj">
+    <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.csproj">
       <Name>MimeKit</Name>
       <Project>{d5f54a4f-d84b-430f-9271-f7861e285b3e}</Project>
       <Private>True</Private>
