@@ -8,7 +8,7 @@ environment:
     secure: XvmOROcqgidalZg23H16UjDbAxIMkpuVXwKKPEp0bq3W5J2av35X1BsZvClM25JX
 
 install:
-  - cmd: >-
+- cmd: >-
     git submodule update --init --recursive
 
     nuget restore MailKit.Net45.sln
@@ -18,7 +18,7 @@ build:
   verbosity: minimal
 
 test_script:
-  - ps: >-
+- ps: >-
     $testDir = ".\UnitTests\bin\Debug\"
 
     $tests = @("$testdir\UnitTests.dll")
