@@ -2,8 +2,8 @@
 *.userprefs
 *.suo
 test-results
+packages
 obj
 bin
 *.tree
 *.zip
-packages/

@@ -1,3 +1,9 @@
 language: csharp
 solution: MailKit.Net45.sln
-before_script: git submodule update --init --recursive
+install:
+  - sudo apt-get install -y gtk-sharp2
+  - git submodule update --init --recursive
+  - nuget restore MailKit.Net45.sln
+script:
+  - xbuild /p:Configuration=Debug MailKit.Net45.sln
+  - mono ./packages/NUnit.Runners.2.6.4/tools/nunit-console.exe UnitTests/bin/Debug/UnitTests.dll
