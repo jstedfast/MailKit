@@ -1,0 +1,75 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit", "MailKit\MailKit.csproj", "{7264D469-A390-4C10-9C87-DAA37EDD3C1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MimeKit", "submodules\MimeKit\MimeKit\MimeKit.csproj", "{D5F54A4F-D84B-430F-9271-F7861E285B3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BouncyCastle", "submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.csproj", "{4C235092-820C-4DEB-9074-D356FB797D8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BB3237C7-E19C-4232-B875-6658ABDD184A}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		AppStore|Any CPU = AppStore|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C235092-820C-4DEB-9074-D356FB797D8B}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{4C235092-820C-4DEB-9074-D356FB797D8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C235092-820C-4DEB-9074-D356FB797D8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C235092-820C-4DEB-9074-D356FB797D8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C235092-820C-4DEB-9074-D356FB797D8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = MailKit\MailKit.csproj
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.inheritsSet = null
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.AlignEmbeddedUsingStatements = False
+		$2.AlignEmbeddedIfStatements = False
+		$2.NamespaceBraceStyle = EndOfLine
+		$2.StructBraceStyle = EndOfLine
+		$2.EnumBraceStyle = EndOfLine
+		$2.BeforeIndexerDeclarationBracket = False
+		$2.AfterDelegateDeclarationParameterComma = True
+		$2.BeforeSizeOfParentheses = True
+		$2.BeforeTypeOfParentheses = True
+		$2.SpacesAfterTypecast = True
+		$2.BlankLinesBeforeUsings = 1
+		$2.inheritsSet = Mono
+		$2.inheritsScope = text/x-csharp
+		$2.scope = text/x-csharp
+		$0.StandardHeader = $3
+		$3.Text = @\r\n${FileName}\n \nAuthor: ${AuthorName} <${AuthorEmail}>\n\nCopyright (c) ${Year} ${CopyrightHolder}\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n
+		$3.IncludeInNewFiles = True
+	EndGlobalSection
+EndGlobal
