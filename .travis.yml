@@ -1,7 +1,6 @@
 language: csharp
 solution: MailKit.Net45.sln
 install:
-  - sudo apt-get install -y gtk-sharp2
   - git submodule update --init --recursive
   - nuget restore MailKit.Net45.sln
 script:
