@@ -1,2 +1,3 @@
 language: csharp
 solution: MailKit.Net45.sln
+before_script: git submodule update --init --recursive
