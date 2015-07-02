@@ -1738,7 +1738,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (GetCachedFolder (encodedName, out parent)) {
-					folder.SetParentFolder (parent);
+					folder.ParentFolder = parent;
 					continue;
 				}
 
@@ -1756,7 +1756,7 @@ namespace MailKit.Net.Imap {
 					list.Add (parent);
 				}
 
-				folder.SetParentFolder (parent);
+				folder.ParentFolder = parent;
 			}
 		}
 

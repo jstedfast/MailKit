@@ -132,10 +132,15 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void ParentFolderRenamed (object sender, FolderRenamedEventArgs e)
+		/// <summary>
+		/// Notifies the folder that a parent folder has been renamed.
+		/// </summary>
+		/// <remarks>
+		/// Updates the <see cref="FullName"/> property.
+		/// </remarks>
+		protected override void OnParentFolderRenamed ()
 		{
 			var oldEncodedName = EncodedName;
-			var oldFullName = FullName;
 
 			FullName = ParentFolder.FullName + DirectorySeparator + Name;
 			EncodedName = Engine.EncodeMailboxName (FullName);
@@ -147,14 +152,6 @@ namespace MailKit.Net.Imap {
 				Access = FolderAccess.None;
 				Engine.Selected = null;
 			}
-
-			OnRenamed (oldFullName, FullName);
-		}
-
-		internal void SetParentFolder (IMailFolder parent)
-		{
-			parent.Renamed += ParentFolderRenamed;
-			ParentFolder = parent;
 		}
 
 		void ProcessResponseCodes (ImapCommand ic, IMailFolder folder)
@@ -561,9 +558,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Result != ImapCommandResult.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
-			folder = list.FirstOrDefault ();
-
-			if (folder != null)
+			if ((folder = list.FirstOrDefault ()) != null)
 				folder.ParentFolder = this;
 
 			return folder;
@@ -655,8 +650,7 @@ namespace MailKit.Net.Imap {
 			Engine.FolderCache.Remove (EncodedName);
 			Engine.FolderCache[encodedName] = this;
 
-			ParentFolder.Renamed -= ParentFolderRenamed;
-			SetParentFolder (parent);
+			ParentFolder = parent;
 
 			FullName = Engine.DecodeMailboxName (encodedName);
 			EncodedName = encodedName;
@@ -675,7 +669,8 @@ namespace MailKit.Net.Imap {
 		/// Deletes the folder on the IMAP server.
 		/// </summary>
 		/// <remarks>
-		/// Deletes the folder on the IMAP server.
+		/// <para>Deletes the folder on the IMAP server.</para>
+		/// <para>Note: This method will not delete any child folders.</para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">

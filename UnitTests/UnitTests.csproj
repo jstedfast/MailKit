@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}</ProjectGuid>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <OutputType>Library</OutputType>
@@ -69,6 +67,15 @@
     <Compile Include="UniqueIdSetTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Net\Imap\Resources\acl\authenticate.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\capability.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\deleteacl.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\getacl.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\listrights.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl1.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl2.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl3.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.0.msg" />
     <EmbeddedResource Include="Net\Imap\Resources\common\message.1.msg" />
@@ -176,6 +183,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\count.examine.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\count.noop.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\create-unittests.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\create-unittests-dummy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\delete-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\examine-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.1.txt" />
@@ -204,10 +212,12 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-personal.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests-dummy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\logout.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\precise-pangolin-message.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\remove-flags.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\rename-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search-summary.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-unittests.txt" />
@@ -237,6 +247,7 @@
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\plus.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\quit.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr1.txt" />
+    <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr123.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\gmail\stat.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-required.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\auth-successful.txt" />
@@ -253,16 +264,6 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\mailbox-unavailable.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\pipelined-mail-from-rcpt-to.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\authenticate.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\capability.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\deleteacl.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\getacl.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\listrights.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl1.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl2.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl3.txt" />
-    <EmbeddedResource Include="Net\Pop3\Resources\gmail\retr123.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Net\" />

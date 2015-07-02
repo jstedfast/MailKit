@@ -53,6 +53,8 @@ namespace MailKit {
 		protected static readonly MessageFlags SettableFlags = MessageFlags.Answered | MessageFlags.Deleted |
 			MessageFlags.Draft | MessageFlags.Flagged | MessageFlags.Seen;
 
+		IMailFolder parent;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MailFolder"/> class.
 		/// </summary>
@@ -84,7 +86,19 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The parent folder.</value>
 		public IMailFolder ParentFolder {
-			get; protected set;
+			get { return parent; }
+			internal protected set {
+				if (value == parent)
+					return;
+
+				if (parent != null)
+					parent.Renamed -= OnParentFolderRenamed;
+
+				parent = value;
+
+				if (parent != null)
+					parent.Renamed += OnParentFolderRenamed;
+			}
 		}
 
 		/// <summary>
@@ -14964,6 +14978,28 @@ namespace MailKit {
 
 			if (handler != null)
 				handler (this, new FolderRenamedEventArgs (oldName, newName));
+		}
+
+		/// <summary>
+		/// Notifies the folder that a parent folder has been renamed.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IMailFolder"/> implementations should override this method
+		/// to update their state (such as updating their <see cref="FullName"/>
+		/// property).
+		/// </remarks>
+		protected virtual void OnParentFolderRenamed ()
+		{
+		}
+
+		void OnParentFolderRenamed (object sender, FolderRenamedEventArgs e)
+		{
+			var oldFullName = FullName;
+
+			OnParentFolderRenamed ();
+
+			if (FullName != oldFullName)
+				OnRenamed (oldFullName, FullName);
 		}
 
 		/// <summary>

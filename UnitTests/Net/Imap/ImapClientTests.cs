@@ -182,8 +182,11 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000083 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Answered)\r\n", "gmail.remove-flags.txt"));
 			commands.Add (new ImapReplayCommand ("A00000084 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", "gmail.add-flags.txt"));
 			commands.Add (new ImapReplayCommand ("A00000085 UNSELECT\r\n", "gmail.unselect-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000086 DELETE UnitTests\r\n", "gmail.delete-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000087 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (new ImapReplayCommand ("A00000086 CREATE UnitTests/Dummy\r\n", "gmail.create-unittests-dummy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000087 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000088 RENAME UnitTests RenamedUnitTests\r\n", "gmail.rename-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000089 DELETE RenamedUnitTests\r\n", "gmail.delete-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000090 LOGOUT\r\n", "gmail.logout.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -276,6 +279,23 @@ namespace UnitTests.Net.Imap {
 				created.AddFlags (matches, MessageFlags.Deleted, true, CancellationToken.None);
 
 				created.Close (false, CancellationToken.None);
+				Assert.IsFalse (created.IsOpen, "Expected the UnitTests folder to be closed.");
+
+				var dummy = created.Create ("Dummy", true);
+				bool dummyRenamed = false;
+				bool renamed = false;
+
+				dummy.Renamed += (sender, e) => { dummyRenamed = true; };
+				created.Renamed += (sender, e) => { renamed = true; };
+
+				created.Rename (created.ParentFolder, "RenamedUnitTests");
+				Assert.AreEqual ("RenamedUnitTests", created.Name);
+				Assert.AreEqual ("RenamedUnitTests", created.FullName);
+				Assert.IsTrue (renamed, "Expected the Rename event to be emitted for the UnitTests folder.");
+
+				Assert.AreEqual ("RenamedUnitTests/Dummy", dummy.FullName);
+				Assert.IsTrue (dummyRenamed, "Expected the Rename event to be emitted for the UnitTests/Dummy folder.");
+
 				created.Delete (CancellationToken.None);
 
 				client.Disconnect (true, CancellationToken.None);
