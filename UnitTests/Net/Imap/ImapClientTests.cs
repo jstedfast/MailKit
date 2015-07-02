@@ -255,11 +255,14 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000083 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Answered)\r\n", "gmail.remove-flags.txt"));
 			commands.Add (new ImapReplayCommand ("A00000084 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", "gmail.add-flags.txt"));
 			commands.Add (new ImapReplayCommand ("A00000085 UNSELECT\r\n", "gmail.unselect-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000086 CREATE UnitTests/Dummy\r\n", "gmail.create-unittests-dummy.txt"));
-			commands.Add (new ImapReplayCommand ("A00000087 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
-			commands.Add (new ImapReplayCommand ("A00000088 RENAME UnitTests RenamedUnitTests\r\n", "gmail.rename-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000089 DELETE RenamedUnitTests\r\n", "gmail.delete-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000090 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (new ImapReplayCommand ("A00000086 SUBSCRIBE UnitTests\r\n", "gmail.subscribe-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000087 LSUB \"\" \"%\"\r\n", "gmail.lsub-personal.txt"));
+			commands.Add (new ImapReplayCommand ("A00000088 UNSUBSCRIBE UnitTests\r\n", "gmail.unsubscribe-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000089 CREATE UnitTests/Dummy\r\n", "gmail.create-unittests-dummy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000090 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000091 RENAME UnitTests RenamedUnitTests\r\n", "gmail.rename-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000092 DELETE RenamedUnitTests\r\n", "gmail.delete-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000093 LOGOUT\r\n", "gmail.logout.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
@@ -353,6 +356,15 @@ namespace UnitTests.Net.Imap {
 
 				created.Close (false, CancellationToken.None);
 				Assert.IsFalse (created.IsOpen, "Expected the UnitTests folder to be closed.");
+
+				created.Subscribe ();
+				Assert.IsTrue (created.IsSubscribed, "Expected IsSubscribed to be true after subscribing to the folder.");
+
+				var subscribed = personal.GetSubfolders (true).ToList ();
+				Assert.IsTrue (subscribed.Contains (created), "Expected the list of subscribed folders to contain the UnitTests folder.");
+
+				created.Unsubscribe ();
+				Assert.IsFalse (created.IsSubscribed, "Expected IsSubscribed to be false after unsubscribing from the folder.");
 
 				var dummy = created.Create ("Dummy", true);
 				bool dummyRenamed = false;

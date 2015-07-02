@@ -216,6 +216,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests-dummy.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\logout.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\lsub-personal.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\namespace.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\precise-pangolin-message.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\remove-flags.txt" />
@@ -224,7 +225,9 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\search-summary.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\select-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\set-flags.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\subscribe-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\unselect-unittests.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\unsubscribe-unittests.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\xlist.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa1.txt" />
     <EmbeddedResource Include="Net\Pop3\Resources\comcast\capa2.txt" />
