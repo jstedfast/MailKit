@@ -114,6 +114,79 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestImapClientFeatures ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				try {
+					var credentials = new NetworkCredential ("username", "password");
+
+					// Note: Do not try XOAUTH2
+					client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+					client.Authenticate (credentials, CancellationToken.None);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
+
+				var implementation = new ImapImplementation {
+					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."
+				};
+
+				implementation = client.Identify (implementation);
+				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
+				Assert.AreEqual ("GImap", implementation.Name);
+				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
+				Assert.AreEqual ("http://support.google.com/mail", implementation.SupportUrl);
+				Assert.AreEqual ("gmail_imap_150623.03_p1", implementation.Version);
+				Assert.AreEqual ("127.0.0.1", implementation.Properties["remote-host"]);
+
+				var personal = client.GetFolder (client.PersonalNamespaces[0]);
+				var inbox = client.Inbox;
+
+				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
+				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
+
+				var quota = inbox.GetQuota ();
+				Assert.IsNotNull (quota, "Expected a non-null GETQUOTAROOT response.");
+				Assert.AreEqual (personal.FullName, quota.QuotaRoot.FullName);
+				Assert.AreEqual (personal, quota.QuotaRoot);
+				Assert.AreEqual (3783, quota.CurrentStorageSize.Value);
+				Assert.AreEqual (15728640, quota.StorageLimit.Value);
+				Assert.IsFalse (quota.CurrentMessageCount.HasValue);
+				Assert.IsFalse (quota.MessageLimit.HasValue);
+
+				client.Disconnect (false, CancellationToken.None);
+			}
+		}
+
+		[Test]
 		public void TestImapClientGMail ()
 		{
 			var commands = new List<ImapReplayCommand> ();

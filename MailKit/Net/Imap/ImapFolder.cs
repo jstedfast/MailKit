@@ -1576,7 +1576,7 @@ namespace MailKit.Net.Imap {
 			if (!engine.GetCachedFolder (encodedName, out quotaRoot)) {
 				// Note: this shouldn't happen because the quota root should
 				// be one of the parent folders which will all have been added
-				// to the folder cache by thsi point.
+				// to the folder cache by this point.
 			}
 
 			ic.UserData = quota = new FolderQuota (quotaRoot);
