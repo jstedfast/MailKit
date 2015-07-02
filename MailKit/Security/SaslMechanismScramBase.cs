@@ -64,6 +64,11 @@ namespace MailKit.Security {
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="entropy">Random characters to act as the cnonce token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
 		internal protected SaslMechanismScramBase (Uri uri, ICredentials credentials, string entropy) : base (uri, credentials)
 		{
 			cnonce = entropy;
@@ -77,6 +82,11 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="uri">The URI of the service.</param>
 		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
 		protected SaslMechanismScramBase (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
 		}
