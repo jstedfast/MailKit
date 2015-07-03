@@ -197,7 +197,7 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
 			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests\r\n", "gmail.create-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "gmail.list-unittests.txt"));
 			commands.Add (new ImapReplayCommand ("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt"));
 
@@ -252,16 +252,16 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000080 UID FETCH 43 (BODY.PEEK[])\r\n", "gmail.fetch.43.txt"));
 			commands.Add (new ImapReplayCommand ("A00000081 UID FETCH 50 (BODY.PEEK[])\r\n", "gmail.fetch.50.txt"));
 			commands.Add (new ImapReplayCommand ("A00000082 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 FLAGS (\\Answered \\Seen)\r\n", "gmail.set-flags.txt"));
-			commands.Add (new ImapReplayCommand ("A00000083 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Answered)\r\n", "gmail.remove-flags.txt"));
+			commands.Add (new ImapReplayCommand ("A00000083 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Answered)\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000084 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", "gmail.add-flags.txt"));
-			commands.Add (new ImapReplayCommand ("A00000085 UNSELECT\r\n", "gmail.unselect-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000086 SUBSCRIBE UnitTests\r\n", "gmail.subscribe-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000085 UNSELECT\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000086 SUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000087 LSUB \"\" \"%\"\r\n", "gmail.lsub-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000088 UNSUBSCRIBE UnitTests\r\n", "gmail.unsubscribe-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000089 CREATE UnitTests/Dummy\r\n", "gmail.create-unittests-dummy.txt"));
+			commands.Add (new ImapReplayCommand ("A00000088 UNSUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000089 CREATE UnitTests/Dummy\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000090 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
-			commands.Add (new ImapReplayCommand ("A00000091 RENAME UnitTests RenamedUnitTests\r\n", "gmail.rename-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000092 DELETE RenamedUnitTests\r\n", "gmail.delete-unittests.txt"));
+			commands.Add (new ImapReplayCommand ("A00000091 RENAME UnitTests RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000092 DELETE RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000093 LOGOUT\r\n", "gmail.logout.txt"));
 
 			using (var client = new ImapClient ()) {

@@ -1,1 +1,0 @@
-A00000085 OK Returned to authenticated state. (Success)

@@ -35,15 +35,48 @@ using MimeKit.IO;
 using MimeKit.IO.Filters;
 
 namespace UnitTests.Net.Imap {
+	enum ImapReplayCommandResponse {
+		OK,
+		NO,
+		BAD
+	}
+
 	class ImapReplayCommand
 	{
 		public string Command { get; private set; }
-		public string Resource { get; private set; }
+		public byte[] Response { get; private set; }
+
+		public ImapReplayCommand (string command, byte[] response)
+		{
+			Command = command;
+			Response = response;
+		}
 
 		public ImapReplayCommand (string command, string resource)
 		{
 			Command = command;
-			Resource = resource;
+
+			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
+				var memory = new MemoryBlockStream ();
+
+				using (var filtered = new FilteredStream (memory)) {
+					filtered.Add (new Unix2DosFilter ());
+					stream.CopyTo (filtered, 4096);
+				}
+
+				Response = memory.ToArray ();
+			}
+		}
+
+		public ImapReplayCommand (string command, ImapReplayCommandResponse response)
+		{
+			var tokens = command.Split (' ');
+			var cmd = (tokens[1] == "UID" ? tokens[2] : tokens[1]).TrimEnd ();
+			var tag = tokens[0];
+
+			var text = string.Format ("{0} {1} {2} completed\r\n", tag, response, cmd);
+			Response = Encoding.ASCII.GetBytes (text);
+			Command = command;
 		}
 	}
 
@@ -65,7 +98,7 @@ namespace UnitTests.Net.Imap {
 
 		public ImapReplayStream (IList<ImapReplayCommand> commands, bool testUnixFormat)
 		{
-			stream = GetResourceStream (commands[0].Resource);
+			stream = GetResponseStream (commands[0]);
 			state = ImapReplayState.SendResponse;
 			this.testUnixFormat = testUnixFormat;
 			this.commands = commands;
@@ -117,22 +150,25 @@ namespace UnitTests.Net.Imap {
 			return nread;
 		}
 
-		Stream GetResourceStream (string name)
+		Stream GetResponseStream (ImapReplayCommand command)
 		{
-			using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + name)) {
-				var memory = new MemoryBlockStream ();
+			MemoryStream memory;
+
+			if (testUnixFormat) {
+				memory = new MemoryStream ();
 
 				using (var filtered = new FilteredStream (memory)) {
-					if (testUnixFormat)
-						filtered.Add (new Dos2UnixFilter ());
-					else
-						filtered.Add (new Unix2DosFilter ());
-					response.CopyTo (filtered, 4096);
+					filtered.Add (new Dos2UnixFilter ());
+					filtered.Write (command.Response, 0, command.Response.Length);
+					filtered.Flush ();
 				}
 
 				memory.Position = 0;
-				return memory;
+			} else {
+				memory = new MemoryStream (command.Response, false);
 			}
+
+			return memory;
 		}
 
 		public override void Write (byte[] buffer, int offset, int count)
@@ -151,7 +187,7 @@ namespace UnitTests.Net.Imap {
 				if (stream != null)
 					stream.Dispose ();
 
-				stream = GetResourceStream (commands[index].Resource);
+				stream = GetResponseStream (commands[index]);
 				state = ImapReplayState.SendResponse;
 				sent.SetLength (0);
 			}
