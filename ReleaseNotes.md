@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 1.2.7
+
+* Fixed ImapFolder.Rename() to properly emit the Renamed event for child folders as well.
+* Fixed ImapFolder.Fetch() to always fill in the Headers property when requesting specific
+  headers even if the server replies with an empty list. (issue #210)
+
 ### MailKit 1.2.6
 
 * Fixed UniqueIdSet.CopyTo() to work properly (also fixes LINQ usage).
