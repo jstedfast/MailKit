@@ -1017,7 +1017,7 @@ namespace MailKit.Net.Imap {
 			OnAuthenticated (ic.ResultText);
 		}
 
-		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken)
+		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 

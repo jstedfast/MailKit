@@ -611,7 +611,7 @@ namespace MailKit.Net.Pop3 {
 			OnAuthenticated (authMessage);
 		}
 
-		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken)
+		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
 				throw new ArgumentNullException ("host");

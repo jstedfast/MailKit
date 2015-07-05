@@ -611,7 +611,7 @@ namespace MailKit.Net.Smtp {
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
 
-		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken)
+		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
