@@ -100,7 +100,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -128,7 +128,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -148,7 +148,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -182,7 +182,7 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (quota.CurrentMessageCount.HasValue);
 				Assert.IsFalse (quota.MessageLimit.HasValue);
 
-				client.Disconnect (false, CancellationToken.None);
+				client.Disconnect (false);
 			}
 		}
 
@@ -212,7 +212,9 @@ namespace UnitTests.Net.Imap {
 
 						stream.Position = 0;
 					}
-					var message = MimeMessage.Load (stream);
+
+					MimeMessage.Load (stream);
+
 					long length = stream.Length;
 					string latin1;
 
@@ -266,7 +268,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -286,7 +288,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -311,18 +313,18 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = personal.GetSubfolders (false, CancellationToken.None).ToList ();
+				var folders = personal.GetSubfolders ().ToList ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
-				var created = personal.Create ("UnitTests", true, CancellationToken.None);
+				var created = personal.Create ("UnitTests", true);
 
 				Assert.IsNotNull (created.ParentFolder, "The ParentFolder property should not be null.");
 
 				const MessageFlags ExpectedPermanentFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.UserDefined;
 				const MessageFlags ExpectedAcceptedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen;
-				var access = created.Open (FolderAccess.ReadWrite, CancellationToken.None);
+				var access = created.Open (FolderAccess.ReadWrite);
 				Assert.AreEqual (FolderAccess.ReadWrite, access, "The UnitTests folder was not opened with the expected access mode.");
 				Assert.AreEqual (ExpectedPermanentFlags, created.PermanentFlags, "The PermanentFlags do not match the expected value.");
 				Assert.AreEqual (ExpectedAcceptedFlags, created.AcceptedFlags, "The AcceptedFlags do not match the expected value.");
@@ -331,30 +333,30 @@ namespace UnitTests.Net.Imap {
 					using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
 						var message = MimeMessage.Load (stream);
 
-						var uid = created.Append (message, MessageFlags.Seen, CancellationToken.None);
+						var uid = created.Append (message, MessageFlags.Seen);
 						Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
 						Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
 					}
 				}
 
 				var query = SearchQuery.ToContains ("nsb").Or (SearchQuery.CcContains ("nsb"));
-				var matches = created.Search (query, CancellationToken.None);
+				var matches = created.Search (query);
 
 				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId;
-				var summaries = created.Fetch (matches, items, CancellationToken.None);
+				var summaries = created.Fetch (matches, items);
 
 				foreach (var summary in summaries) {
 					if (summary.UniqueId.HasValue)
-						created.GetMessage (summary.UniqueId.Value, CancellationToken.None);
+						created.GetMessage (summary.UniqueId.Value);
 					else
-						created.GetMessage (summary.Index, CancellationToken.None);
+						created.GetMessage (summary.Index);
 				}
 
-				created.SetFlags (matches, MessageFlags.Seen | MessageFlags.Answered, false, CancellationToken.None);
-				created.RemoveFlags (matches, MessageFlags.Answered, true, CancellationToken.None);
-				created.AddFlags (matches, MessageFlags.Deleted, true, CancellationToken.None);
+				created.SetFlags (matches, MessageFlags.Seen | MessageFlags.Answered, false);
+				created.RemoveFlags (matches, MessageFlags.Answered, true);
+				created.AddFlags (matches, MessageFlags.Deleted, true);
 
-				created.Close (false, CancellationToken.None);
+				created.Close ();
 				Assert.IsFalse (created.IsOpen, "Expected the UnitTests folder to be closed.");
 
 				created.Subscribe ();
@@ -383,7 +385,7 @@ namespace UnitTests.Net.Imap {
 
 				created.Delete (CancellationToken.None);
 
-				client.Disconnect (true, CancellationToken.None);
+				client.Disconnect (true);
 			}
 		}
 
@@ -400,14 +402,14 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000005 GETACL INBOX\r\n", "acl.getacl.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 LISTRIGHTS INBOX smith\r\n", "acl.listrights.txt"));
 			commands.Add (new ImapReplayCommand ("A00000007 MYRIGHTS INBOX\r\n", "acl.myrights.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SETACL INBOX smith +lrswida\r\n", "acl.setacl1.txt"));
-			commands.Add (new ImapReplayCommand ("A00000009 SETACL INBOX smith -lrswida\r\n", "acl.setacl2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000010 SETACL INBOX smith lrswida\r\n", "acl.setacl3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000011 DELETEACL INBOX smith\r\n", "acl.deleteacl.txt"));
+			commands.Add (new ImapReplayCommand ("A00000008 SETACL INBOX smith +lrswida\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000009 SETACL INBOX smith -lrswida\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000010 SETACL INBOX smith lrswida\r\n", ImapReplayCommandResponse.OK));
+			commands.Add (new ImapReplayCommand ("A00000011 DELETEACL INBOX smith\r\n", ImapReplayCommandResponse.OK));
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -427,7 +429,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -479,7 +481,7 @@ namespace UnitTests.Net.Imap {
 				// DELETEACL INBOX smith
 				client.Inbox.RemoveAccess ("smith");
 
-				client.Disconnect (false, CancellationToken.None);
+				client.Disconnect (false);
 			}
 		}
 
@@ -499,7 +501,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -519,7 +521,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -544,14 +546,14 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = personal.GetSubfolders (false, CancellationToken.None).ToList ();
+				var folders = personal.GetSubfolders ().ToList ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
-				client.Inbox.Open (FolderAccess.ReadOnly, CancellationToken.None);
+				client.Inbox.Open (FolderAccess.ReadOnly);
 
-				var message = client.Inbox.GetMessage (269, CancellationToken.None);
+				var message = client.Inbox.GetMessage (269);
 
 				using (var jpeg = new MemoryStream ()) {
 					var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
@@ -566,7 +568,7 @@ namespace UnitTests.Net.Imap {
 					}
 				}
 
-				client.Disconnect (false, CancellationToken.None);
+				client.Disconnect (false);
 			}
 		}
 		
@@ -587,7 +589,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -600,7 +602,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -613,9 +615,9 @@ namespace UnitTests.Net.Imap {
 					count = client.Inbox.Count;
 				};
 				
-				client.NoOp();
+				client.NoOp ();
 				
-				Assert.AreEqual(1, count, "Count is not correct");
+				Assert.AreEqual (1, count, "Count is not correct");
 			}
 		}
 	}

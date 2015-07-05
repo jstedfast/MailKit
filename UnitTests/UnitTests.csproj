@@ -69,13 +69,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Net\Imap\Resources\acl\authenticate.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\capability.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\deleteacl.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\getacl.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\listrights.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\acl\myrights.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl1.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl2.txt" />
-    <EmbeddedResource Include="Net\Imap\Resources\acl\setacl3.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\capability-greeting.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\getquota.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\common\id.txt" />
