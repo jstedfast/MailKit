@@ -4597,21 +4597,23 @@ namespace MailKit.Net.Imap {
 
 		MimeMessage ParseMessage (Stream stream, CancellationToken cancellationToken)
 		{
+			bool dispose = !(stream is MemoryStream || stream is MemoryBlockStream);
+
 			try {
-				return Engine.ParseMessage (stream, true, cancellationToken);
-			} catch {
-				stream.Dispose ();
-				throw;
+				return Engine.ParseMessage (stream, !dispose, cancellationToken);
+			} finally {
+				if (dispose)
+					stream.Dispose ();
 			}
 		}
 
-		MimeEntity ParseEntity (ChainedStream stream, CancellationToken cancellationToken)
+		MimeEntity ParseEntity (Stream stream, bool dispose, CancellationToken cancellationToken)
 		{
 			try {
-				return Engine.ParseEntity (stream, true, cancellationToken);
-			} catch {
-				stream.Dispose ();
-				throw;
+				return Engine.ParseEntity (stream, !dispose, cancellationToken);
+			} finally {
+				if (dispose)
+					stream.Dispose ();
 			}
 		}
 
@@ -5230,6 +5232,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchStreamContext (progress);
 			ChainedStream chained;
+			bool dispose = false;
 			Stream stream;
 
 			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
@@ -5251,6 +5254,9 @@ namespace MailKit.Net.Imap {
 					if (!ctx.Sections.TryGetValue (tag, out stream))
 						throw new ImapCommandException ("The IMAP server did not return the requested body part.");
 
+					if (!(stream is MemoryStream || stream is MemoryBlockStream))
+						dispose = true;
+
 					chained.Add (stream);
 				}
 
@@ -5260,7 +5266,7 @@ namespace MailKit.Net.Imap {
 				ctx.Dispose ();
 			}
 
-			var entity = ParseEntity (chained, cancellationToken);
+			var entity = ParseEntity (chained, dispose, cancellationToken);
 
 			if (partSpecifier.Length == 0) {
 				for (int i = entity.Headers.Count; i > 0; i--) {
