@@ -315,7 +315,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, this);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
 			} catch {
 				PermanentFlags = MessageFlags.None;
@@ -398,7 +398,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, this);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create (access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT", ic);
 			} catch {
 				PermanentFlags = MessageFlags.None;
@@ -467,7 +467,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create (expunge ? "CLOSE" : "UNSELECT", ic);
 
 			Engine.State = ImapEngineState.Authenticated;
@@ -543,7 +543,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("CREATE", ic);
 
 			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
@@ -555,7 +555,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
 			if ((folder = list.FirstOrDefault ()) != null)
@@ -644,7 +644,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, this);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("RENAME", ic);
 
 			Engine.FolderCache.Remove (EncodedName);
@@ -710,7 +710,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, this);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("DELETE", ic);
 
 			if (Engine.Selected == this) {
@@ -762,7 +762,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SUBSCRIBE", ic);
 
 			IsSubscribed = true;
@@ -807,7 +807,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("UNSUBSCRIBE", ic);
 
 			IsSubscribed = false;
@@ -879,7 +879,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create (subscribedOnly ? "LSUB" : "LIST", ic);
 
 			return children;
@@ -951,7 +951,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
 			if (list.Count == 0)
@@ -1004,7 +1004,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("CHECK", ic);
 		}
 
@@ -1085,7 +1085,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, this);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("STATUS", ic);
 		}
 
@@ -1156,7 +1156,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETACL", ic);
 
 			return (AccessControlList) ic.UserData;
@@ -1237,7 +1237,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LISTRIGHTS", ic);
 
 			return (AccessRights) ic.UserData;
@@ -1302,7 +1302,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("MYRIGHTS", ic);
 
 			return (AccessRights) ic.UserData;
@@ -1321,7 +1321,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SETACL", ic);
 		}
 
@@ -1535,7 +1535,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("DELETEACL", ic);
 		}
 
@@ -1672,7 +1672,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("GETQUOTAROOT", ic);
 
 			if (ic.UserData == null)
@@ -1739,7 +1739,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SETQUOTA", ic);
 
 			if (ic.UserData == null)
@@ -1798,7 +1798,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("EXPUNGE", ic);
 		}
 
@@ -1902,7 +1902,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("EXPUNGE", ic);
 		}
 
@@ -2001,7 +2001,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, this);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
 
 			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
@@ -2088,7 +2088,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, this);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("APPEND", ic);
 
 			var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
@@ -2225,7 +2225,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, this);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
 				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
@@ -2356,7 +2356,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("APPEND", ic);
 
 				var append = ic.RespCodes.OfType<AppendUidResponseCode> ().FirstOrDefault ();
@@ -2464,7 +2464,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, destination);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("COPY", ic);
 
 			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
@@ -2569,7 +2569,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, destination);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("MOVE", ic);
 
 			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
@@ -2653,7 +2653,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, destination);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("COPY", ic);
 		}
 
@@ -2737,7 +2737,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, destination);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("MOVE", ic);
 		}
 
@@ -3167,7 +3167,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -3308,7 +3308,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -3402,7 +3402,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -3567,7 +3567,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -3647,7 +3647,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -3788,7 +3788,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -3877,7 +3877,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -4033,7 +4033,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -4127,7 +4127,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -4278,7 +4278,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -4368,7 +4368,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -4531,7 +4531,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("FETCH", ic);
 
 			return AsReadOnly (ctx.Results.Values);
@@ -4915,7 +4915,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
@@ -4990,7 +4990,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
@@ -5263,7 +5263,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				chained = new ChainedStream ();
@@ -5526,7 +5526,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				chained = new ChainedStream ();
@@ -5641,7 +5641,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
@@ -5734,7 +5734,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
@@ -5819,7 +5819,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
@@ -5923,7 +5923,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
@@ -6008,7 +6008,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
@@ -6111,7 +6111,7 @@ namespace MailKit.Net.Imap {
 
 				ProcessResponseCodes (ic, null);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
@@ -6150,7 +6150,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("STORE", ic);
 
 			if (modseq.HasValue) {
@@ -6513,7 +6513,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("STORE", ic);
 
 			if (modseq.HasValue) {
@@ -6910,7 +6910,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("STORE", ic);
 
 			if (modseq.HasValue) {
@@ -7286,7 +7286,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("STORE", ic);
 
 			if (modseq.HasValue) {
@@ -8174,7 +8174,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
 			var results = (SearchResults) ic.UserData;
@@ -8281,7 +8281,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
 			var results = (SearchResults) ic.UserData;
@@ -8378,7 +8378,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
 			var results = (SearchResults) ic.UserData;
@@ -8494,7 +8494,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
 			var results = (SearchResults) ic.UserData;
@@ -8588,7 +8588,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
 			return (SearchResults) ic.UserData;
@@ -8695,7 +8695,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
 			return (SearchResults) ic.UserData;
@@ -8794,7 +8794,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SEARCH", ic);
 
 			return (SearchResults) ic.UserData;
@@ -8910,7 +8910,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SORT", ic);
 
 			return (SearchResults) ic.UserData;
@@ -8998,7 +8998,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("THREAD", ic);
 
 			var threads = (IList<MessageThread>) ic.UserData;
@@ -9095,7 +9095,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic, null);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("THREAD", ic);
 
 			var threads = (IList<MessageThread>) ic.UserData;

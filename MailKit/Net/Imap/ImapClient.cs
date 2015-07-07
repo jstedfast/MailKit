@@ -281,7 +281,7 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("COMPRESS", ic);
 
 			var unzip = new DeflateStream (engine.Stream.Stream, CompressionMode.Decompress);
@@ -401,7 +401,7 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
 
 			engine.QResyncEnabled = true;
@@ -460,7 +460,7 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
 
 			engine.UTF8Enabled = true;
@@ -592,7 +592,7 @@ namespace MailKit.Net.Imap {
 			engine.QueueCommand (ic);
 			engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ID", ic);
 
 			return (ImapImplementation) ic.UserData;
@@ -747,7 +747,7 @@ namespace MailKit.Net.Imap {
 
 		static AuthenticationException CreateAuthenticationException (ImapCommand ic)
 		{
-			if (string.IsNullOrEmpty (ic.ResultText)) {
+			if (string.IsNullOrEmpty (ic.ResponseText)) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].IsError)
 						return new AuthenticationException (ic.RespCodes[i].Message);
@@ -756,7 +756,7 @@ namespace MailKit.Net.Imap {
 				return new AuthenticationException ();
 			}
 
-			return new AuthenticationException (ic.ResultText);
+			return new AuthenticationException (ic.ResponseText);
 		}
 
 		static bool IsHexDigit (char c)
@@ -959,7 +959,7 @@ namespace MailKit.Net.Imap {
 
 				engine.Wait (ic);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					continue;
 
 				engine.State = ImapEngineState.Authenticated;
@@ -978,7 +978,7 @@ namespace MailKit.Net.Imap {
 
 				engine.QueryNamespaces (cancellationToken);
 				engine.QuerySpecialFolders (cancellationToken);
-				OnAuthenticated (ic.ResultText);
+				OnAuthenticated (ic.ResponseText);
 				return;
 			}
 
@@ -996,7 +996,7 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw CreateAuthenticationException (ic);
 
 			engine.State = ImapEngineState.Authenticated;
@@ -1014,7 +1014,7 @@ namespace MailKit.Net.Imap {
 
 			engine.QueryNamespaces (cancellationToken);
 			engine.QuerySpecialFolders (cancellationToken);
-			OnAuthenticated (ic.ResultText);
+			OnAuthenticated (ic.ResponseText);
 		}
 
 		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
@@ -1231,7 +1231,7 @@ namespace MailKit.Net.Imap {
 
 					engine.Wait (ic);
 
-					if (ic.Result == ImapCommandResult.Ok) {
+					if (ic.Response == ImapCommandResponse.Ok) {
 #if !NETFX_CORE
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 						tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
@@ -1379,7 +1379,7 @@ namespace MailKit.Net.Imap {
 
 					engine.Wait (ic);
 
-					if (ic.Result == ImapCommandResult.Ok) {
+					if (ic.Response == ImapCommandResponse.Ok) {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 						tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
 						engine.Stream.Stream = tls;
@@ -1610,7 +1610,7 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOOP", ic);
 		}
 
@@ -1709,7 +1709,7 @@ namespace MailKit.Net.Imap {
 
 				engine.Wait (ic);
 
-				if (ic.Result != ImapCommandResult.Ok)
+				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("IDLE", ic);
 			}
 		}

@@ -1500,7 +1500,7 @@ namespace MailKit.Net.Imap {
 						var text = ReadLine (cancellationToken);
 
 						if (current != null)
-							current.ResultText = text.Trim ();
+							current.ResponseText = text.Trim ();
 					}
 					break;
 				default:
@@ -1674,7 +1674,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The command result.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public ImapCommandResult QueryCapabilities (CancellationToken cancellationToken)
+		public ImapCommandResponse QueryCapabilities (CancellationToken cancellationToken)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
@@ -1682,7 +1682,7 @@ namespace MailKit.Net.Imap {
 			var ic = QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
 			Wait (ic);
 
-			return ic.Result;
+			return ic.Response;
 		}
 
 		/// <summary>
@@ -1765,7 +1765,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The command result.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public ImapCommandResult QueryNamespaces (CancellationToken cancellationToken)
+		public ImapCommandResponse QueryNamespaces (CancellationToken cancellationToken)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
@@ -1797,7 +1797,7 @@ namespace MailKit.Net.Imap {
 				LookupParentFolders (list, cancellationToken);
 			}
 
-			return ic.Result;
+			return ic.Response;
 		}
 
 		/// <summary>
@@ -1914,7 +1914,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("LIST", ic);
 
 			if (list.Count == 0)
@@ -1954,7 +1954,7 @@ namespace MailKit.Net.Imap {
 
 			ProcessResponseCodes (ic);
 
-			if (ic.Result != ImapCommandResult.Ok)
+			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create (command, ic);
 
 			LookupParentFolders (list, cancellationToken);

@@ -53,6 +53,12 @@ namespace MailKit.Net.Imap {
 		/// <param name="context">The streaming context.</param>
 		protected ImapCommandException (SerializationInfo info, StreamingContext context) : base (info, context)
 		{
+			var value = info.GetString ("Response");
+			ImapCommandResponse response;
+
+			Enum.TryParse (value, out response);
+
+			Response = response;
 		}
 #endif
 
@@ -67,10 +73,10 @@ namespace MailKit.Net.Imap {
 		/// <param name="ic">The command state.</param>
 		internal static ImapCommandException Create (string command, ImapCommand ic)
 		{
-			var result = ic.Result.ToString ().ToUpperInvariant ();
+			var result = ic.Response.ToString ().ToUpperInvariant ();
 			string message, reason = null;
 
-			if (string.IsNullOrEmpty (ic.ResultText)) {
+			if (string.IsNullOrEmpty (ic.ResponseText)) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].IsError) {
 						reason = ic.RespCodes[i].Message;
@@ -78,7 +84,7 @@ namespace MailKit.Net.Imap {
 					}
 				}
 			} else {
-				reason = ic.ResultText;
+				reason = ic.ResponseText;
 			}
 
 			if (!string.IsNullOrEmpty (reason))
@@ -86,7 +92,7 @@ namespace MailKit.Net.Imap {
 			else
 				message = string.Format ("The IMAP server replied to the '{0}' command with a '{1}' response.", command, result);
 
-			return ic.Exception != null ? new ImapCommandException (message, ic.Exception) : new ImapCommandException (message);
+			return ic.Exception != null ? new ImapCommandException (ic.Response, message, ic.Exception) : new ImapCommandException (ic.Response, message);
 		}
 
 		/// <summary>
@@ -95,10 +101,12 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Creates a new <see cref="ImapCommandException"/>.
 		/// </remarks>
+		/// <param name="response">The IMAP command response.</param>
 		/// <param name="message">The error message.</param>
 		/// <param name="innerException">The inner exception.</param>
-		public ImapCommandException (string message, Exception innerException) : base (message, innerException)
+		public ImapCommandException (ImapCommandResponse response, string message, Exception innerException) : base (message, innerException)
 		{
+			Response = response;
 		}
 
 		/// <summary>
@@ -107,9 +115,11 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Creates a new <see cref="ImapCommandException"/>.
 		/// </remarks>
+		/// <param name="response">The IMAP command response.</param>
 		/// <param name="message">The error message.</param>
-		public ImapCommandException (string message) : base (message)
+		public ImapCommandException (ImapCommandResponse response, string message) : base (message)
 		{
+			Response = response;
 		}
 
 		/// <summary>
@@ -118,8 +128,45 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Creates a new <see cref="ImapCommandException"/>.
 		/// </remarks>
-		public ImapCommandException ()
+		/// <param name="response">The IMAP command response.</param>
+		public ImapCommandException (ImapCommandResponse response)
 		{
+			Response = response;
 		}
+
+		/// <summary>
+		/// Gets the IMAP command response.
+		/// </summary>
+		/// <remarks>
+		/// Gets the IMAP command response.
+		/// </remarks>
+		/// <value>The IMAP command response.</value>
+		public ImapCommandResponse Response {
+			get; private set;
+		}
+
+#if !NETFX_CORE
+		/// <summary>
+		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
+		/// with information about the exception.
+		/// </summary>
+		/// <remarks>
+		/// Serializes the state of the <see cref="FolderNotFoundException"/>.
+		/// </remarks>
+		/// <param name="info">The serialization info.</param>
+		/// <param name="context">The streaming context.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="info"/> is <c>null</c>.
+		/// </exception>
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			info.AddValue ("Response", Response);
+
+			base.GetObjectData (info, context);
+		}
+#endif
 	}
 }
