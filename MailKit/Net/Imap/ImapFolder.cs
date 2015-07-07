@@ -4879,6 +4879,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -4916,7 +4919,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested message.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested message.");
 
 				ctx.Sections.Remove (string.Empty);
 			} finally {
@@ -4950,6 +4953,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -4988,7 +4994,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested message.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested message.");
 
 				ctx.Sections.Remove (string.Empty);
 			} finally {
@@ -5058,6 +5064,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message body.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -5104,6 +5113,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message body.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5157,6 +5169,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message body.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -5203,6 +5218,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message body.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5252,7 +5270,7 @@ namespace MailKit.Net.Imap {
 
 				foreach (var tag in tags) {
 					if (!ctx.Sections.TryGetValue (tag, out stream))
-						throw new ImapCommandException ("The IMAP server did not return the requested body part.");
+						throw new MessageNotFoundException ("The IMAP server did not return the requested body part.");
 
 					if (!(stream is MemoryStream || stream is MemoryBlockStream))
 						dispose = true;
@@ -5309,6 +5327,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -5355,6 +5376,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5408,6 +5432,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -5454,6 +5481,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5503,7 +5533,7 @@ namespace MailKit.Net.Imap {
 
 				foreach (var tag in tags) {
 					if (!ctx.Sections.TryGetValue (tag, out stream))
-						throw new ImapCommandException ("The IMAP server did not return the requested body part.");
+						throw new MessageNotFoundException ("The IMAP server did not return the requested body part.");
 
 					if (!(stream is MemoryStream || stream is MemoryBlockStream))
 						dispose = true;
@@ -5566,6 +5596,9 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
 		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
+		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
 		/// </exception>
@@ -5612,7 +5645,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
 
 				ctx.Sections.Remove (string.Empty);
 			} finally {
@@ -5655,6 +5688,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5702,7 +5738,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (string.Empty, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
 
 				ctx.Sections.Remove (string.Empty);
 			} finally {
@@ -5742,6 +5778,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5784,7 +5823,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
 
 				ctx.Sections.Remove (section);
 			} finally {
@@ -5834,6 +5873,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5885,7 +5927,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
 
 				ctx.Sections.Remove (section);
 			} finally {
@@ -5925,6 +5967,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -5967,7 +6012,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
 
 				ctx.Sections.Remove (section);
 			} finally {
@@ -6016,6 +6061,9 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
 		/// The <see cref="ImapFolder"/> is not currently open.
+		/// </exception>
+		/// <exception cref="MessageNotFoundException">
+		/// The IMAP server did not return the requested message stream.
 		/// </exception>
 		/// <exception cref="System.OperationCanceledException">
 		/// The operation was canceled via the cancellation token.
@@ -6067,7 +6115,7 @@ namespace MailKit.Net.Imap {
 					throw ImapCommandException.Create ("FETCH", ic);
 
 				if (!ctx.Sections.TryGetValue (section, out stream))
-					throw new ImapCommandException ("The IMAP server did not return the requested stream.");
+					throw new MessageNotFoundException ("The IMAP server did not return the requested stream.");
 
 				ctx.Sections.Remove (section);
 			} finally {

@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7264D469-A390-4C10-9C87-DAA37EDD3C1D}</ProjectGuid>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <OutputType>Library</OutputType>
@@ -165,6 +163,7 @@
     <Compile Include="MessageFlags.cs" />
     <Compile Include="MessageFlagsChangedEventArgs.cs" />
     <Compile Include="MessageLabelsChangedEventArgs.cs" />
+    <Compile Include="MessageNotFoundException.cs" />
     <Compile Include="MessagesArrivedEventArgs.cs" />
     <Compile Include="MessageSentEventArgs.cs" />
     <Compile Include="MessageSorter.cs" />
