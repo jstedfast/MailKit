@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -40,12 +40,12 @@ namespace MailKit {
 	/// method will throw a <see cref="FolderNotOpenException"/> if the folder is not
 	/// current open.
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public class FolderNotOpenException : InvalidOperationException
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotOpenException"/> class.
 		/// </summary>
@@ -159,7 +159,7 @@ namespace MailKit {
 			return "The folder is not currently open.";
 		}
 
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.

@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -37,12 +37,12 @@ namespace MailKit {
 	/// A <see cref="ProtocolException"/> can be thrown by any of the various client
 	/// methods in MailKit.
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public abstract class ProtocolException : Exception
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ProtocolException"/> class.
 		/// </summary>

@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -80,12 +80,12 @@ namespace MailKit.Net.Smtp {
 	/// <example>
 	/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 	/// </example>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public class SmtpCommandException : CommandException
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpCommandException"/> class.
 		/// </summary>
@@ -148,7 +148,7 @@ namespace MailKit.Net.Smtp {
 			ErrorCode = code;
 		}
 
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.

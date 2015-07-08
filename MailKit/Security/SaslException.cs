@@ -67,12 +67,12 @@ namespace MailKit.Security {
 	/// <remarks>
 	/// Typically indicates an error while parsing a server's challenge token.
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public class SaslException : AuthenticationException
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslException"/> class.
 		/// </summary>
@@ -103,7 +103,7 @@ namespace MailKit.Security {
 			ErrorCode = code;
 		}
 
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.

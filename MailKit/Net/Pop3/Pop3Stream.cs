@@ -326,11 +326,11 @@ namespace MailKit.Net.Pop3 {
 			end = input.Length - PadSize;
 
 			try {
-				#if !NETFX_CORE
+#if !NETFX_CORE
 				bool buffered = Stream is SslStream;
-				#else
+#else
 				bool buffered = true;
-				#endif
+#endif
 
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();

@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -37,12 +37,12 @@ namespace MailKit.Net.Imap {
 	/// The exception that is thrown when an IMAP command fails. Unlike a <see cref="ImapProtocolException"/>,
 	/// a <see cref="ImapCommandException"/> does not require the <see cref="ImapClient"/> to be reconnected.
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public class ImapCommandException : CommandException
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommandException"/> class.
 		/// </summary>
@@ -145,7 +145,7 @@ namespace MailKit.Net.Imap {
 			get; private set;
 		}
 
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.

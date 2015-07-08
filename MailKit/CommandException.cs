@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -39,12 +39,12 @@ namespace MailKit {
 	/// <see cref="CommandException"/> is typically non-fatal (meaning that it does
 	/// not force the client to disconnect).
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public abstract class CommandException : Exception
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.CommandException"/> class.
 		/// </summary>

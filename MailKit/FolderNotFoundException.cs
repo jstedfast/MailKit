@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -36,12 +36,12 @@ namespace MailKit {
 	/// <remarks>
 	/// This exception is thrown by <see cref="IMailFolder.GetSubfolder(string,System.Threading.CancellationToken)"/>.
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public class FolderNotFoundException : Exception
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.FolderNotFoundException"/> class.
 		/// </summary>
@@ -127,7 +127,7 @@ namespace MailKit {
 			get; private set;
 		}
 
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// When overridden in a derived class, sets the <see cref="System.Runtime.Serialization.SerializationInfo"/>
 		/// with information about the exception.

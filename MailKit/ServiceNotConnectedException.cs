@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -37,12 +37,12 @@ namespace MailKit {
 	/// This exception is thrown when an operation on a service could not be completed
 	/// due to the service not being connected.
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public class ServiceNotConnectedException : InvalidOperationException
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.ServiceNotConnectedException"/> class.
 		/// </summary>

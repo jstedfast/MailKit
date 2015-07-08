@@ -25,7 +25,7 @@
 //
 
 using System;
-#if !NETFX_CORE
+#if SERIALIZABLE
 using System.Runtime.Serialization;
 #endif
 
@@ -36,12 +36,12 @@ namespace MailKit.Security {
 	/// <remarks>
 	/// The exception that is thrown when there is an authentication error.
 	/// </remarks>
-#if !NETFX_CORE
+#if SERIALIZABLE
 	[Serializable]
 #endif
 	public class AuthenticationException : Exception
 	{
-#if !NETFX_CORE
+#if SERIALIZABLE
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AuthenticationException"/> class.
 		/// </summary>

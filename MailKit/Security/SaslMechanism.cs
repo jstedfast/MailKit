@@ -445,11 +445,11 @@ namespace MailKit.Security {
 				}
 			}
 
-			#if !NETFX_CORE
+#if !NETFX_CORE
 			return builder.ToString ().Normalize (NormalizationForm.FormKC);
-			#else
+#else
 			return builder.ToString ();
-			#endif
+#endif
 		}
 	}
 }

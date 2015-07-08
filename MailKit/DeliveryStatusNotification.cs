@@ -54,7 +54,7 @@ namespace MailKit {
 
 		/// <summary>
 		/// Send a notification when the delivery to the recipient has
-		/// been delayed for an unusual amount fo time.
+		/// been delayed for an unusual amount of time.
 		/// </summary>
 		Delay   = (1 << 2)
 	}
