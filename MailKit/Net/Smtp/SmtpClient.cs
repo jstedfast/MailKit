@@ -1504,8 +1504,12 @@ namespace MailKit.Net.Smtp {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
 				MailFrom (message, sender, extensions, cancellationToken);
-				foreach (var recipient in recipients)
-					RcptTo (message, recipient, cancellationToken);
+
+				var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+				foreach (var recipient in recipients) {
+					if (unique.Add (recipient.Address))
+						RcptTo (message, recipient, cancellationToken);
+				}
 
 				// Note: if PIPELINING is supported, this will flush all outstanding
 				// MAIL FROM and RCPT TO commands to the server and then process all
