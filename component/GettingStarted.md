@@ -72,8 +72,7 @@ namespace TestClient {
 
 				client.Authenticate ("joey", "password");
 
-				int count = client.GetMessageCount ();
-				for (int i = 0; i < count; i++) {
+				for (int i = 0; i < client.Count; i++) {
 					var message = client.GetMessage (i);
 					Console.WriteLine ("Subject: {0}", message.Subject);
 				}
@@ -107,7 +106,7 @@ namespace TestClient {
 
 				// Note: since we don't have an OAuth2 token, disable
 				// the XOAUTH2 authentication mechanism.
-				client.AuthenticationMechanisms.Remove ("XOAUTH");
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
 				client.Authenticate ("joey", "password");
 
@@ -252,10 +251,27 @@ Another option might be to allow the user of your application to configure which
 
 How you handle this is up to you.
 
-## API Documentation
+## Donate
 
-For the complete API documentation, you can find up-todate documentation on the web
-at [http://jstedfast.github.io/MailKit/docs](http://jstedfast.github.io/MailKit/docs).
+MailKit is a personal open source project that I have put thousands of hours into perfecting with the
+goal of making it not only the very best email framework for .NET, but the best email framework for
+any programming language. I need your help to achieve this.
+
+<a href="http://www.pledgie.com/campaigns/29300" target="_blank">
+  <img src="http://www.pledgie.com/campaigns/29300.png?skin_name=chrome"
+       alt="Click here to lend your support to MimeKit and MailKit by making a donation via pledgie.com!"
+       border="0" />
+</a>
+
+## Reporting Bugs
+
+Have a bug or a feature request? [Please open a new issue](https://github.com/jstedfast/MailKit/issues).
+
+Before opening a new issue, please search for existing issues to avoid submitting duplicates.
+
+## Documentation
+
+API documentation can be found at [http://mimekit.net/docs](http://mimekit.net/docs).
 
 A copy of the xml formatted API documentation is also included in the NuGet and/or
 Xamarin Component package.

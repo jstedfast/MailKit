@@ -453,3 +453,6 @@ Before opening a new issue, please search for existing issues to avoid submittin
 ## Documentation
 
 API documentation can be found at [http://mimekit.net/docs](http://mimekit.net/docs).
+
+A copy of the xml formatted API documentation is also included in the NuGet and/or
+Xamarin Component package.
