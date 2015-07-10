@@ -1570,7 +1570,7 @@ namespace MailKit.Net.Imap {
 		/// <para>When the IMAP server receives a <c>NOOP</c> command, it will reply to the client with a
 		/// list of pending updates such as <c>EXISTS</c> and <c>RECENT</c> counts on the currently
 		/// selected folder. To receive these notifications, subscribe to the
-		/// <see cref="ImapFolder.CountChanged"/> and <see cref="ImapFolder.RecentChanged"/> events,
+		/// <see cref="MailFolder.CountChanged"/> and <see cref="MailFolder.RecentChanged"/> events,
 		/// respectively.</para>
 		/// <para>For more information about the <c>NOOP</c> command, see
 		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.1.2">rfc3501</a>.</para>
