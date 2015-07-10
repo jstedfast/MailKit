@@ -34,10 +34,7 @@
       <title>Building MailKit from Source</title>
       <content>
         <para>
-          First, you'll need to clone <application>MailKit</application>,
-          <application>MimeKit</application>,
-          <application>Bouncy Castle</application> and
-          <application>Portable.Text.Encoding</application> from the
+          First, you'll need to clone <application>MailKit</application> from the
           <externalLink>
             <linkText>GitHub</linkText>
             <linkUri>https://github.com/jstedfast</linkUri>
@@ -48,25 +45,12 @@
           <command>git clone https://github.com/jstedfast/MailKit.git</command>
         </para>
         <para>
-          <command>git clone https://github.com/jstedfast/MimeKit.git</command>
+          Then, since <application>MailKit</application> makes use of git submodules, you
+          will need to initialize and update the submodules using the following command
+          from within the <application>MailKit</application> directory:
         </para>
         <para>
-          <command>git clone https://github.com/jstedfast/bc-csharp.git</command>
-        </para>
-        <para>
-          <command>git clone https://github.com/jstedfast/Portable.Text.Encoding.git</command>
-        </para>
-        <para>
-          Currently, <application>MimeKit</application> depends on the vs2010 branch of
-          bc-csharp for the <application>Visual Studio 2010</application> project files
-          that I've added (to replace the <application>Visual Studio 2003</application>
-          project files). To switch to that branch,
-        </para>
-        <para>
-          <command>cd bc-csharp</command>
-        </para>
-        <para>
-          <command>git checkout -b vs2010 origin/vs2010</command>
+          <command>git submodule update --init --recursive</command>
         </para>
         <para>
           In the top-level <application>MailKit</application> source directory, there
@@ -100,7 +84,7 @@
         </list>
         <para>
           If you don't have the Xamarin products, you'll probably want to open the
-          <application>MailKit.Net40.sln</application> instead of
+          <application>MailKit.Net45.sln</application> instead of
           <application>MailKit.sln</application>.
         </para>
         <para>
