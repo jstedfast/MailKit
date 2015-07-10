@@ -236,10 +236,9 @@ namespace MailKit.Examples {
 			/// <param name="message">The message.</param>
 			protected override string GetEnvelopeId (MimeMessage message)
 			{
-				// Note: realistically you'll want to save this value in case you
-				// ever get a Delivery Status Notification so that you can look
-				// up which message the envelope-id is referring to.
-				return Guid.NewGuid ().ToString ();
+				// Since you will want to be able to map whatever identifier you return here to the
+				// message, the obvious identifier to use is probably the Message-Id value.
+				return message.MessageId;
 			}
 
 			/// <summary>
@@ -253,7 +252,9 @@ namespace MailKit.Examples {
 			/// <param name="mailbox">The mailbox.</param>
 			protected override DeliveryStatusNotification? GetDeliveryStatusNotifications (MimeMessage message, MailboxAddress mailbox)
 			{
-				// In this example, we only want to be notified about failures to deliver to a mailbox.
+				// In this example, we only want to be notified of failures to deliver to a mailbox.
+				// If you also want to be notified of delays or successful deliveries, simply bitwise-or
+				// whatever combination of flags you want to be notified about.
 				return DeliveryStatusNotification.Failure;
 			}
 		}
