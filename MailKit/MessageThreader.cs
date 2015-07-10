@@ -331,7 +331,7 @@ namespace MailKit {
 			}
 		}
 
-		static void GetThreads (ThreadableNode root, List<MessageThread> threads, OrderBy[] orderBy)
+		static void GetThreads (ThreadableNode root, IList<MessageThread> threads, IList<OrderBy> orderBy)
 		{
 			var sorted = MessageSorter.Sort (root.Children, orderBy);
 
@@ -348,7 +348,7 @@ namespace MailKit {
 			}
 		}
 
-		static IList<MessageThread> ThreadByReferences (IEnumerable<IThreadable> messages, OrderBy[] orderBy)
+		static IList<MessageThread> ThreadByReferences (IEnumerable<IThreadable> messages, IList<OrderBy> orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var ids = CreateIdTable (messages);
@@ -362,7 +362,7 @@ namespace MailKit {
 			return threads;
 		}
 
-		static IList<MessageThread> ThreadBySubject (IEnumerable<IThreadable> messages, OrderBy[] orderBy)
+		static IList<MessageThread> ThreadBySubject (IEnumerable<IThreadable> messages, IList<OrderBy> orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var root = new ThreadableNode ();
@@ -428,15 +428,20 @@ namespace MailKit {
 		/// <paramref name="algorithm"/> is not a valid threading algorithm.
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="messages"/> contains one or more items that is missing information needed for threading or sorting.
+		/// <para><paramref name="messages"/> contains one or more items that is missing information needed for threading or sorting.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is an empty list.</para>
 		/// </exception>
-		public static IList<MessageThread> Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages, OrderBy[] orderBy)
+		public static IList<MessageThread> Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages, IList<OrderBy> orderBy)
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
 
 			if (orderBy == null)
 				throw new ArgumentNullException ("orderBy");
+
+			if (orderBy.Count == 0)
+				throw new ArgumentException ("No sort order provided.", "orderBy");
 
 			switch (algorithm) {
 			case ThreadingAlgorithm.OrderedSubject: return ThreadBySubject (messages, orderBy);

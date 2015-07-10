@@ -40,9 +40,9 @@ namespace MailKit {
 	{
 		class MessageComparer<T> : IComparer<T> where T : ISortable
 		{
-			readonly OrderBy[] orderBy;
+			readonly IList<OrderBy> orderBy;
 
-			public MessageComparer (OrderBy[] orderBy)
+			public MessageComparer (IList<OrderBy> orderBy)
 			{
 				this.orderBy = orderBy;
 			}
@@ -53,7 +53,7 @@ namespace MailKit {
 			{
 				int cmp = 0;
 
-				for (int i = 0; i < orderBy.Length; i++) {
+				for (int i = 0; i < orderBy.Count; i++) {
 					switch (orderBy[i].Type) {
 					case OrderByType.Arrival:
 						cmp = x.SortableIndex.CompareTo (y.SortableIndex);
@@ -106,9 +106,11 @@ namespace MailKit {
 		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentException">
-		/// <paramref name="orderBy"/> is an empty list.
+		/// <para><paramref name="messages"/> contains one or more items that is missing information needed for sorting.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is an empty list.</para>
 		/// </exception>
-		public static IList<T> Sort<T> (IEnumerable<T> messages, OrderBy[] orderBy) where T : ISortable
+		public static IList<T> Sort<T> (IEnumerable<T> messages, IList<OrderBy> orderBy) where T : ISortable
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -116,7 +118,7 @@ namespace MailKit {
 			if (orderBy == null)
 				throw new ArgumentNullException ("orderBy");
 
-			if (orderBy.Length == 0)
+			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
 			var list = new List<T> ();
