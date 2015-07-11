@@ -2006,6 +2006,16 @@ namespace MailKit.Net.Imap {
 			return mailboxName.Length > 0;
 		}
 
+		public HeaderList ParseHeaders (Stream stream, CancellationToken cancellationToken)
+		{
+			if (parser == null)
+				parser = new MimeParser (ParserOptions.Default, stream);
+			else
+				parser.SetStream (ParserOptions.Default, stream);
+
+			return parser.ParseHeaders (cancellationToken);
+		}
+
 		public MimeMessage ParseMessage (Stream stream, bool persistent, CancellationToken cancellationToken)
 		{
 			if (parser == null)

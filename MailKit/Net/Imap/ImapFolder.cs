@@ -36,6 +36,7 @@ using System.Collections.ObjectModel;
 
 using MimeKit;
 using MimeKit.IO;
+using MimeKit.Utils;
 using MailKit.Search;
 
 namespace MailKit.Net.Imap {
@@ -2793,6 +2794,7 @@ namespace MailKit.Net.Imap {
 				var atom = (string) token.Value;
 				ulong value64;
 				uint value;
+				int idx;
 
 				switch (atom) {
 				case "INTERNALDATE":
@@ -2875,14 +2877,22 @@ namespace MailKit.Net.Imap {
 						if (token.Type != ImapTokenType.Literal)
 							throw ImapEngine.UnexpectedToken (token, false);
 
+						summary.References = new MessageIdList ();
+
 						try {
-							var message = engine.ParseMessage (engine.Stream, false, ic.CancellationToken);
-							summary.References = message.References;
-							summary.Headers = message.Headers;
+							summary.Headers = engine.ParseHeaders (engine.Stream, ic.CancellationToken);
 						} catch (FormatException) {
 							// consume any remaining literal data...
 							ReadLiteralData (engine, ic.CancellationToken);
 							summary.Headers = new HeaderList ();
+						}
+
+						if ((idx = summary.Headers.IndexOf (HeaderId.References)) != -1) {
+							var references = summary.Headers[idx];
+							var rawValue = references.RawValue;
+
+							foreach (var msgid in MimeUtils.EnumerateReferences (rawValue, 0, rawValue.Length))
+								summary.References.Add (msgid);
 						}
 
 						summary.Fields |= MessageSummaryItems.References;
