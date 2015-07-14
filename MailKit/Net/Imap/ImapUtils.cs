@@ -878,7 +878,70 @@ namespace MailKit.Net.Imap {
 			return body;
 		}
 
-		static void AddEnvelopeAddress (InternetAddressList list, ImapEngine engine, CancellationToken cancellationToken)
+		struct EnvelopeAddress
+		{
+			public readonly string Name;
+			public readonly string Route;
+			public readonly string Mailbox;
+			public readonly string Domain;
+
+			public EnvelopeAddress (string[] values)
+			{
+				Name = values[0];
+				Route = values[1];
+				Mailbox = values[2];
+				Domain = values[3];
+			}
+
+			public bool IsGroupStart {
+				get { return Domain == null; }
+			}
+
+			public bool IsGroupEnd {
+				get { return Mailbox == null; }
+			}
+
+			public MailboxAddress ToMailboxAddress ()
+			{
+				var domain = Domain;
+				string name = null;
+
+				if (Name != null) {
+					// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
+					// to convert bytes to unicode, we can undo that here:
+					name = Rfc2047.DecodePhrase (Latin1.GetBytes (Name));
+				}
+
+				// Note: When parsing mailbox addresses w/o a domain, Dovecot will
+				// use "MISSING_DOMAIN" as the domain string to prevent it from
+				// appearing as a group address in the IMAP ENVELOPE response.
+				if (domain == "MISSING_DOMAIN")
+					domain = null;
+
+				string address = domain != null ? Mailbox + "@" + domain : Mailbox;
+				DomainList route;
+
+				if (Route != null && DomainList.TryParse (Route, out route))
+					return new MailboxAddress (name, route, address);
+
+				return new MailboxAddress (name, address);
+			}
+
+			public GroupAddress ToGroupAddress ()
+			{
+				var name = string.Empty;
+
+				if (Mailbox != null) {
+					// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
+					// to convert bytes to unicode, we can undo that here:
+					name = Rfc2047.DecodePhrase (Latin1.GetBytes (Mailbox));
+				}
+
+				return new GroupAddress (name);
+			}
+		}
+
+		static EnvelopeAddress ParseEnvelopeAddress (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var values = new string[4];
 			ImapToken token;
@@ -909,21 +972,7 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.CloseParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
-			string name = null;
-
-			if (values[0] != null) {
-				// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
-				// to convert bytes to unicode, we can undo that here:
-				name = Rfc2047.DecodePhrase (Latin1.GetBytes (values[0]));
-			}
-
-			string address = values[3] != null ? values[2] + "@" + values[3] : values[2];
-			DomainList route;
-
-			if (values[1] != null && DomainList.TryParse (values[1], out route))
-				list.Add (new MailboxAddress (name, route, address));
-			else
-				list.Add (new MailboxAddress (name, address));
+			return new EnvelopeAddress (values);
 		}
 
 		static void ParseEnvelopeAddressList (InternetAddressList list, ImapEngine engine, CancellationToken cancellationToken)
@@ -936,6 +985,8 @@ namespace MailKit.Net.Imap {
 			if (token.Type != ImapTokenType.OpenParen)
 				throw ImapEngine.UnexpectedToken (token, false);
 
+			GroupAddress group = null;
+
 			do {
 				token = engine.ReadToken (cancellationToken);
 
@@ -945,7 +996,18 @@ namespace MailKit.Net.Imap {
 				if (token.Type != ImapTokenType.OpenParen)
 					throw ImapEngine.UnexpectedToken (token, false);
 
-				AddEnvelopeAddress (list, engine, cancellationToken);
+				var item = ParseEnvelopeAddress (engine, cancellationToken);
+
+				if (item.IsGroupStart && !engine.IsGMail && group == null) {
+					group = item.ToGroupAddress ();
+					list.Add (group);
+				} else if (item.IsGroupEnd) {
+					group = null;
+				} else if (group != null) {
+					group.Members.Add (item.ToMailboxAddress ());
+				} else {
+					list.Add (item.ToMailboxAddress ());
+				}
 			} while (true);
 		}
 
