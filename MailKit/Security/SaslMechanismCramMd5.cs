@@ -90,7 +90,7 @@ namespace MailKit.Security {
 		/// The SASL mechanism is already authenticated.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
-		/// THe SASL mechanism does not support SASL-IR.
+		/// The SASL mechanism does not support SASL-IR.
 		/// </exception>
 		/// <exception cref="SaslException">
 		/// An error has occurred while parsing the server's challenge token.
