@@ -133,13 +133,6 @@ namespace MimeKit.Examples
 		{
 			string fileName = url.Replace (':', '_').Replace ('\\', '_').Replace ('/', '_');
 
-			// try to add a file extension for niceness
-			switch (image.ContentType.MimeType.ToLowerInvariant ()) {
-			case "image/jpeg": fileName += ".jpg"; break;
-			case "image/png": fileName += ".png"; break;
-			case "image/gif": fileName += ".gif"; break;
-			}
-
 			string path = Path.Combine (tempDir, fileName);
 
 			if (!File.Exists (path)) {
