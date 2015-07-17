@@ -173,13 +173,25 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the internationalization level supported by the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the internationalization level supported by the IMAP server.</para>
+		/// <para>For more information, see
+		/// <a href="https://tools.ietf.org/html/rfc5255#section-4">section 4 of rfc5255</a>.</para>
+		/// </remarks>
+		/// <value>The internationalization level.</value>
+		public int InternationalizationLevel {
+			get { return engine.I18NLevel; }
+		}
+
+		/// <summary>
 		/// Get the access rights supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
 		/// These rights are additional rights supported by the IMAP server beyond the standard rights
-		/// defined in <a href="https://tools.ietf.org/html/rfc4314#section-2.1">section 2.1</a> of
-		/// <a href="https://tools.ietf.org/html/rfc4314">rfc4314</a> and will not be populated until
-		/// the client is successfully connected.
+		/// defined in <a href="https://tools.ietf.org/html/rfc4314#section-2.1">section 2.1 of rfc4314</a>
+		/// and will not be populated until the client is successfully connected.
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>

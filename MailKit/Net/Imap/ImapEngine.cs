@@ -194,6 +194,17 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Gets the I18NLEVEL supported by the IMAP server.
+		/// </summary>
+		/// <remarks>
+		/// Gets the I18NLEVEL supported by the IMAP server.
+		/// </remarks>
+		/// <value>The internationalization level.</value>
+		public int I18NLevel {
+			get; private set;
+		}
+
+		/// <summary>
 		/// Get the capabilities supported by the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -822,6 +833,13 @@ namespace MailKit.Net.Imap {
 				} else if (atom.StartsWith ("CONTEXT=", StringComparison.Ordinal)) {
 					SupportedContexts.Add (atom.Substring ("CONTEXT=".Length));
 					Capabilities |= ImapCapabilities.Context;
+				} else if (atom.StartsWith ("I18NLEVEL=", StringComparison.Ordinal)) {
+					int level;
+
+					int.TryParse (atom.Substring ("I18NLEVEL=".Length), out level);
+					I18NLevel = level;
+
+					Capabilities |= ImapCapabilities.I18NLevel;
 				} else if (atom.StartsWith ("RIGHTS=", StringComparison.Ordinal)) {
 					var rights = atom.Substring ("RIGHTS=".Length);
 					Rights.AddRange (rights);
@@ -868,6 +886,7 @@ namespace MailKit.Net.Imap {
 					case "SORT":               Capabilities |= ImapCapabilities.Sort; break;
 					case "LIST-EXTENDED":      Capabilities |= ImapCapabilities.ListExtended; break;
 					case "CONVERT":            Capabilities |= ImapCapabilities.Convert; break;
+					case "LANGUAGE":           Capabilities |= ImapCapabilities.Language; break;
 					case "ESORT":              Capabilities |= ImapCapabilities.ESort; break;
 					case "METADATA":           Capabilities |= ImapCapabilities.Metadata; break;
 					case "NOTIFY":             Capabilities |= ImapCapabilities.Notify; break;
