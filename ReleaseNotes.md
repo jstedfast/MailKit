@@ -1,5 +1,16 @@
 # Release Notes
 
+### MailKit 1.2.8
+
+* Fixed ImapFolder to dispose the temporary streams used in GetMessage and GetBodyPart.
+* Added a MessageNotFoundException.
+* Added an ImapCommandResponse property to ImapCommandException.
+* Fixed SmtpClient to filter out duplicate recipient addresses in RCPT TO.
+* Modified MessageSorter/Threader to take IList<OrderBy> arguments instead of OrderBy[].
+* Added support for parsing group addresses in IMAP ENVELOPE responses.
+* Disable SASL-IR support for the LOGIN mechanism. (issue #216)
+* Capture whether or not the IMAP server supports the I18NLEVEL and LANGUAGE extensions.
+
 ### MailKit 1.2.7
 
 * Fixed ImapFolder.Rename() to properly emit the Renamed event for child folders as well.
