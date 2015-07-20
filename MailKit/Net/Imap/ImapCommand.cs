@@ -221,7 +221,9 @@ namespace MailKit.Net.Imap {
 		/// <param name="action">The progress update action.</param>
 		public ImapLiteral (FormatOptions options, object literal, Action<int> action = null)
 		{
-			format = options;
+			format = options.Clone ();
+			format.NewLineFormat = NewLineFormat.Dos;
+
 			update = action;
 
 			if (literal is MimeMessage) {
