@@ -37,6 +37,14 @@ namespace MailKit {
 	public struct UniqueId : IComparable<UniqueId>, IEquatable<UniqueId>
 	{
 		/// <summary>
+		/// The invalid <see cref="UniqueId"/> value.
+		/// </summary>
+		/// <remarks>
+		/// The invalid <see cref="UniqueId"/> value.
+		/// </remarks>
+		public static readonly UniqueId Invalid = new UniqueId (0);
+
+		/// <summary>
 		/// The minimum <see cref="UniqueId"/> value.
 		/// </summary>
 		/// <remarks>
