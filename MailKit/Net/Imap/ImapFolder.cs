@@ -152,6 +152,7 @@ namespace MailKit.Net.Imap {
 				Engine.State = ImapEngineState.Authenticated;
 				Access = FolderAccess.None;
 				Engine.Selected = null;
+				OnClosed ();
 			}
 		}
 
@@ -324,13 +325,19 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (Engine.Selected != null && Engine.Selected != this) {
-				Engine.Selected.PermanentFlags = MessageFlags.None;
-				Engine.Selected.AcceptedFlags = MessageFlags.None;
-				Engine.Selected.Access = FolderAccess.None;
+				var folder = Engine.Selected;
+
+				folder.PermanentFlags = MessageFlags.None;
+				folder.AcceptedFlags = MessageFlags.None;
+				folder.Access = FolderAccess.None;
+
+				folder.OnClosed ();
 			}
 
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
+
+			OnOpened ();
 
 			return Access;
 		}
@@ -407,13 +414,19 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (Engine.Selected != null && Engine.Selected != this) {
-				Engine.Selected.PermanentFlags = MessageFlags.None;
-				Engine.Selected.AcceptedFlags = MessageFlags.None;
-				Engine.Selected.Access = FolderAccess.None;
+				var folder = Engine.Selected;
+
+				folder.PermanentFlags = MessageFlags.None;
+				folder.AcceptedFlags = MessageFlags.None;
+				folder.Access = FolderAccess.None;
+
+				folder.OnClosed ();
 			}
 
 			Engine.State = ImapEngineState.Selected;
 			Engine.Selected = this;
+
+			OnOpened ();
 
 			return Access;
 		}
@@ -474,6 +487,7 @@ namespace MailKit.Net.Imap {
 			Engine.State = ImapEngineState.Authenticated;
 			Access = FolderAccess.None;
 			Engine.Selected = null;
+			OnClosed ();
 		}
 
 		/// <summary>
@@ -661,6 +675,7 @@ namespace MailKit.Net.Imap {
 				Engine.State = ImapEngineState.Authenticated;
 				Access = FolderAccess.None;
 				Engine.Selected = null;
+				OnClosed ();
 			}
 
 			OnRenamed (oldFullName, FullName);
@@ -718,6 +733,7 @@ namespace MailKit.Net.Imap {
 				Engine.State = ImapEngineState.Authenticated;
 				Access = FolderAccess.None;
 				Engine.Selected = null;
+				OnClosed ();
 			}
 
 			Attributes |= FolderAttributes.NonExistent;

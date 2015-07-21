@@ -15019,6 +15019,50 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Occurs when the folder is opened.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Opened"/> event is emitted when the folder is opened.
+		/// </remarks>
+		public event EventHandler<EventArgs> Opened;
+
+		/// <summary>
+		/// Raise the opened event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the opened event.
+		/// </remarks>
+		protected virtual void OnOpened ()
+		{
+			var handler = Opened;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Occurs when the folder is closed.
+		/// </summary>
+		/// <remarks>
+		/// The <see cref="Closed"/> event is emitted when the folder is closed.
+		/// </remarks>
+		public event EventHandler<EventArgs> Closed;
+
+		/// <summary>
+		/// Raise the closed event.
+		/// </summary>
+		/// <remarks>
+		/// Raises the closed event.
+		/// </remarks>
+		internal protected virtual void OnClosed ()
+		{
+			var handler = Closed;
+
+			if (handler != null)
+				handler (this, EventArgs.Empty);
+		}
+
+		/// <summary>
 		/// Occurs when the folder is deleted.
 		/// </summary>
 		/// <remarks>

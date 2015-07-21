@@ -596,7 +596,11 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		public void Disconnect ()
 		{
-			Selected = null;
+			if (Selected != null) {
+				Selected.OnClosed ();
+				Selected = null;
+			}
+
 			current = null;
 
 			if (Stream != null) {
