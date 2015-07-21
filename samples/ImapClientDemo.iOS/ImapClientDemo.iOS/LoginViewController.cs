@@ -86,7 +86,7 @@ namespace ImapClientDemo.iOS
                 await Mail.Client.ConnectAsync (hostEntry.Value, port, sslCheckbox.Value);
 
                 // Remove this auth mechanism since we don't have an oauth token
-                Mail.Client.AuthenticationMechanisms.Remove ("XOAUTH");
+                Mail.Client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
                 try {
                     // Authenticate now that we're connected

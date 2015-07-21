@@ -1,28 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 2012
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImapClientDemo.iOS", "ImapClientDemo.iOS\ImapClientDemo.iOS.csproj", "{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Ad-Hoc|iPhone = Ad-Hoc|iPhone
-		Ad-Hoc|iPhoneSimulator = Ad-Hoc|iPhoneSimulator
-		AppStore|iPhone = AppStore|iPhone
-		AppStore|iPhoneSimulator = AppStore|iPhoneSimulator
 		Debug|iPhone = Debug|iPhone
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
 		Release|iPhone = Release|iPhone
 		Release|iPhoneSimulator = Release|iPhoneSimulator
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Ad-Hoc|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.AppStore|iPhone.Build.0 = AppStore|iPhone
-		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.AppStore|iPhoneSimulator.ActiveCfg = AppStore|iPhone
 		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Debug|iPhone.ActiveCfg = Debug|iPhone
 		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Debug|iPhone.Build.0 = Debug|iPhone
 		{8C3CBC94-4386-4B01-A626-2014CFB8FFB8}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
