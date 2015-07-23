@@ -237,7 +237,7 @@ Welcome to Netscape
 [Fwd: enc/signed test 1]
 ";
 
-			var threads = MessageThreader.Thread (ThreadingAlgorithm.References, summaries);
+			var threads = summaries.Thread (ThreadingAlgorithm.References);
 			var builder = new StringBuilder ();
 
 			foreach (var thread in threads)

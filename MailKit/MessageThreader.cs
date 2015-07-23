@@ -391,8 +391,8 @@ namespace MailKit {
 		/// Thread the messages according to the specified threading algorithm.
 		/// </remarks>
 		/// <returns>The threaded messages.</returns>
-		/// <param name="algorithm">The threading algorithm.</param>
 		/// <param name="messages">The messages.</param>
+		/// <param name="algorithm">The threading algorithm.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="messages"/> is <c>null</c>.
 		/// </exception>
@@ -402,9 +402,9 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="messages"/> contains one or more items that is missing information needed for threading.
 		/// </exception>
-		public static IList<MessageThread> Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages)
+		public static IList<MessageThread> Thread (this IEnumerable<IThreadable> messages, ThreadingAlgorithm algorithm)
 		{
-			return Thread (algorithm, messages, new [] { OrderBy.Arrival });
+			return Thread (messages, algorithm, new [] { OrderBy.Arrival });
 		}
 
 		/// <summary>
@@ -416,8 +416,8 @@ namespace MailKit {
 		/// and sorts the resulting threads by the specified ordering.
 		/// </remarks>
 		/// <returns>The threaded messages.</returns>
-		/// <param name="algorithm">The threading algorithm.</param>
 		/// <param name="messages">The messages.</param>
+		/// <param name="algorithm">The threading algorithm.</param>
 		/// <param name="orderBy">The requested sort ordering.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="messages"/> is <c>null</c>.</para>
@@ -432,7 +432,7 @@ namespace MailKit {
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is an empty list.</para>
 		/// </exception>
-		public static IList<MessageThread> Thread (ThreadingAlgorithm algorithm, IEnumerable<IThreadable> messages, IList<OrderBy> orderBy)
+		public static IList<MessageThread> Thread (this IEnumerable<IThreadable> messages, ThreadingAlgorithm algorithm, IList<OrderBy> orderBy)
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
