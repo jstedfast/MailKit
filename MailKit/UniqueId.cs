@@ -103,6 +103,17 @@ namespace MailKit {
 			Id = id;
 		}
 
+		/// <summary>
+		/// Gets whether or not the unique identifier is valid.
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the unique identifier is valid.
+		/// </remarks>
+		/// <value><c>true</c> if the unique identifier is valid; otherwise, <c>false</c>.</value>
+		public bool IsValid {
+			get { return Id != 0; }
+		}
+
 		#region IComparable implementation
 
 		/// <summary>
