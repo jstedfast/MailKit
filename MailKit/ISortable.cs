@@ -51,7 +51,7 @@ namespace MailKit {
 		/// Gets the message index in the folder it belongs to.
 		/// </remarks>
 		/// <value>The index.</value>
-		int SortableIndex { get; }
+		int Index { get; }
 
 		/// <summary>
 		/// Gets the Cc header value.
@@ -60,7 +60,7 @@ namespace MailKit {
 		/// Gets the Cc header value.
 		/// </remarks>
 		/// <value>The Cc header value.</value>
-		string SortableCc { get; }
+		string Cc { get; }
 
 		/// <summary>
 		/// Gets the Date header value.
@@ -69,7 +69,7 @@ namespace MailKit {
 		/// Gets the Date header value.
 		/// </remarks>
 		/// <value>The date.</value>
-		DateTimeOffset SortableDate { get; }
+		DateTimeOffset Date { get; }
 
 		/// <summary>
 		/// Gets the From header value.
@@ -78,7 +78,7 @@ namespace MailKit {
 		/// Gets the From header value.
 		/// </remarks>
 		/// <value>The From header value.</value>
-		string SortableFrom { get; }
+		string From { get; }
 
 		/// <summary>
 		/// Gets the size of the message, in bytes.
@@ -87,7 +87,7 @@ namespace MailKit {
 		/// Gets the size of the message, in bytes.
 		/// </remarks>
 		/// <value>The size of the message, in bytes.</value>
-		uint SortableSize { get; }
+		uint Size { get; }
 
 		/// <summary>
 		/// Gets the Subject header value.
@@ -96,7 +96,7 @@ namespace MailKit {
 		/// Gets the Subject header value.
 		/// </remarks>
 		/// <value>The Subject header value.</value>
-		string SortableSubject { get; }
+		string Subject { get; }
 
 		/// <summary>
 		/// Gets the To header value.
@@ -105,6 +105,6 @@ namespace MailKit {
 		/// Gets the To header value.
 		/// </remarks>
 		/// <value>The To header value.</value>
-		string SortableTo { get; }
+		string To { get; }
 	}
 }

@@ -54,12 +54,12 @@ namespace MailKit {
 				get { return Children.Count > 0; }
 			}
 
-			public string ThreadableSubject {
+			public string NormalizedSubject {
 				get {
 					if (Message != null)
-						return Message.ThreadableSubject;
+						return Message.NormalizedSubject;
 
-					return Children[0].ThreadableSubject;
+					return Children[0].NormalizedSubject;
 				}
 			}
 
@@ -69,66 +69,66 @@ namespace MailKit {
 				get { return true; }
 			}
 
-			int ISortable.SortableIndex {
+			int ISortable.Index {
 				get {
 					if (Message != null)
-						return Message.SortableIndex;
+						return Message.Index;
 
-					return ((ISortable) Children[0]).SortableIndex;
+					return ((ISortable) Children[0]).Index;
 				}
 			}
 
-			string ISortable.SortableCc {
+			string ISortable.Cc {
 				get {
 					if (Message != null)
-						return Message.SortableCc;
+						return Message.Cc;
 
-					return ((ISortable) Children[0]).SortableCc;
+					return ((ISortable) Children[0]).Cc;
 				}
 			}
 
-			DateTimeOffset ISortable.SortableDate {
+			DateTimeOffset ISortable.Date {
 				get {
 					if (Message != null)
-						return Message.SortableDate;
+						return Message.Date;
 
-					return ((ISortable) Children[0]).SortableDate;
+					return ((ISortable) Children[0]).Date;
 				}
 			}
 
-			string ISortable.SortableFrom {
+			string ISortable.From {
 				get {
 					if (Message != null)
-						return Message.SortableFrom;
+						return Message.From;
 
-					return ((ISortable) Children[0]).SortableFrom;
+					return ((ISortable) Children[0]).From;
 				}
 			}
 
-			uint ISortable.SortableSize {
+			uint ISortable.Size {
 				get {
 					if (Message != null)
-						return Message.SortableSize;
+						return Message.Size;
 
-					return ((ISortable) Children[0]).SortableSize;
+					return ((ISortable) Children[0]).Size;
 				}
 			}
 
-			string ISortable.SortableSubject {
+			string ISortable.Subject {
 				get {
 					if (Message != null)
-						return Message.SortableSubject;
+						return Message.Subject;
 
-					return ((ISortable) Children[0]).SortableSubject;
+					return ((ISortable) Children[0]).Subject;
 				}
 			}
 
-			string ISortable.SortableTo {
+			string ISortable.To {
 				get {
 					if (Message != null)
-						return Message.SortableTo;
+						return Message.To;
 
-					return ((ISortable) Children[0]).SortableTo;
+					return ((ISortable) Children[0]).To;
 				}
 			}
 
@@ -144,7 +144,7 @@ namespace MailKit {
 				if (!message.CanThread)
 					throw new ArgumentException ("One or more messages is missing information needed for threading.", "messages");
 
-				var id = message.ThreadableMessageId;
+				var id = message.MessageId;
 
 				if (string.IsNullOrEmpty (id))
 					id = MimeUtils.GenerateMessageId ();
@@ -168,7 +168,7 @@ namespace MailKit {
 				}
 
 				ThreadableNode parent = null;
-				foreach (var reference in message.ThreadableReferences) {
+				foreach (var reference in message.References) {
 					ThreadableNode referenced;
 
 					if (!ids.TryGetValue (reference, out referenced)) {
@@ -256,7 +256,7 @@ namespace MailKit {
 
 			for (int i = 0; i < root.Children.Count; i++) {
 				var current = root.Children[i];
-				var subject = current.ThreadableSubject;
+				var subject = current.NormalizedSubject;
 
 				// don't thread messages with empty subjects
 				if (string.IsNullOrEmpty (subject))
@@ -276,7 +276,7 @@ namespace MailKit {
 
 			for (int i = 0; i < root.Children.Count; i++) {
 				var current = root.Children[i];
-				var subject = current.ThreadableSubject;
+				var subject = current.NormalizedSubject;
 
 				// don't thread messages with empty subjects
 				if (string.IsNullOrEmpty (subject))
@@ -340,7 +340,7 @@ namespace MailKit {
 				UniqueId? uid = null;
 
 				if (message != null)
-					uid = message.ThreadableUniqueId;
+					uid = message.UniqueId;
 
 				var thread = new MessageThread (uid);
 				GetThreads (sorted[i], thread.children, orderBy);

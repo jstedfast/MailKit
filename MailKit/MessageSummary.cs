@@ -539,7 +539,7 @@ namespace MailKit {
 		/// Gets the message index in the folder it belongs to.
 		/// </remarks>
 		/// <value>The index.</value>
-		int ISortable.SortableIndex {
+		int ISortable.Index {
 			get { return Index; }
 		}
 
@@ -550,7 +550,7 @@ namespace MailKit {
 		/// Gets the Cc header value.
 		/// </remarks>
 		/// <value>The Cc header value.</value>
-		string ISortable.SortableCc {
+		string ISortable.Cc {
 			get { return Envelope.Cc.ToString (); }
 		}
 
@@ -561,7 +561,7 @@ namespace MailKit {
 		/// Gets the Date header value.
 		/// </remarks>
 		/// <value>The date.</value>
-		DateTimeOffset ISortable.SortableDate {
+		DateTimeOffset ISortable.Date {
 			get { return Envelope.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
 		}
 
@@ -572,7 +572,7 @@ namespace MailKit {
 		/// Gets the From header value.
 		/// </remarks>
 		/// <value>The From header value.</value>
-		string ISortable.SortableFrom {
+		string ISortable.From {
 			get { return Envelope.From.ToString (); }
 		}
 
@@ -583,7 +583,7 @@ namespace MailKit {
 		/// Gets the size of the message, in bytes.
 		/// </remarks>
 		/// <value>The size of the message, in bytes.</value>
-		uint ISortable.SortableSize {
+		uint ISortable.Size {
 			get { return MessageSize ?? 0; }
 		}
 
@@ -594,7 +594,7 @@ namespace MailKit {
 		/// Gets the Subject header value.
 		/// </remarks>
 		/// <value>The Subject header value.</value>
-		string ISortable.SortableSubject {
+		string ISortable.Subject {
 			get { return Envelope.Subject; }
 		}
 
@@ -605,7 +605,7 @@ namespace MailKit {
 		/// Gets the To header value.
 		/// </remarks>
 		/// <value>The To header value.</value>
-		string ISortable.SortableTo {
+		string ISortable.To {
 			get { return Envelope.To.ToString (); }
 		}
 
@@ -615,17 +615,17 @@ namespace MailKit {
 
 		MessageIdList threadableReferences;
 		int threadableReplyDepth = -1;
-		string threadableSubject;
+		string normalizedSubject;
 
 		void UpdateThreadableSubject ()
 		{
-			if (threadableSubject != null)
+			if (normalizedSubject != null)
 				return;
 
 			if (Envelope.Subject != null) {
-				threadableSubject = MessageThreader.GetThreadableSubject (Envelope.Subject, out threadableReplyDepth);
+				normalizedSubject = MessageThreader.GetThreadableSubject (Envelope.Subject, out threadableReplyDepth);
 			} else {
-				threadableSubject = string.Empty;
+				normalizedSubject = string.Empty;
 				threadableReplyDepth = 0;
 			}
 		}
@@ -649,11 +649,11 @@ namespace MailKit {
 		/// "Re:", "Re[#]:", etc have been pruned.
 		/// </remarks>
 		/// <value>The threadable subject.</value>
-		string IThreadable.ThreadableSubject {
+		string IThreadable.NormalizedSubject {
 			get {
 				UpdateThreadableSubject ();
 
-				return threadableSubject;
+				return normalizedSubject;
 			}
 		}
 
@@ -680,7 +680,7 @@ namespace MailKit {
 		/// without the angle brackets.
 		/// </remarks>
 		/// <value>The threadable message identifier.</value>
-		string IThreadable.ThreadableMessageId {
+		string IThreadable.MessageId {
 			get { return Envelope.MessageId; }
 		}
 
@@ -692,7 +692,7 @@ namespace MailKit {
 		/// found in the In-Reply-To and References headers.
 		/// </remarks>
 		/// <value>The threadable references.</value>
-		MessageIdList IThreadable.ThreadableReferences {
+		MessageIdList IThreadable.References {
 			get {
 				if (threadableReferences == null) {
 					threadableReferences = References != null ? References.Clone () : new MessageIdList ();
@@ -712,7 +712,7 @@ namespace MailKit {
 		/// Gets the unique identifier.
 		/// </remarks>
 		/// <value>The unique identifier.</value>
-		UniqueId IThreadable.ThreadableUniqueId {
+		UniqueId IThreadable.UniqueId {
 			get { return UniqueId.Value; }
 		}
 

@@ -52,7 +52,7 @@ namespace MailKit {
 		/// "Re:", "Re[#]:", etc have been pruned.
 		/// </remarks>
 		/// <value>The threadable subject.</value>
-		string ThreadableSubject { get; }
+		string NormalizedSubject { get; }
 
 		/// <summary>
 		/// Gets a value indicating whether this instance is a reply.
@@ -71,7 +71,7 @@ namespace MailKit {
 		/// without the angle brackets.
 		/// </remarks>
 		/// <value>The threadable message identifier.</value>
-		string ThreadableMessageId { get; }
+		string MessageId { get; }
 
 		/// <summary>
 		/// Gets the threadable references.
@@ -81,7 +81,7 @@ namespace MailKit {
 		/// found in the In-Reply-To and References headers.
 		/// </remarks>
 		/// <value>The threadable references.</value>
-		MessageIdList ThreadableReferences { get; }
+		MessageIdList References { get; }
 
 		/// <summary>
 		/// Gets the unique identifier.
@@ -90,6 +90,6 @@ namespace MailKit {
 		/// Gets the unique identifier.
 		/// </remarks>
 		/// <value>The unique identifier.</value>
-		UniqueId ThreadableUniqueId { get; }
+		UniqueId UniqueId { get; }
 	}
 }
