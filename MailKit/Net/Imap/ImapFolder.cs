@@ -2837,7 +2837,7 @@ namespace MailKit.Net.Imap {
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					summary.Fields |= MessageSummaryItems.MessageSize;
-					summary.MessageSize = value;
+					summary.Size = value;
 					break;
 				case "BODYSTRUCTURE":
 					summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);

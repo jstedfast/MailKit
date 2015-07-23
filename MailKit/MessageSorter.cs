@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using MailKit.Search;
@@ -39,7 +38,7 @@ namespace MailKit {
 	/// </remarks>
 	public static class MessageSorter
 	{
-		class MessageComparer<T> : IComparer<T> where T : ISortable
+		class MessageComparer<T> : IComparer<T> where T : IMessageSummary
 		{
 			readonly IList<OrderBy> orderBy;
 
@@ -69,10 +68,16 @@ namespace MailKit {
 						cmp = string.Compare (x.From, y.From, StringComparison.OrdinalIgnoreCase);
 						break;
 					case OrderByType.Size:
-						cmp = x.Size.CompareTo (y.Size);
+						var xsize = x.Size ?? 0;
+						var ysize = y.Size ?? 0;
+
+						cmp = xsize.CompareTo (ysize);
 						break;
 					case OrderByType.Subject:
-						cmp = string.Compare (x.Subject, y.Subject, StringComparison.OrdinalIgnoreCase);
+						var xsubject = x.Envelope.Subject ?? string.Empty;
+						var ysubject = y.Envelope.Subject ?? string.Empty;
+
+						cmp = string.Compare (xsubject, ysubject, StringComparison.OrdinalIgnoreCase);
 						break;
 					case OrderByType.To:
 						cmp = string.Compare (x.To, y.To, StringComparison.OrdinalIgnoreCase);
@@ -111,7 +116,7 @@ namespace MailKit {
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is an empty list.</para>
 		/// </exception>
-		public static IList<T> Sort<T> (this IEnumerable<T> messages, IList<OrderBy> orderBy) where T : ISortable
+		public static IList<T> Sort<T> (this IEnumerable<T> messages, IList<OrderBy> orderBy) where T : IMessageSummary
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -124,7 +129,7 @@ namespace MailKit {
 
 			var list = new List<T> ();
 			foreach (var message in messages) {
-				if (!message.CanSort)
+				if (message.Envelope == null)
 					throw new ArgumentException ("One or more messages is missing information needed for sorting.", "messages");
 
 				list.Add (message);
@@ -160,7 +165,7 @@ namespace MailKit {
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is an empty list.</para>
 		/// </exception>
-		public static void Sort<T> (this List<T> messages, IList<OrderBy> orderBy) where T : ISortable
+		public static void Sort<T> (this List<T> messages, IList<OrderBy> orderBy) where T : IMessageSummary
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -172,7 +177,7 @@ namespace MailKit {
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
 			for (int i = 0; i < messages.Count; i++) {
-				if (!messages[i].CanSort)
+				if (messages[i].Envelope == null)
 					throw new ArgumentException ("One or more messages is missing information needed for sorting.", "messages");
 			}
 

@@ -87,7 +87,7 @@ namespace UnitTests {
 			summary.Envelope.MessageId = MimeUtils.EnumerateReferences (msgid).FirstOrDefault ();
 			summary.Envelope.Subject = subject;
 			summary.Envelope.Date = value;
-			summary.MessageSize = 0;
+			summary.Size = 0;
 
 			summaries.Add (summary);
 		}

@@ -348,8 +348,8 @@ namespace UnitTests.Net.Imap {
 				var summaries = created.Fetch (matches, items);
 
 				foreach (var summary in summaries) {
-					if (summary.UniqueId.HasValue)
-						created.GetMessage (summary.UniqueId.Value);
+					if (summary.UniqueId.IsValid)
+						created.GetMessage (summary.UniqueId);
 					else
 						created.GetMessage (summary.Index);
 				}

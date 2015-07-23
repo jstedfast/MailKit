@@ -28,7 +28,9 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 
+using MimeKit;
 using MimeKit.Utils;
+
 using MailKit.Search;
 
 namespace MailKit {
@@ -40,11 +42,11 @@ namespace MailKit {
 	/// </remarks>
 	public static class MessageThreader
 	{
-		class ThreadableNode : ISortable
+		class ThreadableNode : IMessageSummary
 		{
 			public readonly List<ThreadableNode> Children = new List<ThreadableNode> ();
+			public IMessageSummary Message;
 			public ThreadableNode Parent;
-			public IThreadable Message;
 
 			public bool HasParent {
 				get { return Parent != null; }
@@ -54,97 +56,101 @@ namespace MailKit {
 				get { return Children.Count > 0; }
 			}
 
+			public MessageSummaryItems Fields {
+				get { return MessageSummaryItems.UniqueId | MessageSummaryItems.Envelope; }
+			}
+
+			public BodyPart Body {
+				get { return Message != null ? Message.Body : Children[0].Body; }
+			}
+
+			public Envelope Envelope {
+				get { return Message != null ? Message.Envelope : Children[0].Envelope; }
+			}
+
+			public string From {
+				get { return Message != null ? Message.From : Children[0].From; }
+			}
+
+			public string To {
+				get { return Message != null ? Message.To : Children[0].To; }
+			}
+
+			public string Cc {
+				get { return Message != null ? Message.Cc : Children[0].Cc; }
+			}
+
 			public string NormalizedSubject {
-				get {
-					if (Message != null)
-						return Message.NormalizedSubject;
-
-					return Children[0].NormalizedSubject;
-				}
+				get { return Message != null ? Message.NormalizedSubject : Children[0].NormalizedSubject; }
 			}
 
-			#region ISortable implementation
-
-			bool ISortable.CanSort {
-				get { return true; }
+			public DateTimeOffset Date {
+				get { return Message != null ? Message.Date : Children[0].Date; }
 			}
 
-			int ISortable.Index {
-				get {
-					if (Message != null)
-						return Message.Index;
-
-					return ((ISortable) Children[0]).Index;
-				}
+			public bool IsReply {
+				get { return Message != null && Message.IsReply; }
 			}
 
-			string ISortable.Cc {
-				get {
-					if (Message != null)
-						return Message.Cc;
-
-					return ((ISortable) Children[0]).Cc;
-				}
+			public MessageFlags? Flags {
+				get { return Message != null ? Message.Flags : Children[0].Flags; }
 			}
 
-			DateTimeOffset ISortable.Date {
-				get {
-					if (Message != null)
-						return Message.Date;
-
-					return ((ISortable) Children[0]).Date;
-				}
+			public HashSet<string> UserFlags {
+				get { return Message != null ? Message.UserFlags : Children[0].UserFlags; }
 			}
 
-			string ISortable.From {
-				get {
-					if (Message != null)
-						return Message.From;
-
-					return ((ISortable) Children[0]).From;
-				}
+			public HeaderList Headers {
+				get { return Message != null ? Message.Headers : Children[0].Headers; }
 			}
 
-			uint ISortable.Size {
-				get {
-					if (Message != null)
-						return Message.Size;
-
-					return ((ISortable) Children[0]).Size;
-				}
+			public DateTimeOffset? InternalDate {
+				get { return Message != null ? Message.InternalDate : Children[0].InternalDate; }
 			}
 
-			string ISortable.Subject {
-				get {
-					if (Message != null)
-						return Message.Subject;
-
-					return ((ISortable) Children[0]).Subject;
-				}
+			public uint Size {
+				get { return Message != null ? Message.Size : Children[0].Size; }
 			}
 
-			string ISortable.To {
-				get {
-					if (Message != null)
-						return Message.To;
-
-					return ((ISortable) Children[0]).To;
-				}
+			public ulong? ModSeq {
+				get { return Message != null ? Message.ModSeq : Children[0].ModSeq; }
 			}
 
-			#endregion
+			public MessageIdList References {
+				get { return Message != null ? Message.References : Children[0].References; }
+			}
+
+			public UniqueId UniqueId {
+				get { return Message != null ? Message.UniqueId : Children[0].UniqueId; }
+			}
+
+			public int Index {
+				get { return Message != null ? Message.Index : Children[0].Index; }
+			}
+
+			public ulong? GMailMessageId {
+				get { return Message != null ? Message.GMailMessageId : Children[0].GMailMessageId; }
+			}
+
+			public ulong? GMailThreadId {
+				get { return Message != null ? Message.GMailThreadId : Children[0].GMailThreadId; }
+			}
+
+			public IList<string> GMailLabels {
+				get { return Message != null ? Message.GMailLabels : Children[0].GMailLabels; }
+			}
 		}
 
-		static IDictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IThreadable> messages)
+		static IDictionary<string, ThreadableNode> CreateIdTable (IEnumerable<IMessageSummary> messages)
 		{
 			var ids = new Dictionary<string, ThreadableNode> ();
 			ThreadableNode node;
 
 			foreach (var message in messages) {
-				if (!message.CanThread)
+				if (message.Envelope == null)
 					throw new ArgumentException ("One or more messages is missing information needed for threading.", "messages");
 
-				var id = message.MessageId;
+				var id = message.Envelope.MessageId;
 
 				if (string.IsNullOrEmpty (id))
 					id = MimeUtils.GenerateMessageId ();
@@ -264,8 +270,8 @@ namespace MailKit {
 
 				if (!subjects.TryGetValue (subject, out match) ||
 					(current.Message == null && match.Message != null) ||
-					(match.Message != null && match.Message.IsThreadableReply &&
-						current.Message != null && !current.Message.IsThreadableReply)) {
+					(match.Message != null && match.Message.IsReply &&
+						current.Message != null && !current.Message.IsReply)) {
 					subjects[subject] = current;
 					count++;
 				}
@@ -301,7 +307,7 @@ namespace MailKit {
 					// is not, make the current message a child of the message in the subject
 					// table (a sibling of its children).
 					match.Children.Add (current);
-				} else if (current.Message.IsThreadableReply && !match.Message.IsThreadableReply) {
+				} else if (current.Message.IsReply && !match.Message.IsReply) {
 					// If the current message is a reply or forward and the message in the
 					// subject table is not, make the current message a child of the message
 					// in the subject table (a sibling of its children).
@@ -348,7 +354,7 @@ namespace MailKit {
 			}
 		}
 
-		static IList<MessageThread> ThreadByReferences (IEnumerable<IThreadable> messages, IList<OrderBy> orderBy)
+		static IList<MessageThread> ThreadByReferences (IEnumerable<IMessageSummary> messages, IList<OrderBy> orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var ids = CreateIdTable (messages);
@@ -362,13 +368,13 @@ namespace MailKit {
 			return threads;
 		}
 
-		static IList<MessageThread> ThreadBySubject (IEnumerable<IThreadable> messages, IList<OrderBy> orderBy)
+		static IList<MessageThread> ThreadBySubject (IEnumerable<IMessageSummary> messages, IList<OrderBy> orderBy)
 		{
 			var threads = new List<MessageThread> ();
 			var root = new ThreadableNode ();
 
 			foreach (var message in messages) {
-				if (!message.CanThread)
+				if (message.Envelope == null)
 					throw new ArgumentException ("One or more messages is missing information needed for threading.", "messages");
 
 				var container = new ThreadableNode ();
@@ -402,7 +408,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentException">
 		/// <paramref name="messages"/> contains one or more items that is missing information needed for threading.
 		/// </exception>
-		public static IList<MessageThread> Thread (this IEnumerable<IThreadable> messages, ThreadingAlgorithm algorithm)
+		public static IList<MessageThread> Thread (this IEnumerable<IMessageSummary> messages, ThreadingAlgorithm algorithm)
 		{
 			return Thread (messages, algorithm, new [] { OrderBy.Arrival });
 		}
@@ -432,7 +438,7 @@ namespace MailKit {
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is an empty list.</para>
 		/// </exception>
-		public static IList<MessageThread> Thread (this IEnumerable<IThreadable> messages, ThreadingAlgorithm algorithm, IList<OrderBy> orderBy)
+		public static IList<MessageThread> Thread (this IEnumerable<IMessageSummary> messages, ThreadingAlgorithm algorithm, IList<OrderBy> orderBy)
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");

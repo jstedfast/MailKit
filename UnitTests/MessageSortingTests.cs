@@ -50,7 +50,7 @@ namespace UnitTests {
 			summary.Envelope.Subject = "aaaa";
 			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
 			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
-			summary.MessageSize = 520;
+			summary.Size = 520;
 			messages.Add (summary);
 
 			summary = new MessageSummary (1);
@@ -59,7 +59,7 @@ namespace UnitTests {
 			summary.Envelope.Subject = "bbbb";
 			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
 			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
-			summary.MessageSize = 265;
+			summary.Size = 265;
 			messages.Add (summary);
 
 			summary = new MessageSummary (2);
@@ -68,7 +68,7 @@ namespace UnitTests {
 			summary.Envelope.Subject = "cccc";
 			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
 			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
-			summary.MessageSize = 520;
+			summary.Size = 520;
 			messages.Add (summary);
 
 			messages.Sort (new[] { OrderBy.Arrival });

@@ -43,6 +43,9 @@ namespace MailKit {
 	/// </remarks>
 	public class MessageSummary : IMessageSummary
 	{
+		int threadableReplyDepth = -1;
+		string normalizedSubject;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MessageSummary"/> class.
 		/// </summary>
@@ -60,6 +63,19 @@ namespace MailKit {
 
 			UserFlags = new HashSet<string> ();
 			Index = index;
+		}
+
+		void UpdateThreadableSubject ()
+		{
+			if (normalizedSubject != null)
+				return;
+
+			if (Envelope.Subject != null) {
+				normalizedSubject = MessageThreader.GetThreadableSubject (Envelope.Subject, out threadableReplyDepth);
+			} else {
+				normalizedSubject = string.Empty;
+				threadableReplyDepth = 0;
+			}
 		}
 
 		/// <summary>
@@ -351,6 +367,82 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Gets the From header value as a string.
+		/// </summary>
+		/// <remarks>
+		/// Gets the From header value as a string.
+		/// </remarks>
+		/// <value>The From header value.</value>
+		public string From {
+			get { return Envelope != null ? Envelope.From.ToString () : null; }
+		}
+
+		/// <summary>
+		/// Gets the To header value as a string.
+		/// </summary>
+		/// <remarks>
+		/// Gets the To header value as a string.
+		/// </remarks>
+		/// <value>The To header value.</value>
+		public string To {
+			get { return Envelope != null ? Envelope.To.ToString () : null; }
+		}
+
+		/// <summary>
+		/// Gets the Cc header value as a string.
+		/// </summary>
+		/// <remarks>
+		/// Gets the Cc header value as a string.
+		/// </remarks>
+		/// <value>The Cc header value.</value>
+		public string Cc {
+			get { return Envelope != null ? Envelope.Cc.ToString () : null; }
+		}
+
+		/// <summary>
+		/// Gets the threadable subject.
+		/// </summary>
+		/// <remarks>
+		/// A normalized Subject header value where prefixes such as
+		/// "Re:", "Re[#]:", etc have been pruned.
+		/// </remarks>
+		/// <value>The threadable subject.</value>
+		public string NormalizedSubject {
+			get {
+				UpdateThreadableSubject ();
+
+				return normalizedSubject;
+			}
+		}
+
+		/// <summary>
+		/// Gets whether or not the message is a reply.
+		/// </summary>
+		/// <remarks>
+		/// This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
+		/// </remarks>
+		/// <value><c>true</c> if the message is a reply; otherwise, <c>false</c>.</value>
+		public bool IsReply {
+			get {
+				UpdateThreadableSubject ();
+
+				return threadableReplyDepth != 0;
+			}
+		}
+
+		/// <summary>
+		/// Gets the Date header value.
+		/// </summary>
+		/// <remarks>
+		/// Gets the Date header value. If the Date header is not present, the arrival date is used.
+		/// If neither are known, <see cref="System.DateTimeOffset.MinValue"/> is returned.
+		/// </remarks>
+		/// <value>The date.</value>
+		public DateTimeOffset Date {
+			get { return Envelope.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
+		}
+
+		/// <summary>
 		/// Gets the message flags, if available.
 		/// </summary>
 		/// <remarks>
@@ -416,7 +508,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>
-		public uint? MessageSize {
+		public uint? Size {
 			get; set;
 		}
 
@@ -449,16 +541,16 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the unique ID of the message, if available.
+		/// Gets the unique identifier of the message, if available.
 		/// </summary>
 		/// <remarks>
-		/// <para>Gets the unique ID of the message, if available.</para>
+		/// <para>Gets the unique identifier of the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.UniqueId"/> flag is passed to
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The uid of the message.</value>
-		public UniqueId? UniqueId {
+		public UniqueId UniqueId {
 			get; set;
 		}
 
@@ -515,205 +607,6 @@ namespace MailKit {
 		/// <value>The GMail labels.</value>
 		public IList<string> GMailLabels {
 			get; set;
-		}
-
-		#endregion
-
-		#region ISortable implementation
-
-		/// <summary>
-		/// Gets whether or not the messages can be sorted.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether or not the messages can be sorted.
-		/// </remarks>
-		/// <value><c>true</c> if the messages can be sorted; otherwise, <c>false</c>.</value>
-		bool ISortable.CanSort {
-			get { return Envelope != null; }
-		}
-
-		/// <summary>
-		/// Gets the message index in the folder it belongs to.
-		/// </summary>
-		/// <remarks>
-		/// Gets the message index in the folder it belongs to.
-		/// </remarks>
-		/// <value>The index.</value>
-		int ISortable.Index {
-			get { return Index; }
-		}
-
-		/// <summary>
-		/// Gets the Cc header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Cc header value.
-		/// </remarks>
-		/// <value>The Cc header value.</value>
-		string ISortable.Cc {
-			get { return Envelope.Cc.ToString (); }
-		}
-
-		/// <summary>
-		/// Gets the Date header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Date header value.
-		/// </remarks>
-		/// <value>The date.</value>
-		DateTimeOffset ISortable.Date {
-			get { return Envelope.Date ?? InternalDate ?? DateTimeOffset.MinValue; }
-		}
-
-		/// <summary>
-		/// Gets the From header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the From header value.
-		/// </remarks>
-		/// <value>The From header value.</value>
-		string ISortable.From {
-			get { return Envelope.From.ToString (); }
-		}
-
-		/// <summary>
-		/// Gets the size of the message, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the size of the message, in bytes.
-		/// </remarks>
-		/// <value>The size of the message, in bytes.</value>
-		uint ISortable.Size {
-			get { return MessageSize ?? 0; }
-		}
-
-		/// <summary>
-		/// Gets the Subject header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Subject header value.
-		/// </remarks>
-		/// <value>The Subject header value.</value>
-		string ISortable.Subject {
-			get { return Envelope.Subject; }
-		}
-
-		/// <summary>
-		/// Gets the To header value.
-		/// </summary>
-		/// <remarks>
-		/// Gets the To header value.
-		/// </remarks>
-		/// <value>The To header value.</value>
-		string ISortable.To {
-			get { return Envelope.To.ToString (); }
-		}
-
-		#endregion
-
-		#region IThreadable implementation
-
-		MessageIdList threadableReferences;
-		int threadableReplyDepth = -1;
-		string normalizedSubject;
-
-		void UpdateThreadableSubject ()
-		{
-			if (normalizedSubject != null)
-				return;
-
-			if (Envelope.Subject != null) {
-				normalizedSubject = MessageThreader.GetThreadableSubject (Envelope.Subject, out threadableReplyDepth);
-			} else {
-				normalizedSubject = string.Empty;
-				threadableReplyDepth = 0;
-			}
-		}
-
-		/// <summary>
-		/// Gets whether the message can be threaded.
-		/// </summary>
-		/// <remarks>
-		/// Gets whether the message can be threaded.
-		/// </remarks>
-		/// <value><c>true</c> if the messages can be threaded; otherwise, <c>false</c>.</value>
-		bool IThreadable.CanThread {
-			get { return Envelope != null && UniqueId.HasValue; }
-		}
-
-		/// <summary>
-		/// Gets the threadable subject.
-		/// </summary>
-		/// <remarks>
-		/// A normalized Subject header value where prefixes such as
-		/// "Re:", "Re[#]:", etc have been pruned.
-		/// </remarks>
-		/// <value>The threadable subject.</value>
-		string IThreadable.NormalizedSubject {
-			get {
-				UpdateThreadableSubject ();
-
-				return normalizedSubject;
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether this instance is a reply.
-		/// </summary>
-		/// <remarks>
-		/// This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
-		/// </remarks>
-		/// <value><c>true</c> if this instance is a reply; otherwise, <c>false</c>.</value>
-		bool IThreadable.IsThreadableReply {
-			get {
-				UpdateThreadableSubject ();
-
-				return threadableReplyDepth != 0;
-			}
-		}
-
-		/// <summary>
-		/// Gets the threadable message identifier.
-		/// </summary>
-		/// <remarks>
-		/// This value should be the canonicalized Message-Id header value
-		/// without the angle brackets.
-		/// </remarks>
-		/// <value>The threadable message identifier.</value>
-		string IThreadable.MessageId {
-			get { return Envelope.MessageId; }
-		}
-
-		/// <summary>
-		/// Gets the threadable references.
-		/// </summary>
-		/// <remarks>
-		/// This value should be the list of canonicalized Message-Ids
-		/// found in the In-Reply-To and References headers.
-		/// </remarks>
-		/// <value>The threadable references.</value>
-		MessageIdList IThreadable.References {
-			get {
-				if (threadableReferences == null) {
-					threadableReferences = References != null ? References.Clone () : new MessageIdList ();
-
-					if (Envelope.InReplyTo != null)
-						threadableReferences.Add (Envelope.InReplyTo);
-				}
-
-				return threadableReferences;
-			}
-		}
-
-		/// <summary>
-		/// Gets the unique identifier.
-		/// </summary>
-		/// <remarks>
-		/// Gets the unique identifier.
-		/// </remarks>
-		/// <value>The unique identifier.</value>
-		UniqueId IThreadable.UniqueId {
-			get { return UniqueId.Value; }
 		}
 
 		#endregion

@@ -39,7 +39,7 @@ namespace MailKit {
 	/// The properties of the <see cref="IMessageSummary"/> that will be available
 	/// depend on the <see cref="MessageSummaryItems"/> passed to the aformentioned method.
 	/// </remarks>
-	public interface IMessageSummary : IThreadable, ISortable
+	public interface IMessageSummary
 	{
 		/// <summary>
 		/// Get a bitmask of fields that have been populated.
@@ -79,6 +79,62 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The envelope of the message.</value>
 		Envelope Envelope { get; }
+
+		/// <summary>
+		/// Gets the From header value as a string.
+		/// </summary>
+		/// <remarks>
+		/// Gets the From header value as a string.
+		/// </remarks>
+		/// <value>The From header value.</value>
+		string From { get; }
+
+		/// <summary>
+		/// Gets the To header value as a string.
+		/// </summary>
+		/// <remarks>
+		/// Gets the To header value as a string.
+		/// </remarks>
+		/// <value>The To header value.</value>
+		string To { get; }
+
+		/// <summary>
+		/// Gets the Cc header value as a string.
+		/// </summary>
+		/// <remarks>
+		/// Gets the Cc header value as a string.
+		/// </remarks>
+		/// <value>The Cc header value.</value>
+		string Cc { get; }
+
+		/// <summary>
+		/// Gets the normalized subject.
+		/// </summary>
+		/// <remarks>
+		/// <para>A normalized Subject header value where prefixes such as "Re:", "Re[#]:", etc have been pruned.</para>
+		/// <para>This property is typically used for threading messages by subject.</para>
+		/// </remarks>
+		/// <value>The normalized subject.</value>
+		string NormalizedSubject { get; }
+
+		/// <summary>
+		/// Gets the Date header value.
+		/// </summary>
+		/// <remarks>
+		/// Gets the Date header value. If the Date header is not present, the arrival date is used.
+		/// If neither are known, <see cref="System.DateTimeOffset.MinValue"/> is returned.
+		/// </remarks>
+		/// <value>The date.</value>
+		DateTimeOffset Date { get; }
+
+		/// <summary>
+		/// Gets whether or not the message is a reply.
+		/// </summary>
+		/// <remarks>
+		/// This value should be based on whether the message subject contained any "Re:" or "Fwd:" prefixes.
+		/// </remarks>
+		/// <value><c>true</c> if the message is a reply; otherwise, <c>false</c>.</value>
+		bool IsReply { get; }
 
 		/// <summary>
 		/// Gets the message flags, if available.
@@ -138,7 +194,7 @@ namespace MailKit {
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The size of the message.</value>
-		uint? MessageSize { get; }
+		uint? Size { get; }
 
 		/// <summary>
 		/// Gets the mod-sequence value for the message, if available.
@@ -165,16 +221,16 @@ namespace MailKit {
 		MessageIdList References { get; }
 
 		/// <summary>
-		/// Gets the unique ID of the message, if available.
+		/// Gets the unique identifier of the message, if available.
 		/// </summary>
 		/// <remarks>
-		/// <para>Gets the unique ID of the message, if available.</para>
+		/// <para>Gets the unique identifier of the message, if available.</para>
 		/// <para>This property will only be set if the
 		/// <see cref="MessageSummaryItems.UniqueId"/> flag is passed to
 		/// <see cref="IMailFolder.Fetch(System.Collections.Generic.IList&lt;UniqueId&gt;,MessageSummaryItems,System.Threading.CancellationToken)"/>.</para>
 		/// </remarks>
 		/// <value>The uid of the message.</value>
-		UniqueId? UniqueId { get; }
+		UniqueId UniqueId { get; }
 
 		/// <summary>
 		/// Gets the index of the message.
