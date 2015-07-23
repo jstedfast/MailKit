@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using MailKit.Search;
@@ -110,7 +111,7 @@ namespace MailKit {
 		/// <para>-or-</para>
 		/// <para><paramref name="orderBy"/> is an empty list.</para>
 		/// </exception>
-		public static IList<T> Sort<T> (IEnumerable<T> messages, IList<OrderBy> orderBy) where T : ISortable
+		public static IList<T> Sort<T> (this IEnumerable<T> messages, IList<OrderBy> orderBy) where T : ISortable
 		{
 			if (messages == null)
 				throw new ArgumentNullException ("messages");
@@ -137,6 +138,50 @@ namespace MailKit {
 			list.Sort (comparer);
 
 			return list;
+		}
+
+		/// <summary>
+		/// Sorts the messages by the specified ordering.
+		/// </summary>
+		/// <remarks>
+		/// Sorts the messages by the specified ordering.
+		/// </remarks>
+		/// <returns>The sorted messages.</returns>
+		/// <typeparam name="T">The message items must implement the <see cref="ISortable"/> interface.</typeparam>
+		/// <param name="messages">The messages to sort.</param>
+		/// <param name="orderBy">The sort ordering.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="messages"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <para><paramref name="messages"/> contains one or more items that is missing information needed for sorting.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="orderBy"/> is an empty list.</para>
+		/// </exception>
+		public static void Sort<T> (this List<T> messages, IList<OrderBy> orderBy) where T : ISortable
+		{
+			if (messages == null)
+				throw new ArgumentNullException ("messages");
+
+			if (orderBy == null)
+				throw new ArgumentNullException ("orderBy");
+
+			if (orderBy.Count == 0)
+				throw new ArgumentException ("No sort order provided.", "orderBy");
+
+			for (int i = 0; i < messages.Count; i++) {
+				if (!messages[i].CanSort)
+					throw new ArgumentException ("One or more messages is missing information needed for sorting.", "messages");
+			}
+
+			if (messages.Count < 2)
+				return;
+
+			var comparer = new MessageComparer<T> (orderBy);
+
+			messages.Sort (comparer);
 		}
 	}
 }

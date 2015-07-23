@@ -333,17 +333,17 @@ namespace MailKit {
 
 		static void GetThreads (ThreadableNode root, IList<MessageThread> threads, IList<OrderBy> orderBy)
 		{
-			var sorted = MessageSorter.Sort (root.Children, orderBy);
+			root.Children.Sort (orderBy);
 
-			for (int i = 0; i < sorted.Count; i++) {
-				var message = sorted[i].Message;
+			for (int i = 0; i < root.Children.Count; i++) {
+				var message = root.Children[i].Message;
 				UniqueId? uid = null;
 
 				if (message != null)
 					uid = message.UniqueId;
 
 				var thread = new MessageThread (uid);
-				GetThreads (sorted[i], thread.children, orderBy);
+				GetThreads (root.Children[i], thread.children, orderBy);
 				threads.Add (thread);
 			}
 		}
