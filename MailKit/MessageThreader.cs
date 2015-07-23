@@ -108,7 +108,7 @@ namespace MailKit {
 				get { return Message != null ? Message.InternalDate : Children[0].InternalDate; }
 			}
 
-			public uint Size {
+			public uint? Size {
 				get { return Message != null ? Message.Size : Children[0].Size; }
 			}
 
