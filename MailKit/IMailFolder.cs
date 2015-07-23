@@ -258,7 +258,7 @@ namespace MailKit {
 		/// <param name="highestModSeq">The last known <see cref="HighestModSeq"/> value.</param>
 		/// <param name="uids">The last known list of unique message identifiers.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		FolderAccess Open (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously opens the folder using the requested folder access.
@@ -277,7 +277,7 @@ namespace MailKit {
 		/// <param name="highestModSeq">The last known <see cref="HighestModSeq"/> value.</param>
 		/// <param name="uids">The last known list of unique message identifiers.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<FolderAccess> OpenAsync (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Open the folder using the requested folder access.

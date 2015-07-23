@@ -274,7 +274,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override FolderAccess Open (FolderAccess access, UniqueId uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
+		public override FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
@@ -292,7 +292,7 @@ namespace MailKit.Net.Imap {
 			if (!Engine.QResyncEnabled)
 				throw new InvalidOperationException ("The QRESYNC extension has not been enabled.");
 
-			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity.Id, highestModSeq);
+			var qresync = string.Format ("(QRESYNC ({0} {1}", uidValidity, highestModSeq);
 
 			if (uids.Count > 0)
 				qresync += " " + set;
