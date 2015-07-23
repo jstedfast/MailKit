@@ -35,21 +35,21 @@ namespace MailKit {
 	/// </remarks>
 	public sealed class MessageThread
 	{
-		internal readonly List<MessageThread> children;
-
-		internal MessageThread (UniqueId? uid)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MessageThread"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new message thread node.
+		/// </remarks>
+		/// <param name="uid">The unique identifier of the message.</param>
+		public MessageThread (UniqueId? uid)
 		{
-			children = new List<MessageThread> ();
+			Children = new List<MessageThread> ();
 			UniqueId = uid;
 		}
 
-		internal void Add (MessageThread child)
-		{
-			children.Add (child);
-		}
-
 		/// <summary>
-		/// Gets the unique identifier for the message.
+		/// Gets the unique identifier of the message.
 		/// </summary>
 		/// <remarks>
 		/// The unique identifier may be <c>null</c> if the message is missing
@@ -68,8 +68,8 @@ namespace MailKit {
 		/// Each child represents a reply to the message referenced by <see cref="UniqueId"/>.
 		/// </remarks>
 		/// <value>The children.</value>
-		public IEnumerable<MessageThread> Children {
-			get { return children; }
+		public IList<MessageThread> Children {
+			get; private set;
 		}
 	}
 }

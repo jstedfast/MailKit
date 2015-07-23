@@ -1206,13 +1206,13 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type == ImapTokenType.OpenParen) {
 					child = ParseThread (engine, uidValidity, cancellationToken);
-					node.Add (child);
+					node.Children.Add (child);
 				} else {
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid))
 						throw ImapEngine.UnexpectedToken (token, false);
 
 					child = new MessageThread (new UniqueId (uidValidity, uid));
-					node.Add (child);
+					node.Children.Add (child);
 					node = child;
 				}
 			} while (true);

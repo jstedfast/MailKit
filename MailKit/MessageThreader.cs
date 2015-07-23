@@ -349,7 +349,7 @@ namespace MailKit {
 					uid = message.UniqueId;
 
 				var thread = new MessageThread (uid);
-				GetThreads (root.Children[i], thread.children, orderBy);
+				GetThreads (root.Children[i], thread.Children, orderBy);
 				threads.Add (thread);
 			}
 		}
