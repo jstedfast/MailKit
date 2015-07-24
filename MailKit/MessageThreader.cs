@@ -61,7 +61,23 @@ namespace MailKit {
 			}
 
 			public BodyPart Body {
-				get { return Message != null ? Message.Body : Children[0].Body; }
+				get { return null; }
+			}
+
+			public BodyPartText TextBody {
+				get { return null; }
+			}
+
+			public BodyPartText HtmlBody {
+				get { return null; }
+			}
+
+			public IEnumerable<BodyPartBasic> BodyParts {
+				get { yield break; }
+			}
+
+			public IEnumerable<BodyPartBasic> Attachments {
+				get { yield break; }
 			}
 
 			public Envelope Envelope {
