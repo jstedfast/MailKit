@@ -4139,6 +4139,22 @@ namespace MailKit {
 		Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
+		/// Occurs when the folder is opened.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the folder is opened.
+		/// </remarks>
+		event EventHandler<EventArgs> Opened;
+
+		/// <summary>
+		/// Occurs when the folder is closed.
+		/// </summary>
+		/// <remarks>
+		/// Emitted when the folder is closed.
+		/// </remarks>
+		event EventHandler<EventArgs> Closed;
+
+		/// <summary>
 		/// Occurs when the folder is deleted.
 		/// </summary>
 		/// <remarks>
