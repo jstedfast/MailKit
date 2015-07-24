@@ -133,33 +133,6 @@ namespace MailKit {
 		Envelope Envelope { get; }
 
 		/// <summary>
-		/// Gets the From header value as a string.
-		/// </summary>
-		/// <remarks>
-		/// Gets the From header value as a string.
-		/// </remarks>
-		/// <value>The From header value.</value>
-		string From { get; }
-
-		/// <summary>
-		/// Gets the To header value as a string.
-		/// </summary>
-		/// <remarks>
-		/// Gets the To header value as a string.
-		/// </remarks>
-		/// <value>The To header value.</value>
-		string To { get; }
-
-		/// <summary>
-		/// Gets the Cc header value as a string.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Cc header value as a string.
-		/// </remarks>
-		/// <value>The Cc header value.</value>
-		string Cc { get; }
-
-		/// <summary>
 		/// Gets the normalized subject.
 		/// </summary>
 		/// <remarks>

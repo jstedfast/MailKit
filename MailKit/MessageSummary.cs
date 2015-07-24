@@ -367,39 +367,6 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the From header value as a string.
-		/// </summary>
-		/// <remarks>
-		/// Gets the From header value as a string.
-		/// </remarks>
-		/// <value>The From header value.</value>
-		public string From {
-			get { return Envelope != null ? Envelope.From.ToString () : null; }
-		}
-
-		/// <summary>
-		/// Gets the To header value as a string.
-		/// </summary>
-		/// <remarks>
-		/// Gets the To header value as a string.
-		/// </remarks>
-		/// <value>The To header value.</value>
-		public string To {
-			get { return Envelope != null ? Envelope.To.ToString () : null; }
-		}
-
-		/// <summary>
-		/// Gets the Cc header value as a string.
-		/// </summary>
-		/// <remarks>
-		/// Gets the Cc header value as a string.
-		/// </remarks>
-		/// <value>The Cc header value.</value>
-		public string Cc {
-			get { return Envelope != null ? Envelope.Cc.ToString () : null; }
-		}
-
-		/// <summary>
 		/// Gets the threadable subject.
 		/// </summary>
 		/// <remarks>

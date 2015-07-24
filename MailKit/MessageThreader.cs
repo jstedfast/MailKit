@@ -84,18 +84,6 @@ namespace MailKit {
 				get { return Message != null ? Message.Envelope : Children[0].Envelope; }
 			}
 
-			public string From {
-				get { return Message != null ? Message.From : Children[0].From; }
-			}
-
-			public string To {
-				get { return Message != null ? Message.To : Children[0].To; }
-			}
-
-			public string Cc {
-				get { return Message != null ? Message.Cc : Children[0].Cc; }
-			}
-
 			public string NormalizedSubject {
 				get { return Message != null ? Message.NormalizedSubject : Children[0].NormalizedSubject; }
 			}

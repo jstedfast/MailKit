@@ -48,8 +48,9 @@ namespace UnitTests {
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "aaaa";
-			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
-			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
+			summary.Envelope.From.Add (new MailboxAddress ("A", "a@a.com"));
+			summary.Envelope.To.Add (new MailboxAddress ("A", "a@a.com"));
+			summary.Envelope.Cc.Add (new MailboxAddress ("A", "a@a.com"));
 			summary.Size = 520;
 			messages.Add (summary);
 
@@ -57,8 +58,9 @@ namespace UnitTests {
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "bbbb";
-			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
-			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
+			summary.Envelope.From.Add (new MailboxAddress ("B", "b@b.com"));
+			summary.Envelope.To.Add (new MailboxAddress ("B", "b@b.com"));
+			summary.Envelope.Cc.Add (new MailboxAddress ("B", "b@b.com"));
 			summary.Size = 265;
 			messages.Add (summary);
 
@@ -66,8 +68,9 @@ namespace UnitTests {
 			summary.Envelope = new Envelope ();
 			summary.Envelope.Date = DateTimeOffset.Now;
 			summary.Envelope.Subject = "cccc";
-			summary.Envelope.From.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
-			summary.Envelope.To.Add (new MailboxAddress ("Jeffrey Stedfast", "jeff@xamarin.com"));
+			summary.Envelope.From.Add (new MailboxAddress ("C", "c@c.com"));
+			summary.Envelope.To.Add (new MailboxAddress ("C", "c@c.com"));
+			summary.Envelope.Cc.Add (new MailboxAddress ("C", "c@c.com"));
 			summary.Size = 520;
 			messages.Add (summary);
 
@@ -102,9 +105,34 @@ namespace UnitTests {
 			Assert.AreEqual (2, messages[2].Index, "Sorting by size+subject failed.");
 
 			messages.Sort (new [] { OrderBy.ReverseSize, OrderBy.ReverseSubject });
-			Assert.AreEqual (2, messages[0].Index, "Sorting by size+subject failed.");
-			Assert.AreEqual (0, messages[1].Index, "Sorting by size+subject failed.");
-			Assert.AreEqual (1, messages[2].Index, "Sorting by size+subject failed.");
+			Assert.AreEqual (2, messages[0].Index, "Sorting by reversed size+subject failed.");
+			Assert.AreEqual (0, messages[1].Index, "Sorting by reversed size+subject failed.");
+			Assert.AreEqual (1, messages[2].Index, "Sorting by reversed size+subject failed.");
+
+			messages.Sort (new[] { OrderBy.DisplayFrom });
+			Assert.AreEqual (0, messages[0].Index, "Sorting by display-from failed.");
+			Assert.AreEqual (1, messages[1].Index, "Sorting by display-from failed.");
+			Assert.AreEqual (2, messages[2].Index, "Sorting by display-from failed.");
+
+			messages.Sort (new[] { OrderBy.From });
+			Assert.AreEqual (0, messages[0].Index, "Sorting by from failed.");
+			Assert.AreEqual (1, messages[1].Index, "Sorting by from failed.");
+			Assert.AreEqual (2, messages[2].Index, "Sorting by from failed.");
+
+			messages.Sort (new[] { OrderBy.DisplayTo });
+			Assert.AreEqual (0, messages[0].Index, "Sorting by display-to failed.");
+			Assert.AreEqual (1, messages[1].Index, "Sorting by display-to failed.");
+			Assert.AreEqual (2, messages[2].Index, "Sorting by display-to failed.");
+
+			messages.Sort (new[] { OrderBy.To });
+			Assert.AreEqual (0, messages[0].Index, "Sorting by to failed.");
+			Assert.AreEqual (1, messages[1].Index, "Sorting by to failed.");
+			Assert.AreEqual (2, messages[2].Index, "Sorting by to failed.");
+
+			messages.Sort (new[] { OrderBy.Cc });
+			Assert.AreEqual (0, messages[0].Index, "Sorting by cc failed.");
+			Assert.AreEqual (1, messages[1].Index, "Sorting by cc failed.");
+			Assert.AreEqual (2, messages[2].Index, "Sorting by cc failed.");
 		}
 	}
 }

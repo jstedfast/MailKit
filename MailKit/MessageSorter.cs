@@ -25,8 +25,10 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
+using MimeKit;
 using MailKit.Search;
 
 namespace MailKit {
@@ -49,6 +51,48 @@ namespace MailKit {
 
 			#region IComparer implementation
 
+			static int CompareDisplayNames (InternetAddressList list1, InternetAddressList list2)
+			{
+				var m1 = list1.Mailboxes.GetEnumerator ();
+				var m2 = list2.Mailboxes.GetEnumerator ();
+				bool n1 = m1.MoveNext ();
+				bool n2 = m2.MoveNext ();
+
+				while (n1 && n2) {
+					var name1 = m1.Current.Name ?? string.Empty;
+					var name2 = m2.Current.Name ?? string.Empty;
+					int cmp;
+
+					if ((cmp = string.Compare (name1, name2, StringComparison.OrdinalIgnoreCase)) != 0)
+						return cmp;
+
+					n1 = m1.MoveNext ();
+					n2 = m2.MoveNext ();
+				}
+
+				return n1 ? 1 : (n2 ? -1  : 0);
+			}
+
+			static int CompareMailboxAddresses (InternetAddressList list1, InternetAddressList list2)
+			{
+				var m1 = list1.Mailboxes.GetEnumerator ();
+				var m2 = list2.Mailboxes.GetEnumerator ();
+				bool n1 = m1.MoveNext ();
+				bool n2 = m2.MoveNext ();
+
+				while (n1 && n2) {
+					int cmp;
+
+					if ((cmp = string.Compare (m1.Current.Address, m2.Current.Address, StringComparison.OrdinalIgnoreCase)) != 0)
+						return cmp;
+
+					n1 = m1.MoveNext ();
+					n2 = m2.MoveNext ();
+				}
+
+				return n1 ? 1 : (n2 ? -1  : 0);
+			}
+
 			public int Compare (T x, T y)
 			{
 				int cmp = 0;
@@ -59,13 +103,16 @@ namespace MailKit {
 						cmp = x.Index.CompareTo (y.Index);
 						break;
 					case OrderByType.Cc:
-						cmp = string.Compare (x.Cc, y.Cc, StringComparison.OrdinalIgnoreCase);
+						cmp = CompareMailboxAddresses (x.Envelope.Cc, y.Envelope.Cc);
 						break;
 					case OrderByType.Date:
 						cmp = x.Date.CompareTo (y.Date);
 						break;
+					case OrderByType.DisplayFrom:
+						cmp = CompareDisplayNames (x.Envelope.From, y.Envelope.From);
+						break;
 					case OrderByType.From:
-						cmp = string.Compare (x.From, y.From, StringComparison.OrdinalIgnoreCase);
+						cmp = CompareMailboxAddresses (x.Envelope.From, y.Envelope.From);
 						break;
 					case OrderByType.Size:
 						var xsize = x.Size ?? 0;
@@ -79,8 +126,11 @@ namespace MailKit {
 
 						cmp = string.Compare (xsubject, ysubject, StringComparison.OrdinalIgnoreCase);
 						break;
+					case OrderByType.DisplayTo:
+						cmp = CompareDisplayNames (x.Envelope.To, y.Envelope.To);
+						break;
 					case OrderByType.To:
-						cmp = string.Compare (x.To, y.To, StringComparison.OrdinalIgnoreCase);
+						cmp = CompareMailboxAddresses (x.Envelope.To, y.Envelope.To);
 						break;
 					}
 
