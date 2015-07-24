@@ -65,6 +65,58 @@ namespace MailKit {
 		BodyPart Body { get; }
 
 		/// <summary>
+		/// Gets the text body part of the message if it exists.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the text/plain body part of the message.</para>
+		/// <para>In order for this to work properly, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// </remarks>
+		/// <value>The text body if it exists; otherwise, <c>null</c>.</value>
+		BodyPartText TextBody { get; }
+
+		/// <summary>
+		/// Gets the html body part of the message if it exists.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets the text/html body part of the message.</para>
+		/// <para>In order for this to work properly, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// </remarks>
+		/// <value>The html body if it exists; otherwise, <c>null</c>.</value>
+		BodyPartText HtmlBody { get; }
+
+		/// <summary>
+		/// Gets the body parts of the message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
+		/// <see cref="BodyPartBasic"/> objects.</para>
+		/// <para>In order for this to work, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> or
+		/// <see cref="MessageSummaryItems.Body"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// </remarks>
+		/// <value>The body parts.</value>
+		IEnumerable<BodyPartBasic> BodyParts { get; }
+
+		/// <summary>
+		/// Gets the attachments.
+		/// </summary>
+		/// <remarks>
+		/// <para>Traverses over the <see cref="Body"/>, enumerating all of the
+		/// <see cref="BodyPartBasic"/> objects that have a Content-Disposition
+		/// header set to <c>"attachment"</c>.</para>
+		/// <para>In order for this to work properly, it is necessary to include
+		/// <see cref="MessageSummaryItems.BodyStructure"/> when fetching
+		/// summary information from a <see cref="IMailFolder"/>.</para>
+		/// </remarks>
+		/// <value>The attachments.</value>
+		IEnumerable<BodyPartBasic> Attachments { get; }
+
+		/// <summary>
 		/// Gets the envelope of the message, if available.
 		/// </summary>
 		/// <remarks>
