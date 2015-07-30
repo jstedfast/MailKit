@@ -47,6 +47,7 @@ namespace MailKit.Net.Imap {
 	static class ImapUtils
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		const string FolderSpecialChars = "*/\\\"\n\t";
 		const string QuotedSpecials = " \t()<>@,;:\\\"/[]?=";
 		static int InboxLength = "INBOX".Length;
 
@@ -431,7 +432,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			// parse the folder name
-			token = engine.ReadToken (ic.CancellationToken);
+			token = engine.ReadToken (FolderSpecialChars, ic.CancellationToken);
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
