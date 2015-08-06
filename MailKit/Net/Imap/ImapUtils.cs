@@ -1065,7 +1065,7 @@ namespace MailKit.Net.Imap {
 				envelope.InReplyTo = MimeUtils.EnumerateReferences (nstring).FirstOrDefault ();
 
 			if ((nstring = ReadNStringToken (engine, false, cancellationToken)) != null)
-				envelope.MessageId = MimeUtils.EnumerateReferences (nstring).FirstOrDefault ();
+				envelope.MessageId = MimeUtils.ParseMessageId (nstring);
 
 			token = engine.ReadToken (cancellationToken);
 
