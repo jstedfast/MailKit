@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.2.8.0</version>
+        <version>1.2.9.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,20 +22,27 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed ImapFolder to dispose the temporary streams used in GetMessage and GetBodyPart.
-* Added a MessageNotFoundException.
-* Added an ImapCommandResponse property to ImapCommandException.
-* Fixed SmtpClient to filter out duplicate recipient addresses in RCPT TO.
-* Modified MessageSorter/Threader to take IList&lt;OrderBy&gt; arguments instead of OrderBy[].
-* Added support for parsing group addresses in IMAP ENVELOPE responses.
-* Disable SASL-IR support for the LOGIN mechanism. (issue #216)
-* Capture whether or not the IMAP server supports the I18NLEVEL and LANGUAGE extensions.
+        <releaseNotes>
+* Fixed ImapFolder.Append() methods to make sure to encode the message with &lt;CR&gt;&lt;LF&gt; line endings.
+* Added UniqueId.Invalid that can be used for error conditions.
+* Added UniqueId.IsValid property to check that the UniqueId is valid.
+* Added Opened and Closed events to IMailFolder.
+* Fixed the QRESYNC version of the IMailFolder.Open() method to take a uint uidValidity instead of a UniqueId uidValidity argument for consistency.
+* Updated MessageSorter.Sort() to be an extension method and added a List&lt;T&gt; overload.
+* Updated MessageThreader.Thread() to be extension methods (required reordering of args).
+* Merged ISortable and IThreadable interfaces into IMessageSummary in order to remove duplicated properties and simplify things.
+* Renamed IMessageSummary.MessageSize to IMessageSummary.Size.
+* Modified IMessageSummary.UniqueId to no longer be nullable.
+* Added TextBody, HtmlBody, BodyParts and Attachments properties to IMessageSummary.
+* Modified the IMAP parser to allow NIL for the Content-Type and subtype strings in BODY and BODYSTRUCTURE values even though it is illegal. (issue #226)
+* Modified the IMAP parser to properly handle Message-Id tokens that are not properly encapsulated within angle brackets. (issue #224)
+* Fixed IMAP to properly deal with folder names that contained unescaped square brackets. (issue #222)
 </releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.2.8.0" />
+            <dependency id="MimeKit" version="1.2.9.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
