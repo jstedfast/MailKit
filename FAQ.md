@@ -9,6 +9,7 @@
 * [What does "The ImapClient is currently busy processing a command." mean?](#ImapClientBusy)
 * [Why do I get InvalidOperationException: "The folder is not currently open."?](#FolderNotOpenException)
 * [ImapFolder.MoveTo() does not move the message out of the source folder. Why not?](#MoveDoesNotMove)
+* [How can I mark messages as read using IMAP?](#MarkAsRead)
 
 ### <a name="ProtocolLog">How can I get a protocol log for IMAP, POP3, or SMTP to see what is going wrong?</a>
 
@@ -149,3 +150,21 @@ deleted messages with a strikeout (which you probably have disabled).
 
 So to answer your question more succinctly: After calling `folder.MoveTo (...);`, if you are confident
 that the messages marked for deletion should be expunged, call `folder.Expunge ();`
+
+### <a name="MarkAsRead">How can I mark messages as read for IMAP?</a>
+
+The way to mark messages as read using the IMAP protocol is to set the `\Seen` flag on the message(s).
+
+To do this using MailKit, you will first need to know either the index(es) or the UID(s) of the messages
+that you would like to set the `\Seen` flag on. Once you have that information, you will want to call
+one of the `AddFlags()` methods on the `ImapFolder`. For example:
+
+```csharp
+folder.AddFlags (uids, MessageFlags.Seen, true);
+```
+
+To mark messages as unread, you would *remove* the `\Seen` flag, like so:
+
+```csharp
+folder.RemoveFlags (uids, MessageFlags.Seen, true);
+```
