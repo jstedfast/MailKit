@@ -140,7 +140,7 @@ copy the message(s) to the destination folder. Once the `COPY` command has compl
 mark the messages that you asked it to move for deletion by setting the `\Deleted` flag on those
 messages.
 
-If the server supports the `UIDPLUS` extension, then MailKit will attempt to `EXPUNG`E the subset of
+If the server supports the `UIDPLUS` extension, then MailKit will attempt to `EXPUNGE` the subset of
 messages that it just marked for deletion, however, if the `UIDPLUS` extension is not supported by the
 IMAP server, then it cannot safely expunge just that subset of messages and so it simply stops there.
 
