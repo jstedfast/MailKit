@@ -45,7 +45,6 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using SslProtocols = System.Security.Authentication.SslProtocols;
 using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
 #endif
 
@@ -69,12 +68,6 @@ namespace MailKit.Net.Pop3 {
 	/// </example>
 	public class Pop3Client : MailSpool
 	{
-#if NET_4_5 || __MOBILE__
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
-#elif !NETFX_CORE
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
-#endif
-
 		[Flags]
 		enum ProbedCapabilities : byte {
 			None   = 0,
@@ -779,7 +772,7 @@ namespace MailKit.Net.Pop3 {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -824,7 +817,7 @@ namespace MailKit.Net.Pop3 {
 
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 					engine.Stream.Stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
@@ -939,7 +932,7 @@ namespace MailKit.Net.Pop3 {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -965,7 +958,7 @@ namespace MailKit.Net.Pop3 {
 					SendCommand (cancellationToken, "STLS");
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 					engine.Stream.Stream = tls;
 
 					// re-issue a CAPA command

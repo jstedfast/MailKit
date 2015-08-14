@@ -33,6 +33,7 @@ using System.Collections.Generic;
 #if !NETFX_CORE
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using SslProtocols = System.Security.Authentication.SslProtocols;
 #endif
 
 using MailKit.Security;
@@ -46,6 +47,12 @@ namespace MailKit {
 	/// </remarks>
 	public abstract class MailService : IMailService
 	{
+#if NET_4_5 || __MOBILE__
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+#elif !NETFX_CORE
+		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
+#endif
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
 		/// </summary>
@@ -61,7 +68,19 @@ namespace MailKit {
 			if (protocolLogger == null)
 				throw new ArgumentNullException ("protocolLogger");
 
+			SslProtocols = DefaultSslProtocols;
 			ProtocolLogger = protocolLogger;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
+		/// </remarks>
+		protected MailService ()
+		{
+			SslProtocols = DefaultSslProtocols;
 		}
 
 		/// <summary>
@@ -113,6 +132,19 @@ namespace MailKit {
 		}
 
 #if !NETFX_CORE
+		/// <summary>
+		/// Gets or sets the SSL/TLS protocols that the client is allowed to use.
+		/// </summary>
+		/// <remarks>
+		/// <para>Gets or sets the SSL/TLS protocols that the client is allowed to use.</para>
+		/// <para>This property should be set before calling any of the
+		/// <a href="Overload_MailKit_MailService_Connect.htm">Connect</a> methods.</para>
+		/// </remarks>
+		/// <value>The ssl protocols.</value>
+		public SslProtocols SslProtocols {
+			get; set;
+		}
+
 		/// <summary>
 		/// Gets or sets the client SSL certificates.
 		/// </summary>

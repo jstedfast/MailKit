@@ -42,7 +42,6 @@ using Encoding = Portable.Text.Encoding;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using SslProtocols = System.Security.Authentication.SslProtocols;
 #endif
 
 using MailKit.Security;
@@ -67,11 +66,6 @@ namespace MailKit.Net.Imap {
 	{
 		static readonly char[] ReservedUriCharacters = new [] { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',' };
 		const string HexAlphabet = "0123456789ABCDEF";
-#if NET_4_5 || __MOBILE__
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
-#elif !NETFX_CORE
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
-#endif
 		readonly ImapEngine engine;
 #if NETFX_CORE
 		StreamSocket socket;
@@ -1196,7 +1190,7 @@ namespace MailKit.Net.Imap {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -1246,7 +1240,7 @@ namespace MailKit.Net.Imap {
 					if (ic.Response == ImapCommandResponse.Ok) {
 #if !NETFX_CORE
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 						engine.Stream.Stream = tls;
 #else
 						socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
@@ -1363,7 +1357,7 @@ namespace MailKit.Net.Imap {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -1393,7 +1387,7 @@ namespace MailKit.Net.Imap {
 
 					if (ic.Response == ImapCommandResponse.Ok) {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-						tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 						engine.Stream.Stream = tls;
 
 						// Query the CAPABILITIES again if the server did not include an

@@ -45,7 +45,6 @@ using Encoding = Portable.Text.Encoding;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using SslProtocols = System.Security.Authentication.SslProtocols;
 #endif
 
 using MailKit.Security;
@@ -70,11 +69,6 @@ namespace MailKit.Net.Smtp {
 	/// </example>
 	public class SmtpClient : MailTransport
 	{
-#if NET_4_5 || __MOBILE__
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
-#elif !NETFX_CORE
-		const SslProtocols DefaultSslProtocols = SslProtocols.Tls;
-#endif
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
 		const int MaxLineLength = 998;
 
@@ -810,7 +804,7 @@ namespace MailKit.Net.Smtp {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -862,7 +856,7 @@ namespace MailKit.Net.Smtp {
 
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 					Stream.Stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
@@ -990,7 +984,7 @@ namespace MailKit.Net.Smtp {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -1024,7 +1018,7 @@ namespace MailKit.Net.Smtp {
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (host, ClientCertificates, DefaultSslProtocols, true);
+					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 					Stream.Stream = tls;
 
 					// Send EHLO again and get the new list of supported extensions
