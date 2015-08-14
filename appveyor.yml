@@ -24,7 +24,7 @@ test_script:
     $tests = @("$testdir\UnitTests.dll")
 
     foreach ($elem in $tests) {
-    	.\packages\OpenCover.4.5.3723\OpenCover.Console.exe `
+    	.\packages\OpenCover.4.6.166\OpenCover.Console.exe `
     	-register:user `
     	-target:.\packages\NUnit.Runners.2.6.4\tools\nunit-console.exe `
     	"-targetargs: ""$elem"" /framework:net-4.5 /noshadow" `
@@ -42,7 +42,7 @@ test_script:
 
     $commitMessage = git show --quiet --format="%s" $revision
 
-    .\packages\coveralls.net.0.5.0\csmacnz.Coveralls.exe `
+    .\packages\coveralls.net.0.6.0\csmacnz.Coveralls.exe `
 
     --opencover -i opencover.xml `
 
