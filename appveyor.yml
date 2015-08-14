@@ -42,7 +42,7 @@ test_script:
 
     $commitMessage = git show --quiet --format="%s" $revision
 
-    .\packages\coveralls.net.0.6.0\csmacnz.Coveralls.exe `
+    .\packages\coveralls.net.0.6.0\tools\csmacnz.Coveralls.exe `
 
     --opencover -i opencover.xml `
 
