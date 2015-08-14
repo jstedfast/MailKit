@@ -1,5 +1,5 @@
 version: 1.2.9.{build}
-
+os: Visual Studio 2015 RC
 configuration: Debug
 platform: Any CPU
 
