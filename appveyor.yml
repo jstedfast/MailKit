@@ -15,7 +15,7 @@ install:
 
 build:
   project: MailKit.Net45.sln
-  verbosity: minimal
+  verbosity: detailed
 
 test_script:
 - ps: >-
