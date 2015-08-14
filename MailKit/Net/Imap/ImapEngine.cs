@@ -1286,7 +1286,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.HighestModSeq:
 				var highest = (HighestModSeqResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out n64) || n64 == 0) {
+				if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out n64)) {
 					Debug.WriteLine ("Expected 64-bit nz-number as first argument of the 'HIGHESTMODSEQ' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
