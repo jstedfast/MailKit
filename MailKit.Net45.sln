@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
+# Visual Studio 2012
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailKit", "MailKit\MailKit.csproj", "{7264D469-A390-4C10-9C87-DAA37EDD3C1D}"
@@ -18,34 +18,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BB3237
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		AppStore|Any CPU = AppStore|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C235092-820C-4DEB-9074-D356FB797D8B}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
 		{4C235092-820C-4DEB-9074-D356FB797D8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4C235092-820C-4DEB-9074-D356FB797D8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C235092-820C-4DEB-9074-D356FB797D8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C235092-820C-4DEB-9074-D356FB797D8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
 		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{637EC535-3921-4A7A-8CB4-00A5AB18FAA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7264D469-A390-4C10-9C87-DAA37EDD3C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F54A4F-D84B-430F-9271-F7861E285B3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = MailKit\MailKit.csproj
