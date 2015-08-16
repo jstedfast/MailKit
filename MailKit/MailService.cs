@@ -68,7 +68,9 @@ namespace MailKit {
 			if (protocolLogger == null)
 				throw new ArgumentNullException ("protocolLogger");
 
+#if !NETFX_CORE
 			SslProtocols = DefaultSslProtocols;
+#endif
 			ProtocolLogger = protocolLogger;
 		}
 
@@ -80,7 +82,9 @@ namespace MailKit {
 		/// </remarks>
 		protected MailService ()
 		{
+#if !NETFX_CORE
 			SslProtocols = DefaultSslProtocols;
+#endif
 		}
 
 		/// <summary>
