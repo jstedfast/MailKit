@@ -1,5 +1,13 @@
 # Release Notes
 
+### MailKit 1.2.10
+
+* Added an SslProtocols property to ImapClient, Pop3Client, and SmtpClient to allow
+  developers to override which SSL protocols are to be allowed for SSL connections.
+  (issue #229)
+* Added a work-around for GMail IMAP (and other IMAP servers) that sometimes send an
+  illegal MODSEQ value of 0. (issue #228)
+
 ### MailKit 1.2.9
 
 * Fixed ImapFolder.Append() methods to make sure to encode the message with <CR><LF>
