@@ -147,8 +147,8 @@ namespace ImapClientDemo
 			if (handler != null) {
 				var info = (MessageInfo) e.Node.Tag;
 
-				if (info.Summary.UniqueId.HasValue)
-					handler (this, new MessageSelectedEventArgs (folder, info.Summary.UniqueId.Value, info.Summary.Body));
+				if (info.Summary.UniqueId.IsValid)
+					handler (this, new MessageSelectedEventArgs (folder, info.Summary.UniqueId, info.Summary.Body));
 			}
 
 			base.OnAfterSelect (e);

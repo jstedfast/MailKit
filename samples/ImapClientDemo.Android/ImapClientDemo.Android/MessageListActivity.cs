@@ -63,7 +63,7 @@ namespace ImapClientDemo
             listView.ItemClick += async (sender, e) => {
                 var summary = adapter[e.Position];
 
-                var msg = await Mail.CurrentFolder.GetMessageAsync (summary.UniqueId.Value);
+                var msg = await Mail.CurrentFolder.GetMessageAsync (summary.UniqueId);
 
                 Mail.CurrentMessage = msg;
 

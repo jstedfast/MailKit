@@ -69,7 +69,7 @@ namespace ImapClientDemo.iOS
                 // Add an item to the UI section/list
                 sectionMessages.Add (new MessageElement (async (viewController, tableView, indexPath) => {
                     // When a message is selected, fetch the actual message by UID
-                    var msg = await Folder.GetMessageAsync (summaries [indexPath.Row].UniqueId.Value);
+                    var msg = await Folder.GetMessageAsync (summaries [indexPath.Row].UniqueId);
 
                     // Show the message details view controller
                     viewMessageViewController = new MessageViewController (msg);
