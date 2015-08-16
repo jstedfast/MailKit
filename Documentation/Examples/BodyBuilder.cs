@@ -18,7 +18,7 @@ Will you be my +1?
 
 // In order to reference sexy-pose.jpg from the html text, we'll need to add it
 // to builder.LinkedResources and then use its Content-Id value in the img src.
-var image = builder.LinkedResources.Add ("C:\\Users\\Joey\\Documents\\Selfies\\sexy-pose.jpg");
+var image = builder.LinkedResources.Add (@"C:\Users\Joey\Documents\Selfies\sexy-pose.jpg");
 
 // Set the html version of the message text
 builder.HtmlBody = string.Format (@"<p>Hey Alice,<br>
@@ -29,7 +29,7 @@ Saturday and I was hoping you could make it.<br>
 <center><img src=""cid:{0}""></center>", image.ContentId);
 
 // We may also want to attach a calendar event for Monica's party...
-builder.Attachments.Add ("C:\\Users\Joey\\Documents\\party.ics");
+builder.Attachments.Add (@"C:\Users\Joey\Documents\party.ics");
 
 // Now we just need to set the message body and we're done
 message.Body = builder.ToMessageBody ();
