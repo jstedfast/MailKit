@@ -23,7 +23,7 @@
         </para>
         <para>
           If you are targetting any of the <application>Xamarin</application> platforms
-          (or Linux), you won't need to do anything (although you certianly can if you want to)
+          (or Linux), you won't need to do anything (although you certainly can if you want to)
           because, by default, MimeKit will automatically use the
           <application>Mono.Data.Sqlite</application> binding to
           <externalLink>
