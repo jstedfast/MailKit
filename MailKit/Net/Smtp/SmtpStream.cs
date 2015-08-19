@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Buffer = System.Buffer;
 
 #if NETFX_CORE
@@ -251,7 +252,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		}
 
-		unsafe int ReadAhead (CancellationToken cancellationToken)
+	    async Task<Int32> ReadAhead (CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
 			int start = inputStart;
@@ -296,11 +297,11 @@ namespace MailKit.Net.Smtp {
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					nread = Stream.Read (input, start, end - start);
+					nread = await Stream.ReadAsync (input, start, end - start, cancellationToken);
 				} else {
 					Poll (SelectMode.SelectRead, cancellationToken);
 
-					nread = Stream.Read (input, start, end - start);
+					nread = await Stream.ReadAsync (input, start, end - start, cancellationToken);
 				}
 
 				if (nread > 0) {
@@ -367,7 +368,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task<Int32> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -377,7 +378,7 @@ namespace MailKit.Net.Smtp {
 			int n;
 
 			if (length < count && length <= ReadAheadSize)
-				ReadAhead (cancellationToken);
+                await ReadAhead(cancellationToken);
 
 			length = inputEnd - inputIndex;
 			n = Math.Min (count, length);
@@ -418,10 +419,15 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			return Read (buffer, offset, count, CancellationToken.None);
+            throw new NotSupportedException("Use ReadAsync.");
 		}
 
-		static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
+	    public override Task<Int32> ReadAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+	    {
+            return Read(buffer, offset, count, CancellationToken.None);
+        }
+
+        static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
 		{
 			int startIndex = index;
 
@@ -453,7 +459,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public SmtpResponse ReadResponse (CancellationToken cancellationToken)
+		public async Task<SmtpResponse> ReadResponse (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -465,7 +471,7 @@ namespace MailKit.Net.Smtp {
 
 				do {
 					if (memory.Length > 0 || inputIndex == inputEnd)
-						ReadAhead (cancellationToken);
+						await ReadAhead (cancellationToken);
 
 					complete = false;
 
@@ -537,40 +543,40 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		/// <summary>
-		/// Writes a sequence of bytes to the stream and advances the current
-		/// position within this stream by the number of bytes written.
-		/// </summary>
-		/// <remarks>
-		/// Writes a sequence of bytes to the stream and advances the current
-		/// position within this stream by the number of bytes written.
-		/// </remarks>
-		/// <param name='buffer'>The buffer to write.</param>
-		/// <param name='offset'>The offset of the first byte to write.</param>
-		/// <param name='count'>The number of bytes to write.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="buffer"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
-		/// <para>-or-</para>
-		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
-		/// at the specified <paramref name="offset"/>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The stream has been disposed.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The stream does not support writing.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	    /// <summary>
+	    /// Writes a sequence of bytes to the stream and advances the current
+	    /// position within this stream by the number of bytes written.
+	    /// </summary>
+	    /// <remarks>
+	    /// Writes a sequence of bytes to the stream and advances the current
+	    /// position within this stream by the number of bytes written.
+	    /// </remarks>
+	    /// <param name='buffer'>The buffer to write.</param>
+	    /// <param name='offset'>The offset of the first byte to write.</param>
+	    /// <param name='count'>The number of bytes to write.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="buffer"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+	    /// <para>-or-</para>
+	    /// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+	    /// at the specified <paramref name="offset"/>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The stream has been disposed.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The stream does not support writing.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    public async Task Write (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -594,7 +600,7 @@ namespace MailKit.Net.Smtp {
 					if (outputIndex == BlockSize) {
 						// flush the output buffer
 						Poll (SelectMode.SelectWrite, cancellationToken);
-						Stream.Write (output, 0, BlockSize);
+						await Stream.WriteAsync (output, 0, BlockSize, cancellationToken);
 						logger.LogClient (output, 0, BlockSize);
 						outputIndex = 0;
 					}
@@ -603,7 +609,7 @@ namespace MailKit.Net.Smtp {
 						// write blocks of data to the stream without buffering
 						while (left >= BlockSize) {
 							Poll (SelectMode.SelectWrite, cancellationToken);
-							Stream.Write (buffer, index, BlockSize);
+							await Stream.WriteAsync(buffer, index, BlockSize, cancellationToken);
 							logger.LogClient (buffer, index, BlockSize);
 							index += BlockSize;
 							left -= BlockSize;
@@ -650,28 +656,28 @@ namespace MailKit.Net.Smtp {
 			Write (buffer, offset, count, CancellationToken.None);
 		}
 
-		/// <summary>
-		/// Clears all buffers for this stream and causes any buffered data to be written
-		/// to the underlying device.
-		/// </summary>
-		/// <remarks>
-		/// Clears all buffers for this stream and causes any buffered data to be written
-		/// to the underlying device.
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The stream has been disposed.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The stream does not support writing.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		public void Flush (CancellationToken cancellationToken)
+	    /// <summary>
+	    /// Clears all buffers for this stream and causes any buffered data to be written
+	    /// to the underlying device.
+	    /// </summary>
+	    /// <remarks>
+	    /// Clears all buffers for this stream and causes any buffered data to be written
+	    /// to the underlying device.
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The stream has been disposed.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The stream does not support writing.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    public async Task Flush (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -680,8 +686,8 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				Poll (SelectMode.SelectWrite, cancellationToken);
-				Stream.Write (output, 0, outputIndex);
-				Stream.Flush ();
+				await Stream.WriteAsync (output, 0, outputIndex, cancellationToken);
+				await Stream.FlushAsync (cancellationToken);
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
 			} catch {
@@ -709,10 +715,15 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override void Flush ()
 		{
-			Flush (CancellationToken.None);
+			throw new NotSupportedException("Use FlushAsync.");
 		}
 
-		/// <summary>
+	    public override Task FlushAsync(CancellationToken cancellationToken)
+	    {
+	        return Flush(cancellationToken);
+	    }
+
+	    /// <summary>
 		/// Sets the position within the current stream.
 		/// </summary>
 		/// <returns>The new position within the stream.</returns>

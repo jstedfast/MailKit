@@ -33,7 +33,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
+using System.Threading.Tasks;
 using MimeKit;
 using MimeKit.IO;
 using MimeKit.Utils;
@@ -219,7 +219,7 @@ namespace MailKit.Net.Imap {
 			return access == FolderAccess.ReadOnly ? "EXAMINE" : "SELECT";
 		}
 
-		static void QResyncFetch (ImapEngine engine, ImapCommand ic, int index)
+		static async Task QResyncFetch (ImapEngine engine, ImapCommand ic, int index)
 		{
 			ic.Folder.OnFetch (engine, index, ic.CancellationToken);
 		}
@@ -562,7 +562,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("CREATE", ic);
 
 			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
@@ -871,7 +871,7 @@ namespace MailKit.Net.Imap {
 			var list = new List<ImapFolder> ();
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command + " \"\" %S\r\n", pattern + "%");
-			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler (command, (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
@@ -960,7 +960,7 @@ namespace MailKit.Net.Imap {
 				return subfolder;
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
@@ -1106,18 +1106,18 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("STATUS", ic);
 		}
 
-		static void UntaggedAcl (ImapEngine engine, ImapCommand ic, int index)
+		static async Task UntaggedAcl (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			var acl = (AccessControlList) ic.UserData;
 			string name, rights;
 			ImapToken token;
 
 			// read the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			await ReadStringToken (engine, ic.CancellationToken);
 
 			do {
-				name = ReadStringToken (engine, ic.CancellationToken);
-				rights = ReadStringToken (engine, ic.CancellationToken);
+				name = await ReadStringToken (engine, ic.CancellationToken);
+				rights = await ReadStringToken (engine, ic.CancellationToken);
 
 				acl.Add (new AccessControl (name, rights));
 
@@ -1165,7 +1165,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETACL %F\r\n", this);
-			ic.RegisterUntaggedHandler ("ACL", UntaggedAcl);
+			ic.RegisterUntaggedHandler ("ACL", (engine, ic1, index) => UntaggedAcl(engine, ic1, index));
 			ic.UserData = new AccessControlList ();
 
 			Engine.QueueCommand (ic);
@@ -1179,19 +1179,19 @@ namespace MailKit.Net.Imap {
 			return (AccessControlList) ic.UserData;
 		}
 
-		static void UntaggedListRights (ImapEngine engine, ImapCommand ic, int index)
+		static async Task UntaggedListRights (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			var access = (AccessRights) ic.UserData;
 			ImapToken token;
 
 			// read the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			await ReadStringToken (engine, ic.CancellationToken);
 
 			// read the identity name
-			ReadStringToken (engine, ic.CancellationToken);
+			await ReadStringToken (engine, ic.CancellationToken);
 
 			do {
-				var rights = ReadStringToken (engine, ic.CancellationToken);
+				var rights = await ReadStringToken (engine, ic.CancellationToken);
 
 				access.AddRange (rights);
 
@@ -1246,7 +1246,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LISTRIGHTS %F %S\r\n", this, name);
-			ic.RegisterUntaggedHandler ("LISTRIGHTS", UntaggedListRights);
+			ic.RegisterUntaggedHandler ("LISTRIGHTS", (engine, ic1, index) => UntaggedListRights(engine, ic1, index));
 			ic.UserData = new AccessRights ();
 
 			Engine.QueueCommand (ic);
@@ -1260,15 +1260,15 @@ namespace MailKit.Net.Imap {
 			return (AccessRights) ic.UserData;
 		}
 
-		static void UntaggedMyRights (ImapEngine engine, ImapCommand ic, int index)
+		static async Task UntaggedMyRights (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			var access = (AccessRights) ic.UserData;
 
 			// read the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			await ReadStringToken (engine, ic.CancellationToken);
 
 			// read the access rights
-			access.AddRange (ReadStringToken (engine, ic.CancellationToken));
+			access.AddRange (await ReadStringToken (engine, ic.CancellationToken));
 		}
 
 		/// <summary>
@@ -1311,7 +1311,7 @@ namespace MailKit.Net.Imap {
 			CheckState (false, false);
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "MYRIGHTS %F\r\n", this);
-			ic.RegisterUntaggedHandler ("MYRIGHTS", UntaggedMyRights);
+			ic.RegisterUntaggedHandler ("MYRIGHTS", (engine, ic1, index) => UntaggedMyRights(engine, ic1, index));
 			ic.UserData = new AccessRights ();
 
 			Engine.QueueCommand (ic);
@@ -1556,12 +1556,12 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("DELETEACL", ic);
 		}
 
-		static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
+		static async Task<String> ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
 			switch (token.Type) {
-			case ImapTokenType.Literal: return engine.ReadLiteral (cancellationToken);
+			case ImapTokenType.Literal: return await engine.ReadLiteral (cancellationToken);
 			case ImapTokenType.QString: return (string) token.Value;
 			case ImapTokenType.Atom:    return (string) token.Value;
 			default:
@@ -1569,24 +1569,24 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		static void UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, int index)
+		static async Task UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			// The first token should be the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			await ReadStringToken (engine, ic.CancellationToken);
 
 			// ...followed by 0 or more quota roots
 			var token = engine.PeekToken (ic.CancellationToken);
 
 			while (token.Type != ImapTokenType.Eoln) {
-				ReadStringToken (engine, ic.CancellationToken);
+				await ReadStringToken (engine, ic.CancellationToken);
 
 				token = engine.PeekToken (ic.CancellationToken);
 			}
 		}
 
-		static void UntaggedQuota (ImapEngine engine, ImapCommand ic, int index)
+		static async Task UntaggedQuota (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
-			var encodedName = ReadStringToken (engine, ic.CancellationToken);
+			var encodedName = await ReadStringToken (engine, ic.CancellationToken);
 			ImapFolder quotaRoot;
 			FolderQuota quota;
 
@@ -1681,8 +1681,8 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the QUOTA extension.");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "GETQUOTAROOT %F\r\n", this);
-			ic.RegisterUntaggedHandler ("QUOTAROOT", UntaggedQuotaRoot);
-			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
+			ic.RegisterUntaggedHandler ("QUOTAROOT", (engine, ic1, index) => UntaggedQuotaRoot(engine, ic1, index));
+			ic.RegisterUntaggedHandler ("QUOTA", (engine, ic1, index) => UntaggedQuota(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -1749,7 +1749,7 @@ namespace MailKit.Net.Imap {
 			command.Append (")\r\n");
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), this);
-			ic.RegisterUntaggedHandler ("QUOTA", UntaggedQuota);
+			ic.RegisterUntaggedHandler ("QUOTA", (engine, ic1, index) => UntaggedQuota(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -2758,13 +2758,13 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("MOVE", ic);
 		}
 
-		static void ReadLiteralData (ImapEngine engine, CancellationToken cancellationToken)
+		static async Task ReadLiteralData (ImapEngine engine, CancellationToken cancellationToken)
 		{
 			var buf = new byte[4096];
 			int nread;
 
 			do {
-				nread = engine.Stream.Read (buf, 0, buf.Length, cancellationToken);
+				nread = await engine.Stream.Read (buf, 0, buf.Length, cancellationToken);
 			} while (nread > 0);
 		}
 
@@ -2780,7 +2780,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void FetchSummaryItems (ImapEngine engine, ImapCommand ic, int index)
+		async Task FetchSummaryItems (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 
@@ -2840,7 +2840,7 @@ namespace MailKit.Net.Imap {
 					summary.Size = value;
 					break;
 				case "BODYSTRUCTURE":
-					summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+					summary.Body = await ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
 					summary.Fields |= MessageSummaryItems.BodyStructure;
 					break;
 				case "BODY":
@@ -2871,7 +2871,7 @@ namespace MailKit.Net.Imap {
 									// the header field names will generally be atoms or qstrings but may also be literals
 									switch (token.Type) {
 									case ImapTokenType.Literal:
-										engine.ReadLiteral (ic.CancellationToken);
+										await engine.ReadLiteral (ic.CancellationToken);
 										break;
 									case ImapTokenType.QString:
 									case ImapTokenType.Atom:
@@ -2899,7 +2899,7 @@ namespace MailKit.Net.Imap {
 							summary.Headers = engine.ParseHeaders (engine.Stream, ic.CancellationToken);
 						} catch (FormatException) {
 							// consume any remaining literal data...
-							ReadLiteralData (engine, ic.CancellationToken);
+							await ReadLiteralData (engine, ic.CancellationToken);
 							summary.Headers = new HeaderList ();
 						}
 
@@ -2916,7 +2916,7 @@ namespace MailKit.Net.Imap {
 						summary.Fields |= MessageSummaryItems.Body;
 
 						try {
-							summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+							summary.Body = await ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
 						} catch (ImapProtocolException ex) {
 							if (!ex.UnexpectedToken)
 								throw;
@@ -2933,7 +2933,7 @@ namespace MailKit.Net.Imap {
 								token = engine.ReadToken (ic.CancellationToken);
 
 								if (token.Type == ImapTokenType.Literal)
-									ReadLiteralData (engine, ic.CancellationToken);
+									await ReadLiteralData (engine, ic.CancellationToken);
 							} while (true);
 
 							return;
@@ -2941,7 +2941,7 @@ namespace MailKit.Net.Imap {
 					}
 					break;
 				case "ENVELOPE":
-					summary.Envelope = ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
+					summary.Envelope = await ImapUtils.ParseEnvelope (engine, ic.CancellationToken);
 					summary.Fields |= MessageSummaryItems.Envelope;
 					break;
 				case "FLAGS":
@@ -3185,7 +3185,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -3326,7 +3326,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -3420,7 +3420,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -3585,7 +3585,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -3665,7 +3665,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -3806,7 +3806,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -3895,7 +3895,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -4051,7 +4051,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -4145,7 +4145,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -4296,7 +4296,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -4386,7 +4386,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -4549,7 +4549,7 @@ namespace MailKit.Net.Imap {
 			var ic = new ImapCommand (Engine, cancellationToken, this, command);
 			var ctx = new FetchSummaryContext (items);
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchSummaryItems);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchSummaryItems(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -4672,7 +4672,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		void FetchStream (ImapEngine engine, ImapCommand ic, int index)
+		async Task FetchStream (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 			var labels = new MessageLabelsChangedEventArgs (index);
@@ -4779,7 +4779,7 @@ namespace MailKit.Net.Imap {
 						stream = CreateStream (uid, section.ToString (), offset, length);
 
 						try {
-							while ((n = engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken)) > 0) {
+							while ((n = await engine.Stream.Read (buf, 0, buf.Length, ic.CancellationToken)) > 0) {
 								stream.Write (buf, 0, n);
 								nread += n;
 
@@ -4931,7 +4931,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index) => FetchStream(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5006,7 +5006,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", (engine, ic1, index1) => FetchStream(engine, ic1, index1));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5279,7 +5279,7 @@ namespace MailKit.Net.Imap {
 			bool dispose = false;
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index) => await FetchStream(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5542,7 +5542,7 @@ namespace MailKit.Net.Imap {
 			bool dispose = false;
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index1) => await FetchStream(engine, ic1, index1));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5657,7 +5657,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index) => await FetchStream(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5750,7 +5750,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index1) => await FetchStream(engine, ic1, index1));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5835,7 +5835,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index) => await FetchStream(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -5939,7 +5939,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index) => await FetchStream(engine, ic1, index));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -6024,7 +6024,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index1) => await FetchStream(engine, ic1, index1));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -6127,7 +6127,7 @@ namespace MailKit.Net.Imap {
 			var ctx = new FetchStreamContext (progress);
 			Stream stream;
 
-			ic.RegisterUntaggedHandler ("FETCH", FetchStream);
+			ic.RegisterUntaggedHandler ("FETCH", async (engine, ic1, index1) => await FetchStream(engine, ic1, index1));
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
@@ -7963,7 +7963,7 @@ namespace MailKit.Net.Imap {
 			return builder.ToString ();
 		}
 
-		static void SearchMatches (ImapEngine engine, ImapCommand ic, int index)
+		static async Task SearchMatches (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			var results = new SearchResults ();
 			var uids = new List<UniqueId> ();
@@ -8019,7 +8019,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = results;
 		}
 
-		static void ESearchMatches (ImapEngine engine, ImapCommand ic, int index)
+		static Task ESearchMatches (ImapEngine engine, ImapCommand ic, Int32 index)
 		{
 			var token = engine.ReadToken (ic.CancellationToken);
 			var results = new SearchResults ();
@@ -8122,6 +8122,8 @@ namespace MailKit.Net.Imap {
 
 			results.UniqueIds = uids ?? new UniqueIdSet ();
 			ic.UserData = results;
+
+            return Task.FromResult(true);
 		}
 
 		/// <summary>
@@ -8193,7 +8195,7 @@ namespace MailKit.Net.Imap {
 			// Note: always register the untagged SEARCH handler because some servers will brokenly
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
-			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+			ic.RegisterUntaggedHandler ("SEARCH", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8298,9 +8300,9 @@ namespace MailKit.Net.Imap {
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
-				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+				ic.RegisterUntaggedHandler ("ESEARCH", (engine, ic1, index) => ESearchMatches(engine, ic1, index));
 			else
-				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
+				ic.RegisterUntaggedHandler ("SORT", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8392,12 +8394,12 @@ namespace MailKit.Net.Imap {
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
-				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+				ic.RegisterUntaggedHandler ("ESEARCH", (engine, ic1, index) => ESearchMatches(engine, ic1, index));
 
 			// Note: always register the untagged SEARCH handler because some servers will brokenly
 			// respond with "* SEARCH ..." instead of "* ESEARCH ..." even when using the extended
 			// search syntax.
-			ic.RegisterUntaggedHandler ("SEARCH", SearchMatches);
+			ic.RegisterUntaggedHandler ("SEARCH", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8511,9 +8513,9 @@ namespace MailKit.Net.Imap {
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
-				ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+				ic.RegisterUntaggedHandler ("ESEARCH", (engine, ic1, index) => ESearchMatches(engine, ic1, index));
 			else
-				ic.RegisterUntaggedHandler ("SORT", SearchMatches);
+				ic.RegisterUntaggedHandler ("SORT", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
@@ -8606,7 +8608,7 @@ namespace MailKit.Net.Imap {
 			command += expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+			ic.RegisterUntaggedHandler ("ESEARCH", (engine, ic1, index) => ESearchMatches(engine, ic1, index));
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
@@ -8713,7 +8715,7 @@ namespace MailKit.Net.Imap {
 			command += order + " " + charset + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+			ic.RegisterUntaggedHandler ("ESEARCH", (engine, ic1, index) => ESearchMatches(engine, ic1, index));
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
@@ -8812,7 +8814,7 @@ namespace MailKit.Net.Imap {
 			command += "UID " + set + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+			ic.RegisterUntaggedHandler ("ESEARCH", (engine, ic1, index) => ESearchMatches(engine, ic1, index));
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
@@ -8928,7 +8930,7 @@ namespace MailKit.Net.Imap {
 			command += order + " " + charset + " UID " + set + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
-			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
+			ic.RegisterUntaggedHandler ("ESEARCH", (engine, ic1, index) => ESearchMatches(engine, ic1, index));
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
@@ -8942,7 +8944,7 @@ namespace MailKit.Net.Imap {
 			return (SearchResults) ic.UserData;
 		}
 
-		static void ThreadMatches (ImapEngine engine, ImapCommand ic, int index)
+		static async Task ThreadMatches (ImapEngine engine, ImapCommand ic, int index)
 		{
 			ic.UserData = ImapUtils.ParseThreads (engine, ic.Folder.UidValidity, ic.CancellationToken);
 		}

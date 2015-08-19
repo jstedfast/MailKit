@@ -30,7 +30,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 #if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 using EncoderExceptionFallback = Portable.Text.EncoderExceptionFallback;
@@ -772,7 +772,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public string ReadLiteral (CancellationToken cancellationToken)
+		public async Task<String> ReadLiteral (CancellationToken cancellationToken)
 		{
 			if (Stream.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
@@ -781,7 +781,7 @@ namespace MailKit.Net.Imap {
 				var buf = new byte[4096];
 				int nread;
 
-				while ((nread = Stream.Read (buf, 0, buf.Length, cancellationToken)) > 0)
+				while ((nread = await Stream.Read (buf, 0, buf.Length, cancellationToken)) > 0)
 					memory.Write (buf, 0, nread);
 
 				nread = (int) memory.Length;
@@ -795,7 +795,7 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		internal void SkipLine (CancellationToken cancellationToken)
+		internal async Task SkipLine (CancellationToken cancellationToken)
 		{
 			ImapToken token;
 
@@ -807,7 +807,7 @@ namespace MailKit.Net.Imap {
 					int nread;
 
 					do {
-						nread = Stream.Read (buf, 0, buf.Length, cancellationToken);
+						nread = await Stream.Read (buf, 0, buf.Length, cancellationToken);
 					} while (nread > 0);
 				}
 			} while (token.Type != ImapTokenType.Eoln);
@@ -1351,7 +1351,7 @@ namespace MailKit.Net.Imap {
 			return code;
 		}
 
-		void UpdateStatus (CancellationToken cancellationToken)
+	    async Task UpdateStatus (CancellationToken cancellationToken)
 		{
 			var token = Stream.ReadToken (cancellationToken);
 			ImapFolder folder;
@@ -1362,7 +1362,7 @@ namespace MailKit.Net.Imap {
 
 			switch (token.Type) {
 			case ImapTokenType.Literal:
-				name = ReadLiteral (cancellationToken);
+				name = await ReadLiteral (cancellationToken);
 				break;
 			case ImapTokenType.QString:
 			case ImapTokenType.Atom:
@@ -1450,7 +1450,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <returns>The untagged response.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		internal ImapUntaggedResult ProcessUntaggedResponse (CancellationToken cancellationToken)
+		internal async Task<ImapUntaggedResult> ProcessUntaggedResponse (CancellationToken cancellationToken)
 		{
 			var result = ImapUntaggedResult.Handled;
 			var token = Stream.ReadToken (cancellationToken);
@@ -1503,7 +1503,7 @@ namespace MailKit.Net.Imap {
 					UpdateNamespaces (cancellationToken);
 					break;
 				case "STATUS":
-					UpdateStatus (cancellationToken);
+                        await UpdateStatus(cancellationToken);
 					break;
 				case "OK": case "NO": case "BAD":
 					if (atom == "OK")
@@ -1766,7 +1766,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index1) => ImapUtils.ParseFolderList(engine, ic1, index1));
 				ic.UserData = new List<ImapFolder> ();
 
 				QueueCommand (ic);
@@ -1802,7 +1802,7 @@ namespace MailKit.Net.Imap {
 				var list = new List<ImapFolder> ();
 
 				ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 				ic.UserData = list;
 
 				QueueCommand (ic);
@@ -1839,7 +1839,7 @@ namespace MailKit.Net.Imap {
 				var list = new List<ImapFolder> ();
 
 				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 				ic.UserData = list;
 
 				QueueCommand (ic);
@@ -1854,7 +1854,7 @@ namespace MailKit.Net.Imap {
 				var list = new List<ImapFolder> ();
 
 				var ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 				ic.UserData = list;
 
 				QueueCommand (ic);
@@ -1884,7 +1884,7 @@ namespace MailKit.Net.Imap {
 				var list = new List<ImapFolder> ();
 
 				var ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
-				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderList);
+				ic.RegisterUntaggedHandler ("XLIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 				ic.UserData = list;
 
 				QueueCommand (ic);
@@ -1929,7 +1929,7 @@ namespace MailKit.Net.Imap {
 				return folder;
 
 			var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 			ic.UserData = list;
 
 			QueueCommand (ic);
@@ -1969,7 +1969,7 @@ namespace MailKit.Net.Imap {
 				throw new FolderNotFoundException (@namespace.Path);
 
 			var ic = new ImapCommand (this, cancellationToken, null, command + " %F \"*\"\r\n", folder);
-			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
+			ic.RegisterUntaggedHandler (command, (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
 			ic.UserData = list;
 
 			QueueCommand (ic);

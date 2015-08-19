@@ -593,7 +593,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			var ic = new ImapCommand (engine, cancellationToken, null, command.ToString (), args.ToArray ());
-			ic.RegisterUntaggedHandler ("ID", ImapUtils.ParseImplementation);
+			ic.RegisterUntaggedHandler ("ID", (engine1, ic1, index) => ImapUtils.ParseImplementation(engine1, ic1, index));
 
 			engine.QueueCommand (ic);
 			engine.Wait (ic);
@@ -866,51 +866,51 @@ namespace MailKit.Net.Imap {
 			return string.Format ("{0}://{1}@{2}:{3}", uri.Scheme, EscapeUserName (userName), uri.Host, uri.Port);
 		}
 
-		/// <summary>
-		/// Authenticate using the supplied credentials.
-		/// </summary>
-		/// <remarks>
-		/// <para>If the IMAP server supports one or more SASL authentication mechanisms,
-		/// then the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
-		/// the credentials are used to authenticate.</para>
-		/// <para>If the server does not support SASL or if no common SASL mechanisms
-		/// can be found, then LOGIN command is used as a fallback.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling the Authenticate() method.</para>
-		/// </remarks>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is already authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="MailKit.Security.AuthenticationException">
-		/// Authentication using the supplied credentials has failed.
-		/// </exception>
-		/// <exception cref="MailKit.Security.SaslException">
-		/// A SASL authentication error occurred.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// An IMAP protocol error occurred.
-		/// </exception>
-		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Authenticate using the supplied credentials.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>If the IMAP server supports one or more SASL authentication mechanisms,
+	    /// then the SASL mechanisms that both the client and server support are tried
+	    /// in order of greatest security to weakest security. Once a SASL
+	    /// authentication mechanism is found that both client and server support,
+	    /// the credentials are used to authenticate.</para>
+	    /// <para>If the server does not support SASL or if no common SASL mechanisms
+	    /// can be found, then LOGIN command is used as a fallback.</para>
+	    /// <para>Note: To prevent the usage of certain authentication mechanisms,
+	    /// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+	    /// set before calling the Authenticate() method.</para>
+	    /// </remarks>
+	    /// <param name="credentials">The user's credentials.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="credentials"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="ImapClient"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="ImapClient"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="System.InvalidOperationException">
+	    /// The <see cref="ImapClient"/> is already authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="MailKit.Security.AuthenticationException">
+	    /// Authentication using the supplied credentials has failed.
+	    /// </exception>
+	    /// <exception cref="MailKit.Security.SaslException">
+	    /// A SASL authentication error occurred.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ImapProtocolException">
+	    /// An IMAP protocol error occurred.
+	    /// </exception>
+	    public override async Task Authenticate (ICredentials credentials, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
@@ -947,7 +947,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				ic = engine.QueueCommand (cancellationToken, null, command);
-				ic.ContinuationHandler = (imap, cmd, text) => {
+				ic.ContinuationHandler = async (imap, cmd, text) => {
 					string challenge;
 
 					if (sasl.IsAuthenticated) {
@@ -959,8 +959,8 @@ namespace MailKit.Net.Imap {
 					}
 
 					var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
-					imap.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
-					imap.Stream.Flush (cmd.CancellationToken);
+                    await imap.Stream.Write(buf, 0, buf.Length, cmd.CancellationToken);
+                    await imap.Stream.Flush(cmd.CancellationToken);
 				};
 
 				engine.Wait (ic);
@@ -1707,7 +1707,7 @@ namespace MailKit.Net.Imap {
 				var ic = engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
 				ic.UserData = context;
 
-				ic.ContinuationHandler = (imap, cmd, text) => {
+				ic.ContinuationHandler = async (imap, cmd, text) => {
 					imap.State = ImapEngineState.Idle;
 
 					doneToken.Register (IdleComplete, context);

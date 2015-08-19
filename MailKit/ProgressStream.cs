@@ -27,7 +27,7 @@
 using System;
 using System.IO;
 using System.Threading;
-
+using System.Threading.Tasks;
 using MimeKit.IO;
 
 namespace MailKit {
@@ -100,15 +100,15 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("count");
 		}
 
-		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task<Int32> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			int n;
 
 			if (cancellable != null) {
-				if ((n = cancellable.Read (buffer, offset, count, cancellationToken)) > 0)
+				if ((n = await cancellable.Read (buffer, offset, count, cancellationToken)) > 0)
 					Update (n);
 			} else {
-				if ((n = Source.Read (buffer, offset, count)) > 0)
+				if ((n = await Source.ReadAsync (buffer, offset, count, cancellationToken)) > 0)
 					Update (n);
 			}
 
@@ -125,12 +125,12 @@ namespace MailKit {
 			return n;
 		}
 
-		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task Write (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 		{
 			if (cancellable != null)
-				cancellable.Write (buffer, offset, count, cancellationToken);
+				await cancellable.Write (buffer, offset, count, cancellationToken);
 			else
-				Source.Write (buffer, offset, count);
+				await Source.WriteAsync (buffer, offset, count, cancellationToken);
 
 			if (count > 0)
 				Update (count);
@@ -149,12 +149,12 @@ namespace MailKit {
 			throw new NotSupportedException ("The stream does not support seeking.");
 		}
 
-		public void Flush (CancellationToken cancellationToken)
+		public async Task Flush (CancellationToken cancellationToken)
 		{
 			if (cancellable != null)
-				cancellable.Flush (cancellationToken);
+				await cancellable.Flush (cancellationToken);
 			else
-				Source.Flush ();
+				await Source.FlushAsync (cancellationToken);
 		}
 
 		public override void Flush ()

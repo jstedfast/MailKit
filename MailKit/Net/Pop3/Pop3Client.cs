@@ -285,7 +285,7 @@ namespace MailKit.Net.Pop3 {
 		{
 			string okText = string.Empty;
 
-			var pc = engine.QueueCommand (token, (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (token, async (pop3, cmd, text) => {
 				if (cmd.Status == Pop3CommandStatus.Ok)
 					okText = text;
 			}, format, args);
@@ -386,7 +386,7 @@ namespace MailKit.Net.Pop3 {
 
 		void UpdateMessageCount (CancellationToken cancellationToken)
 		{
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -428,58 +428,58 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		/// <summary>
-		/// Authenticates using the supplied credentials.
-		/// </summary>
-		/// <remarks>
-		/// <para>If the POP3 server supports the APOP authentication mechanism,
-		/// then APOP is used.</para>
-		/// <para>If the APOP authentication mechanism is not supported and the
-		/// server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
-		/// the credentials are used to authenticate.</para>
-		/// <para>If the server does not support SASL or if no common SASL mechanisms
-		/// can be found, then the <c>USER</c> and <c>PASS</c> commands are used as a
-		/// fallback.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling any of the Authenticate() methods.</para>
-		/// </remarks>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="Pop3Client"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="Pop3Client"/> is not connected.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="Pop3Client"/> is already authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="MailKit.Security.AuthenticationException">
-		/// Authentication using the supplied credentials has failed.
-		/// </exception>
-		/// <exception cref="MailKit.Security.SaslException">
-		/// A SASL authentication error occurred.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="Pop3CommandException">
-		/// A POP3 command failed.
-		/// </exception>
-		/// <exception cref="Pop3ProtocolException">
-		/// An POP3 protocol error occurred.
-		/// </exception>
-		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Authenticates using the supplied credentials.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>If the POP3 server supports the APOP authentication mechanism,
+	    /// then APOP is used.</para>
+	    /// <para>If the APOP authentication mechanism is not supported and the
+	    /// server supports one or more SASL authentication mechanisms, then
+	    /// the SASL mechanisms that both the client and server support are tried
+	    /// in order of greatest security to weakest security. Once a SASL
+	    /// authentication mechanism is found that both client and server support,
+	    /// the credentials are used to authenticate.</para>
+	    /// <para>If the server does not support SASL or if no common SASL mechanisms
+	    /// can be found, then the <c>USER</c> and <c>PASS</c> commands are used as a
+	    /// fallback.</para>
+	    /// <para>Note: To prevent the usage of certain authentication mechanisms,
+	    /// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
+	    /// set before calling any of the Authenticate() methods.</para>
+	    /// </remarks>
+	    /// <param name="credentials">The user's credentials.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="credentials"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="Pop3Client"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="Pop3Client"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="System.InvalidOperationException">
+	    /// The <see cref="Pop3Client"/> is already authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="MailKit.Security.AuthenticationException">
+	    /// Authentication using the supplied credentials has failed.
+	    /// </exception>
+	    /// <exception cref="MailKit.Security.SaslException">
+	    /// A SASL authentication error occurred.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="Pop3CommandException">
+	    /// A POP3 command failed.
+	    /// </exception>
+	    /// <exception cref="Pop3ProtocolException">
+	    /// An POP3 protocol error occurred.
+	    /// </exception>
+	    public override async Task Authenticate (ICredentials credentials, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
@@ -540,7 +540,7 @@ namespace MailKit.Net.Pop3 {
 
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+					pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text) => {
 						if (cmd.Status == Pop3CommandStatus.Ok) {
 							authMessage = text;
 							return;
@@ -550,8 +550,8 @@ namespace MailKit.Net.Pop3 {
 							challenge = sasl.Challenge (text);
 
 							var buf = Encoding.ASCII.GetBytes (challenge + "\r\n");
-							pop3.Stream.Write (buf, 0, buf.Length, cmd.CancellationToken);
-							pop3.Stream.Flush (cmd.CancellationToken);
+                            await pop3.Stream.Write(buf, 0, buf.Length, cmd.CancellationToken);
+                            await pop3.Stream.Flush(cmd.CancellationToken);
 
 							var response = pop3.ReadLine (cmd.CancellationToken).TrimEnd ();
 
@@ -1194,7 +1194,7 @@ namespace MailKit.Net.Pop3 {
 
 			var langs = new List<Pop3Language> ();
 
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -1519,7 +1519,7 @@ namespace MailKit.Net.Pop3 {
 
 			string uid = null;
 
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -1616,7 +1616,7 @@ namespace MailKit.Net.Pop3 {
 
 			dict.Clear ();
 
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -1695,7 +1695,7 @@ namespace MailKit.Net.Pop3 {
 				sizes[index++] = size;
 			}
 
-			void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text)
+			async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text)
 			{
 				if (pc.Status != Pop3CommandStatus.Ok)
 					return;
@@ -1929,7 +1929,7 @@ namespace MailKit.Net.Pop3 {
 
 			var sizes = new List<int> ();
 
-			var pc = engine.QueueCommand (cancellationToken, (pop3, cmd, text) => {
+			var pc = engine.QueueCommand (cancellationToken, async (pop3, cmd, text) => {
 				if (cmd.Status != Pop3CommandStatus.Ok)
 					return;
 
@@ -1999,7 +1999,7 @@ namespace MailKit.Net.Pop3 {
 				get { return Client.engine; }
 			}
 
-			protected abstract T Parse (Pop3Stream data, CancellationToken cancellationToken);
+			protected abstract Task<T> Parse (Pop3Stream data, CancellationToken cancellationToken);
 
 			protected void Update (int n)
 			{
@@ -2030,14 +2030,14 @@ namespace MailKit.Net.Pop3 {
 				downloaded[index++] = item;
 			}
 
-			void OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text)
+		    async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, String text)
 			{
 				if (pc.Status != Pop3CommandStatus.Ok)
 					return;
 
 				try {
 					pop3.Stream.Mode = Pop3StreamMode.Data;
-					Add (Parse (pop3.Stream, pc.CancellationToken));
+					Add (await Parse (pop3.Stream, pc.CancellationToken));
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
 					pop3.Stream.CopyTo (Stream.Null, 4096);
@@ -2049,9 +2049,9 @@ namespace MailKit.Net.Pop3 {
 			Pop3Command QueueCommand (int seqid, bool headersOnly, CancellationToken cancellationToken)
 			{
 				if (headersOnly)
-					return Engine.QueueCommand (cancellationToken, OnDataReceived, "TOP {0} 0", seqid);
+					return Engine.QueueCommand (cancellationToken, (pop3, pc, text) => OnDataReceived(pop3, pc, text), "TOP {0} 0", seqid);
 
-				return Engine.QueueCommand (cancellationToken, OnDataReceived, "RETR {0}", seqid);
+				return Engine.QueueCommand (cancellationToken, (pop3, pc, text) => OnDataReceived(pop3, pc, text), "RETR {0}", seqid);
 			}
 
 			void DownloadItem (int seqid, bool headersOnly, CancellationToken cancellationToken)
@@ -2121,7 +2121,7 @@ namespace MailKit.Net.Pop3 {
 			{
 			}
 
-			protected override Stream Parse (Pop3Stream data, CancellationToken cancellationToken)
+			protected override async Task<Stream> Parse (Pop3Stream data, CancellationToken cancellationToken)
 			{
 				cancellationToken.ThrowIfCancellationRequested ();
 
@@ -2129,7 +2129,7 @@ namespace MailKit.Net.Pop3 {
 				var buffer = new byte[4096];
 				int nread;
 
-				while ((nread = data.Read (buffer, 0, buffer.Length, cancellationToken)) > 0) {
+				while ((nread = await data.Read (buffer, 0, buffer.Length, cancellationToken)) > 0) {
 					stream.Write (buffer, 0, nread);
 					Update (nread);
 				}
@@ -2149,7 +2149,7 @@ namespace MailKit.Net.Pop3 {
 				this.parser = parser;
 			}
 
-			protected override HeaderList Parse (Pop3Stream data, CancellationToken cancellationToken)
+			protected override async Task<HeaderList> Parse (Pop3Stream data, CancellationToken cancellationToken)
 			{
 				using (var stream = new ProgressStream (data, Update)) {
 					parser.SetStream (ParserOptions.Default, stream);
@@ -2168,7 +2168,7 @@ namespace MailKit.Net.Pop3 {
 				this.parser = parser;
 			}
 
-			protected override MimeMessage Parse (Pop3Stream data, CancellationToken cancellationToken)
+			protected override async Task<MimeMessage> Parse (Pop3Stream data, CancellationToken cancellationToken)
 			{
 				using (var stream = new ProgressStream (data, Update)) {
 					parser.SetStream (ParserOptions.Default, stream);

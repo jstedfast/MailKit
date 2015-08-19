@@ -178,25 +178,25 @@ namespace MailKit {
 		/// </exception>
 		Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
-		/// <summary>
-		/// Authenticate using the supplied credentials.
-		/// </summary>
-		/// <remarks>
-		/// <para>Authenticates using the supplied credentials.</para>
-		/// <para>If the server supports one or more SASL authentication mechanisms, then
-		/// the SASL mechanisms that both the client and server support are tried
-		/// in order of greatest security to weakest security. Once a SASL
-		/// authentication mechanism is found that both client and server support,
-		/// the credentials are used to authenticate.</para>
-		/// <para>If the server does not support SASL or if no common SASL mechanisms
-		/// can be found, then the default login command is used as a fallback.</para>
-		/// </remarks>
-		/// <param name="credentials">The user's credentials.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailService"/> is not connected.
-		/// </exception>
-		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Authenticate using the supplied credentials.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Authenticates using the supplied credentials.</para>
+	    /// <para>If the server supports one or more SASL authentication mechanisms, then
+	    /// the SASL mechanisms that both the client and server support are tried
+	    /// in order of greatest security to weakest security. Once a SASL
+	    /// authentication mechanism is found that both client and server support,
+	    /// the credentials are used to authenticate.</para>
+	    /// <para>If the server does not support SASL or if no common SASL mechanisms
+	    /// can be found, then the default login command is used as a fallback.</para>
+	    /// </remarks>
+	    /// <param name="credentials">The user's credentials.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailService"/> is not connected.
+	    /// </exception>
+	    Task Authenticate (ICredentials credentials, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously authenticate using the supplied credentials.

@@ -30,7 +30,7 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using MimeKit;
 using MimeKit.IO;
 using MimeKit.Utils;
@@ -49,7 +49,7 @@ namespace MailKit.Net.Imap {
 	/// force-disconnect the connection. If a non-fatal error occurs, set
 	/// it on the <see cref="ImapCommand.Exception"/> property.
 	/// </remarks>
-	delegate void ImapContinuationHandler (ImapEngine engine, ImapCommand ic, string text);
+	delegate Task ImapContinuationHandler (ImapEngine engine, ImapCommand ic, string text);
 
 	/// <summary>
 	/// An IMAP untagged response handler.
@@ -57,7 +57,7 @@ namespace MailKit.Net.Imap {
 	/// <remarks>
 	/// <para>Most IMAP commands return their results in untagged responses.</para>
 	/// </remarks>
-	delegate void ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, int index);
+	delegate Task ImapUntaggedHandler (ImapEngine engine, ImapCommand ic, int index);
 
 	delegate void ImapCommandResetHandler (ImapCommand ic);
 

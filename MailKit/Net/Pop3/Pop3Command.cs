@@ -26,6 +26,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MailKit.Net.Pop3 {
 	/// <summary>
@@ -36,7 +37,7 @@ namespace MailKit.Net.Pop3 {
 	/// force-disconnect the connection. If a non-fatal error occurs, set
 	/// it on the <see cref="Pop3Command.Exception"/> property.
 	/// </remarks>
-	delegate void Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text);
+	delegate Task Pop3CommandHandler (Pop3Engine engine, Pop3Command pc, string text);
 
 	enum Pop3CommandStatus {
 		Queued         = -5,

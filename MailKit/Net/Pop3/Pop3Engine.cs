@@ -29,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 #if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
@@ -451,7 +452,7 @@ namespace MailKit.Net.Pop3 {
 			return pc;
 		}
 
-		static void CapaHandler (Pop3Engine engine, Pop3Command pc, string text)
+		static async Task CapaHandler (Pop3Engine engine, Pop3Command pc, string text)
 		{
 			if (pc.Status != Pop3CommandStatus.Ok)
 				return;
