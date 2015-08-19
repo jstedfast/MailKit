@@ -63,7 +63,7 @@ namespace MailKit.Net.Imap {
 		Literal
 	}
 
-	class ImapStream : Stream, ICancellableStream
+	class ImapStream : Stream
 	{
 		// Note: GMail's IMAP implementation is broken and does not quote strings with ']' like it should.
 		public const string GMailLabelSpecials = "(){%*\\\"\n";
@@ -476,12 +476,12 @@ namespace MailKit.Net.Imap {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 	    {
-	        throw new NotSupportedException("Use ReadAsync.");
+		    return Read(buffer, offset, count, CancellationToken.None).Result;
 	    }
 
 	    public override Task<Int32> ReadAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 	    {
-            return Read(buffer, offset, count, CancellationToken.None);
+            return Read(buffer, offset, count, cancellationToken);
         }
 
 	    static bool IsAtom (byte c, string specials)
@@ -963,13 +963,13 @@ namespace MailKit.Net.Imap {
 		/// An I/O error occurred.
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
-		{
-			throw new NotSupportedException("Use WriteAsync.");
-		}
+	    {
+		    Write(buffer, offset, count, CancellationToken.None).Wait();
+	    }
 
 	    public override async Task WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 	    {
-            await Write(buffer, offset, count, CancellationToken.None);
+            await Write(buffer, offset, count, cancellationToken);
         }
 
 	    /// <summary>
@@ -1030,9 +1030,9 @@ namespace MailKit.Net.Imap {
 		/// An I/O error occurred.
 		/// </exception>
 		public override void Flush ()
-		{
-			throw new NotSupportedException("Wait on FlushAsync.");
-		}
+	    {
+		    Flush(CancellationToken.None).Wait();
+	    }
 
 	    /// <summary>
         /// Clears all output buffers for this stream and causes any buffered data to be written
@@ -1053,7 +1053,7 @@ namespace MailKit.Net.Imap {
         /// </exception>
         public override async Task FlushAsync(CancellationToken cancellationToken)
 	    {
-            await Flush(CancellationToken.None);
+            await Flush(cancellationToken);
         }
 
 	    /// <summary>

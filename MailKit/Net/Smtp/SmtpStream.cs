@@ -53,7 +53,7 @@ namespace MailKit.Net.Smtp {
 	/// <remarks>
 	/// A stream capable of reading SMTP server responses.
 	/// </remarks>
-	class SmtpStream : Stream, ICancellableStream
+	class SmtpStream : Stream
 	{
 		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
@@ -419,12 +419,12 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-            throw new NotSupportedException("Use ReadAsync.");
-		}
+            return Read(buffer, offset, count, CancellationToken.None).Result;
+        }
 
 	    public override Task<Int32> ReadAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 	    {
-            return Read(buffer, offset, count, CancellationToken.None);
+            return Read(buffer, offset, count, cancellationToken);
         }
 
         static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
@@ -653,10 +653,15 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			Write (buffer, offset, count, CancellationToken.None);
+			Write (buffer, offset, count, CancellationToken.None).Wait();
 		}
 
-	    /// <summary>
+		public override Task WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+		{
+            return Write(buffer, offset, count, CancellationToken.None);
+        }
+
+		/// <summary>
 	    /// Clears all buffers for this stream and causes any buffered data to be written
 	    /// to the underlying device.
 	    /// </summary>

@@ -1454,16 +1454,16 @@ namespace MailKit.Net.Smtp {
 					using (var filtered = new FilteredStream (stream)) {
 						filtered.Add (new SmtpDataFilter ());
 
-						message.WriteTo (options, filtered, cancellationToken);
-						await filtered.Flush (cancellationToken);
+						await message.WriteTo (options, filtered, cancellationToken);
+						await filtered.FlushAsync(cancellationToken);
 					}
 				}
 			} else {
 				using (var filtered = new FilteredStream (Stream)) {
 					filtered.Add (new SmtpDataFilter ());
 
-					message.WriteTo (options, filtered, cancellationToken);
-					await filtered.Flush (cancellationToken);
+					await message.WriteTo (options, filtered, cancellationToken);
+					await filtered.FlushAsync(cancellationToken);
 				}
 			}
 

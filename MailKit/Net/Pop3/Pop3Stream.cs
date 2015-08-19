@@ -69,7 +69,7 @@ namespace MailKit.Net.Pop3 {
 	/// A stream capable of reading data line-by-line (<see cref="Pop3StreamMode.Line"/>)
 	/// or by raw byte streams (<see cref="Pop3StreamMode.Data"/>).
 	/// </remarks>
-	class Pop3Stream : Stream, ICancellableStream
+	class Pop3Stream : Stream
 	{
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
@@ -540,12 +540,12 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			throw new NotSupportedException("Use ReadAsync.");
-		}
+			return Read(buffer, offset, count, CancellationToken.None).Result;
+        }
 
 	    public override Task<Int32> ReadAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 	    {
-	        return Read(buffer, offset, count, CancellationToken.None);
+	        return Read(buffer, offset, count, cancellationToken);
         }
 
 	    /// <summary>
@@ -726,7 +726,7 @@ namespace MailKit.Net.Pop3 {
 
 	    public override Task WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 	    {
-	        return Write(buffer, offset, count, CancellationToken.None);
+	        return Write(buffer, offset, count, cancellationToken);
         }
 
 	    /// <summary>
