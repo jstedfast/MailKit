@@ -348,7 +348,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		public Task Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
@@ -387,7 +387,7 @@ namespace MailKit {
 				options = SecureSocketOptions.StartTlsWhenAvailable;
 			}
 
-			Connect (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
+			return Connect (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
 		}
 
 		/// <summary>
@@ -428,11 +428,7 @@ namespace MailKit {
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", "uri");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Connect (uri, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => Connect (uri, cancellationToken));
 		}
 
 		/// <summary>
@@ -626,11 +622,7 @@ namespace MailKit {
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Authenticate (credentials, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => Authenticate (credentials, cancellationToken));
 		}
 
 		/// <summary>
@@ -785,11 +777,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Disconnect (quit, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => Disconnect (quit, cancellationToken));
 		}
 
 	    /// <summary>
@@ -851,11 +839,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					NoOp (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => NoOp (cancellationToken));
 		}
 
 		/// <summary>

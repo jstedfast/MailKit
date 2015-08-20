@@ -32,7 +32,7 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.Security.Cryptography;
-
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 using MimeKit;
@@ -70,439 +70,589 @@ namespace UnitTests.Net.Pop3 {
 		[Test]
 		public void TestBasicPop3Client ()
 		{
-			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
-
-			using (var client = new Pop3Client ()) {
-				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
-
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
-
-				Assert.AreEqual (1, client.Count, "Expected 1 message");
-
-				try {
-					var message = client.GetMessage (0, CancellationToken.None).Result;
-					// TODO: assert that the message is byte-identical to what we expect
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
-				}
-
-				try {
-					client.Disconnect (true, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
+		    TestBasicPop3ClientAsync().Wait();
 		}
 
-		[Test]
+	    async Task TestBasicPop3ClientAsync()
+	    {
+	        var commands = new List<Pop3ReplayCommand>();
+	        commands.Add(new Pop3ReplayCommand("", "comcast.greeting.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "comcast.capa1.txt"));
+	        commands.Add(new Pop3ReplayCommand("USER username\r\n", "comcast.ok.txt"));
+	        commands.Add(new Pop3ReplayCommand("PASS password\r\n", "comcast.ok.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "comcast.capa2.txt"));
+	        commands.Add(new Pop3ReplayCommand("STAT\r\n", "comcast.stat1.txt"));
+	        commands.Add(new Pop3ReplayCommand("RETR 1\r\n", "comcast.retr1.txt"));
+	        commands.Add(new Pop3ReplayCommand("QUIT\r\n", "comcast.quit.txt"));
+
+	        using (var client = new Pop3Client())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new Pop3ReplayStream(commands, false), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
+
+	            Assert.AreEqual(ComcastCapa1, client.Capabilities);
+	            Assert.AreEqual(0, client.AuthenticationMechanisms.Count);
+	            Assert.AreEqual(31, client.ExpirePolicy);
+
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
+
+	            Assert.AreEqual(ComcastCapa2, client.Capabilities);
+	            Assert.AreEqual("ZimbraInc", client.Implementation);
+	            Assert.AreEqual(2, client.AuthenticationMechanisms.Count);
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Expected SASL PLAIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
+	            Assert.AreEqual(-1, client.ExpirePolicy);
+
+	            Assert.AreEqual(1, client.Count, "Expected 1 message");
+
+	            try
+	            {
+	                await client.GetMessage(0, CancellationToken.None);
+	                // TODO: assert that the message is byte-identical to what we expect
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessage: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestBasicPop3ClientUnixLineEndings ()
-		{
-			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "comcast.stat1.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "comcast.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
+	    {
+	        TestBasicPop3ClientUnixLineEndingsAsync().Wait();
+	    }
 
-			using (var client = new Pop3Client ()) {
-				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, true), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
+	    async Task TestBasicPop3ClientUnixLineEndingsAsync()
+	    {
+	        var commands = new List<Pop3ReplayCommand>();
+	        commands.Add(new Pop3ReplayCommand("", "comcast.greeting.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "comcast.capa1.txt"));
+	        commands.Add(new Pop3ReplayCommand("USER username\r\n", "comcast.ok.txt"));
+	        commands.Add(new Pop3ReplayCommand("PASS password\r\n", "comcast.ok.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "comcast.capa2.txt"));
+	        commands.Add(new Pop3ReplayCommand("STAT\r\n", "comcast.stat1.txt"));
+	        commands.Add(new Pop3ReplayCommand("RETR 1\r\n", "comcast.retr1.txt"));
+	        commands.Add(new Pop3ReplayCommand("QUIT\r\n", "comcast.quit.txt"));
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+	        using (var client = new Pop3Client())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new Pop3ReplayStream(commands, true), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
 
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
 
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
+	            Assert.AreEqual(ComcastCapa1, client.Capabilities);
+	            Assert.AreEqual(0, client.AuthenticationMechanisms.Count);
+	            Assert.AreEqual(31, client.ExpirePolicy);
 
-				Assert.AreEqual (ComcastCapa2, client.Capabilities);
-				Assert.AreEqual ("ZimbraInc", client.Implementation);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
-				Assert.AreEqual (-1, client.ExpirePolicy);
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
 
-				Assert.AreEqual (1, client.Count, "Expected 1 message");
+	            Assert.AreEqual(ComcastCapa2, client.Capabilities);
+	            Assert.AreEqual("ZimbraInc", client.Implementation);
+	            Assert.AreEqual(2, client.AuthenticationMechanisms.Count);
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Expected SASL PLAIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("X-ZIMBRA"), "Expected SASL X-ZIMBRA auth mechanism");
+	            Assert.AreEqual(-1, client.ExpirePolicy);
 
-				try {
-					var message = client.GetMessage (0, CancellationToken.None).Result;
-					// TODO: assert that the message is byte-identical to what we expect
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
-				}
+	            Assert.AreEqual(1, client.Count, "Expected 1 message");
 
-				try {
-					client.Disconnect (true, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
+	            try
+	            {
+	                await client.GetMessage(0, CancellationToken.None);
+	                // TODO: assert that the message is byte-identical to what we expect
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessage: {0}", ex);
+	            }
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
-		}
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
 
-		[Test]
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestAuthenticationExceptions ()
 		{
-			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.err.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
-
-			using (var client = new Pop3Client ()) {
-				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
-
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-					Assert.Fail ("Expected AuthenticationException");
-				} catch (AuthenticationException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
-
-				try {
-					var sizes = client.GetMessageSizes (CancellationToken.None).Result;
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Count: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var sizes = client.GetMessageSizes (CancellationToken.None).Result;
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var size = client.GetMessageSize ("uid", CancellationToken.None);
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSize(uid): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var size = client.GetMessageSize (0, CancellationToken.None);
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSize(int): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var uids = client.GetMessageUids (CancellationToken.None).Result;
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var uid = client.GetMessageUid (0, CancellationToken.None).Result;
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageUid: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var message = client.GetMessage ("uid", CancellationToken.None).Result;
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage(uid): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var message = client.GetMessage (0, CancellationToken.None).Result;
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage(int): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					client.DeleteMessage ("uid", CancellationToken.None);
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessage(uid): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					client.DeleteMessage (0, CancellationToken.None).Wait();
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessage(int): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					client.Disconnect (true, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
+            TestAuthenticationExceptionsAsync().Wait();
 		}
 
-		[Test]
+	    async Task TestAuthenticationExceptionsAsync()
+	    {
+	        var commands = new List<Pop3ReplayCommand>();
+	        commands.Add(new Pop3ReplayCommand("", "comcast.greeting.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "comcast.capa1.txt"));
+	        commands.Add(new Pop3ReplayCommand("USER username\r\n", "comcast.ok.txt"));
+	        commands.Add(new Pop3ReplayCommand("PASS password\r\n", "comcast.err.txt"));
+	        commands.Add(new Pop3ReplayCommand("QUIT\r\n", "comcast.quit.txt"));
+
+	        using (var client = new Pop3Client())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new Pop3ReplayStream(commands, false), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
+
+	            Assert.AreEqual(ComcastCapa1, client.Capabilities);
+	            Assert.AreEqual(0, client.AuthenticationMechanisms.Count);
+	            Assert.AreEqual(31, client.ExpirePolicy);
+
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+                    await client.Authenticate(credentials, CancellationToken.None);
+	                Assert.Fail("Expected AuthenticationException");
+	            }
+	            catch (AuthenticationException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "AuthenticationException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessageSizes(CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Count: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessageSizes(CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessageSizes: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessageSize("uid", CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessageSize(uid): {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessageSize(0, CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessageSize(int): {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessageUids(CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessageUids: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessageUid(0, CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessageUid: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessage("uid", CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessage(uid): {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+	                await client.GetMessage(0, CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessage(int): {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+                    await client.DeleteMessage("uid", CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in DeleteMessage(uid): {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+                    await client.DeleteMessage(0, CancellationToken.None);
+	                Assert.Fail("Expected ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // we expect this exception...
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in DeleteMessage(int): {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+	            try
+	            {
+                    await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestExchangePop3Client ()
-		{
-			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "exchange.greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
-			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "exchange.plus.txt"));
-			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "exchange.capa.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "exchange.stat.txt"));
-			commands.Add (new Pop3ReplayCommand ("UIDL\r\n", "exchange.uidl.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "exchange.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "exchange.quit.txt"));
+	    {
+	        TestExchangePop3ClientAsync().Wait();
+	    }
 
-			using (var client = new Pop3Client ()) {
-				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
+	    async Task TestExchangePop3ClientAsync()
+	    {
+	        var commands = new List<Pop3ReplayCommand>();
+	        commands.Add(new Pop3ReplayCommand("", "exchange.greeting.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "exchange.capa.txt"));
+	        commands.Add(new Pop3ReplayCommand("AUTH PLAIN\r\n", "exchange.plus.txt"));
+	        commands.Add(new Pop3ReplayCommand("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "exchange.auth.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "exchange.capa.txt"));
+	        commands.Add(new Pop3ReplayCommand("STAT\r\n", "exchange.stat.txt"));
+	        commands.Add(new Pop3ReplayCommand("UIDL\r\n", "exchange.uidl.txt"));
+	        commands.Add(new Pop3ReplayCommand("RETR 1\r\n", "exchange.retr1.txt"));
+	        commands.Add(new Pop3ReplayCommand("QUIT\r\n", "exchange.quit.txt"));
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+	        using (var client = new Pop3Client())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new Pop3ReplayStream(commands, false), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
 
-				// Note: remove these auth mechanisms to force PLAIN auth
-				client.AuthenticationMechanisms.Remove ("GSSAPI");
-				client.AuthenticationMechanisms.Remove ("NTLM");
+	            Assert.AreEqual(ExchangeCapa, client.Capabilities);
+	            Assert.AreEqual(3, client.AuthenticationMechanisms.Count);
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("NTLM"), "Expected SASL NTLM auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Expected SASL PLAIN auth mechanism");
 
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
+	            // Note: remove these auth mechanisms to force PLAIN auth
+	            client.AuthenticationMechanisms.Remove("GSSAPI");
+	            client.AuthenticationMechanisms.Remove("NTLM");
 
-				Assert.AreEqual (ExchangeCapa, client.Capabilities);
-				Assert.AreEqual (3, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("NTLM"), "Expected SASL NTLM auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
 
-				Assert.AreEqual (7, client.Count, "Expected 7 messages");
+	            Assert.AreEqual(ExchangeCapa, client.Capabilities);
+	            Assert.AreEqual(3, client.AuthenticationMechanisms.Count);
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("GSSAPI"), "Expected SASL GSSAPI auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("NTLM"), "Expected SASL NTLM auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Expected SASL PLAIN auth mechanism");
 
-				try {
-					var uids = client.GetMessageUids (CancellationToken.None).Result;
-					Assert.AreEqual (7, uids.Count, "Expected 7 uids");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
-				}
+	            Assert.AreEqual(7, client.Count, "Expected 7 messages");
 
-				try {
-					var message = client.GetMessage (0, CancellationToken.None).Result;
-					// TODO: assert that the message is byte-identical to what we expect
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
-				}
+	            try
+	            {
+	                var uids = await client.GetMessageUids(CancellationToken.None);
+	                Assert.AreEqual(7, uids.Count, "Expected 7 uids");
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessageUids: {0}", ex);
+	            }
 
-				try {
-					client.Disconnect (true, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
+	            try
+	            {
+	                await client.GetMessage(0, CancellationToken.None);
+	                // TODO: assert that the message is byte-identical to what we expect
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessage: {0}", ex);
+	            }
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
-		}
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
 
-		[Test]
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestGMailPop3Client ()
-		{
-			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("AUTH PLAIN\r\n", "gmail.plus.txt"));
-			commands.Add (new Pop3ReplayCommand ("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.auth.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "gmail.capa2.txt"));
-			commands.Add (new Pop3ReplayCommand ("STAT\r\n", "gmail.stat.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\n", "gmail.retr1.txt"));
-			commands.Add (new Pop3ReplayCommand ("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "gmail.quit.txt"));
+	    {
+	        TestGMailPop3ClientAsync().Wait();
+	    }
 
-			using (var client = new Pop3Client ()) {
-				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
+	    async Task TestGMailPop3ClientAsync()
+	    {
+	        var commands = new List<Pop3ReplayCommand>();
+	        commands.Add(new Pop3ReplayCommand("", "gmail.greeting.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "gmail.capa1.txt"));
+	        commands.Add(new Pop3ReplayCommand("AUTH PLAIN\r\n", "gmail.plus.txt"));
+	        commands.Add(new Pop3ReplayCommand("AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.auth.txt"));
+	        commands.Add(new Pop3ReplayCommand("CAPA\r\n", "gmail.capa2.txt"));
+	        commands.Add(new Pop3ReplayCommand("STAT\r\n", "gmail.stat.txt"));
+	        commands.Add(new Pop3ReplayCommand("RETR 1\r\n", "gmail.retr1.txt"));
+	        commands.Add(new Pop3ReplayCommand("RETR 1\r\nRETR 2\r\nRETR 3\r\n", "gmail.retr123.txt"));
+	        commands.Add(new Pop3ReplayCommand("QUIT\r\n", "gmail.quit.txt"));
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+	        using (var client = new Pop3Client())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new Pop3ReplayStream(commands, false), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
 
-				Assert.AreEqual (GMailCapa1, client.Capabilities);
-				Assert.AreEqual (2, client.AuthenticationMechanisms.Count);
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
 
-				// Note: remove the XOAUTH2 auth mechanism to force PLAIN auth
-				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+	            Assert.AreEqual(GMailCapa1, client.Capabilities);
+	            Assert.AreEqual(2, client.AuthenticationMechanisms.Count);
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Expected SASL PLAIN auth mechanism");
 
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
+	            // Note: remove the XOAUTH2 auth mechanism to force PLAIN auth
+	            client.AuthenticationMechanisms.Remove("XOAUTH2");
 
-				Assert.AreEqual (GMailCapa2, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
 
-				Assert.AreEqual (3, client.Count, "Expected 3 messages");
+	            Assert.AreEqual(GMailCapa2, client.Capabilities);
+	            Assert.AreEqual(0, client.AuthenticationMechanisms.Count);
 
-				try {
-					var message = client.GetMessage (0, CancellationToken.None).Result;
+	            Assert.AreEqual(3, client.Count, "Expected 3 messages");
 
-					using (var jpeg = new MemoryStream ()) {
-						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
+	            try
+	            {
+	                var message = await client.GetMessage(0, CancellationToken.None);
 
-						attachment.ContentObject.DecodeTo (jpeg);
-						jpeg.Position = 0;
+	                using (var jpeg = new MemoryStream())
+	                {
+	                    var attachment = message.Attachments.OfType<MimePart>().FirstOrDefault();
 
-						using (var md5 = new MD5CryptoServiceProvider ()) {
-							var md5sum = HexEncode (md5.ComputeHash (jpeg));
+	                    await attachment.ContentObject.DecodeTo(jpeg);
+	                    jpeg.Position = 0;
 
-							Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
-						}
-					}
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
-				}
+	                    using (var md5 = new MD5CryptoServiceProvider())
+	                    {
+	                        var md5sum = HexEncode(md5.ComputeHash(jpeg));
 
-				try {
-					var messages = client.GetMessages (new [] { 0, 1, 2 }, CancellationToken.None).Result;
+	                        Assert.AreEqual("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+	                    }
+	                }
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessage: {0}", ex);
+	            }
 
-					foreach (var message in messages) {
-						using (var jpeg = new MemoryStream ()) {
-							var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
+	            try
+	            {
+	                var messages = await client.GetMessages(new[] {0, 1, 2}, CancellationToken.None);
 
-							attachment.ContentObject.DecodeTo (jpeg);
-							jpeg.Position = 0;
+	                foreach (var message in messages)
+	                {
+	                    using (var jpeg = new MemoryStream())
+	                    {
+	                        var attachment = message.Attachments.OfType<MimePart>().FirstOrDefault();
 
-							using (var md5 = new MD5CryptoServiceProvider ()) {
-								var md5sum = HexEncode (md5.ComputeHash (jpeg));
+	                        await attachment.ContentObject.DecodeTo(jpeg);
+	                        jpeg.Position = 0;
 
-								Assert.AreEqual ("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
-							}
-						}
-					}
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessages: {0}", ex);
-				}
+	                        using (var md5 = new MD5CryptoServiceProvider())
+	                        {
+	                            var md5sum = HexEncode(md5.ComputeHash(jpeg));
 
-				try {
-					client.Disconnect (true, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
+	                            Assert.AreEqual("5b1b8b2c9300c9cd01099f44e1155e2b", md5sum, "MD5 checksums do not match.");
+	                        }
+	                    }
+	                }
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in GetMessages: {0}", ex);
+	            }
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
-		}
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
 	}
 }

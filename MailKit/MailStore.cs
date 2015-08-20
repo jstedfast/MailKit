@@ -195,11 +195,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task EnableQuickResyncAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					EnableQuickResync (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => EnableQuickResync (cancellationToken));
 		}
 
 		/// <summary>

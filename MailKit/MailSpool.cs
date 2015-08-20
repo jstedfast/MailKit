@@ -170,11 +170,7 @@ namespace MailKit {
 		[Obsolete ("Use the Count property instead.")]
 		public virtual Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageCount (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(async () => GetMessageCount (cancellationToken));
 		}
 
 		/// <summary>
@@ -1767,11 +1763,7 @@ namespace MailKit {
 			if (uid == null)
 				throw new ArgumentNullException ("uid");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					DeleteMessage (uid, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => DeleteMessage (uid, cancellationToken));
 		}
 
 	    /// <summary>
@@ -1850,11 +1842,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DeleteMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					DeleteMessage (index, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => DeleteMessage (index, cancellationToken));
 		}
 
 	    /// <summary>
@@ -1954,11 +1942,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					DeleteMessages (uids, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => DeleteMessages (uids, cancellationToken));
 		}
 
 	    /// <summary>
@@ -2050,11 +2034,7 @@ namespace MailKit {
 			if (indexes.Count == 0)
 				throw new ArgumentException ("No indexes specified.", "indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					DeleteMessages (indexes, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => DeleteMessages (indexes, cancellationToken));
 		}
 
 	    /// <summary>
@@ -2137,11 +2117,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					DeleteMessages (startIndex, count, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => DeleteMessages (startIndex, count, cancellationToken));
 		}
 
 	    /// <summary>
@@ -2209,11 +2185,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					DeleteAllMessages (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => DeleteAllMessages (cancellationToken));
 		}
 
 	    /// <summary>
@@ -2281,11 +2253,7 @@ namespace MailKit {
 		/// </exception>
 		public Task ResetAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Reset (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => Reset (cancellationToken));
 		}
 
 		/// <summary>

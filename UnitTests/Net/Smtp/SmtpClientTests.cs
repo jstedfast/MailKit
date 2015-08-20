@@ -30,7 +30,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 using MailKit.Net.Smtp;
@@ -89,435 +89,575 @@ namespace UnitTests.Net.Smtp {
 		[Test]
 		public void TestBasicFunctionality ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
-
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
-
-				try {
-					client.Disconnect (true, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
+		    TestBasicFunctionalityAsync().Wait();
 		}
 
-		[Test]
+	    async Task TestBasicFunctionalityAsync()
+	    {
+	        var commands = new List<SmtpReplayCommand>();
+	        commands.Add(new SmtpReplayCommand("", "comcast-greeting.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
+	        commands.Add(new SmtpReplayCommand("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
+	        commands.Add(new SmtpReplayCommand("DATA\r\n", "comcast-data.txt"));
+	        commands.Add(new SmtpReplayCommand(".\r\n", "comcast-data-done.txt"));
+	        commands.Add(new SmtpReplayCommand("QUIT\r\n", "comcast-quit.txt"));
+
+	        using (var client = new SmtpClient())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new SmtpReplayStream(commands), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EnhancedStatusCodes),
+	                "Failed to detect ENHANCEDSTATUSCODES extension");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Size), "Failed to detect SIZE extension");
+	            Assert.AreEqual(36700160, client.MaxSize, "Failed to parse SIZE correctly");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Send(CreateSimpleMessage(), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Send: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestEightBitMime ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
-
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				try {
-					client.Send (CreateEightBitMessage (), CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
-
-				try {
-					client.Disconnect (true, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
+		    TestEightBitMimeAsync().Wait();
 		}
 
-		[Test]
+	    async Task TestEightBitMimeAsync()
+	    {
+	        var commands = new List<SmtpReplayCommand>();
+	        commands.Add(new SmtpReplayCommand("", "comcast-greeting.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\n", "comcast-mail-from.txt"));
+	        commands.Add(new SmtpReplayCommand("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
+	        commands.Add(new SmtpReplayCommand("DATA\r\n", "comcast-data.txt"));
+	        commands.Add(new SmtpReplayCommand(".\r\n", "comcast-data-done.txt"));
+	        commands.Add(new SmtpReplayCommand("QUIT\r\n", "comcast-quit.txt"));
+
+	        using (var client = new SmtpClient())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new SmtpReplayStream(commands), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EnhancedStatusCodes),
+	                "Failed to detect ENHANCEDSTATUSCODES extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Size), "Failed to detect SIZE extension");
+	            Assert.AreEqual(36700160, client.MaxSize, "Failed to parse SIZE correctly");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Send(CreateEightBitMessage(), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Send: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestBinaryMime ()
 		{
-			var message = CreateBinaryMessage ();
-			string bdat;
-
-			using (var memory = new MemoryStream ()) {
-				var options = FormatOptions.Default.Clone ();
-				long size;
-
-				options.NewLineFormat = NewLineFormat.Dos;
-
-				using (var measure = new MeasuringStream ()) {
-					message.WriteTo (options, measure).Wait();
-					size = measure.Length;
-				}
-
-				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
-				memory.Write (bytes, 0, bytes.Length);
-				message.WriteTo (options, memory).Wait();
-
-				bytes = memory.GetBuffer ();
-
-				bdat = Encoding.UTF8.GetString (bytes, 0, (int) memory.Length);
-			}
-
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+binarymime.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand (bdat, "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
-
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
-
-				try {
-					client.Send (message, CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
-
-				try {
-					client.Disconnect (true, CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
+		    TestBinaryMimeAsync().Wait();
 		}
 
-		[Test]
+	    async Task TestBinaryMimeAsync()
+	    {
+	        var message = CreateBinaryMessage();
+	        string bdat;
+
+	        using (var memory = new MemoryStream())
+	        {
+	            var options = FormatOptions.Default.Clone();
+	            long size;
+
+	            options.NewLineFormat = NewLineFormat.Dos;
+
+	            using (var measure = new MeasuringStream())
+	            {
+	                await message.WriteTo(options, measure);
+	                size = measure.Length;
+	            }
+
+	            var bytes = Encoding.ASCII.GetBytes(string.Format("BDAT {0} LAST\r\n", size));
+	            memory.Write(bytes, 0, bytes.Length);
+	            await message.WriteTo(options, memory);
+
+	            bytes = memory.GetBuffer();
+
+	            bdat = Encoding.UTF8.GetString(bytes, 0, (int) memory.Length);
+	        }
+
+	        var commands = new List<SmtpReplayCommand>();
+	        commands.Add(new SmtpReplayCommand("", "comcast-greeting.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo+binarymime.txt"));
+	        commands.Add(new SmtpReplayCommand("MAIL FROM:<sender@example.com> BODY=BINARYMIME\r\n", "comcast-mail-from.txt"));
+	        commands.Add(new SmtpReplayCommand("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
+	        commands.Add(new SmtpReplayCommand(bdat, "comcast-data-done.txt"));
+	        commands.Add(new SmtpReplayCommand("QUIT\r\n", "comcast-quit.txt"));
+
+	        using (var client = new SmtpClient())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new SmtpReplayStream(commands), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EnhancedStatusCodes),
+	                "Failed to detect ENHANCEDSTATUSCODES extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Size), "Failed to detect SIZE extension");
+	            Assert.AreEqual(36700160, client.MaxSize, "Failed to parse SIZE correctly");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.BinaryMime), "Failed to detect BINARYMIME extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
+
+	            try
+	            {
+	                await client.Send(message, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Send: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestPipelining ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo+pipelining.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\nRCPT TO:<recipient@example.com>\r\n", "pipelined-mail-from-rcpt-to.txt"));
-			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
-			commands.Add (new SmtpReplayCommand (".\r\n", "comcast-data-done.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
-
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				try {
-					client.Send (CreateEightBitMessage (), CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
-				}
-
-				try {
-					client.Disconnect (true, CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
+		    TestPipeliningAsync().Wait();
 		}
 
-		[Test]
+	    async Task TestPipeliningAsync()
+	    {
+	        var commands = new List<SmtpReplayCommand>();
+	        commands.Add(new SmtpReplayCommand("", "comcast-greeting.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo+pipelining.txt"));
+	        commands.Add(
+	            new SmtpReplayCommand("MAIL FROM:<sender@example.com> BODY=8BITMIME\r\nRCPT TO:<recipient@example.com>\r\n",
+	                "pipelined-mail-from-rcpt-to.txt"));
+	        commands.Add(new SmtpReplayCommand("DATA\r\n", "comcast-data.txt"));
+	        commands.Add(new SmtpReplayCommand(".\r\n", "comcast-data-done.txt"));
+	        commands.Add(new SmtpReplayCommand("QUIT\r\n", "comcast-quit.txt"));
+
+	        using (var client = new SmtpClient())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new SmtpReplayStream(commands), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EnhancedStatusCodes),
+	                "Failed to detect ENHANCEDSTATUSCODES extension");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Size), "Failed to detect SIZE extension");
+	            Assert.AreEqual(36700160, client.MaxSize, "Failed to parse SIZE correctly");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Send(CreateEightBitMessage(), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Send: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestMailFromMailboxUnavailable ()
 		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
-
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
-
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
-
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
-					Assert.Fail ("Expected an SmtpException");
-				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
-
-				try {
-					client.Disconnect (true, CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
+		    TestMailFromMailboxUnavailableAsync().Wait();
 		}
 
-		[Test]
+	    async Task TestMailFromMailboxUnavailableAsync()
+	    {
+	        var commands = new List<SmtpReplayCommand>();
+	        commands.Add(new SmtpReplayCommand("", "comcast-greeting.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("MAIL FROM:<sender@example.com>\r\n", "mailbox-unavailable.txt"));
+	        commands.Add(new SmtpReplayCommand("RSET\r\n", "comcast-rset.txt"));
+	        commands.Add(new SmtpReplayCommand("QUIT\r\n", "comcast-quit.txt"));
+
+	        using (var client = new SmtpClient())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new SmtpReplayStream(commands), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EnhancedStatusCodes),
+	                "Failed to detect ENHANCEDSTATUSCODES extension");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Size), "Failed to detect SIZE extension");
+	            Assert.AreEqual(36700160, client.MaxSize, "Failed to parse SIZE correctly");
+
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
+
+	            try
+	            {
+	                await client.Send(CreateSimpleMessage(), CancellationToken.None);
+	                Assert.Fail("Expected an SmtpException");
+	            }
+	            catch (SmtpCommandException sex)
+	            {
+	                Assert.AreEqual(sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect this exception in Send: {0}", ex);
+	            }
+
+	            Assert.IsTrue(client.IsConnected, "Expected the client to still be connected");
+
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestRcptToMailboxUnavailable ()
-		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
-			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"));
-			commands.Add (new SmtpReplayCommand ("RSET\r\n", "comcast-rset.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+	    {
+	        TestRcptToMailboxUnavailableAsync().Wait();
+	    }
 
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
+	    async Task TestRcptToMailboxUnavailableAsync()
+	    {
+	        var commands = new List<SmtpReplayCommand>();
+	        commands.Add(new SmtpReplayCommand("", "comcast-greeting.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
+	        commands.Add(new SmtpReplayCommand("RCPT TO:<recipient@example.com>\r\n", "mailbox-unavailable.txt"));
+	        commands.Add(new SmtpReplayCommand("RSET\r\n", "comcast-rset.txt"));
+	        commands.Add(new SmtpReplayCommand("QUIT\r\n", "comcast-quit.txt"));
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+	        using (var client = new SmtpClient())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new SmtpReplayStream(commands), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EnhancedStatusCodes),
+	                "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Size), "Failed to detect SIZE extension");
+	            Assert.AreEqual(36700160, client.MaxSize, "Failed to parse SIZE correctly");
 
-				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
-					Assert.Fail ("Expected an SmtpException");
-				} catch (SmtpCommandException sex) {
-					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
-				}
+	            try
+	            {
+	                var credentials = new NetworkCredential("username", "password");
+	                await client.Authenticate(credentials, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Authenticate: {0}", ex);
+	            }
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+	            try
+	            {
+	                await client.Send(CreateSimpleMessage(), CancellationToken.None);
+	                Assert.Fail("Expected an SmtpException");
+	            }
+	            catch (SmtpCommandException sex)
+	            {
+	                Assert.AreEqual(sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect this exception in Send: {0}", ex);
+	            }
 
-				try {
-					client.Disconnect (true, CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
+	            Assert.IsTrue(client.IsConnected, "Expected the client to still be connected");
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
-		}
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
 
-		[Test]
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
+
+	    [Test]
 		public void TestUnauthorizedAccessException ()
-		{
-			var commands = new List<SmtpReplayCommand> ();
-			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
-			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
-			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+	    {
+	        TestUnauthorizedAccessExceptionAsync().Wait();
+	    }
 
-			using (var client = new SmtpClient ()) {
-				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
+	    async Task TestUnauthorizedAccessExceptionAsync()
+	    {
+	        var commands = new List<SmtpReplayCommand>();
+	        commands.Add(new SmtpReplayCommand("", "comcast-greeting.txt"));
+	        commands.Add(new SmtpReplayCommand("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+	        commands.Add(new SmtpReplayCommand("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
+	        commands.Add(new SmtpReplayCommand("QUIT\r\n", "comcast-quit.txt"));
 
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+	        using (var client = new SmtpClient())
+	        {
+	            try
+	            {
+	                await client.ReplayConnect("localhost", new SmtpReplayStream(commands), CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Connect: {0}", ex);
+	            }
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
-				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Failed to detect the PLAIN auth mechanism");
+	            Assert.IsTrue(client.IsConnected, "Client failed to connect.");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("LOGIN"), "Failed to detect the LOGIN auth mechanism");
+	            Assert.IsTrue(client.AuthenticationMechanisms.Contains("PLAIN"), "Failed to detect the PLAIN auth mechanism");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.EnhancedStatusCodes), "Failed to detect ENHANCEDSTATUSCODES extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EightBitMime), "Failed to detect 8BITMIME extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Size), "Failed to detect SIZE extension");
-				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.EnhancedStatusCodes),
+	                "Failed to detect ENHANCEDSTATUSCODES extension");
 
-				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.Size), "Failed to detect SIZE extension");
+	            Assert.AreEqual(36700160, client.MaxSize, "Failed to parse SIZE correctly");
 
-				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
-					Assert.Fail ("Expected an ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// this is the expected exception
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect this exception in Send: {0}", ex);
-				}
+	            Assert.IsTrue(client.Capabilities.HasFlag(SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
-				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
+	            try
+	            {
+	                await client.Send(CreateSimpleMessage(), CancellationToken.None);
+	                Assert.Fail("Expected an ServiceNotAuthenticatedException");
+	            }
+	            catch (ServiceNotAuthenticatedException)
+	            {
+	                // this is the expected exception
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect this exception in Send: {0}", ex);
+	            }
 
-				try {
-					client.Disconnect (true, CancellationToken.None);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
+	            Assert.IsTrue(client.IsConnected, "Expected the client to still be connected");
 
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
-		}
+	            try
+	            {
+	                await client.Disconnect(true, CancellationToken.None);
+	            }
+	            catch (Exception ex)
+	            {
+	                Assert.Fail("Did not expect an exception in Disconnect: {0}", ex);
+	            }
+
+	            Assert.IsFalse(client.IsConnected, "Failed to disconnect");
+	        }
+	    }
 	}
 }
 

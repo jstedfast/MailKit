@@ -464,11 +464,11 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("lrswi", acl[1].Rights.ToString (), "The access rights for the second access control does not match.");
 
 				// LISTRIGHTS INBOX smith
-				var rights = client.Inbox.GetAccessRights ("smith");
+				var rights = client.Inbox.GetAccessRights ("smith").Result;
 				Assert.AreEqual ("lrswipkxtecda0123456789", rights.ToString (), "The access rights do not match for user smith.");
 
 				// MYRIGHTS INBOX
-				rights = client.Inbox.GetMyAccessRights ();
+				rights = client.Inbox.GetMyAccessRights ().Result;
 				Assert.AreEqual ("rwiptsldaex", rights.ToString (), "My access rights do not match.");
 
 				// SETACL INBOX smith +lrswida
@@ -553,14 +553,14 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
-				client.Inbox.Open (FolderAccess.ReadOnly);
+				client.Inbox.Open (FolderAccess.ReadOnly).Wait();
 
 				var message = client.Inbox.GetMessage (269).Result;
 
 				using (var jpeg = new MemoryStream ()) {
 					var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-					attachment.ContentObject.DecodeTo (jpeg);
+					attachment.ContentObject.DecodeTo (jpeg).Wait();
 					jpeg.Position = 0;
 
 					using (var md5 = new MD5CryptoServiceProvider ()) {
