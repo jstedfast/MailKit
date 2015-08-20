@@ -320,7 +320,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
-					client.DeleteMessage (0, CancellationToken.None);
+					client.DeleteMessage (0, CancellationToken.None).Wait();
 					Assert.Fail ("Expected ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...

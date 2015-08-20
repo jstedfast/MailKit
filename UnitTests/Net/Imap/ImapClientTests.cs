@@ -100,7 +100,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -128,7 +128,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -268,7 +268,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -385,9 +385,9 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("RenamedUnitTests/Dummy", dummy.FullName);
 				Assert.IsTrue (dummyRenamed, "Expected the Rename event to be emitted for the UnitTests/Dummy folder.");
 
-				created.Delete (CancellationToken.None);
+				created.Delete (CancellationToken.None).Wait();
 
-				client.Disconnect (true);
+				client.Disconnect (true).Wait();
 			}
 		}
 
@@ -411,7 +411,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -503,7 +503,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -591,7 +591,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

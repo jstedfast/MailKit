@@ -123,8 +123,7 @@ namespace MailKit.Net.Imap {
 		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		static int TagPrefixIndex;
-        static SemaphoreSlim Lock = new SemaphoreSlim(1);
-
+        
         internal readonly Dictionary<string, ImapFolder> FolderCache;
 		readonly CreateImapFolderDelegate createImapFolder;
 		readonly ImapFolderNameComparer cacheComparer;
@@ -1545,8 +1544,8 @@ namespace MailKit.Net.Imap {
 						atom = (string) token.Value;
 
 						if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
-							// the command registered an untagged handler for this atom...
-							handler (this, current, (int) number - 1);
+                            // the command registered an untagged handler for this atom...
+                            await handler(this, current, (int) number - 1);
 						} else if (folder != null) {
 							switch (atom) {
 							case "EXISTS":
@@ -1575,17 +1574,17 @@ namespace MailKit.Net.Imap {
 							Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
 						}
 
-						SkipLine (cancellationToken);
+                        await SkipLine(cancellationToken);
 					} else if (current != null && current.UntaggedHandlers.TryGetValue (atom, out handler)) {
-						// the command registered an untagged handler for this atom...
-						handler (this, current, -1);
-						SkipLine (cancellationToken);
+                        // the command registered an untagged handler for this atom...
+                        await handler(this, current, -1);
+                        await SkipLine(cancellationToken);
 					} else if (atom == "VANISHED" && folder != null) {
 						folder.OnVanished (this, cancellationToken);
-						SkipLine (cancellationToken);
+                         await SkipLine(cancellationToken);
 					} else {
-						// don't know how to handle this... eat it?
-						SkipLine (cancellationToken);
+                        // don't know how to handle this... eat it?
+                        await SkipLine(cancellationToken);
 					}
 					break;
 				}
@@ -1597,7 +1596,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Iterate the command pipeline.
 		/// </summary>
-		public int Iterate ()
+		public async Task<Int32> Iterate ()
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
@@ -1621,7 +1620,7 @@ namespace MailKit.Net.Imap {
 			int id = current.Id;
 
 			try {
-				while (current.Step ()) {
+				while (await current.Step ()) {
 					// more literal data to send...
 				}
 
@@ -1637,19 +1636,19 @@ namespace MailKit.Net.Imap {
 			return id;
 		}
 
-		/// <summary>
-		/// Wait for the specified command to finish.
-		/// </summary>
-		/// <param name="ic">The IMAP command.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="ic"/> is <c>null</c>.
-		/// </exception>
-		public void Wait (ImapCommand ic)
+        /// <summary>
+        /// Wait for the specified command to finish.
+        /// </summary>
+        /// <param name="ic">The IMAP command.</param>
+        /// <exception cref="System.ArgumentNullException">
+        /// <paramref name="ic"/> is <c>null</c>.
+        /// </exception>
+        public async Task Wait (ImapCommand ic)
 		{
 			if (ic == null)
 				throw new ArgumentNullException ("ic");
 
-			while (Iterate () < ic.Id) {
+			while (await Iterate() < ic.Id) {
 				// continue processing commands...
 			}
 		}
@@ -1708,7 +1707,7 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ();
 
 			var ic = await QueueCommand (cancellationToken, null, "CAPABILITY\r\n");
-			Wait (ic);
+            await Wait(ic);
 
 			return ic.Response;
 		}
@@ -1775,7 +1774,7 @@ namespace MailKit.Net.Imap {
 				ic.UserData = new List<ImapFolder> ();
 
 				QueueCommand (ic);
-				Wait (ic);
+                await Wait(ic);
 
 				if (!GetCachedFolder (encodedName, out parent)) {
 					parent = CreateImapFolder (encodedName, FolderAttributes.NonExistent, folder.DirectorySeparator);
@@ -1802,7 +1801,7 @@ namespace MailKit.Net.Imap {
 
 			if ((Capabilities & ImapCapabilities.Namespace) != 0) {
 				ic = await QueueCommand (cancellationToken, null, "NAMESPACE\r\n");
-				Wait (ic);
+                await Wait(ic);
 			} else {
 				var list = new List<ImapFolder> ();
 
@@ -1811,7 +1810,7 @@ namespace MailKit.Net.Imap {
 				ic.UserData = list;
 
 				QueueCommand (ic);
-				Wait (ic);
+                await Wait(ic);
 
 				PersonalNamespaces.Clear ();
 				SharedNamespaces.Clear ();
@@ -1848,7 +1847,7 @@ namespace MailKit.Net.Imap {
 				ic.UserData = list;
 
 				QueueCommand (ic);
-				Wait (ic);
+                await Wait(ic);
 
 				Inbox = list.Count > 0 ? list[0] : null;
 			} else {
@@ -1863,7 +1862,7 @@ namespace MailKit.Net.Imap {
 				ic.UserData = list;
 
 				QueueCommand (ic);
-				Wait (ic);
+                await Wait(ic);
 
 				await LookupParentFolders (list, cancellationToken);
 
@@ -1893,7 +1892,7 @@ namespace MailKit.Net.Imap {
 				ic.UserData = list;
 
 				QueueCommand (ic);
-				Wait (ic);
+                await Wait(ic);
 
 				await LookupParentFolders (list, cancellationToken);
 
@@ -1938,7 +1937,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = list;
 
 			QueueCommand (ic);
-			Wait (ic);
+            await Wait(ic);
 
 			ProcessResponseCodes (ic);
 
@@ -1978,7 +1977,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = list;
 
 			QueueCommand (ic);
-			Wait (ic);
+            await Wait(ic);
 
 			ProcessResponseCodes (ic);
 

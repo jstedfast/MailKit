@@ -301,12 +301,12 @@ namespace MailKit.Net.Pop3 {
 			return okText;
 		}
 
-		void LoadUids ()
+	    async Task LoadUids ()
 		{
 			if (dict.Count > 0)
 				return;
 
-			GetMessageUids ();
+            await GetMessageUids();
 		}
 
 		#region IMailService implementation
@@ -416,13 +416,13 @@ namespace MailKit.Net.Pop3 {
 				throw pc.Exception;
 		}
 
-		void ProbeCapabilities (CancellationToken cancellationToken)
+	    async Task ProbeCapabilities (CancellationToken cancellationToken)
 		{
 			if ((engine.Capabilities & Pop3Capabilities.UIDL) == 0) {
 				// if the message count is > 0, we can probe the UIDL command
 				if (total > 0) {
 					try {
-						GetMessageUid (0, cancellationToken);
+                        await GetMessageUid(0, cancellationToken);
 					} catch (NotSupportedException) {
 					}
 				}
@@ -523,7 +523,7 @@ namespace MailKit.Net.Pop3 {
 				if (engine.State == Pop3EngineState.Transaction) {
 					await engine.QueryCapabilities (cancellationToken);
 					await UpdateMessageCount (cancellationToken);
-					ProbeCapabilities (cancellationToken);
+                    await ProbeCapabilities(cancellationToken);
 					OnAuthenticated (authMessage);
 					return;
 				}
@@ -580,7 +580,7 @@ namespace MailKit.Net.Pop3 {
 					engine.State = Pop3EngineState.Transaction;
 					await engine.QueryCapabilities (cancellationToken);
 					await UpdateMessageCount (cancellationToken);
-					ProbeCapabilities (cancellationToken);
+                    await ProbeCapabilities(cancellationToken);
 					OnAuthenticated (authMessage);
 					return;
 				}
@@ -601,7 +601,7 @@ namespace MailKit.Net.Pop3 {
 			engine.State = Pop3EngineState.Transaction;
 			await engine.QueryCapabilities (cancellationToken);
 			await UpdateMessageCount (cancellationToken);
-			ProbeCapabilities (cancellationToken);
+            await ProbeCapabilities(cancellationToken);
 			OnAuthenticated (authMessage);
 		}
 
@@ -1730,12 +1730,12 @@ namespace MailKit.Net.Pop3 {
 					throw pc.Exception;
 			}
 
-			public int GetSize (int seqid, CancellationToken cancellationToken)
+			public async Task<Int32> GetSize (int seqid, CancellationToken cancellationToken)
 			{
 				sizes = new int[1];
 				index = 0;
 
-				SendCommand (seqid, cancellationToken);
+                await SendCommand(seqid, cancellationToken);
 
 				return sizes[0];
 			}
@@ -1813,7 +1813,7 @@ namespace MailKit.Net.Pop3 {
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public override int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<Int32> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			int seqid;
 
@@ -1824,50 +1824,50 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			LoadUids ();
+            await LoadUids();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
 
 			var ctx = new MessageSizeContext (engine);
 
-			return ctx.GetSize (seqid, cancellationToken);
+			return await ctx.GetSize (seqid, cancellationToken);
 		}
 
-		/// <summary>
-		/// Get the size of the specified message, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the size of the specified message, in bytes.
-		/// </remarks>
-		/// <returns>The message size, in bytes.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is not a valid message index.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="Pop3Client"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="Pop3Client"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="Pop3Client"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="Pop3CommandException">
-		/// The POP3 command failed.
-		/// </exception>
-		/// <exception cref="Pop3ProtocolException">
-		/// A POP3 protocol error occurred.
-		/// </exception>
-		public override int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Get the size of the specified message, in bytes.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the size of the specified message, in bytes.
+	    /// </remarks>
+	    /// <returns>The message size, in bytes.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="index"/> is not a valid message index.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="Pop3Client"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="Pop3Client"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="Pop3Client"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="Pop3CommandException">
+	    /// The POP3 command failed.
+	    /// </exception>
+	    /// <exception cref="Pop3ProtocolException">
+	    /// A POP3 protocol error occurred.
+	    /// </exception>
+	    public override Task<Int32> GetMessageSize (Int32 index, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2218,7 +2218,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			LoadUids ();
+            await LoadUids();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -2329,7 +2329,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			LoadUids ();
+            await LoadUids();
 
 			var seqids = new int[uids.Count];
 
@@ -2536,7 +2536,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			LoadUids ();
+            await LoadUids();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -2651,7 +2651,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			LoadUids ();
+            await LoadUids();
 
 			var seqids = new int[uids.Count];
 
@@ -3055,7 +3055,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			LoadUids ();
+            await LoadUids();
 
 			if (!dict.TryGetValue (uid, out seqid))
 				throw new ArgumentException ("No such message.", "uid");
@@ -3167,7 +3167,7 @@ namespace MailKit.Net.Pop3 {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			LoadUids ();
+            await LoadUids();
 
 			var seqids = new int[uids.Count];
 
@@ -3369,79 +3369,79 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		/// <summary>
-		/// Mark all messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="Pop3Client"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="Pop3Client"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="Pop3Client"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="Pop3CommandException">
-		/// The POP3 command failed.
-		/// </exception>
-		/// <exception cref="Pop3ProtocolException">
-		/// A POP3 protocol error occurred.
-		/// </exception>
-		public override void DeleteAllMessages (CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Mark all messages for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="Pop3Client"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="Pop3Client"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="Pop3Client"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="Pop3CommandException">
+	    /// The POP3 command failed.
+	    /// </exception>
+	    /// <exception cref="Pop3ProtocolException">
+	    /// A POP3 protocol error occurred.
+	    /// </exception>
+	    public override async Task DeleteAllMessages (CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (total > 0)
-				DeleteMessages (0, total, cancellationToken);
+                await DeleteMessages(0, total, cancellationToken);
 		}
 
-		/// <summary>
-		/// Reset the state of all messages marked for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="Pop3Client"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="Pop3Client"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="Pop3Client"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="Pop3CommandException">
-		/// The POP3 command failed.
-		/// </exception>
-		/// <exception cref="Pop3ProtocolException">
-		/// A POP3 protocol error occurred.
-		/// </exception>
-		public override void Reset (CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Reset the state of all messages marked for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="Pop3Client.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="Pop3Client"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="Pop3Client"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="Pop3Client"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="Pop3CommandException">
+	    /// The POP3 command failed.
+	    /// </exception>
+	    /// <exception cref="Pop3ProtocolException">
+	    /// A POP3 protocol error occurred.
+	    /// </exception>
+	    public override Task Reset (CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			SendCommand (cancellationToken, "RSET");
+            return SendCommand(cancellationToken, "RSET");
 		}
 
 		#endregion

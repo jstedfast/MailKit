@@ -314,7 +314,7 @@ namespace MailKit.Net.Imap {
 
 			try {
 				Engine.QueueCommand (ic);
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, this);
 
@@ -403,7 +403,7 @@ namespace MailKit.Net.Imap {
 
 			try {
 				Engine.QueueCommand (ic);
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, this);
 
@@ -478,7 +478,7 @@ namespace MailKit.Net.Imap {
 				return;
 			}
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -555,7 +555,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, null, "CREATE %S\r\n", createName);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -567,7 +567,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -656,7 +656,7 @@ namespace MailKit.Net.Imap {
 			var ic = await Engine.QueueCommand (cancellationToken, null, "RENAME %F %S\r\n", this, encodedName);
 			var oldFullName = FullName;
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, this);
 
@@ -723,7 +723,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, null, "DELETE %F\r\n", this);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, this);
 
@@ -776,7 +776,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, null, "SUBSCRIBE %F\r\n", this);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -821,7 +821,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, null, "UNSUBSCRIBE %F\r\n", this);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -876,7 +876,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			// Note: Some broken IMAP servers (*cough* SmarterMail 13.0 *cough*) return folders
 			// that are not children of the folder we requested, so we need to filter those
@@ -965,7 +965,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1018,7 +1018,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, this, "CHECK\r\n");
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1099,7 +1099,7 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("STATUS %F ({0})\r\n", flags);
 			var ic = await Engine.QueueCommand (cancellationToken, null, command, this);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, this);
 
@@ -1170,7 +1170,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = new AccessControlList ();
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1251,7 +1251,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = new AccessRights ();
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1316,7 +1316,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = new AccessRights ();
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1335,7 +1335,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, null, "SETACL %F %S %S\r\n", this, name, action + rights);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1549,7 +1549,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, null, "DELETEACL %F %S\r\n", this, name);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1686,7 +1686,7 @@ namespace MailKit.Net.Imap {
 			ic.RegisterUntaggedHandler ("QUOTA", (engine, ic1, index) => UntaggedQuota(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1753,7 +1753,7 @@ namespace MailKit.Net.Imap {
 			ic.RegisterUntaggedHandler ("QUOTA", (engine, ic1, index) => UntaggedQuota(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1812,7 +1812,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await Engine.QueueCommand (cancellationToken, this, "EXPUNGE\r\n");
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -1916,7 +1916,7 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("UID EXPUNGE {0}\r\n", set);
 			var ic = await Engine.QueueCommand (cancellationToken, this, command);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -2015,7 +2015,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await QueueAppend (format, message, flags, null, cancellationToken, progress);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, this);
 
@@ -2102,7 +2102,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await QueueAppend (format, message, flags, date, cancellationToken, progress);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, this);
 
@@ -2239,7 +2239,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
 				var ic = await QueueMultiAppend (format, messages, flags, null, cancellationToken, progress);
 
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, this);
 
@@ -2370,7 +2370,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.MultiAppend) != 0) {
 				var ic = await QueueMultiAppend (format, messages, flags, dates, cancellationToken, progress);
 
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -2478,7 +2478,7 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("UID COPY {0} %F\r\n", set);
 			var ic = await Engine.QueueCommand (cancellationToken, this, command, destination);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, destination);
 
@@ -2583,7 +2583,7 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("UID MOVE {0} %F\r\n", set);
 			var ic = await Engine.QueueCommand (cancellationToken, this, command, destination);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, destination);
 
@@ -2667,7 +2667,7 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("COPY {0} %F\r\n", set);
 			var ic = await Engine.QueueCommand (cancellationToken, this, command, destination);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, destination);
 
@@ -2751,7 +2751,7 @@ namespace MailKit.Net.Imap {
 			var command = string.Format ("MOVE {0} %F\r\n", set);
 			var ic = await Engine.QueueCommand(cancellationToken, this, command, destination);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, destination);
 
@@ -3190,7 +3190,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -3331,7 +3331,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -3425,7 +3425,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -3590,7 +3590,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -3670,7 +3670,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -3811,7 +3811,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -3900,7 +3900,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -4056,7 +4056,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -4150,7 +4150,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -4301,7 +4301,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -4391,7 +4391,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -4554,7 +4554,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = ctx;
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -4938,7 +4938,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -5013,7 +5013,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -5286,7 +5286,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -5549,7 +5549,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -5664,7 +5664,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -5757,7 +5757,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -5842,7 +5842,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -5946,7 +5946,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -6031,7 +6031,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -6134,7 +6134,7 @@ namespace MailKit.Net.Imap {
 			Engine.QueueCommand (ic);
 
 			try {
-				Engine.Wait (ic);
+                await Engine.Wait (ic);
 
 				ProcessResponseCodes (ic, null);
 
@@ -6173,7 +6173,7 @@ namespace MailKit.Net.Imap {
 			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = await Engine.QueueCommand(cancellationToken, this, format, userFlagList);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -6536,7 +6536,7 @@ namespace MailKit.Net.Imap {
 			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, flaglist);
 			var ic = await Engine.QueueCommand(cancellationToken, this, format, userFlagList);
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -6933,7 +6933,7 @@ namespace MailKit.Net.Imap {
 			var format = string.Format ("UID STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
 			var ic = await Engine.QueueCommand(cancellationToken, this, format, args.ToArray ());
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -7309,7 +7309,7 @@ namespace MailKit.Net.Imap {
 			var format = string.Format ("STORE {0}{1} {2} {3}\r\n", set, @params, action, list);
 			var ic = await Engine.QueueCommand(cancellationToken, this, format, args.ToArray ());
 
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8199,7 +8199,7 @@ namespace MailKit.Net.Imap {
 			ic.RegisterUntaggedHandler ("SEARCH", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8306,7 +8306,7 @@ namespace MailKit.Net.Imap {
 				ic.RegisterUntaggedHandler ("SORT", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8403,7 +8403,7 @@ namespace MailKit.Net.Imap {
 			ic.RegisterUntaggedHandler ("SEARCH", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8519,7 +8519,7 @@ namespace MailKit.Net.Imap {
 				ic.RegisterUntaggedHandler ("SORT", (engine, ic1, index) => SearchMatches(engine, ic1, index));
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8613,7 +8613,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8720,7 +8720,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8819,7 +8819,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -8935,7 +8935,7 @@ namespace MailKit.Net.Imap {
 			ic.UserData = new SearchResults ();
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -9023,7 +9023,7 @@ namespace MailKit.Net.Imap {
 			ic.RegisterUntaggedHandler ("THREAD", ThreadMatches);
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 
@@ -9120,7 +9120,7 @@ namespace MailKit.Net.Imap {
 			ic.RegisterUntaggedHandler ("THREAD", ThreadMatches);
 
 			Engine.QueueCommand (ic);
-			Engine.Wait (ic);
+            await Engine.Wait (ic);
 
 			ProcessResponseCodes (ic, null);
 

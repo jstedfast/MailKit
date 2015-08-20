@@ -371,7 +371,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<Int32> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -415,47 +415,43 @@ namespace MailKit {
 			if (uid == null)
 				throw new ArgumentNullException ("uid");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageSize (uid, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageSize (uid, cancellationToken));
 		}
 
-		/// <summary>
-		/// Get the size of the specified message, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the size of the specified message, in bytes.
-		/// </remarks>
-		/// <returns>The message size, in bytes.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is not a valid message index.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		public abstract int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Get the size of the specified message, in bytes.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the size of the specified message, in bytes.
+	    /// </remarks>
+	    /// <returns>The message size, in bytes.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="index"/> is not a valid message index.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    public abstract Task<Int32> GetMessageSize (Int32 index, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -492,11 +488,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<int> GetMessageSizeAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageSize (index, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageSize (index, cancellationToken));
 		}
 
 		/// <summary>
@@ -2152,37 +2144,37 @@ namespace MailKit {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
-		/// <summary>
-		/// Mark all messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		public abstract void DeleteAllMessages (CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Mark all messages for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    public abstract Task DeleteAllMessages (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark all messages for deletion.
@@ -2224,37 +2216,37 @@ namespace MailKit {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
-		/// <summary>
-		/// Reset the state of all messages marked for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		public abstract void Reset (CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Reset the state of all messages marked for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    public abstract Task Reset (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously reset the state of all messages marked for deletion.

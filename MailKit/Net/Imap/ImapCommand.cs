@@ -428,12 +428,12 @@ namespace MailKit.Net.Imap {
                             case 'd': // an integer
                                 str = ((int)args[argc++]).ToString();
                                 buf = Encoding.ASCII.GetBytes(str);
-                                await builder.WriteAsync(buf, 0, buf.Length);
+                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
                                 break;
                             case 'u': // an unsigned integer
                                 str = ((uint)args[argc++]).ToString();
                                 buf = Encoding.ASCII.GetBytes(str);
-                                await builder.WriteAsync(buf, 0, buf.Length);
+                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
                                 break;
                             case 'F': // an ImapFolder
                                 var utf7 = ((ImapFolder)args[argc++]).EncodedName;
@@ -451,7 +451,7 @@ namespace MailKit.Net.Imap {
                                     str = "{" + length + plus + "}\r\n";
 
                                 buf = Encoding.ASCII.GetBytes(str);
-                                await builder.WriteAsync(buf, 0, buf.Length);
+                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
 
                                 command.parts.Add(new ImapCommandPart(builder.ToArray(), literal));
                                 builder.SetLength(0);
@@ -467,7 +467,7 @@ namespace MailKit.Net.Imap {
                                 break;
                             case 's': // a safe atom string
                                 buf = Encoding.ASCII.GetBytes((string)args[argc++]);
-                                await builder.WriteAsync(buf, 0, buf.Length);
+                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
                                 break;
                             default:
                                 throw new FormatException();
@@ -485,12 +485,7 @@ namespace MailKit.Net.Imap {
 	        return command;
         }
 
-        public ImapCommand (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
-		{
-			
-		}
-
-		void UpdateProgress (int n)
+	    void UpdateProgress (int n)
 		{
 			nwritten += n;
 
@@ -602,7 +597,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public bool Step ()
+		public async Task<Boolean> Step ()
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
 			int timeout = Engine.Stream.CanTimeout ? Engine.Stream.ReadTimeout : -1;
@@ -615,21 +610,21 @@ namespace MailKit.Net.Imap {
 				Tag = string.Format ("{0}{1:D8}", Engine.TagPrefix, Engine.Tag++);
 
 				var buf = Encoding.ASCII.GetBytes (Tag + " ");
-				Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
+                await Engine.Stream.Write (buf, 0, buf.Length, CancellationToken);
 			}
 
 			do {
 				var command = parts[current].Command;
 
-				Engine.Stream.Write (command, 0, command.Length, CancellationToken);
+                await Engine.Stream.Write (command, 0, command.Length, CancellationToken);
 
 				// if the server doesn't support LITERAL+, we'll need to wait for a "+" response
 				// before writing out the any literals...
 				if (!supportsLiteralPlus || parts[current].Literal == null)
 					break;
 
-				// otherwise, we can write out any and all literal tokens we have...
-				parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+                // otherwise, we can write out any and all literal tokens we have...
+                await parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 
 				if (current + 1 >= parts.Count)
 					break;
@@ -637,7 +632,7 @@ namespace MailKit.Net.Imap {
 				current++;
 			} while (true);
 
-			Engine.Stream.Flush ();
+            await Engine.Stream.FlushAsync(CancellationToken);
 
 			// now we need to read the response...
 			do {
@@ -671,16 +666,16 @@ namespace MailKit.Net.Imap {
 
 					// if we've got a Literal pending, the '+' means we can send it now...
 					if (!supportsLiteralPlus && parts[current].Literal != null) {
-						parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
+                        await parts[current].Literal.WriteTo (Engine.Stream, CancellationToken);
 						break;
 					}
 
 					Debug.Assert (ContinuationHandler != null, "The ImapCommand's ContinuationHandler is null");
 
-					ContinuationHandler (Engine, this, text);
+                    await ContinuationHandler(Engine, this, text);
 				} else if (token.Type == ImapTokenType.Asterisk) {
-					// we got an untagged response, let the engine handle this...
-					Engine.ProcessUntaggedResponse (CancellationToken);
+                    // we got an untagged response, let the engine handle this...
+                    await Engine.ProcessUntaggedResponse (CancellationToken);
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
 					token = Engine.ReadToken (CancellationToken);

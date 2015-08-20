@@ -1408,7 +1408,7 @@ namespace MailKit.Net.Smtp {
 			long size;
 
 			using (var measure = new MeasuringStream ()) {
-				message.WriteTo (options, measure, cancellationToken);
+				await message.WriteTo (options, measure, cancellationToken);
 				size = measure.Length;
 			}
 
@@ -1420,11 +1420,11 @@ namespace MailKit.Net.Smtp {
 				var ctx = new SendContext (progress, size);
 
 				using (var stream = new ProgressStream (Stream, ctx.Update)) {
-					message.WriteTo (options, stream, cancellationToken);
+                    await message.WriteTo (options, stream, cancellationToken);
 					await stream.Flush (cancellationToken);
 				}
 			} else {
-				message.WriteTo (options, Stream, cancellationToken);
+                await message.WriteTo (options, Stream, cancellationToken);
 				await Stream.Flush (cancellationToken);
 			}
 

@@ -144,7 +144,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken) instead.")]
-		int GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
+		Task<Int32> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -158,16 +158,16 @@ namespace MailKit {
 		[Obsolete ("Use GetMessageSizeAsync (int index, CancellationToken cancellationToken) instead.")]
 		Task<int> GetMessageSizeAsync (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
-		/// <summary>
-		/// Get the size of the specified message, in bytes.
-		/// </summary>
-		/// <remarks>
-		/// Gets the size of the specified message, in bytes.
-		/// </remarks>
-		/// <returns>The message size, in bytes.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		int GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Get the size of the specified message, in bytes.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the size of the specified message, in bytes.
+	    /// </remarks>
+	    /// <returns>The message size, in bytes.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    Task<Int32> GetMessageSize (Int32 index, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -649,16 +649,16 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
 
-		/// <summary>
-		/// Mark all messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		void DeleteAllMessages (CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Mark all messages for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    Task DeleteAllMessages (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark all messages for deletion.
@@ -672,16 +672,16 @@ namespace MailKit {
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task DeleteAllMessagesAsync (CancellationToken cancellationToken = default (CancellationToken));
 
-		/// <summary>
-		/// Reset the state of all messages marked for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		void Reset (CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Reset the state of all messages marked for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="IMailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    Task Reset (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously reset the state of all messages marked for deletion.

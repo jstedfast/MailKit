@@ -285,7 +285,7 @@ namespace MailKit.Net.Imap {
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var ic = await engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
 
-			engine.Wait (ic);
+            await engine.Wait (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("COMPRESS", ic);
@@ -401,7 +401,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await engine.QueueCommand (cancellationToken, null, "ENABLE QRESYNC CONDSTORE\r\n");
 
-			engine.Wait (ic);
+            await engine.Wait (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
@@ -460,7 +460,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
 
-			engine.Wait (ic);
+            await engine.Wait (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
@@ -588,7 +588,7 @@ namespace MailKit.Net.Imap {
 			ic.RegisterUntaggedHandler ("ID", ImapUtils.ParseImplementation);
 
 			engine.QueueCommand (ic);
-			engine.Wait (ic);
+            await engine.Wait (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ID", ic);
@@ -951,7 +951,7 @@ namespace MailKit.Net.Imap {
                     await imap.Stream.Flush(cmd.CancellationToken);
 				};
 
-				engine.Wait (ic);
+                await engine.Wait (ic);
 
 				if (ic.Response != ImapCommandResponse.Ok)
 					continue;
@@ -968,10 +968,10 @@ namespace MailKit.Net.Imap {
 				// Query the CAPABILITIES again if the server did not include an
 				// untagged CAPABILITIES response to the AUTHENTICATE command.
 				if (engine.CapabilitiesVersion == capabilitiesVersion)
-					engine.QueryCapabilities (cancellationToken);
+					await engine.QueryCapabilities (cancellationToken);
 
-				engine.QueryNamespaces (cancellationToken);
-				engine.QuerySpecialFolders (cancellationToken);
+                await engine.QueryNamespaces (cancellationToken);
+                await engine.QuerySpecialFolders (cancellationToken);
 				OnAuthenticated (ic.ResponseText);
 				return;
 			}
@@ -988,7 +988,7 @@ namespace MailKit.Net.Imap {
 
 			ic = await engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
 
-			engine.Wait (ic);
+            await engine.Wait (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw CreateAuthenticationException (ic);
@@ -1004,7 +1004,7 @@ namespace MailKit.Net.Imap {
 			// Query the CAPABILITIES again if the server did not include an
 			// untagged CAPABILITIES response to the LOGIN command.
 			if (engine.CapabilitiesVersion == capabilitiesVersion)
-				engine.QueryCapabilities (cancellationToken);
+                await engine.QueryCapabilities (cancellationToken);
 
 			await engine.QueryNamespaces (cancellationToken);
 			await engine.QuerySpecialFolders (cancellationToken);
@@ -1223,7 +1223,7 @@ namespace MailKit.Net.Imap {
 				if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
 					var ic = await engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
-					engine.Wait (ic);
+                    await engine.Wait (ic);
 
 					if (ic.Response == ImapCommandResponse.Ok) {
 #if !NETFX_CORE
@@ -1371,7 +1371,7 @@ namespace MailKit.Net.Imap {
 				if (starttls && (engine.Capabilities & ImapCapabilities.StartTLS) != 0) {
 					var ic = await engine.QueueCommand (cancellationToken, null, "STARTTLS\r\n");
 
-					engine.Wait (ic);
+                    await engine.Wait (ic);
 
 					if (ic.Response == ImapCommandResponse.Ok) {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
@@ -1421,7 +1421,7 @@ namespace MailKit.Net.Imap {
 				try {
 					var ic = await engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
 
-					engine.Wait (ic);
+                    await engine.Wait (ic);
 				} catch (OperationCanceledException) {
 				} catch (ImapProtocolException) {
 				} catch (ImapCommandException) {
@@ -1598,7 +1598,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = await engine.QueueCommand (cancellationToken, null, "NOOP\r\n");
 
-			engine.Wait (ic);
+            await engine.Wait (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOOP", ic);
@@ -1691,13 +1691,13 @@ namespace MailKit.Net.Imap {
 				var ic = await engine.QueueCommand (cancellationToken, null, "IDLE\r\n");
 				ic.UserData = context;
 
-				ic.ContinuationHandler = async (imap, cmd, text) => {
+                ic.ContinuationHandler = async (imap, cmd, text) => {
 					imap.State = ImapEngineState.Idle;
 
 					doneToken.Register (IdleComplete, context);
 				};
 
-				engine.Wait (ic);
+                await engine.Wait (ic);
 
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("IDLE", ic);
