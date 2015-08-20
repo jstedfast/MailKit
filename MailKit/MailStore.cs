@@ -108,48 +108,48 @@ namespace MailKit {
 			get;
 		}
 
-		/// <summary>
-		/// Enable the quick resynchronization feature.
-		/// </summary>
-		/// <remarks>
-		/// <para>Enables quick resynchronization when a folder is opened using the
-		/// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
-		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
-		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
-		/// <para>This method needs to be called immediately after calling one of the
-		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods, before
-		/// opening any folders.</para>
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Quick resynchronization needs to be enabled before selecting a folder.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The mail store does not support quick resynchronization.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Enable the quick resynchronization feature.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Enables quick resynchronization when a folder is opened using the
+	    /// <see cref="MailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
+	    /// method.</para>
+	    /// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+	    /// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+	    /// <para>This method needs to be called immediately after calling one of the
+	    /// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a> methods, before
+	    /// opening any folders.</para>
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.InvalidOperationException">
+	    /// Quick resynchronization needs to be enabled before selecting a folder.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The mail store does not support quick resynchronization.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task EnableQuickResync (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously enable the quick resynchronization feature.

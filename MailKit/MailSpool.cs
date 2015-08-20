@@ -1685,48 +1685,48 @@ namespace MailKit {
 			return SyncRoot.StartAsync(() => GetStreams (startIndex, count, headersOnly, cancellationToken, progress));
 		}
 
-		/// <summary>
-		/// Mark the specified message for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uid"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is not a valid message UID.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The mail spool does not support UIDs.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		[Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract void DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Mark the specified message for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="uid">The UID of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uid"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="uid"/> is not a valid message UID.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The mail spool does not support UIDs.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    [Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public abstract Task DeleteMessage (String uid, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -1782,44 +1782,44 @@ namespace MailKit {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
-		/// <summary>
-		/// Mark the specified message for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
-		/// </example>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is not a valid message index.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		public abstract void DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Mark the specified message for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <example>
+	    /// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadMessages"/>
+	    /// </example>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="index"/> is not a valid message index.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    public abstract Task DeleteMessage (Int32 index, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -1865,50 +1865,50 @@ namespace MailKit {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
-		/// <summary>
-		/// Mark the specified messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> are invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No uids were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The mail spool does not support UIDs.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		[Obsolete ("Use DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract void DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Mark the specified messages for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="uids"/> are invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No uids were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The mail spool does not support UIDs.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    [Obsolete ("Use DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
+		public abstract Task DeleteMessages (IList<String> uids, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -1969,46 +1969,46 @@ namespace MailKit {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
-		/// <summary>
-		/// Mark the specified messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No indexes were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		public abstract void DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Mark the specified messages for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="indexes"/> are invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No indexes were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    public abstract Task DeleteMessages (IList<Int32> indexes, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -2065,46 +2065,46 @@ namespace MailKit {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
-		/// <summary>
-		/// Mark the specified range of messages for deletion.
-		/// </summary>
-		/// <remarks>
-		/// Messages marked for deletion are not actually deleted until the session
-		/// is cleanly disconnected
-		/// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
-		/// </example>
-		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
-		/// <param name="count">The number of messages to mark for deletion.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
-		/// a valid range of messages.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="MailSpool"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="MailSpool"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="MailSpool"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// A protocol error occurred.
-		/// </exception>
-		public abstract void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Mark the specified range of messages for deletion.
+	    /// </summary>
+	    /// <remarks>
+	    /// Messages marked for deletion are not actually deleted until the session
+	    /// is cleanly disconnected
+	    /// (see <see cref="MailService.Disconnect(bool, CancellationToken)"/>).
+	    /// </remarks>
+	    /// <example>
+	    /// <code language="c#" source="Examples\Pop3Examples.cs" region="BatchDownloadMessages"/>
+	    /// </example>
+	    /// <param name="startIndex">The index of the first message to mark for deletion.</param>
+	    /// <param name="count">The number of messages to mark for deletion.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+	    /// a valid range of messages.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="MailSpool"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="MailSpool"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="MailSpool"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// A protocol error occurred.
+	    /// </exception>
+	    public abstract Task DeleteMessages (Int32 startIndex, Int32 count, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified range of messages for deletion.

@@ -341,50 +341,50 @@ namespace MailKit.Net.Imap {
 		    return SyncRoot.StartAsync(() => Compress(cancellationToken));
 		}
 
-		/// <summary>
-		/// Enable the QRESYNC feature.
-		/// </summary>
-		/// <remarks>
-		/// <para>Enables the QRESYNC feature.</para>
-		/// <para>The QRESYNC extension improves resynchronization performance of folders by
-		/// querying the IMAP server for a list of changes when the folder is opened using the
-		/// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
-		/// method.</para>
-		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
-		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
-		/// <para>This method needs to be called immediately after calling one of the
-		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods, before
-		/// opening any folders.</para>
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// Quick resynchronization needs to be enabled before selecting a folder.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The IMAP server does not support the QRESYNC extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapCommandException">
-		/// The server replied to the ENABLE command with a NO or BAD response.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// An IMAP protocol error occurred.
-		/// </exception>
-		public override async void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Enable the QRESYNC feature.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Enables the QRESYNC feature.</para>
+	    /// <para>The QRESYNC extension improves resynchronization performance of folders by
+	    /// querying the IMAP server for a list of changes when the folder is opened using the
+	    /// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
+	    /// method.</para>
+	    /// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
+	    /// with the <see cref="MailFolder.MessagesVanished"/> event.</para>
+	    /// <para>This method needs to be called immediately after calling one of the
+	    /// <a href="Overload_MailKit_Net_Imap_ImapClient_Authenticate.htm">Authenticate</a> methods, before
+	    /// opening any folders.</para>
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="ImapClient"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="ImapClient"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="ImapClient"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="System.InvalidOperationException">
+	    /// Quick resynchronization needs to be enabled before selecting a folder.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The IMAP server does not support the QRESYNC extension.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ImapCommandException">
+	    /// The server replied to the ENABLE command with a NO or BAD response.
+	    /// </exception>
+	    /// <exception cref="ImapProtocolException">
+	    /// An IMAP protocol error occurred.
+	    /// </exception>
+	    public override async Task EnableQuickResync (CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1011,7 +1011,7 @@ namespace MailKit.Net.Imap {
 			OnAuthenticated (ic.ResponseText);
 		}
 
-		internal async void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
+		internal async Task ReplayConnect (String host, Stream replayStream, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -1255,65 +1255,65 @@ namespace MailKit.Net.Imap {
 		}
 
 #if !NETFX_CORE
-		/// <summary>
-		/// Establish a connection to the specified IMAP or IMAP/S server using the provided socket.
-		/// </summary>
-		/// <remarks>
-		/// <para>Establishes a connection to the specified IMAP or IMAP/S server using
-		/// the provided socket.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
-		/// <para>If the <paramref name="options"/> has a value of
-		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
-		/// to determine the default security options. If the <paramref name="port"/> has a value
-		/// of <c>993</c>, then the default options used will be
-		/// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
-		/// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
-		/// <para>Once a connection is established, properties such as
-		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
-		/// populated.</para>
-		/// </remarks>
-		/// <param name="socket">The socket to use for the connection.</param>
-		/// <param name="host">The host name to connect to.</param>
-		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
-		/// <param name="options">The secure socket options to when connecting.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="socket"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="host"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="socket"/> is not connected.</para>
-		/// <para>-or-</para>
-		/// The <paramref name="host"/> is a zero-length string.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="ImapClient"/> is already connected.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <paramref name="options"/> was set to
-		/// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
-		/// and the IMAP server does not support the STARTTLS extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ImapProtocolException">
-		/// An IMAP protocol error occurred.
-		/// </exception>
-		public async void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Establish a connection to the specified IMAP or IMAP/S server using the provided socket.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Establishes a connection to the specified IMAP or IMAP/S server using
+	    /// the provided socket.</para>
+	    /// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
+	    /// <paramref name="options"/> parameter is used to determine the default port to
+	    /// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
+	    /// is <c>993</c>. All other values will use a default port of <c>143</c>.</para>
+	    /// <para>If the <paramref name="options"/> has a value of
+	    /// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
+	    /// to determine the default security options. If the <paramref name="port"/> has a value
+	    /// of <c>993</c>, then the default options used will be
+	    /// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
+	    /// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
+	    /// <para>Once a connection is established, properties such as
+	    /// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
+	    /// populated.</para>
+	    /// </remarks>
+	    /// <param name="socket">The socket to use for the connection.</param>
+	    /// <param name="host">The host name to connect to.</param>
+	    /// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+	    /// <param name="options">The secure socket options to when connecting.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="socket"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="host"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="socket"/> is not connected.</para>
+	    /// <para>-or-</para>
+	    /// The <paramref name="host"/> is a zero-length string.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="ImapClient"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="System.InvalidOperationException">
+	    /// The <see cref="ImapClient"/> is already connected.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// <paramref name="options"/> was set to
+	    /// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
+	    /// and the IMAP server does not support the STARTTLS extension.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ImapProtocolException">
+	    /// An IMAP protocol error occurred.
+	    /// </exception>
+	    public async Task Connect (Socket socket, String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (socket == null)
 				throw new ArgumentNullException ("socket");

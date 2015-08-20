@@ -102,7 +102,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -124,7 +124,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -136,7 +136,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					client.Disconnect (true, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -161,7 +161,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -180,7 +180,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -192,7 +192,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					client.Disconnect (true, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -214,13 +214,13 @@ namespace UnitTests.Net.Smtp {
 				options.NewLineFormat = NewLineFormat.Dos;
 
 				using (var measure = new MeasuringStream ()) {
-					message.WriteTo (options, measure);
+					message.WriteTo (options, measure).Wait();
 					size = measure.Length;
 				}
 
 				var bytes = Encoding.ASCII.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 				memory.Write (bytes, 0, bytes.Length);
-				message.WriteTo (options, memory);
+				message.WriteTo (options, memory).Wait();
 
 				bytes = memory.GetBuffer ();
 
@@ -239,7 +239,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -260,7 +260,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -299,7 +299,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -321,7 +321,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -356,7 +356,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -378,7 +378,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -419,7 +419,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -441,7 +441,7 @@ namespace UnitTests.Net.Smtp {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -478,7 +478,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

@@ -279,15 +279,15 @@ namespace MailKit.Net.Imap {
             }
         }
 
-		/// <summary>
-		/// Write the literal to the specified stream.
-		/// </summary>
-		/// <remarks>
-		/// Writes the literal to the specified stream.
-		/// </remarks>
-		/// <param name="stream">The stream.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		public async void WriteTo (ImapStream stream, CancellationToken cancellationToken)
+	    /// <summary>
+	    /// Write the literal to the specified stream.
+	    /// </summary>
+	    /// <remarks>
+	    /// Writes the literal to the specified stream.
+	    /// </remarks>
+	    /// <param name="stream">The stream.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    public async Task WriteTo (ImapStream stream, CancellationToken cancellationToken)
 		{
 			if (Type == ImapLiteralType.String) {
 				var bytes = (byte[]) Literal;
