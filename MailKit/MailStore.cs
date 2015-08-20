@@ -284,7 +284,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IEnumerable<IMailFolder>> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
@@ -325,11 +325,7 @@ namespace MailKit {
 			if (@namespace == null)
 				throw new ArgumentNullException ("namespace");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetFolders (@namespace, subscribedOnly, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetFolders(@namespace, subscribedOnly, cancellationToken));
 		}
 
 		/// <summary>
@@ -368,7 +364,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IMailFolder> GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the folder for the specified path.
@@ -411,11 +407,7 @@ namespace MailKit {
 			if (path == null)
 				throw new ArgumentNullException ("path");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetFolder (path, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetFolder(path, cancellationToken));
 		}
 
 		/// <summary>

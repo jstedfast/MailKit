@@ -82,7 +82,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -95,7 +95,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -110,14 +110,14 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (1, client.Count, "Expected 1 message");
 
 				try {
-					var message = client.GetMessage (0, CancellationToken.None);
+					var message = client.GetMessage (0, CancellationToken.None).Result;
 					// TODO: assert that the message is byte-identical to what we expect
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					client.Disconnect (true, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -141,7 +141,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, true), CancellationToken.None);
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, true), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -154,7 +154,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -169,14 +169,14 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (1, client.Count, "Expected 1 message");
 
 				try {
-					var message = client.GetMessage (0, CancellationToken.None);
+					var message = client.GetMessage (0, CancellationToken.None).Result;
 					// TODO: assert that the message is byte-identical to what we expect
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					client.Disconnect (true, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -197,7 +197,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -210,7 +210,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 					Assert.Fail ("Expected AuthenticationException");
 				} catch (AuthenticationException) {
 					// we expect this exception...
@@ -221,7 +221,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
 
 				try {
-					var sizes = client.GetMessageSizes (CancellationToken.None);
+					var sizes = client.GetMessageSizes (CancellationToken.None).Result;
 					Assert.Fail ("Expected ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
@@ -232,7 +232,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
-					var sizes = client.GetMessageSizes (CancellationToken.None);
+					var sizes = client.GetMessageSizes (CancellationToken.None).Result;
 					Assert.Fail ("Expected ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
@@ -265,7 +265,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
-					var uids = client.GetMessageUids (CancellationToken.None);
+					var uids = client.GetMessageUids (CancellationToken.None).Result;
 					Assert.Fail ("Expected ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
@@ -276,7 +276,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
-					var uid = client.GetMessageUid (0, CancellationToken.None);
+					var uid = client.GetMessageUid (0, CancellationToken.None).Result;
 					Assert.Fail ("Expected ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
@@ -287,7 +287,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
-					var message = client.GetMessage ("uid", CancellationToken.None);
+					var message = client.GetMessage ("uid", CancellationToken.None).Result;
 					Assert.Fail ("Expected ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
@@ -298,7 +298,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
-					var message = client.GetMessage (0, CancellationToken.None);
+					var message = client.GetMessage (0, CancellationToken.None).Result;
 					Assert.Fail ("Expected ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// we expect this exception...
@@ -331,7 +331,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					client.Disconnect (true, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -356,7 +356,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -375,7 +375,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -389,21 +389,21 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (7, client.Count, "Expected 7 messages");
 
 				try {
-					var uids = client.GetMessageUids (CancellationToken.None);
+					var uids = client.GetMessageUids (CancellationToken.None).Result;
 					Assert.AreEqual (7, uids.Count, "Expected 7 uids");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
 				}
 
 				try {
-					var message = client.GetMessage (0, CancellationToken.None);
+					var message = client.GetMessage (0, CancellationToken.None).Result;
 					// TODO: assert that the message is byte-identical to what we expect
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					client.Disconnect (true, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -428,7 +428,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -445,7 +445,7 @@ namespace UnitTests.Net.Pop3 {
 
 				try {
 					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					client.Authenticate (credentials, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -456,7 +456,7 @@ namespace UnitTests.Net.Pop3 {
 				Assert.AreEqual (3, client.Count, "Expected 3 messages");
 
 				try {
-					var message = client.GetMessage (0, CancellationToken.None);
+					var message = client.GetMessage (0, CancellationToken.None).Result;
 
 					using (var jpeg = new MemoryStream ()) {
 						var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
@@ -475,7 +475,7 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					var messages = client.GetMessages (new [] { 0, 1, 2 }, CancellationToken.None);
+					var messages = client.GetMessages (new [] { 0, 1, 2 }, CancellationToken.None).Result;
 
 					foreach (var message in messages) {
 						using (var jpeg = new MemoryStream ()) {
@@ -496,7 +496,7 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					client.Disconnect (true, CancellationToken.None).Wait();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}

@@ -32,6 +32,7 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MailKit.Net.Common;
 using MimeKit;
 using MimeKit.IO;
 
@@ -144,8 +145,8 @@ namespace MailKit.Net.Smtp {
 		/// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
 		/// </remarks>
 		/// <value>The lock object.</value>
-		public override object SyncRoot {
-			get { return this; }
+		public override EngineLock SyncRoot {
+			get { return this.SyncRoot; }
 		}
 
 		/// <summary>
@@ -681,73 +682,73 @@ namespace MailKit.Net.Smtp {
 		}
 
 	    /// <summary>
-		/// Establishes a connection to the specified SMTP or SMTP/S server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Establishes a connection to the specified SMTP or SMTP/S server.</para>
-		/// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
-		/// <paramref name="options"/> parameter is used to determine the default port to
-		/// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
-		/// is <c>465</c>. All other values will use a default port of <c>25</c>.</para>
-		/// <para>If the <paramref name="options"/> has a value of
-		/// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
-		/// to determine the default security options. If the <paramref name="port"/> has a value
-		/// of <c>465</c>, then the default options used will be
-		/// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
-		/// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
-		/// <para>Once a connection is established, properties such as
-		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
-		/// populated.</para>
-		/// <para>Note: The connection established by any of the
-		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
-		/// methods may be re-used if an application wishes to send multiple messages
-		/// to the same SMTP server. Since connecting and authenticating can be expensive
-		/// operations, re-using a connection can significantly improve performance when
-		/// sending a large number of messages to the same SMTP server over a short
-		/// period of time.</para>
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
-		/// </example>
-		/// <param name="host">The host name to connect to.</param>
-		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
-		/// <param name="options">The secure socket options to when connecting.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// The <paramref name="host"/> is a zero-length string.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="SmtpClient"/> is already connected.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <paramref name="options"/> was set to
-		/// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
-		/// and the SMTP server does not support the STARTTLS extension.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// An SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol error occurred.
-		/// </exception>
-		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+	    /// Establishes a connection to the specified SMTP or SMTP/S server.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Establishes a connection to the specified SMTP or SMTP/S server.</para>
+	    /// <para>If the <paramref name="port"/> has a value of <c>0</c>, then the
+	    /// <paramref name="options"/> parameter is used to determine the default port to
+	    /// connect to. The default port used with <see cref="SecureSocketOptions.SslOnConnect"/>
+	    /// is <c>465</c>. All other values will use a default port of <c>25</c>.</para>
+	    /// <para>If the <paramref name="options"/> has a value of
+	    /// <see cref="SecureSocketOptions.Auto"/>, then the <paramref name="port"/> is used
+	    /// to determine the default security options. If the <paramref name="port"/> has a value
+	    /// of <c>465</c>, then the default options used will be
+	    /// <see cref="SecureSocketOptions.SslOnConnect"/>. All other values will use
+	    /// <see cref="SecureSocketOptions.StartTlsWhenAvailable"/>.</para>
+	    /// <para>Once a connection is established, properties such as
+	    /// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
+	    /// populated.</para>
+	    /// <para>Note: The connection established by any of the
+	    /// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
+	    /// methods may be re-used if an application wishes to send multiple messages
+	    /// to the same SMTP server. Since connecting and authenticating can be expensive
+	    /// operations, re-using a connection can significantly improve performance when
+	    /// sending a large number of messages to the same SMTP server over a short
+	    /// period of time.</para>
+	    /// </remarks>
+	    /// <example>
+	    /// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+	    /// </example>
+	    /// <param name="host">The host name to connect to.</param>
+	    /// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+	    /// <param name="options">The secure socket options to when connecting.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="host"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// The <paramref name="host"/> is a zero-length string.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="SmtpClient"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="System.InvalidOperationException">
+	    /// The <see cref="SmtpClient"/> is already connected.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// <paramref name="options"/> was set to
+	    /// <see cref="MailKit.Security.SecureSocketOptions.StartTls"/>
+	    /// and the SMTP server does not support the STARTTLS extension.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="SmtpCommandException">
+	    /// An SMTP command failed.
+	    /// </exception>
+	    /// <exception cref="SmtpProtocolException">
+	    /// An SMTP protocol error occurred.
+	    /// </exception>
+	    public override Task Connect (String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default(CancellationToken))
 	    {
-	        ConnectAsync(host, port, options, cancellationToken).Wait(cancellationToken);
+	        return ConnectAsync(host, port, options, cancellationToken);
 	    }
 
 	    public async override Task ConnectAsync(String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto,
@@ -1055,23 +1056,23 @@ namespace MailKit.Net.Smtp {
 		}
 #endif
 
-		/// <summary>
-		/// Disconnect the service.
-		/// </summary>
-		/// <remarks>
-		/// If <paramref name="quit"/> is <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
-		/// </remarks>
-		/// <example>
-		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
-		/// </example>
-		/// <param name="quit">If set to <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		public override void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Disconnect the service.
+	    /// </summary>
+	    /// <remarks>
+	    /// If <paramref name="quit"/> is <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.
+	    /// </remarks>
+	    /// <example>
+	    /// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+	    /// </example>
+	    /// <param name="quit">If set to <c>true</c>, a <c>QUIT</c> command will be issued in order to disconnect cleanly.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="SmtpClient"/> has been disposed.
+	    /// </exception>
+	    public override Task Disconnect (Boolean quit, CancellationToken cancellationToken = default(CancellationToken))
 		{
-            DisconnectAsync(quit, cancellationToken).Wait(cancellationToken);
+            return DisconnectAsync(quit, cancellationToken);
 		}
 
 	    public override async Task DisconnectAsync(Boolean quit, CancellationToken cancellationToken = new CancellationToken())
@@ -1105,31 +1106,31 @@ namespace MailKit.Net.Smtp {
         }
 
 	    /// <summary>
-		/// Ping the SMTP server to keep the connection alive.
-		/// </summary>
-		/// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="SmtpClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="SmtpClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="SmtpCommandException">
-		/// The SMTP command failed.
-		/// </exception>
-		/// <exception cref="SmtpProtocolException">
-		/// An SMTP protocol error occurred.
-		/// </exception>
-		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
+	    /// Ping the SMTP server to keep the connection alive.
+	    /// </summary>
+	    /// <remarks>Mail servers, if left idle for too long, will automatically drop the connection.</remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="SmtpClient"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="SmtpClient"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="SmtpCommandException">
+	    /// The SMTP command failed.
+	    /// </exception>
+	    /// <exception cref="SmtpProtocolException">
+	    /// An SMTP protocol error occurred.
+	    /// </exception>
+	    public override Task NoOp (CancellationToken cancellationToken = default(CancellationToken))
 	    {
-	        NoOpAsync(cancellationToken).Wait(cancellationToken);
+	        return NoOpAsync(cancellationToken);
 	    }
 
 	    public override async Task NoOpAsync(CancellationToken cancellationToken = new CancellationToken())

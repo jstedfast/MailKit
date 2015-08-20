@@ -336,7 +336,8 @@ namespace MailKit.Net.Pop3 {
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					nread = Stream.Read (input, start, end - start);
+                    throw new NotImplementedException("need async");
+					nread = Stream.Read(input, start, end - start);
 				} else {
 					Poll (SelectMode.SelectRead, cancellationToken);
 

@@ -214,7 +214,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract string GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<String> GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the UID of the message at the specified index.
@@ -255,11 +255,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<string> GetMessageUidAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageUid (index, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageUid (index, cancellationToken));
 		}
 
 		/// <summary>
@@ -298,7 +294,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<string> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<String>> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the full list of available message UIDs.
@@ -335,11 +331,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<string>> GetMessageUidsAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageUids (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageUids (cancellationToken));
 		}
 
 		/// <summary>
@@ -536,7 +528,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<int> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<Int32>> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the sizes for all available messages, in bytes.
@@ -569,11 +561,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<int>> GetMessageSizesAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageSizes (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetMessageSizes(cancellationToken));
 		}
 
 		/// <summary>
@@ -616,7 +604,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract HeaderList GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<HeaderList> GetMessageHeaders (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified message.
@@ -663,11 +651,7 @@ namespace MailKit {
 			if (uid == null)
 				throw new ArgumentNullException ("uid");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageHeaders (uid, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageHeaders (uid, cancellationToken));
 		}
 
 		/// <summary>
@@ -703,7 +687,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract HeaderList GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<HeaderList> GetMessageHeaders (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified message.
@@ -740,11 +724,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<HeaderList> GetMessageHeadersAsync (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageHeaders (index, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageHeaders (index, cancellationToken));
 		}
 
 		/// <summary>
@@ -789,7 +769,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract IList<HeaderList> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<HeaderList>> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified messages.
@@ -841,11 +821,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageHeaders (uids, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetMessageHeaders(uids, cancellationToken)); 
 		}
 
 		/// <summary>
@@ -886,7 +862,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<HeaderList>> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the headers for the specified messages.
@@ -934,11 +910,7 @@ namespace MailKit {
 			if (indexes.Count == 0)
 				throw new ArgumentException ("No indexes specified.", "indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageHeaders (indexes, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageHeaders (indexes, cancellationToken));
 		}
 
 		/// <summary>
@@ -976,7 +948,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<HeaderList>> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the headers of the messages within the specified range.
@@ -1015,11 +987,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<HeaderList>> GetMessageHeadersAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessageHeaders (startIndex, count, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessageHeaders (startIndex, count, cancellationToken));
 		}
 
 		/// <summary>
@@ -1062,7 +1030,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract MimeMessage GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<MimeMessage> GetMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the message with the specified UID.
@@ -1109,11 +1077,7 @@ namespace MailKit {
 			if (uid == null)
 				throw new ArgumentNullException ("uid");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessage (uid, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessage (uid, cancellationToken));
 		}
 
 		/// <summary>
@@ -1153,7 +1117,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<MimeMessage> GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message at the specified index.
@@ -1191,11 +1155,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessage (index, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessage (index, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -1240,7 +1200,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<MimeMessage>> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the messages with the specified UIDs.
@@ -1292,11 +1252,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessages (uids, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessages (uids, cancellationToken));
 		}
 
 		/// <summary>
@@ -1338,7 +1294,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<MimeMessage>> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages at the specified indexes.
@@ -1387,11 +1343,7 @@ namespace MailKit {
 			if (indexes.Count == 0)
 				throw new ArgumentException ("No indexes specified.", "indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessages (indexes, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessages (indexes, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -1433,7 +1385,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<MimeMessage>> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the messages within the specified range.
@@ -1473,11 +1425,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<MimeMessage>> GetMessagesAsync (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMessages (startIndex, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetMessages (startIndex, count, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -1515,7 +1463,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Stream GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStream (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header stream at the specified index.
@@ -1554,11 +1502,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<Stream> GetStreamAsync (int index, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (index, headersOnly, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetStream (index, headersOnly, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -1604,7 +1548,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<Stream>> GetStreams (IList<int> indexes, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams at the specified indexes.
@@ -1654,11 +1598,7 @@ namespace MailKit {
 			if (indexes.Count == 0)
 				throw new ArgumentException ("No indexes specified.", "indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStreams (indexes, headersOnly, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetStreams (indexes, headersOnly, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -1701,7 +1641,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IList<Stream> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<Stream>> GetStreams (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the message or header streams within the specified range.
@@ -1742,11 +1682,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IList<Stream>> GetStreamsAsync (int startIndex, int count, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStreams (startIndex, count, headersOnly, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => GetStreams (startIndex, count, headersOnly, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -2388,7 +2324,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract IEnumerator<MimeMessage> GetEnumerator ();
+//		public abstract IEnumerator<MimeMessage> GetEnumerator ();
 
 		/// <summary>
 		/// Gets an enumerator for the messages in the folder.
@@ -2418,9 +2354,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
+//		IEnumerator IEnumerable.GetEnumerator ()
+//		{
+//			return GetEnumerator ();
+//		}
 	}
 }

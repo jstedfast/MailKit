@@ -29,6 +29,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using MailKit.Net.Common;
+using MailKit.Net.Imap;
 #if !NETFX_CORE
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -53,7 +55,7 @@ namespace MailKit {
 		/// Gets an object that can be used to synchronize access to the folder.
 		/// </remarks>
 		/// <value>The sync root.</value>
-		object SyncRoot { get; }
+		EngineLock SyncRoot { get; }
 
 #if !NETFX_CORE
 		/// <summary>
@@ -107,40 +109,40 @@ namespace MailKit {
 		/// <value>The timeout in milliseconds.</value>
 		int Timeout { get; set; }
 
-		/// <summary>
-		/// Establish a connection to the specified mail server.
-		/// </summary>
-		/// <remarks>
-		/// <para>Establish a connection to the specified mail server.</para>
-		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
-		/// property will be populated.</para>
-		/// </remarks>
-		/// <param name="host">The host name to connect to.</param>
-		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
-		/// <param name="options">The secure socket options to when connecting.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="host"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
-		/// </exception>
-		/// <exception cref="System.InvalidOperationException">
-		/// The <see cref="IMailService"/> is already connected.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command was rejected by the mail server.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server responded with an unexpected token.
-		/// </exception>
-		void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Establish a connection to the specified mail server.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Establish a connection to the specified mail server.</para>
+	    /// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+	    /// property will be populated.</para>
+	    /// </remarks>
+	    /// <param name="host">The host name to connect to.</param>
+	    /// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+	    /// <param name="options">The secure socket options to when connecting.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="host"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+	    /// </exception>
+	    /// <exception cref="System.InvalidOperationException">
+	    /// The <see cref="IMailService"/> is already connected.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command was rejected by the mail server.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server responded with an unexpected token.
+	    /// </exception>
+	    Task Connect (String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server.
@@ -243,34 +245,34 @@ namespace MailKit {
 		/// </exception>
 		Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
-		/// <summary>
-		/// Disconnect the service.
-		/// </summary>
-		/// <remarks>
-		/// <para>Disconnects from the service.</para>
-		/// <para>If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</para>
-		/// </remarks>
-		/// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailService"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailService"/> is not connected.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command was rejected by the mail server.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server responded with an unexpected token.
-		/// </exception>
-		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Disconnect the service.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Disconnects from the service.</para>
+	    /// <para>If <paramref name="quit"/> is <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</para>
+	    /// </remarks>
+	    /// <param name="quit">If set to <c>true</c>, a "QUIT" command will be issued in order to disconnect cleanly.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailService"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailService"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command was rejected by the mail server.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server responded with an unexpected token.
+	    /// </exception>
+	    Task Disconnect (Boolean quit, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously disconnect the service.
@@ -302,32 +304,32 @@ namespace MailKit {
 		/// </exception>
 		Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
-		/// <summary>
-		/// Ping the message service to keep the connection alive.
-		/// </summary>
-		/// <remarks>
-		/// Mail servers, if left idle for too long, will automatically drop the connection.
-		/// </remarks>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailService"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailService"/> is not connected.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command was rejected by the mail server.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server responded with an unexpected token.
-		/// </exception>
-		void NoOp (CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Ping the message service to keep the connection alive.
+	    /// </summary>
+	    /// <remarks>
+	    /// Mail servers, if left idle for too long, will automatically drop the connection.
+	    /// </remarks>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailService"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailService"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command was rejected by the mail server.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server responded with an unexpected token.
+	    /// </exception>
+	    Task NoOp (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously ping the mail server to keep the connection alive.
