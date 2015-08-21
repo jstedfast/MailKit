@@ -210,7 +210,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<String> GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<string> GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the UID of the message at the specified index.
@@ -290,7 +290,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<String>> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<string>> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Get the full list of available message UIDs.
@@ -367,7 +367,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract Task<Int32> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<int> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -447,7 +447,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<Int32> GetMessageSize (Int32 index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<int> GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -516,7 +516,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task<IList<Int32>> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<int>> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the sizes for all available messages, in bytes.
@@ -1714,7 +1714,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract Task DeleteMessage (String uid, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -1803,7 +1803,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task DeleteMessage (Int32 index, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -1888,7 +1888,7 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public abstract Task DeleteMessages (IList<String> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -1984,7 +1984,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task DeleteMessages (IList<Int32> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -2076,7 +2076,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract Task DeleteMessages (Int32 startIndex, Int32 count, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified range of messages for deletion.

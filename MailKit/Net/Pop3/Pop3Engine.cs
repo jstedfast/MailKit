@@ -298,7 +298,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async Task<String> ReadLine (CancellationToken cancellationToken)
+		public async Task<string> ReadLine (CancellationToken cancellationToken)
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();
@@ -408,7 +408,7 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-		public async Task<Int32> Iterate ()
+		public async Task<int> Iterate ()
 		{
 			if (stream == null)
 				throw new InvalidOperationException ();

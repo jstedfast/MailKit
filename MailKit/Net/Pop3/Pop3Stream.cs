@@ -419,7 +419,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async Task<Int32> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task<int> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -544,7 +544,7 @@ namespace MailKit.Net.Pop3 {
 			return Read(buffer, offset, count, CancellationToken.None).Result;
         }
 
-	    public override Task<Int32> ReadAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+	    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 	    {
 	        return Read(buffer, offset, count, cancellationToken);
         }
@@ -643,7 +643,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async Task Write (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+		public async Task Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -725,7 +725,7 @@ namespace MailKit.Net.Pop3 {
 			throw new NotSupportedException ("Use WrtiteAsync.");
 		}
 
-		public override Task WriteAsync (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			return Write (buffer, offset, count, cancellationToken);
 		}

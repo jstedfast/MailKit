@@ -100,7 +100,7 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("count");
 		}
 
-		public async Task<Int32> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task<int> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			int n;
 
@@ -120,7 +120,7 @@ namespace MailKit {
 			return n;
 		}
 
-		public async Task Write (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+		public async Task Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			await Source.WriteAsync (buffer, offset, count, cancellationToken);
 

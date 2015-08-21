@@ -256,7 +256,7 @@ namespace MailKit.Net.Imap {
 			get { return GetLengthAsync().Result; }
 		}
 
-		public async Task<Int64> GetLengthAsync()
+		public async Task<long> GetLengthAsync()
 		{
             if (Type == ImapLiteralType.String)
                 return (long)((byte[])Literal).Length;
@@ -590,7 +590,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public async Task<Boolean> Step ()
+		public async Task<bool> Step ()
 		{
 			var supportsLiteralPlus = (Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0;
 			int timeout = Engine.Stream.CanTimeout ? Engine.Stream.ReadTimeout : -1;

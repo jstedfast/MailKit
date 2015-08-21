@@ -142,7 +142,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task Connect (String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		Task Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server.
@@ -272,7 +272,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		Task Disconnect (Boolean quit, CancellationToken cancellationToken = default (CancellationToken));
+		Task Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously disconnect the service.

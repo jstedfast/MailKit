@@ -259,7 +259,7 @@ namespace MailKit {
 		/// <param name="highestModSeq">The last known <see cref="HighestModSeq"/> value.</param>
 		/// <param name="uids">The last known list of unique message identifiers.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<FolderAccess> Open (FolderAccess access, UInt32 uidValidity, UInt64 highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		Task<FolderAccess> Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously opens the folder using the requested folder access.
@@ -310,7 +310,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="expunge">If set to <c>true</c>, expunge.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task Close (Boolean expunge = false, CancellationToken cancellationToken = default (CancellationToken));
+		Task Close (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously close the folder, optionally expunging the messages marked for deletion.
@@ -356,7 +356,7 @@ namespace MailKit {
 		/// <param name="parent">The new parent folder.</param>
 		/// <param name="name">The new name of the folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task Rename (IMailFolder parent, String name, CancellationToken cancellationToken = default (CancellationToken));
+		Task Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously rename the folder.
@@ -596,7 +596,7 @@ namespace MailKit {
 		/// <param name="name">The identity name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddAccessRights (String name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add access rights for the specified identity.
@@ -619,7 +619,7 @@ namespace MailKit {
 		/// <param name="name">The identity name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveAccessRights (String name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove access rights for the specified identity.
@@ -642,7 +642,7 @@ namespace MailKit {
 		/// <param name="name">The identity name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetAccessRights (String name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the access rights for the sepcified identity.
@@ -664,7 +664,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="name">The identity name.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveAccess (String name, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove all access rights for the given identity.
@@ -1145,7 +1145,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task CopyTo (IList<Int32> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		Task CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -1191,7 +1191,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task MoveTo (IList<Int32> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		Task MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -1394,7 +1394,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, UInt64 modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
@@ -1446,7 +1446,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, UInt64 modseq, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
@@ -1490,7 +1490,7 @@ namespace MailKit {
 		/// <param name="indexes">The indexes.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -1528,7 +1528,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">THe desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -1567,7 +1567,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">THe desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -1608,7 +1608,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, UInt64 modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that have a
@@ -1651,7 +1651,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">THe desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, UInt64 modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes
@@ -1695,7 +1695,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">THe desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, UInt64 modseq, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes
@@ -1737,7 +1737,7 @@ namespace MailKit {
 		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -1778,7 +1778,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">THe desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -1820,7 +1820,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">THe desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -1864,7 +1864,7 @@ namespace MailKit {
 		/// <param name="modseq">The mod-sequence value.</param>
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, UInt64 modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -1911,7 +1911,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, UInt64 modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -1959,7 +1959,7 @@ namespace MailKit {
 		/// <param name="items">The message summary items to fetch.</param>
 		/// <param name="fields">The desired header fields.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, UInt64 modseq, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -2019,7 +2019,7 @@ namespace MailKit {
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<MimeMessage> GetMessage (Int32 index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<MimeMessage> GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -2071,7 +2071,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<MimeEntity> GetBodyPart (UniqueId uid, BodyPart part, Boolean headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<MimeEntity> GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -2098,7 +2098,7 @@ namespace MailKit {
 		/// <param name="part">The body part.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<MimeEntity> GetBodyPart (Int32 index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<MimeEntity> GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -2125,7 +2125,7 @@ namespace MailKit {
 		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<MimeEntity> GetBodyPart (Int32 index, BodyPart part, Boolean headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<MimeEntity> GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -2225,7 +2225,7 @@ namespace MailKit {
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<Stream> GetStream (UniqueId uid, BodyPart part, Int32 offset, Int32 count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<Stream> GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -2261,7 +2261,7 @@ namespace MailKit {
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<Stream> GetStream (Int32 index, BodyPart part, Int32 offset, Int32 count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<Stream> GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -2329,7 +2329,7 @@ namespace MailKit {
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<Stream> GetStream (UniqueId uid, String section, Int32 offset, Int32 count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<Stream> GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2364,7 +2364,7 @@ namespace MailKit {
 		/// <param name="section">The desired section of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<Stream> GetStream (Int32 index, String section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<Stream> GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2399,7 +2399,7 @@ namespace MailKit {
 		/// <param name="count">The number of bytes desired.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		Task<Stream> GetStream (Int32 index, String section, Int32 offset, Int32 count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task<Stream> GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -2483,7 +2483,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlags (IList<UniqueId> uids, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -2509,7 +2509,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -2587,7 +2587,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -2613,7 +2613,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -2691,7 +2691,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlags (IList<UniqueId> uids, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -2717,7 +2717,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -2745,7 +2745,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -2774,7 +2774,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -2803,7 +2803,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -2832,7 +2832,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -2861,7 +2861,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -2890,7 +2890,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -2969,7 +2969,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlags (IList<Int32> indexes, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -2995,7 +2995,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddFlags (IList<Int32> indexes, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -3073,7 +3073,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlags (IList<Int32> indexes, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -3099,7 +3099,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveFlags (IList<Int32> indexes, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -3177,7 +3177,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlags (IList<Int32> indexes, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -3203,7 +3203,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetFlags (IList<Int32> indexes, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -3231,7 +3231,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> AddFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3260,7 +3260,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> AddFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3289,7 +3289,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> RemoveFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3318,7 +3318,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> RemoveFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3347,7 +3347,7 @@ namespace MailKit {
 		/// <param name="flags">The message flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> SetFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3376,7 +3376,7 @@ namespace MailKit {
 		/// <param name="userFlags">A set of user-defined flags to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> SetFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3428,7 +3428,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddLabels (IList<UniqueId> uids, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages.
@@ -3478,7 +3478,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveLabels (IList<UniqueId> uids, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages.
@@ -3528,7 +3528,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetLabels (IList<UniqueId> uids, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages.
@@ -3555,7 +3555,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> AddLabels (IList<UniqueId> uids, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> AddLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3583,7 +3583,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> RemoveLabels (IList<UniqueId> uids, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> RemoveLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3611,7 +3611,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> SetLabels (IList<UniqueId> uids, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<UniqueId>> SetLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.
@@ -3662,7 +3662,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task AddLabels (IList<Int32> indexes, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task AddLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages.
@@ -3712,7 +3712,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task RemoveLabels (IList<Int32> indexes, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task RemoveLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages.
@@ -3762,7 +3762,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task SetLabels (IList<Int32> indexes, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task SetLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages.
@@ -3789,7 +3789,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to add.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> AddLabels (IList<Int32> indexes, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> AddLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -3817,7 +3817,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to remove.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> RemoveLabels (IList<Int32> indexes, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> RemoveLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -3845,7 +3845,7 @@ namespace MailKit {
 		/// <param name="labels">The labels to set.</param>
 		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> SetLabels (IList<Int32> indexes, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> SetLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.

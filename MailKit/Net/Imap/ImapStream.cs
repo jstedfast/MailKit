@@ -283,7 +283,7 @@ namespace MailKit.Net.Imap {
 #endif
 		}
 
-		async Task<Int32> ReadAhead (int atleast, CancellationToken cancellationToken) {
+		async Task<int> ReadAhead (int atleast, CancellationToken cancellationToken) {
 			int left = inputEnd - inputIndex;
 
 			if (left >= atleast)
@@ -291,7 +291,7 @@ namespace MailKit.Net.Imap {
 
 			int start = inputStart;
 			int end = inputEnd;
-			Int32 nread;
+			int nread;
 
 			if (left > 0) {
 				int index = inputIndex;
@@ -402,7 +402,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async Task<Int32> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken) {
+		public async Task<int> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken) {
 			CheckDisposed ();
 
 			ValidateArguments (buffer, offset, count);
@@ -462,7 +462,7 @@ namespace MailKit.Net.Imap {
 			return Read (buffer, offset, count, CancellationToken.None).Result;
 		}
 
-		public override Task<Int32> ReadAsync (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken) {
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken) {
 			return Read (buffer, offset, count, cancellationToken);
 		}
 
@@ -861,7 +861,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async Task Write (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken) {
+		public async Task Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken) {
 			CheckDisposed ();
 
 			ValidateArguments (buffer, offset, count);
@@ -939,7 +939,7 @@ namespace MailKit.Net.Imap {
 			Write (buffer, offset, count, CancellationToken.None).Wait ();
 		}
 
-		public override async Task WriteAsync (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken) {
+		public override async Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken) {
 			await Write (buffer, offset, count, cancellationToken);
 		}
 

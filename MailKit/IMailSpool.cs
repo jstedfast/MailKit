@@ -98,7 +98,7 @@ namespace MailKit {
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<String> GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
+		Task<string> GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the UID of the message at the specified index.
@@ -121,7 +121,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message UIDs.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<String>> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<string>> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the full list of available message UIDs.
@@ -144,7 +144,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken) instead.")]
-		Task<Int32> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
+		Task<int> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -167,7 +167,7 @@ namespace MailKit {
 		/// <returns>The message size, in bytes.</returns>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<Int32> GetMessageSize (Int32 index, CancellationToken cancellationToken = default (CancellationToken));
+		Task<int> GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the size of the specified message, in bytes.
@@ -188,7 +188,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <returns>The message sizes, in bytes.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<Int32>> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
+		Task<IList<int>> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the sizes for all available messages, in bytes.
@@ -529,7 +529,7 @@ namespace MailKit {
 		/// <param name="uid">The UID of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		[Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken) instead.")]
-		Task DeleteMessage (String uid, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessage (string uid, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -555,7 +555,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="index">The index of the message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task DeleteMessage (Int32 index, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified message for deletion.
@@ -581,7 +581,7 @@ namespace MailKit {
 		/// <param name="uids">The UIDs of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		[Obsolete ("Use DeleteMessages (IList<int> index, CancellationToken cancellationToken) instead.")]
-		Task DeleteMessages (IList<String> uids, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -607,7 +607,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="indexes">The indexes of the messages.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task DeleteMessages (IList<Int32> indexes, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified messages for deletion.
@@ -633,7 +633,7 @@ namespace MailKit {
 		/// <param name="startIndex">The index of the first message to mark for deletion.</param>
 		/// <param name="count">The number of messages to mark for deletion.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task DeleteMessages (Int32 startIndex, Int32 count, CancellationToken cancellationToken = default (CancellationToken));
+		Task DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously mark the specified range of messages for deletion.

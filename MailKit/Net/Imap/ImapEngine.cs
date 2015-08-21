@@ -776,7 +776,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public async Task<String> ReadLiteral (CancellationToken cancellationToken)
+		public async Task<string> ReadLiteral (CancellationToken cancellationToken)
 		{
 			if (Stream.Mode != ImapStreamMode.Literal)
 				throw new InvalidOperationException ();
@@ -1596,7 +1596,7 @@ namespace MailKit.Net.Imap {
 		/// <summary>
 		/// Iterate the command pipeline.
 		/// </summary>
-		public async Task<Int32> Iterate ()
+		public async Task<int> Iterate ()
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();

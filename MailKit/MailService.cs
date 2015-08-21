@@ -761,7 +761,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
-		public abstract Task Disconnect (Boolean quit, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously disconnects the service.

@@ -270,7 +270,7 @@ namespace MailKit.Net.Pop3 {
 			return new Pop3ProtocolException (string.Format (format, args));
 		}
 
-	    async Task SendCommand (CancellationToken token, String command)
+	    async Task SendCommand (CancellationToken token, string command)
 		{
 			var pc = engine.QueueCommand (token, null, command);
 
@@ -282,7 +282,7 @@ namespace MailKit.Net.Pop3 {
 				throw CreatePop3Exception (pc);
 		}
 
-	    async Task<String> SendCommand (CancellationToken token, string format, params object[] args)
+	    async Task<string> SendCommand (CancellationToken token, string format, params object[] args)
 		{
 			string okText = string.Empty;
 
@@ -605,7 +605,7 @@ namespace MailKit.Net.Pop3 {
 			OnAuthenticated (authMessage);
 		}
 
-		internal async Task ReplayConnect (String host, Stream replayStream, CancellationToken cancellationToken = default(CancellationToken))
+		internal async Task ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (host == null)
 				throw new ArgumentNullException ("host");
@@ -722,7 +722,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task Connect (String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
 				throw new ArgumentNullException ("host");
@@ -901,7 +901,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public async Task Connect (Socket socket, String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public async Task Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (socket == null)
 				throw new ArgumentNullException ("socket");
@@ -989,7 +989,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
 		/// </exception>
-		public override async Task Disconnect (Boolean quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -1293,7 +1293,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public async Task SetLanguage (String lang, CancellationToken cancellationToken = default (CancellationToken))
+		public async Task SetLanguage (string lang, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (lang == null)
 				throw new ArgumentNullException ("lang");
@@ -1494,7 +1494,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<String> GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<string> GetMessageUid (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1594,7 +1594,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<IList<String>> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<IList<string>> GetMessageUids (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1715,7 +1715,7 @@ namespace MailKit.Net.Pop3 {
 				return Engine.QueueCommand (cancellationToken, OnDataReceived, "LIST {0}", seqid);
 			}
 
-		    async Task SendCommand (Int32 seqid, CancellationToken cancellationToken)
+		    async Task SendCommand (int seqid, CancellationToken cancellationToken)
 			{
 				var pc = QueueCommand (seqid, cancellationToken);
 
@@ -1730,7 +1730,7 @@ namespace MailKit.Net.Pop3 {
 					throw pc.Exception;
 			}
 
-			public async Task<Int32> GetSize (int seqid, CancellationToken cancellationToken)
+			public async Task<int> GetSize (int seqid, CancellationToken cancellationToken)
 			{
 				sizes = new int[1];
 				index = 0;
@@ -1740,7 +1740,7 @@ namespace MailKit.Net.Pop3 {
 				return sizes[0];
 			}
 
-			public async Task<IList<Int32>> GetSizes (IList<int> seqids, CancellationToken cancellationToken)
+			public async Task<IList<int>> GetSizes (IList<int> seqids, CancellationToken cancellationToken)
 			{
 				sizes = new int[seqids.Count];
 				index = 0;
@@ -1813,7 +1813,7 @@ namespace MailKit.Net.Pop3 {
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public override async Task<Int32> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<int> GetMessageSize (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			int seqid;
 
@@ -1867,7 +1867,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override Task<Int32> GetMessageSize (Int32 index, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task<int> GetMessageSize (int index, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -1910,7 +1910,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task<IList<Int32>> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task<IList<int>> GetMessageSizes (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -2019,7 +2019,7 @@ namespace MailKit.Net.Pop3 {
 				downloaded[index++] = item;
 			}
 
-		    async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, String text)
+		    async Task OnDataReceived (Pop3Engine pop3, Pop3Command pc, string text)
 			{
 				if (pc.Status != Pop3CommandStatus.Ok)
 					return;
@@ -2043,7 +2043,7 @@ namespace MailKit.Net.Pop3 {
 				return Engine.QueueCommand (cancellationToken, (pop3, pc, text) => OnDataReceived(pop3, pc, text), "RETR {0}", seqid);
 			}
 
-		    async Task DownloadItem (Int32 seqid, Boolean headersOnly, CancellationToken cancellationToken)
+		    async Task DownloadItem (int seqid, bool headersOnly, CancellationToken cancellationToken)
 			{
 				var pc = QueueCommand (seqid, headersOnly, cancellationToken);
 
@@ -3044,7 +3044,7 @@ namespace MailKit.Net.Pop3 {
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use DeleteMessage (int index, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public override async Task DeleteMessage (String uid, CancellationToken cancellationToken = default(CancellationToken))
+		public override async Task DeleteMessage (string uid, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			int seqid;
 
@@ -3100,7 +3100,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task DeleteMessage (Int32 index, CancellationToken cancellationToken = default(CancellationToken))
+		public override async Task DeleteMessage (int index, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CheckDisposed ();
 			CheckConnected ();
@@ -3155,7 +3155,7 @@ namespace MailKit.Net.Pop3 {
 		/// A POP3 protocol error occurred.
 		/// </exception>
 		[Obsolete ("Use GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken)) instead.")]
-		public override async Task DeleteMessages (IList<String> uids, CancellationToken cancellationToken = default(CancellationToken))
+		public override async Task DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
@@ -3244,7 +3244,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task DeleteMessages (IList<Int32> indexes, CancellationToken cancellationToken = default(CancellationToken))
+		public override async Task DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
@@ -3329,7 +3329,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// A POP3 protocol error occurred.
 		/// </exception>
-		public override async Task DeleteMessages (Int32 startIndex, Int32 count, CancellationToken cancellationToken = default(CancellationToken))
+		public override async Task DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (startIndex < 0 || startIndex >= total)
 				throw new ArgumentOutOfRangeException ("startIndex");

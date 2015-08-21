@@ -373,7 +373,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task<FolderAccess> Open (FolderAccess access, UInt32 uidValidity, UInt64 highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract Task<FolderAccess> Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously opens the folder using the requested folder access.
@@ -553,7 +553,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task Close (Boolean expunge = false, CancellationToken cancellationToken = default(CancellationToken));
+		public abstract Task Close (bool expunge = false, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously close the folder, optionally expunging the messages marked for deletion.
@@ -732,7 +732,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task Rename (IMailFolder parent, String name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously rename the folder.
@@ -1586,7 +1586,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task AddAccessRights (String name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add access rights for the specified identity.
@@ -1676,7 +1676,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task RemoveAccessRights (String name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove access rights for the specified identity.
@@ -1766,7 +1766,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task SetAccessRights (String name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the access rights for the specified identity.
@@ -1853,7 +1853,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Task RemoveAccess (String name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove all access rights for the given identity.
@@ -3755,7 +3755,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task CopyTo (IList<Int32> indexes, IMailFolder destination, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -3966,7 +3966,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task MoveTo (IList<Int32> indexes, IMailFolder destination, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -4571,7 +4571,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, UInt64 modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
@@ -4709,7 +4709,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, UInt64 modseq, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
@@ -4835,7 +4835,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -4949,7 +4949,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -5072,7 +5072,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -5199,7 +5199,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, UInt64 modseq, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that
@@ -5325,7 +5325,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, UInt64 modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that
@@ -5453,7 +5453,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (IList<Int32> indexes, UInt64 modseq, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that
@@ -5576,7 +5576,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -5699,7 +5699,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -5830,7 +5830,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -5962,7 +5962,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, UInt64 modseq, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -6097,7 +6097,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, UInt64 modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -6240,7 +6240,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<IMessageSummary>> Fetch (Int32 min, Int32 max, UInt64 modseq, MessageSummaryItems items, HashSet<String> fields, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -6454,7 +6454,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<MimeMessage> GetMessage (Int32 index, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	    public abstract Task<MimeMessage> GetMessage (int index, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -6655,7 +6655,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<MimeEntity> GetBodyPart (UniqueId uid, BodyPart part, Boolean headersOnly, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	    public abstract Task<MimeEntity> GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6758,7 +6758,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<MimeEntity> GetBodyPart (Int32 index, BodyPart part, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	    public abstract Task<MimeEntity> GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6864,7 +6864,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<MimeEntity> GetBodyPart (Int32 index, BodyPart part, Boolean headersOnly, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	    public abstract Task<MimeEntity> GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -7207,7 +7207,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<Stream> GetStream (UniqueId uid, BodyPart part, Int32 offset, Int32 count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null)
+	    public virtual Task<Stream> GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -7349,7 +7349,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<Stream> GetStream (Int32 index, BodyPart part, Int32 offset, Int32 count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null)
+	    public virtual Task<Stream> GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -7596,7 +7596,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<Stream> GetStream (UniqueId uid, String section, Int32 offset, Int32 count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	    public abstract Task<Stream> GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7718,7 +7718,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<Stream> GetStream (Int32 index, String section, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	    public abstract Task<Stream> GetStream (int index, string section, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -7836,7 +7836,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<Stream> GetStream (Int32 index, String section, Int32 offset, Int32 count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	    public abstract Task<Stream> GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -8150,7 +8150,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task AddFlags (IList<UniqueId> uids, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task AddFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return AddFlags (uids, flags, null, silent, cancellationToken);
 		}
@@ -8269,7 +8269,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -8577,7 +8577,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return RemoveFlags (uids, flags, null, silent, cancellationToken);
 		}
@@ -8696,7 +8696,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -8984,7 +8984,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task SetFlags (IList<UniqueId> uids, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task SetFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return SetFlags (uids, flags, null, silent, cancellationToken);
 		}
@@ -9090,7 +9090,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -9200,7 +9200,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return AddFlags (uids, modseq, flags, null, silent, cancellationToken);
 		}
@@ -9322,7 +9322,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -9441,7 +9441,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return RemoveFlags (uids, modseq, flags, null, silent, cancellationToken);
 		}
@@ -9563,7 +9563,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -9680,7 +9680,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return SetFlags (uids, modseq, flags, null, silent, cancellationToken);
 		}
@@ -9793,7 +9793,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -10081,7 +10081,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task AddFlags (IList<Int32> indexes, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task AddFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return AddFlags (indexes, flags, null, silent, cancellationToken);
 		}
@@ -10190,7 +10190,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task AddFlags (IList<Int32> indexes, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -10477,7 +10477,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task RemoveFlags (IList<Int32> indexes, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task RemoveFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return RemoveFlags (indexes, flags, null, silent, cancellationToken);
 		}
@@ -10587,7 +10587,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task RemoveFlags (IList<Int32> indexes, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -10864,7 +10864,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task SetFlags (IList<Int32> indexes, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task SetFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return SetFlags (indexes, flags, null, silent, cancellationToken);
 		}
@@ -10965,7 +10965,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task SetFlags (IList<Int32> indexes, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -11072,7 +11072,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<IList<Int32>> AddFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task<IList<int>> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return AddFlags (indexes, modseq, flags, null, silent, cancellationToken);
 		}
@@ -11191,7 +11191,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<Int32>> AddFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<int>> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -11307,7 +11307,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<IList<Int32>> RemoveFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task<IList<int>> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return RemoveFlags (indexes, modseq, flags, null, silent, cancellationToken);
 		}
@@ -11426,7 +11426,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<Int32>> RemoveFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<int>> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -11540,7 +11540,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public virtual Task<IList<Int32>> SetFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken))
+	    public virtual Task<IList<int>> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return SetFlags (indexes, modseq, flags, null, silent, cancellationToken);
 		}
@@ -11652,7 +11652,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<Int32>> SetFlags (IList<Int32> indexes, UInt64 modseq, MessageFlags flags, HashSet<String> userFlags, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<int>> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -11853,7 +11853,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task AddLabels (IList<UniqueId> uids, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task AddLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages.
@@ -12063,7 +12063,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task RemoveLabels (IList<UniqueId> uids, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task RemoveLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages.
@@ -12268,7 +12268,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task SetLabels (IList<UniqueId> uids, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task SetLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages.
@@ -12384,7 +12384,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<UniqueId>> AddLabels (IList<UniqueId> uids, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<UniqueId>> AddLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -12509,7 +12509,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<UniqueId>> RemoveLabels (IList<UniqueId> uids, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<UniqueId>> RemoveLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -12632,7 +12632,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<UniqueId>> SetLabels (IList<UniqueId> uids, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<UniqueId>> SetLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.
@@ -12841,7 +12841,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task AddLabels (IList<Int32> indexes, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task AddLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages.
@@ -13052,7 +13052,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task RemoveLabels (IList<Int32> indexes, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task RemoveLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages.
@@ -13257,7 +13257,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task SetLabels (IList<Int32> indexes, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task SetLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages.
@@ -13369,7 +13369,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<Int32>> AddLabels (IList<Int32> indexes, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<int>> AddLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -13491,7 +13491,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<Int32>> RemoveLabels (IList<Int32> indexes, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<int>> RemoveLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -13611,7 +13611,7 @@ namespace MailKit {
 	    /// <exception cref="CommandException">
 	    /// The command failed.
 	    /// </exception>
-	    public abstract Task<IList<Int32>> SetLabels (IList<Int32> indexes, UInt64 modseq, IList<String> labels, Boolean silent, CancellationToken cancellationToken = default(CancellationToken));
+	    public abstract Task<IList<int>> SetLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.

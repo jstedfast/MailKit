@@ -302,7 +302,7 @@ namespace MailKit.Net.Smtp {
 		}
 #endif
 
-	    async Task QueueCommand (SmtpCommand type, String command, CancellationToken cancellationToken)
+	    async Task QueueCommand (SmtpCommand type, string command, CancellationToken cancellationToken)
 		{
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
 
@@ -605,7 +605,7 @@ namespace MailKit.Net.Smtp {
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
 
-		internal async Task ReplayConnect (String hostName, Stream replayStream, CancellationToken cancellationToken = default(CancellationToken))
+		internal async Task ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -746,12 +746,12 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public override Task Connect (String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return ConnectAsync (host, port, options, cancellationToken);
 		}
 
-		public async override Task ConnectAsync (String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto,
+		public async override Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto,
 			CancellationToken cancellationToken = new CancellationToken ())
 		{
 			if (host == null)
@@ -956,7 +956,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public async Task Connect (Socket socket, String host, Int32 port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public async Task Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (socket == null)
 				throw new ArgumentNullException ("socket");
@@ -1059,12 +1059,12 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
-		public override Task Disconnect (Boolean quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			return DisconnectAsync (quit, cancellationToken);
 		}
 
-		public override async Task DisconnectAsync (Boolean quit, CancellationToken cancellationToken = new CancellationToken ())
+		public override async Task DisconnectAsync (bool quit, CancellationToken cancellationToken = new CancellationToken ())
 		{
 			CheckDisposed ();
 
