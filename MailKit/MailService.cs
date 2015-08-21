@@ -302,7 +302,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual async Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
 				throw new ArgumentNullException ("host");
@@ -313,7 +313,7 @@ namespace MailKit {
 			if (port < 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port");
 
-            await SyncRoot.StartAsync(async () => await Connect(host, port, options, cancellationToken));
+            return SyncRoot.StartAsync(async () => await Connect(host, port, options, cancellationToken));
         }
 
 		/// <summary>
