@@ -1770,7 +1770,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				var ic = await ImapCommand.CreateAsync(this, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
-				ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index1) => ImapUtils.ParseFolderList(engine, ic1, index1));
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
 				ic.UserData = new List<ImapFolder> ();
 
 				QueueCommand (ic);
@@ -1806,7 +1806,7 @@ namespace MailKit.Net.Imap {
 				var list = new List<ImapFolder> ();
 
 				ic = await ImapCommand.CreateAsync(this, cancellationToken, null, "LIST \"\" \"\"\r\n");
-				ic.RegisterUntaggedHandler ("LIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
+				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
 				ic.UserData = list;
 
 				QueueCommand (ic);
@@ -1888,7 +1888,7 @@ namespace MailKit.Net.Imap {
 				var list = new List<ImapFolder> ();
 
 				var ic = await ImapCommand.CreateAsync(this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
-				ic.RegisterUntaggedHandler ("XLIST", (engine, ic1, index) => ImapUtils.ParseFolderList(engine, ic1, index));
+				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderList);
 				ic.UserData = list;
 
 				QueueCommand (ic);
