@@ -170,7 +170,7 @@ namespace MailKit {
 		[Obsolete ("Use the Count property instead.")]
 		public virtual Task<int> GetMessageCountAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return SyncRoot.StartAsync(async () => GetMessageCount (cancellationToken));
+			return SyncRoot.Start(() => GetMessageCount (cancellationToken));
 		}
 
 		/// <summary>

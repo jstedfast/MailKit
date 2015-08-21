@@ -33,5 +33,15 @@ namespace MailKit.Net.Common
                 _slim.Release();
             }
         }
-    }
+
+		public async Task<T> Start<T>(Func<T> action)
+		{
+			try {
+				await _slim.WaitAsync ();
+				return action ();
+			} finally {
+				_slim.Release ();
+			}
+		}
+	}
 }
