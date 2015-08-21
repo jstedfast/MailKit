@@ -1672,7 +1672,7 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 	    {
-	        SendAsync(options, message, sender, recipients, cancellationToken, progress).Wait(cancellationToken);
+	        SendAsync(options, message, sender, recipients, cancellationToken, progress).GetAwaiter().GetResult();
 	    }
 
 	    public override async Task SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients,

@@ -118,7 +118,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None).Result;
+							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing BODY failed: {0}", ex);
 							return;
@@ -155,7 +155,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None).Result;
+							envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
 							return;
@@ -206,7 +206,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None).Result;
+							envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
 							return;
@@ -235,7 +235,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None).Result;
+							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None).GetAwaiter ().GetResult ();
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
 							return;

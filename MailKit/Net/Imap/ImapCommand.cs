@@ -253,7 +253,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <value>The length.</value>
 		public long Length {
-			get { return GetLengthAsync().Result; }
+			get { return GetLengthAsync().GetAwaiter ().GetResult (); }
 		}
 
 		public async Task<long> GetLengthAsync()

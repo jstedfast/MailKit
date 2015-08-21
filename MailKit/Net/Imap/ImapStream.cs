@@ -459,7 +459,7 @@ namespace MailKit.Net.Imap {
 		/// An I/O error occurred.
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count) {
-			return Read (buffer, offset, count, CancellationToken.None).Result;
+			return Read (buffer, offset, count, CancellationToken.None).GetAwaiter ().GetResult ();
 		}
 
 		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken) {
