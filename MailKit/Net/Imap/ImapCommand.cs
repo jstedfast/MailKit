@@ -362,130 +362,123 @@ namespace MailKit.Net.Imap {
 		long totalSize, nwritten;
 		int current;
 
-        private ImapCommand() {}
+		private ImapCommand () { }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
-        /// </summary>
-        /// <remarks>
-        /// Creates a new <see cref="MailKit.Net.Imap.ImapCommand"/>.
-        /// </remarks>
-        /// <param name="engine">The IMAP engine that will be sending the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="folder">The IMAP folder that the command operates on.</param>
-        /// <param name="format">The command format.</param>
-        /// <param name="args">The command arguments.</param>
-        public static async Task<ImapCommand> CreateAsync(ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.Net.Imap.ImapCommand"/>.
+		/// </remarks>
+		/// <param name="engine">The IMAP engine that will be sending the command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="folder">The IMAP folder that the command operates on.</param>
+		/// <param name="format">The command format.</param>
+		/// <param name="args">The command arguments.</param>
+		public static async Task<ImapCommand> CreateAsync (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, string format, params object[] args)
 		{
-			return await CreateAsync(engine, cancellationToken, folder, FormatOptions.Default, format, args);
+			return await CreateAsync (engine, cancellationToken, folder, FormatOptions.Default, format, args);
 		}
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
-        /// </summary>
-        /// <remarks>
-        /// Creates a new <see cref="MailKit.Net.Imap.ImapCommand"/>.
-        /// </remarks>
-        /// <param name="engine">The IMAP engine that will be sending the command.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="folder">The IMAP folder that the command operates on.</param>
-        /// <param name="options">The formatting options.</param>
-        /// <param name="format">The command format.</param>
-        /// <param name="args">The command arguments.</param>
-        public static async Task<ImapCommand> CreateAsync(ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
-        {
-	        var command = new ImapCommand
-	        {
-                UntaggedHandlers = new Dictionary<string, ImapUntaggedHandler>(),
-                RespCodes = new List<ImapResponseCode>(),
-                CancellationToken = cancellationToken,
-                Response = ImapCommandResponse.None,
-                Status = ImapCommandStatus.Created,
-                Engine = engine,
-                Folder = folder
-            };
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapCommand"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="MailKit.Net.Imap.ImapCommand"/>.
+		/// </remarks>
+		/// <param name="engine">The IMAP engine that will be sending the command.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="folder">The IMAP folder that the command operates on.</param>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="format">The command format.</param>
+		/// <param name="args">The command arguments.</param>
+		public static async Task<ImapCommand> CreateAsync (ImapEngine engine, CancellationToken cancellationToken, ImapFolder folder, FormatOptions options, string format, params object[] args)
+		{
+			var command = new ImapCommand {
+				UntaggedHandlers = new Dictionary<string, ImapUntaggedHandler> (),
+				RespCodes = new List<ImapResponseCode> (),
+				CancellationToken = cancellationToken,
+				Response = ImapCommandResponse.None,
+				Status = ImapCommandStatus.Created,
+				Engine = engine,
+				Folder = folder
+			};
 
-            using (var builder = new MemoryStream())
-            {
-                var plus = (command.Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ? "+" : string.Empty;
-                int argc = 0;
-                byte[] buf;
-                string str;
-                char c;
+			using (var builder = new MemoryStream ()) {
+				var plus = (command.Engine.Capabilities & ImapCapabilities.LiteralPlus) != 0 ? "+" : string.Empty;
+				int argc = 0;
+				byte[] buf;
+				string str;
+				char c;
 
-                for (int i = 0; i < format.Length; i++)
-                {
-                    if (format[i] == '%')
-                    {
-                        switch (format[++i])
-                        {
-                            case '%': // a literal %
-                                builder.WriteByte((byte)'%');
-                                break;
-                            case 'c': // a character
-                                c = (char)args[argc++];
-                                builder.WriteByte((byte)c);
-                                break;
-                            case 'd': // an integer
-                                str = ((int)args[argc++]).ToString();
-                                buf = Encoding.ASCII.GetBytes(str);
-                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
-                                break;
-                            case 'u': // an unsigned integer
-                                str = ((uint)args[argc++]).ToString();
-                                buf = Encoding.ASCII.GetBytes(str);
-                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
-                                break;
-                            case 'F': // an ImapFolder
-                                var utf7 = ((ImapFolder)args[argc++]).EncodedName;
-                                command.AppendString(options, true, builder, utf7);
-                                break;
-                            case 'L':
-                                var literal = new ImapLiteral(options, args[argc++], command.UpdateProgress);
-                                var length = await literal.GetLengthAsync();
+				for (int i = 0; i < format.Length; i++) {
+					if (format[i] == '%') {
+						switch (format[++i]) {
+						case '%': // a literal %
+							builder.WriteByte ((byte)'%');
+							break;
+						case 'c': // a character
+							c = (char)args[argc++];
+							builder.WriteByte ((byte)c);
+							break;
+						case 'd': // an integer
+							str = ((int)args[argc++]).ToString ();
+							buf = Encoding.ASCII.GetBytes (str);
+							await builder.WriteAsync (buf, 0, buf.Length, cancellationToken);
+							break;
+						case 'u': // an unsigned integer
+							str = ((uint)args[argc++]).ToString ();
+							buf = Encoding.ASCII.GetBytes (str);
+							await builder.WriteAsync (buf, 0, buf.Length, cancellationToken);
+							break;
+						case 'F': // an ImapFolder
+							var utf7 = ((ImapFolder)args[argc++]).EncodedName;
+							command.AppendString (options, true, builder, utf7);
+							break;
+						case 'L':
+							var literal = new ImapLiteral (options, args[argc++], command.UpdateProgress);
+							var length = await literal.GetLengthAsync ();
 
-                                command.totalSize += length;
+							command.totalSize += length;
 
-                                if (options.International)
-                                    str = "UTF8 (~{" + length + plus + "}\r\n";
-                                else
-                                    str = "{" + length + plus + "}\r\n";
+							if (options.International)
+								str = "UTF8 (~{" + length + plus + "}\r\n";
+							else
+								str = "{" + length + plus + "}\r\n";
 
-                                buf = Encoding.ASCII.GetBytes(str);
-                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
+							buf = Encoding.ASCII.GetBytes (str);
+							await builder.WriteAsync (buf, 0, buf.Length, cancellationToken);
 
-                                command.parts.Add(new ImapCommandPart(builder.ToArray(), literal));
-                                builder.SetLength(0);
+							command.parts.Add (new ImapCommandPart (builder.ToArray (), literal));
+							builder.SetLength (0);
 
-                                if (options.International)
-                                    builder.WriteByte((byte)')');
-                                break;
-                            case 'S': // a string which may need to be quoted or made into a literal
-                                command.AppendString(options, true, builder, (string)args[argc++]);
-                                break;
-                            case 'Q': // similar to %S but string must be quoted at a minimum
-                                command.AppendString(options, false, builder, (string)args[argc++]);
-                                break;
-                            case 's': // a safe atom string
-                                buf = Encoding.ASCII.GetBytes((string)args[argc++]);
-                                await builder.WriteAsync(buf, 0, buf.Length, cancellationToken);
-                                break;
-                            default:
-                                throw new FormatException();
-                        }
-                    }
-                    else
-                    {
-                        builder.WriteByte((byte)format[i]);
-                    }
-                }
+							if (options.International)
+								builder.WriteByte ((byte)')');
+							break;
+						case 'S': // a string which may need to be quoted or made into a literal
+							command.AppendString (options, true, builder, (string)args[argc++]);
+							break;
+						case 'Q': // similar to %S but string must be quoted at a minimum
+							command.AppendString (options, false, builder, (string)args[argc++]);
+							break;
+						case 's': // a safe atom string
+							buf = Encoding.ASCII.GetBytes ((string)args[argc++]);
+							await builder.WriteAsync (buf, 0, buf.Length, cancellationToken);
+							break;
+						default:
+							throw new FormatException ();
+						}
+					} else {
+						builder.WriteByte ((byte)format[i]);
+					}
+				}
 
-                command.parts.Add(new ImapCommandPart(builder.ToArray(), null));
-            }
+				command.parts.Add (new ImapCommandPart (builder.ToArray (), null));
+			}
 
-	        return command;
-        }
+			return command;
+		}
 
-	    void UpdateProgress (int n)
+		void UpdateProgress (int n)
 		{
 			nwritten += n;
 

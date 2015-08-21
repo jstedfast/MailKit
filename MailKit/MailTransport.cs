@@ -54,54 +54,54 @@ namespace MailKit {
 		{
 		}
 
-	    /// <summary>
-	    /// Sends the specified message.
-	    /// </summary>
-	    /// <remarks>
-	    /// <para>Sends the specified message.</para>
-	    /// <para>The sender address is determined by checking the following
-	    /// message headers (in order of precedence): Resent-Sender,
-	    /// Resent-From, Sender, and From.</para>
-	    /// <para>If either the Resent-Sender or Resent-From addresses are present,
-	    /// the recipients are collected from the Resent-To, Resent-Cc, and
-	    /// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
-	    /// </remarks>
-	    /// <example>
-	    /// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
-	    /// </example>
-	    /// <param name="message">The message.</param>
-	    /// <param name="cancellationToken">The cancellation token.</param>
-	    /// <param name="progress">The progress reporting mechanism.</param>
-	    /// <exception cref="System.ArgumentNullException">
-	    /// <paramref name="message"/> is <c>null</c>.
-	    /// </exception>
-	    /// <exception cref="System.ObjectDisposedException">
-	    /// The <see cref="MailTransport"/> has been disposed.
-	    /// </exception>
-	    /// <exception cref="ServiceNotConnectedException">
-	    /// The <see cref="MailTransport"/> is not connected.
-	    /// </exception>
-	    /// <exception cref="ServiceNotAuthenticatedException">
-	    /// Authentication is required before sending a message.
-	    /// </exception>
-	    /// <exception cref="System.InvalidOperationException">
-	    /// <para>A sender has not been specified.</para>
-	    /// <para>-or-</para>
-	    /// <para>No recipients have been specified.</para>
-	    /// </exception>
-	    /// <exception cref="System.OperationCanceledException">
-	    /// The operation has been canceled.
-	    /// </exception>
-	    /// <exception cref="System.IO.IOException">
-	    /// An I/O error occurred.
-	    /// </exception>
-	    /// <exception cref="CommandException">
-	    /// The send command failed.
-	    /// </exception>
-	    /// <exception cref="ProtocolException">
-	    /// A protocol exception occurred.
-	    /// </exception>
-	    public virtual Task Send (MimeMessage message, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null)
+		/// <summary>
+		/// Sends the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
+		/// <param name="message">The message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="message"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailTransport"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>A sender has not been specified.</para>
+		/// <para>-or-</para>
+		/// <para>No recipients have been specified.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The send command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol exception occurred.
+		/// </exception>
+		public virtual Task Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Send (FormatOptions.Default, message, cancellationToken, progress);
 		}
@@ -264,63 +264,63 @@ namespace MailKit {
 			if (recipients == null)
 				throw new ArgumentNullException ("recipients");
 
-			return SyncRoot.StartAsync(() => SendAsync (message, sender, recipients, cancellationToken, progress));
+			return SyncRoot.StartAsync (() => SendAsync (message, sender, recipients, cancellationToken, progress));
 		}
 
-	    /// <summary>
-	    /// Sends the specified message.
-	    /// </summary>
-	    /// <remarks>
-	    /// <para>Sends the specified message.</para>
-	    /// <para>The sender address is determined by checking the following
-	    /// message headers (in order of precedence): Resent-Sender,
-	    /// Resent-From, Sender, and From.</para>
-	    /// <para>If either the Resent-Sender or Resent-From addresses are present,
-	    /// the recipients are collected from the Resent-To, Resent-Cc, and
-	    /// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
-	    /// </remarks>
-	    /// <example>
-	    /// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
-	    /// </example>
-	    /// <param name="options">The formatting options.</param>
-	    /// <param name="message">The message.</param>
-	    /// <param name="cancellationToken">The cancellation token.</param>
-	    /// <param name="progress">The progress reporting mechanism.</param>
-	    /// <exception cref="System.ArgumentNullException">
-	    /// <para><paramref name="options"/> is <c>null</c>.</para>
-	    /// <para>-or-</para>
-	    /// <para><paramref name="message"/> is <c>null</c>.</para>
-	    /// </exception>
-	    /// <exception cref="System.ObjectDisposedException">
-	    /// The <see cref="MailTransport"/> has been disposed.
-	    /// </exception>
-	    /// <exception cref="ServiceNotConnectedException">
-	    /// The <see cref="MailTransport"/> is not connected.
-	    /// </exception>
-	    /// <exception cref="ServiceNotAuthenticatedException">
-	    /// Authentication is required before sending a message.
-	    /// </exception>
-	    /// <exception cref="System.InvalidOperationException">
-	    /// <para>A sender has not been specified.</para>
-	    /// <para>-or-</para>
-	    /// <para>No recipients have been specified.</para>
-	    /// </exception>
-	    /// <exception cref="System.OperationCanceledException">
-	    /// The operation has been canceled.
-	    /// </exception>
-	    /// <exception cref="System.NotSupportedException">
-	    /// <para>Internationalized formatting was requested but is not supported by the transport.</para>
-	    /// </exception>
-	    /// <exception cref="System.IO.IOException">
-	    /// An I/O error occurred.
-	    /// </exception>
-	    /// <exception cref="CommandException">
-	    /// The send command failed.
-	    /// </exception>
-	    /// <exception cref="ProtocolException">
-	    /// A protocol exception occurred.
-	    /// </exception>
-	    public abstract Task Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+		/// <summary>
+		/// Sends the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessageWithOptions"/>
+		/// </example>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="options"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="message"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailTransport"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailTransport"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before sending a message.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// <para>A sender has not been specified.</para>
+		/// <para>-or-</para>
+		/// <para>No recipients have been specified.</para>
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// <para>Internationalized formatting was requested but is not supported by the transport.</para>
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The send command failed.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol exception occurred.
+		/// </exception>
+		public abstract Task Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously sends the specified message.

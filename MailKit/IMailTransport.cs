@@ -38,24 +38,23 @@ namespace MailKit {
 	/// <remarks>
 	/// An interface for sending messages.
 	/// </remarks>
-	public interface IMailTransport : IMailService
-	{
-	    /// <summary>
-	    /// Send the specified message.
-	    /// </summary>
-	    /// <remarks>
-	    /// <para>Sends the specified message.</para>
-	    /// <para>The sender address is determined by checking the following
-	    /// message headers (in order of precedence): Resent-Sender,
-	    /// Resent-From, Sender, and From.</para>
-	    /// <para>If either the Resent-Sender or Resent-From addresses are present,
-	    /// the recipients are collected from the Resent-To, Resent-Cc, and
-	    /// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
-	    /// </remarks>
-	    /// <param name="message">The message.</param>
-	    /// <param name="cancellationToken">The cancellation token.</param>
-	    /// <param name="progress">The progress reporting mechanism.</param>
-	    Task Send (MimeMessage message, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+	public interface IMailTransport : IMailService {
+		/// <summary>
+		/// Send the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+		/// </remarks>
+		/// <param name="message">The message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message.
@@ -102,23 +101,23 @@ namespace MailKit {
 		/// <param name="progress">The progress reporting mechanism.</param>
 		Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
-	    /// <summary>
-	    /// Send the specified message.
-	    /// </summary>
-	    /// <remarks>
-	    /// <para>Sends the specified message.</para>
-	    /// <para>The sender address is determined by checking the following
-	    /// message headers (in order of precedence): Resent-Sender,
-	    /// Resent-From, Sender, and From.</para>
-	    /// <para>If either the Resent-Sender or Resent-From addresses are present,
-	    /// the recipients are collected from the Resent-To, Resent-Cc, and
-	    /// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
-	    /// </remarks>
-	    /// <param name="options">The formatting options.</param>
-	    /// <param name="message">The message.</param>
-	    /// <param name="cancellationToken">The cancellation token.</param>
-	    /// <param name="progress">The progress reporting mechanism.</param>
-	    Task Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
+		/// <summary>
+		/// Send the specified message.
+		/// </summary>
+		/// <remarks>
+		/// <para>Sends the specified message.</para>
+		/// <para>The sender address is determined by checking the following
+		/// message headers (in order of precedence): Resent-Sender,
+		/// Resent-From, Sender, and From.</para>
+		/// <para>If either the Resent-Sender or Resent-From addresses are present,
+		/// the recipients are collected from the Resent-To, Resent-Cc, and
+		/// Resent-Bcc headers, otherwise the To, Cc, and Bcc headers are used.</para>
+		/// </remarks>
+		/// <param name="options">The formatting options.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <param name="progress">The progress reporting mechanism.</param>
+		Task Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message.

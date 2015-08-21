@@ -610,40 +610,40 @@ namespace MailKit.Net.Pop3 {
 			}
 		}
 
-	    /// <summary>
-	    /// Writes a sequence of bytes to the stream and advances the current
-	    /// position within this stream by the number of bytes written.
-	    /// </summary>
-	    /// <remarks>
-	    /// Writes a sequence of bytes to the stream and advances the current
-	    /// position within this stream by the number of bytes written.
-	    /// </remarks>
-	    /// <param name='buffer'>The buffer to write.</param>
-	    /// <param name='offset'>The offset of the first byte to write.</param>
-	    /// <param name='count'>The number of bytes to write.</param>
-	    /// <param name="cancellationToken">The cancellation token.</param>
-	    /// <exception cref="System.ArgumentNullException">
-	    /// <paramref name="buffer"/> is <c>null</c>.
-	    /// </exception>
-	    /// <exception cref="System.ArgumentOutOfRangeException">
-	    /// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
-	    /// <para>-or-</para>
-	    /// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
-	    /// at the specified <paramref name="offset"/>.</para>
-	    /// </exception>
-	    /// <exception cref="System.ObjectDisposedException">
-	    /// The stream has been disposed.
-	    /// </exception>
-	    /// <exception cref="System.NotSupportedException">
-	    /// The stream does not support writing.
-	    /// </exception>
-	    /// <exception cref="System.OperationCanceledException">
-	    /// The operation was canceled via the cancellation token.
-	    /// </exception>
-	    /// <exception cref="System.IO.IOException">
-	    /// An I/O error occurred.
-	    /// </exception>
-	    public async Task Write (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+		/// <summary>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </summary>
+		/// <remarks>
+		/// Writes a sequence of bytes to the stream and advances the current
+		/// position within this stream by the number of bytes written.
+		/// </remarks>
+		/// <param name='buffer'>The buffer to write.</param>
+		/// <param name='offset'>The offset of the first byte to write.</param>
+		/// <param name='count'>The number of bytes to write.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="buffer"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <para><paramref name="offset"/> is less than zero or greater than the length of <paramref name="buffer"/>.</para>
+		/// <para>-or-</para>
+		/// <para>The <paramref name="buffer"/> is not large enough to contain <paramref name="count"/> bytes strting
+		/// at the specified <paramref name="offset"/>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public async Task Write (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -722,36 +722,36 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-		    throw new NotSupportedException("Use WrtiteAsync.");
+			throw new NotSupportedException ("Use WrtiteAsync.");
 		}
 
-	    public override Task WriteAsync(Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
-	    {
-	        return Write(buffer, offset, count, cancellationToken);
-        }
+		public override Task WriteAsync (Byte[] buffer, Int32 offset, Int32 count, CancellationToken cancellationToken)
+		{
+			return Write (buffer, offset, count, cancellationToken);
+		}
 
-	    /// <summary>
-	    /// Clears all buffers for this stream and causes any buffered data to be written
-	    /// to the underlying device.
-	    /// </summary>
-	    /// <remarks>
-	    /// Clears all buffers for this stream and causes any buffered data to be written
-	    /// to the underlying device.
-	    /// </remarks>
-	    /// <param name="cancellationToken">The cancellation token.</param>
-	    /// <exception cref="System.ObjectDisposedException">
-	    /// The stream has been disposed.
-	    /// </exception>
-	    /// <exception cref="System.NotSupportedException">
-	    /// The stream does not support writing.
-	    /// </exception>
-	    /// <exception cref="System.OperationCanceledException">
-	    /// The operation was canceled via the cancellation token.
-	    /// </exception>
-	    /// <exception cref="System.IO.IOException">
-	    /// An I/O error occurred.
-	    /// </exception>
-	    public async Task Flush (CancellationToken cancellationToken)
+		/// <summary>
+		/// Clears all buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </summary>
+		/// <remarks>
+		/// Clears all buffers for this stream and causes any buffered data to be written
+		/// to the underlying device.
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The stream has been disposed.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The stream does not support writing.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		public async Task Flush (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 

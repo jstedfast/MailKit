@@ -36,8 +36,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by <see cref="MailKit.Net.Imap.ImapClient"/>.
 	/// </remarks>
-	public interface IMailStore : IMailService
-	{
+	public interface IMailStore : IMailService {
 		/// <summary>
 		/// Get the personal namespaces.
 		/// </summary>
@@ -84,48 +83,48 @@ namespace MailKit {
 		/// <value>The Inbox folder.</value>
 		IMailFolder Inbox { get; }
 
-	    /// <summary>
-	    /// Enable the quick resynchronization feature.
-	    /// </summary>
-	    /// <remarks>
-	    /// <para>Enables quick resynchronization when a folder is opened using the
-	    /// <see cref="IMailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
-	    /// method.</para>
-	    /// <para>If this feature is enabled, the <see cref="IMailFolder.MessageExpunged"/> event
-	    /// is replaced with the <see cref="IMailFolder.MessagesVanished"/> event.</para>
-	    /// <para>This method needs to be called immediately after
-	    /// <see cref="IMailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
-	    /// before the opening of any folders.</para>
-	    /// </remarks>
-	    /// <param name="cancellationToken">The cancellation token.</param>
-	    /// <exception cref="System.ObjectDisposedException">
-	    /// The <see cref="MailStore"/> has been disposed.
-	    /// </exception>
-	    /// <exception cref="ServiceNotConnectedException">
-	    /// The <see cref="IMailService"/> is not connected.
-	    /// </exception>
-	    /// <exception cref="ServiceNotAuthenticatedException">
-	    /// The <see cref="IMailService"/> is not authenticated.
-	    /// </exception>
-	    /// <exception cref="System.InvalidOperationException">
-	    /// Quick resynchronization needs to be enabled before selecting a folder.
-	    /// </exception>
-	    /// <exception cref="System.NotSupportedException">
-	    /// The mail store does not support quick resynchronization.
-	    /// </exception>
-	    /// <exception cref="System.OperationCanceledException">
-	    /// The operation was canceled via the cancellation token.
-	    /// </exception>
-	    /// <exception cref="System.IO.IOException">
-	    /// An I/O error occurred.
-	    /// </exception>
-	    /// <exception cref="ProtocolException">
-	    /// A protocol error occurred.
-	    /// </exception>
-	    /// <exception cref="CommandException">
-	    /// The command failed.
-	    /// </exception>
-	    Task EnableQuickResync (CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>
+		/// Enable the quick resynchronization feature.
+		/// </summary>
+		/// <remarks>
+		/// <para>Enables quick resynchronization when a folder is opened using the
+		/// <see cref="IMailFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
+		/// method.</para>
+		/// <para>If this feature is enabled, the <see cref="IMailFolder.MessageExpunged"/> event
+		/// is replaced with the <see cref="IMailFolder.MessagesVanished"/> event.</para>
+		/// <para>This method needs to be called immediately after
+		/// <see cref="IMailService.Authenticate(System.Net.ICredentials,System.Threading.CancellationToken)"/>,
+		/// before the opening of any folders.</para>
+		/// </remarks>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="IMailService"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="IMailService"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// Quick resynchronization needs to be enabled before selecting a folder.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The mail store does not support quick resynchronization.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		Task EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously enable the quick resynchronization feature.
