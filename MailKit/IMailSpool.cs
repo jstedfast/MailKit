@@ -39,7 +39,7 @@ namespace MailKit {
 	/// <remarks>
 	/// An interface for retreiving messages from a spool.
 	/// </remarks>
-	public interface IMailSpool : IMailService//, IEnumerable<MimeMessage>
+	public interface IMailSpool : IMailService
 	{
 		/// <summary>
 		/// Get the number of messages available in the message spool.

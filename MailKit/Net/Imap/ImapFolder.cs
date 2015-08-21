@@ -9330,39 +9330,5 @@ namespace MailKit.Net.Imap {
 		#endregion
 
 		#endregion
-
-		#region IEnumerable<MimeMessage> implementation
-
-		/// <summary>
-		/// Gets an enumerator for the messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets an enumerator for the messages in the folder.
-		/// </remarks>
-		/// <returns>The enumerator.</returns>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="ImapClient"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="ImapClient"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="ImapClient"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="ImapFolder"/> is not currently open.
-		/// </exception>
-//		public override IEnumerator<MimeMessage> GetEnumerator ()
-//		{
-//		    CheckState (true, false);
-//
-//		    var enumerator = new List<MimeMessage>();
-//		    for (int i = 0; i < Count; i++)
-//				enumerator.Add(GetMessage (i, CancellationToken.None));
-//
-//			return enumerator.GetEnumerator();
-//		}
-
-		#endregion
 	}
 }
