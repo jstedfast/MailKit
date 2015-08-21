@@ -36,8 +36,7 @@ namespace MailKit {
 	/// <remarks>
 	/// Implemented by <see cref="MailKit.Net.Imap.ImapClient"/>.
 	/// </remarks>
-	public interface IMailStore : IMailService
-	{
+	public interface IMailStore : IMailService {
 		/// <summary>
 		/// Get the personal namespaces.
 		/// </summary>
@@ -125,7 +124,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		void EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
+		Task EnableQuickResync (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously enable the quick resynchronization feature.
@@ -239,7 +238,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IEnumerable<IMailFolder>> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
@@ -307,7 +306,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
+		Task<IMailFolder> GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the folder for the specified path.

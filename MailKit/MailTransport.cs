@@ -101,9 +101,9 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public virtual void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			Send (FormatOptions.Default, message, cancellationToken, progress);
+			return Send (FormatOptions.Default, message, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -156,11 +156,7 @@ namespace MailKit {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Send (message, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => SendAsync (message, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -268,11 +264,7 @@ namespace MailKit {
 			if (recipients == null)
 				throw new ArgumentNullException ("recipients");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Send (message, sender, recipients, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => SendAsync (message, sender, recipients, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -328,7 +320,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol exception occurred.
 		/// </exception>
-		public abstract void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously sends the specified message.
@@ -389,11 +381,7 @@ namespace MailKit {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Send (options, message, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => SendAsync (options, message, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -513,11 +501,7 @@ namespace MailKit {
 			if (recipients == null)
 				throw new ArgumentNullException ("recipients");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Send (options, message, sender, recipients, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => SendAsync (options, message, sender, recipients, cancellationToken, progress));
 		}
 
 		/// <summary>

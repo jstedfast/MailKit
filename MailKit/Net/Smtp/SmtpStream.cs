@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Buffer = System.Buffer;
 
 #if NETFX_CORE
@@ -52,7 +53,7 @@ namespace MailKit.Net.Smtp {
 	/// <remarks>
 	/// A stream capable of reading SMTP server responses.
 	/// </remarks>
-	class SmtpStream : Stream, ICancellableStream
+	class SmtpStream : Stream
 	{
 		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
@@ -251,7 +252,7 @@ namespace MailKit.Net.Smtp {
 #endif
 		}
 
-		unsafe int ReadAhead (CancellationToken cancellationToken)
+	    async Task<int> ReadAhead (CancellationToken cancellationToken)
 		{
 			int left = inputEnd - inputIndex;
 			int start = inputStart;
@@ -296,11 +297,11 @@ namespace MailKit.Net.Smtp {
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					nread = Stream.Read (input, start, end - start);
+					nread = await Stream.ReadAsync (input, start, end - start, cancellationToken);
 				} else {
 					Poll (SelectMode.SelectRead, cancellationToken);
 
-					nread = Stream.Read (input, start, end - start);
+					nread = await Stream.ReadAsync (input, start, end - start, cancellationToken);
 				}
 
 				if (nread > 0) {
@@ -367,7 +368,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task<int> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -377,7 +378,7 @@ namespace MailKit.Net.Smtp {
 			int n;
 
 			if (length < count && length <= ReadAheadSize)
-				ReadAhead (cancellationToken);
+                await ReadAhead(cancellationToken);
 
 			length = inputEnd - inputIndex;
 			n = Math.Min (count, length);
@@ -418,10 +419,15 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			return Read (buffer, offset, count, CancellationToken.None);
-		}
+            return Read(buffer, offset, count, CancellationToken.None).GetAwaiter ().GetResult ();
+        }
 
-		static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
+	    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	    {
+            return Read(buffer, offset, count, cancellationToken);
+        }
+
+        static bool TryParseInt32 (byte[] text, ref int index, int endIndex, out int value)
 		{
 			int startIndex = index;
 
@@ -453,7 +459,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public SmtpResponse ReadResponse (CancellationToken cancellationToken)
+		public async Task<SmtpResponse> ReadResponse (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -465,7 +471,7 @@ namespace MailKit.Net.Smtp {
 
 				do {
 					if (memory.Length > 0 || inputIndex == inputEnd)
-						ReadAhead (cancellationToken);
+						await ReadAhead (cancellationToken);
 
 					complete = false;
 
@@ -521,19 +527,19 @@ namespace MailKit.Net.Smtp {
 
 				try {
 #if !NETFX_CORE
-					message = UTF8.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+					message = UTF8.GetString (memory.GetBuffer (), 0, (int)memory.Length);
 #else
 					message = UTF8.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				} catch (DecoderFallbackException) {
 #if !NETFX_CORE
-					message = Latin1.GetString (memory.GetBuffer (), 0, (int) memory.Length);
+					message = Latin1.GetString (memory.GetBuffer (), 0, (int)memory.Length);
 #else
 					message = Latin1.GetString (memory.ToArray (), 0, (int) memory.Length);
 #endif
 				}
 
-				return new SmtpResponse ((SmtpStatusCode) code, message);
+				return new SmtpResponse ((SmtpStatusCode)code, message);
 			}
 		}
 
@@ -570,7 +576,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -594,7 +600,7 @@ namespace MailKit.Net.Smtp {
 					if (outputIndex == BlockSize) {
 						// flush the output buffer
 						Poll (SelectMode.SelectWrite, cancellationToken);
-						Stream.Write (output, 0, BlockSize);
+						await Stream.WriteAsync (output, 0, BlockSize, cancellationToken);
 						logger.LogClient (output, 0, BlockSize);
 						outputIndex = 0;
 					}
@@ -603,7 +609,7 @@ namespace MailKit.Net.Smtp {
 						// write blocks of data to the stream without buffering
 						while (left >= BlockSize) {
 							Poll (SelectMode.SelectWrite, cancellationToken);
-							Stream.Write (buffer, index, BlockSize);
+							await Stream.WriteAsync(buffer, index, BlockSize, cancellationToken);
 							logger.LogClient (buffer, index, BlockSize);
 							index += BlockSize;
 							left -= BlockSize;
@@ -647,7 +653,12 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			Write (buffer, offset, count, CancellationToken.None);
+			Write (buffer, offset, count, CancellationToken.None).Wait ();
+		}
+
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return Write (buffer, offset, count, CancellationToken.None);
 		}
 
 		/// <summary>
@@ -671,7 +682,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public void Flush (CancellationToken cancellationToken)
+		public async Task Flush (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -680,8 +691,8 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				Poll (SelectMode.SelectWrite, cancellationToken);
-				Stream.Write (output, 0, outputIndex);
-				Stream.Flush ();
+				await Stream.WriteAsync (output, 0, outputIndex, cancellationToken);
+				await Stream.FlushAsync (cancellationToken);
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
 			} catch {
@@ -709,10 +720,15 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override void Flush ()
 		{
-			Flush (CancellationToken.None);
+			throw new NotSupportedException("Use FlushAsync.");
 		}
 
-		/// <summary>
+	    public override Task FlushAsync(CancellationToken cancellationToken)
+	    {
+	        return Flush(cancellationToken);
+	    }
+
+	    /// <summary>
 		/// Sets the position within the current stream.
 		/// </summary>
 		/// <returns>The new position within the stream.</returns>

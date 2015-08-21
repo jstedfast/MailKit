@@ -27,20 +27,20 @@
 using System;
 using System.IO;
 using System.Threading;
-
+using System.Threading.Tasks;
 using MimeKit.IO;
 
 namespace MailKit {
-	class ProgressStream : Stream, ICancellableStream
+	class ProgressStream : Stream
 	{
-		readonly ICancellableStream cancellable;
+		readonly Stream cancellable;
 
 		public ProgressStream (Stream source, Action<int> update)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
 
-			cancellable = source as ICancellableStream;
+			cancellable = source;
 			Source = source;
 			Update = update;
 		}
@@ -100,17 +100,12 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("count");
 		}
 
-		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task<int> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			int n;
 
-			if (cancellable != null) {
-				if ((n = cancellable.Read (buffer, offset, count, cancellationToken)) > 0)
-					Update (n);
-			} else {
-				if ((n = Source.Read (buffer, offset, count)) > 0)
-					Update (n);
-			}
+		    if ((n = await Source.ReadAsync (buffer, offset, count, cancellationToken)) > 0)
+			    Update (n);
 
 			return n;
 		}
@@ -125,12 +120,9 @@ namespace MailKit {
 			return n;
 		}
 
-		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			if (cancellable != null)
-				cancellable.Write (buffer, offset, count, cancellationToken);
-			else
-				Source.Write (buffer, offset, count);
+			await Source.WriteAsync (buffer, offset, count, cancellationToken);
 
 			if (count > 0)
 				Update (count);
@@ -149,12 +141,9 @@ namespace MailKit {
 			throw new NotSupportedException ("The stream does not support seeking.");
 		}
 
-		public void Flush (CancellationToken cancellationToken)
+		public async Task Flush (CancellationToken cancellationToken)
 		{
-			if (cancellable != null)
-				cancellable.Flush (cancellationToken);
-			else
-				Source.Flush ();
+			await Source.FlushAsync (cancellationToken);
 		}
 
 		public override void Flush ()

@@ -31,7 +31,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
+using MailKit.Net.Common;
 using MimeKit;
 using MimeKit.IO;
 
@@ -144,8 +145,8 @@ namespace MailKit.Net.Smtp {
 		/// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
 		/// </remarks>
 		/// <value>The lock object.</value>
-		public override object SyncRoot {
-			get { return this; }
+		public override EngineLock SyncRoot {
+			get { return this.SyncRoot; }
 		}
 
 		/// <summary>
@@ -301,16 +302,16 @@ namespace MailKit.Net.Smtp {
 		}
 #endif
 
-		void QueueCommand (SmtpCommand type, string command, CancellationToken cancellationToken)
+	    async Task QueueCommand (SmtpCommand type, string command, CancellationToken cancellationToken)
 		{
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
 
 			// Note: queued commands will be buffered by the stream
-			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
+			await Stream.Write (bytes, 0, bytes.Length, cancellationToken);
 			queued.Add (type);
 		}
 
-		void FlushCommandQueue (MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
+	    async Task FlushCommandQueue (MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken)
 		{
 			if (queued.Count == 0)
 				return;
@@ -321,13 +322,13 @@ namespace MailKit.Net.Smtp {
 				int rcpt = 0;
 
 				// Note: queued commands are buffered by the stream
-				Stream.Flush (cancellationToken);
+				await Stream.Flush (cancellationToken);
 
 				// Note: we need to read all responses from the server before we can process
 				// them in case any of them have any errors so that we can RSET the state.
 				try {
 					for (int i = 0; i < queued.Count; i++)
-						responses.Add (Stream.ReadResponse (cancellationToken));
+						responses.Add (await Stream.ReadResponse (cancellationToken));
 				} catch (Exception ex) {
 					// Note: save this exception for later (it may be related to
 					// an error response for a MAIL FROM or RCPT TO command).
@@ -352,17 +353,16 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		SmtpResponse SendCommand (string command, CancellationToken cancellationToken)
+	    async Task<SmtpResponse> SendCommand (string command, CancellationToken cancellationToken)
 		{
 			var bytes = Encoding.UTF8.GetBytes (command + "\r\n");
+            await Stream.Write(bytes, 0, bytes.Length, cancellationToken);
+            await Stream.Flush(cancellationToken);
 
-			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
-			Stream.Flush (cancellationToken);
-
-			return Stream.ReadResponse (cancellationToken);
+			return await Stream.ReadResponse (cancellationToken);
 		}
 
-		SmtpResponse SendEhlo (bool ehlo, CancellationToken cancellationToken)
+	    async Task<SmtpResponse> SendEhlo (bool ehlo, CancellationToken cancellationToken)
 		{
 			string command = ehlo ? "EHLO " : "HELO ";
 
@@ -401,14 +401,14 @@ namespace MailKit.Net.Smtp {
 				command += Stream.Socket.Information.LocalAddress.CanonicalName;
 #endif
 
-			return SendCommand (command, cancellationToken);
+			return await SendCommand (command, cancellationToken);
 		}
 
-		void Ehlo (CancellationToken cancellationToken)
+	    async Task Ehlo (CancellationToken cancellationToken)
 		{
 			SmtpResponse response;
 
-			response = SendEhlo (true, cancellationToken);
+			response = await SendEhlo (true, cancellationToken);
 
 			// Some SMTP servers do not accept an EHLO after authentication (despite the rfc saying it is required).
 			if (response.StatusCode == SmtpStatusCode.BadCommandSequence && capabilities != SmtpCapabilities.None)
@@ -416,7 +416,7 @@ namespace MailKit.Net.Smtp {
 
 			if (response.StatusCode != SmtpStatusCode.Ok) {
 				// Try sending HELO instead...
-				response = SendEhlo (false, cancellationToken);
+				response = await SendEhlo (false, cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 			} else {
@@ -524,7 +524,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override async Task Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
@@ -567,7 +567,7 @@ namespace MailKit.Net.Smtp {
 					command = string.Format ("AUTH {0}", authmech);
 				}
 
-				response = SendCommand (command, cancellationToken);
+				response = await SendCommand (command, cancellationToken);
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationMechanismTooWeak)
 					continue;
@@ -578,11 +578,11 @@ namespace MailKit.Net.Smtp {
 							throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 						challenge = sasl.Challenge (response.Response);
-						response = SendCommand (challenge, cancellationToken);
+						response = await SendCommand (challenge, cancellationToken);
 					}
 				} catch (SaslException ex) {
 					// reset the authentication state
-					response = SendCommand (string.Empty, cancellationToken);
+					response = await SendCommand (string.Empty, cancellationToken);
 					authException = ex;
 				}
 
@@ -592,7 +592,7 @@ namespace MailKit.Net.Smtp {
 					// state that clients SHOULD send EHLO again after authenticating.
 					// See https://github.com/jstedfast/MailKit/issues/162 for details.
 					if (host != "smtp.strato.de")
-						Ehlo (cancellationToken);
+						await Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
 					return;
@@ -605,7 +605,7 @@ namespace MailKit.Net.Smtp {
 			throw new NotSupportedException ("No compatible authentication mechanisms found.");
 		}
 
-		internal void ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
+		internal async Task ReplayConnect (string hostName, Stream replayStream, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			CheckDisposed ();
 
@@ -623,13 +623,13 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				// read the greeting
-				var response = Stream.ReadResponse (cancellationToken);
+				var response = await Stream.ReadResponse (cancellationToken);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 				// Send EHLO and get a list of supported extensions
-				Ehlo (cancellationToken);
+				await Ehlo (cancellationToken);
 
 				connected = true;
 			} catch {
@@ -746,7 +746,13 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return ConnectAsync (host, port, options, cancellationToken);
+		}
+
+		public async override Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto,
+			CancellationToken cancellationToken = new CancellationToken ())
 		{
 			if (host == null)
 				throw new ArgumentNullException ("host");
@@ -756,7 +762,7 @@ namespace MailKit.Net.Smtp {
 
 			if (port < 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port");
-			
+
 			CheckDisposed ();
 
 			if (IsConnected)
@@ -804,7 +810,7 @@ namespace MailKit.Net.Smtp {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				await ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -827,37 +833,40 @@ namespace MailKit.Net.Smtp {
 			stream = new DuplexStream (socket.InputStream.AsStreamForRead (0), socket.OutputStream.AsStreamForWrite (0));
 #endif
 
-			if (stream.CanTimeout) {
-				stream.WriteTimeout = timeout;
-				stream.ReadTimeout = timeout;
-			}
+            if (stream.CanTimeout)
+            {
+                stream.WriteTimeout = timeout;
+                stream.ReadTimeout = timeout;
+            }
 
-			ProtocolLogger.LogConnect (uri);
+            ProtocolLogger.LogConnect(uri);
 
-			Stream = new SmtpStream (stream, socket, ProtocolLogger);
+            Stream = new SmtpStream(stream, socket, ProtocolLogger);
 
-			try {
-				// read the greeting
-				response = Stream.ReadResponse (cancellationToken);
+            try
+            {
+                // read the greeting
+                response = await Stream.ReadResponse(cancellationToken);
 
-				if (response.StatusCode != SmtpStatusCode.ServiceReady)
-					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+                if (response.StatusCode != SmtpStatusCode.ServiceReady)
+                    throw new SmtpCommandException(SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-				// Send EHLO and get a list of supported extensions
-				Ehlo (cancellationToken);
+                // Send EHLO and get a list of supported extensions
+                await Ehlo(cancellationToken);
 
-				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
-					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
+                if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
+                    throw new NotSupportedException("The SMTP server does not support the STARTTLS extension.");
 
-				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = SendCommand ("STARTTLS", cancellationToken);
-					if (response.StatusCode != SmtpStatusCode.ServiceReady)
-						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+                if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0)
+                {
+                    response = await SendCommand("STARTTLS", cancellationToken);
+                    if (response.StatusCode != SmtpStatusCode.ServiceReady)
+                        throw new SmtpCommandException(SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 #if !NETFX_CORE
-					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
-					Stream.Stream = tls;
+                    var tls = new SslStream(stream, false, ValidateRemoteCertificate);
+                    await tls.AuthenticateAsClientAsync(host, ClientCertificates, SslProtocols, true);
+                    Stream.Stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
 						.AsTask (cancellationToken)
@@ -866,7 +875,7 @@ namespace MailKit.Net.Smtp {
 #endif
 
 					// Send EHLO again and get the new list of supported extensions
-					Ehlo (cancellationToken);
+					await Ehlo (cancellationToken);
 				}
 
 				connected = true;
@@ -947,7 +956,7 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
+		public async Task Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (socket == null)
 				throw new ArgumentNullException ("socket");
@@ -984,7 +993,7 @@ namespace MailKit.Net.Smtp {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
-				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				await ssl.AuthenticateAsClientAsync(host, ClientCertificates, SslProtocols, true);
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
@@ -1001,28 +1010,28 @@ namespace MailKit.Net.Smtp {
 
 			try {
 				// read the greeting
-				response = Stream.ReadResponse (cancellationToken);
+				response = await Stream.ReadResponse (cancellationToken);
 
 				if (response.StatusCode != SmtpStatusCode.ServiceReady)
 					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
-				// Send EHLO and get a list of supported extensions
-				Ehlo (cancellationToken);
+                // Send EHLO and get a list of supported extensions
+                await Ehlo(cancellationToken);
 
 				if (options == SecureSocketOptions.StartTls && (capabilities & SmtpCapabilities.StartTLS) == 0)
 					throw new NotSupportedException ("The SMTP server does not support the STARTTLS extension.");
 
 				if (starttls && (capabilities & SmtpCapabilities.StartTLS) != 0) {
-					response = SendCommand ("STARTTLS", cancellationToken);
+					response = await SendCommand("STARTTLS", cancellationToken);
 					if (response.StatusCode != SmtpStatusCode.ServiceReady)
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
-					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+					await tls.AuthenticateAsClientAsync(host, ClientCertificates, SslProtocols, true);
 					Stream.Stream = tls;
 
-					// Send EHLO again and get the new list of supported extensions
-					Ehlo (cancellationToken);
+                    // Send EHLO again and get the new list of supported extensions
+                    await Ehlo(cancellationToken);
 				}
 
 				connected = true;
@@ -1050,7 +1059,12 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="SmtpClient"/> has been disposed.
 		/// </exception>
-		public override void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		public override Task Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return DisconnectAsync (quit, cancellationToken);
+		}
+
+		public override async Task DisconnectAsync (bool quit, CancellationToken cancellationToken = new CancellationToken ())
 		{
 			CheckDisposed ();
 
@@ -1059,7 +1073,7 @@ namespace MailKit.Net.Smtp {
 
 			if (quit) {
 				try {
-					SendCommand ("QUIT", cancellationToken);
+					await SendCommand ("QUIT", cancellationToken);
 				} catch (OperationCanceledException) {
 				} catch (SmtpProtocolException) {
 				} catch (SmtpCommandException) {
@@ -1093,14 +1107,19 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol error occurred.
 		/// </exception>
-		public override void NoOp (CancellationToken cancellationToken = default (CancellationToken))
+		public override Task NoOp (CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return NoOpAsync (cancellationToken);
+		}
+
+		public override async Task NoOpAsync (CancellationToken cancellationToken = new CancellationToken ())
 		{
 			CheckDisposed ();
 
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
 
-			var response = SendCommand ("NOOP", cancellationToken);
+			var response = await SendCommand ("NOOP", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.Ok)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -1240,7 +1259,7 @@ namespace MailKit.Net.Smtp {
 			return null;
 		}
 
-		void MailFrom (MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
+	    async Task MailFrom (MimeMessage message, MailboxAddress mailbox, SmtpExtension extensions, CancellationToken cancellationToken)
 		{
 			var utf8 = (extensions & SmtpExtension.UTF8) != 0 ? " SMTPUTF8" : string.Empty;
 			var command = string.Format ("MAIL FROM:<{0}>{1}", mailbox.Address, utf8);
@@ -1260,11 +1279,11 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
-				QueueCommand (SmtpCommand.MailFrom, command, cancellationToken);
+				await QueueCommand (SmtpCommand.MailFrom, command, cancellationToken);
 				return;
 			}
 
-			ProcessMailFromResponse (SendCommand (command, cancellationToken), mailbox);
+			ProcessMailFromResponse (await SendCommand (command, cancellationToken), mailbox);
 		}
 
 		static void ProcessRcptToResponse (SmtpResponse response, MailboxAddress mailbox)
@@ -1321,7 +1340,7 @@ namespace MailKit.Net.Smtp {
 			return value.TrimEnd (',');
 		}
 
-		void RcptTo (MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
+	    async Task RcptTo (MimeMessage message, MailboxAddress mailbox, CancellationToken cancellationToken)
 		{
 			var command = string.Format ("RCPT TO:<{0}>", mailbox.Address);
 
@@ -1333,11 +1352,11 @@ namespace MailKit.Net.Smtp {
 			}
 
 			if ((capabilities & SmtpCapabilities.Pipelining) != 0) {
-				QueueCommand (SmtpCommand.RcptTo, command, cancellationToken);
+				await QueueCommand (SmtpCommand.RcptTo, command, cancellationToken);
 				return;
 			}
 
-			ProcessRcptToResponse (SendCommand (command, cancellationToken), mailbox);
+			ProcessRcptToResponse (await SendCommand (command, cancellationToken), mailbox);
 		}
 
 		class SendContext
@@ -1363,32 +1382,32 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void Bdat (FormatOptions options, MimeMessage message, CancellationToken cancellationToken, ITransferProgress progress)
+	    async Task Bdat (FormatOptions options, MimeMessage message, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			long size;
 
 			using (var measure = new MeasuringStream ()) {
-				message.WriteTo (options, measure, cancellationToken);
+				await message.WriteTo (options, measure, cancellationToken);
 				size = measure.Length;
 			}
 
 			var bytes = Encoding.UTF8.GetBytes (string.Format ("BDAT {0} LAST\r\n", size));
 
-			Stream.Write (bytes, 0, bytes.Length, cancellationToken);
+			await Stream.Write (bytes, 0, bytes.Length, cancellationToken);
 
 			if (progress != null) {
 				var ctx = new SendContext (progress, size);
 
 				using (var stream = new ProgressStream (Stream, ctx.Update)) {
-					message.WriteTo (options, stream, cancellationToken);
-					stream.Flush (cancellationToken);
+                    await message.WriteTo (options, stream, cancellationToken);
+					await stream.Flush (cancellationToken);
 				}
 			} else {
-				message.WriteTo (options, Stream, cancellationToken);
-				Stream.Flush (cancellationToken);
+                await message.WriteTo (options, Stream, cancellationToken);
+				await Stream.Flush (cancellationToken);
 			}
 
-			var response = Stream.ReadResponse (cancellationToken);
+			var response = await Stream.ReadResponse (cancellationToken);
 
 			switch (response.StatusCode) {
 			default:
@@ -1401,9 +1420,9 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void Data (FormatOptions options, MimeMessage message, CancellationToken cancellationToken, ITransferProgress progress)
+	    async Task Data (FormatOptions options, MimeMessage message, CancellationToken cancellationToken, ITransferProgress progress)
 		{
-			var response = SendCommand ("DATA", cancellationToken);
+			var response = await SendCommand ("DATA", cancellationToken);
 
 			if (response.StatusCode != SmtpStatusCode.StartMailInput)
 				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
@@ -1415,23 +1434,23 @@ namespace MailKit.Net.Smtp {
 					using (var filtered = new FilteredStream (stream)) {
 						filtered.Add (new SmtpDataFilter ());
 
-						message.WriteTo (options, filtered, cancellationToken);
-						filtered.Flush ();
+						await message.WriteTo (options, filtered, cancellationToken);
+						await filtered.FlushAsync(cancellationToken);
 					}
 				}
 			} else {
 				using (var filtered = new FilteredStream (Stream)) {
 					filtered.Add (new SmtpDataFilter ());
 
-					message.WriteTo (options, filtered, cancellationToken);
-					filtered.Flush ();
+					await message.WriteTo (options, filtered, cancellationToken);
+					await filtered.FlushAsync(cancellationToken);
 				}
 			}
 
-			Stream.Write (EndData, 0, EndData.Length, cancellationToken);
-			Stream.Flush (cancellationToken);
+			await Stream.Write (EndData, 0, EndData.Length, cancellationToken);
+			await Stream.Flush (cancellationToken);
 
-			response = Stream.ReadResponse (cancellationToken);
+			response = await Stream.ReadResponse (cancellationToken);
 
 			switch (response.StatusCode) {
 			default:
@@ -1444,20 +1463,20 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
-		void Reset (CancellationToken cancellationToken)
+	    async Task Reset (CancellationToken cancellationToken)
 		{
 			try {
-				var response = SendCommand ("RSET", cancellationToken);
+				var response = await SendCommand ("RSET", cancellationToken);
 				if (response.StatusCode != SmtpStatusCode.Ok)
-					Disconnect (false, cancellationToken);
+					await DisconnectAsync(false, cancellationToken);
 			} catch (SmtpCommandException) {
 				// do not disconnect
 			} catch {
-				Disconnect ();
+				Disconnect();
 			}
 		}
 
-		void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
+	    async Task Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IList<MailboxAddress> recipients, CancellationToken cancellationToken, ITransferProgress progress)
 		{
 			CheckDisposed ();
 
@@ -1497,28 +1516,28 @@ namespace MailKit.Net.Smtp {
 			try {
 				// Note: if PIPELINING is supported, MailFrom() and RcptTo() will
 				// queue their commands instead of sending them immediately.
-				MailFrom (message, sender, extensions, cancellationToken);
+				await MailFrom (message, sender, extensions, cancellationToken);
 
 				var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 				foreach (var recipient in recipients) {
 					if (unique.Add (recipient.Address))
-						RcptTo (message, recipient, cancellationToken);
+						await RcptTo (message, recipient, cancellationToken);
 				}
 
 				// Note: if PIPELINING is supported, this will flush all outstanding
 				// MAIL FROM and RCPT TO commands to the server and then process all
 				// of their responses.
-				FlushCommandQueue (sender, recipients, cancellationToken);
+				await FlushCommandQueue (sender, recipients, cancellationToken);
 
 				if ((extensions & SmtpExtension.BinaryMime) != 0)
-					Bdat (format, message, cancellationToken, progress);
+					await Bdat (format, message, cancellationToken, progress);
 				else
-					Data (format, message, cancellationToken, progress);
+					await Data (format, message, cancellationToken, progress);
 			} catch (ServiceNotAuthenticatedException) {
 				// do not disconnect
 				throw;
 			} catch (SmtpCommandException) {
-				Reset (cancellationToken);
+				await Reset (cancellationToken);
 				throw;
 			} catch {
 				Disconnect ();
@@ -1579,7 +1598,13 @@ namespace MailKit.Net.Smtp {
 		/// <exception cref="SmtpProtocolException">
 		/// An SMTP protocol exception occurred.
 		/// </exception>
-		public override void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public override Task Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		{
+			return SendAsync (options, message, cancellationToken, progress);
+		}
+
+		public override async Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = new CancellationToken (),
+			ITransferProgress progress = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException ("message");
@@ -1592,8 +1617,7 @@ namespace MailKit.Net.Smtp {
 
 			if (recipients.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
-
-			Send (options, message, sender, recipients, cancellationToken, progress);
+			await Send (options, message, sender, recipients, cancellationToken, progress);
 		}
 
 		/// <summary>
@@ -1647,28 +1671,34 @@ namespace MailKit.Net.Smtp {
 		/// An SMTP protocol exception occurred.
 		/// </exception>
 		public override void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-		{
-			if (options == null)
-				throw new ArgumentNullException ("options");
+	    {
+	        SendAsync(options, message, sender, recipients, cancellationToken, progress).GetAwaiter().GetResult();
+	    }
 
-			if (message == null)
-				throw new ArgumentNullException ("message");
+	    public override async Task SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients,
+	        CancellationToken cancellationToken = new CancellationToken(), ITransferProgress progress = null)
+	    {
+            if (options == null)
+                throw new ArgumentNullException("options");
 
-			if (sender == null)
-				throw new ArgumentNullException ("sender");
+            if (message == null)
+                throw new ArgumentNullException("message");
 
-			if (recipients == null)
-				throw new ArgumentNullException ("recipients");
+            if (sender == null)
+                throw new ArgumentNullException("sender");
 
-			var rcpts = recipients.ToList ();
+            if (recipients == null)
+                throw new ArgumentNullException("recipients");
 
-			if (rcpts.Count == 0)
-				throw new InvalidOperationException ("No recipients have been specified.");
+            var rcpts = recipients.ToList();
 
-			Send (options, message, sender, rcpts, cancellationToken, progress);
-		}
+            if (rcpts.Count == 0)
+                throw new InvalidOperationException("No recipients have been specified.");
 
-		#endregion
+            await Send(options, message, sender, rcpts, cancellationToken, progress);
+        }
+
+	    #endregion
 
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="SmtpClient"/> and

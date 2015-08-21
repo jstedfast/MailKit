@@ -100,7 +100,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -128,7 +128,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -148,7 +148,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials);
+					client.Authenticate (credentials).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -159,7 +159,7 @@ namespace UnitTests.Net.Imap {
 					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."
 				};
 
-				implementation = client.Identify (implementation);
+				implementation = client.Identify (implementation).GetAwaiter ().GetResult ();
 				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
 				Assert.AreEqual ("GImap", implementation.Name);
 				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
@@ -173,7 +173,7 @@ namespace UnitTests.Net.Imap {
 				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
 				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
 
-				var quota = inbox.GetQuota ();
+				var quota = inbox.GetQuota ().GetAwaiter ().GetResult ();
 				Assert.IsNotNull (quota, "Expected a non-null GETQUOTAROOT response.");
 				Assert.AreEqual (personal.FullName, quota.QuotaRoot.FullName);
 				Assert.AreEqual (personal, quota.QuotaRoot);
@@ -182,7 +182,7 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (quota.CurrentMessageCount.HasValue);
 				Assert.IsFalse (quota.MessageLimit.HasValue);
 
-				client.Disconnect (false);
+				client.Disconnect (false).GetAwaiter ().GetResult ();
 			}
 		}
 
@@ -268,7 +268,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter().GetResult();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -288,7 +288,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials);
+					client.Authenticate (credentials).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -313,12 +313,12 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = personal.GetSubfolders ().ToList ();
+				var folders = personal.GetSubfolders ().GetAwaiter ().GetResult ().ToList ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
-				var created = personal.Create ("UnitTests", true);
+				var created = personal.Create ("UnitTests", true).GetAwaiter ().GetResult ();
 				Assert.IsNotNull (created, "Expected a non-null created folder.");
 				Assert.AreEqual (FolderAttributes.HasNoChildren, created.Attributes);
 
@@ -335,17 +335,17 @@ namespace UnitTests.Net.Imap {
 					using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
 						var message = MimeMessage.Load (stream);
 
-						var uid = created.Append (message, MessageFlags.Seen);
+						var uid = created.Append (message, MessageFlags.Seen).GetAwaiter ().GetResult ();
 						Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
 						Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
 					}
 				}
 
 				var query = SearchQuery.ToContains ("nsb").Or (SearchQuery.CcContains ("nsb"));
-				var matches = created.Search (query);
+				var matches = created.Search (query).GetAwaiter ().GetResult ();
 
 				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId;
-				var summaries = created.Fetch (matches, items);
+				var summaries = created.Fetch (matches, items).GetAwaiter ().GetResult ();
 
 				foreach (var summary in summaries) {
 					if (summary.UniqueId.IsValid)
@@ -364,13 +364,13 @@ namespace UnitTests.Net.Imap {
 				created.Subscribe ();
 				Assert.IsTrue (created.IsSubscribed, "Expected IsSubscribed to be true after subscribing to the folder.");
 
-				var subscribed = personal.GetSubfolders (true).ToList ();
+				var subscribed = personal.GetSubfolders (true).GetAwaiter ().GetResult ().ToList ();
 				Assert.IsTrue (subscribed.Contains (created), "Expected the list of subscribed folders to contain the UnitTests folder.");
 
 				created.Unsubscribe ();
 				Assert.IsFalse (created.IsSubscribed, "Expected IsSubscribed to be false after unsubscribing from the folder.");
 
-				var dummy = created.Create ("Dummy", true);
+				var dummy = created.Create ("Dummy", true).GetAwaiter ().GetResult ();
 				bool dummyRenamed = false;
 				bool renamed = false;
 
@@ -385,9 +385,9 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("RenamedUnitTests/Dummy", dummy.FullName);
 				Assert.IsTrue (dummyRenamed, "Expected the Rename event to be emitted for the UnitTests/Dummy folder.");
 
-				created.Delete (CancellationToken.None);
+				created.Delete (CancellationToken.None).GetAwaiter ().GetResult ();
 
-				client.Disconnect (true);
+				client.Disconnect (true).GetAwaiter ().GetResult ();
 			}
 		}
 
@@ -411,7 +411,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -431,7 +431,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials);
+					client.Authenticate (credentials).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -456,7 +456,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// GETACL INBOX
-				var acl = client.Inbox.GetAccessControlList ();
+				var acl = client.Inbox.GetAccessControlList ().GetAwaiter ().GetResult ();
 				Assert.AreEqual (2, acl.Count, "The number of access controls does not match.");
 				Assert.AreEqual ("Fred", acl[0].Name, "The identifier for the first access control does not match.");
 				Assert.AreEqual ("rwipslxetad", acl[0].Rights.ToString (), "The access rights for the first access control does not match.");
@@ -464,11 +464,11 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("lrswi", acl[1].Rights.ToString (), "The access rights for the second access control does not match.");
 
 				// LISTRIGHTS INBOX smith
-				var rights = client.Inbox.GetAccessRights ("smith");
+				var rights = client.Inbox.GetAccessRights ("smith").GetAwaiter ().GetResult ();
 				Assert.AreEqual ("lrswipkxtecda0123456789", rights.ToString (), "The access rights do not match for user smith.");
 
 				// MYRIGHTS INBOX
-				rights = client.Inbox.GetMyAccessRights ();
+				rights = client.Inbox.GetMyAccessRights ().GetAwaiter ().GetResult ();
 				Assert.AreEqual ("rwiptsldaex", rights.ToString (), "My access rights do not match.");
 
 				// SETACL INBOX smith +lrswida
@@ -483,7 +483,7 @@ namespace UnitTests.Net.Imap {
 				// DELETEACL INBOX smith
 				client.Inbox.RemoveAccess ("smith");
 
-				client.Disconnect (false);
+				client.Disconnect (false).GetAwaiter ().GetResult ();
 			}
 		}
 
@@ -503,7 +503,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -523,7 +523,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials);
+					client.Authenticate (credentials).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -548,19 +548,19 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = personal.GetSubfolders ().ToList ();
+				var folders = personal.GetSubfolders ().GetAwaiter ().GetResult ().ToList ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
-				client.Inbox.Open (FolderAccess.ReadOnly);
+				client.Inbox.Open (FolderAccess.ReadOnly).GetAwaiter ().GetResult ();
 
-				var message = client.Inbox.GetMessage (269);
+				var message = client.Inbox.GetMessage (269).GetAwaiter ().GetResult ();
 
 				using (var jpeg = new MemoryStream ()) {
 					var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-					attachment.ContentObject.DecodeTo (jpeg);
+					attachment.ContentObject.DecodeTo (jpeg).GetAwaiter ().GetResult ();
 					jpeg.Position = 0;
 
 					using (var md5 = new MD5CryptoServiceProvider ()) {
@@ -570,7 +570,7 @@ namespace UnitTests.Net.Imap {
 					}
 				}
 
-				client.Disconnect (false);
+				client.Disconnect (false).GetAwaiter ().GetResult ();
 			}
 		}
 		
@@ -591,7 +591,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -604,7 +604,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials);
+					client.Authenticate (credentials).GetAwaiter ().GetResult ();
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -617,7 +617,7 @@ namespace UnitTests.Net.Imap {
 					count = client.Inbox.Count;
 				};
 				
-				client.NoOp ();
+				client.NoOp ().GetAwaiter ().GetResult ();
 				
 				Assert.AreEqual (1, count, "Count is not correct");
 			}

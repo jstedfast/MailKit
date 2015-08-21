@@ -30,7 +30,8 @@ using System.Threading;
 using System.Collections;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
+using MailKit.Net.Common;
+using MailKit.Net.Imap;
 using MimeKit;
 
 using MailKit.Search;
@@ -74,7 +75,7 @@ namespace MailKit {
 		/// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
 		/// </remarks>
 		/// <value>The sync root.</value>
-		public abstract object SyncRoot {
+		public abstract EngineLock SyncRoot {
 			get;
 		}
 
@@ -372,7 +373,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderAccess Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderAccess> Open (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously opens the folder using the requested folder access.
@@ -424,7 +425,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
@@ -435,11 +436,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Open (access, uidValidity, highestModSeq, uids, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return await SyncRoot.StartAsync(async () => await Open(access, uidValidity, highestModSeq, uids, cancellationToken));
 		}
 
 		/// <summary>
@@ -478,7 +475,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderAccess> Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously open the folder using the requested folder access.
@@ -516,16 +513,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
 				throw new ArgumentOutOfRangeException ("access");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Open (access, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return await SyncRoot.StartAsync(async () => await Open(access, cancellationToken));
 		}
 
 		/// <summary>
@@ -560,7 +553,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Close (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Close (bool expunge = false, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously close the folder, optionally expunging the messages marked for deletion.
@@ -597,11 +590,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task CloseAsync (bool expunge = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Close (expunge, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return SyncRoot.StartAsync(async () => await Close(expunge, cancellationToken));
 		}
 
 		/// <summary>
@@ -644,7 +633,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IMailFolder> Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously create a new subfolder with the given name.
@@ -686,7 +675,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
@@ -694,11 +683,7 @@ namespace MailKit {
 			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
 				throw new ArgumentException ("The name is not a legal folder name.", "name");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Create (name, isMessageFolder, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return await SyncRoot.StartAsync (async () => await Create (name, isMessageFolder, cancellationToken));
 		}
 
 		/// <summary>
@@ -747,7 +732,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously rename the folder.
@@ -796,7 +781,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (parent == null)
 				throw new ArgumentNullException ("parent");
@@ -810,11 +795,8 @@ namespace MailKit {
 			if (IsNamespace)
 				throw new InvalidOperationException ("Cannot rename this folder.");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Rename (parent, name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            await SyncRoot.StartAsync(() => Rename (parent, name, cancellationToken));
+			
 		}
 
 		/// <summary>
@@ -851,7 +833,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Delete (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Delete (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously delete the folder.
@@ -888,16 +870,13 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task DeleteAsync (CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task DeleteAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (IsNamespace)
 				throw new InvalidOperationException ("Cannot delete this folder.");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Delete (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            await SyncRoot.StartAsync(() => Delete (cancellationToken));
+			
 		}
 
 		/// <summary>
@@ -928,7 +907,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Subscribe (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Subscribe (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously subscribe to the folder.
@@ -961,11 +940,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task SubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Subscribe (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return SyncRoot.StartAsync(() => Subscribe(cancellationToken));
 		}
 
 		/// <summary>
@@ -996,7 +971,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Unsubscribe (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Unsubscribe (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously unsubscribe from the folder.
@@ -1029,11 +1004,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task UnsubscribeAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Unsubscribe (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return SyncRoot.StartAsync(() => Unsubscribe(cancellationToken));
 		}
 
 		/// <summary>
@@ -1066,7 +1037,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IEnumerable<IMailFolder> GetSubfolders (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IEnumerable<IMailFolder>> GetSubfolders (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the subfolders.
@@ -1100,11 +1071,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<IEnumerable<IMailFolder>> GetSubfoldersAsync (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetSubfolders (subscribedOnly, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return SyncRoot.StartAsync(() => GetSubfolders(subscribedOnly, cancellationToken));
 		}
 
 		/// <summary>
@@ -1146,7 +1113,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IMailFolder> GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the specified subfolder.
@@ -1195,11 +1162,7 @@ namespace MailKit {
 			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
 				throw new ArgumentException ("The name of the subfolder is invalid.", "name");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetSubfolder (name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetSubfolder(name, cancellationToken));
 		}
 
 		/// <summary>
@@ -1233,7 +1196,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Check (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Check (CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously force the server to flush its state for the folder.
@@ -1269,11 +1232,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task CheckAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Check (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Check (cancellationToken));
 		}
 
 		/// <summary>
@@ -1318,7 +1277,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Status (StatusItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously update the values of the specified items.
@@ -1362,11 +1321,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task StatusAsync (StatusItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Status (items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Status(items, cancellationToken));
 		}
 
 		/// <summary>
@@ -1401,7 +1356,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract AccessControlList GetAccessControlList (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<AccessControlList> GetAccessControlList (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the complete access control list for the folder.
@@ -1437,11 +1392,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<AccessControlList> GetAccessControlListAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetAccessControlList (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetAccessControlList(cancellationToken));
 		}
 
 		/// <summary>
@@ -1480,7 +1431,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<AccessRights> GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the access rights for a particular identifier.
@@ -1523,11 +1474,7 @@ namespace MailKit {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetAccessRights (name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetAccessRights(name, cancellationToken));
 		}
 
 		/// <summary>
@@ -1562,7 +1509,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract AccessRights GetMyAccessRights (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<AccessRights> GetMyAccessRights (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the access rights for the current authenticated user.
@@ -1598,11 +1545,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<AccessRights> GetMyAccessRightsAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetMyAccessRights (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => GetMyAccessRights (cancellationToken));
 		}
 
 		/// <summary>
@@ -1643,7 +1586,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add access rights for the specified identity.
@@ -1692,11 +1635,7 @@ namespace MailKit {
 			if (rights == null)
 				throw new ArgumentNullException ("rights");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddAccessRights (name, rights, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => AddAccessRights (name, rights, cancellationToken));
 		}
 
 		/// <summary>
@@ -1737,7 +1676,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove access rights for the specified identity.
@@ -1786,11 +1725,7 @@ namespace MailKit {
 			if (rights == null)
 				throw new ArgumentNullException ("rights");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveAccessRights (name, rights, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => RemoveAccessRights (name, rights, cancellationToken));
 		}
 
 		/// <summary>
@@ -1831,7 +1766,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the access rights for the specified identity.
@@ -1880,11 +1815,7 @@ namespace MailKit {
 			if (rights == null)
 				throw new ArgumentNullException ("rights");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetAccessRights (name, rights, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => SetAccessRights (name, rights, cancellationToken));
 		}
 
 		/// <summary>
@@ -1922,7 +1853,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove all access rights for the given identity.
@@ -1965,11 +1896,7 @@ namespace MailKit {
 			if (name == null)
 				throw new ArgumentNullException ("name");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveAccess (name, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => RemoveAccess(name, cancellationToken));
 		}
 
 		/// <summary>
@@ -2006,7 +1933,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderQuota GetQuota (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderQuota> GetQuota (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously get the quota information for the folder.
@@ -2044,11 +1971,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<FolderQuota> GetQuotaAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetQuota (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetQuota(cancellationToken));
 		}
 
 		/// <summary>
@@ -2087,7 +2010,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract FolderQuota SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<FolderQuota> SetQuota (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the quota limits for the folder.
@@ -2127,11 +2050,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<FolderQuota> SetQuotaAsync (uint? messageLimit, uint? storageLimit, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetQuota (messageLimit, storageLimit, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => SetQuota (messageLimit, storageLimit, cancellationToken));
 		}
 
 		/// <summary>
@@ -2171,7 +2090,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Expunge (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Expunge (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously expunge the folder, permanently removing all messages marked for deletion.
@@ -2213,11 +2132,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task ExpungeAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Expunge (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Expunge (cancellationToken));
 		}
 
 		/// <summary>
@@ -2266,7 +2181,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract void Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Expunge (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously expunge the specified uids, permanently removing them from the folder.
@@ -2323,11 +2238,7 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Expunge (uids, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Expunge (uids, cancellationToken));
 		}
 
 		/// <summary>
@@ -2368,7 +2279,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<UniqueId?> Append (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Append (FormatOptions.Default, message, flags, cancellationToken, progress);
 		}
@@ -2416,11 +2327,7 @@ namespace MailKit {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (message, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Append (message, flags, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -2462,7 +2369,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<UniqueId?> Append (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Append (FormatOptions.Default, message, flags, date, cancellationToken, progress);
 		}
@@ -2511,11 +2418,7 @@ namespace MailKit {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (message, flags, date, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Append(message, flags, date, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -2565,7 +2468,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<UniqueId?> Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -2622,11 +2525,7 @@ namespace MailKit {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, message, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Append(options, message, flags, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -2677,7 +2576,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<UniqueId?> Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified message to the folder.
@@ -2735,11 +2634,7 @@ namespace MailKit {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, message, flags, date, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Append (options, message, flags, date, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -2787,7 +2682,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<IList<UniqueId>> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Append (FormatOptions.Default, messages, flags, cancellationToken, progress);
 		}
@@ -2853,11 +2748,11 @@ namespace MailKit {
 			if (messages.Count != flags.Count)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (messages, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+
+			return SyncRoot.StartAsync (() => {
+				return Append (messages, flags, cancellationToken, progress);
+			});
+
 		}
 
 		/// <summary>
@@ -2908,7 +2803,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual IList<UniqueId> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+		public virtual Task<IList<UniqueId>> Append (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			return Append (FormatOptions.Default, messages, flags, dates, cancellationToken, progress);
 		}
@@ -2980,11 +2875,7 @@ namespace MailKit {
 			if (messages.Count != flags.Count || messages.Count != dates.Count)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (messages, flags, dates, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Append (messages, flags, dates, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -3041,7 +2932,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<UniqueId>> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -3116,11 +3007,7 @@ namespace MailKit {
 			if (messages.Count != flags.Count)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, messages, flags, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Append(options, messages, flags, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -3180,7 +3067,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<IList<UniqueId>> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously append the specified messages to the folder.
@@ -3261,11 +3148,7 @@ namespace MailKit {
 			if (messages.Count != flags.Count || messages.Count != dates.Count)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Append (options, messages, flags, dates, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Append (options, messages, flags, dates, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -3313,12 +3196,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<UniqueId?> CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			var uids = CopyTo (new [] { uid }, destination, cancellationToken);
+			var uids = await CopyTo (new[] { uid }, destination, cancellationToken);
 
 			if (uids != null && uids.Count > 0)
 				return uids[0];
@@ -3376,11 +3259,7 @@ namespace MailKit {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return CopyTo (uid, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => CopyTo (uid, destination, cancellationToken));
 		}
 
 		/// <summary>
@@ -3413,7 +3292,7 @@ namespace MailKit {
 		/// The <see cref="IMailStore"/> is not authenticated.
 		/// </exception>
 		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
+		/// The folder is not currently open in read-write mode.
 		/// </exception>
 		/// <exception cref="System.NotSupportedException">
 		/// The mail store does not support the UIDPLUS extension.
@@ -3430,7 +3309,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<UniqueId>> CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -3492,11 +3371,11 @@ namespace MailKit {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return CopyTo (uids, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+
+			return SyncRoot.StartAsync (() => {
+				return CopyTo (uids, destination, cancellationToken);
+			});
+
 		}
 
 		/// <summary>
@@ -3544,12 +3423,12 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual UniqueId? MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual async Task<UniqueId?> MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			var uids = MoveTo (new [] { uid }, destination, cancellationToken);
+			var uids = await MoveTo (new[] { uid }, destination, cancellationToken);
 
 			if (uids != null && uids.Count > 0)
 				return uids[0];
@@ -3607,11 +3486,7 @@ namespace MailKit {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return MoveTo (uid, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => MoveTo (uid, destination, cancellationToken));
 		}
 
 		/// <summary>
@@ -3663,7 +3538,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<UniqueId>> MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -3725,11 +3600,7 @@ namespace MailKit {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return MoveTo (uids, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => MoveTo(uids, destination, cancellationToken));
 		}
 
 		/// <summary>
@@ -3839,52 +3710,52 @@ namespace MailKit {
 			return CopyToAsync (new [] { index }, destination, cancellationToken);
 		}
 
-		/// <summary>
-		/// Copy the specified messages to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Copies the specified messages to the destination folder.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages to copy.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Copy the specified messages to the destination folder.
+	    /// </summary>
+	    /// <remarks>
+	    /// Copies the specified messages to the destination folder.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages to copy.</param>
+	    /// <param name="destination">The destination folder.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="destination"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task CopyTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -3940,11 +3811,7 @@ namespace MailKit {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					CopyTo (indexes, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => CopyTo(indexes, destination, cancellationToken));
 		}
 
 		/// <summary>
@@ -4054,52 +3921,52 @@ namespace MailKit {
 			return MoveToAsync (new [] { index }, destination, cancellationToken);
 		}
 
-		/// <summary>
-		/// Move the specified messages to the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Moves the specified messages to the destination folder.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages to move.</param>
-		/// <param name="destination">The destination folder.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="destination"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Move the specified messages to the destination folder.
+	    /// </summary>
+	    /// <remarks>
+	    /// Moves the specified messages to the destination folder.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages to move.</param>
+	    /// <param name="destination">The destination folder.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="destination"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>The destination folder does not belong to the <see cref="IMailStore"/>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task MoveTo (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -4155,12 +4022,12 @@ namespace MailKit {
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					MoveTo (indexes, destination, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+				return SyncRoot.StartAsync(() => { 
+					return MoveTo (indexes, destination, cancellationToken);
+				});
+
+        }
 
 		/// <summary>
 		/// Fetch the message summaries for the specified message UIDs.
@@ -4211,7 +4078,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
@@ -4271,65 +4138,61 @@ namespace MailKit {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Fetch(uids, items, cancellationToken));
 		}
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message UIDs.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message UIDs.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="uids">The UIDs.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message UIDs.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message UIDs.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="uids">The UIDs.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
@@ -4394,11 +4257,7 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Fetch(uids, items, fields, cancellationToken));
 		}
 
 		/// <summary>
@@ -4452,7 +4311,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs.
@@ -4517,11 +4376,7 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Fetch(uids, items, fields, cancellationToken));
 		}
 
 		/// <summary>
@@ -4583,7 +4438,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
@@ -4652,75 +4507,71 @@ namespace MailKit {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, modseq, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Fetch(uids, modseq, items, cancellationToken));
 		}
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message UIDs that have a
-		/// higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message UIDs that
-		/// have a higher mod-sequence value than the one specified.</para>
-		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
-		/// have vanished since the specified mod-sequence value.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="uids">The UIDs.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailStore"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message UIDs that have a
+	    /// higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message UIDs that
+	    /// have a higher mod-sequence value than the one specified.</para>
+	    /// <para>If the mail store supports quick resynchronization and the application has
+	    /// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+	    /// then this method will emit <see cref="MessagesVanished"/> events for messages that
+	    /// have vanished since the specified mod-sequence value.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="uids">The UIDs.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="IMailStore"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
@@ -4794,75 +4645,71 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Fetch(uids, modseq, items, fields, cancellationToken));
 		}
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message UIDs that have a
-		/// higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message UIDs that
-		/// have a higher mod-sequence value than the one specified.</para>
-		/// <para>If the mail store supports quick resynchronization and the application has
-		/// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
-		/// then this method will emit <see cref="MessagesVanished"/> events for messages that
-		/// have vanished since the specified mod-sequence value.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="uids">The UIDs.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="IMailStore"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message UIDs that have a
+	    /// higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message UIDs that
+	    /// have a higher mod-sequence value than the one specified.</para>
+	    /// <para>If the mail store supports quick resynchronization and the application has
+	    /// enabled this feature via <see cref="MailStore.EnableQuickResync(CancellationToken)"/>,
+	    /// then this method will emit <see cref="MessagesVanished"/> events for messages that
+	    /// have vanished since the specified mod-sequence value.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="uids">The UIDs.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="IMailStore"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message UIDs that have a
@@ -4936,63 +4783,59 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (uids, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => Fetch(uids, modseq, items, fields, cancellationToken));
 		}
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message indexes.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message indexes.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="items"/> is empty.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message indexes.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message indexes.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="indexes">The indexes.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="items"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// One or more of the <paramref name="indexes"/> is invalid.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -5052,65 +4895,61 @@ namespace MailKit {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Fetch(indexes, items, cancellationToken));
 		}
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message indexes.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message indexes.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message indexes.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message indexes.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="indexes">The indexes.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -5175,65 +5014,65 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (indexes, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message indexes.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message indexes.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message indexes.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message indexes.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="indexes">The indexes.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes.
@@ -5298,69 +5137,69 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (indexes, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message indexes that have a
-		/// higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message indexes that
-		/// have a higher mod-sequence value than the one specified.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="items"/> is empty.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// One or more of the <paramref name="indexes"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message indexes that have a
+	    /// higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message indexes that
+	    /// have a higher mod-sequence value than the one specified.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="indexes">The indexes.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="items"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// One or more of the <paramref name="indexes"/> is invalid.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that
@@ -5425,68 +5264,68 @@ namespace MailKit {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (indexes, modseq, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message indexes that
-		/// have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message indexes that
-		/// have a higher mod-sequence value than the one specified.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message indexes that
+	    /// have a higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message indexes that
+	    /// have a higher mod-sequence value than the one specified.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="indexes">The indexes.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that
@@ -5553,68 +5392,68 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (indexes, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the specified message indexes that
-		/// have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the specified message indexes that
-		/// have a higher mod-sequence value than the one specified.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="indexes">The indexes.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="fields"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the specified message indexes that
+	    /// have a higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the specified message indexes that
+	    /// have a higher mod-sequence value than the one specified.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="indexes">The indexes.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="fields"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the specified message indexes that
@@ -5681,63 +5520,63 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Fetch (indexes, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+
+		    return SyncRoot.StartAsync(() => {
+		                                         return Fetch(indexes, modseq, items, fields, cancellationToken);
+		    });
+
 		}
 
-		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes, inclusive.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the messages between the two
-		/// indexes, inclusive.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="min"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="max"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="items"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Fetch the message summaries for the messages between the two indexes, inclusive.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the messages between the two
+	    /// indexes, inclusive.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="min">The minimum index.</param>
+	    /// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="min"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="max"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="items"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -5799,68 +5638,68 @@ namespace MailKit {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (min, max, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes, inclusive.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the messages between the two
-		/// indexes, inclusive.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="min"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="max"/> is out of range.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the messages between the two indexes, inclusive.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the messages between the two
+	    /// indexes, inclusive.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="min">The minimum index.</param>
+	    /// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="min"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="max"/> is out of range.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="fields"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="fields"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -5930,68 +5769,68 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (min, max, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes, inclusive.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the messages between the two
-		/// indexes, inclusive.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="min"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="max"/> is out of range.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the messages between the two indexes, inclusive.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the messages between the two
+	    /// indexes, inclusive.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="min">The minimum index.</param>
+	    /// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="min"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="max"/> is out of range.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="fields"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="fields"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes, inclusive.
@@ -6061,69 +5900,69 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (min, max, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes (inclusive)
-		/// that have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the messages between the two
-		/// indexes (inclusive) that have a higher mod-sequence value than the one
-		/// specified.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="min"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="max"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="items"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the messages between the two indexes (inclusive)
+	    /// that have a higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the messages between the two
+	    /// indexes (inclusive) that have a higher mod-sequence value than the one
+	    /// specified.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="min">The minimum index.</param>
+	    /// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="min"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="max"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="items"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -6191,74 +6030,74 @@ namespace MailKit {
 			if (items == MessageSummaryItems.None)
 				throw new ArgumentOutOfRangeException ("items");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (min, max, modseq, items, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes (inclusive)
-		/// that have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the messages between the two
-		/// indexes (inclusive) that have a higher mod-sequence value than the one
-		/// specified.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="min"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="max"/> is out of range.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the messages between the two indexes (inclusive)
+	    /// that have a higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the messages between the two
+	    /// indexes (inclusive) that have a higher mod-sequence value than the one
+	    /// specified.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="min">The minimum index.</param>
+	    /// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="min"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="max"/> is out of range.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="fields"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="fields"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -6334,74 +6173,74 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (min, max, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Fetch the message summaries for the messages between the two indexes (inclusive)
-		/// that have a higher mod-sequence value than the one specified.
-		/// </summary>
-		/// <remarks>
-		/// <para>Fetches the message summaries for the messages between the two
-		/// indexes (inclusive) that have a higher mod-sequence value than the one
-		/// specified.</para>
-		/// <para>It should be noted that if another client has modified any message
-		/// in the folder, the mail service may choose to return information that was
-		/// not explicitly requested. It is therefore important to be prepared to
-		/// handle both additional fields on a <see cref="IMessageSummary"/> for
-		/// messages that were requested as well as summaries for messages that were
-		/// not requested at all.</para>
-		/// </remarks>
-		/// <returns>An enumeration of summaries for the requested messages.</returns>
-		/// <param name="min">The minimum index.</param>
-		/// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="items">The message summary items to fetch.</param>
-		/// <param name="fields">The desired header fields.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="min"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="max"/> is out of range.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="fields"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="fields"/> is empty.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Fetch the message summaries for the messages between the two indexes (inclusive)
+	    /// that have a higher mod-sequence value than the one specified.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Fetches the message summaries for the messages between the two
+	    /// indexes (inclusive) that have a higher mod-sequence value than the one
+	    /// specified.</para>
+	    /// <para>It should be noted that if another client has modified any message
+	    /// in the folder, the mail service may choose to return information that was
+	    /// not explicitly requested. It is therefore important to be prepared to
+	    /// handle both additional fields on a <see cref="IMessageSummary"/> for
+	    /// messages that were requested as well as summaries for messages that were
+	    /// not requested at all.</para>
+	    /// </remarks>
+	    /// <returns>An enumeration of summaries for the requested messages.</returns>
+	    /// <param name="min">The minimum index.</param>
+	    /// <param name="max">The maximum index, or <c>-1</c> to specify no upper bound.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="items">The message summary items to fetch.</param>
+	    /// <param name="fields">The desired header fields.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="min"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="max"/> is out of range.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="fields"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="fields"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<IMessageSummary>> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously fetch the message summaries for the messages between the two indexes
@@ -6477,54 +6316,54 @@ namespace MailKit {
 			if (fields.Count == 0)
 				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Fetch (min, max, modseq, items, fields, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified message.
-		/// </remarks>
-		/// <returns>The message.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get the specified message.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the specified message.
+	    /// </remarks>
+	    /// <returns>The message.</returns>
+	    /// <param name="uid">The UID of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="uid"/> is invalid.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<MimeMessage> GetMessage (UniqueId uid, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -6568,54 +6407,54 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task<MimeMessage> GetMessageAsync (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetMessage (uid, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get the specified message.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified message.
-		/// </remarks>
-		/// <returns>The message.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get the specified message.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the specified message.
+	    /// </remarks>
+	    /// <returns>The message.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="index"/> is out of range.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<MimeMessage> GetMessage (int index, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified message.
@@ -6662,58 +6501,58 @@ namespace MailKit {
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetMessage (index, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get the specified body part.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the specified body part.
+	    /// </remarks>
+	    /// <returns>The body part.</returns>
+	    /// <param name="uid">The UID of the message.</param>
+	    /// <param name="part">The body part.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="part"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="uid"/> is invalid.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message body.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<MimeEntity> GetBodyPart (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6764,59 +6603,59 @@ namespace MailKit {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetBodyPart (uid, part, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get the specified body part.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the specified body part.
+	    /// </remarks>
+	    /// <returns>The body part.</returns>
+	    /// <param name="uid">The UID of the message.</param>
+	    /// <param name="part">The body part.</param>
+	    /// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="part"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="uid"/> is invalid.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message body.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<MimeEntity> GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6868,58 +6707,58 @@ namespace MailKit {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetBodyPart (uid, part, headersOnly, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract MimeEntity GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get the specified body part.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the specified body part.
+	    /// </remarks>
+	    /// <returns>The body part.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="part">The body part.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="part"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="index"/> is out of range.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message body.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<MimeEntity> GetBodyPart (int index, BodyPart part, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -6973,59 +6812,59 @@ namespace MailKit {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetBodyPart (index, part, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets the specified body part.
-		/// </remarks>
-		/// <returns>The body part.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The body part.</param>
-		/// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message body.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get the specified body part.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets the specified body part.
+	    /// </remarks>
+	    /// <returns>The body part.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="part">The body part.</param>
+	    /// <param name="headersOnly"><c>true</c> if only the headers should be downloaded; otherwise, <c>false</c>></param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="part"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="index"/> is out of range.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message body.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<MimeEntity> GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get the specified body part.
@@ -7080,12 +6919,12 @@ namespace MailKit {
 			if (part == null)
 				throw new ArgumentNullException ("part");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetBodyPart (index, part, headersOnly, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
+
+        }
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -7137,7 +6976,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7197,11 +7036,7 @@ namespace MailKit {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (uid, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetStream(uid, offset, count, cancellationToken, progress));
 		}
 
 		/// <summary>
@@ -7253,7 +7088,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7315,68 +7150,64 @@ namespace MailKit {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (index, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetStream(index, offset, count, cancellationToken, progress));
 		}
 
-		/// <summary>
-		/// Get a substream of the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="offset"/> is negative.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="count"/> is negative.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message stream.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+	    /// <summary>
+	    /// Get a substream of the specified body part.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets a substream of the body part. If the starting offset is beyond
+	    /// the end of the body part, an empty stream is returned. If the number of
+	    /// bytes desired extends beyond the end of the body part, a truncated stream
+	    /// will be returned.
+	    /// </remarks>
+	    /// <returns>The stream.</returns>
+	    /// <param name="uid">The UID of the message.</param>
+	    /// <param name="part">The desired body part.</param>
+	    /// <param name="offset">The starting offset of the first desired byte.</param>
+	    /// <param name="count">The number of bytes desired.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="uid"/> is invalid.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="part"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="offset"/> is negative.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="count"/> is negative.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message stream.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<Stream> GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
 				throw new ArgumentException ("The uid is invalid.", "uid");
@@ -7458,67 +7289,67 @@ namespace MailKit {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetStream (uid, part, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get a substream of the specified body part.
-		/// </summary>
-		/// <remarks>
-		/// Gets a substream of the body part. If the starting offset is beyond
-		/// the end of the body part, an empty stream is returned. If the number of
-		/// bytes desired extends beyond the end of the body part, a truncated stream
-		/// will be returned.
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="part">The desired body part.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="part"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="index"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="offset"/> is negative.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="count"/> is negative.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message stream.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
+        }
+
+	    /// <summary>
+	    /// Get a substream of the specified body part.
+	    /// </summary>
+	    /// <remarks>
+	    /// Gets a substream of the body part. If the starting offset is beyond
+	    /// the end of the body part, an empty stream is returned. If the number of
+	    /// bytes desired extends beyond the end of the body part, a truncated stream
+	    /// will be returned.
+	    /// </remarks>
+	    /// <returns>The stream.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="part">The desired body part.</param>
+	    /// <param name="offset">The starting offset of the first desired byte.</param>
+	    /// <param name="count">The number of bytes desired.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="part"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="index"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="offset"/> is negative.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="count"/> is negative.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message stream.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<Stream> GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
 				throw new ArgumentOutOfRangeException ("index");
@@ -7602,12 +7433,10 @@ namespace MailKit {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (index, part, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			return SyncRoot.StartAsync(() => { 
+				return GetStream (index, part, offset, count, cancellationToken, progress);
+			});
+        }
 
 		/// <summary>
 		/// Get a substream of the specified message.
@@ -7655,7 +7484,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		public abstract Task<Stream> GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7708,70 +7537,66 @@ namespace MailKit {
 			if (section == null)
 				throw new ArgumentNullException ("section");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return GetStream (uid, section, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => GetStream(uid, section, cancellationToken, progress));
 		}
 
-		/// <summary>
-		/// Get a substream of the specified message.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets a substream of the specified message. If the starting offset is beyond
-		/// the end of the specified section of the message, an empty stream is returned. If
-		/// the number of bytes desired extends beyond the end of the section, a truncated
-		/// stream will be returned.</para>
-		/// <para>For more information about how to construct the <paramref name="section"/>,
-		/// see Section 6.4.5 of RFC3501.</para>
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="uid">The UID of the message.</param>
-		/// <param name="section">The desired section of the message.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="uid"/> is invalid.
-		/// </exception>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="section"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="offset"/> is negative.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="count"/> is negative.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message stream.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+	    /// <summary>
+	    /// Get a substream of the specified message.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Gets a substream of the specified message. If the starting offset is beyond
+	    /// the end of the specified section of the message, an empty stream is returned. If
+	    /// the number of bytes desired extends beyond the end of the section, a truncated
+	    /// stream will be returned.</para>
+	    /// <para>For more information about how to construct the <paramref name="section"/>,
+	    /// see Section 6.4.5 of RFC3501.</para>
+	    /// </remarks>
+	    /// <returns>The stream.</returns>
+	    /// <param name="uid">The UID of the message.</param>
+	    /// <param name="section">The desired section of the message.</param>
+	    /// <param name="offset">The starting offset of the first desired byte.</param>
+	    /// <param name="count">The number of bytes desired.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="uid"/> is invalid.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="section"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="offset"/> is negative.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="count"/> is negative.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message stream.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<Stream> GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified message.
@@ -7840,60 +7665,60 @@ namespace MailKit {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetStream (uid, section, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get a substream of the specified message.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets a substream of the specified message.</para>
-		/// <para>For more information about how to construct the <paramref name="section"/>,
-		/// see Section 6.4.5 of RFC3501.</para>
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="section">The desired section of the message.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="section"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <paramref name="index"/> is out of range.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message stream.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get a substream of the specified message.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Gets a substream of the specified message.</para>
+	    /// <para>For more information about how to construct the <paramref name="section"/>,
+	    /// see Section 6.4.5 of RFC3501.</para>
+	    /// </remarks>
+	    /// <returns>The stream.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="section">The desired section of the message.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="section"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <paramref name="index"/> is out of range.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message stream.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<Stream> GetStream (int index, string section, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -7949,69 +7774,69 @@ namespace MailKit {
 			if (section == null)
 				throw new ArgumentNullException ("section");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetStream (index, section, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Get a substream of the specified message.
-		/// </summary>
-		/// <remarks>
-		/// <para>Gets a substream of the specified message. If the starting offset is beyond
-		/// the end of the specified section of the message, an empty stream is returned. If
-		/// the number of bytes desired extends beyond the end of the section, a truncated
-		/// stream will be returned.</para>
-		/// <para>For more information about how to construct the <paramref name="section"/>,
-		/// see Section 6.4.5 of RFC3501.</para>
-		/// </remarks>
-		/// <returns>The stream.</returns>
-		/// <param name="index">The index of the message.</param>
-		/// <param name="section">The desired section of the message.</param>
-		/// <param name="offset">The starting offset of the first desired byte.</param>
-		/// <param name="count">The number of bytes desired.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <param name="progress">The progress reporting mechanism.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="section"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="index"/> is out of range.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="offset"/> is negative.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="count"/> is negative.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="MessageNotFoundException">
-		/// The <see cref="IMailStore"/> did not return the requested message stream.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+        }
+
+	    /// <summary>
+	    /// Get a substream of the specified message.
+	    /// </summary>
+	    /// <remarks>
+	    /// <para>Gets a substream of the specified message. If the starting offset is beyond
+	    /// the end of the specified section of the message, an empty stream is returned. If
+	    /// the number of bytes desired extends beyond the end of the section, a truncated
+	    /// stream will be returned.</para>
+	    /// <para>For more information about how to construct the <paramref name="section"/>,
+	    /// see Section 6.4.5 of RFC3501.</para>
+	    /// </remarks>
+	    /// <returns>The stream.</returns>
+	    /// <param name="index">The index of the message.</param>
+	    /// <param name="section">The desired section of the message.</param>
+	    /// <param name="offset">The starting offset of the first desired byte.</param>
+	    /// <param name="count">The number of bytes desired.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <param name="progress">The progress reporting mechanism.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="section"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentOutOfRangeException">
+	    /// <para><paramref name="index"/> is out of range.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="offset"/> is negative.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="count"/> is negative.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="MessageNotFoundException">
+	    /// The <see cref="IMailStore"/> did not return the requested message stream.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<Stream> GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default(CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously get a substream of the specified body part.
@@ -8082,12 +7907,12 @@ namespace MailKit {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return GetStream (index, section, offset, count, cancellationToken, progress);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
+
+        }
 
 		/// <summary>
 		/// Add a set of flags to the specified message.
@@ -8278,56 +8103,56 @@ namespace MailKit {
 			return AddFlagsAsync (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Add a set of flags to the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual void AddFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Add a set of flags to the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task AddFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			AddFlags (uids, flags, null, silent, cancellationToken);
+			return AddFlags (uids, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -8389,62 +8214,62 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (uids, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+				return SyncRoot.StartAsync(() => { 
+					return AddFlags (uids, flags, silent, cancellationToken);
+				});
 
-		/// <summary>
-		/// Add a set of flags to the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Add a set of flags to the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="userFlags">A set of user-defined flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task AddFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -8506,11 +8331,11 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (uids, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddFlags (uids, flags, userFlags, silent, cancellationToken);
+			});
+			
 		}
 
 		/// <summary>
@@ -8705,56 +8530,56 @@ namespace MailKit {
 			return RemoveFlagsAsync (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			RemoveFlags (uids, flags, null, silent, cancellationToken);
+			return RemoveFlags (uids, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -8816,62 +8641,62 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (uids, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (uids, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="userFlags">A set of user-defined flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -8933,12 +8758,11 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (uids, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+		
+            return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (uids, flags, userFlags, silent, cancellationToken);
+			});
+        }
 
 		/// <summary>
 		/// Set the flags of the specified message.
@@ -9118,51 +8942,51 @@ namespace MailKit {
 			return SetFlagsAsync (new [] { uid }, flags, userFlags, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Set the flags of the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual void SetFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Set the flags of the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task SetFlags (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			SetFlags (uids, flags, null, silent, cancellationToken);
+			return SetFlags (uids, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -9216,57 +9040,57 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (uids, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (uids, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Set the flags of the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Set the flags of the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="userFlags">A set of user-defined flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task SetFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -9320,63 +9144,63 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (uids, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (uids, flags, userFlags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+        }
+
+	    /// <summary>
+	    /// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return AddFlags (uids, modseq, flags, null, silent, cancellationToken);
 		}
@@ -9441,64 +9265,64 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (uids, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddFlags (uids, modseq, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="userFlags">A set of user-defined flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -9561,63 +9385,63 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+        }
+
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return RemoveFlags (uids, modseq, flags, null, silent, cancellationToken);
 		}
@@ -9682,64 +9506,64 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (uids, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (uids, modseq, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="userFlags">A set of user-defined flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -9802,61 +9626,61 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual IList<UniqueId> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+        }
+
+	    /// <summary>
+	    /// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return SetFlags (uids, modseq, flags, null, silent, cancellationToken);
 		}
@@ -9916,62 +9740,60 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (uids, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (uids, modseq, flags, silent, cancellationToken);
+			});
+        }
 
-		/// <summary>
-		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="uids"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="userFlags">A set of user-defined flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="uids"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> SetFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -10029,12 +9851,11 @@ namespace MailKit {
 			if (uids.Count == 0)
 				throw new ArgumentException ("No uids were specified.", "uids");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (uids, modseq, flags, userFlags, silent, cancellationToken);
+			});
+        }
 
 		/// <summary>
 		/// Add a set of flags to the specified message.
@@ -10216,53 +10037,53 @@ namespace MailKit {
 			return AddFlagsAsync (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Add a set of flags to the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual void AddFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Add a set of flags to the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task AddFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			AddFlags (indexes, flags, null, silent, cancellationToken);
+			return AddFlags (indexes, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -10318,59 +10139,58 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (indexes, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddFlags (indexes, flags, silent, cancellationToken);
+			});
+        }
 
-		/// <summary>
-		/// Add a set of flags to the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Add a set of flags to the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="userFlags">A set of user-defined flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages.
@@ -10426,12 +10246,12 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddFlags (indexes, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddFlags (indexes, flags, userFlags, silent, cancellationToken);
+			});
+
+        }
 
 		/// <summary>
 		/// Remove a set of flags from the specified message.
@@ -10613,53 +10433,53 @@ namespace MailKit {
 			return RemoveFlagsAsync (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual void RemoveFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task RemoveFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			RemoveFlags (indexes, flags, null, silent, cancellationToken);
+			return RemoveFlags (indexes, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -10715,59 +10535,59 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (indexes, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (indexes, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="userFlags">A set of user-defined flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages.
@@ -10823,12 +10643,12 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveFlags (indexes, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (indexes, flags, userFlags, silent, cancellationToken);
+			});
+
+        }
 
 		/// <summary>
 		/// Set the flags of the specified message.
@@ -11002,51 +10822,51 @@ namespace MailKit {
 			return SetFlagsAsync (new [] { index }, flags, userFlags, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Set the flags of the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual void SetFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+	    /// <summary>
+	    /// Set the flags of the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task SetFlags (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			SetFlags (indexes, flags, null, silent, cancellationToken);
+			return SetFlags (indexes, flags, null, silent, cancellationToken);
 		}
 
 		/// <summary>
@@ -11097,57 +10917,55 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (indexes, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (indexes, flags, silent, cancellationToken);
+			});
+        }
 
-		/// <summary>
-		/// Set the flags of the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Set the flags of the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="userFlags">A set of user-defined flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task SetFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages.
@@ -11198,63 +11016,63 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetFlags (indexes, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (indexes, flags, userFlags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+        }
+
+	    /// <summary>
+	    /// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<IList<int>> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return AddFlags (indexes, modseq, flags, null, silent, cancellationToken);
 		}
@@ -11316,64 +11134,64 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (indexes, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddFlags (indexes, modseq, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to add.</param>
-		/// <param name="userFlags">A set of user-defined flags to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to add.</param>
+	    /// <param name="userFlags">A set of user-defined flags to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<int>> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of flags to the specified messages only if their mod-sequence value is less than the specified value.
@@ -11433,63 +11251,63 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+        }
+
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<IList<int>> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return RemoveFlags (indexes, modseq, flags, null, silent, cancellationToken);
 		}
@@ -11551,64 +11369,64 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0)
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (indexes, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (indexes, modseq, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to remove.</param>
-		/// <param name="userFlags">A set of user-defined flags to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No flags were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to remove.</param>
+	    /// <param name="userFlags">A set of user-defined flags to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No flags were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<int>> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of flags from the specified messages only if their mod-sequence value is less than the specified value.
@@ -11668,61 +11486,61 @@ namespace MailKit {
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
 				throw new ArgumentException ("No flags were specified.", "flags");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public virtual IList<int> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
+        }
+
+	    /// <summary>
+	    /// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public virtual Task<IList<int>> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return SetFlags (indexes, modseq, flags, null, silent, cancellationToken);
 		}
@@ -11779,62 +11597,62 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (indexes, modseq, flags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (indexes, modseq, flags, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="flags">The message flags to set.</param>
-		/// <param name="userFlags">A set of user-defined flags to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="indexes"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<int> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Set the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the flags of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="flags">The message flags to set.</param>
+	    /// <param name="userFlags">A set of user-defined flags to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageFlagsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="indexes"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<int>> SetFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the flags of the specified messages only if their mod-sequence value is less than the specified value.
@@ -11889,12 +11707,10 @@ namespace MailKit {
 			if (indexes == null)
 				throw new ArgumentNullException ("indexes");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			return SyncRoot.StartAsync(() => { 
+				return SetFlags (indexes, modseq, flags, userFlags, silent, cancellationToken);
+			});
+        }
 
 		/// <summary>
 		/// Add a set of labels to the specified message.
@@ -11991,53 +11807,53 @@ namespace MailKit {
 			return AddLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Add a set of labels to the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of labels to the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void AddLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Add a set of labels to the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of labels to the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="labels">The labels to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task AddLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages.
@@ -12100,12 +11916,11 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddLabels (uids, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddLabels (uids, labels, silent, cancellationToken);
+			});
+        }
 
 		/// <summary>
 		/// Remove a set of labels from the specified message.
@@ -12202,53 +12017,53 @@ namespace MailKit {
 			return RemoveLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Remove a set of labels from the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of labels from the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void RemoveLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Remove a set of labels from the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of labels from the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="labels">The labels to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task RemoveLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages.
@@ -12311,12 +12126,12 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveLabels (uids, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveLabels (uids, labels, silent, cancellationToken);
+			});
+
+        }
 
 		/// <summary>
 		/// Set the labels of the specified message.
@@ -12409,51 +12224,51 @@ namespace MailKit {
 			return SetLabelsAsync (new [] { uid }, labels, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Set the labels of the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Sets the labels of the specified messages.
-		/// </remarks>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void SetLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Set the labels of the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the labels of the specified messages.
+	    /// </remarks>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="labels">The labels to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task SetLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages.
@@ -12511,65 +12326,65 @@ namespace MailKit {
 			if (labels == null)
 				throw new ArgumentNullException ("labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetLabels (uids, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetLabels (uids, labels, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> AddLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="labels">The labels to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> AddLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -12636,65 +12451,65 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddLabels (uids, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddLabels (uids, modseq, labels, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> RemoveLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="labels">The labels to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> RemoveLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -12761,63 +12576,63 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveLabels (uids, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveLabels (uids, modseq, labels, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The unique IDs of the messages that were not updated.</returns>
-		/// <param name="uids">The UIDs of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="uids"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> SetLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The unique IDs of the messages that were not updated.</returns>
+	    /// <param name="uids">The UIDs of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="labels">The labels to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="uids"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> SetLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.
@@ -12879,12 +12694,11 @@ namespace MailKit {
 			if (labels == null)
 				throw new ArgumentNullException ("labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetLabels (uids, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetLabels (uids, modseq, labels, silent, cancellationToken);
+			});
+        }
 
 		/// <summary>
 		/// Add a set of labels to the specified message.
@@ -12981,53 +12795,53 @@ namespace MailKit {
 			return AddLabelsAsync (new [] { index }, labels, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Add a set of labels to the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of labels to the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void AddLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Add a set of labels to the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of labels to the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="labels">The labels to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task AddLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages.
@@ -13090,12 +12904,12 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					AddLabels (indexes, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddLabels (indexes, labels, silent, cancellationToken);
+			});
+
+        }
 
 		/// <summary>
 		/// Remove a set of labels from the specified message.
@@ -13192,53 +13006,53 @@ namespace MailKit {
 			return RemoveLabelsAsync (new [] { index }, labels, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Remove a set of labels from the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of labels from the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void RemoveLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Remove a set of labels from the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of labels from the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="labels">The labels to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task RemoveLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages.
@@ -13301,12 +13115,12 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					RemoveLabels (indexes, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveLabels (indexes, labels, silent, cancellationToken);
+			});
+
+        }
 
 		/// <summary>
 		/// Set the labels of the specified message.
@@ -13399,51 +13213,51 @@ namespace MailKit {
 			return SetLabelsAsync (new [] { index }, labels, silent, cancellationToken);
 		}
 
-		/// <summary>
-		/// Set the labels of the specified messages.
-		/// </summary>
-		/// <remarks>
-		/// Sets the labels of the specified messages.
-		/// </remarks>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract void SetLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Set the labels of the specified messages.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the labels of the specified messages.
+	    /// </remarks>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="labels">The labels to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task SetLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages.
@@ -13498,65 +13312,64 @@ namespace MailKit {
 			if (labels == null)
 				throw new ArgumentNullException ("labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					SetLabels (indexes, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetLabels (indexes, labels, silent, cancellationToken);
+			});
+        }
 
-		/// <summary>
-		/// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="labels">The labels to add.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<int> AddLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Adds a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="labels">The labels to add.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<int>> AddLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously add a set of labels to the specified messages only if their mod-sequence value is less than the specified value.
@@ -13620,65 +13433,65 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return AddLabels (indexes, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return AddLabels (indexes, modseq, labels, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="labels">The labels to remove.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para>No labels were specified.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<int> RemoveLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Removes a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="labels">The labels to remove.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para>No labels were specified.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<int>> RemoveLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously remove a set of labels from the specified messages only if their mod-sequence value is less than the specified value.
@@ -13742,63 +13555,63 @@ namespace MailKit {
 			if (labels.Count == 0)
 				throw new ArgumentException ("No labels were specified.", "labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return RemoveLabels (indexes, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return RemoveLabels (indexes, modseq, labels, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </summary>
-		/// <remarks>
-		/// Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
-		/// </remarks>
-		/// <returns>The indexes of the messages that were not updated.</returns>
-		/// <param name="indexes">The indexes of the messages.</param>
-		/// <param name="modseq">The mod-sequence value.</param>
-		/// <param name="labels">The labels to set.</param>
-		/// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="indexes"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="labels"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para><paramref name="indexes"/> is empty.</para>
-		/// <para>-or-</para>
-		/// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open in read-write mode.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// The <see cref="MailFolder"/> does not support mod-sequences.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<int> SetLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Set the labels of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </summary>
+	    /// <remarks>
+	    /// Sets the labels of the specified messages only if their mod-sequence value is less than the specified value.
+	    /// </remarks>
+	    /// <returns>The indexes of the messages that were not updated.</returns>
+	    /// <param name="indexes">The indexes of the messages.</param>
+	    /// <param name="modseq">The mod-sequence value.</param>
+	    /// <param name="labels">The labels to set.</param>
+	    /// <param name="silent">If set to <c>true</c>, no <see cref="MessageLabelsChanged"/> events will be emitted.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="indexes"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="labels"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para><paramref name="indexes"/> is empty.</para>
+	    /// <para>-or-</para>
+	    /// <para>One or more of the <paramref name="indexes"/> is invalid.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open in read-write mode.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// The <see cref="MailFolder"/> does not support mod-sequences.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<int>> SetLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously set the labels of the specified messages only if their mod-sequence value is less than the specified value.
@@ -13857,54 +13670,54 @@ namespace MailKit {
 			if (labels == null)
 				throw new ArgumentNullException ("labels");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return SetLabels (indexes, modseq, labels, silent, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return SetLabels (indexes, modseq, labels, silent, cancellationToken);
+			});
 
-		/// <summary>
-		/// Search the folder for messages matching the specified query.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers can be used with methods such as
-		/// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
-		/// <param name="query">The search query.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// One or more search terms in the <paramref name="query"/> are not supported by the mail store.
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> Search (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Search the folder for messages matching the specified query.
+	    /// </summary>
+	    /// <remarks>
+	    /// The returned array of unique identifiers can be used with methods such as
+	    /// <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+	    /// </remarks>
+	    /// <returns>An array of matching UIDs.</returns>
+	    /// <param name="query">The search query.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="query"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// One or more search terms in the <paramref name="query"/> are not supported by the mail store.
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> Search (SearchQuery query, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query.
@@ -13951,63 +13764,63 @@ namespace MailKit {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return Search (query, cancellationToken);
+			});
 
-		/// <summary>
-		/// Search the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs in the specified sort order.</returns>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="orderBy"/> is empty.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> Search (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Search the folder for messages matching the specified query,
+	    /// returning them in the preferred sort order.
+	    /// </summary>
+	    /// <remarks>
+	    /// The returned array of unique identifiers will be sorted in the preferred order and
+	    /// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+	    /// </remarks>
+	    /// <returns>An array of matching UIDs in the specified sort order.</returns>
+	    /// <param name="query">The search query.</param>
+	    /// <param name="orderBy">The sort order.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="query"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="orderBy"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+	    /// <para>-or-</para>
+	    /// <para>The server does not support the SORT extension.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> Search (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query,
@@ -14069,12 +13882,12 @@ namespace MailKit {
 			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			
+			return SyncRoot.StartAsync(() => { 
+				return Search (query, orderBy, cancellationToken);
+			});
+
+        }
 
 		/// <summary>
 		/// Search the subset of UIDs in the folder for messages matching the specified query.
@@ -14122,7 +13935,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<UniqueId>> Search (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query.
@@ -14178,68 +13991,64 @@ namespace MailKit {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (uids, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Search(uids, query, cancellationToken));
 		}
 
-		/// <summary>
-		/// Search the subset of UIDs in the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// The returned array of unique identifiers will be sorted in the preferred order and
-		/// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
-		/// </remarks>
-		/// <returns>An array of matching UIDs.</returns>
-		/// <param name="uids">The subset of UIDs</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="uids"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <para>One or more of the <paramref name="uids"/> is invalid.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is empty.</para>
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support the SORT extension.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract IList<UniqueId> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+	    /// <summary>
+	    /// Search the subset of UIDs in the folder for messages matching the specified query,
+	    /// returning them in the preferred sort order.
+	    /// </summary>
+	    /// <remarks>
+	    /// The returned array of unique identifiers will be sorted in the preferred order and
+	    /// can be used with <see cref="IMailFolder.GetMessage(UniqueId,CancellationToken,ITransferProgress)"/>.
+	    /// </remarks>
+	    /// <returns>An array of matching UIDs.</returns>
+	    /// <param name="uids">The subset of UIDs</param>
+	    /// <param name="query">The search query.</param>
+	    /// <param name="orderBy">The sort order.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="uids"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="query"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <para>One or more of the <paramref name="uids"/> is invalid.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="orderBy"/> is empty.</para>
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// <para>One or more search terms in the <paramref name="query"/> are not supported by the mail store.</para>
+	    /// <para>-or-</para>
+	    /// <para>The server does not support the SORT extension.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The folder is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<IList<UniqueId>> Search (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the subset of UIDs in the folder for messages matching the specified query,
@@ -14309,57 +14118,57 @@ namespace MailKit {
 			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Search (uids, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Search the folder for messages matching the specified query.
-		/// </summary>
-		/// <remarks>
-		/// Searches the folder for messages matching the specified query,
-		/// returning only the specified search results.
-		/// </remarks>
-		/// <returns>The search results.</returns>
-		/// <param name="options">The search options.</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="query"/> is <c>null</c>.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
-		/// <para>-or-</para>
-		/// <para>The IMAP server does not support the ESEARCH extension.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Search the folder for messages matching the specified query.
+	    /// </summary>
+	    /// <remarks>
+	    /// Searches the folder for messages matching the specified query,
+	    /// returning only the specified search results.
+	    /// </remarks>
+	    /// <returns>The search results.</returns>
+	    /// <param name="options">The search options.</param>
+	    /// <param name="query">The search query.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <paramref name="query"/> is <c>null</c>.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+	    /// <para>-or-</para>
+	    /// <para>The IMAP server does not support the ESEARCH extension.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The <see cref="MailFolder"/> is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<SearchResults> Search (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously search the folder for messages matching the specified query.
@@ -14409,64 +14218,64 @@ namespace MailKit {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Search (options, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
 
-		/// <summary>
-		/// Searches the folder for messages matching the specified query,
-		/// returning them in the preferred sort order.
-		/// </summary>
-		/// <remarks>
-		/// Searches the folder for messages matching the specified query and ordering,
-		/// returning only the requested search results.
-		/// </remarks>
-		/// <returns>The search results.</returns>
-		/// <param name="options">The search options.</param>
-		/// <param name="query">The search query.</param>
-		/// <param name="orderBy">The sort order.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ArgumentNullException">
-		/// <para><paramref name="query"/> is <c>null</c>.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="orderBy"/> is <c>null</c>.</para>
-		/// </exception>
-		/// <exception cref="System.ArgumentException">
-		/// <paramref name="orderBy"/> is empty.
-		/// </exception>
-		/// <exception cref="System.NotSupportedException">
-		/// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
-		/// <para>-or-</para>
-		/// <para>The server does not support the ESORT extension.</para>
-		/// </exception>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The <see cref="MailFolder"/> is not currently open.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		/// <exception cref="ProtocolException">
-		/// The server's response contained unexpected tokens.
-		/// </exception>
-		/// <exception cref="CommandException">
-		/// The command failed.
-		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+        }
+
+	    /// <summary>
+	    /// Searches the folder for messages matching the specified query,
+	    /// returning them in the preferred sort order.
+	    /// </summary>
+	    /// <remarks>
+	    /// Searches the folder for messages matching the specified query and ordering,
+	    /// returning only the requested search results.
+	    /// </remarks>
+	    /// <returns>The search results.</returns>
+	    /// <param name="options">The search options.</param>
+	    /// <param name="query">The search query.</param>
+	    /// <param name="orderBy">The sort order.</param>
+	    /// <param name="cancellationToken">The cancellation token.</param>
+	    /// <exception cref="System.ArgumentNullException">
+	    /// <para><paramref name="query"/> is <c>null</c>.</para>
+	    /// <para>-or-</para>
+	    /// <para><paramref name="orderBy"/> is <c>null</c>.</para>
+	    /// </exception>
+	    /// <exception cref="System.ArgumentException">
+	    /// <paramref name="orderBy"/> is empty.
+	    /// </exception>
+	    /// <exception cref="System.NotSupportedException">
+	    /// <para>One or more search terms in the <paramref name="query"/> are not supported by the IMAP server.</para>
+	    /// <para>-or-</para>
+	    /// <para>The server does not support the ESORT extension.</para>
+	    /// </exception>
+	    /// <exception cref="System.ObjectDisposedException">
+	    /// The <see cref="IMailStore"/> has been disposed.
+	    /// </exception>
+	    /// <exception cref="ServiceNotConnectedException">
+	    /// The <see cref="IMailStore"/> is not connected.
+	    /// </exception>
+	    /// <exception cref="ServiceNotAuthenticatedException">
+	    /// The <see cref="IMailStore"/> is not authenticated.
+	    /// </exception>
+	    /// <exception cref="FolderNotOpenException">
+	    /// The <see cref="MailFolder"/> is not currently open.
+	    /// </exception>
+	    /// <exception cref="System.OperationCanceledException">
+	    /// The operation was canceled via the cancellation token.
+	    /// </exception>
+	    /// <exception cref="System.IO.IOException">
+	    /// An I/O error occurred.
+	    /// </exception>
+	    /// <exception cref="ProtocolException">
+	    /// The server's response contained unexpected tokens.
+	    /// </exception>
+	    /// <exception cref="CommandException">
+	    /// The command failed.
+	    /// </exception>
+	    public abstract Task<SearchResults> Search (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously searches the folder for messages matching the specified query,
@@ -14529,12 +14338,12 @@ namespace MailKit {
 			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
+			
+				return SyncRoot.StartAsync(() => { 
 					return Search (options, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+				});
+
+        }
 
 		/// <summary>
 		/// Searches the subset of UIDs in the folder for messages matching the specified query.
@@ -14585,7 +14394,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<SearchResults> Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously searches the subset of UIDs in the folder for messages matching the specified query.
@@ -14644,12 +14453,10 @@ namespace MailKit {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (options, uids, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			return SyncRoot.StartAsync(() => { 
+				return Search (options, uids, query, cancellationToken);
+			});
+        }
 
 		/// <summary>
 		/// Searches the subset of UIDs in the folder for messages matching the specified query,
@@ -14706,7 +14513,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract SearchResults Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<SearchResults> Search (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously searches the subset of UIDs in the folder for messages matching the specified query,
@@ -14777,12 +14584,10 @@ namespace MailKit {
 			if (orderBy.Count == 0)
 				throw new ArgumentException ("No sort order provided.", "orderBy");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Search (options, uids, query, orderBy, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+			return SyncRoot.StartAsync(() => { 
+				return Search (options, uids, query, orderBy, cancellationToken);
+			});
+        }
 
 		/// <summary>
 		/// Thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -14830,7 +14635,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<MessageThread> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<MessageThread>> Thread (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -14883,11 +14688,7 @@ namespace MailKit {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Thread (algorithm, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Thread(algorithm, query, cancellationToken));
 		}
 
 		/// <summary>
@@ -14944,7 +14745,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<MessageThread> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task<IList<MessageThread>> Thread (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Asynchronously thread the messages in the folder that match the search query using the specified threading algorithm.
@@ -15011,11 +14812,7 @@ namespace MailKit {
 			if (query == null)
 				throw new ArgumentNullException ("query");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					return Thread (uids, algorithm, query, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		    return SyncRoot.StartAsync(() => Thread(uids, algorithm, query, cancellationToken));
 		}
 
 		/// <summary>
@@ -15420,55 +15217,6 @@ namespace MailKit {
 			if (handler != null)
 				handler (this, EventArgs.Empty);
 		}
-
-		#region IEnumerable<MimeMessage> implementation
-
-		/// <summary>
-		/// Get an enumerator for the messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets an enumerator for the messages in the folder.
-		/// </remarks>
-		/// <returns>The enumerator.</returns>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		public abstract IEnumerator<MimeMessage> GetEnumerator ();
-
-		/// <summary>
-		/// Get an enumerator for the messages in the folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets an enumerator for the messages in the folder.
-		/// </remarks>
-		/// <returns>The enumerator.</returns>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The <see cref="IMailStore"/> has been disposed.
-		/// </exception>
-		/// <exception cref="ServiceNotConnectedException">
-		/// The <see cref="IMailStore"/> is not connected.
-		/// </exception>
-		/// <exception cref="ServiceNotAuthenticatedException">
-		/// The <see cref="IMailStore"/> is not authenticated.
-		/// </exception>
-		/// <exception cref="FolderNotOpenException">
-		/// The folder is not currently open.
-		/// </exception>
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator ();
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.MailFolder"/>.

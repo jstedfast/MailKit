@@ -29,6 +29,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using MailKit.Net.Common;
+using MailKit.Net.Imap;
 #if !NETFX_CORE
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -53,7 +55,7 @@ namespace MailKit {
 		/// Gets an object that can be used to synchronize access to the folder.
 		/// </remarks>
 		/// <value>The sync root.</value>
-		object SyncRoot { get; }
+		EngineLock SyncRoot { get; }
 
 #if !NETFX_CORE
 		/// <summary>
@@ -140,7 +142,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		Task Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server.
@@ -196,7 +198,7 @@ namespace MailKit {
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="IMailService"/> is not connected.
 		/// </exception>
-		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		Task Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously authenticate using the supplied credentials.
@@ -270,7 +272,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
+		Task Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously disconnect the service.
@@ -327,7 +329,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		void NoOp (CancellationToken cancellationToken = default (CancellationToken));
+		Task NoOp (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously ping the mail server to keep the connection alive.

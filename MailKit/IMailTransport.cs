@@ -38,8 +38,7 @@ namespace MailKit {
 	/// <remarks>
 	/// An interface for sending messages.
 	/// </remarks>
-	public interface IMailTransport : IMailService
-	{
+	public interface IMailTransport : IMailService {
 		/// <summary>
 		/// Send the specified message.
 		/// </summary>
@@ -55,7 +54,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		void Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task Send (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message.
@@ -118,7 +117,7 @@ namespace MailKit {
 		/// <param name="message">The message.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <param name="progress">The progress reporting mechanism.</param>
-		void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
+		Task Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null);
 
 		/// <summary>
 		/// Asynchronously send the specified message.

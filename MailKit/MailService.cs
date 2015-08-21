@@ -29,7 +29,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-
+using MailKit.Net.Common;
+using MailKit.Net.Imap;
 #if !NETFX_CORE
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -109,7 +110,7 @@ namespace MailKit {
 		/// <see cref="SyncRoot"/> object for thread safety when using the synchronous methods.</para>
 		/// </remarks>
 		/// <value>The sync root.</value>
-		public abstract object SyncRoot {
+		public abstract EngineLock SyncRoot {
 			get;
 		}
 
@@ -264,7 +265,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously establish a connection to the specified mail server.
@@ -312,12 +313,8 @@ namespace MailKit {
 			if (port < 0 || port > 65535)
 				throw new ArgumentOutOfRangeException ("port");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Connect (host, port, options, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
-		}
+            return SyncRoot.StartAsync(async () => await Connect(host, port, options, cancellationToken));
+        }
 
 		/// <summary>
 		/// Establish a connection to the specified mail server.
@@ -351,7 +348,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
+		public Task Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
@@ -390,7 +387,7 @@ namespace MailKit {
 				options = SecureSocketOptions.StartTlsWhenAvailable;
 			}
 
-			Connect (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
+			return Connect (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
 		}
 
 		/// <summary>
@@ -431,11 +428,7 @@ namespace MailKit {
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", "uri");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Connect (uri, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => Connect (uri, cancellationToken));
 		}
 
 		/// <summary>
@@ -578,7 +571,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously authenticates using the supplied credentials.
@@ -629,11 +622,7 @@ namespace MailKit {
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Authenticate (credentials, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => Authenticate (credentials, cancellationToken));
 		}
 
 		/// <summary>
@@ -772,7 +761,7 @@ namespace MailKit {
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="MailService"/> has been disposed.
 		/// </exception>
-		public abstract void Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task Disconnect (bool quit, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously disconnects the service.
@@ -788,11 +777,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task DisconnectAsync (bool quit, CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Disconnect (quit, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync (() => Disconnect (quit, cancellationToken));
 		}
 
 		/// <summary>
@@ -822,7 +807,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public abstract void NoOp (CancellationToken cancellationToken = default (CancellationToken));
+		public abstract Task NoOp (CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously pings the mail server to keep the connection alive.
@@ -854,11 +839,7 @@ namespace MailKit {
 		/// </exception>
 		public virtual Task NoOpAsync (CancellationToken cancellationToken = default (CancellationToken))
 		{
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					NoOp (cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return SyncRoot.StartAsync(() => NoOp (cancellationToken));
 		}
 
 		/// <summary>

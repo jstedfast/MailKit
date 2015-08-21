@@ -27,6 +27,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Buffer = System.Buffer;
 
 #if NETFX_CORE
@@ -68,7 +69,7 @@ namespace MailKit.Net.Pop3 {
 	/// A stream capable of reading data line-by-line (<see cref="Pop3StreamMode.Line"/>)
 	/// or by raw byte streams (<see cref="Pop3StreamMode.Data"/>).
 	/// </remarks>
-	class Pop3Stream : Stream, ICancellableStream
+	class Pop3Stream : Stream
 	{
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
@@ -335,7 +336,8 @@ namespace MailKit.Net.Pop3 {
 				if (buffered) {
 					cancellationToken.ThrowIfCancellationRequested ();
 
-					nread = Stream.Read (input, start, end - start);
+                    throw new NotImplementedException("need async");
+					nread = Stream.Read(input, start, end - start);
 				} else {
 					Poll (SelectMode.SelectRead, cancellationToken);
 
@@ -417,7 +419,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task<int> Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -539,10 +541,15 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-			return Read (buffer, offset, count, CancellationToken.None);
-		}
+			return Read(buffer, offset, count, CancellationToken.None).GetAwaiter ().GetResult ();
+        }
 
-		/// <summary>
+	    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	    {
+	        return Read(buffer, offset, count, cancellationToken);
+        }
+
+	    /// <summary>
 		/// Reads a single line of input from the stream.
 		/// </summary>
 		/// <remarks>
@@ -636,7 +643,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public void Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		public async Task Write (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -660,7 +667,7 @@ namespace MailKit.Net.Pop3 {
 					if (outputIndex == BlockSize) {
 						// flush the output buffer
 						Poll (SelectMode.SelectWrite, cancellationToken);
-						Stream.Write (output, 0, BlockSize);
+						await Stream.WriteAsync (output, 0, BlockSize, cancellationToken);
 						logger.LogClient (output, 0, BlockSize);
 						outputIndex = 0;
 					}
@@ -669,7 +676,7 @@ namespace MailKit.Net.Pop3 {
 						// write blocks of data to the stream without buffering
 						while (left >= BlockSize) {
 							Poll (SelectMode.SelectWrite, cancellationToken);
-							Stream.Write (buffer, index, BlockSize);
+							await Stream.WriteAsync(buffer, index, BlockSize, cancellationToken);
 							logger.LogClient (buffer, index, BlockSize);
 							index += BlockSize;
 							left -= BlockSize;
@@ -715,7 +722,12 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Write (byte[] buffer, int offset, int count)
 		{
-			Write (buffer, offset, count, CancellationToken.None);
+			throw new NotSupportedException ("Use WrtiteAsync.");
+		}
+
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return Write (buffer, offset, count, cancellationToken);
 		}
 
 		/// <summary>
@@ -739,7 +751,7 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public void Flush (CancellationToken cancellationToken)
+		public async Task Flush (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -748,8 +760,8 @@ namespace MailKit.Net.Pop3 {
 
 			try {
 				Poll (SelectMode.SelectWrite, cancellationToken);
-				Stream.Write (output, 0, outputIndex);
-				Stream.Flush ();
+				await Stream.WriteAsync (output, 0, outputIndex, cancellationToken);
+				await Stream.FlushAsync (cancellationToken);
 				logger.LogClient (output, 0, outputIndex);
 				outputIndex = 0;
 			} catch {
@@ -777,10 +789,15 @@ namespace MailKit.Net.Pop3 {
 		/// </exception>
 		public override void Flush ()
 		{
-			Flush (CancellationToken.None);
+		    throw new NotSupportedException("Use FlushAsync.");
 		}
 
-		/// <summary>
+	    public override Task FlushAsync(CancellationToken cancellationToken)
+	    {
+	        return Flush(cancellationToken);
+	    }
+
+	    /// <summary>
 		/// Sets the position within the current stream.
 		/// </summary>
 		/// <returns>The new position within the stream.</returns>
