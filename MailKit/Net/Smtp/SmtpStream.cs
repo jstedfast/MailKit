@@ -458,14 +458,17 @@ namespace MailKit.Net.Smtp {
 			CheckDisposed ();
 
 			using (var memory = new MemoryStream ()) {
+				bool needInput = inputIndex == inputEnd;
 				bool complete = false;
 				bool newLine = true;
 				bool more = true;
 				int code = 0;
 
 				do {
-					if (memory.Length > 0 || inputIndex == inputEnd)
+					if (needInput) {
 						ReadAhead (cancellationToken);
+						needInput = false;
+					}
 
 					complete = false;
 
@@ -480,6 +483,7 @@ namespace MailKit.Net.Smtp {
 
 							if (inputIndex == inputEnd) {
 								inputIndex = startIndex;
+								needInput = true;
 								break;
 							}
 
@@ -515,6 +519,9 @@ namespace MailKit.Net.Smtp {
 							inputIndex++;
 						}
 					} while (more && inputIndex < inputEnd);
+
+					if (inputIndex == inputEnd)
+						needInput = true;
 				} while (more || !complete);
 
 				string message = null;
