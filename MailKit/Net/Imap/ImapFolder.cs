@@ -474,15 +474,17 @@ namespace MailKit.Net.Imap {
 			} else if ((Engine.Capabilities & ImapCapabilities.Unselect) != 0) {
 				ic = Engine.QueueCommand (cancellationToken, this, "UNSELECT\r\n");
 			} else {
-				return;
+				ic = null;
 			}
 
-			Engine.Wait (ic);
+			if (ic != null) {
+				Engine.Wait (ic);
 
-			ProcessResponseCodes (ic, null);
+				ProcessResponseCodes (ic, null);
 
-			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create (expunge ? "CLOSE" : "UNSELECT", ic);
+				if (ic.Response != ImapCommandResponse.Ok)
+					throw ImapCommandException.Create (expunge ? "CLOSE" : "UNSELECT", ic);
+			}
 
 			Engine.State = ImapEngineState.Authenticated;
 			Access = FolderAccess.None;
