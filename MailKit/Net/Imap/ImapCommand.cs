@@ -612,7 +612,7 @@ namespace MailKit.Net.Imap {
 				current++;
 			} while (true);
 
-			Engine.Stream.Flush ();
+			Engine.Stream.Flush (CancellationToken);
 
 			// now we need to read the response...
 			do {
