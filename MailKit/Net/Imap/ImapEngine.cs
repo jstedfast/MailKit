@@ -1250,7 +1250,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.CopyUid:
 				var copy = (CopyUidResponseCode) code;
 
-				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
+				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number as first argument of the 'COPYUID' RESP-CODE, but got: {0}", token);
 					throw UnexpectedToken (token, false);
 				}
