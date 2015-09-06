@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.2.10.0</version>
+        <version>1.2.11.0</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,14 +22,15 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Added an SslProtocols property to ImapClient, Pop3Client, and SmtpClient to allow developers to override which SSL protocols are to be allowed for SSL connections. (issue #229)
-* Added a work-around for GMail IMAP (and other IMAP servers) that sometimes send an illegal MODSEQ value of 0. (issue #228)
+        <releaseNotes>* Fixed SmtpStream logic for determining if a call to ReadAhead() is needed. (issue #232)
+* Fixed ImapFolder.Close() to change the state to Closed even if the IMAP server does not support the UNSELECT command.
+* Allow the UIDVALIDITY argument to the COPYUID and APPENDUID resp-codes to be 0 even though that value is llegal. Improves compatibility with SmarterMail. (issue #240)
 </releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security smime s/mime openpgp pgp mbox email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.2.10.0" />
+            <dependency id="MimeKit" version="1.2.11.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
