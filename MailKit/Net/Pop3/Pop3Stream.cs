@@ -817,8 +817,9 @@ namespace MailKit.Net.Pop3 {
 			if (disposing && !disposed) {
 				IsConnected = false;
 				Stream.Dispose ();
-				disposed = true;
 			}
+
+			disposed = true;
 
 			base.Dispose (disposing);
 		}

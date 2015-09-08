@@ -756,7 +756,6 @@ namespace MailKit.Net.Smtp {
 			if (disposing && !disposed) {
 				IsConnected = false;
 				Stream.Dispose ();
-				disposed = true;
 
 #if NETFX_CORE
 				if (Socket != null) {
@@ -767,6 +766,8 @@ namespace MailKit.Net.Smtp {
 				Socket = null;
 #endif
 			}
+
+			disposed = true;
 
 			base.Dispose (disposing);
 		}
