@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.2.11.1
+
+* Fixed ImapFolder.GetSubfolders() to work with Yahoo! Mail and other IMAP servers that
+  do not use the canonical INBOX naming convention for the INBOX folder. (issue #242)
+
 ### MailKit 1.2.11
 
 * Fixed SmtpStream logic for determining if a call to ReadAhead() is needed. (issue #232)
