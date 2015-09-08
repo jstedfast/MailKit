@@ -1173,10 +1173,17 @@ namespace MailKit.Net.Imap {
 			// Note: GMail's IMAP implementation is broken and does not quote strings with ']' like it should.
 			token = engine.ReadToken (ImapStream.GMailLabelSpecials, cancellationToken);
 
-			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString) {
-				var label = engine.DecodeMailboxName ((string) token.Value);
+			while (token.Type == ImapTokenType.Flag || token.Type == ImapTokenType.Atom || token.Type == ImapTokenType.QString || token.Type == ImapTokenType.Nil) {
+				// Apparently it's possible to set a NIL label in GMail...
+				//
+				// See https://github.com/jstedfast/MailKit/issues/244 for an example.
+				if (token.Type != ImapTokenType.Nil) {
+					var label = engine.DecodeMailboxName ((string) token.Value);
 
-				labels.Add (label);
+					labels.Add (label);
+				} else {
+					labels.Add (null);
+				}
 
 				token = engine.ReadToken (ImapStream.GMailLabelSpecials, cancellationToken);
 			}

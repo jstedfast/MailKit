@@ -105,6 +105,32 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
+		public void TestParseLabelsListWithNIL ()
+		{
+			const string text = "(atom-label \\flag-label \"quoted-label\" NIL)\r\n";
+
+			using (var memory = new MemoryStream (Encoding.ASCII.GetBytes (text), false)) {
+				using (var tokenizer = new ImapStream (memory, null, new NullProtocolLogger ())) {
+					using (var engine = new ImapEngine (null)) {
+						IList<string> labels;
+
+						engine.SetStream (tokenizer);
+
+						try {
+							labels = ImapUtils.ParseLabelsList (engine, CancellationToken.None);
+						} catch (Exception ex) {
+							Assert.Fail ("Parsing X-GM-LABELS failed: {0}", ex);
+							return;
+						}
+
+						var token = engine.ReadToken (CancellationToken.None);
+						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
+					}
+				}
+			}
+		}
+
+		[Test]
 		public void TestParseExampleBodyRfc3501 ()
 		{
 			const string text = "(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 3028 92)\r\n";

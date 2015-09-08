@@ -6891,6 +6891,11 @@ namespace MailKit.Net.Imap {
 				if (i > 0)
 					list.Append (' ');
 
+				if (labels[i] == null) {
+					list.Append ("NIL");
+					continue;
+				}
+
 				switch (labels[i]) {
 				case "\\AllMail":
 				case "\\Drafts":
