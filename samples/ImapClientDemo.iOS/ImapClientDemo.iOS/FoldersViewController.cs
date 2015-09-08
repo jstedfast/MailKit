@@ -69,6 +69,9 @@ namespace ImapClientDemo.iOS
                     OpenFolder (folder)));
             }
 
+			if (folder.Attributes.HasFlag (FolderAttributes.HasNoChildren))
+				return;
+
             var subfolders = await folder.GetSubfoldersAsync ();
 
             foreach (var sf in subfolders)
