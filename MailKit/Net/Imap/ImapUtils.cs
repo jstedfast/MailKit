@@ -1178,7 +1178,7 @@ namespace MailKit.Net.Imap {
 
 				labels.Add (label);
 
-				token = engine.ReadToken (cancellationToken);
+				token = engine.ReadToken (ImapStream.GMailLabelSpecials, cancellationToken);
 			}
 
 			if (token.Type != ImapTokenType.CloseParen)
