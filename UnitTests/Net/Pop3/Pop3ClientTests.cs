@@ -67,9 +67,9 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public void TestBasicPop3Client ()
+		public async void TestBasicPop3Client ()
 		{
-			TestBasicPop3ClientAsync().GetAwaiter().GetResult();
+			await TestBasicPop3ClientAsync();
 		}
 
 		async Task TestBasicPop3ClientAsync ()
@@ -131,9 +131,9 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public void TestBasicPop3ClientUnixLineEndings ()
+		public async void TestBasicPop3ClientUnixLineEndings ()
 		{
-			TestBasicPop3ClientUnixLineEndingsAsync ().GetAwaiter ().GetResult ();
+			await TestBasicPop3ClientUnixLineEndingsAsync ();
 		}
 
 		async Task TestBasicPop3ClientUnixLineEndingsAsync ()
@@ -195,9 +195,9 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public void TestAuthenticationExceptions ()
+		public async void TestAuthenticationExceptions ()
 		{
-			TestAuthenticationExceptionsAsync ().GetAwaiter ().GetResult ();
+			await TestAuthenticationExceptionsAsync ();
 		}
 
 		async Task TestAuthenticationExceptionsAsync ()
@@ -355,9 +355,9 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public void TestExchangePop3Client ()
+		public async void TestExchangePop3Client ()
 		{
-			TestExchangePop3ClientAsync ().GetAwaiter ().GetResult ();
+			await TestExchangePop3ClientAsync ();
 		}
 
 		async Task TestExchangePop3ClientAsync ()
@@ -432,9 +432,9 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
-		public void TestGMailPop3Client ()
+		public async void TestGMailPop3Client ()
 		{
-			TestGMailPop3ClientAsync ().GetAwaiter ().GetResult ();
+			await TestGMailPop3ClientAsync ();
 		}
 
 		async Task TestGMailPop3ClientAsync ()

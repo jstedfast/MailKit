@@ -1671,8 +1671,9 @@ namespace MailKit.Net.Smtp {
 		/// An SMTP protocol exception occurred.
 		/// </exception>
 		public override void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
-	    {
-	        SendAsync(options, message, sender, recipients, cancellationToken, progress).GetAwaiter().GetResult();
+		{
+		    throw new Exception("Use SendAsync");
+//	        SendAsync(options, message, sender, recipients, cancellationToken, progress);
 	    }
 
 	    public override async Task SendAsync(FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients,

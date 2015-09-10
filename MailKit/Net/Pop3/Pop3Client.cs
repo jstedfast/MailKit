@@ -2143,7 +2143,7 @@ namespace MailKit.Net.Pop3 {
 				using (var stream = new ProgressStream (data, Update)) {
 					parser.SetStream (ParserOptions.Default, stream);
 
-					return parser.ParseMessage (cancellationToken).Headers;
+					return (await parser.ParseMessage (cancellationToken)).Headers;
 				}
 			}
 		}
@@ -2162,7 +2162,7 @@ namespace MailKit.Net.Pop3 {
 				using (var stream = new ProgressStream (data, Update)) {
 					parser.SetStream (ParserOptions.Default, stream);
 
-					return parser.ParseMessage (cancellationToken);
+					return await parser.ParseMessage (cancellationToken);
 				}
 			}
 		}

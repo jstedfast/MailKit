@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -458,8 +459,10 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public override int Read (byte[] buffer, int offset, int count) {
-			return Read (buffer, offset, count, CancellationToken.None).GetAwaiter ().GetResult ();
+		public override int Read (byte[] buffer, int offset, int count)
+		{
+		    throw new Exception("Use ReadAsync.");
+//			return Read (buffer, offset, count, CancellationToken.None);
 		}
 
 		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken) {
@@ -478,44 +481,63 @@ namespace MailKit.Net.Imap {
 			return c == (byte)' ' || c == (byte)'\t' || c == (byte)'\r';
 		}
 
-		unsafe ImapToken ReadQuotedStringToken (byte* inbuf, CancellationToken cancellationToken) {
-			byte* inptr = inbuf + inputIndex;
-			byte* inend = inbuf + inputEnd;
-			bool escaped = false;
+	    async Task<ImapToken> ReadQuotedStringToken (CancellationToken cancellationToken) {
 
-			// skip over the leading '"'
-			inptr++;
+            bool escaped = false;
+
+            unsafe
+            {
+                _inptr = _inbuf + inputIndex;
+                _inend = _inbuf + inputEnd;
+
+                // skip over the leading '"'
+                _inptr++;
+            }
 
 			using (var memory = new MemoryStream ()) {
 				do {
-					while (inptr < inend) {
-						if (*inptr == (byte)'"' && !escaped)
-							break;
+				    unsafe
+				    {
+                        while (_inptr < _inend)
+                        {
+                            if (*_inptr == (byte)'"' && !escaped)
+                                break;
 
-						if (*inptr == (byte)'\\' && !escaped) {
-							escaped = true;
-						} else {
-							memory.WriteByte (*inptr);
-							escaped = false;
-						}
+                            if (*_inptr == (byte)'\\' && !escaped)
+                            {
+                                escaped = true;
+                            }
+                            else
+                            {
+                                memory.WriteByte(*_inptr);
+                                escaped = false;
+                            }
 
-						inptr++;
-					}
+                            _inptr++;
+                        }
 
-					if (inptr < inend) {
-						inptr++;
-						break;
-					}
+                        if (_inptr < _inend)
+                        {
+                            _inptr++;
+                            break;
+                        }
 
-					inputIndex = (int)(inptr - inbuf);
+                        inputIndex = (int)(_inptr - _inbuf);
+                    }
 
-					ReadAhead (1, cancellationToken).Wait (cancellationToken);
+					await ReadAhead (1, cancellationToken);
 
-					inptr = inbuf + inputIndex;
-					inend = inbuf + inputEnd;
+				    unsafe
+				    {
+                        _inptr = _inbuf + inputIndex;
+                        _inend = _inbuf + inputEnd;
+                    }
 				} while (true);
 
-				inputIndex = (int)(inptr - inbuf);
+			    unsafe
+			    {
+                    inputIndex = (int)(_inptr - _inbuf);
+                }
 
 #if !NETFX_CORE
 				var buffer = memory.GetBuffer ();
@@ -528,135 +550,187 @@ namespace MailKit.Net.Imap {
 			}
 		}
 
-		unsafe string ReadAtomString (byte* inbuf, bool flag, string specials, CancellationToken cancellationToken) {
+	    async Task<string> ReadAtomString (bool flag, string specials, CancellationToken cancellationToken) {
 			var builder = new StringBuilder ();
-			byte* inptr = inbuf + inputIndex;
-			byte* inend = inbuf + inputEnd;
+
+		    unsafe
+		    {
+                _inptr = _inbuf + inputIndex;
+                _inbuf = _inbuf + inputEnd;
+            }
 
 			do {
-				*inend = (byte)'\n';
+			    unsafe
+			    {
+                    *_inbuf = (byte)'\n';
 
-				if (flag && builder.Length == 0 && *inptr == (byte)'*') {
-					// this is a special wildcard flag
-					inputIndex++;
-					return "*";
-				}
+                    if (flag && builder.Length == 0 && *_inptr == (byte)'*')
+                    {
+                        // this is a special wildcard flag
+                        inputIndex++;
+                        return "*";
+                    }
 
-				while (IsAtom (*inptr, specials))
-					builder.Append ((char)*inptr++);
+                    while (IsAtom(*_inptr, specials))
+                        builder.Append((char)*_inptr++);
 
-				if (inptr < inend)
-					break;
+                    if (_inptr < _inbuf)
+                        break;
 
-				inputIndex = (int)(inptr - inbuf);
+                    inputIndex = (int)(_inptr - _inbuf);
+                }
 
-				ReadAhead (1, cancellationToken).Wait (cancellationToken);
+				await ReadAhead (1, cancellationToken);
 
-				inptr = inbuf + inputIndex;
-				inend = inbuf + inputEnd;
+			    unsafe
+			    {
+                    _inptr = _inbuf + inputIndex;
+                    _inbuf = _inbuf + inputEnd;
+                }
 			} while (true);
 
-			inputIndex = (int)(inptr - inbuf);
+		    unsafe
+		    {
+                inputIndex = (int)(_inptr - _inbuf);
+            }
 
 			return builder.ToString ();
 		}
 
-		unsafe ImapToken ReadAtomToken (byte* inbuf, string specials, CancellationToken cancellationToken) {
-			var atom = ReadAtomString (inbuf, false, specials, cancellationToken);
+	    async Task<ImapToken> ReadAtomToken (string specials, CancellationToken cancellationToken) {
+			var atom = await ReadAtomString (false, specials, cancellationToken);
 
 			return atom == "NIL" ? new ImapToken (ImapTokenType.Nil, atom) : new ImapToken (ImapTokenType.Atom, atom);
 		}
 
-		unsafe ImapToken ReadFlagToken (byte* inbuf, string specials, CancellationToken cancellationToken) {
+	    async Task<ImapToken> ReadFlagToken (string specials, CancellationToken cancellationToken) {
 			inputIndex++;
 
-			var flag = "\\" + ReadAtomString (inbuf, true, specials, cancellationToken);
+			var flag = "\\" + await ReadAtomString (true, specials, cancellationToken);
 
 			return new ImapToken (ImapTokenType.Flag, flag);
 		}
 
-		unsafe ImapToken ReadLiteralToken (byte* inbuf, CancellationToken cancellationToken) {
+		async Task<ImapToken> ReadLiteralToken (CancellationToken cancellationToken) {
 			var builder = new StringBuilder ();
-			byte* inptr = inbuf + inputIndex;
-			byte* inend = inbuf + inputEnd;
 
-			// skip over the '{'
-			inptr++;
+		    unsafe
+		    {
+                _inptr = _inbuf + inputIndex;
+                _inbuf = _inbuf + inputEnd;
+
+                // skip over the '{'
+                _inptr++;
+            }
 
 			do {
-				*inend = (byte)'}';
+			    unsafe
+			    {
+                    *_inbuf = (byte)'}';
 
-				while (*inptr != (byte)'}' && *inptr != '+')
-					builder.Append ((char)*inptr++);
+                    while (*_inptr != (byte)'}' && *_inptr != '+')
+                        builder.Append((char)*_inptr++);
 
-				if (inptr < inend)
-					break;
+                    if (_inptr < _inbuf)
+                        break;
 
-				inputIndex = (int)(inptr - inbuf);
+                    inputIndex = (int)(_inptr - _inbuf);
+                }
 
-				ReadAhead (1, cancellationToken).Wait (cancellationToken);
+				await ReadAhead (1, cancellationToken);
 
-				inptr = inbuf + inputIndex;
-				inend = inbuf + inputEnd;
+			    unsafe
+			    {
+                    _inptr = _inbuf + inputIndex;
+                    _inbuf = _inbuf + inputEnd;
+                }
 			} while (true);
 
-			if (*inptr == (byte)'+')
-				inptr++;
+		    unsafe
+		    {
+                if (*_inptr == (byte)'+')
+                    _inptr++;
 
-			// technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
-			inputIndex = (int)(inptr - inbuf);
+                // technically, we need "}\r\n", but in order to be more lenient, we'll accept "}\n"
+                inputIndex = (int)(_inptr - _inbuf);
+            }
 
-			ReadAhead (2, cancellationToken).Wait (cancellationToken);
+			await ReadAhead (2, cancellationToken);
 
-			inptr = inbuf + inputIndex;
-			inend = inbuf + inputEnd;
+            bool isEnd;
 
-			if (*inptr != (byte)'}') {
+		    unsafe
+		    {
+                _inptr = _inbuf + inputIndex;
+                _inbuf = _inbuf + inputEnd;
+
+                isEnd = *_inptr != (byte)'}';
+            }
+
+		    if (isEnd) {
 				// PROTOCOL ERROR... but maybe we can work around it?
 				do {
-					*inend = (byte)'}';
+				    unsafe
+				    {
+                        *_inbuf = (byte)'}';
 
-					while (*inptr != (byte)'}')
-						inptr++;
+                        while (*_inptr != (byte)'}')
+                            _inptr++;
 
-					if (inptr < inend)
-						break;
+                        if (_inptr < _inbuf)
+                            break;
 
-					inputIndex = (int)(inptr - inbuf);
+                        inputIndex = (int)(_inptr - _inbuf);
+                    }
 
-					ReadAhead (1, cancellationToken).Wait (cancellationToken);
+					await ReadAhead (1, cancellationToken);
 
-					inptr = inbuf + inputIndex;
-					inend = inbuf + inputEnd;
+				    unsafe
+				    {
+                        _inptr = _inbuf + inputIndex;
+                        _inbuf = _inbuf + inputEnd;
+                    }
 				} while (true);
 			}
 
-			// skip over the '}'
-			inptr++;
+		    unsafe
+		    {
+                // skip over the '}'
+                _inptr++;
+            }
 
 			// read until we get a new line...
 			do {
-				*inend = (byte)'\n';
+			    unsafe
+			    {
+                    *_inbuf = (byte)'\n';
 
-				while (*inptr != (byte)'\n')
-					inptr++;
+                    while (*_inptr != (byte)'\n')
+                        _inptr++;
 
-				if (inptr < inend)
-					break;
+                    if (_inptr < _inbuf)
+                        break;
 
-				inputIndex = (int)(inptr - inbuf);
+                    inputIndex = (int)(_inptr - _inbuf);
+                }
 
-				ReadAhead (1, cancellationToken).Wait (cancellationToken);
+				await ReadAhead (1, cancellationToken);
 
-				inptr = inbuf + inputIndex;
-				inend = inbuf + inputEnd;
-				*inptr = (byte)'\n';
+			    unsafe
+			    {
+                    _inptr = _inbuf + inputIndex;
+                    _inbuf = _inbuf + inputEnd;
+                    *_inptr = (byte)'\n';
+                }
 			} while (true);
 
-			// skip over the '\n'
-			inptr++;
+		    unsafe
+		    {
+                // skip over the '\n'
+                _inptr++;
 
-			inputIndex = (int)(inptr - inbuf);
+                inputIndex = (int)(_inptr - _inbuf);
+            }
 
 			if (!int.TryParse (builder.ToString (), out literalDataLeft) || literalDataLeft < 0)
 				return new ImapToken (ImapTokenType.Error, builder.ToString ());
@@ -666,22 +740,28 @@ namespace MailKit.Net.Imap {
 			return new ImapToken (ImapTokenType.Literal, literalDataLeft);
 		}
 
-		/// <summary>
-		/// Reads the next available token from the stream.
-		/// </summary>
-		/// <returns>The token.</returns>
-		/// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
-		/// <param name="cancellationToken">The cancellation token.</param>
-		/// <exception cref="System.ObjectDisposedException">
-		/// The stream has been disposed.
-		/// </exception>
-		/// <exception cref="System.OperationCanceledException">
-		/// The operation was canceled via the cancellation token.
-		/// </exception>
-		/// <exception cref="System.IO.IOException">
-		/// An I/O error occurred.
-		/// </exception>
-		public ImapToken ReadToken (string specials, CancellationToken cancellationToken) {
+        private unsafe byte* _inbuf;
+        private GCHandle _inbufHandle;
+
+        private unsafe byte* _inptr;
+        private unsafe byte* _inend;
+
+        /// <summary>
+        /// Reads the next available token from the stream.
+        /// </summary>
+        /// <returns>The token.</returns>
+        /// <param name="specials">A list of characters that are not legal in bare string tokens.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <exception cref="System.ObjectDisposedException">
+        /// The stream has been disposed.
+        /// </exception>
+        /// <exception cref="System.OperationCanceledException">
+        /// The operation was canceled via the cancellation token.
+        /// </exception>
+        /// <exception cref="System.IO.IOException">
+        /// An I/O error occurred.
+        /// </exception>
+        public async Task<ImapToken> ReadToken (string specials, CancellationToken cancellationToken) {
 			CheckDisposed ();
 
 			if (nextToken != null) {
@@ -690,54 +770,81 @@ namespace MailKit.Net.Imap {
 				return token;
 			}
 
-			unsafe
+            unsafe
+            {
+                _inbufHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
+                _inbuf = (byte*) _inbufHandle.AddrOfPinnedObject().ToPointer();
+            }
+
+            try
 			{
-				fixed (byte* inbuf = input)
-				{
-					byte* inptr = inbuf + inputIndex;
-					byte* inend = inbuf + inputEnd;
+			    unsafe
+			    {
+                    _inptr = _inbuf + inputIndex;
+                    _inend = _inbuf + inputEnd;
 
-					*inend = (byte)'\n';
+                    *_inend = (byte)'\n';
+                }
 
-					// skip over white space between tokens...
-					do {
-						while (IsWhiteSpace (*inptr))
-							inptr++;
+			    // skip over white space between tokens...
+			    do
+			    {
+			        unsafe
+			        {
+                        while (IsWhiteSpace(*_inptr))
+                            _inptr++;
 
-						if (inptr < inend)
-							break;
+                        if (_inptr < _inend)
+                            break;
 
-						inputIndex = (int)(inptr - inbuf);
+                        inputIndex = (int)(_inptr - _inbuf);
+                    }
 
-						ReadAhead (1, cancellationToken).Wait (cancellationToken);
+			        await ReadAhead(1, cancellationToken);
 
-						inptr = inbuf + inputIndex;
-						inend = inbuf + inputEnd;
+			        unsafe
+			        {
+                        _inptr = _inbuf + inputIndex;
+                        _inend = _inbuf + inputEnd;
 
-						*inend = (byte)'\n';
-					} while (true);
+                        *_inend = (byte)'\n';
+                    }
+			    } while (true);
 
-					inputIndex = (int)(inptr - inbuf);
-					char c = (char)*inptr;
+			    char c;
+			    unsafe
+			    {
+			        inputIndex = (int) (_inptr - _inbuf);
+			        c = (char) *_inptr;
+			    }
 
-					if (c == '"')
-						return ReadQuotedStringToken (inbuf, cancellationToken);
+			    if (c == '"')
+                    return await ReadQuotedStringToken(cancellationToken);
 
-					if (c == '{')
-						return ReadLiteralToken (inbuf, cancellationToken);
+                if (c == '{')
+                    return await ReadLiteralToken(cancellationToken);
 
-					if (c == '\\')
-						return ReadFlagToken (inbuf, specials, cancellationToken);
+                if (c == '\\')
+                    return await ReadFlagToken(specials, cancellationToken);
 
-					if (IsAtom (*inptr, specials))
-						return ReadAtomToken (inbuf, specials, cancellationToken);
+                bool isAtom;
+			    unsafe
+			    {
+			        isAtom = IsAtom(*_inptr, specials);
+			    }
 
-					// special character token
-					inputIndex++;
+                if (isAtom)
+                    return await ReadAtomToken(specials, cancellationToken);
 
-					return new ImapToken ((ImapTokenType)c, c);
-				}
+                // special character token
+                inputIndex++;
+
+                return new ImapToken((ImapTokenType)c, c);
 			}
+			finally
+			{
+                _inbufHandle.Free();
+            }
 		}
 
 		/// <summary>
@@ -754,8 +861,8 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		public ImapToken ReadToken (CancellationToken cancellationToken) {
-			return ReadToken (AtomSpecials, cancellationToken);
+		public async Task<ImapToken> ReadToken (CancellationToken cancellationToken) {
+			return await ReadToken (AtomSpecials, cancellationToken);
 		}
 
 		/// <summary>

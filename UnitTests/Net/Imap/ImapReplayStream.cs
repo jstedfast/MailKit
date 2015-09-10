@@ -28,7 +28,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 using MimeKit.IO;
@@ -43,7 +43,27 @@ namespace UnitTests.Net.Imap {
 
 	class ImapReplayCommand
 	{
-		public string Command { get; private set; }
+	    public static async Task<ImapReplayCommand> Create(string command, string resource)
+	    {
+            ImapReplayCommand replayCommand;
+
+            using (var stream = typeof(ImapReplayCommand).Assembly.GetManifestResourceStream("UnitTests.Net.Imap.Resources." + resource))
+            {
+                var memory = new MemoryBlockStream();
+
+                using (var filtered = new FilteredStream(memory))
+                {
+                    filtered.Add(new Unix2DosFilter());
+                    await stream.CopyToAsync(filtered, 4096);
+                }
+
+                replayCommand = new ImapReplayCommand(command, memory.ToArray());
+            }
+
+            return replayCommand;
+	    }
+
+	    public string Command { get; private set; }
 		public byte[] Response { get; private set; }
 
 		public ImapReplayCommand (string command, byte[] response)
@@ -52,23 +72,7 @@ namespace UnitTests.Net.Imap {
 			Response = response;
 		}
 
-		public ImapReplayCommand (string command, string resource)
-		{
-			Command = command;
-
-			using (var stream = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Imap.Resources." + resource)) {
-				var memory = new MemoryBlockStream ();
-
-				using (var filtered = new FilteredStream (memory)) {
-					filtered.Add (new Unix2DosFilter ());
-					stream.CopyTo (filtered, 4096);
-				}
-
-				Response = memory.ToArray ();
-			}
-		}
-
-		public ImapReplayCommand (string command, ImapReplayCommandResponse response)
+	    public ImapReplayCommand (string command, ImapReplayCommandResponse response)
 		{
 			var tokens = command.Split (' ');
 			var cmd = (tokens[1] == "UID" ? tokens[2] : tokens[1]).TrimEnd ();

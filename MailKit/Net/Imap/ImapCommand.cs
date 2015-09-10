@@ -244,17 +244,18 @@ namespace MailKit.Net.Imap {
 
 			Literal = literal;
 		}
-
-		/// <summary>
+        
+        /// <summary>
 		/// Get the length of the literal, in bytes.
 		/// </summary>
 		/// <remarks>
 		/// Gets the length of the literal, in bytes.
 		/// </remarks>
 		/// <value>The length.</value>
-		public long Length {
-			get { return GetLengthAsync().GetAwaiter ().GetResult (); }
-		}
+	    public Task<long> GetLength()
+	    {
+	        return GetLengthAsync();
+	    }
 
 		public async Task<long> GetLengthAsync()
 		{
@@ -634,7 +635,7 @@ namespace MailKit.Net.Imap {
 						if (Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = -1;
 
-						token = Engine.ReadToken (idle.LinkedToken);
+						token = await Engine.ReadToken (idle.LinkedToken);
 
 						if (Engine.Stream.CanTimeout)
 							Engine.Stream.ReadTimeout = timeout;
@@ -647,10 +648,10 @@ namespace MailKit.Net.Imap {
 
 						Engine.Stream.IsConnected = true;
 
-						token = Engine.ReadToken (CancellationToken);
+						token = await Engine.ReadToken (CancellationToken);
 					}
 				} else {
-					token = Engine.ReadToken (CancellationToken);
+					token = await Engine.ReadToken (CancellationToken);
 				}
 
 				if (token.Type == ImapTokenType.Atom && token.Value.ToString () == "+") {
@@ -671,7 +672,7 @@ namespace MailKit.Net.Imap {
                     await Engine.ProcessUntaggedResponse (CancellationToken);
 				} else if (token.Type == ImapTokenType.Atom && (string) token.Value == Tag) {
 					// the next token should be "OK", "NO", or "BAD"
-					token = Engine.ReadToken (CancellationToken);
+					token = await Engine.ReadToken (CancellationToken);
 
 					if (token.Type == ImapTokenType.Atom) {
 						string atom = (string) token.Value;
@@ -683,9 +684,9 @@ namespace MailKit.Net.Imap {
 						default: throw ImapEngine.UnexpectedToken (token, false);
 						}
 
-						token = Engine.ReadToken (CancellationToken);
+						token = await Engine.ReadToken (CancellationToken);
 						if (token.Type == ImapTokenType.OpenBracket) {
-							var code = Engine.ParseResponseCode (CancellationToken);
+							var code = await Engine.ParseResponseCode (CancellationToken);
 							RespCodes.Add (code);
 							break;
 						}
@@ -703,7 +704,7 @@ namespace MailKit.Net.Imap {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
 					// return RESP-CODES that are not preceded by "* OK " such as the example in
 					// issue #115 (https://github.com/jstedfast/MailKit/issues/115).
-					var code = Engine.ParseResponseCode (CancellationToken);
+					var code = await Engine.ParseResponseCode (CancellationToken);
 					RespCodes.Add (code);
 				} else {
 					// no clue what we got...

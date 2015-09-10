@@ -1022,7 +1022,7 @@ namespace MailKit.Net.Imap {
 				throw new ArgumentNullException ("replayStream");
 
 			engine.Uri = new Uri ("imap://" + host);
-			engine.Connect (new ImapStream (replayStream, null, ProtocolLogger), cancellationToken);
+            await engine.Connect (new ImapStream (replayStream, null, ProtocolLogger), cancellationToken);
 			engine.TagPrefix = 'A';
 
 			if (engine.CapabilitiesVersion == 0)
@@ -1210,7 +1210,7 @@ namespace MailKit.Net.Imap {
 
 			ProtocolLogger.LogConnect (uri);
 
-			engine.Connect (new ImapStream (stream, socket, ProtocolLogger), cancellationToken);
+            await engine.Connect (new ImapStream (stream, socket, ProtocolLogger), cancellationToken);
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.
@@ -1358,7 +1358,7 @@ namespace MailKit.Net.Imap {
 
 			ProtocolLogger.LogConnect (uri);
 
-			engine.Connect (new ImapStream (stream, socket, ProtocolLogger), cancellationToken);
+            await engine.Connect (new ImapStream (stream, socket, ProtocolLogger), cancellationToken);
 
 			try {
 				// Only query the CAPABILITIES if the greeting didn't include them.
@@ -1604,15 +1604,15 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("NOOP", ic);
 		}
 
-		static void IdleComplete (object state)
+		static async Task IdleComplete (object state)
 		{
 			var ctx = (ImapIdleContext) state;
 
 			if (ctx.Engine.State == ImapEngineState.Idle) {
 				var buf = Encoding.ASCII.GetBytes ("DONE\r\n");
 
-				ctx.Engine.Stream.Write (buf, 0, buf.Length);
-				ctx.Engine.Stream.Flush ();
+				await ctx.Engine.Stream.WriteAsync(buf, 0, buf.Length, CancellationToken.None);
+				await ctx.Engine.Stream.FlushAsync(CancellationToken.None);
 
 				ctx.Engine.State = ImapEngineState.Selected;
 			}
@@ -1694,7 +1694,7 @@ namespace MailKit.Net.Imap {
                 ic.ContinuationHandler = async (imap, cmd, text) => {
 					imap.State = ImapEngineState.Idle;
 
-					doneToken.Register (IdleComplete, context);
+					doneToken.Register (state => IdleComplete(state), context);
 				};
 
                 await engine.Wait (ic);

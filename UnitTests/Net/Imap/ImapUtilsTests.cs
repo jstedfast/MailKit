@@ -105,7 +105,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestParseExampleBodyRfc3501 ()
+		public async void TestParseExampleBodyRfc3501 ()
 		{
 			const string text = "(\"TEXT\" \"PLAIN\" (\"CHARSET\" \"US-ASCII\") NIL NIL \"7BIT\" 3028 92)\r\n";
 
@@ -118,13 +118,13 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None).GetAwaiter ().GetResult ();
+							body = await ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing BODY failed: {0}", ex);
 							return;
 						}
 
-						var token = engine.ReadToken (CancellationToken.None);
+						var token = await engine.ReadToken (CancellationToken.None);
 						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
 
 						Assert.IsInstanceOf<BodyPartText> (body, "Body types did not match.");
@@ -143,7 +143,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestParseExampleEnvelopeRfc3501 ()
+		public async void TestParseExampleEnvelopeRfc3501 ()
 		{
 			const string text = "(\"Wed, 17 Jul 1996 02:23:25 -0700 (PDT)\" \"IMAP4rev1 WG mtg summary and minutes\" ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((\"Terry Gray\" NIL \"gray\" \"cac.washington.edu\")) ((NIL NIL \"imap\" \"cac.washington.edu\")) ((NIL NIL \"minutes\" \"CNRI.Reston.VA.US\") (\"John Klensin\" NIL \"KLENSIN\" \"MIT.EDU\")) NIL NIL \"<B27397-0100000@cac.washington.edu>\")\r\n";
 
@@ -155,13 +155,13 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None).GetAwaiter ().GetResult ();
+							envelope = await ImapUtils.ParseEnvelope (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
 							return;
 						}
 
-						var token = engine.ReadToken (CancellationToken.None);
+						var token = await engine.ReadToken (CancellationToken.None);
 						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
 
 						Assert.IsTrue (envelope.Date.HasValue, "Parsed ENVELOPE date is null.");
@@ -194,7 +194,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestParseDovcotEnvelopeWithGroupAddresses ()
+		public async void TestParseDovcotEnvelopeWithGroupAddresses ()
 		{
 			const string text = "(\"Mon, 13 Jul 2015 21:15:32 -0400\" \"Test message\" ((\"Example From\" NIL \"from\" \"example.com\")) ((\"Example Sender\" NIL \"sender\" \"example.com\")) ((\"Example Reply-To\" NIL \"reply-to\" \"example.com\")) ((NIL NIL \"boys\" NIL)(NIL NIL \"aaron\" \"MISSING_DOMAIN\")(NIL NIL \"jeff\" \"MISSING_DOMAIN\")(NIL NIL \"zach\" \"MISSING_DOMAIN\")(NIL NIL NIL NIL)(NIL NIL \"girls\" NIL)(NIL NIL \"alice\" \"MISSING_DOMAIN\")(NIL NIL \"hailey\" \"MISSING_DOMAIN\")(NIL NIL \"jenny\" \"MISSING_DOMAIN\")(NIL NIL NIL NIL)) NIL NIL NIL \"<MV4F9T0FLVT4.2CZLZPO4HZ8B3@Jeffreys-MacBook-Air.local>\")";
 
@@ -206,7 +206,7 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							envelope = ImapUtils.ParseEnvelope (engine, CancellationToken.None).GetAwaiter ().GetResult ();
+							envelope = await ImapUtils.ParseEnvelope (engine, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing ENVELOPE failed: {0}", ex);
 							return;
@@ -222,7 +222,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestParseExampleMultiLevelDovecotBodyStructure ()
+		public async void TestParseExampleMultiLevelDovecotBodyStructure ()
 		{
 			const string text = "(((\"text\" \"plain\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 28 2 NIL NIL NIL NIL) (\"text\" \"html\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 1707 65 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"----=_NextPart_001_0078_01CBB179.57530990\") NIL NIL NIL) (\"message\" \"rfc822\" NIL NIL NIL \"7bit\" 641 (\"Sat, 8 Jan 2011 14:16:36 +0100\" \"Subj 2\" ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Recipient\" NIL \"example\" \"gmail.com\")) NIL NIL NIL NIL) (\"text\" \"plain\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 185 18 NIL NIL (\"cs\") NIL) 31 NIL (\"attachment\" NIL) NIL NIL) (\"message\" \"rfc822\" NIL NIL NIL \"7bit\" 50592 (\"Sat, 8 Jan 2011 13:58:39 +0100\" \"Subj 1\" ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Some Name, SOMECOMPANY\" NIL \"recipient\" \"example.com\")) ((\"Recipient\" NIL \"example\" \"gmail.com\")) NIL NIL NIL NIL) ( (\"text\" \"plain\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 4296 345 NIL NIL NIL NIL) (\"text\" \"html\" (\"charset\" \"iso-8859-2\") NIL NIL \"quoted-printable\" 45069 1295 NIL NIL NIL NIL) \"alternative\" (\"boundary\" \"----=_NextPart_000_0073_01CBB179.57530990\") NIL (\"cs\") NIL) 1669 NIL (\"attachment\" NIL) NIL NIL) \"mixed\" (\"boundary\" \"----=_NextPart_000_0077_01CBB179.57530990\") NIL (\"cs\") NIL)\r\n";
 
@@ -235,13 +235,13 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							body = ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None).GetAwaiter ().GetResult ();
+							body = await ImapUtils.ParseBody (engine, string.Empty, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing BODYSTRUCTURE failed: {0}", ex);
 							return;
 						}
 
-						var token = engine.ReadToken (CancellationToken.None);
+						var token = await engine.ReadToken (CancellationToken.None);
 						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
 
 						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
@@ -261,7 +261,7 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestParseExampleThreads ()
+		public async void TestParseExampleThreads ()
 		{
 			const string text = "(2)(3 6 (4 23)(44 7 96))\r\n";
 
@@ -273,13 +273,13 @@ namespace UnitTests.Net.Imap {
 						engine.SetStream (tokenizer);
 
 						try {
-							threads = ImapUtils.ParseThreads (engine, 0, CancellationToken.None);
+							threads = await ImapUtils.ParseThreads (engine, 0, CancellationToken.None);
 						} catch (Exception ex) {
 							Assert.Fail ("Parsing THREAD response failed: {0}", ex);
 							return;
 						}
 
-						var token = engine.ReadToken (CancellationToken.None);
+						var token = await engine.ReadToken (CancellationToken.None);
 						Assert.AreEqual (ImapTokenType.Eoln, token.Type, "Expected new-line, but got: {0}", token);
 
 						Assert.AreEqual (2, threads.Count, "Expected 2 threads.");

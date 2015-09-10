@@ -93,14 +93,14 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestImapClientGreetingCapabilities ()
+		public async void TestImapClientGreetingCapabilities ()
 		{
 			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "common.capability-greeting.txt"));
+			commands.Add (await ImapReplayCommand.Create("", "common.capability-greeting.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
+					await client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -114,21 +114,21 @@ namespace UnitTests.Net.Imap {
 		}
 
 		[Test]
-		public void TestImapClientFeatures ()
+		public async void TestImapClientFeatures ()
 		{
 			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
+			commands.Add (await ImapReplayCommand.Create("", "gmail.greeting.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000005 ID (\"name\" \"MailKit\" \"version\" \"1.0\" \"vendor\" \"Xamarin Inc.\")\r\n", "common.id.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000006 GETQUOTAROOT INBOX\r\n", "common.getquota.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
+					await client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -148,7 +148,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials).GetAwaiter ().GetResult ();
+					await client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -159,7 +159,7 @@ namespace UnitTests.Net.Imap {
 					Name = "MailKit", Version = "1.0", Vendor = "Xamarin Inc."
 				};
 
-				implementation = client.Identify (implementation).GetAwaiter ().GetResult ();
+				implementation = await client.Identify (implementation);
 				Assert.IsNotNull (implementation, "Expected a non-null ID response.");
 				Assert.AreEqual ("GImap", implementation.Name);
 				Assert.AreEqual ("Google, Inc.", implementation.Vendor);
@@ -173,7 +173,7 @@ namespace UnitTests.Net.Imap {
 				Assert.IsNotNull (inbox, "Expected non-null Inbox folder.");
 				Assert.AreEqual (FolderAttributes.Inbox | FolderAttributes.HasNoChildren, inbox.Attributes, "Expected Inbox attributes to be \\HasNoChildren.");
 
-				var quota = inbox.GetQuota ().GetAwaiter ().GetResult ();
+				var quota = await inbox.GetQuota ();
 				Assert.IsNotNull (quota, "Expected a non-null GETQUOTAROOT response.");
 				Assert.AreEqual (personal.FullName, quota.QuotaRoot.FullName);
 				Assert.AreEqual (personal, quota.QuotaRoot);
@@ -182,38 +182,38 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (quota.CurrentMessageCount.HasValue);
 				Assert.IsFalse (quota.MessageLimit.HasValue);
 
-				client.Disconnect (false).GetAwaiter ().GetResult ();
+				await client.Disconnect (false);
 			}
 		}
 
 		[Test]
-		public void TestImapClientGMail ()
+		public async void TestImapClientGMail ()
 		{
 			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
+			commands.Add (await ImapReplayCommand.Create("", "gmail.greeting.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000006 CREATE UnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000007 LIST \"\" UnitTests\r\n", "gmail.list-unittests.txt"));
-			commands.Add (new ImapReplayCommand ("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000007 LIST \"\" UnitTests\r\n", "gmail.list-unittests.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt"));
 
 			for (int i = 0; i < 50; i++) {
 				using (var stream = new MemoryStream ()) {
 					using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
 						using (var filtered = new FilteredStream (stream)) {
 							filtered.Add (new Unix2DosFilter ());
-							resource.CopyTo (filtered, 4096);
-							filtered.Flush ();
+							await resource.CopyToAsync (filtered, 4096);
+							await filtered.FlushAsync ();
 						}
 
 						stream.Position = 0;
 					}
 
-					MimeMessage.Load (stream);
+					await MimeMessage.Load (stream);
 
 					long length = stream.Length;
 					string latin1;
@@ -225,50 +225,50 @@ namespace UnitTests.Net.Imap {
 					var command = string.Format ("A{0:D8} APPEND UnitTests (\\Seen) ", i + 9);
 					command += "{" + length + "}\r\n";
 
-					commands.Add (new ImapReplayCommand (command, "gmail.go-ahead.txt"));
-					commands.Add (new ImapReplayCommand (latin1 + "\r\n", string.Format ("gmail.append.{0}.txt", i + 1)));
+					commands.Add (await ImapReplayCommand.Create(command, "gmail.go-ahead.txt"));
+					commands.Add (await ImapReplayCommand.Create(latin1 + "\r\n", string.Format ("gmail.append.{0}.txt", i + 1)));
 				}
 			}
 
-			commands.Add (new ImapReplayCommand ("A00000059 UID SEARCH RETURN () CHARSET US-ASCII OR TO nsb CC nsb\r\n", "gmail.search.txt"));
-			commands.Add (new ImapReplayCommand ("A00000060 UID FETCH 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODY)\r\n", "gmail.search-summary.txt"));
-			commands.Add (new ImapReplayCommand ("A00000061 UID FETCH 1 (BODY.PEEK[])\r\n", "gmail.fetch.1.txt"));
-			commands.Add (new ImapReplayCommand ("A00000062 UID FETCH 2 (BODY.PEEK[])\r\n", "gmail.fetch.2.txt"));
-			commands.Add (new ImapReplayCommand ("A00000063 UID FETCH 3 (BODY.PEEK[])\r\n", "gmail.fetch.3.txt"));
-			commands.Add (new ImapReplayCommand ("A00000064 UID FETCH 5 (BODY.PEEK[])\r\n", "gmail.fetch.5.txt"));
-			commands.Add (new ImapReplayCommand ("A00000065 UID FETCH 7 (BODY.PEEK[])\r\n", "gmail.fetch.7.txt"));
-			commands.Add (new ImapReplayCommand ("A00000066 UID FETCH 8 (BODY.PEEK[])\r\n", "gmail.fetch.8.txt"));
-			commands.Add (new ImapReplayCommand ("A00000067 UID FETCH 9 (BODY.PEEK[])\r\n", "gmail.fetch.9.txt"));
-			commands.Add (new ImapReplayCommand ("A00000068 UID FETCH 11 (BODY.PEEK[])\r\n", "gmail.fetch.11.txt"));
-			commands.Add (new ImapReplayCommand ("A00000069 UID FETCH 12 (BODY.PEEK[])\r\n", "gmail.fetch.12.txt"));
-			commands.Add (new ImapReplayCommand ("A00000070 UID FETCH 13 (BODY.PEEK[])\r\n", "gmail.fetch.13.txt"));
-			commands.Add (new ImapReplayCommand ("A00000071 UID FETCH 14 (BODY.PEEK[])\r\n", "gmail.fetch.14.txt"));
-			commands.Add (new ImapReplayCommand ("A00000072 UID FETCH 26 (BODY.PEEK[])\r\n", "gmail.fetch.26.txt"));
-			commands.Add (new ImapReplayCommand ("A00000073 UID FETCH 27 (BODY.PEEK[])\r\n", "gmail.fetch.27.txt"));
-			commands.Add (new ImapReplayCommand ("A00000074 UID FETCH 28 (BODY.PEEK[])\r\n", "gmail.fetch.28.txt"));
-			commands.Add (new ImapReplayCommand ("A00000075 UID FETCH 29 (BODY.PEEK[])\r\n", "gmail.fetch.29.txt"));
-			commands.Add (new ImapReplayCommand ("A00000076 UID FETCH 31 (BODY.PEEK[])\r\n", "gmail.fetch.31.txt"));
-			commands.Add (new ImapReplayCommand ("A00000077 UID FETCH 34 (BODY.PEEK[])\r\n", "gmail.fetch.34.txt"));
-			commands.Add (new ImapReplayCommand ("A00000078 UID FETCH 41 (BODY.PEEK[])\r\n", "gmail.fetch.41.txt"));
-			commands.Add (new ImapReplayCommand ("A00000079 UID FETCH 42 (BODY.PEEK[])\r\n", "gmail.fetch.42.txt"));
-			commands.Add (new ImapReplayCommand ("A00000080 UID FETCH 43 (BODY.PEEK[])\r\n", "gmail.fetch.43.txt"));
-			commands.Add (new ImapReplayCommand ("A00000081 UID FETCH 50 (BODY.PEEK[])\r\n", "gmail.fetch.50.txt"));
-			commands.Add (new ImapReplayCommand ("A00000082 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 FLAGS (\\Answered \\Seen)\r\n", "gmail.set-flags.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000059 UID SEARCH RETURN () CHARSET US-ASCII OR TO nsb CC nsb\r\n", "gmail.search.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000060 UID FETCH 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODY)\r\n", "gmail.search-summary.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000061 UID FETCH 1 (BODY.PEEK[])\r\n", "gmail.fetch.1.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000062 UID FETCH 2 (BODY.PEEK[])\r\n", "gmail.fetch.2.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000063 UID FETCH 3 (BODY.PEEK[])\r\n", "gmail.fetch.3.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000064 UID FETCH 5 (BODY.PEEK[])\r\n", "gmail.fetch.5.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000065 UID FETCH 7 (BODY.PEEK[])\r\n", "gmail.fetch.7.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000066 UID FETCH 8 (BODY.PEEK[])\r\n", "gmail.fetch.8.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000067 UID FETCH 9 (BODY.PEEK[])\r\n", "gmail.fetch.9.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000068 UID FETCH 11 (BODY.PEEK[])\r\n", "gmail.fetch.11.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000069 UID FETCH 12 (BODY.PEEK[])\r\n", "gmail.fetch.12.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000070 UID FETCH 13 (BODY.PEEK[])\r\n", "gmail.fetch.13.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000071 UID FETCH 14 (BODY.PEEK[])\r\n", "gmail.fetch.14.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000072 UID FETCH 26 (BODY.PEEK[])\r\n", "gmail.fetch.26.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000073 UID FETCH 27 (BODY.PEEK[])\r\n", "gmail.fetch.27.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000074 UID FETCH 28 (BODY.PEEK[])\r\n", "gmail.fetch.28.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000075 UID FETCH 29 (BODY.PEEK[])\r\n", "gmail.fetch.29.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000076 UID FETCH 31 (BODY.PEEK[])\r\n", "gmail.fetch.31.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000077 UID FETCH 34 (BODY.PEEK[])\r\n", "gmail.fetch.34.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000078 UID FETCH 41 (BODY.PEEK[])\r\n", "gmail.fetch.41.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000079 UID FETCH 42 (BODY.PEEK[])\r\n", "gmail.fetch.42.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000080 UID FETCH 43 (BODY.PEEK[])\r\n", "gmail.fetch.43.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000081 UID FETCH 50 (BODY.PEEK[])\r\n", "gmail.fetch.50.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000082 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 FLAGS (\\Answered \\Seen)\r\n", "gmail.set-flags.txt"));
 			commands.Add (new ImapReplayCommand ("A00000083 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 -FLAGS.SILENT (\\Answered)\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000084 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", "gmail.add-flags.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000084 UID STORE 1:3,5,7:9,11:14,26:29,31,34,41:43,50 +FLAGS.SILENT (\\Deleted)\r\n", "gmail.add-flags.txt"));
 			commands.Add (new ImapReplayCommand ("A00000085 UNSELECT\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000086 SUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000087 LSUB \"\" \"%\"\r\n", "gmail.lsub-personal.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000087 LSUB \"\" \"%\"\r\n", "gmail.lsub-personal.txt"));
 			commands.Add (new ImapReplayCommand ("A00000088 UNSUBSCRIBE UnitTests\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000089 CREATE UnitTests/Dummy\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000090 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000090 LIST \"\" UnitTests/Dummy\r\n", "gmail.list-unittests-dummy.txt"));
 			commands.Add (new ImapReplayCommand ("A00000091 RENAME UnitTests RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000092 DELETE RenamedUnitTests\r\n", ImapReplayCommandResponse.OK));
-			commands.Add (new ImapReplayCommand ("A00000093 LOGOUT\r\n", "gmail.logout.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000093 LOGOUT\r\n", "gmail.logout.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter().GetResult();
+					await client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -288,7 +288,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials).GetAwaiter ().GetResult ();
+					await client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -313,12 +313,12 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = personal.GetSubfolders ().GetAwaiter ().GetResult ().ToList ();
+				var folders = (await personal.GetSubfolders ()).ToList ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
-				var created = personal.Create ("UnitTests", true).GetAwaiter ().GetResult ();
+				var created = await personal.Create ("UnitTests", true);
 				Assert.IsNotNull (created, "Expected a non-null created folder.");
 				Assert.AreEqual (FolderAttributes.HasNoChildren, created.Attributes);
 
@@ -326,58 +326,58 @@ namespace UnitTests.Net.Imap {
 
 				const MessageFlags ExpectedPermanentFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen | MessageFlags.UserDefined;
 				const MessageFlags ExpectedAcceptedFlags = MessageFlags.Answered | MessageFlags.Flagged | MessageFlags.Draft | MessageFlags.Deleted | MessageFlags.Seen;
-				var access = created.Open (FolderAccess.ReadWrite);
+				var access = await created.Open (FolderAccess.ReadWrite);
 				Assert.AreEqual (FolderAccess.ReadWrite, access, "The UnitTests folder was not opened with the expected access mode.");
 				Assert.AreEqual (ExpectedPermanentFlags, created.PermanentFlags, "The PermanentFlags do not match the expected value.");
 				Assert.AreEqual (ExpectedAcceptedFlags, created.AcceptedFlags, "The AcceptedFlags do not match the expected value.");
 
 				for (int i = 0; i < 50; i++) {
 					using (var stream = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
-						var message = MimeMessage.Load (stream);
+						var message = await MimeMessage.Load (stream);
 
-						var uid = created.Append (message, MessageFlags.Seen).GetAwaiter ().GetResult ();
+						var uid = await created.Append (message, MessageFlags.Seen);
 						Assert.IsTrue (uid.HasValue, "Expected a UID to be returned from folder.Append().");
 						Assert.AreEqual ((uint) (i + 1), uid.Value.Id, "The UID returned from the APPEND command does not match the expected UID.");
 					}
 				}
 
 				var query = SearchQuery.ToContains ("nsb").Or (SearchQuery.CcContains ("nsb"));
-				var matches = created.Search (query).GetAwaiter ().GetResult ();
+				var matches = await created.Search (query);
 
 				const MessageSummaryItems items = MessageSummaryItems.Full | MessageSummaryItems.UniqueId;
-				var summaries = created.Fetch (matches, items).GetAwaiter ().GetResult ();
+				var summaries = await created.Fetch (matches, items);
 
 				foreach (var summary in summaries) {
 					if (summary.UniqueId.IsValid)
-						created.GetMessage (summary.UniqueId);
+						await created.GetMessage (summary.UniqueId);
 					else
-						created.GetMessage (summary.Index);
+						await created.GetMessage (summary.Index);
 				}
 
-				created.SetFlags (matches, MessageFlags.Seen | MessageFlags.Answered, false);
-				created.RemoveFlags (matches, MessageFlags.Answered, true);
-				created.AddFlags (matches, MessageFlags.Deleted, true);
+				await created.SetFlags (matches, MessageFlags.Seen | MessageFlags.Answered, false);
+				await created.RemoveFlags (matches, MessageFlags.Answered, true);
+				await created.AddFlags (matches, MessageFlags.Deleted, true);
 
-				created.Close ();
+				await created.Close ();
 				Assert.IsFalse (created.IsOpen, "Expected the UnitTests folder to be closed.");
 
-				created.Subscribe ();
+				await created.Subscribe ();
 				Assert.IsTrue (created.IsSubscribed, "Expected IsSubscribed to be true after subscribing to the folder.");
 
-				var subscribed = personal.GetSubfolders (true).GetAwaiter ().GetResult ().ToList ();
+				var subscribed = (await personal.GetSubfolders (true)).ToList ();
 				Assert.IsTrue (subscribed.Contains (created), "Expected the list of subscribed folders to contain the UnitTests folder.");
 
-				created.Unsubscribe ();
+				await created.Unsubscribe ();
 				Assert.IsFalse (created.IsSubscribed, "Expected IsSubscribed to be false after unsubscribing from the folder.");
 
-				var dummy = created.Create ("Dummy", true).GetAwaiter ().GetResult ();
+				var dummy = await created.Create ("Dummy", true);
 				bool dummyRenamed = false;
 				bool renamed = false;
 
 				dummy.Renamed += (sender, e) => { dummyRenamed = true; };
 				created.Renamed += (sender, e) => { renamed = true; };
 
-				created.Rename (created.ParentFolder, "RenamedUnitTests");
+				await created.Rename (created.ParentFolder, "RenamedUnitTests");
 				Assert.AreEqual ("RenamedUnitTests", created.Name);
 				Assert.AreEqual ("RenamedUnitTests", created.FullName);
 				Assert.IsTrue (renamed, "Expected the Rename event to be emitted for the UnitTests folder.");
@@ -385,25 +385,25 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("RenamedUnitTests/Dummy", dummy.FullName);
 				Assert.IsTrue (dummyRenamed, "Expected the Rename event to be emitted for the UnitTests/Dummy folder.");
 
-				created.Delete (CancellationToken.None).GetAwaiter ().GetResult ();
+				await created.Delete (CancellationToken.None);
 
-				client.Disconnect (true).GetAwaiter ().GetResult ();
+				await client.Disconnect (true);
 			}
 		}
 
 		[Test]
-		public void TestAccessControlLists ()
+		public async void TestAccessControlLists ()
 		{
 			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "acl.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "acl.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 GETACL INBOX\r\n", "acl.getacl.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 LISTRIGHTS INBOX smith\r\n", "acl.listrights.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 MYRIGHTS INBOX\r\n", "acl.myrights.txt"));
+			commands.Add (await ImapReplayCommand.Create("", "gmail.greeting.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000000 CAPABILITY\r\n", "acl.capability.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "acl.authenticate.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000005 GETACL INBOX\r\n", "acl.getacl.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000006 LISTRIGHTS INBOX smith\r\n", "acl.listrights.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000007 MYRIGHTS INBOX\r\n", "acl.myrights.txt"));
 			commands.Add (new ImapReplayCommand ("A00000008 SETACL INBOX smith +lrswida\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000009 SETACL INBOX smith -lrswida\r\n", ImapReplayCommandResponse.OK));
 			commands.Add (new ImapReplayCommand ("A00000010 SETACL INBOX smith lrswida\r\n", ImapReplayCommandResponse.OK));
@@ -411,7 +411,7 @@ namespace UnitTests.Net.Imap {
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
+                    await client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -431,7 +431,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials).GetAwaiter ().GetResult ();
+                    await client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -456,7 +456,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				// GETACL INBOX
-				var acl = client.Inbox.GetAccessControlList ().GetAwaiter ().GetResult ();
+				var acl = await client.Inbox.GetAccessControlList ();
 				Assert.AreEqual (2, acl.Count, "The number of access controls does not match.");
 				Assert.AreEqual ("Fred", acl[0].Name, "The identifier for the first access control does not match.");
 				Assert.AreEqual ("rwipslxetad", acl[0].Rights.ToString (), "The access rights for the first access control does not match.");
@@ -464,46 +464,46 @@ namespace UnitTests.Net.Imap {
 				Assert.AreEqual ("lrswi", acl[1].Rights.ToString (), "The access rights for the second access control does not match.");
 
 				// LISTRIGHTS INBOX smith
-				var rights = client.Inbox.GetAccessRights ("smith").GetAwaiter ().GetResult ();
+				var rights = await client.Inbox.GetAccessRights ("smith");
 				Assert.AreEqual ("lrswipkxtecda0123456789", rights.ToString (), "The access rights do not match for user smith.");
 
 				// MYRIGHTS INBOX
-				rights = client.Inbox.GetMyAccessRights ().GetAwaiter ().GetResult ();
+				rights = await client.Inbox.GetMyAccessRights ();
 				Assert.AreEqual ("rwiptsldaex", rights.ToString (), "My access rights do not match.");
 
-				// SETACL INBOX smith +lrswida
-				client.Inbox.AddAccessRights ("smith", new AccessRights ("lrswida"));
+                // SETACL INBOX smith +lrswida
+                await client.Inbox.AddAccessRights ("smith", new AccessRights ("lrswida"));
 
-				// SETACL INBOX smith -lrswida
-				client.Inbox.RemoveAccessRights ("smith", new AccessRights ("lrswida"));
+                // SETACL INBOX smith -lrswida
+                await client.Inbox.RemoveAccessRights ("smith", new AccessRights ("lrswida"));
 
-				// SETACL INBOX smith lrswida
-				client.Inbox.SetAccessRights ("smith", new AccessRights ("lrswida"));
+                // SETACL INBOX smith lrswida
+                await client.Inbox.SetAccessRights ("smith", new AccessRights ("lrswida"));
 
-				// DELETEACL INBOX smith
-				client.Inbox.RemoveAccess ("smith");
+                // DELETEACL INBOX smith
+                await client.Inbox.RemoveAccess ("smith");
 
-				client.Disconnect (false).GetAwaiter ().GetResult ();
+                await client.Disconnect (false);
 			}
 		}
 
 		[Test]
-		public void TestExtractingPrecisePangolinAttachment ()
+		public async void TestExtractingPrecisePangolinAttachment ()
 		{
 			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
-			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
-			commands.Add (new ImapReplayCommand ("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000007 FETCH 270 (BODY.PEEK[])\r\n", "gmail.precise-pangolin-message.txt"));
+			commands.Add (await ImapReplayCommand.Create("", "gmail.greeting.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000005 LIST \"\" \"%\"\r\n", "gmail.list-personal.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000006 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.examine-inbox.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000007 FETCH 270 (BODY.PEEK[])\r\n", "gmail.precise-pangolin-message.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
+					await client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -523,7 +523,7 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials).GetAwaiter ().GetResult ();
+					await client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -548,19 +548,19 @@ namespace UnitTests.Net.Imap {
 				}
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
-				var folders = personal.GetSubfolders ().GetAwaiter ().GetResult ().ToList ();
+				var folders = (await personal.GetSubfolders ()).ToList ();
 				Assert.AreEqual (client.Inbox, folders[0], "Expected the first folder to be the Inbox.");
 				Assert.AreEqual ("[Gmail]", folders[1].FullName, "Expected the second folder to be [Gmail].");
 				Assert.AreEqual (FolderAttributes.NoSelect | FolderAttributes.HasChildren, folders[1].Attributes, "Expected [Gmail] folder to be \\Noselect \\HasChildren.");
 
-				client.Inbox.Open (FolderAccess.ReadOnly).GetAwaiter ().GetResult ();
+				await client.Inbox.Open (FolderAccess.ReadOnly);
 
-				var message = client.Inbox.GetMessage (269).GetAwaiter ().GetResult ();
+				var message = await client.Inbox.GetMessage (269);
 
 				using (var jpeg = new MemoryStream ()) {
 					var attachment = message.Attachments.OfType<MimePart> ().FirstOrDefault ();
 
-					attachment.ContentObject.DecodeTo (jpeg).GetAwaiter ().GetResult ();
+					await attachment.ContentObject.DecodeTo (jpeg);
 					jpeg.Position = 0;
 
 					using (var md5 = new MD5CryptoServiceProvider ()) {
@@ -570,28 +570,28 @@ namespace UnitTests.Net.Imap {
 					}
 				}
 
-				client.Disconnect (false).GetAwaiter ().GetResult ();
+				await client.Disconnect (false);
 			}
 		}
 		
 		[Test]
-		public void TestMessageCount ()
+		public async void TestMessageCount ()
 		{
 			var commands = new List<ImapReplayCommand> ();
-			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
-			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
-			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
-			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
-			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
-			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (await ImapReplayCommand.Create("", "gmail.greeting.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
 			// INBOX has 1 message present in this test
-			commands.Add (new ImapReplayCommand ("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000005 EXAMINE INBOX (CONDSTORE)\r\n", "gmail.count.examine.txt"));
 			// next command simulates one expunge + one new message
-			commands.Add (new ImapReplayCommand ("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
+			commands.Add (await ImapReplayCommand.Create("A00000006 NOOP\r\n", "gmail.count.noop.txt"));
 
 			using (var client = new ImapClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false)).GetAwaiter ().GetResult ();
+					await client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -604,20 +604,20 @@ namespace UnitTests.Net.Imap {
 					// Note: Do not try XOAUTH2
 					client.AuthenticationMechanisms.Remove ("XOAUTH2");
 
-					client.Authenticate (credentials).GetAwaiter ().GetResult ();
+					await client.Authenticate (credentials);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 				
 				var count = -1;
-				
-				client.Inbox.Open (FolderAccess.ReadOnly);
+
+                await client.Inbox.Open (FolderAccess.ReadOnly);
 				
 				client.Inbox.CountChanged += delegate {
 					count = client.Inbox.Count;
 				};
 				
-				client.NoOp ().GetAwaiter ().GetResult ();
+				await client.NoOp ();
 				
 				Assert.AreEqual (1, count, "Count is not correct");
 			}

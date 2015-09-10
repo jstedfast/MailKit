@@ -419,7 +419,8 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override int Read (byte[] buffer, int offset, int count)
 		{
-            return Read(buffer, offset, count, CancellationToken.None).GetAwaiter ().GetResult ();
+		    throw new Exception("Use ReadAsync");
+//            return Read(buffer, offset, count, CancellationToken.None);
         }
 
 	    public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
