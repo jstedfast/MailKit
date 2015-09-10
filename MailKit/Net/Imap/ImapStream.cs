@@ -556,13 +556,13 @@ namespace MailKit.Net.Imap {
 		    unsafe
 		    {
                 _inptr = _inbuf + inputIndex;
-                _inbuf = _inbuf + inputEnd;
+                _inend = _inbuf + inputEnd;
             }
 
 			do {
 			    unsafe
 			    {
-                    *_inbuf = (byte)'\n';
+                    *_inend = (byte)'\n';
 
                     if (flag && builder.Length == 0 && *_inptr == (byte)'*')
                     {
@@ -574,7 +574,7 @@ namespace MailKit.Net.Imap {
                     while (IsAtom(*_inptr, specials))
                         builder.Append((char)*_inptr++);
 
-                    if (_inptr < _inbuf)
+                    if (_inptr < _inend)
                         break;
 
                     inputIndex = (int)(_inptr - _inbuf);
@@ -585,7 +585,7 @@ namespace MailKit.Net.Imap {
 			    unsafe
 			    {
                     _inptr = _inbuf + inputIndex;
-                    _inbuf = _inbuf + inputEnd;
+                    _inend = _inbuf + inputEnd;
                 }
 			} while (true);
 
@@ -617,7 +617,7 @@ namespace MailKit.Net.Imap {
 		    unsafe
 		    {
                 _inptr = _inbuf + inputIndex;
-                _inbuf = _inbuf + inputEnd;
+                _inend = _inbuf + inputEnd;
 
                 // skip over the '{'
                 _inptr++;
@@ -626,12 +626,12 @@ namespace MailKit.Net.Imap {
 			do {
 			    unsafe
 			    {
-                    *_inbuf = (byte)'}';
+                    *_inend = (byte)'}';
 
                     while (*_inptr != (byte)'}' && *_inptr != '+')
                         builder.Append((char)*_inptr++);
 
-                    if (_inptr < _inbuf)
+                    if (_inptr < _inend)
                         break;
 
                     inputIndex = (int)(_inptr - _inbuf);
@@ -642,7 +642,7 @@ namespace MailKit.Net.Imap {
 			    unsafe
 			    {
                     _inptr = _inbuf + inputIndex;
-                    _inbuf = _inbuf + inputEnd;
+                    _inend = _inbuf + inputEnd;
                 }
 			} while (true);
 
@@ -662,7 +662,7 @@ namespace MailKit.Net.Imap {
 		    unsafe
 		    {
                 _inptr = _inbuf + inputIndex;
-                _inbuf = _inbuf + inputEnd;
+                _inend = _inbuf + inputEnd;
 
                 isEnd = *_inptr != (byte)'}';
             }
@@ -672,12 +672,12 @@ namespace MailKit.Net.Imap {
 				do {
 				    unsafe
 				    {
-                        *_inbuf = (byte)'}';
+                        *_inend = (byte)'}';
 
                         while (*_inptr != (byte)'}')
                             _inptr++;
 
-                        if (_inptr < _inbuf)
+                        if (_inptr < _inend)
                             break;
 
                         inputIndex = (int)(_inptr - _inbuf);
@@ -688,7 +688,7 @@ namespace MailKit.Net.Imap {
 				    unsafe
 				    {
                         _inptr = _inbuf + inputIndex;
-                        _inbuf = _inbuf + inputEnd;
+                        _inend = _inbuf + inputEnd;
                     }
 				} while (true);
 			}
@@ -703,12 +703,12 @@ namespace MailKit.Net.Imap {
 			do {
 			    unsafe
 			    {
-                    *_inbuf = (byte)'\n';
+                    *_inend = (byte)'\n';
 
                     while (*_inptr != (byte)'\n')
                         _inptr++;
 
-                    if (_inptr < _inbuf)
+                    if (_inptr < _inend)
                         break;
 
                     inputIndex = (int)(_inptr - _inbuf);
@@ -719,7 +719,7 @@ namespace MailKit.Net.Imap {
 			    unsafe
 			    {
                     _inptr = _inbuf + inputIndex;
-                    _inbuf = _inbuf + inputEnd;
+                    _inend = _inbuf + inputEnd;
                     *_inptr = (byte)'\n';
                 }
 			} while (true);
