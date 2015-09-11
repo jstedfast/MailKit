@@ -2029,7 +2029,7 @@ namespace MailKit.Net.Pop3 {
 					Add (await Parse (pop3.Stream, pc.CancellationToken));
 				} catch (FormatException ex) {
 					pc.Exception = CreatePop3ParseException (ex, "Failed to parse data.");
-					pop3.Stream.CopyTo (Stream.Null, 4096);
+					await pop3.Stream.CopyToAsync (Stream.Null, 4096);
 				} finally {
 					pop3.Stream.Mode = Pop3StreamMode.Line;
 				}

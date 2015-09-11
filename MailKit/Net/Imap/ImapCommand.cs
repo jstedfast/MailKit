@@ -268,7 +268,7 @@ namespace MailKit.Net.Imap {
                 {
                     case ImapLiteralType.Stream:
                         var stream = (Stream)Literal;
-                        stream.CopyTo(measure, 4096);
+                        await stream.CopyToAsync(measure, 4096);
                         stream.Position = 0;
                         break;
                     case ImapLiteralType.MimeMessage:

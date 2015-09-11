@@ -86,7 +86,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					await client.ReplayConnect ("localhost", await Pop3ReplayStream.Create(commands, false), CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -150,7 +150,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, true), CancellationToken.None);
+					await client.ReplayConnect ("localhost", await Pop3ReplayStream.Create(commands, true), CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -211,7 +211,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					await client.ReplayConnect ("localhost", await Pop3ReplayStream.Create(commands, false), CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -375,7 +375,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					await client.ReplayConnect ("localhost", await Pop3ReplayStream.Create(commands, false), CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -452,7 +452,7 @@ namespace UnitTests.Net.Pop3 {
 
 			using (var client = new Pop3Client ()) {
 				try {
-					await client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false), CancellationToken.None);
+					await client.ReplayConnect ("localhost", await Pop3ReplayStream.Create(commands, false), CancellationToken.None);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}

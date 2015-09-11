@@ -28,7 +28,8 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-
+using System.Threading;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 using MimeKit.IO;
@@ -54,22 +55,38 @@ namespace UnitTests.Net.Pop3 {
 
 	class Pop3ReplayStream : Stream
 	{
-		readonly IList<Pop3ReplayCommand> commands;
+	    public static async Task<Pop3ReplayStream> Create(IList<Pop3ReplayCommand> commands, bool testUnixFormat)
+	    {
+	        var pop3ReplayStream = new Pop3ReplayStream(
+                Pop3ReplayState.SendResponse,
+                commands,
+                testUnixFormat);
+
+	        pop3ReplayStream.SetStream(await GetResourceStream(pop3ReplayStream, commands[0].Resource));
+
+            return pop3ReplayStream;
+	    }
+
+	    private void SetStream(Stream resourceStream)
+	    {
+	        stream = resourceStream;
+	    }
+
+	    readonly IList<Pop3ReplayCommand> commands;
 		readonly bool testUnixFormat;
 		Pop3ReplayState state;
 		Stream stream;
 		bool disposed;
 		int index;
 
-		public Pop3ReplayStream (IList<Pop3ReplayCommand> commands, bool testUnixFormat)
-		{
-			stream = GetResourceStream (commands[0].Resource);
-			state = Pop3ReplayState.SendResponse;
-			this.testUnixFormat = testUnixFormat;
-			this.commands = commands;
-		}
+	    private Pop3ReplayStream(Pop3ReplayState sendResponse, IList<Pop3ReplayCommand> commands, bool testUnixFormat)
+	    {
+            state = sendResponse;
+            this.testUnixFormat = testUnixFormat;
+            this.commands = commands;
+        }
 
-		void CheckDisposed ()
+	    void CheckDisposed ()
 		{
 			if (disposed)
 				throw new ObjectDisposedException ("Pop3ReplayStream");
@@ -115,17 +132,17 @@ namespace UnitTests.Net.Pop3 {
 			return nread;
 		}
 
-		Stream GetResourceStream (string name)
+	    static async Task<Stream> GetResourceStream (Pop3ReplayStream pop3ReplayStream, string name)
 		{
-			using (var response = GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources." + name)) {
+			using (var response = pop3ReplayStream.GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Pop3.Resources." + name)) {
 				var memory = new MemoryBlockStream ();
 
 				using (var filtered = new FilteredStream (memory)) {
-					if (testUnixFormat)
+					if (pop3ReplayStream.testUnixFormat)
 						filtered.Add (new Dos2UnixFilter ());
 					else
 						filtered.Add (new Unix2DosFilter ());
-					response.CopyTo (filtered, 4096);
+					await response.CopyToAsync (filtered, 4096);
 				}
 
 				memory.Position = 0;
@@ -133,22 +150,27 @@ namespace UnitTests.Net.Pop3 {
 			}
 		}
 
-		public override void Write (byte[] buffer, int offset, int count)
-		{
-			CheckDisposed ();
+	    public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+	    {
+            CheckDisposed();
 
-			Assert.AreEqual (Pop3ReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
+            Assert.AreEqual(Pop3ReplayState.WaitForCommand, state, "Trying to write when a command has already been given.");
 
-			var command = Encoding.UTF8.GetString (buffer, offset, count);
+            var command = Encoding.UTF8.GetString(buffer, offset, count);
 
-			Assert.AreEqual (commands[index].Command, command, "Commands did not match.");
+            Assert.AreEqual(commands[index].Command, command, "Commands did not match.");
 
-			if (stream != null)
-				stream.Dispose ();
+            if (stream != null)
+                stream.Dispose();
 
-			stream = GetResourceStream (commands[index].Resource);
-			state = Pop3ReplayState.SendResponse;
-		}
+            stream = await GetResourceStream(this, commands[index].Resource);
+            state = Pop3ReplayState.SendResponse;
+        }
+
+	    public override void Write (byte[] buffer, int offset, int count)
+	    {
+	        throw new NotSupportedException("Use WriteAsync.");
+	    }
 
 		public override void Flush ()
 		{
