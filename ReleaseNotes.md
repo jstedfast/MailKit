@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 1.2.12
+
+* Allow developers to specify a local IPEndPoint to use for connecting to remote servers.
+  (issue #247)
+* Added support for NIL GMail labels. (issue #244)
+
 ### MailKit 1.2.11.1
 
 * Fixed ImapFolder.GetSubfolders() to work with Yahoo! Mail and other IMAP servers that
