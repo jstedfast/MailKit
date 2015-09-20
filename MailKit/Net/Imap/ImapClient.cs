@@ -1170,6 +1170,10 @@ namespace MailKit.Net.Imap {
 
 				try {
 					cancellationToken.ThrowIfCancellationRequested ();
+
+					if (LocalEndPoint != null)
+						socket.Bind (LocalEndPoint);
+
 					socket.Connect (ipAddresses[i], port);
 					break;
 				} catch (OperationCanceledException) {

@@ -175,6 +175,17 @@ namespace MailKit {
 		public RemoteCertificateValidationCallback ServerCertificateValidationCallback {
 			get; set;
 		}
+
+		/// <summary>
+		/// Get or set the local IP end point to use when connecting to the remote host.
+		/// </summary>
+		/// <remarks>
+		/// Gets or sets the local IP end point to use when connecting to the remote host.
+		/// </remarks>
+		/// <value>The local IP end point or <c>null</c> to use the default end point.</value>
+		public IPEndPoint LocalEndPoint {
+			get; set;
+		}
 #endif
 
 		/// <summary>
