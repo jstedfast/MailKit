@@ -113,12 +113,6 @@ namespace MailKit {
 		public override int Read (byte[] buffer, int offset, int count)
 		{
 		    throw new NotSupportedException("Use ReadAsync.");
-			int n;
-
-			if ((n = Source.Read (buffer, offset, count)) > 0)
-				Update (n);
-
-			return n;
 		}
 
 	    public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)

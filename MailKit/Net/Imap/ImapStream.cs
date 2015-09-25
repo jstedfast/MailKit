@@ -896,42 +896,37 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal bool ReadLine (out byte[] buffer, out int offset, out int count, CancellationToken cancellationToken) {
+		internal Task<bool> ReadLine (out byte[] buffer, out int offset, out int count, CancellationToken cancellationToken) {
 			CheckDisposed ();
 
-			unsafe
+            // we need at least 1 byte: "\n"
+            await ReadAhead(1, cancellationToken);
+
+            unsafe
 			{
-				fixed (byte* inbuf = input)
-				{
-					byte* start, inptr, inend;
+				offset = inputIndex;
+				buffer = input;
 
-					// we need at least 1 byte: "\n"
-					ReadAhead (1, cancellationToken).Wait (cancellationToken);
+				start = inbuf + inputIndex;
+				inend = inbuf + inputEnd;
+				*inend = (byte)'\n';
+				inptr = start;
 
-					offset = inputIndex;
-					buffer = input;
+				// FIXME: use SIMD to optimize this
+				while (*inptr != (byte)'\n')
+					inptr++;
 
-					start = inbuf + inputIndex;
-					inend = inbuf + inputEnd;
-					*inend = (byte)'\n';
-					inptr = start;
+				inputIndex = (int)(inptr - inbuf);
+				count = (int)(inptr - start);
 
-					// FIXME: use SIMD to optimize this
-					while (*inptr != (byte)'\n')
-						inptr++;
+				if (inptr == inend)
+					return false;
 
-					inputIndex = (int)(inptr - inbuf);
-					count = (int)(inptr - start);
+				// consume the '\n'
+				inputIndex++;
+				count++;
 
-					if (inptr == inend)
-						return false;
-
-					// consume the '\n'
-					inputIndex++;
-					count++;
-
-					return true;
-				}
+				return true;
 			}
 		}
 

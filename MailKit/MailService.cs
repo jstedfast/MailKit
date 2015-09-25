@@ -676,6 +676,7 @@ namespace MailKit {
 		/// </exception>
 		public void Authenticate (string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
 		{
+		    throw new NotSupportedException("Use AuthenticateAsync.");
 			if (userName == null)
 				throw new ArgumentNullException ("userName");
 
