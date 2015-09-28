@@ -749,6 +749,10 @@ namespace MailKit.Net.Smtp {
 		/// Releases the unmanaged resources used by the <see cref="SmtpStream"/> and
 		/// optionally releases the managed resources.
 		/// </summary>
+		/// <remarks>
+		/// Releases the unmanaged resources used by the <see cref="SmtpStream"/> and
+		/// optionally releases the managed resources.
+		/// </remarks>
 		/// <param name="disposing"><c>true</c> to release both managed and unmanaged resources;
 		/// <c>false</c> to release only the unmanaged resources.</param>
 		protected override void Dispose (bool disposing)
@@ -756,15 +760,6 @@ namespace MailKit.Net.Smtp {
 			if (disposing && !disposed) {
 				IsConnected = false;
 				Stream.Dispose ();
-
-#if NETFX_CORE
-				if (Socket != null) {
-					Socket.Dispose ();
-					Socket = null;
-				}
-#else
-				Socket = null;
-#endif
 			}
 
 			disposed = true;
