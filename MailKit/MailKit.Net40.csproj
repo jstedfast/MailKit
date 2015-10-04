@@ -134,6 +134,7 @@
     <Compile Include="BodyPartMessage.cs" />
     <Compile Include="BodyPartMultipart.cs" />
     <Compile Include="BodyPartText.cs" />
+    <Compile Include="BodyPartVisitor.cs" />
     <Compile Include="CommandException.cs" />
     <Compile Include="DeliveryStatusNotification.cs" />
     <Compile Include="DuplexStream.cs" />

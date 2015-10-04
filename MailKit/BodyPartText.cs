@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 //
 
+using System;
 using System.Text;
 
 namespace MailKit {
@@ -76,6 +77,29 @@ namespace MailKit {
 		/// <value>The number of lines.</value>
 		public uint Lines {
 			get; set;
+		}
+
+		/// <summary>
+		/// Dispatches to the specific visit method for this MIME body part.
+		/// </summary>
+		/// <remarks>
+		/// This default implementation for <see cref="MailKit.BodyPart"/> nodes
+		/// calls <see cref="MailKit.BodyPartVisitor.VisitBodyPart"/>. Override this
+		/// method to call into a more specific method on a derived visitor class
+		/// of the <see cref="MailKit.BodyPartVisitor"/> class. However, it should still
+		/// support unknown visitors by calling
+		/// <see cref="MailKit.BodyPartVisitor.VisitBodyPart"/>.
+		/// </remarks>
+		/// <param name="visitor">The visitor.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="visitor"/> is <c>null</c>.
+		/// </exception>
+		public override void Accept (BodyPartVisitor visitor)
+		{
+			if (visitor == null)
+				throw new ArgumentNullException ("visitor");
+
+			visitor.VisitBodyPartText (this);
 		}
 
 		/// <summary>
