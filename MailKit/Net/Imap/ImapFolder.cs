@@ -4813,6 +4813,9 @@ namespace MailKit.Net.Imap {
 							throw;
 						}
 						break;
+					case ImapTokenType.Nil:
+						stream = CreateStream (uid, section.ToString (), offset, 0);
+						break;
 					default:
 						throw ImapEngine.UnexpectedToken (token, false);
 					}
