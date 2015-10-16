@@ -202,32 +202,30 @@ namespace UnitTests.Net.Imap {
 			commands.Add (new ImapReplayCommand ("A00000008 SELECT UnitTests (CONDSTORE)\r\n", "gmail.select-unittests.txt"));
 
 			for (int i = 0; i < 50; i++) {
+				MimeMessage message;
+				string latin1;
+				long length;
+
+				using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i)))
+					message = MimeMessage.Load (resource);
+
 				using (var stream = new MemoryStream ()) {
-					using (var resource = GetResourceStream (string.Format ("common.message.{0}.msg", i))) {
-						using (var filtered = new FilteredStream (stream)) {
-							filtered.Add (new Unix2DosFilter ());
-							resource.CopyTo (filtered, 4096);
-							filtered.Flush ();
-						}
+					var options = FormatOptions.Default.Clone ();
+					options.NewLineFormat = NewLineFormat.Dos;
 
-						stream.Position = 0;
-					}
-
-					MimeMessage.Load (stream);
-
-					long length = stream.Length;
-					string latin1;
-
+					message.WriteTo (options, stream);
+					length = stream.Length;
 					stream.Position = 0;
+
 					using (var reader = new StreamReader (stream, Latin1))
 						latin1 = reader.ReadToEnd ();
-
-					var command = string.Format ("A{0:D8} APPEND UnitTests (\\Seen) ", i + 9);
-					command += "{" + length + "}\r\n";
-
-					commands.Add (new ImapReplayCommand (command, "gmail.go-ahead.txt"));
-					commands.Add (new ImapReplayCommand (latin1 + "\r\n", string.Format ("gmail.append.{0}.txt", i + 1)));
 				}
+
+				var command = string.Format ("A{0:D8} APPEND UnitTests (\\Seen) ", i + 9);
+				command += "{" + length + "}\r\n";
+
+				commands.Add (new ImapReplayCommand (command, "gmail.go-ahead.txt"));
+				commands.Add (new ImapReplayCommand (latin1 + "\r\n", string.Format ("gmail.append.{0}.txt", i + 1)));
 			}
 
 			commands.Add (new ImapReplayCommand ("A00000059 UID SEARCH RETURN () CHARSET US-ASCII OR TO nsb CC nsb\r\n", "gmail.search.txt"));
