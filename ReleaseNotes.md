@@ -1,5 +1,11 @@
 # Release Notes
 
+### MailKit 1.2.13
+
+* Fixed SmtpClient to not double dispose the socket.
+* Added a BodyPartVisitor class.
+* Fixed ImapFolder to allow NIL tokens for body parts. (issue #244)
+
 ### MailKit 1.2.12
 
 * Allow developers to specify a local IPEndPoint to use for connecting to remote servers.
