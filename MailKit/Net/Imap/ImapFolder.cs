@@ -7691,7 +7691,7 @@ namespace MailKit.Net.Imap {
 
 		static string FormatDateTime (DateTime date)
 		{
-			return date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture).ToUpperInvariant ();
+			return date.ToString ("d-MMM-yyyy", CultureInfo.InvariantCulture);
 		}
 
 		void BuildQuery (StringBuilder builder, SearchQuery query, List<string> args, bool parens, ref bool ascii)
