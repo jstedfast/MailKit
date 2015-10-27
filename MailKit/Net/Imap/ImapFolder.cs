@@ -888,7 +888,7 @@ namespace MailKit.Net.Imap {
 			prefix = ImapUtils.CanonicalizeMailboxName (prefix, DirectorySeparator);
 			foreach (var folder in list) {
 				var canonicalFullName = ImapUtils.CanonicalizeMailboxName (folder.FullName, folder.DirectorySeparator);
-				var canonicalName = ImapUtils.IsInbox (folder.Name) ? "INBOX" : folder.Name;
+				var canonicalName = ImapUtils.IsInbox (folder.FullName) ? "INBOX" : folder.Name;
 
 				if (canonicalFullName != prefix + canonicalName)
 					continue;
