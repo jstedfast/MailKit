@@ -1271,7 +1271,20 @@ namespace MailKit.Net.Smtp {
 			ProcessMailFromResponse (SendCommand (command, cancellationToken), mailbox);
 		}
 
-		static void ProcessRcptToResponse (SmtpResponse response, MailboxAddress mailbox)
+		/// <summary>
+		/// Process the response to a RCPT TO command.
+		/// </summary>
+		/// <remarks>
+		/// <para>Processes the response to a RCPT TO command.</para>
+		/// <para>By default, this method no-op when the <paramref name="response"/>
+		/// <see cref="SmtpResponse.StatusCode"/> property has a value of
+		/// <see cref="SmtpStatusCode.Ok"/> or
+		/// <see cref="SmtpStatusCode.UserNotLocalWillForward"/> and will throw
+		/// an appropriate exception for all other status codes.</para>
+		/// </remarks>
+		/// <param name="response">The response to an RCPT TO command.</param>
+		/// <param name="mailbox">The mailbox used in the RCPT TO command.</param>
+		protected virtual void ProcessRcptToResponse (SmtpResponse response, MailboxAddress mailbox)
 		{
 			switch (response.StatusCode) {
 			case SmtpStatusCode.UserNotLocalWillForward:

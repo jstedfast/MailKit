@@ -26,25 +26,37 @@
 
 namespace MailKit.Net.Smtp {
 	/// <summary>
-	/// An SMTP response.
+	/// An SMTP command response.
 	/// </summary>
-	class SmtpResponse
+	/// <remarks>
+	/// An SMTP command response.
+	/// </remarks>
+	public class SmtpResponse
 	{
 		/// <summary>
-		/// Gets the status code.
+		/// Get the status code.
 		/// </summary>
+		/// <remarks>
+		/// Gets the status code.
+		/// </remarks>
 		/// <value>The status code.</value>
 		public SmtpStatusCode StatusCode { get; private set; }
 
 		/// <summary>
-		/// Gets the response text.
+		/// Get the response text.
 		/// </summary>
+		/// <remarks>
+		/// Gets the response text.
+		/// </remarks>
 		/// <value>The response text.</value>
 		public string Response { get; private set; }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpResponse"/> class.
 		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SmtpResponse"/>.
+		/// </remarks>
 		/// <param name="code">The status code.</param>
 		/// <param name="response">The response text.</param>
 		public SmtpResponse (SmtpStatusCode code, string response)
