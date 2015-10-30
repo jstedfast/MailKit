@@ -112,7 +112,7 @@ namespace MailKit.Net.Smtp {
 
 			ErrorCode = (SmtpErrorCode) info.GetInt32 ("ErrorCode");
 
-			StatusCode = info.GetInt32 ("StatusCode");
+			StatusCode = (SmtpStatusCode) info.GetInt32 ("StatusCode");
 		}
 #endif
 
@@ -126,9 +126,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="status">The status code.</param>
 		/// <param name="mailbox">The rejected mailbox.</param>
 		/// <param name="message">The error message.</param>
-		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
+		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, MailboxAddress mailbox, string message) : base (message)
 		{
-			StatusCode = (int) status;
+			StatusCode = status;
 			Mailbox = mailbox;
 			ErrorCode = code;
 		}
@@ -142,9 +142,9 @@ namespace MailKit.Net.Smtp {
 		/// <param name="code">The error code.</param>
 		/// <param name="status">The status code.</param>>
 		/// <param name="message">The error message.</param>
-		internal SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
+		public SmtpCommandException (SmtpErrorCode code, SmtpStatusCode status, string message) : base (message)
 		{
-			StatusCode = (int) status;
+			StatusCode = status;
 			ErrorCode = code;
 		}
 
@@ -169,8 +169,8 @@ namespace MailKit.Net.Smtp {
 			if (Mailbox != null)
 				info.AddValue ("Mailbox", Mailbox.ToString ());
 
-			info.AddValue ("ErrorCode", ErrorCode.ToString ());
-			info.AddValue ("StatusCode", StatusCode);
+			info.AddValue ("ErrorCode", (int) ErrorCode);
+			info.AddValue ("StatusCode", (int) StatusCode);
 
 			base.GetObjectData (info, context);
 		}
@@ -220,7 +220,7 @@ namespace MailKit.Net.Smtp {
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="ExceptionHandling"/>
 		/// </example>
 		/// <value>The status code.</value>
-		public int StatusCode {
+		public SmtpStatusCode StatusCode {
 			get; private set;
 		}
 	}
