@@ -591,7 +591,9 @@ namespace MailKit.Net.Smtp {
 					// an EHLO command after authenticating even though the specifications explicitly
 					// state that clients SHOULD send EHLO again after authenticating.
 					// See https://github.com/jstedfast/MailKit/issues/162 for details.
-					if (host != "smtp.strato.de")
+					//
+					// Apparently smtp.sina.com has the same problem. Don't you love non RFC-compliant mail servers?
+					if (host != "smtp.strato.de" && host != "smtp.sina.com")
 						Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
