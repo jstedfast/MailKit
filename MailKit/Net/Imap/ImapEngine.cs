@@ -563,11 +563,14 @@ namespace MailKit.Net.Imap {
 				var atom = (string) token.Value;
 
 				switch (atom) {
-				case "PREAUTH": State = ImapEngineState.Authenticated; break;
-				case "OK":      State = ImapEngineState.PreAuth; break;
 				case "BYE":
-					// FIXME: should we throw a special exception here?
-					throw UnexpectedToken (token, true);
+					throw new ImapProtocolException ("IMAP server unexpectedly disconnected.");
+				case "PREAUTH":
+					State = ImapEngineState.Authenticated;
+					break;
+				case "OK":
+					State = ImapEngineState.PreAuth;
+					break;
 				default:
 					throw UnexpectedToken (token, true);
 				}
