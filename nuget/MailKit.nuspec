@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>MailKit</id>
-        <version>1.2.13</version>
+        <version>1.2.14</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,15 +22,18 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Fixed SmtpClient to not double dispose the socket.
-* Added a BodyPartVisitor class.
-* Fixed ImapFolder to allow NIL tokens for body parts. (issue #244)
+        <releaseNotes>* Fixed ImapFolder.Search() to not capitalize the date strings in date queries. (issue #252)
+* Fixed filtering logic in ImapFolder.GetSubfolders() to not filter out subfolders named Inbox. (issue #255)
+* Exposed SmtpClient.ProcessRcptToResponse() as virtual protected to allow subclasses to override error handling. (issue #256)
+* Modified SmtpCommandException .ctors to be public and fixed serialization logic. (issue #257)
+* Added workaround for broken smtp.sina.com mail server.
+* Throw a custom ImapProtocolException on "* BYE" during connection instead of "unexpected token". (issue #262)
 </releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
         <dependencies>
-            <dependency id="MimeKit" version="1.2.14.0" />
+            <dependency id="MimeKit" version="1.2.15.0" />
         </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />

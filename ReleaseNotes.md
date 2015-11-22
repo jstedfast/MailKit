@@ -1,5 +1,17 @@
 # Release Notes
 
+### MailKit 1.2.14
+
+* Fixed ImapFolder.Search() to not capitalize the date strings in date queries. (issue #252)
+* Fixed filtering logic in ImapFolder.GetSubfolders() to not filter out subfolders named Inbox.
+  (issue #255)
+* Exposed SmtpClient.ProcessRcptToResponse() as virtual protected to allow subclasses to override
+  error handling. (issue #256)
+* Modified SmtpCommandException .ctors to be public and fixed serialization logic. (issue #257)
+* Added workaround for broken smtp.sina.com mail server.
+* Throw a custom ImapProtocolException on "* BYE" during connection instead of "unexpected token".
+  (issue #262)
+
 ### MailKit 1.2.13
 
 * Fixed SmtpClient to not double dispose the socket.
