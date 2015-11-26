@@ -172,15 +172,15 @@ namespace MailKit.Security {
 		/// </exception>
 		public string Challenge (string token)
 		{
-			byte[] decoded;
-			int length;
+			byte[] decoded = null;
+			int length = 0;
 
 			if (token != null) {
-				decoded = Convert.FromBase64String (token);
-				length = decoded.Length;
-			} else {
-				decoded = null;
-				length = 0;
+				try {
+					decoded = Convert.FromBase64String (token.Trim ());
+					length = decoded.Length;
+				} catch (FormatException) {
+				}
 			}
 
 			var challenge = Challenge (decoded, 0, length);
