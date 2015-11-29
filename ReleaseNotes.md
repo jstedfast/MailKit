@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.2.15
+
+* Be more forgiving during SASL auth when a POP3 server sends unexpected text after a + response.
+  (issue #268)
+
 ### MailKit 1.2.14
 
 * Fixed ImapFolder.Search() to not capitalize the date strings in date queries. (issue #252)
