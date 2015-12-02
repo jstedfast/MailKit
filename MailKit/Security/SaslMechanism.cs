@@ -48,7 +48,7 @@ namespace MailKit.Security {
 		/// which order the SASL mechanisms supported by the server should be tried.
 		/// </remarks>
 		public static readonly string[] AuthMechanismRank = {
-			"XOAUTH2", "SCRAM-SHA-1", "NTLM", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN"
+			"XOAUTH2", "SCRAM-SHA-256", "SCRAM-SHA-1", "NTLM", "CRAM-MD5", "DIGEST-MD5", "PLAIN", "LOGIN"
 		};
 
 		/// <summary>
@@ -220,14 +220,15 @@ namespace MailKit.Security {
 				throw new ArgumentNullException ("mechanism");
 
 			switch (mechanism) {
-			case "SCRAM-SHA-1": return true;
-			case "DIGEST-MD5":  return true;
-			case "CRAM-MD5":    return true;
-			case "XOAUTH2":     return true;
-			case "PLAIN":       return true;
-			case "LOGIN":       return true;
-			case "NTLM":        return true;
-			default:            return false;
+			case "SCRAM-SHA-256": return true;
+			case "SCRAM-SHA-1":   return true;
+			case "DIGEST-MD5":    return true;
+			case "CRAM-MD5":      return true;
+			case "XOAUTH2":       return true;
+			case "PLAIN":         return true;
+			case "LOGIN":         return true;
+			case "NTLM":          return true;
+			default:              return false;
 			}
 		}
 
@@ -261,16 +262,17 @@ namespace MailKit.Security {
 				throw new ArgumentNullException ("credentials");
 
 			switch (mechanism) {
-			//case "KERBEROS_V4": return null;
-			case "SCRAM-SHA-1": return new SaslMechanismScramSha1 (uri, credentials);
-			case "DIGEST-MD5":  return new SaslMechanismDigestMd5 (uri, credentials);
-			case "CRAM-MD5":    return new SaslMechanismCramMd5 (uri, credentials);
-			//case "GSSAPI":      return null;
-			case "XOAUTH2":     return new SaslMechanismOAuth2 (uri, credentials);
-			case "PLAIN":       return new SaslMechanismPlain (uri, credentials);
-			case "LOGIN":       return new SaslMechanismLogin (uri, credentials);
-			case "NTLM":        return new SaslMechanismNtlm (uri, credentials);
-			default:            return null;
+			//case "KERBEROS_V4":   return null;
+			case "SCRAM-SHA-256": return new SaslMechanismScramSha256 (uri, credentials);
+			case "SCRAM-SHA-1":   return new SaslMechanismScramSha1 (uri, credentials);
+			case "DIGEST-MD5":    return new SaslMechanismDigestMd5 (uri, credentials);
+			case "CRAM-MD5":      return new SaslMechanismCramMd5 (uri, credentials);
+			//case "GSSAPI":        return null;
+			case "XOAUTH2":       return new SaslMechanismOAuth2 (uri, credentials);
+			case "PLAIN":         return new SaslMechanismPlain (uri, credentials);
+			case "LOGIN":         return new SaslMechanismLogin (uri, credentials);
+			case "NTLM":          return new SaslMechanismNtlm (uri, credentials);
+			default:              return null;
 			}
 		}
 
