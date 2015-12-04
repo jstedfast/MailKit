@@ -23,6 +23,7 @@
         "System.Text.Encoding": "4.0.10",
         "System.Net.NetworkInformation": "4.0.0",
         "System.Net.Primitives": "4.0.0",
+        "System.Net.Sockets": "4.0.0",
         "System.Collections": "4.0.10",
         "System.Data.Common": "4.0.0",
         "System.Threading": "4.0.10",
