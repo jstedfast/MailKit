@@ -1,0 +1,8 @@
+{
+  "frameworks": {
+    "MonoAndroid,Version=v4.0.3": {}
+  },
+  "runtimes": {
+    "win-anycpu": {}
+  }
+}

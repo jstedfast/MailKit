@@ -1,0 +1,39 @@
+﻿{
+  "version": "1.0.0-*",
+  "title": "MailKit",
+  "description": "An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.",
+  "authors": [ "Jeffrey Stedfast" ],
+  "tags": [ "smtp", "pop3", "imap", "mime", "security", "dkim", "smime", "s/mime", "openpgp", "pgp", "mbox", "mail", "email", "parser", "tnef", "xamarin", "android", "ios", "monodroid", "monotouch", "net40", "net45", "wpa81" ],
+  "projectUrl": "https://github.com/jstedfast/MailKit",
+  "licenseUrl": "https://github.com/jstedfast/MailKit/blob/master/License.md",
+  "language": "en-US",
+
+  "frameworks": {
+    "dnxcore50": {
+      "compilationOptions": {
+        "define": [ "COREFX", "ENABLE_CRYPTO" ],
+        "allowUnsafe": true
+      },
+      "dependencies": {
+        "System.Security.Cryptography.Algorithms": "4.0.0-beta-23516",
+        "System.Security.Cryptography.Primitives": "4.0.0-beta-23516",
+        "System.Runtime.Serialization.Primitives": "4.0.0",
+        "System.Text.Encoding.Extensions": "4.0.10",
+        "System.Text.Encoding.CodePages": "4.0.0",
+        "System.Text.Encoding": "4.0.10",
+        "System.Net.NetworkInformation": "4.0.0",
+        "System.Net.Primitives": "4.0.0",
+        "System.Collections": "4.0.10",
+        "System.Data.Common": "4.0.0",
+        "System.Threading": "4.0.10",
+        "System.Runtime": "4.0.20",
+        "System.Linq": "4.0.0",
+        "Microsoft.CSharp": "4.0.0"
+      }
+    }
+  },
+  "compileExclude": [
+    "MailKit.*.project.json",
+    "packages.*.config",
+  ]
+}

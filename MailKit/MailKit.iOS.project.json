@@ -1,0 +1,8 @@
+{
+  "frameworks": {
+    "Xamarin.iOS,Version=v1.0": {}
+  },
+  "runtimes": {
+    "win-anycpu": {}
+  }
+}
