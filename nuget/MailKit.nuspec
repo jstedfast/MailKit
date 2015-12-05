@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-    <metadata>
+    <metadata minClientVersion="3.0">
         <id>MailKit</id>
-        <version>1.2.15</version>
+        <version>1.2.16-beta1</version>
         <title>MailKit</title>
         <authors>Jeffrey Stedfast</authors>
         <owners>Jeffrey Stedfast</owners>
@@ -22,14 +22,12 @@ Features include:
 * S/MIME and PGP support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
         <summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-        <releaseNotes>* Be more forgiving during SASL auth when a POP3 server sends unexpected text after a + response. (issue #268)
+        <releaseNotes>* Added support for the SCRAM-SHA-256 SASL mechanism.
+* Added support for dnxcore50.
 </releaseNotes>
         <copyright>Xamarin Inc.</copyright>
         <language>en-US</language>
         <tags>smtp pop3 imap mime security dkim smime s/mime openpgp pgp mbox mail email parser tnef xamarin android ios monodroid monotouch net40 net45 wpa81</tags>
-        <dependencies>
-            <dependency id="MimeKit" version="1.2.16.0" />
-        </dependencies>
         <frameworkAssemblies>
             <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.0" />
             <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.0" />
@@ -44,8 +42,50 @@ Features include:
             <frameworkAssembly assemblyName="System.Core" targetFramework="Xamarin.iOS10" />
             <frameworkAssembly assemblyName="System.Data" targetFramework="Xamarin.iOS10" />
         </frameworkAssemblies>
+	<dependencies>
+	  <group targetFramework="dnxcore50">
+	    <dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
+	    <dependency id="System.Security.Cryptography.Primitives" version="4.0.0-beta-23516" />
+	    <dependency id="System.Runtime.Serialization.Primitives" version="4.0.10" />
+	    <dependency id="System.Text.Encoding.Extensions" version="4.0.10" />
+	    <dependency id="System.Text.Encoding.CodePages" version="4.0.0" />
+	    <dependency id="System.Text.Encoding" version="4.0.10" />
+	    <dependency id="System.Net.NameResolution" version="4.0.0-beta-23516" />
+	    <dependency id="System.Net.NetworkInformation" version="4.0.0" />
+	    <dependency id="System.Net.Primitives" version="4.0.10" />
+	    <dependency id="System.Net.Security" version="4.0.0-beta-23409" />
+	    <dependency id="System.Security.Sockets" version="4.0.10-beta-23123" />
+	    <dependency id="System.IO.Compression" version="4.0.0" />
+	    <dependency id="System.Collections" version="4.0.10" />
+	    <dependency id="System.Data.Common" version="4.0.0" />
+	    <dependency id="System.Threading" version="4.0.10" />
+	    <dependency id="System.Runtime" version="4.0.20" />
+	    <dependency id="System.Linq" version="4.0.0" />
+	    <dependency id="Microsoft.CSharp" version="4.0.0" />
+	    <dependency id="Portable.BouncyCastle" version="1.8.0" />
+	    <dependency id="MimeKit" version="1.2.17.2" />
+	  </group>
+	  <group targetFramework="wpa81">
+	    <dependency id="Portable.BouncyCastle" version="1.8.0" />
+	    <dependency id="MimeKit" version="1.2.17.2" />
+	  </group>
+	  <group targetFramework="xamarinios10">
+	    <dependency id="MimeKit" version="1.2.17.2" />
+	  </group>
+	  <group targetFramework="MonoAndroid">
+	    <dependency id="MimeKit" version="1.2.17.2" />
+	  </group>
+	  <group targetFramework="net45">
+	    <dependency id="MimeKit" version="1.2.17.2" />
+	  </group>
+	  <group targetFramework="net40">
+	    <dependency id="MimeKit" version="1.2.17.2" />
+	  </group>
+	</dependencies>
     </metadata>
     <files>
+        <file src="..\MailKit\bin\Release\lib\corefx\Release\dnxcore50\MailKit.dll" target="lib\dnxcore50\MailKit.dll" />
+        <file src="..\MailKit\bin\Release\lib\corefx\Release\dnxcore50\MailKit.xml" target="lib\dnxcore50\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.dll" target="lib\MonoAndroid\MailKit.dll" />
         <file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.xml" target="lib\MonoAndroid\MailKit.xml" />
         <file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.dll" target="lib\xamarinios10\MailKit.dll" />

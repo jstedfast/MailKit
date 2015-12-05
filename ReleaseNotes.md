@@ -1,5 +1,10 @@
 # Release Notes
 
+### MailKit 1.2.16
+
+* Added support for the SCRAM-SHA-256 SASL mechanism.
+* Added support for dnxcore50.
+
 ### MailKit 1.2.15
 
 * Be more forgiving during SASL auth when a POP3 server sends unexpected text after a + response.
