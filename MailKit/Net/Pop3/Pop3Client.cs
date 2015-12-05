@@ -45,7 +45,6 @@ using System.Net.Sockets;
 using System.Net.Security;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
 #endif
 
 using MimeKit;
@@ -241,8 +240,10 @@ namespace MailKit.Net.Pop3 {
 			if (ServerCertificateValidationCallback != null)
 				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
 
+#if !COREFX
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
+#endif
 
 			return true;
 		}
@@ -507,7 +508,7 @@ namespace MailKit.Net.Pop3 {
 				var md5sum = new StringBuilder ();
 				byte[] digest;
 
-				using (var md5 = new MD5 ())
+				using (var md5 = MD5.Create ())
 					digest = md5.ComputeHash (Encoding.UTF8.GetBytes (challenge));
 
 				for (int i = 0; i < digest.Length; i++)
@@ -1009,10 +1010,10 @@ namespace MailKit.Net.Pop3 {
 				}
 			}
 
-			#if NETFX_CORE
+#if NETFX_CORE
 			socket.Dispose ();
 			socket = null;
-			#endif
+#endif
 
 			dict.Clear ();
 			total = 0;

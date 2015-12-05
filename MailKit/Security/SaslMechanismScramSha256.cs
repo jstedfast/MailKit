@@ -128,7 +128,7 @@ namespace MailKit.Security {
 
 			return hash;
 #else
-			using (var sha256 = new SHA256CryptoServiceProvider ())
+			using (var sha256 = SHA256.Create ())
 				return sha256.ComputeHash (str);
 #endif
 		}

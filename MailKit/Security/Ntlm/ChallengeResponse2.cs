@@ -39,12 +39,11 @@
 using System;
 using System.Text;
 
-#if !NETFX_CORE
-using System.Security.Cryptography;
-using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
-#else
+#if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 using MD5 = MimeKit.Cryptography.MD5;
+#else
+using System.Security.Cryptography;
 #endif
 
 namespace MailKit.Security.Ntlm {
@@ -127,7 +126,7 @@ namespace MailKit.Security.Ntlm {
 			lm = new byte[24];
 			nonce.CopyTo (lm, 0);
 
-			using (var md5 = new MD5 ()) {
+			using (var md5 = MD5.Create ()) {
 				var hash = md5.ComputeHash (sessionNonce);
 				var newChallenge = new byte[8];
 

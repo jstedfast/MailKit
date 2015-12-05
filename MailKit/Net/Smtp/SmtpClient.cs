@@ -294,8 +294,10 @@ namespace MailKit.Net.Smtp {
 			if (ServerCertificateValidationCallback != null)
 				return ServerCertificateValidationCallback (host, certificate, chain, errors);
 
+#if !COREFX
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (host, certificate, chain, errors);
+#endif
 
 			return true;
 		}

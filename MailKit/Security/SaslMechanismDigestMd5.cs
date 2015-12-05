@@ -33,7 +33,6 @@ using System.Collections.Generic;
 using Encoding = Portable.Text.Encoding;
 using MD5 = MimeKit.Cryptography.MD5;
 #else
-using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
 using System.Security.Cryptography;
 #endif
 
@@ -426,10 +425,10 @@ namespace MailKit.Security {
 			// compute A1
 			text = string.Format ("{0}:{1}:{2}", UserName, Realm, password);
 			buf = Encoding.UTF8.GetBytes (text);
-			using (var md5 = new MD5 ())
+			using (var md5 = MD5.Create ())
 				digest = md5.ComputeHash (buf);
 
-			using (var md5 = new MD5 ()) {
+			using (var md5 = MD5.Create ()) {
 				md5.TransformBlock (digest, 0, digest.Length, null, 0);
 				text = string.Format (":{0}:{1}", Nonce, CNonce);
 				if (!string.IsNullOrEmpty (AuthZid))
@@ -447,14 +446,14 @@ namespace MailKit.Security {
 				text += ":00000000000000000000000000000000";
 
 			buf = Encoding.ASCII.GetBytes (text);
-			using (var md5 = new MD5 ())
+			using (var md5 = MD5.Create ())
 				digest = md5.ComputeHash (buf);
 			a2 = HexEncode (digest);
 
 			// compute KD
 			text = string.Format ("{0}:{1}:{2:x8}:{3}:{4}:{5}", a1, Nonce, Nc, CNonce, Qop, a2);
 			buf = Encoding.ASCII.GetBytes (text);
-			using (var md5 = new MD5 ())
+			using (var md5 = MD5.Create ())
 				digest = md5.ComputeHash (buf);
 
 			return HexEncode (digest);

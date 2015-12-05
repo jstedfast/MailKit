@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.0.0-*",
+  "version": "1.2.16",
   "title": "MailKit",
   "description": "An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.",
   "authors": [ "Jeffrey Stedfast" ],
@@ -11,7 +11,7 @@
   "frameworks": {
     "dnxcore50": {
       "compilationOptions": {
-        "define": [ "COREFX", "ENABLE_CRYPTO" ],
+        "define": [ "COREFX" ],
         "allowUnsafe": true
       },
       "dependencies": {
@@ -21,9 +21,11 @@
         "System.Text.Encoding.Extensions": "4.0.10",
         "System.Text.Encoding.CodePages": "4.0.0",
         "System.Text.Encoding": "4.0.10",
+        "System.Net.NameResolution": "4.0.0-beta-23516",
         "System.Net.NetworkInformation": "4.0.0",
-        "System.Net.Primitives": "4.0.0",
-        "System.Net.Sockets": "4.0.0",
+        "System.Net.Primitives": "4.0.11-beta-23409",
+        "System.Net.Security": "4.0.0-beta-23516",
+        "System.Net.Sockets": "4.0.10-beta-23123",
         "System.Collections": "4.0.10",
         "System.Data.Common": "4.0.0",
         "System.Threading": "4.0.10",
@@ -34,7 +36,14 @@
     }
   },
   "compileExclude": [
+    "Security/Ntlm/DES.cs",
+    "Security/Ntlm/HMACMD5.cs",
+    "Security/KeyedHashAlgorithm.cs",
+    "Security/RandomNumberGenerator.cs",
     "MailKit.*.project.json",
-    "packages.*.config",
-  ]
+    "packages.*.config"
+  ],
+  "dependencies": {
+    "MimeKit": "1.2.17"
+  }
 }

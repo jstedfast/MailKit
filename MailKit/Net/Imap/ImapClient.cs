@@ -236,8 +236,10 @@ namespace MailKit.Net.Imap {
 			if (ServerCertificateValidationCallback != null)
 				return ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
 
+#if !COREFX
 			if (ServicePointManager.ServerCertificateValidationCallback != null)
 				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, errors);
+#endif
 
 			return true;
 		}

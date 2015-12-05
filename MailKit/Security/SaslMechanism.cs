@@ -447,7 +447,7 @@ namespace MailKit.Security {
 				}
 			}
 
-#if !NETFX_CORE
+#if !NETFX_CORE && !COREFX
 			return builder.ToString ().Normalize (NormalizationForm.FormKC);
 #else
 			return builder.ToString ();

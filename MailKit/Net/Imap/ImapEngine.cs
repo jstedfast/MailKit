@@ -649,7 +649,7 @@ namespace MailKit.Net.Imap {
 				memory.Write (buf, offset, count);
 
 				count = (int) memory.Length;
-#if !NETFX_CORE
+#if !NETFX_CORE && !COREFX
 				buf = memory.GetBuffer ();
 #else
 				buf = memory.ToArray ();
@@ -788,7 +788,7 @@ namespace MailKit.Net.Imap {
 					memory.Write (buf, 0, nread);
 
 				nread = (int) memory.Length;
-#if !NETFX_CORE
+#if !NETFX_CORE && !COREFX
 				buf = memory.GetBuffer ();
 #else
 				buf = memory.ToArray ();

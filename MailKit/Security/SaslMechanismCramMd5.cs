@@ -31,7 +31,7 @@ using System.Text;
 #if NETFX_CORE
 using MD5 = MimeKit.Cryptography.MD5;
 #else
-using MD5 = System.Security.Cryptography.MD5CryptoServiceProvider;
+using System.Security.Cryptography;
 #endif
 
 namespace MailKit.Security {
@@ -113,7 +113,7 @@ namespace MailKit.Security {
 			if (password.Length > 64) {
 				byte[] checksum;
 
-				using (var md5 = new MD5 ())
+				using (var md5 = MD5.Create ())
 					checksum = md5.ComputeHash (password);
 
 				Array.Copy (checksum, ipad, checksum.Length);
@@ -128,13 +128,13 @@ namespace MailKit.Security {
 				opad[i] ^= 0x5c;
 			}
 
-			using (var md5 = new MD5 ()) {
+			using (var md5 = MD5.Create ()) {
 				md5.TransformBlock (ipad, 0, ipad.Length, null, 0);
 				md5.TransformFinalBlock (token, startIndex, length);
 				digest = md5.Hash;
 			}
 
-			using (var md5 = new MD5 ()) {
+			using (var md5 = MD5.Create ()) {
 				md5.TransformBlock (opad, 0, opad.Length, null, 0);
 				md5.TransformFinalBlock (digest, 0, digest.Length);
 				digest = md5.Hash;
