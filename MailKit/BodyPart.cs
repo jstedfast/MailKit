@@ -601,9 +601,9 @@ namespace MailKit {
 				if (!TryParse (text, ref index, false, out contentType))
 					return false;
 
-				if (contentType.Matches ("message", "rfc822"))
+				if (contentType.IsMimeType ("message", "rfc822"))
 					basic = message = new BodyPartMessage ();
-				else if (contentType.Matches ("text", "*"))
+				else if (contentType.IsMimeType ("text", "*"))
 					basic = txt = new BodyPartText ();
 				else
 					basic = new BodyPartBasic ();

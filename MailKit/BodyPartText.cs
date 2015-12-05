@@ -54,7 +54,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if the text is html; otherwise, <c>false</c>.</value>
 		public bool IsPlain {
-			get { return ContentType.Matches ("text", "plain"); }
+			get { return ContentType.IsMimeType ("text", "plain"); }
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value><c>true</c> if the text is html; otherwise, <c>false</c>.</value>
 		public bool IsHtml {
-			get { return ContentType.Matches ("text", "html"); }
+			get { return ContentType.IsMimeType ("text", "html"); }
 		}
 
 		/// <summary>

@@ -1190,7 +1190,7 @@ namespace MailKit.Net.Smtp {
 
 			protected override void VisitMultipart (Multipart multipart)
 			{
-				if (multipart.ContentType.Matches ("multipart", "signed")) {
+				if (multipart.ContentType.IsMimeType ("multipart", "signed")) {
 					// do not modify children of a multipart/signed
 					return;
 				}

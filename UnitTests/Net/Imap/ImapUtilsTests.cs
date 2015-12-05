@@ -156,7 +156,7 @@ namespace UnitTests.Net.Imap {
 						Assert.IsInstanceOf<BodyPartText> (body, "Body types did not match.");
 						basic = (BodyPartText) body;
 
-						Assert.IsTrue (body.ContentType.Matches ("text", "plain"), "Content-Type did not match.");
+						Assert.IsTrue (body.ContentType.IsMimeType ("text", "plain"), "Content-Type did not match.");
 						Assert.AreEqual ("US-ASCII", body.ContentType.Parameters["charset"], "charset param did not match");
 
 						Assert.IsNotNull (basic, "The parsed body is not BodyPartText.");
@@ -273,7 +273,7 @@ namespace UnitTests.Net.Imap {
 						Assert.IsInstanceOf<BodyPartMultipart> (body, "Body types did not match.");
 						multipart = (BodyPartMultipart) body;
 
-						Assert.IsTrue (body.ContentType.Matches ("multipart", "mixed"), "Content-Type did not match.");
+						Assert.IsTrue (body.ContentType.IsMimeType ("multipart", "mixed"), "Content-Type did not match.");
 						Assert.AreEqual ("----=_NextPart_000_0077_01CBB179.57530990", body.ContentType.Parameters["boundary"], "boundary param did not match");
 						Assert.AreEqual (3, multipart.BodyParts.Count, "BodyParts count does not match.");
 						Assert.IsInstanceOf<BodyPartMultipart> (multipart.BodyParts[0], "The type of the first child does not match.");

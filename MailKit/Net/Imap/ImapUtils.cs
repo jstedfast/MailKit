@@ -803,7 +803,7 @@ namespace MailKit.Net.Imap {
 			var octets = ReadNumber (engine, cancellationToken);
 			BodyPartBasic body;
 
-			if (type.Matches ("message", "rfc822")) {
+			if (type.IsMimeType ("message", "rfc822")) {
 				var mesg = new BodyPartMessage ();
 
 				// Note: GMail (and potentially other IMAP servers) will send body-part-basic
@@ -828,7 +828,7 @@ namespace MailKit.Net.Imap {
 				}
 
 				body = mesg;
-			} else if (type.Matches ("text", "*")) {
+			} else if (type.IsMimeType ("text", "*")) {
 				var text = new BodyPartText ();
 				text.Lines = ReadNumber (engine, cancellationToken);
 				body = text;
