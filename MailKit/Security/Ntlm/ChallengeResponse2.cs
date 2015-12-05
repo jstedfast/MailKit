@@ -81,8 +81,6 @@ namespace MailKit.Security.Ntlm {
 					using (var ct = des.CreateEncryptor ())
 						ct.TransformBlock (magic, 0, 8, buffer, 8);
 				}
-
-				des.Clear ();
 			}
 
 			return GetResponse (challenge, buffer);

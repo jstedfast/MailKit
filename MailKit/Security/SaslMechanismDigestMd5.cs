@@ -32,6 +32,9 @@ using System.Collections.Generic;
 #if NETFX_CORE
 using Encoding = Portable.Text.Encoding;
 using MD5 = MimeKit.Cryptography.MD5;
+#elif COREFX
+using System.Security.Cryptography;
+using MD5 = MimeKit.Cryptography.MD5;
 #else
 using System.Security.Cryptography;
 #endif

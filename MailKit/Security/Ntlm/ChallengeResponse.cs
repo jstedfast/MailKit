@@ -118,8 +118,6 @@ namespace MailKit.Security.Ntlm {
 						Array.Clear (data, 0, data.Length);
 						Array.Clear (hash, 0, hash.Length);
 					}
-
-					des.Clear ();
 				}
 			}
 		}

@@ -69,6 +69,9 @@ namespace MailKit.Security.Ntlm {
 			if (inputCount < 0 || inputOffset > inputBuffer.Length - inputCount)
 				throw new ArgumentOutOfRangeException ("inputCount");
 
+			if (inputCount != 8)
+				throw new ArgumentOutOfRangeException ("inputCount", "Can only transform 8 bytes at a time.");
+
 			if (outputBuffer == null)
 				throw new ArgumentNullException ("outputBuffer");
 
@@ -98,8 +101,6 @@ namespace MailKit.Security.Ntlm {
 
 	sealed class DES : IDisposable
 	{
-		bool disposed;
-
 		public static DES Create ()
 		{
 			return new DES ();
@@ -120,20 +121,11 @@ namespace MailKit.Security.Ntlm {
 
 		public void Clear ()
 		{
-			if (disposed)
-				throw new ObjectDisposedException ("DES");
-
-			if (Key != null) {
-				Array.Clear (Key, 0, Key.Length);
-				Key = null;
-			}
+			Dispose ();
 		}
 
 		public SymmetricKeyEncryptor CreateEncryptor ()
 		{
-			if (disposed)
-				throw new ObjectDisposedException ("DES");
-
 			var buffer = CryptographicBuffer.CreateFromByteArray (Key);
 			SymmetricKeyAlgorithmProvider algorithm;
 			CryptographicKey key;
@@ -157,14 +149,16 @@ namespace MailKit.Security.Ntlm {
 
 		void Dispose (bool disposing)
 		{
-			Clear ();
+			if (Key != null) {
+				Array.Clear (Key, 0, Key.Length);
+				Key = null;
+			}
 		}
 
 		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
-			disposed = true;
 		}
 	}
 #else
@@ -241,14 +235,41 @@ namespace MailKit.Security.Ntlm {
 
 			public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 			{
+				if (inputBuffer == null)
+					throw new ArgumentNullException ("inputBuffer");
+
+				if (inputOffset < 0 || inputOffset > inputBuffer.Length)
+					throw new ArgumentOutOfRangeException ("inputOffset");
+
+				if (inputCount < 0 || inputOffset > inputBuffer.Length - inputCount)
+					throw new ArgumentOutOfRangeException ("inputCount");
+
+				if (inputCount != 8)
+					throw new ArgumentOutOfRangeException ("inputCount", "Can only transform 8 bytes at a time.");
+
+				if (outputBuffer == null)
+					throw new ArgumentNullException ("outputBuffer");
+
+				if (outputOffset < 0 || outputOffset > outputBuffer.Length - 8)
+					throw new ArgumentOutOfRangeException ("outputOffset");
+
 				return engine.ProcessBlock (inputBuffer, inputOffset, outputBuffer, outputOffset);
 			}
 
 			public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
 			{
+				if (inputBuffer == null)
+					throw new ArgumentNullException ("inputBuffer");
+
+				if (inputOffset < 0 || inputOffset > inputBuffer.Length)
+					throw new ArgumentOutOfRangeException ("inputOffset");
+
+				if (inputCount < 0 || inputOffset > inputBuffer.Length - inputCount)
+					throw new ArgumentOutOfRangeException ("inputCount");
+
 				var output = new byte[8];
 
-				engine.ProcessBlock (inputBuffer, inputOffset, inputCount, output, 0);
+				engine.ProcessBlock (inputBuffer, inputOffset, output, 0);
 
 				return output;
 			}
@@ -336,7 +357,7 @@ namespace MailKit.Security.Ntlm {
 			return (((ulong) block[0]) << 56) | (((ulong) block[1]) << 48) |
 				(((ulong) block[2]) << 40) | (((ulong) block[3]) << 32) |
 				(((ulong) block[4]) << 24) | (((ulong) block[5]) << 16) |
-				(((ulong) block[6]) << 8) | ((ulong) block[7]));
+				(((ulong) block[6]) << 8) | ((ulong) block[7]);
 		}
 	}
 #endif
