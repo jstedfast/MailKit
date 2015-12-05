@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2014 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2015 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -111,6 +111,26 @@ namespace MailKit.Security {
 		/// </remarks>
 		/// <param name="key">The secret key.</param>
 		public HMACSHA1 (byte[] key) : base (MacAlgorithmNames.HmacSha1, key)
+		{
+		}
+	}
+
+	/// <summary>
+	/// The HMAC SHA-256 algorithm.
+	/// </summary>
+	/// <remarks>
+	/// The HMAC SHA-256 algorithm.
+	/// </remarks>
+	public class HMACSHA256 : KeyedHashAlgorithm
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.HMACSHA256"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new HMAC SHA-256 context.
+		/// </remarks>
+		/// <param name="key">The secret key.</param>
+		public HMACSHA256 (byte[] key) : base (MacAlgorithmNames.HmacSha256, key)
 		{
 		}
 	}
