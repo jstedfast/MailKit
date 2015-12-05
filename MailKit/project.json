@@ -32,13 +32,13 @@
         "System.Threading": "4.0.10",
         "System.Runtime": "4.0.20",
         "System.Linq": "4.0.0",
-        "Microsoft.CSharp": "4.0.0"
+        "Microsoft.CSharp": "4.0.0",
+        "Portable.BouncyCastle": "1.8.0"
       }
     }
   },
   "compileExclude": [
     "Net/SelectMode.cs",
-    "Security/Ntlm/DES.cs",
     "Security/Ntlm/HMACMD5.cs",
     "Security/KeyedHashAlgorithm.cs",
     "Security/RandomNumberGenerator.cs",

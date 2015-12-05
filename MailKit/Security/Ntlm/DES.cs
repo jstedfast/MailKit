@@ -32,6 +32,10 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 #else
 using System.Security.Cryptography;
+
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
 #endif
 
 namespace MailKit.Security.Ntlm {
@@ -164,71 +168,107 @@ namespace MailKit.Security.Ntlm {
 		}
 	}
 #else
-	// Copyright (c) Microsoft Corporation.  All rights reserved.
-
 	class DES : SymmetricAlgorithm
 	{
-		static KeySizes[] s_legalBlockSizes = {
-			new KeySizes (64, 64, 0)
-		};
-		static KeySizes[] s_legalKeySizes = {
-			new KeySizes (64, 64, 0)
-		};
-
-		//
-		// protected constructors
-		//
-
 		DES ()
 		{
-			KeySizeValue = 64;
-			BlockSizeValue = 64;
-			FeedbackSizeValue = BlockSizeValue;
-			LegalBlockSizesValue = s_legalBlockSizes;
-			LegalKeySizesValue = s_legalKeySizes;
+			BlockSize = 64;
+			KeySize = 64;
 		}
-
-		//
-		// public properties
-		//
-
-		public override byte[] Key {
-			get {
-				if (KeyValue == null) {
-					// Never hand back a weak or semi-weak key
-					do {
-						GenerateKey ();
-					} while (IsWeakKey (KeyValue) || IsSemiWeakKey (KeyValue));
-				}
-
-				return (byte[]) KeyValue.Clone ();
-			}
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("value");
-
-				if (!ValidKeySize (value.Length * 8))
-					throw new ArgumentException ("Invalid key size.");
-
-				if (IsWeakKey (value))
-					throw new CryptographicException ("Key is too weak.");
-
-				if (IsSemiWeakKey (value))
-					throw new CryptographicException ("Key is semi-weak.");
-
-				KeyValue = (byte[]) value.Clone ();
-				KeySizeValue = value.Length * 8;
-			}
-		}
-
-		//
-		// public methods
-		//
 
 		public static DES Create ()
 		{
 			return new DES ();
 		}
+
+		public override KeySizes[] LegalBlockSizes {
+			get { return new [] { new KeySizes (64, 64, 0) }; }
+		}
+
+		public override KeySizes[] LegalKeySizes {
+			get { return new [] { new KeySizes (64, 64, 0) }; }
+		}
+
+		public override void GenerateIV ()
+		{
+			var iv = new byte[8];
+
+			using (var rng = RandomNumberGenerator.Create ())
+				rng.GetBytes (iv);
+
+			IV = iv;
+		}
+
+		public override void GenerateKey ()
+		{
+			var key = new byte[8];
+
+			using (var rng = RandomNumberGenerator.Create ()) {
+				do {
+					rng.GetBytes (key);
+				} while (IsWeakKey (key) || IsSemiWeakKey (key));
+			}
+
+			Key = key;
+		}
+
+		class DesTransform : ICryptoTransform
+		{
+			readonly DesEngine engine;
+
+			public DesTransform (bool encryption, byte[] key)
+			{
+				engine = new DesEngine ();
+
+				engine.Init (encryption, new KeyParameter (key));
+			}
+
+			public bool CanReuseTransform {
+				get { return false; }
+			}
+
+			public bool CanTransformMultipleBlocks {
+				get { return false; }
+			}
+
+			public int InputBlockSize {
+				get { return 8; }
+			}
+
+			public int OutputBlockSize {
+				get { return 8; }
+			}
+
+			public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+			{
+				return engine.ProcessBlock (inputBuffer, inputOffset, outputBuffer, outputOffset);
+			}
+
+			public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
+			{
+				var output = new byte[8];
+
+				engine.ProcessBlock (inputBuffer, inputOffset, inputCount, output, 0);
+
+				return output;
+			}
+
+			public void Dispose ()
+			{
+			}
+		}
+
+		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV)
+		{
+			return new DesTransform (false, rgbKey);
+		}
+
+		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
+		{
+			return new DesTransform (true, rgbKey);
+		}
+
+		// The following code is Copyright (C) Microsoft Corporation. All rights reserved.
 
 		public static bool IsWeakKey (byte[] rgbKey)
 		{
@@ -265,10 +305,6 @@ namespace MailKit.Security.Ntlm {
 				(key == 0xe0fee0fef1fef1fe) ||
 				(key == 0xfee0fee0fef1fef1));
 		}
-
-		//
-		// private methods
-		//
 
 		static byte[] FixupKeyParity (byte[] key)
 		{
