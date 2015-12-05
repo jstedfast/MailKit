@@ -745,7 +745,11 @@ namespace MailKit.Net.Pop3 {
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
+#if COREFX
+			var ipAddresses = Dns.GetHostAddressesAsync (uri.DnsSafeHost).GetAwaiter ().GetResult ();
+#else
 			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+#endif
 			Socket socket = null;
 
 			for (int i = 0; i < ipAddresses.Length; i++) {

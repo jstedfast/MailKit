@@ -16,7 +16,7 @@
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\lib\net40</OutputPath>
     <IntermediateOutputPath>obj\Debug\lib\net40</IntermediateOutputPath>
-    <DefineConstants>DEBUG;TRACE;SERIALIZABLE;</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;SERIALIZABLE;NET_4_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -31,7 +31,7 @@
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>bin\Release\lib\net40\MailKit.xml</DocumentationFile>
-    <DefineConstants>SERIALIZABLE;</DefineConstants>
+    <DefineConstants>SERIALIZABLE;NET_4_0</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

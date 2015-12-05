@@ -1164,7 +1164,11 @@ namespace MailKit.Net.Imap {
 			ComputeDefaultValues (host, ref port, ref options, out uri, out starttls);
 
 #if !NETFX_CORE
-			var ipAddresses = Dns.GetHostAddresses (host);
+#if COREFX
+			var ipAddresses = Dns.GetHostAddressesAsync (uri.DnsSafeHost).GetAwaiter ().GetResult ();
+#else
+			var ipAddresses = Dns.GetHostAddresses (uri.DnsSafeHost);
+#endif
 			Socket socket = null;
 
 			for (int i = 0; i < ipAddresses.Length; i++) {
