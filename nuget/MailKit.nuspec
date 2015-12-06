@@ -46,17 +46,17 @@ Features include:
 	  <group targetFramework="dnxcore50">
 	    <dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
 	    <dependency id="System.Security.Cryptography.Primitives" version="4.0.0-beta-23516" />
-	    <dependency id="System.Runtime.Serialization.Primitives" version="4.0.10" />
+	    <dependency id="System.Runtime.Serialization.Primitives" version="4.1.0-beta-23516" />
 	    <dependency id="System.Text.Encoding.Extensions" version="4.0.11-beta-23516" />
 	    <dependency id="System.Text.Encoding.CodePages" version="4.0.1-beta-23516" />
 	    <dependency id="System.Text.Encoding" version="4.0.11-beta-23516" />
 	    <dependency id="System.Net.NameResolution" version="4.0.0-beta-23516" />
-	    <dependency id="System.Net.NetworkInformation" version="4.0.0" />
+	    <dependency id="System.Net.NetworkInformation" version="4.1.0-beta-23516" />
 	    <dependency id="System.Net.Primitives" version="4.0.11-beta-23516" />
 	    <dependency id="System.Net.Security" version="4.0.0-beta-23516" />
 	    <dependency id="System.Net.Sockets" version="4.1.0-beta-23516" />
 	    <dependency id="System.IO.Compression" version="4.1.0-beta-23516" />
-	    <dependency id="System.Collections" version="4.0.10" />
+	    <dependency id="System.Collections" version="4.0.11-beta-23516" />
 	    <dependency id="System.Data.Common" version="4.0.1-beta-23516" />
 	    <dependency id="System.Reflection" version="4.1.0-beta-23516" />
 	    <dependency id="System.Threading" version="4.0.11-beta-23516" />
