@@ -354,7 +354,7 @@ namespace MailKit.Net.Imap {
 		/// <para>Enables the QRESYNC feature.</para>
 		/// <para>The QRESYNC extension improves resynchronization performance of folders by
 		/// querying the IMAP server for a list of changes when the folder is opened using the
-		/// <see cref="ImapFolder.Open(FolderAccess,UniqueId,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
+		/// <see cref="ImapFolder.Open(FolderAccess,uint,ulong,System.Collections.Generic.IList&lt;UniqueId&gt;,System.Threading.CancellationToken)"/>
 		/// method.</para>
 		/// <para>If this feature is enabled, the <see cref="MailFolder.MessageExpunged"/> event is replaced
 		/// with the <see cref="MailFolder.MessagesVanished"/> event.</para>

@@ -137,7 +137,7 @@ namespace MailKit.Net.Imap {
 		/// Notifies the folder that a parent folder has been renamed.
 		/// </summary>
 		/// <remarks>
-		/// Updates the <see cref="FullName"/> property.
+		/// Updates the <see cref="MailFolder.FullName"/> property.
 		/// </remarks>
 		protected override void OnParentFolderRenamed ()
 		{

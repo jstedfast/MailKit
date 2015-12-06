@@ -70,7 +70,7 @@ namespace MailKit {
 		InternalDate   = 1 << 5,
 
 		/// <summary>
-		/// Fetch the <see cref="MessageSummary.MessageSize"/>.
+		/// Fetch the <see cref="MessageSummary.Size"/>.
 		/// </summary>
 		MessageSize    = 1 << 6,
 
