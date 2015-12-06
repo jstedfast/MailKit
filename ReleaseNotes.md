@@ -1,6 +1,6 @@
 # Release Notes
 
-### MailKit 1.2.16
+### MailKit 1.3.0
 
 * Added support for the SCRAM-SHA-256 SASL mechanism.
 * Added support for dnxcore50.
