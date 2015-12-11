@@ -1905,11 +1905,17 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ServiceNotAuthenticatedException">
 		/// The <see cref="ImapClient"/> is not authenticated.
 		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the SPECIAL-USE nor XLIST extensions.
+		/// </exception>
 		public override IMailFolder GetFolder (SpecialFolder folder)
 		{
 			CheckDisposed ();
 			CheckConnected ();
 			CheckAuthenticated ();
+
+			if ((Capabilities & (ImapCapabilities.SpecialUse | ImapCapabilities.XList)) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the SPECIAL-USE nor XLIST extensions.");
 
 			switch (folder) {
 			case SpecialFolder.All:     return engine.All;
