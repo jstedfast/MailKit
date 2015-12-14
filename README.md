@@ -23,6 +23,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
   * NTLM
   * PLAIN
   * SCRAM-SHA-1
+  * SCRAM-SHA-256
   * XOAUTH2 (partial support - you need to fetch the auth tokens yourself)
 * SMTP Client
   * Supports all of the SASL mechanisms listed above.
