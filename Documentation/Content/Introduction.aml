@@ -142,7 +142,7 @@
             <linkUri>http://jeffreystedfast.blogspot.com/2013/10/optimization-tips-tricks-used-by.html</linkUri>
             <linkTarget>_blank</linkTarget>
           </externalLink>], MimeKit's performance is actually <externalLink>
-            <linkText>par with GMime</linkText>
+            <linkText>on par with GMime</linkText>
             <linkUri>http://jeffreystedfast.blogspot.com/2014/03/gmime-gets-speed-boost.html</linkUri>
             <linkTarget>_blank</linkTarget>
           </externalLink>.
