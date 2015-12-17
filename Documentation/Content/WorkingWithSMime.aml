@@ -67,7 +67,7 @@
           encrypted content like OpenPGP, S/MIME uses <literal>application/pkcs7-mime</literal>.
           To encrypt any <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>,
           simply use the
-          <codeEntityReference autoUpgrade="true" linkText="ApplicationPkcs7Mime.Encrypt">
+          <codeEntityReference autoUpgrade="true" qualifyHint="true">
             Overload:MimeKit.Cryptography.ApplicationPkcs7Mime.Encrypt
           </codeEntityReference>
           method:
@@ -113,7 +113,7 @@
           To digitally sign a <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>
           using a <literal>multipart/signed</literal> MIME part, it works exactly the same
           as it does for <link xlink:href="WorkingWithPGP#Sign">OpenPGP</link> using
-          <codeEntityReference autoUpgrade="true" linkText="MultipartSigned.Create">
+          <codeEntityReference autoUpgrade="true" qualifyHint="true">
             Overload:MimeKit.Cryptography.MultipartSigned.Create
           </codeEntityReference>
         </para>
@@ -127,7 +127,7 @@
           You can also choose to digitially sign a
           <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference> using the
           <literal>application/pkcs7-mime</literal> format using
-          <codeEntityReference autoUpgrade="true" linkText="ApplicationPkcs7Mime.Sign">
+          <codeEntityReference autoUpgrade="true" qualifyHint="true">
             Overload:MimeKit.Cryptography.ApplicationPkcs7Mime.Sign
           </codeEntityReference>
         </para>

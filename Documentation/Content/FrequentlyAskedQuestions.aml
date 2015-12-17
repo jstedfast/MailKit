@@ -14,6 +14,44 @@
       <autoOutline />
     </introduction>
 
+    <section address="CompletelyFree">
+      <title>Are MimeKit and MailKit completely free? Can I use them in my proprietary product(s)?</title>
+      <content>
+        <para>
+          Yes. MimeKit and MailKit are both completely free and open source. They are both covered under
+          the <link xlink:href="https://opensource.org/licenses/MIT">MIT</link> license.
+        </para>
+      </content>
+    </section>
+
+    <section address="CreateAttachments">
+      <title>How do I create a message with attachments?</title>
+      <content>
+        <para>
+          To construct a message with attachments, the first thing you'll need to do is create a
+          <literal>multipart/mixed</literal> container which you'll then want to add the message
+          body to first. Once you've added the body, you can then add MIME parts to it that contain
+          the content of the files you'd like to attach, being sure to set the
+          <literal>Content-Disposition</literal> header value to <literal>attachment</literal>.
+          You'll probably also want to set the <literal>filename</literal> parameter on the
+          <literal>Content-Disposition</literal> header as well as the <literal>name</literal>
+          parameter on the <literal>Content-Type</literal> header. The most convenient way to do this
+          is to simply use the <codeEntityReference qualifyHint="true">
+          P:MimeKit.MimePart.FileName</codeEntityReference> property which will set both parameters
+          for you as well as setting the <literal>Content-Disposition</literal> header value to
+          <literal>attachment</literal> if it has not already been set to something else.
+        </para>
+        <para>
+          A simpler way to construct messages with attachments is to take advantage of the
+          <codeEntityReference>T:MimeKit.BodyBuilder</codeEntityReference> class.
+        </para>
+        <code language="c#" source="Examples\BodyBuilder.cs"/>
+        <para>
+          For more information, see <link xlink:href="CreatingMessages">Creating Messages</link>.
+        </para>
+      </content>
+    </section>
+
     <section address="MessageBody">
       <title>How do I get the message body?</title>
       <content>
@@ -100,6 +138,46 @@ multipart/mixed
         </para>
         <para>
           For more information, see <link xlink:href="WorkingWithMessages"/>.
+        </para>
+      </content>
+    </section>
+
+    <section address="HasAttachments">
+      <title>How do I tell if a message has attachments?</title>
+      <content>
+        <para>
+          In most cases, a message with a body that has a MIME-type of <literal>multipart/mixed</literal>
+          containing more than a single part probably has attachments. As illustrated above, the first part
+          of a </literal>multipart/mixed</literal> is typically the textual body of the message, but it is
+          not always quite that simple.
+        </para>
+        <para>
+          In general, MIME attachments will have a <literal>Content-Disposition</literal> header with a
+          value of <literal>attachment</literal>. To get the list of body parts matching this criteria,
+          you can use the <codeEntityReference qualifyHint="true">
+          P:MimeKit.MimeMessage.Attachments</codeEntityReference> property.
+        </para>
+        <para>
+          Unfortunately, not all mail clients follow this convention and so you may need to write your
+          own custom logic. For example, you may wish to treat all body parts having a <literal>name</literal>
+          or <literal>filename</literal> parameter set on them:
+        </para>
+        <code language="c#">
+var attachments = message.BodyParts.OfType<MimePart> ().Where (part => !string.IsNullOrEmpty (part.FileName));
+        </code>
+        <para>
+          A more sophisticated approach is to treat body parts not referenced by the main textual body part of
+          the message as attachments. In other words, treat any body part not used for rendering the message
+          as an attachment. For an example on how to do this, consider the following code snippets:
+        </para>
+        <code language="c#" source="Examples\MimeVisitorExamples.cs" region="HtmlPreviewVisitor"/>
+        <para>And the way you'd use this visitor might look something like this:</para>
+        <code language="c#" source="Examples\MimeVisitorExamples.cs" region="RenderMessage"/>
+        <para>
+          Once you've rnedered the message using the above technique, you'll have a list of attachments
+          that were not used, even if they did not match the simplistic criteria used by the
+          <codeEntityReference qualifyHint="true"> P:MimeKit.MimeMessage.Attachments</codeEntityReference>
+          property.
         </para>
       </content>
     </section>

@@ -48,8 +48,8 @@
       <link xlink:href="CreatingMessages"/>
       <link xlink:href="WorkingWithMessages"/>
       
-      <!--<codeEntityReference autoUpgrade="true">M:MimeKit.MimeParser.ParseMessage(System.Threading.CancellationToken)</codeEntityReference>
-      <codeEntityReference autoUpgrade="true">M:MimeKit.MimeMessage.Load(System.IO.Stream,System.Threading.CancellationToken)</codeEntityReference>-->
+      <!--<codeEntityReference autoUpgrade="true" qualifyHint="true">M:MimeKit.MimeParser.ParseMessage(System.Threading.CancellationToken)</codeEntityReference>
+      <codeEntityReference autoUpgrade="true" qualifyHint="true">M:MimeKit.MimeMessage.Load(System.IO.Stream,System.Threading.CancellationToken)</codeEntityReference>-->
     </relatedTopics>
   </developerConceptualDocument>
 </topic>

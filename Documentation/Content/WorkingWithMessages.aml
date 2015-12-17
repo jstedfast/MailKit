@@ -225,11 +225,11 @@ multipart/alternative
     <relatedTopics>
       <link xlink:href="ParsingMessages"/>
       
-      <!--<codeEntityReference>P:MimeKit.MimeMessage.TextBody</codeEntityReference>
-      <codeEntityReference>P:MimeKit.MimeMessage.HtmlBody</codeEntityReference>
-      <codeEntityReference autoUpgrade="true">M:MimeKit.MimeMessage.GetTextBody(MimeKit.Text.TextFormat)</codeEntityReference>
-      <codeEntityReference>P:MimeKit.MimeMessage.BodyParts</codeEntityReference>
-      <codeEntityReference>P:MimeKit.MimeMessage.Attachments</codeEntityReference>
+      <!--<codeEntityReference qualifyHint="true">P:MimeKit.MimeMessage.TextBody</codeEntityReference>
+      <codeEntityReference qualifyHint="true">P:MimeKit.MimeMessage.HtmlBody</codeEntityReference>
+      <codeEntityReference autoUpgrade="true" qualifyHint="true">M:MimeKit.MimeMessage.GetTextBody(MimeKit.Text.TextFormat)</codeEntityReference>
+      <codeEntityReference qualifyHint="true">P:MimeKit.MimeMessage.BodyParts</codeEntityReference>
+      <codeEntityReference qualifyHint="true">P:MimeKit.MimeMessage.Attachments</codeEntityReference>
       <codeEntityReference>T:MimeKit.MimeIterator</codeEntityReference>-->
     </relatedTopics>
   </developerConceptualDocument>
