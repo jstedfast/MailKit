@@ -53,7 +53,7 @@
     </section>
 
     <section address="MessageBody">
-      <title>How do I get the message body?</title>
+      <title>How do I get the main body of a message?</title>
       <content>
         <para>
           (Note: for the TL;DR version, skip to the end)
@@ -267,6 +267,86 @@ var attachments = message.BodyParts.OfType<MimePart> ().Where (part => !string.I
         <code language="c#">
 foreach (var mailbox in message.To.Mailboxes)
     Console.WriteLine ("{0}'s email address is {1}", mailbox.Name, mailbox.Address);
+        </code>
+      </content>
+    </section>
+
+    <section address="UnreadMessages">
+      <title>How do I get all of the unread messages in a folder?</title>
+      <content>
+        <para>
+          The easiest way is to search for all of the messages that do not have the
+          <literal>\Seen</literal> flag on them, like so:
+        </para>
+        <code language="c#">
+foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
+    var message = folder.GetMessage (uid);
+}
+        </code>
+      </content>
+    </section>
+
+    <section address="Serialize">
+      <title>Why doesn't the MimeMessage class implement ISerializable so that I can serialize a
+      message to disk and read it back later?</title>
+      <content>
+        <para>
+          The MimeKit API was designed to use the existing MIME format for serialization. In light
+          of this, the ability to use the .NET serialization API and format did not make much sense
+          to support.
+        </para>
+        <para>
+          You can easily serialize a MimeMessage to a stream using the
+          <codeEntityReference autoUpgrade="true">
+          M:MimeKit.MimeMessage.WriteTo (System.IO.Stream,System.Threading.CancellationToken)
+          </codeEntityReference> methods.
+        </para>
+      </content>
+    </section>
+
+    <section address="UntitledAttachments">
+      <title>Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?</title>
+      <content>
+        <para>
+          An attachment filename is stored as a MIME parameter on the <literal>Content-Disposition</literal>
+          header. Unfortunately, the original MIME specifications did not specify a method for encoding
+          non-ascii filenames. In 1997, <link xlink:href="https://tools.ietf.org/html/rfc2184">rfc2184</link>
+          (later updated by <link xlink:href="https://tools.ietf.org/html/rfc2231">rfc2231</link>) was
+          published which specified an encoding mechanism to use for encoding them. Since there was a window
+          in time where the MIME specifications did not define a way to encode them, some mail client
+          developers decided to use the mechanism described by
+          <link xlink:href="https://tools.ietf.org/html/rfc2047">rfc2047</link> which was meant for encoding
+          non-ASCII text in headers. While this may at first seem logical, the problem with this approach
+          was that rfc2047 encoded-word tokens are not allowed to be in quotes (as well as some other issues)
+          and so another, more appropriate, encoding mechanism was needed.
+        </para>
+        <para>
+          Outlook is one of those mail clients which decided to encode filenames using the mechanism described
+          in rfc2047 and until Outlook 2007, did not support filenames encoded using mechanism defined in
+          rfc2231.
+        </para>
+        <para>
+          As of MimeKit v1.2.18, it is possible to configure MimeKit to use the rfc2047 encoding mechanism for
+          filenames in the following two ways:
+        </para>
+        <para>
+          The first way is to set the encoding method on each individual
+          <codeEntityReference>T:MimeKit.Parameter</codeEntityReference>:
+        </para>
+        <code language="c#">
+Parameter param;
+
+if (attachment.ContentDisposition.Parameters.TryGetValue ("filename", out param))
+    param.EncodingMethod = ParameterEncodingMethod.Rfc2047;
+        </code>
+        <para>
+          The other way is to use a <codeEntityReference>T:MimeKit.FormatOptions</codeEntityReference>:
+        </para>
+        <code language="c#">
+var options = FormatOptions.Default.Clone ();
+options.ParameterEncodingMethod = ParameterEncodingMethod.Rfc2047;
+
+message.WriteTo (options, stream);
         </code>
       </content>
     </section>
