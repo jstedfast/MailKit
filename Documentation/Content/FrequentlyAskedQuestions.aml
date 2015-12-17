@@ -19,7 +19,12 @@
       <content>
         <para>
           Yes. MimeKit and MailKit are both completely free and open source. They are both covered under
-          the <link xlink:href="https://opensource.org/licenses/MIT">MIT</link> license.
+          the
+          <externalLink>
+            <linkText>MIT</linkText>
+            <linkUri>https://opensource.org/licenses/MIT</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> license.
         </para>
       </content>
     </section>
@@ -41,11 +46,12 @@
           for you as well as setting the <literal>Content-Disposition</literal> header value to
           <literal>attachment</literal> if it has not already been set to something else.
         </para>
+        <code language="c#" source="Examples\CreateMultipartMixed.cs"/>
         <para>
           A simpler way to construct messages with attachments is to take advantage of the
           <codeEntityReference>T:MimeKit.BodyBuilder</codeEntityReference> class.
         </para>
-        <code language="c#" source="Examples\BodyBuilder.cs"/>
+        <code language="c#" source="Examples\BodyBuilder.cs" region="Simple"/>
         <para>
           For more information, see <link xlink:href="CreatingMessages">Creating Messages</link>.
         </para>
@@ -148,7 +154,7 @@ multipart/mixed
         <para>
           In most cases, a message with a body that has a MIME-type of <literal>multipart/mixed</literal>
           containing more than a single part probably has attachments. As illustrated above, the first part
-          of a </literal>multipart/mixed</literal> is typically the textual body of the message, but it is
+          of a <literal>multipart/mixed</literal> is typically the textual body of the message, but it is
           not always quite that simple.
         </para>
         <para>
@@ -163,7 +169,7 @@ multipart/mixed
           or <literal>filename</literal> parameter set on them:
         </para>
         <code language="c#">
-var attachments = message.BodyParts.OfType<MimePart> ().Where (part => !string.IsNullOrEmpty (part.FileName));
+var attachments = message.BodyParts.OfType&lt;MimePart&gt; ().Where (part => !string.IsNullOrEmpty (part.FileName));
         </code>
         <para>
           A more sophisticated approach is to treat body parts not referenced by the main textual body part of
@@ -174,9 +180,9 @@ var attachments = message.BodyParts.OfType<MimePart> ().Where (part => !string.I
         <para>And the way you'd use this visitor might look something like this:</para>
         <code language="c#" source="Examples\MimeVisitorExamples.cs" region="RenderMessage"/>
         <para>
-          Once you've rnedered the message using the above technique, you'll have a list of attachments
+          Once you've rendered the message using the above technique, you'll have a list of attachments
           that were not used, even if they did not match the simplistic criteria used by the
-          <codeEntityReference qualifyHint="true"> P:MimeKit.MimeMessage.Attachments</codeEntityReference>
+          <codeEntityReference qualifyHint="true">P:MimeKit.MimeMessage.Attachments</codeEntityReference>
           property.
         </para>
       </content>
@@ -297,9 +303,8 @@ foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
         </para>
         <para>
           You can easily serialize a MimeMessage to a stream using the
-          <codeEntityReference autoUpgrade="true">
-          M:MimeKit.MimeMessage.WriteTo (System.IO.Stream,System.Threading.CancellationToken)
-          </codeEntityReference> methods.
+          <codeEntityReference autoUpgrade="true">M:MimeKit.MimeMessage.WriteTo</codeEntityReference>
+          methods.
         </para>
       </content>
     </section>
@@ -310,19 +315,33 @@ foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
         <para>
           An attachment filename is stored as a MIME parameter on the <literal>Content-Disposition</literal>
           header. Unfortunately, the original MIME specifications did not specify a method for encoding
-          non-ascii filenames. In 1997, <link xlink:href="https://tools.ietf.org/html/rfc2184">rfc2184</link>
-          (later updated by <link xlink:href="https://tools.ietf.org/html/rfc2231">rfc2231</link>) was
+          non-ascii filenames. In 1997,
+          <externalLink>
+            <linkText>rfc2184</linkText>
+            <linkUri>https://tools.ietf.org/html/rfc2184</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>
+          (later updated by 
+          <externalLink>
+            <linkText>rfc2231</linkText>
+            <linkUri>https://tools.ietf.org/html/rfc2231</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>) was
           published which specified an encoding mechanism to use for encoding them. Since there was a window
           in time where the MIME specifications did not define a way to encode them, some mail client
           developers decided to use the mechanism described by
-          <link xlink:href="https://tools.ietf.org/html/rfc2047">rfc2047</link> which was meant for encoding
+          <externalLink>
+            <linkText>rfc2047</linkText>
+            <linkUri>https://tools.ietf.org/html/rfc2047</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> which was meant for encoding
           non-ASCII text in headers. While this may at first seem logical, the problem with this approach
           was that rfc2047 encoded-word tokens are not allowed to be in quotes (as well as some other issues)
           and so another, more appropriate, encoding mechanism was needed.
         </para>
         <para>
           Outlook is one of those mail clients which decided to encode filenames using the mechanism described
-          in rfc2047 and until Outlook 2007, did not support filenames encoded using mechanism defined in
+          in rfc2047 and until Outlook 2007, did not support filenames encoded using the mechanism defined in
           rfc2231.
         </para>
         <para>
@@ -393,12 +412,12 @@ message.WriteTo (options, stream);
           Since classes like <codeEntityReference>T:System.Net.HttpWebRequest</codeEntityReference>
           take care of parsing the HTTP headers (which includes the <literal>Content-Type</literal> header)
           and only offer a content stream to consume, MimeKit provides a way to deal with this using the
-          following two static methods on <codeEntityReference>T:MimeKit.MimeEntity</codeEntityReference>:
-          <codeEntityReference>
+          following two static methods:
+          <codeEntityReference qualifyHint="true">
             M:MimeKit.MimeEntity.Load(MimeKit.ParserOptions,MimeKit.ContentType,System.IO.Stream,System.Threading.CancellationToken)
           </codeEntityReference>
           and
-          <codeEntityReference>
+          <codeEntityReference qualifyHint="true">
             M:MimeKit.MimeEntity.Load(MimeKit.ContentType,System.IO.Stream,System.Threading.CancellationToken)
           </codeEntityReference>
         </para>
@@ -415,8 +434,132 @@ message.WriteTo (options, stream);
       </content>
     </section>
 
+    <section address="ProtocolLog">
+      <title>How do I debug SMTP, POP3 and/or IMAP errors?</title>
+      <content>
+        <para>
+          All of MailKit's client implementations have a constructor that takes a nifty
+          <codeEntityReference>T:MailKit.IProtocolLogger</codeEntityReference> interface for logging client/server communications.
+          Out of the box, you can use the handy <codeEntityReference>T:MailKit.ProtocolLogger</codeEntityReference> class. Here are
+          some examples of how to use it:
+        </para>
+        <code language="c#">
+// log to a file called 'imap.log'
+var client = new ImapClient (new ProtocolLogger ("imap.log"));
+
+// log to standard output (i.e. the console)
+var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
+        </code>
+      </content>
+    </section>
+
+    <section address="GMail">
+      <title>How do I access GMail using MailKit?</title>
+      <content>
+        <para>
+          The first thing that you will need to do is to configure your GMail account to
+          <externalLink>
+            <linkText>enable less secure apps</linkText>
+            <linkUri>https://www.google.com/settings/security/lesssecureapps</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink>, or you'll need to use OAuth 2.0 authentication (which is a bit more complex).
+        </para>
+        <para>
+          Then, assuming that your GMail account is <literal>user@gmail.com</literal>, you would use the following
+          code snippet to connect to GMail via IMAP:
+        </para>
+        <code language="c#">
+using (var client = new ImapClient ()) {
+    client.Connect ("imap.gmail.com", 993, SecureSocketOptions.SslOnConnect);
+    
+    // disable OAuth2 authentication unless you are actually using an access_token
+    client.AuthenticationMechanisms.Remove ("XOAUTH2");
+    
+    client.Authenticate ("user@gmail.com", "password");
+    
+    // do stuff...
+    
+    client.Disconnect (true);
+}
+        </code>
+        <para>
+          Connecting via POP3 or SMTP is identical except for the host names and ports (and, of course, you'd
+          use a Pop3Client or SmtpClient as appropriate).
+        </para>
+        <para>
+          If you decide to authenticate via OAuth 2.0 instead of enabling less secure apps, you'll need to read
+          <externalLink>
+            <linkText>Google's OAuth 2.0 documentation</linkText>
+            <linkUri>https://developers.google.com/identity/protocols/OAuth2</linkUri>
+            <linkTarget>_blank</linkTarget>
+          </externalLink> to learn how to do this.
+        </para>
+        <para>
+          Once you've got the access_token, you simply use it as if it were the password when
+          calling the <application>Authenticate</application> method.
+        </para>
+        <code language="c#">
+var certificate = new X509Certificate2 (@"C:\path\to\certificate.p12", "password", X509KeyStorageFlags.Exportable);
+var credential = new ServiceAccountCredential (new ServiceAccountCredential.Initializer ("your-developer-id@developer.gserviceaccount.com") {
+    // Note: other scopes can be found here: https://developers.google.com/gmail/api/auth/scopes
+    Scopes = new[] { "https://mail.google.com/" },
+    User = "user@gmail.com"
+}.FromCertificate (certificate));
+
+// Note: result will be true if the access token was received successfully
+bool result = await credential.RequestAccessTokenAsync (cancel.Token);
+
+// use the access token as the password string
+client.Authenticate ("user@gmail.com", credential.Token.AccessToken);
+        </code>
+      </content>
+    </section>
+
+    <section address="GMailAuthenticationFailed">
+      <title>Why do I get an exception when I try to authenticate with GMail?</title>
+      <content>
+        <para>
+          You probably forgot to
+          <externalLink>
+          <linkText>enable less secure apps</linkText>
+          <linkUri>https://www.google.com/settings/security/lesssecureapps</linkUri>
+          <linkTarget>_blank</linkTarget>
+        </externalLink>.
+        </para>
+      </content>
+    </section>
+
+    <section address="GMailHiddenMessages">
+      <title>Why don't I see some of my messages when accessing GMail with POP3?</title>
+      <content>
+        <para>
+          By default, GMail's POP3 server does not behave like a standard POP3 server and hides messages
+          from clients (as well as having other non-standard behavior) that have already been viewed.
+        </para>
+        <para>
+          If you want to configure your GMail POP3 settings to behave the way POP3 is intended to behave,
+          you'll need to log in to your GMail account via your web browser and navigate to the
+          <application>Forwarding and POP/IMAP</application> tab of your
+          <application>GMail Settings</application> page and make the following changes in the
+          <application>POP3 Download</application> section:
+        </para>
+        <list>
+          <listItem>
+            <para>
+              <application>Enable POP for all mail (even if it has already been downloaded)</application>.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              When messages are accessed with POP, <application>keep GMail's copy in the Inbox</application>.
+            </para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+
     <relatedTopics>
-      <link xlink:href="WorkingWithMessages"/>
+      <!--<link xlink:href="WorkingWithMessages"/>-->
     </relatedTopics>
   </developerConceptualDocument>
 </topic>

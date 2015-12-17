@@ -69,7 +69,7 @@
           than manually creating the tree of MIME parts. Here's how you could create a message
           body using a <codeEntityReference>T:MimeKit.BodyBuilder</codeEntityReference>:
         </para>
-        <code language="c#" source="Examples\BodyBuilder.cs"/>
+        <code language="c#" source="Examples\BodyBuilder.cs" region="Complex"/>
       </content>
     </section>
 

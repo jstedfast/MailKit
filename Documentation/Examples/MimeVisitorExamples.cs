@@ -242,7 +242,7 @@ namespace MimeKit.Examples
 	public class Program
 	{
 		#region RenderMessage
-		void Render (WebBrowser browser, MimeMessage message)
+		void Render (MimeMessage message)
 		{
 			var tmpDir = Path.Combine (Path.GetTempPath (), message.MessageId);
 			var visitor = new HtmlPreviewVisitor (tmpDir);
@@ -251,7 +251,8 @@ namespace MimeKit.Examples
 
 			message.Accept (visitor);
 
-			browser.DocumentText = visitor.HtmlBody;
+			DisplayHtml (visitor.HtmlBody);
+			DisplayAttachments (visitor.Attachments);
 		}
 		#endregion
 	}
