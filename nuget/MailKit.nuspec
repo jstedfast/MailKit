@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>MailKit</id>
-		<version>1.3.0-beta3</version>
+		<version>1.3.0-beta4</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -23,6 +23,8 @@ Features include:
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
 		<releaseNotes>* Added support for the SCRAM-SHA-256 SASL mechanism.
+* Added support for the IMAP METADATA extension.
+* Added support for the IMAP CREATE-SPECIAL-USE extension.
 * Added support for dnxcore50.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
@@ -44,16 +46,16 @@ Features include:
 		</frameworkAssemblies>
 	<dependencies>
 		<group targetFramework="net40">
-			<dependency id="MimeKit" version="1.3.0-beta2" />
+			<dependency id="MimeKit" version="1.3.0-beta4" />
 		</group>
 		<group targetFramework="net45">
-			<dependency id="MimeKit" version="1.3.0-beta2" />
+			<dependency id="MimeKit" version="1.3.0-beta4" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.3.0-beta2" />
+			<dependency id="MimeKit" version="1.3.0-beta4" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.3.0-beta2" />
+			<dependency id="MimeKit" version="1.3.0-beta4" />
 		</group>
 		<group targetFramework="dnxcore50">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
@@ -76,11 +78,11 @@ Features include:
 			<dependency id="System.Linq" version="4.0.1-beta-23516" />
 			<dependency id="Microsoft.CSharp" version="4.0.1-beta-23516" />
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta2" />
+			<dependency id="MimeKit" version="1.3.0-beta4" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta2" />
+			<dependency id="MimeKit" version="1.3.0-beta4" />
 		</group>
 	</dependencies>
 	</metadata>
