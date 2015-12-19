@@ -1757,8 +1757,11 @@ namespace MailKit.Net.Imap {
 					break;
 				}
 
-				token = engine.ReadToken (ic.CancellationToken);
+				token = engine.PeekToken (ic.CancellationToken);
 			}
+
+			// read the closing paren
+			engine.ReadToken (ic.CancellationToken);
 		}
 
 		/// <summary>
@@ -1885,6 +1888,242 @@ namespace MailKit.Net.Imap {
 				return new FolderQuota (null);
 
 			return (FolderQuota) ic.UserData;
+		}
+
+		static void UntaggedMetadata (ImapEngine engine, ImapCommand ic, int index)
+		{
+			var encodedName = ReadStringToken (engine, ic.CancellationToken);
+			var metadata = (MetadataCollection) ic.UserData;
+			ImapFolder folder;
+
+			engine.GetCachedFolder (encodedName, out folder);
+
+			var token = engine.ReadToken (ic.CancellationToken);
+
+			if (token.Type != ImapTokenType.OpenParen)
+				throw ImapEngine.UnexpectedToken (token, false);
+
+			while (token.Type != ImapTokenType.CloseParen) {
+				var tag = ReadStringToken (engine, ic.CancellationToken);
+				var value = ReadStringToken (engine, ic.CancellationToken);
+
+				metadata.Add (new Metadata (MetadataTag.Create (tag), value));
+
+				token = engine.PeekToken (ic.CancellationToken);
+			}
+
+			// read the closing paren
+			engine.ReadToken (ic.CancellationToken);
+		}
+
+		/// <summary>
+		/// Gets the specified metadata.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified metadata.
+		/// </remarks>
+		/// <returns>The requested metadata value.</returns>
+		/// <param name="tag">The metadata tag.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the METADATA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override string GetMetadata (MetadataTag tag, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckState (false, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, "GETMETADATA %F (%S)\r\n", this, tag.Id);
+			ic.RegisterUntaggedHandler ("METADATA", UntaggedMetadata);
+			var metadata = new MetadataCollection ();
+			ic.UserData = metadata;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("GETMETADATA", ic);
+
+			for (int i = 0; i < metadata.Count; i++) {
+				if (metadata[i].Tag.Id == tag.Id)
+					return metadata[i].Value;
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the specified metadata.
+		/// </summary>
+		/// <remarks>
+		/// Gets the specified metadata.
+		/// </remarks>
+		/// <returns>The requested metadata.</returns>
+		/// <param name="tags">The metadata tags.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="tags"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the METADATA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (tags == null)
+				throw new ArgumentNullException ("tags");
+
+			CheckState (false, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+
+			var command = new StringBuilder ("GETMETADATA %F (");
+			var args = new List<object> ();
+
+			args.Add (this);
+
+			foreach (var tag in tags) {
+				if (args.Count > 1)
+					command.Append (' ');
+
+				command.Append ("%S");
+				args.Add (tag.Id);
+			}
+
+			command.Append (")\r\n");
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args.ToArray ());
+			ic.RegisterUntaggedHandler ("METADATA", UntaggedMetadata);
+			ic.UserData = new MetadataCollection ();
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("GETMETADATA", ic);
+
+			return (MetadataCollection) ic.UserData;
+		}
+
+		/// <summary>
+		/// Sets the specified metadata.
+		/// </summary>
+		/// <remarks>
+		/// Sets the specified metadata.
+		/// </remarks>
+		/// <returns>The metadata.</returns>
+		/// <param name="metadata">The metadata.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="metadata"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the METADATA extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (metadata == null)
+				throw new ArgumentNullException ("metadata");
+
+			CheckState (false, false);
+
+			if ((Engine.Capabilities & ImapCapabilities.Metadata) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the METADATA extension.");
+
+			var command = new StringBuilder ("SETMETADATA %F (");
+			var args = new object[metadata.Count * 2 + 1];
+			int argc = 0;
+
+			args[argc++] = this;
+
+			for (int i = 0; i < metadata.Count; i++) {
+				if (i > 0)
+					command.Append (' ');
+
+				command.Append ("%S %S");
+				args[argc++] = metadata[i].Tag.Id;
+				args[argc++] = metadata[i].Value;
+			}
+			command.Append (")\r\n");
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), args);
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("SETMETADATA", ic);
 		}
 
 		/// <summary>

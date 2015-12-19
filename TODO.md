@@ -18,7 +18,6 @@
     * LIST-EXTENDED (Note: partially implemented already for getting the special folders)
     * CONVERT (Note: none of the mainstream IMAP servers seem to support this)
     * ANNOTATE
-    * METADATA
     * NOTIFY (Note: only Dovecot seems to support this)
     * FILTERS (Note: none of the mainstream IMAP servers seem to support this)
     * LIST-STATUS (Note: only Dovecot seems to support this)

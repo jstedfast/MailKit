@@ -81,7 +81,8 @@ namespace MailKit.Net.Imap {
 	enum ImapStringType {
 		Atom,
 		QString,
-		Literal
+		Literal,
+		Nil
 	}
 
 	/// <summary>
@@ -334,6 +335,8 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	class ImapCommand
 	{
+		static readonly byte[] Nil = new byte[] { (byte) 'N', (byte) 'I', (byte) 'L' };
+
 		public Dictionary<string, ImapUntaggedHandler> UntaggedHandlers { get; private set; }
 		public ImapContinuationHandler ContinuationHandler { get; set; }
 		public CancellationToken CancellationToken { get; private set; }
@@ -487,6 +490,9 @@ namespace MailKit.Net.Imap {
 		{
 			var type = allowAtom ? ImapStringType.Atom : ImapStringType.QString;
 
+			if (value == null)
+				return ImapStringType.Nil;
+
 			if (value.Length == 0)
 				return ImapStringType.QString;
 
@@ -534,6 +540,9 @@ namespace MailKit.Net.Imap {
 			case ImapStringType.Atom:
 				buf = Encoding.UTF8.GetBytes (value);
 				builder.Write (buf, 0, buf.Length);
+				break;
+			case ImapStringType.Nil:
+				builder.Write (Nil, 0, Nil.Length);
 				break;
 			}
 		}

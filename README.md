@@ -67,6 +67,7 @@ MailKit is a cross-platform mail client library built on top of [MimeKit](https:
     * SORT
     * THREAD
     * ESORT (partial)
+    * METADATA
     * SPECIAL-USE
     * CREATE-SPECIAL-USE
     * SEARCH=FUZZY (partial)
