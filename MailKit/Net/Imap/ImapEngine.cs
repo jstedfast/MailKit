@@ -1095,6 +1095,7 @@ namespace MailKit.Net.Imap {
 			case "OVERQUOTA":            return ImapResponseCodeType.OverQuota;
 			case "ALREADYEXISTS":        return ImapResponseCodeType.AlreadyExists;
 			case "NONEXISTENT":          return ImapResponseCodeType.NonExistent;
+			case "USEATTR":              return ImapResponseCodeType.UseAttr;
 			default:                     return ImapResponseCodeType.Unknown;
 			}
 		}
@@ -1827,20 +1828,44 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Assigns the special folders.
+		/// </summary>
+		/// <param name="list">The list of folders.</param>
+		public void AssignSpecialFolders (IList<ImapFolder> list)
+		{
+			for (int i = 0; i < list.Count; i++) {
+				var folder = list[i];
+
+				if ((folder.Attributes & FolderAttributes.All) != 0)
+					All = folder;
+				if ((folder.Attributes & FolderAttributes.Archive) != 0)
+					Archive = folder;
+				if ((folder.Attributes & FolderAttributes.Drafts) != 0)
+					Drafts = folder;
+				if ((folder.Attributes & FolderAttributes.Flagged) != 0)
+					Flagged = folder;
+				if ((folder.Attributes & FolderAttributes.Junk) != 0)
+					Junk = folder;
+				if ((folder.Attributes & FolderAttributes.Sent) != 0)
+					Sent = folder;
+				if ((folder.Attributes & FolderAttributes.Trash) != 0)
+					Trash = folder;
+			}
+		}
+
+		/// <summary>
 		/// Queries the special folders.
 		/// </summary>
-		/// <returns>The command result.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		public void QuerySpecialFolders (CancellationToken cancellationToken)
 		{
 			if (Stream == null)
 				throw new InvalidOperationException ();
 
+			var list = new List<ImapFolder> ();
 			ImapFolder folder;
 
 			if (!GetCachedFolder ("INBOX", out folder)) {
-				var list = new List<ImapFolder> ();
-
 				var ic = new ImapCommand (this, cancellationToken, null, "LIST \"\" \"INBOX\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
 				ic.UserData = list;
@@ -1849,13 +1874,12 @@ namespace MailKit.Net.Imap {
 				Wait (ic);
 
 				Inbox = list.Count > 0 ? list[0] : null;
+				list.Clear ();
 			} else {
 				Inbox = folder;
 			}
 
 			if ((Capabilities & ImapCapabilities.SpecialUse) != 0) {
-				var list = new List<ImapFolder> ();
-
 				var ic = new ImapCommand (this, cancellationToken, null, "LIST (SPECIAL-USE) \"\" \"*\"\r\n");
 				ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
 				ic.UserData = list;
@@ -1864,28 +1888,8 @@ namespace MailKit.Net.Imap {
 				Wait (ic);
 
 				LookupParentFolders (list, cancellationToken);
-
-				for (int i = 0; i < list.Count; i++) {
-					folder = list[i];
-
-					if ((folder.Attributes & FolderAttributes.All) != 0)
-						All = folder;
-					if ((folder.Attributes & FolderAttributes.Archive) != 0)
-						Archive = folder;
-					if ((folder.Attributes & FolderAttributes.Drafts) != 0)
-						Drafts = folder;
-					if ((folder.Attributes & FolderAttributes.Flagged) != 0)
-						Flagged = folder;
-					if ((folder.Attributes & FolderAttributes.Junk) != 0)
-						Junk = folder;
-					if ((folder.Attributes & FolderAttributes.Sent) != 0)
-						Sent = folder;
-					if ((folder.Attributes & FolderAttributes.Trash) != 0)
-						Trash = folder;
-				}
+				AssignSpecialFolders (list);
 			} else if ((Capabilities & ImapCapabilities.XList) != 0) {
-				var list = new List<ImapFolder> ();
-
 				var ic = new ImapCommand (this, cancellationToken, null, "XLIST \"\" \"*\"\r\n");
 				ic.RegisterUntaggedHandler ("XLIST", ImapUtils.ParseFolderList);
 				ic.UserData = list;
@@ -1894,25 +1898,7 @@ namespace MailKit.Net.Imap {
 				Wait (ic);
 
 				LookupParentFolders (list, cancellationToken);
-
-				for (int i = 0; i < list.Count; i++) {
-					folder = list[i];
-
-					if ((folder.Attributes & FolderAttributes.All) != 0)
-						All = folder;
-					if ((folder.Attributes & FolderAttributes.Archive) != 0)
-						Archive = folder;
-					if ((folder.Attributes & FolderAttributes.Drafts) != 0)
-						Drafts = folder;
-					if ((folder.Attributes & FolderAttributes.Flagged) != 0)
-						Flagged = folder;
-					if ((folder.Attributes & FolderAttributes.Junk) != 0)
-						Junk = folder;
-					if ((folder.Attributes & FolderAttributes.Sent) != 0)
-						Sent = folder;
-					if ((folder.Attributes & FolderAttributes.Trash) != 0)
-						Trash = folder;
-				}
+				AssignSpecialFolders (list);
 			}
 		}
 

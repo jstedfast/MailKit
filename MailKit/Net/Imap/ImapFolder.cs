@@ -582,6 +582,125 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Creates a new subfolder with the given name.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new subfolder with the given name.
+		/// </remarks>
+		/// <returns>The created folder.</returns>
+		/// <param name="name">The name of the folder to create.</param>
+		/// <param name="specialUses">A list of special uses for the folder being created.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="name"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="name"/> is empty.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="ImapClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="ImapClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="ImapClient"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailFolder.DirectorySeparator"/> is nil, and thus child folders cannot be created.
+		/// </exception>
+		/// <exception cref="System.NotSupportedException">
+		/// The IMAP server does not support the CREATE-SPECIAL-USE extension.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ImapProtocolException">
+		/// The server's response contained unexpected tokens.
+		/// </exception>
+		/// <exception cref="ImapCommandException">
+		/// The server replied with a NO or BAD response.
+		/// </exception>
+		public override IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
+				throw new ArgumentException ("The name is not a legal folder name.", "name");
+
+			CheckState (false, false);
+
+			if (!string.IsNullOrEmpty (FullName) && DirectorySeparator == '\0')
+				throw new InvalidOperationException ("Cannot create child folders.");
+
+			if ((Engine.Capabilities & ImapCapabilities.CreateSpecialUse) == 0)
+				throw new NotSupportedException ("The IMAP server does not support the CREATE-SPECIAL-USE extension.");
+
+			var uses = new StringBuilder ();
+
+			foreach (var use in specialUses) {
+				if (uses.Length > 0)
+					uses.Append (' ');
+
+				switch (use) {
+				case SpecialFolder.All:     uses.Append ("\\All"); break;
+				case SpecialFolder.Archive: uses.Append ("\\Archive"); break;
+				case SpecialFolder.Drafts:  uses.Append ("\\Drafts"); break;
+				case SpecialFolder.Flagged: uses.Append ("\\Flagged"); break;
+				case SpecialFolder.Junk:    uses.Append ("\\Junk"); break;
+				case SpecialFolder.Sent:    uses.Append ("\\Sent"); break;
+				case SpecialFolder.Trash:   uses.Append ("\\Trash"); break;
+				default: if (uses.Length > 0) uses.Length--; break;
+				}
+			}
+
+			var fullName = !string.IsNullOrEmpty (FullName) ? FullName + DirectorySeparator + name : name;
+			var command = string.Format ("CREATE %s (USE ({0}))\r\n", uses);
+			var encodedName = Engine.EncodeMailboxName (fullName);
+			var list = new List<ImapFolder> ();
+			var createName = encodedName;
+			ImapFolder folder;
+
+			var ic = Engine.QueueCommand (cancellationToken, null, command, createName);
+
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok) {
+				var useAttr = ic.RespCodes.FirstOrDefault (rc => rc.Type == ImapResponseCodeType.UseAttr);
+
+				if (useAttr != null)
+					throw new ImapCommandException (ic.Response, useAttr.Message);
+
+				throw ImapCommandException.Create ("CREATE", ic);
+			}
+
+			ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
+			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
+			ic.UserData = list;
+
+			Engine.QueueCommand (ic);
+			Engine.Wait (ic);
+
+			ProcessResponseCodes (ic, null);
+
+			if (ic.Response != ImapCommandResponse.Ok)
+				throw ImapCommandException.Create ("LIST", ic);
+
+			if ((folder = list.FirstOrDefault ()) != null)
+				folder.ParentFolder = this;
+
+			Engine.AssignSpecialFolders (new [] { folder });
+
+			return folder;
+		}
+
+		/// <summary>
 		/// Renames the folder to exist with a new name under a new parent folder.
 		/// </summary>
 		/// <remarks>

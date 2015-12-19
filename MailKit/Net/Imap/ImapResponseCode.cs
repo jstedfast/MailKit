@@ -118,6 +118,9 @@ namespace MailKit.Net.Imap {
 		AlreadyExists,
 		NonExistent,
 
+		// RESP-CODES introduced in rfc6154:
+		UseAttr,
+
 		Unknown       = 255
 	}
 
@@ -190,6 +193,7 @@ namespace MailKit.Net.Imap {
 			case ImapResponseCodeType.OverQuota:            return new ImapResponseCode (type, true);
 			case ImapResponseCodeType.AlreadyExists:        return new ImapResponseCode (type, true);
 			case ImapResponseCodeType.NonExistent:          return new ImapResponseCode (type, true);
+			case ImapResponseCodeType.UseAttr:              return new ImapResponseCode (type, true);
 			default:                                        return new ImapResponseCode (type, true);
 			}
 		}
