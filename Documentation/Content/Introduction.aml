@@ -62,8 +62,8 @@
               <listItem>
                 <para>Supports the ACL, QUOTA, LITERAL+, IDLE, NAMESPACE, ID, CHILDREN, LOGINDISABLED, STARTTLS
                 MULTIAPPEND, UNSELECT, UIDPLUS, CONDSTORE, ESEARCH, SASL-ID, COMPRESS, WITHIN, ENABLE, QRESYNC,
-                SORT, THREAD, ESORT, SPECIAL-USE, SEARCH=FUZZY, MOVE, UTF8=ACCEPT, UTF8=ONLY, XLIST, and the
-                Google Mail extensions.</para>
+                SORT, THREAD, ESORT, SPECIAL-USE, CREATE-SPECIAL-USE, SEARCH=FUZZY, MOVE, UTF8=ACCEPT, UTF8=ONLY,
+                XLIST, and the Google Mail extensions.</para>
               </listItem>
             </list>
           </listItem>

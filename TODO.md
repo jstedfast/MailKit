@@ -22,7 +22,6 @@
     * NOTIFY (Note: only Dovecot seems to support this)
     * FILTERS (Note: none of the mainstream IMAP servers seem to support this)
     * LIST-STATUS (Note: only Dovecot seems to support this)
-    * CREATE-SPECIAL-USE (Note: not widely supported)
     * MULTISEARCH (Note: none of the mainstream IMAP servers seem to support this)
 * Maildir
 * Thunderbird mbox folder trees
