@@ -322,12 +322,11 @@ namespace MailKit.Net.Pop3 {
 		/// (<see cref="Pop3Capabilities.Apop"/>) or the ability to login using the
 		/// <c>USER</c> and <c>PASS</c> commands (<see cref="Pop3Capabilities.User"/>).
 		/// </para>
-		/// <alert class="tip"><para>To prevent the usage of certain authentication mechanisms in the
-		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods,
-		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
-		/// authenticating.</para>
-		/// <para>In the case of the APOP authentication mechanism, remove it from
-		/// the <see cref="Capabilities"/> property instead.</para></alert>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Tip"/> Tip</th></tr><tr><td><p>
+		/// To prevent the usage of certain authentication mechanisms, simply remove them from the
+		/// <see cref="AuthenticationMechanisms"/> hash set before authenticating.</p>
+		/// <p>In the case of the APOP authentication mechanism, remove it from the
+		/// <see cref="Capabilities"/> property instead.</p></td></tr></table></div>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
@@ -444,10 +443,11 @@ namespace MailKit.Net.Pop3 {
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the <c>USER</c> and <c>PASS</c> commands are used as a
 		/// fallback.</para>
-		/// <alert class="tip"><para>To prevent the usage of certain authentication mechanisms, simply remove
-		/// them from the <see cref="AuthenticationMechanisms"/> hash set before calling this method.</para>
-		/// <para>In the case of the APOP authentication mechanism, remove it from
-		/// the <see cref="Capabilities"/> property instead.</para></alert>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Tip"/> Tip</th></tr><tr><td><p>
+		/// To prevent the usage of certain authentication mechanisms, simply remove them from the
+		/// <see cref="AuthenticationMechanisms"/> hash set before calling this method.</p>
+		/// <p>In the case of the APOP authentication mechanism, remove it from the
+		/// <see cref="Capabilities"/> property instead.</p></td></tr></table></div>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1481,9 +1481,10 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the UID of the message at the specified index.</para>
-		/// <para><alert class="warning">Not all servers support UIDs, so you should first check the
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// Not all servers support UIDs, so you should first check the
 		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
-		/// the <see cref="SupportsUids"/> convenience property.</alert></para>
+		/// the <see cref="SupportsUids"/> convenience property.</p></td></tr></table></div>
 		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
@@ -1583,9 +1584,10 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the full list of available message UIDs.</para>
-		/// <para><alert class="warning">Not all servers support UIDs, so you should first check the
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// Not all servers support UIDs, so you should first check the
 		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
-		/// the <see cref="SupportsUids"/> convenience property.</alert></para>
+		/// the <see cref="SupportsUids"/> convenience property.</p></td></tr></table></div>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadNewMessages"/>

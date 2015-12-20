@@ -101,8 +101,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>The Inbox folder is the default folder and always exists on the mail store.</para>
-		/// <para><alert class="note">This property will only be available after the client has been
-		/// authenticated.</alert></para>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
+		/// This property will only be available after the client has been authenticated.</p></td></tr></table></div>
 		/// </remarks>
 		/// <value>The Inbox folder.</value>
 		public abstract IMailFolder Inbox {

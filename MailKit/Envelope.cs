@@ -293,8 +293,9 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>The returned string can be parsed by <see cref="TryParse(string,out Envelope)"/>.</para>
-		/// <para><alert class="warning">The syntax of the string returned, while similar to IMAP's ENVELOPE
-		/// syntax, is not completely compatible.</alert></para>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// The syntax of the string returned, while similar to IMAP's ENVELOPE syntax, is not completely compatible.
+		/// </p></td></tr></table></div>
 		/// </remarks>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.Envelope"/>.</returns>
 		public override string ToString ()
@@ -532,8 +533,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Parses an Envelope value from the specified text.</para>
-		/// <para><alert class="warning">This syntax, while similar to IMAP's ENVELOPE syntax, is not completely
-		/// compatible.</alert></para>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// This syntax, while similar to IMAP's ENVELOPE syntax, is not completely compatible.</p></td></tr></table></div>
 		/// </remarks>
 		/// <returns><c>true</c>, if the envelope was successfully parsed, <c>false</c> otherwise.</returns>
 		/// <param name="text">The text to parse.</param>
