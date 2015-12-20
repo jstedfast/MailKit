@@ -293,7 +293,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>The returned string can be parsed by <see cref="TryParse(string,out Envelope)"/>.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertCaution.png" alt="Warning"/> Warning</th></tr><tr><td><p>
 		/// The syntax of the string returned, while similar to IMAP's ENVELOPE syntax, is not completely compatible.
 		/// </p></td></tr></table></div>
 		/// </remarks>
@@ -533,7 +533,7 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Parses an Envelope value from the specified text.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertCaution.png" alt="Warning"/> Warning</th></tr><tr><td><p>
 		/// This syntax, while similar to IMAP's ENVELOPE syntax, is not completely compatible.</p></td></tr></table></div>
 		/// </remarks>
 		/// <returns><c>true</c>, if the envelope was successfully parsed, <c>false</c> otherwise.</returns>

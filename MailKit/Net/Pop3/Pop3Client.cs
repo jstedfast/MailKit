@@ -1481,7 +1481,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the UID of the message at the specified index.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertCaution.png" alt="Warning"/> Warning</th></tr><tr><td><p>
 		/// Not all servers support UIDs, so you should first check the
 		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
 		/// the <see cref="SupportsUids"/> convenience property.</p></td></tr></table></div>
@@ -1584,7 +1584,7 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the full list of available message UIDs.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertWarning.png" alt="Warning"/> Warning</th></tr><tr><td><p>
+		/// <div class="alert"><table><tr><th><img src="../icons/AlertCaution.png" alt="Warning"/> Warning</th></tr><tr><td><p>
 		/// Not all servers support UIDs, so you should first check the
 		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
 		/// the <see cref="SupportsUids"/> convenience property.</p></td></tr></table></div>
