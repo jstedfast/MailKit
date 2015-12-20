@@ -903,7 +903,8 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("SUBSCRIBE", ic);
 
-			IsSubscribed = true;
+			Attributes |= FolderAttributes.Subscribed;
+
 			OnSubscribed ();
 		}
 
@@ -948,7 +949,8 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("UNSUBSCRIBE", ic);
 
-			IsSubscribed = false;
+			Attributes &= ~FolderAttributes.Subscribed;
+
 			OnUnsubscribed ();
 		}
 
@@ -959,6 +961,7 @@ namespace MailKit.Net.Imap {
 		/// Gets the subfolders.
 		/// </remarks>
 		/// <returns>The subfolders.</returns>
+		/// <param name="items">The status items to pre-populate.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -982,17 +985,56 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IEnumerable<IMailFolder> GetSubfolders (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			CheckState (false, false);
 
 			var pattern = EncodedName.Length > 0 ? EncodedName + DirectorySeparator : string.Empty;
-			var command = subscribedOnly ? "LSUB" : "LIST";
 			var children = new List<IMailFolder> ();
+			var status = items != StatusItems.None;
 			var list = new List<ImapFolder> ();
+			var command = new StringBuilder ();
+			var lsub = subscribedOnly;
 
-			var ic = new ImapCommand (Engine, cancellationToken, null, command + " \"\" %S\r\n", pattern + "%");
-			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
+			if (subscribedOnly) {
+				if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
+					command.Append ("LIST (SUBSCRIBED)");
+					lsub = false;
+				} else {
+					command.Append ("LSUB");
+				}
+			} else {
+				command.Append ("LIST");
+			}
+
+			command.Append (" \"\" %S");
+
+			if (!lsub) {
+				if (items != StatusItems.None && (Engine.Capabilities & ImapCapabilities.ListStatus) != 0) {
+					command.Append (" RETURN (");
+
+					if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
+						if (!subscribedOnly)
+							command.Append ("SUBSCRIBED ");
+						command.Append ("CHILDREN ");
+					}
+
+					command.AppendFormat ("STATUS ({0})", GetStatusQuery (items));
+					command.Append (')');
+					status = false;
+				} else if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
+					command.Append (" RETURN (");
+					if (!subscribedOnly)
+						command.Append ("SUBSCRIBED ");
+					command.Append ("CHILDREN");
+					command.Append (')');
+				}
+			}
+
+			command.Append ("\r\n");
+
+			var ic = new ImapCommand (Engine, cancellationToken, null, command.ToString (), pattern + "%");
+			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderList);
 			ic.UserData = list;
 
 			Engine.QueueCommand (ic);
@@ -1000,7 +1042,7 @@ namespace MailKit.Net.Imap {
 
 			// Note: Some broken IMAP servers (*cough* SmarterMail 13.0 *cough*) return folders
 			// that are not children of the folder we requested, so we need to filter those
-			// folders out of the list we'll be returning to our caller.
+			// folders out of the list that we'll be returning to our caller.
 			//
 			// See https://github.com/jstedfast/MailKit/issues/149 for more details.
 			var prefix = FullName.Length > 0 ? FullName + DirectorySeparator : string.Empty;
@@ -1012,6 +1054,9 @@ namespace MailKit.Net.Imap {
 				if (canonicalFullName != prefix + canonicalName)
 					continue;
 
+				if (subscribedOnly)
+					folder.Attributes |= FolderAttributes.Subscribed;
+
 				folder.ParentFolder = this;
 				children.Add (folder);
 			}
@@ -1019,7 +1064,12 @@ namespace MailKit.Net.Imap {
 			ProcessResponseCodes (ic, null);
 
 			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create (subscribedOnly ? "LSUB" : "LIST", ic);
+				throw ImapCommandException.Create (lsub ? "LSUB" : "LIST", ic);
+
+			if (status) {
+				for (int i = 0; i < children.Count; i++)
+					children[i].Status (items, cancellationToken);
+			}
 
 			return children;
 		}
@@ -1147,6 +1197,29 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("CHECK", ic);
 		}
 
+		string GetStatusQuery (StatusItems items)
+		{
+			var flags = string.Empty;
+
+			if ((items & StatusItems.Count) != 0)
+				flags += "MESSAGES ";
+			if ((items & StatusItems.Recent) != 0)
+				flags += "RECENT ";
+			if ((items & StatusItems.UidNext) != 0)
+				flags += "UIDNEXT ";
+			if ((items & StatusItems.UidValidity) != 0)
+				flags += "UIDVALIDITY ";
+			if ((items & StatusItems.Unread) != 0)
+				flags += "UNSEEN ";
+
+			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
+				if ((items & StatusItems.HighestModSeq) != 0)
+					flags += "HIGHESTMODSEQ ";
+			}
+
+			return flags.TrimEnd ();
+		}
+
 		/// <summary>
 		/// Updates the values of the specified items.
 		/// </summary>
@@ -1198,26 +1271,10 @@ namespace MailKit.Net.Imap {
 
 			CheckState (false, false);
 
-			string flags = string.Empty;
-			if ((items & StatusItems.Count) != 0)
-				flags += "MESSAGES ";
-			if ((items & StatusItems.Recent) != 0)
-				flags += "RECENT ";
-			if ((items & StatusItems.UidNext) != 0)
-				flags += "UIDNEXT ";
-			if ((items & StatusItems.UidValidity) != 0)
-				flags += "UIDVALIDITY ";
-			if ((items & StatusItems.Unread) != 0)
-				flags += "UNSEEN ";
+			if (items == StatusItems.None)
+				return;
 
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
-				if ((items & StatusItems.HighestModSeq) != 0)
-					flags += "HIGHESTMODSEQ ";
-			}
-
-			flags = flags.TrimEnd ();
-
-			var command = string.Format ("STATUS %F ({0})\r\n", flags);
+			var command = string.Format ("STATUS %F ({0})\r\n", GetStatusQuery (items));
 			var ic = Engine.QueueCommand (cancellationToken, null, command, this);
 
 			Engine.Wait (ic);

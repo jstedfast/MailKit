@@ -481,6 +481,30 @@ namespace MailKit {
 		/// Gets the subfolders.
 		/// </remarks>
 		/// <returns>The subfolders.</returns>
+		/// <param name="items">The status items to pre-populate.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		IEnumerable<IMailFolder> GetSubfolders (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get the subfolders.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets the subfolders.
+		/// </remarks>
+		/// <returns>The subfolders.</returns>
+		/// <param name="items">The status items to pre-populate.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task<IEnumerable<IMailFolder>> GetSubfoldersAsync (StatusItems items, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Get the subfolders.
+		/// </summary>
+		/// <remarks>
+		/// Gets the subfolders.
+		/// </remarks>
+		/// <returns>The subfolders.</returns>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		IEnumerable<IMailFolder> GetSubfolders (bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));

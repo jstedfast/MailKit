@@ -36,6 +36,11 @@ namespace MailKit {
 	[Flags]
 	public enum StatusItems {
 		/// <summary>
+		/// No status requested.
+		/// </summary>
+		None           = 0,
+
+		/// <summary>
 		/// Updates <see cref="IMailFolder.Count"/>.
 		/// </summary>
 		Count          = 1 << 0,
