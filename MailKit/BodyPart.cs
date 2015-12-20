@@ -232,8 +232,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Returns a <see cref="System.String"/> that represents the current <see cref="MailKit.BodyPart"/>.</para>
-		/// <para>Note: The syntax of the string returned, while similar to IMAP's BODYSTRUCTURE syntax,
-		/// is not completely compatible.</para>
+		/// <para><alert class="note">The syntax of the string returned, while similar to IMAP's BODYSTRUCTURE syntax,
+		/// is not completely compatible.</alert></para>
 		/// </remarks>
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.BodyPart"/>.</returns>
 		public override string ToString ()
@@ -693,7 +693,8 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Parses a body part from the specified text.</para>
-		/// <para>Note: This syntax, while similar to IMAP's BODYSTRUCTURE syntax, is not completely compatible.</para>
+		/// <para><alert class="note">This syntax, while similar to IMAP's BODYSTRUCTURE syntax, is not completely
+		/// compatible.</alert></para>
 		/// </remarks>
 		/// <returns><c>true</c>, if the body part was successfully parsed, <c>false</c> otherwise.</returns>
 		/// <param name="text">The text to parse.</param>

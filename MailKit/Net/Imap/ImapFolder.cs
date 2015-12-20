@@ -807,7 +807,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Deletes the folder on the IMAP server.</para>
-		/// <para>Note: This method will not delete any child folders.</para>
+		/// <para><alert class="note">This method will not delete any child folders.</alert></para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -2191,12 +2191,12 @@ namespace MailKit.Net.Imap {
 		/// that have the <see cref="MessageFlags.Deleted"/> flag set.</para>
 		/// <para>For more information about the <c>EXPUNGE</c> command, see
 		/// <a href="https://tools.ietf.org/html/rfc3501#section-6.4.3">rfc3501</a>.</para>
-		/// <para>Note: Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
-		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC
-		/// extension and it has been enabled via the
+		/// <para><alert class="note">Normally, a <see cref="MailFolder.MessageExpunged"/> event
+		/// will be emitted for each message that is expunged. However, if the IMAP server supports
+		/// the QRESYNC extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MailFolder.MessageExpunged"/> event.</para>
+		/// <see cref="MailFolder.MessageExpunged"/> event.</alert></para>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -2254,12 +2254,12 @@ namespace MailKit.Net.Imap {
 		/// the IMAP server does not support the UIDPLUS extension.</para>
 		/// <para>For more information about the <c>UID EXPUNGE</c> command, see
 		/// <a href="https://tools.ietf.org/html/rfc4315#section-2.1">rfc4315</a>.</para>
-		/// <para>Note: Normally, an <see cref="MailFolder.MessageExpunged"/> event will be emitted
-		/// for each message that is expunged. However, if the IMAP server supports the QRESYNC
-		/// extension and it has been enabled via the
+		/// <para><alert class="note">Normally, a <see cref="MailFolder.MessageExpunged"/> event
+		/// will be emitted for each message that is expunged. However, if the IMAP server supports
+		/// the QRESYNC extension and it has been enabled via the
 		/// <see cref="ImapClient.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MailFolder.MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MailFolder.MessageExpunged"/> event.</para>
+		/// <see cref="MailFolder.MessageExpunged"/> event.</alert></para>
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -4995,11 +4995,11 @@ namespace MailKit.Net.Imap {
 		/// <see cref="CommitStream"/> before adding the stream to their cache.</para>
 		/// <para>Streams returned by this method SHOULD clean up any allocated resources
 		/// such as deleting temporary files from the file system.</para>
-		/// <para>Note: The <paramref name="uid"/> will not be available for the variations
-		/// GetMessage(), GetBodyPart() and GetStream() methods that take a message index
+		/// <para><alert class="note">The <paramref name="uid"/> will not be available for the
+		/// various GetMessage(), GetBodyPart() and GetStream() methods that take a message index
 		/// rather than a <see cref="UniqueId"/>. It may also not be available if the IMAP
 		/// server response does not specify the <c>UID</c> value prior to sending the
-		/// <c>literal-string</c> token containing the message stream.</para>
+		/// <c>literal-string</c> token containing the message stream.</alert></para>
 		/// </remarks>
 		/// <seealso cref="CommitStream"/>
 		/// <returns>The stream.</returns>
@@ -5025,10 +5025,10 @@ namespace MailKit.Net.Imap {
 		/// <see cref="UniqueId"/> has been obtained for the associated message.</para>
 		/// <para>For subclasses implementing caching, this method should be used for
 		/// committing the stream to their cache.</para>
-		/// <para>Note: Subclass implementations may take advantage of the fact that
+		/// <para><alert class="note">Subclass implementations may take advantage of the fact that
 		/// <see cref="CommitStream"/> allows returning a new <see cref="System.IO.Stream"/>
 		/// reference if they move a file on the file system and wish to return a new
-		/// <see cref="System.IO.FileStream"/> based on the new path, for example.</para>
+		/// <see cref="System.IO.FileStream"/> based on the new path, for example.</alert></para>
 		/// </remarks>
 		/// <seealso cref="CreateStream"/>
 		/// <returns>The stream.</returns>

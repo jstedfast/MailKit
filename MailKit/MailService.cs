@@ -557,11 +557,9 @@ namespace MailKit {
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling any of the
-		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
-		/// methods.</para>
+		/// <para><alert class="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling this method.</alert></para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -602,11 +600,9 @@ namespace MailKit {
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling any of the
-		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
-		/// methods.</para>
+		/// <para><alert class="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling this method.</alert></para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="credentials">The user's credentials.</param>
@@ -658,11 +654,9 @@ namespace MailKit {
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling any of the
-		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
-		/// methods.</para>
+		/// <para><alert class="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling this method.</alert></para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
@@ -720,11 +714,9 @@ namespace MailKit {
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling any of the
-		/// <a href="Overload_MailKit_MailService_Authenticate.htm">Authenticate</a>
-		/// methods.</para>
+		/// <para><alert class="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling this method.</alert></para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="userName">The user name.</param>

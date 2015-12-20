@@ -1249,7 +1249,10 @@ namespace MailKit {
 		/// Get the subfolders.
 		/// </summary>
 		/// <remarks>
-		/// Gets the subfolders.
+		/// <para>Gets the subfolders as well as queries the server for the status of the requested items.</para>
+		/// <para>When the <paramref name="items"/> argument is non-empty, this has the equivalent functionality
+		/// of calling <see cref="GetSubfolders(bool,System.Threading.CancellationToken)"/> and then calling
+		/// <see cref="Status(StatusItems,System.Threading.CancellationToken)"/> on each of the returned folders.</para>
 		/// </remarks>
 		/// <returns>The subfolders.</returns>
 		/// <param name="items">The status items to pre-populate.</param>
@@ -1282,7 +1285,10 @@ namespace MailKit {
 		/// Asynchronously get the subfolders.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously gets the subfolders.
+		/// <para>Asynchronously gets the subfolders as well as queries the server for the status of the requested items.</para>
+		/// <para>When the <paramref name="items"/> argument is non-empty, this has the equivalent functionality
+		/// of calling <see cref="GetSubfoldersAsync(bool,System.Threading.CancellationToken)"/> and then calling
+		/// <see cref="StatusAsync(StatusItems,System.Threading.CancellationToken)"/> on each of the returned folders.</para>
 		/// </remarks>
 		/// <returns>The subfolders.</returns>
 		/// <param name="items">The status items to pre-populate.</param>

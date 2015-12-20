@@ -202,8 +202,8 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// <para>The maximum message size will not be known until a successful connection has
 		/// been made and may change once the client is authenticated.</para>
-		/// <para>Note: This value is only relevant if the <see cref="Capabilities"/>
-		/// includes the <see cref="SmtpCapabilities.Size"/> flag.</para>
+		/// <para><alert class="note">This value is only relevant if the <see cref="Capabilities"/>
+		/// includes the <see cref="SmtpCapabilities.Size"/> flag.</alert></para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
@@ -226,10 +226,10 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		/// <remarks>
 		/// <para>The authentication mechanisms are queried as part of the connection process.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms in the
-		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a>
-		/// methods, simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling Authenticate().</para>
+		/// <para><alert class="tip">To prevent the usage of certain authentication mechanisms in the
+		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Authenticate.htm">Authenticate</a> methods,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
+		/// authenticating.</alert></para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
@@ -490,9 +490,9 @@ namespace MailKit.Net.Smtp {
 		/// The <see cref="Capabilities"/> property can be checked for the
 		/// <see cref="SmtpCapabilities.Authentication"/> flag to make sure the
 		/// SMTP server supports authentication before calling this method.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling this method.</para>
+		/// <para><alert class="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
+		/// calling this method.</alert></para>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -703,13 +703,13 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
-		/// <para>Note: The connection established by any of the
+		/// <para><alert class="note">The connection established by any of the
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
 		/// methods may be re-used if an application wishes to send multiple messages
 		/// to the same SMTP server. Since connecting and authenticating can be expensive
 		/// operations, re-using a connection can significantly improve performance when
 		/// sending a large number of messages to the same SMTP server over a short
-		/// period of time.</para>
+		/// period of time.</alert></para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
@@ -910,13 +910,13 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
-		/// <para>Note: The connection established by any of the
+		/// <para><alert class="note">The connection established by any of the
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
 		/// methods may be re-used if an application wishes to send multiple messages
 		/// to the same SMTP server. Since connecting and authenticating can be expensive
 		/// operations, re-using a connection can significantly improve performance when
 		/// sending a large number of messages to the same SMTP server over a short
-		/// period of time.</para>
+		/// period of time.</alert></para>
 		/// </remarks>
 		/// <param name="socket">The socket to use for the connection.</param>
 		/// <param name="host">The host name to connect to.</param>

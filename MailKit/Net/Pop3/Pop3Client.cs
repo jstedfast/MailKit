@@ -322,12 +322,12 @@ namespace MailKit.Net.Pop3 {
 		/// (<see cref="Pop3Capabilities.Apop"/>) or the ability to login using the
 		/// <c>USER</c> and <c>PASS</c> commands (<see cref="Pop3Capabilities.User"/>).
 		/// </para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms in the
-		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a>
-		/// methods, simply remove them from the the <see cref="AuthenticationMechanisms"/>
-		/// hash set before calling either of the Authenticate() methods.</para>
+		/// <alert class="tip"><para>To prevent the usage of certain authentication mechanisms in the
+		/// <a href="Overload_MailKit_Net_Pop3_Pop3Client_Authenticate.htm">Authenticate</a> methods,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set before
+		/// authenticating.</para>
 		/// <para>In the case of the APOP authentication mechanism, remove it from
-		/// the <see cref="Capabilities"/> property instead.</para>
+		/// the <see cref="Capabilities"/> property instead.</para></alert>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="Capabilities"/>
@@ -444,9 +444,10 @@ namespace MailKit.Net.Pop3 {
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the <c>USER</c> and <c>PASS</c> commands are used as a
 		/// fallback.</para>
-		/// <para>Note: To prevent the usage of certain authentication mechanisms,
-		/// simply remove them from the the <see cref="AuthenticationMechanisms"/> hash
-		/// set before calling any of the Authenticate() methods.</para>
+		/// <alert class="tip"><para>To prevent the usage of certain authentication mechanisms, simply remove
+		/// them from the <see cref="AuthenticationMechanisms"/> hash set before calling this method.</para>
+		/// <para>In the case of the APOP authentication mechanism, remove it from
+		/// the <see cref="Capabilities"/> property instead.</para></alert>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1480,9 +1481,9 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the UID of the message at the specified index.</para>
-		/// <para>Note: Not all servers support UIDs, so you should first check the <see cref="Capabilities"/>
-		/// property for the <see cref="Pop3Capabilities.UIDL"/> flag or the <see cref="SupportsUids"/>
-		/// convenience property.</para>
+		/// <para><alert class="warning">Not all servers support UIDs, so you should first check the
+		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
+		/// the <see cref="SupportsUids"/> convenience property.</alert></para>
 		/// </remarks>
 		/// <returns>The message UID.</returns>
 		/// <param name="index">The message index.</param>
@@ -1582,8 +1583,9 @@ namespace MailKit.Net.Pop3 {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the full list of available message UIDs.</para>
-		/// <para>Note: Not all servers support UIDs, so you should first check
-		/// the <see cref="SupportsUids"/> property.</para>
+		/// <para><alert class="warning">Not all servers support UIDs, so you should first check the
+		/// <see cref="Capabilities"/> property for the <see cref="Pop3Capabilities.UIDL"/> flag or
+		/// the <see cref="SupportsUids"/> convenience property.</alert></para>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\Pop3Examples.cs" region="DownloadNewMessages"/>
