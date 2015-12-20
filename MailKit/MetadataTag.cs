@@ -27,6 +27,12 @@
 using System;
 
 namespace MailKit {
+	/// <summary>
+	/// A metadata tag.
+	/// </summary>
+	/// <remarks>
+	/// A metadata tag.
+	/// </remarks>
 	public struct MetadataTag
 	{
 		/// <summary>
@@ -63,6 +69,8 @@ namespace MailKit {
 		/// </remarks>
 		public static readonly MetadataTag PrivateSpecialUse = new MetadataTag ("/private/specialuse");
 
+		readonly string id;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.MetadataTag"/> struct.
 		/// </summary>
@@ -84,7 +92,7 @@ namespace MailKit {
 			if (id.Length == 0)
 				throw new ArgumentException ("A metadata tag identifier cannot be empty.");
 
-			Id = id;
+			this.id = id;
 		}
 
 		/// <summary>
@@ -95,7 +103,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The metadata tag identifier.</value>
 		public string Id {
-			get; private set;
+			get { return id; }
 		}
 
 		/// <summary>

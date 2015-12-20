@@ -303,7 +303,7 @@ foreach (var uid in folder.Search (SearchQuery.NotSeen)) {
         </para>
         <para>
           You can easily serialize a MimeMessage to a stream using the
-          <codeEntityReference autoUpgrade="true">M:MimeKit.MimeMessage.WriteTo</codeEntityReference>
+          <codeEntityReference autoUpgrade="true">Overload:MimeKit.MimeMessage.WriteTo</codeEntityReference>
           methods.
         </para>
       </content>

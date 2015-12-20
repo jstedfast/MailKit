@@ -2467,7 +2467,7 @@ namespace MailKit {
 		/// Asynchronously gets the specified metadata.
 		/// </remarks>
 		/// <returns>The requested metadata value.</returns>
-		/// <param name="tags">The metadata tag.</param>
+		/// <param name="tag">The metadata tag.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="IMailStore"/> has been disposed.
