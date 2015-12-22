@@ -215,9 +215,9 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the number of unread messages in the folder.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
-		/// with <see cref="StatusItems.Unread"/>.</p></td></tr></table></div>
+		/// <note type="note">This value will only be set after calling
+		/// <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Unread"/>.</note>
 		/// </remarks>
 		/// <value>The number of unread messages.</value>
 		int Unread { get; }
@@ -227,9 +227,10 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Gets the number of recently delivered messages in the folder.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// This value will only be set after calling <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
-		/// with <see cref="StatusItems.Recent"/>.</p></td></tr></table></div>
+		/// <note type="note">
+		/// This value will only be set after calling
+		/// <see cref="Status(StatusItems, System.Threading.CancellationToken)"/>
+		/// with <see cref="StatusItems.Recent"/>.</note>
 		/// </remarks>
 		/// <value>The number of recently delivered messages.</value>
 		int Recent { get; }
@@ -484,9 +485,7 @@ namespace MailKit {
 		/// <para>When the <paramref name="items"/> argument is non-empty, this has the equivalent functionality
 		/// of calling <see cref="GetSubfolders(bool,System.Threading.CancellationToken)"/> and then calling
 		/// <see cref="Status(StatusItems,System.Threading.CancellationToken)"/> on each of the returned folders.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Tip"/> Tip</th></tr><tr><td><p>
-		/// Using this method is potentially more efficient than querying the status of each returned folder.
-		/// </p></td></tr></table></div>
+		/// <note type="tip">Using this method is potentially more efficient than querying the status of each returned folder.</note>
 		/// </remarks>
 		/// <returns>The subfolders.</returns>
 		/// <param name="items">The status items to pre-populate.</param>
@@ -881,13 +880,12 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Expunges the folder, permanently removing all messages marked for deletion.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// Normally, an <see cref="MessageExpunged"/> event will be emitted for each
+		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for each
 		/// message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MessageExpunged"/> event.</p></td></tr></table></div>
+		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		void Expunge (CancellationToken cancellationToken = default (CancellationToken));
@@ -897,13 +895,12 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Asynchronously expunges the folder, permanently removing all messages marked for deletion.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the mail store supports the quick
+		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for
+		/// each message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MessageExpunged"/> event.</p></td></tr></table></div>
+		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -914,13 +911,12 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Expunges the specified uids, permanently removing them from the folder.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the mail store supports the quick
+		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for
+		/// each message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MessageExpunged"/> event.</p></td></tr></table></div>
+		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
 		/// <param name="uids">The message uids.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -931,13 +927,12 @@ namespace MailKit {
 		/// </summary>
 		/// <remarks>
 		/// <para>Asynchronously expunges the specified uids, permanently removing them from the folder.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// Normally, an <see cref="MessageExpunged"/> event will be emitted for each
-		/// message that is expunged. However, if the mail store supports the quick
+		/// <note type="note">Normally, an <see cref="MessageExpunged"/> event will be emitted for
+		/// each message that is expunged. However, if the mail store supports the quick
 		/// resynchronization feature and it has been enabled via the
 		/// <see cref="IMailStore.EnableQuickResync(CancellationToken)"/> method, then
 		/// the <see cref="MessagesVanished"/> event will be emitted rather than the
-		/// <see cref="MessageExpunged"/> event.</p></td></tr></table></div>
+		/// <see cref="MessageExpunged"/> event.</note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="uids">The message uids.</param>
@@ -4390,12 +4385,11 @@ namespace MailKit {
 		/// inefficient. To alleviate this potential problem, this event will be emitted
 		/// as soon as the <see cref="IMailFolder"/> successfully retrieves the complete
 		/// <see cref="IMessageSummary"/> for each requested message.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// The <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a> methods will return
-		/// a list of all message summaries that any information was retrieved for, regardless
-		/// of whether or not all of the requested items were fetched, therefore there may be
-		/// a discrepency between the number of times this event is emitetd and the number of
-		/// summary items returned from the Fetch method.</p></td></tr></table></div>
+		/// <note type="note">The <a href="Overload_MailKit_IMailFolder_Fetch.htm">Fetch</a>
+		/// methods will return a list of all message summaries that any information was
+		/// retrieved for, regardless of whether or not all of the requested items were fetched,
+		/// therefore there may be a discrepency between the number of times this event is
+		/// emitetd and the number of summary items returned from the Fetch method.</note>
 		/// </remarks>
 		event EventHandler<MessageSummaryFetchedEventArgs> MessageSummaryFetched;
 

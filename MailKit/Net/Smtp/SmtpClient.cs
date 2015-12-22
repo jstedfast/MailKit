@@ -202,9 +202,8 @@ namespace MailKit.Net.Smtp {
 		/// <remarks>
 		/// <para>The maximum message size will not be known until a successful connection has
 		/// been made and may change once the client is authenticated.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// This value is only relevant if the <see cref="Capabilities"/> includes the
-		/// <see cref="SmtpCapabilities.Size"/> flag.</p></td></tr></table></div>
+		/// <note type="note">This value is only relevant if the <see cref="Capabilities"/> includes
+		/// the <see cref="SmtpCapabilities.Size"/> flag.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
@@ -226,10 +225,11 @@ namespace MailKit.Net.Smtp {
 		/// Get the authentication mechanisms supported by the SMTP server.
 		/// </summary>
 		/// <remarks>
-		/// <para>The authentication mechanisms are queried as part of the connection process.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Tip"/> Tip</th></tr><tr><td><p>
-		/// To prevent the usage of certain authentication mechanisms, simply remove them from the
-		/// <see cref="AuthenticationMechanisms"/> hash set before authenticating.</p></td></tr></table></div>
+		/// <para>The authentication mechanisms are queried as part of the connection
+		/// process.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before authenticating.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="Capabilities"/>
@@ -490,9 +490,9 @@ namespace MailKit.Net.Smtp {
 		/// The <see cref="Capabilities"/> property can be checked for the
 		/// <see cref="SmtpCapabilities.Authentication"/> flag to make sure the
 		/// SMTP server supports authentication before calling this method.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Tip"/> Tip</th></tr><tr><td><p>
-		/// To prevent the usage of certain authentication mechanisms, simply remove them from the
-		/// <see cref="AuthenticationMechanisms"/> hash set before calling this method.</p></td></tr></table></div>
+		/// <note type="tip"> To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -703,14 +703,13 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// The connection established by any of the
+		/// <note type="note">The connection established by any of the
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
 		/// methods may be re-used if an application wishes to send multiple messages
 		/// to the same SMTP server. Since connecting and authenticating can be expensive
 		/// operations, re-using a connection can significantly improve performance when
 		/// sending a large number of messages to the same SMTP server over a short
-		/// period of time.</p></td></tr></table></div>
+		/// period of time.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
@@ -911,14 +910,13 @@ namespace MailKit.Net.Smtp {
 		/// <para>Once a connection is established, properties such as
 		/// <see cref="AuthenticationMechanisms"/> and <see cref="Capabilities"/> will be
 		/// populated.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// The connection established by any of the
+		/// <note type="note">The connection established by any of the
 		/// <a href="Overload_MailKit_Net_Smtp_SmtpClient_Connect.htm">Connect</a>
 		/// methods may be re-used if an application wishes to send multiple messages
 		/// to the same SMTP server. Since connecting and authenticating can be expensive
 		/// operations, re-using a connection can significantly improve performance when
 		/// sending a large number of messages to the same SMTP server over a short
-		/// period of time./</p></td></tr></table></div>
+		/// period of time./</note>
 		/// </remarks>
 		/// <param name="socket">The socket to use for the connection.</param>
 		/// <param name="host">The host name to connect to.</param>

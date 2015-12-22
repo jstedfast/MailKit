@@ -385,8 +385,7 @@ namespace MailKit.Search {
 		/// </summary>
 		/// <remarks>
 		/// <para>Applies a fuzzy matching algorithm to the specified expression.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertCaution.png" alt="Warning"/> Warning</th></tr><tr><td><p>
-		/// This feature is not supported by all IMAP servers.</p></td></tr></table></div>
+		/// <note type="warning">This feature is not supported by all IMAP servers.</note>
 		/// </remarks>
 		/// <returns>A <see cref="UnarySearchQuery"/>.</returns>
 		/// <param name="expr">The expression</param>

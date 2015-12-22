@@ -218,8 +218,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>Creates a new <see cref="ImapFolder"/> instance.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// This method's purpose is to allow subclassing <see cref="ImapFolder"/>.</p></td></tr></table></div>
+		/// <note type="note">This method's purpose is to allow subclassing <see cref="ImapFolder"/>.</note>
 		/// </remarks>
 		/// <returns>The IMAP folder instance.</returns>
 		/// <param name="args">The constructior arguments.</param>
@@ -668,9 +667,9 @@ namespace MailKit.Net.Imap {
 		/// <para>The authentication mechanisms are queried as part of the
 		/// <a href="Overload_MailKit_Net_Imap_ImapClient_Connect.htm">Connect</a>
 		/// method.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Tip"/> Tip</th></tr><tr><td><p>
-		/// To prevent the usage of certain authentication mechanisms, simply remove them from the
-		/// <see cref="AuthenticationMechanisms"/> hash set before authenticating.</p></td></tr></table></div>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before authenticating.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
@@ -879,9 +878,9 @@ namespace MailKit.Net.Imap {
 		/// the credentials are used to authenticate.</para>
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then LOGIN command is used as a fallback.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Tip"/> Tip</th></tr><tr><td><p>
-		/// To prevent the usage of certain authentication mechanisms, simply remove them from the
-		/// <see cref="AuthenticationMechanisms"/> hash set before calling this method.</p></td></tr></table></div>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
 		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -1659,10 +1658,9 @@ namespace MailKit.Net.Imap {
 		/// or any of the other variants.</para>
 		/// <para>While the IDLE command is running, no other commands may be issued until the
 		/// <paramref name="doneToken"/> is cancelled.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// It is especially important to cancel the <paramref name="doneToken"/> before
-		/// cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to the
-		/// fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</p></td></tr></table></div>
+		/// <note type="note">It is especially important to cancel the <paramref name="doneToken"/>
+		/// before cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to
+		/// the fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapIdleExample.cs"/>
@@ -1746,10 +1744,9 @@ namespace MailKit.Net.Imap {
 		/// or any of the other variants.</para>
 		/// <para>While the IDLE command is running, no other commands may be issued until the
 		/// <paramref name="doneToken"/> is cancelled.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// It is especially important to cancel the <paramref name="doneToken"/> before
-		/// cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to the
-		/// fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</p></td></tr></table></div>
+		/// <note type="note">It is especially important to cancel the <paramref name="doneToken"/>
+		/// before cancelling the <paramref name="cancellationToken"/> when using SSL or TLS due to
+		/// the fact that <see cref="System.Net.Security.SslStream"/> cannot be polled.</note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="doneToken">The cancellation token used to return to the non-idle state.</param>
@@ -1859,8 +1856,7 @@ namespace MailKit.Net.Imap {
 		/// </summary>
 		/// <remarks>
 		/// <para>The Inbox folder is the default folder and always exists on the server.</para>
-		/// <div class="alert"><table><tr><th><img src="../icons/AlertNote.png" alt="Note"/> Note</th></tr><tr><td><p>
-		/// This property will only be available after the client has been authenticated.</p></td></tr></table></div>
+		/// <note type="note">This property will only be available after the client has been authenticated.</note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="DownloadMessages"/>
