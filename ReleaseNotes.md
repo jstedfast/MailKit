@@ -2,8 +2,12 @@
 
 ### MailKit 1.3.0
 
-* Added support for the SCRAM-SHA-256 SASL mechanism.
 * Added support for dnxcore50.
+
+### MailKit 1.2.16
+
+* Added support for the SCRAM-SHA-256 SASL mechanism.
+* Added support for the LIST-STATUS IMAP extension.
 
 ### MailKit 1.2.15
 

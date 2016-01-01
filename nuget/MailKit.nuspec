@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>MailKit</id>
-		<version>1.3.0-beta4</version>
+		<version>1.3.0-beta5</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -46,16 +46,16 @@ Features include:
 		</frameworkAssemblies>
 	<dependencies>
 		<group targetFramework="net40">
-			<dependency id="MimeKit" version="1.3.0-beta4" />
+			<dependency id="MimeKit" version="1.3.0-beta5" />
 		</group>
 		<group targetFramework="net45">
-			<dependency id="MimeKit" version="1.3.0-beta4" />
+			<dependency id="MimeKit" version="1.3.0-beta5" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.3.0-beta4" />
+			<dependency id="MimeKit" version="1.3.0-beta5" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.3.0-beta4" />
+			<dependency id="MimeKit" version="1.3.0-beta5" />
 		</group>
 		<group targetFramework="dnxcore50">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
@@ -78,11 +78,11 @@ Features include:
 			<dependency id="System.Linq" version="4.0.1-beta-23516" />
 			<dependency id="Microsoft.CSharp" version="4.0.1-beta-23516" />
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta4" />
+			<dependency id="MimeKit" version="1.3.0-beta5" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta4" />
+			<dependency id="MimeKit" version="1.3.0-beta5" />
 		</group>
 	</dependencies>
 	</metadata>
