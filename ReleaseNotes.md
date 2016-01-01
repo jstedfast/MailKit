@@ -7,6 +7,8 @@
 ### MailKit 1.2.16
 
 * Added support for the SCRAM-SHA-256 SASL mechanism.
+* Added support for the CREATE-SPECIAL-USE IMAP extension.
+* Added support for the METADATA IMAP extension.
 * Added support for the LIST-STATUS IMAP extension.
 
 ### MailKit 1.2.15
