@@ -1,6 +1,6 @@
 ## License Information
 
-MailKit is Copyright (C) 2013-2015 Xamarin Inc. and is licensed under the MIT license:
+MailKit is Copyright (C) 2013-2016 Xamarin Inc. and is licensed under the MIT license:
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
