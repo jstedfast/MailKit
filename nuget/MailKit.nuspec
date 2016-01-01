@@ -22,10 +22,7 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Added support for the SCRAM-SHA-256 SASL mechanism.
-* Added support for the IMAP METADATA extension.
-* Added support for the IMAP CREATE-SPECIAL-USE extension.
-* Added support for dnxcore50.
+		<releaseNotes>* Added support for dnxcore50.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
