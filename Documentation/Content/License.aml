@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <topic id="License" revisionNumber="1">
   <developerConceptualDocument
     xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5"
@@ -45,7 +45,7 @@
       <title>Copyright Notices</title>
       <content>
         <para>
-          <application>MimeKit</application> is Copyright © 2013-2015 Xamarin Inc. (www.xamarin.com)
+          <application>MimeKit</application> is Copyright © 2013-2016 Xamarin Inc. (www.xamarin.com)
         </para>
       </content>
     </section>
