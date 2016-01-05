@@ -285,6 +285,9 @@ namespace MailKit.Net.Imap {
 			if ((engine.Capabilities & ImapCapabilities.Compress) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the COMPRESS extension.");
 
+			if (engine.State >= ImapEngineState.Selected)
+				throw new InvalidOperationException ("Compression must be enabled before selecting a folder.");
+
 			int capabilitiesVersion = engine.CapabilitiesVersion;
 			var ic = engine.QueueCommand (cancellationToken, null, "COMPRESS DEFLATE\r\n");
 
