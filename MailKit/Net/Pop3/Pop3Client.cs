@@ -82,8 +82,8 @@ namespace MailKit.Net.Pop3 {
 #if NETFX_CORE
 		StreamSocket socket;
 #endif
+		bool disposed, secure, utf8;
 		int timeout = 100000;
-		bool disposed, utf8;
 		int total;
 
 		/// <summary>
@@ -372,6 +372,17 @@ namespace MailKit.Net.Pop3 {
 		}
 
 		/// <summary>
+		/// Get whether or not the connection is secure (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is secure (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+		public override bool IsSecure {
+			get { return IsConnected && secure; }
+		}
+
+		/// <summary>
 		/// Get whether or not the client is currently authenticated with the POP3 server.
 		/// </summary>
 		/// <remarks>
@@ -617,6 +628,7 @@ namespace MailKit.Net.Pop3 {
 			CheckDisposed ();
 
 			probed = ProbedCapabilities.None;
+			secure = false;
 
 			engine.Uri = new Uri ("pop://" + host);
 			engine.Connect (new Pop3Stream (replayStream, null, ProtocolLogger), cancellationToken);
@@ -783,9 +795,11 @@ namespace MailKit.Net.Pop3 {
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				secure = true;
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
+				secure = false;
 			}
 #else
 			var protection = options == SecureSocketOptions.SslOnConnect ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket;
@@ -836,11 +850,14 @@ namespace MailKit.Net.Pop3 {
 						.GetResult ();
 #endif
 
+					secure = true;
+
 					// re-issue a CAPA command
 					engine.QueryCapabilities (cancellationToken);
 				}
 			} catch {
 				engine.Disconnect ();
+				secure = false;
 				throw;
 			}
 
@@ -943,9 +960,11 @@ namespace MailKit.Net.Pop3 {
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				secure = true;
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
+				secure = false;
 			}
 
 			probed = ProbedCapabilities.None;
@@ -971,11 +990,14 @@ namespace MailKit.Net.Pop3 {
 					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 					engine.Stream.Stream = tls;
 
+					secure = true;
+
 					// re-issue a CAPA command
 					engine.QueryCapabilities (cancellationToken);
 				}
 			} catch {
 				engine.Disconnect ();
+				secure = false;
 				throw;
 			}
 
@@ -1020,6 +1042,7 @@ namespace MailKit.Net.Pop3 {
 			socket = null;
 #endif
 
+			secure = utf8 = false;
 			dict.Clear ();
 			total = 0;
 
@@ -1064,7 +1087,7 @@ namespace MailKit.Net.Pop3 {
 		void OnEngineDisconnected (object sender, EventArgs e)
 		{
 			engine.Disconnected -= OnEngineDisconnected;
-			utf8 = false;
+			secure = utf8 = false;
 
 			OnDisconnected ();
 		}

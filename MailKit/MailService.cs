@@ -213,6 +213,17 @@ namespace MailKit {
 		}
 
 		/// <summary>
+		/// Get whether or not the connection is secure (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is secure (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+		public abstract bool IsSecure {
+			get;
+		}
+
+		/// <summary>
 		/// Get whether or not the client is currently authenticated with the mail server.
 		/// </summary>
 		/// <remarks>

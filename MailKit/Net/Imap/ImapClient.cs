@@ -73,6 +73,7 @@ namespace MailKit.Net.Imap {
 		string identifier = null;
 		int timeout = 100000;
 		bool disposed;
+		bool secure;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Imap.ImapClient"/> class.
@@ -728,6 +729,17 @@ namespace MailKit.Net.Imap {
 		}
 
 		/// <summary>
+		/// Get whether or not the connection is secure (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is secure (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+		public override bool IsSecure {
+			get { return IsConnected && secure; }
+		}
+
+		/// <summary>
 		/// Get whether or not the client is currently authenticated with the IMAP server.
 		/// </summary>
 		/// <remarks>
@@ -1037,6 +1049,7 @@ namespace MailKit.Net.Imap {
 			engine.Uri = new Uri ("imap://" + host);
 			engine.Connect (new ImapStream (replayStream, null, ProtocolLogger), cancellationToken);
 			engine.TagPrefix = 'A';
+			secure = false;
 
 			if (engine.CapabilitiesVersion == 0)
 				engine.QueryCapabilities (cancellationToken);
@@ -1200,9 +1213,11 @@ namespace MailKit.Net.Imap {
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				secure = true;
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
+				secure = false;
 			}
 #else
 			var protection = options == SecureSocketOptions.SslOnConnect ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket;
@@ -1258,6 +1273,8 @@ namespace MailKit.Net.Imap {
 							.GetResult ();
 #endif
 
+						secure = true;
+
 						// Query the CAPABILITIES again if the server did not include an
 						// untagged CAPABILITIES response to the STARTTLS command.
 						if (engine.CapabilitiesVersion == 1)
@@ -1268,6 +1285,7 @@ namespace MailKit.Net.Imap {
 				}
 			} catch {
 				engine.Disconnect ();
+				secure = false;
 				throw;
 			}
 
@@ -1367,9 +1385,11 @@ namespace MailKit.Net.Imap {
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				secure = true;
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
+				secure = false;
 			}
 
 			if (stream.CanTimeout) {
@@ -1399,6 +1419,8 @@ namespace MailKit.Net.Imap {
 						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 						engine.Stream.Stream = tls;
 
+						secure = true;
+
 						// Query the CAPABILITIES again if the server did not include an
 						// untagged CAPABILITIES response to the STARTTLS command.
 						if (engine.CapabilitiesVersion == 1)
@@ -1409,6 +1431,7 @@ namespace MailKit.Net.Imap {
 				}
 			} catch {
 				engine.Disconnect ();
+				secure = false;
 				throw;
 			}
 
@@ -1456,6 +1479,7 @@ namespace MailKit.Net.Imap {
 #endif
 
 			engine.Disconnect ();
+			secure = false;
 		}
 
 #if ENABLE_RECONNECT
@@ -2080,6 +2104,7 @@ namespace MailKit.Net.Imap {
 		{
 			engine.Disconnected -= OnEngineDisconnected;
 			OnDisconnected ();
+			secure = false;
 		}
 
 		/// <summary>

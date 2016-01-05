@@ -84,6 +84,7 @@ namespace MailKit.Net.Smtp {
 		bool authenticated;
 		bool connected;
 		bool disposed;
+		bool secure;
 		string host;
 
 		/// <summary>
@@ -272,6 +273,17 @@ namespace MailKit.Net.Smtp {
 		/// <value><c>true</c> if the client is connected; otherwise, <c>false</c>.</value>
 		public override bool IsConnected {
 			get { return connected; }
+		}
+
+		/// <summary>
+		/// Get whether or not the connection is secure (typically via SSL or TLS).
+		/// </summary>
+		/// <remarks>
+		/// Gets whether or not the connection is secure (typically via SSL or TLS).
+		/// </remarks>
+		/// <value><c>true</c> if the connection is secure; otherwise, <c>false</c>.</value>
+		public override bool IsSecure {
+			get { return IsConnected && secure; }
 		}
 
 		/// <summary>
@@ -623,6 +635,7 @@ namespace MailKit.Net.Smtp {
 			capabilities = SmtpCapabilities.None;
 			AuthenticationMechanisms.Clear ();
 			host = hostName;
+			secure = false;
 			MaxSize = 0;
 
 			try {
@@ -817,9 +830,11 @@ namespace MailKit.Net.Smtp {
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				secure = true;
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
+				secure = false;
 			}
 #else
 			var protection = options == SecureSocketOptions.SslOnConnect ? SocketProtectionLevel.Tls12 : SocketProtectionLevel.PlainSocket;
@@ -877,6 +892,8 @@ namespace MailKit.Net.Smtp {
 						.GetResult ();
 #endif
 
+					secure = true;
+
 					// Send EHLO again and get the new list of supported extensions
 					Ehlo (cancellationToken);
 				}
@@ -884,6 +901,7 @@ namespace MailKit.Net.Smtp {
 				connected = true;
 			} catch {
 				Stream.Dispose ();
+				secure = false;
 				Stream = null;
 				throw;
 			}
@@ -997,9 +1015,11 @@ namespace MailKit.Net.Smtp {
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+				secure = true;
 				stream = ssl;
 			} else {
 				stream = new NetworkStream (socket, true);
+				secure = false;
 			}
 
 			if (stream.CanTimeout) {
@@ -1033,6 +1053,8 @@ namespace MailKit.Net.Smtp {
 					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
 					Stream.Stream = tls;
 
+					secure = true;
+
 					// Send EHLO again and get the new list of supported extensions
 					Ehlo (cancellationToken);
 				}
@@ -1040,6 +1062,7 @@ namespace MailKit.Net.Smtp {
 				connected = true;
 			} catch {
 				Stream.Dispose ();
+				secure = false;
 				Stream = null;
 				throw;
 			}
@@ -1122,6 +1145,7 @@ namespace MailKit.Net.Smtp {
 		{
 			authenticated = false;
 			connected = false;
+			secure = false;
 			host = null;
 
 			if (Stream != null) {
