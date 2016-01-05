@@ -119,6 +119,11 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	class ImapEngine : IDisposable
 	{
+		internal const string GenericUntaggedResponseSyntaxErrorFormat = "Syntax error in untagged {0} response. Unexpected token: {1}";
+		internal const string GenericItemSyntaxErrorFormat = "Syntax error in {0}. Unexpected token: {1}";
+		const string GenericResponseCodeSyntaxErrorFormat = "Syntax error in {0} response code. Unexpected token: {1}";
+		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. Unexpected token: {0}";
+
 		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		static int TagPrefixIndex;
@@ -490,16 +495,9 @@ namespace MailKit.Net.Imap {
 			return createImapFolder (args);
 		}
 
-		internal static ImapProtocolException UnexpectedToken (ImapToken token, bool greeting)
+		internal static ImapProtocolException UnexpectedToken (string format, params object[] args)
 		{
-			string message;
-
-			if (greeting)
-				message = string.Format ("Unexpected token in IMAP greeting: {0}", token);
-			else
-				message = string.Format ("Unexpected token in IMAP response: {0}", token);
-
-			return new ImapProtocolException (message) { UnexpectedToken = true };
+			return new ImapProtocolException (string.Format (format, args)) { UnexpectedToken = true };
 		}
 
 		/// <summary>
@@ -553,12 +551,12 @@ namespace MailKit.Net.Imap {
 				var token = stream.ReadToken (cancellationToken);
 
 				if (token.Type != ImapTokenType.Asterisk)
-					throw UnexpectedToken (token, true);
+					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 
 				token = stream.ReadToken (cancellationToken);
 
 				if (token.Type != ImapTokenType.Atom)
-					throw UnexpectedToken (token, true);
+					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 
 				var atom = (string) token.Value;
 
@@ -572,7 +570,7 @@ namespace MailKit.Net.Imap {
 					State = ImapEngineState.PreAuth;
 					break;
 				default:
-					throw UnexpectedToken (token, true);
+					throw UnexpectedToken (GreetingSyntaxErrorFormat, token);
 				}
 
 				token = stream.ReadToken (cancellationToken);
@@ -916,7 +914,7 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != sentinel) {
 				Debug.WriteLine ("Expected '{0}' at the end of the CAPABILITIES, but got: {1}", sentinel, token);
-				throw UnexpectedToken (token, false);
+				throw UnexpectedToken (GenericItemSyntaxErrorFormat, "CAPABILITIES", token);
 			}
 
 			// unget the sentinel
@@ -964,7 +962,7 @@ namespace MailKit.Net.Imap {
 
 						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom) {
 							Debug.WriteLine ("Expected string token as first element in namespace pair, but got: {0}", token);
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 						}
 
 						path = (string) token.Value;
@@ -974,7 +972,7 @@ namespace MailKit.Net.Imap {
 
 						if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Nil) {
 							Debug.WriteLine ("Expected string or nil token as second element in namespace pair, but got: {0}", token);
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 						}
 
 						var qstring = token.Type == ImapTokenType.Nil ? string.Empty : (string) token.Value;
@@ -1006,12 +1004,12 @@ namespace MailKit.Net.Imap {
 							// NAMESPACE extension
 
 							if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom)
-								throw UnexpectedToken (token, false);
+								throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 							token = Stream.ReadToken (cancellationToken);
 
 							if (token.Type != ImapTokenType.OpenParen)
-								throw UnexpectedToken (token, false);
+								throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 
 							do {
 								token = Stream.ReadToken (cancellationToken);
@@ -1020,7 +1018,7 @@ namespace MailKit.Net.Imap {
 									break;
 
 								if (token.Type != ImapTokenType.QString && token.Type != ImapTokenType.Atom)
-									throw UnexpectedToken (token, false);
+									throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 							} while (true);
 						} while (true);
 
@@ -1030,11 +1028,11 @@ namespace MailKit.Net.Imap {
 
 					if (token.Type != ImapTokenType.CloseParen) {
 						Debug.WriteLine ("Expected ')' to close namespace pair, but got: {0}", token);
-						throw UnexpectedToken (token, false);
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 					}
 				} else if (token.Type != ImapTokenType.Nil) {
 					Debug.WriteLine ("Expected '(' or 'NIL' token after untagged 'NAMESPACE' response, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "NAMESPACE", token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
@@ -1125,7 +1123,7 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != ImapTokenType.Atom) {
 				Debug.WriteLine ("Expected an atom token containing a RESP-CODE, but got: {0}", token);
-				throw UnexpectedToken (token, false);
+				throw UnexpectedToken ("Syntax error in response code. Unexpected token: {0}", token);
 			}
 
 			atom = (string) token.Value;
@@ -1146,7 +1144,7 @@ namespace MailKit.Net.Imap {
 
 					if (token.Type != ImapTokenType.CloseParen) {
 						Debug.WriteLine ("Expected ')' after list of charsets in 'BADCHARSET' RESP-CODE, but got: {0}", token);
-						throw UnexpectedToken (token, false);
+						throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "BADCHARSET", token);
 					}
 
 					token = Stream.ReadToken (cancellationToken);
@@ -1161,7 +1159,7 @@ namespace MailKit.Net.Imap {
 				var perm = (PermanentFlagsResponseCode) code;
 
 				Stream.UngetToken (token);
-				perm.Flags = ImapUtils.ParseFlagsList (this, null, cancellationToken);
+				perm.Flags = ImapUtils.ParseFlagsList (this, "PERMANENTFLAGS", null, cancellationToken);
 				token = Stream.ReadToken (cancellationToken);
 				break;
 			case ImapResponseCodeType.UidNext:
@@ -1169,7 +1167,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32) || n32 == 0) {
 					Debug.WriteLine ("Expected nz-number argument to 'UIDNEXT' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UIDNEXT", token);
 				}
 
 				next.Uid = new UniqueId (n32);
@@ -1183,7 +1181,7 @@ namespace MailKit.Net.Imap {
 				// has no messages. See https://github.com/jstedfast/MailKit/issues/150 for details.
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number argument to 'UIDVALIDITY' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UIDVALIDITY", token);
 				}
 
 				uidvalidity.UidValidity = n32;
@@ -1197,7 +1195,7 @@ namespace MailKit.Net.Imap {
 				// has no messages. See https://github.com/jstedfast/MailKit/issues/34 for details.
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number argument to 'UNSEEN' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "UNSEEN", token);
 				}
 
 				unseen.Index = n32 > 0 ? (int) (n32 - 1) : 0;
@@ -1214,7 +1212,7 @@ namespace MailKit.Net.Imap {
 				// referrals.
 				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
 					Debug.WriteLine ("Expected atom or qstring as first argument to 'NEWNAME' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
 				}
 
 				rename.OldName = (string) token.Value;
@@ -1224,7 +1222,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
 					Debug.WriteLine ("Expected atom or qstring as second argument to 'NEWNAME' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "NEWNAME", token);
 				}
 
 				rename.NewName = (string) token.Value;
@@ -1236,7 +1234,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number as first argument of the 'APPENDUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 				}
 
 				append.UidValidity = n32;
@@ -1246,7 +1244,7 @@ namespace MailKit.Net.Imap {
 				// The MULTIAPPEND extension redefines APPENDUID's second argument to be a uid-set instead of a single uid.
 				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out append.UidSet)) {
 					Debug.WriteLine ("Expected nz-number or uid-set as second argument to 'APPENDUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "APPENDUID", token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
@@ -1256,7 +1254,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out n32)) {
 					Debug.WriteLine ("Expected nz-number as first argument of the 'COPYUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				}
 
 				copy.UidValidity = n32;
@@ -1265,14 +1263,14 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, validity, out copy.SrcUidSet)) {
 					Debug.WriteLine ("Expected uid-set as second argument to 'COPYUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
 
 				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, n32, out copy.DestUidSet)) {
 					Debug.WriteLine ("Expected uid-set as third argument to 'COPYUID' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "COPYUID", token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
@@ -1282,7 +1280,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
 					Debug.WriteLine ("Expected url-resp-text as argument to the 'BADURL' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "BADURL", token);
 				}
 
 				badurl.BadUrl = (string) token.Value;
@@ -1292,7 +1290,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out n64)) {
 					Debug.WriteLine ("Expected 64-bit nz-number as first argument of the 'HIGHESTMODSEQ' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "HIGHESTMODSEQ", token);
 				}
 
 				highest.HighestModSeq = n64;
@@ -1304,7 +1302,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, validity, out modified.UidSet)) {
 					Debug.WriteLine ("Expected uid-set argument to 'MODIFIED' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "MODIFIED", token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
@@ -1315,7 +1313,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom || !int.TryParse ((string) token.Value, out maxConvert.MaxConvert)) {
 					Debug.WriteLine ("Expected number argument to '{0}' RESP-CODE, but got: {1}", code.Type.ToString ().ToUpperInvariant (), token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, code.Type.ToString ().ToUpperInvariant (), token);
 				}
 
 				token = Stream.ReadToken (cancellationToken);
@@ -1325,7 +1323,7 @@ namespace MailKit.Net.Imap {
 
 				if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString) {
 					Debug.WriteLine ("Expected string argument to 'NOUPDATE' RESP-CODE, but got: {0}", token);
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericResponseCodeSyntaxErrorFormat, "NOUPDATE", token);
 				}
 
 				noUpdate.Tag = (string) token.Value;
@@ -1347,7 +1345,7 @@ namespace MailKit.Net.Imap {
 
 			if (token.Type != ImapTokenType.CloseBracket) {
 				Debug.WriteLine ("Expected ']' after '{0}' RESP-CODE, but got: {1}", atom, token);
-				throw UnexpectedToken (token, false);
+				throw UnexpectedToken ("Syntax error in response code. Unexpected token: {0}", token);
 			}
 
 			code.Message = ReadLine (cancellationToken).Trim ();
@@ -1373,7 +1371,7 @@ namespace MailKit.Net.Imap {
 				name = (string) token.Value;
 				break;
 			default:
-				throw UnexpectedToken (token, false);
+				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 			}
 
 			// Note: if the folder is null, then it probably means the user is using NOTIFY
@@ -1383,7 +1381,7 @@ namespace MailKit.Net.Imap {
 			token = Stream.ReadToken (cancellationToken);
 
 			if (token.Type != ImapTokenType.OpenParen)
-				throw UnexpectedToken (token, false);
+				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 			do {
 				token = Stream.ReadToken (cancellationToken);
@@ -1392,50 +1390,50 @@ namespace MailKit.Net.Imap {
 					break;
 
 				if (token.Type != ImapTokenType.Atom)
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 				var atom = (string) token.Value;
 
 				token = Stream.ReadToken (cancellationToken);
 
 				if (token.Type != ImapTokenType.Atom)
-					throw UnexpectedToken (token, false);
+					throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 
 				if (folder != null) {
 					switch (atom) {
 					case "HIGHESTMODSEQ":
 						if (!ulong.TryParse ((string) token.Value, out modseq))
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						folder.UpdateHighestModSeq (modseq);
 						break;
 					case "MESSAGES":
 						if (!int.TryParse ((string) token.Value, out count))
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						folder.OnExists (count);
 						break;
 					case "RECENT":
 						if (!int.TryParse ((string) token.Value, out count))
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						folder.OnRecent (count);
 						break;
 					case "UIDNEXT":
 						if (!uint.TryParse ((string) token.Value, out uid))
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						folder.UpdateUidNext (new UniqueId (uid));
 						break;
 					case "UIDVALIDITY":
 						if (!uint.TryParse ((string) token.Value, out uid))
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						folder.UpdateUidValidity (uid);
 						break;
 					case "UNSEEN":
 						if (!int.TryParse ((string) token.Value, out count))
-							throw UnexpectedToken (token, false);
+							throw UnexpectedToken (GenericItemSyntaxErrorFormat, atom, token);
 
 						folder.UpdateUnread (count);
 						break;
@@ -1446,7 +1444,7 @@ namespace MailKit.Net.Imap {
 			token = Stream.ReadToken (cancellationToken);
 
 			if (token.Type != ImapTokenType.Eoln)
-				throw UnexpectedToken (token, false);
+				throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, "STATUS", token);
 		}
 
 		/// <summary>
@@ -1495,12 +1493,12 @@ namespace MailKit.Net.Imap {
 					Stream.ReadToken (cancellationToken);
 					break;
 				case "FLAGS":
-					folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, null, cancellationToken));
+					folder.UpdateAcceptedFlags (ImapUtils.ParseFlagsList (this, atom, null, cancellationToken));
 					token = Stream.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.Eoln) {
 						Debug.WriteLine ("Expected eoln after untagged FLAGS list, but got: {0}", token);
-						throw UnexpectedToken (token, false);
+						throw UnexpectedToken (GenericUntaggedResponseSyntaxErrorFormat, atom, token);
 					}
 					break;
 				case "NAMESPACE":
@@ -1538,7 +1536,7 @@ namespace MailKit.Net.Imap {
 						if (token.Type != ImapTokenType.Atom) {
 							// protocol error
 							Debug.WriteLine ("Unhandled untagged response: * {0} {1}", number, atom);
-							throw ImapEngine.UnexpectedToken (token, false);
+							throw UnexpectedToken ("Syntax error in untagged response. Unexpected token: {0}", token);
 						}
 
 						atom = (string) token.Value;
@@ -1553,13 +1551,13 @@ namespace MailKit.Net.Imap {
 								break;
 							case "EXPUNGE":
 								if (number == 0)
-									throw UnexpectedToken (new ImapToken (ImapTokenType.Atom, "0"), false);
+									throw UnexpectedToken ("Syntax error in untagged EXPUNGE response. Unexpected message index: 0");
 
 								folder.OnExpunge ((int) number - 1);
 								break;
 							case "FETCH":
 								if (number == 0)
-									throw UnexpectedToken (new ImapToken (ImapTokenType.Atom, "0"), false);
+									throw UnexpectedToken ("Syntax error in untagged FETCH response. Unexpected message index: 0");
 
 								folder.OnFetch (this, (int) number - 1, cancellationToken);
 								break;

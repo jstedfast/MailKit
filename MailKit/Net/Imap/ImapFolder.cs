@@ -1287,16 +1287,17 @@ namespace MailKit.Net.Imap {
 
 		static void UntaggedAcl (ImapEngine engine, ImapCommand ic, int index)
 		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ACL", "{0}");
 			var acl = (AccessControlList) ic.UserData;
 			string name, rights;
 			ImapToken token;
 
 			// read the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			ReadStringToken (engine, format, ic.CancellationToken);
 
 			do {
-				name = ReadStringToken (engine, ic.CancellationToken);
-				rights = ReadStringToken (engine, ic.CancellationToken);
+				name = ReadStringToken (engine, format, ic.CancellationToken);
+				rights = ReadStringToken (engine, format, ic.CancellationToken);
 
 				acl.Add (new AccessControl (name, rights));
 
@@ -1360,17 +1361,18 @@ namespace MailKit.Net.Imap {
 
 		static void UntaggedListRights (ImapEngine engine, ImapCommand ic, int index)
 		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "LISTRIGHTS", "{0}");
 			var access = (AccessRights) ic.UserData;
 			ImapToken token;
 
 			// read the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			ReadStringToken (engine, format, ic.CancellationToken);
 
 			// read the identity name
-			ReadStringToken (engine, ic.CancellationToken);
+			ReadStringToken (engine, format, ic.CancellationToken);
 
 			do {
-				var rights = ReadStringToken (engine, ic.CancellationToken);
+				var rights = ReadStringToken (engine, format, ic.CancellationToken);
 
 				access.AddRange (rights);
 
@@ -1441,13 +1443,14 @@ namespace MailKit.Net.Imap {
 
 		static void UntaggedMyRights (ImapEngine engine, ImapCommand ic, int index)
 		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "MYRIGHTS", "{0}");
 			var access = (AccessRights) ic.UserData;
 
 			// read the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			ReadStringToken (engine, format, ic.CancellationToken);
 
 			// read the access rights
-			access.AddRange (ReadStringToken (engine, ic.CancellationToken));
+			access.AddRange (ReadStringToken (engine, format, ic.CancellationToken));
 		}
 
 		/// <summary>
@@ -1735,7 +1738,7 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("DELETEACL", ic);
 		}
 
-		static string ReadStringToken (ImapEngine engine, CancellationToken cancellationToken)
+		static string ReadStringToken (ImapEngine engine, string format, CancellationToken cancellationToken)
 		{
 			var token = engine.ReadToken (cancellationToken);
 
@@ -1744,20 +1747,22 @@ namespace MailKit.Net.Imap {
 			case ImapTokenType.QString: return (string) token.Value;
 			case ImapTokenType.Atom:    return (string) token.Value;
 			default:
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (format, token);
 			}
 		}
 
 		static void UntaggedQuotaRoot (ImapEngine engine, ImapCommand ic, int index)
 		{
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTAROOT", "{0}");
+
 			// The first token should be the mailbox name
-			ReadStringToken (engine, ic.CancellationToken);
+			ReadStringToken (engine, format, ic.CancellationToken);
 
 			// ...followed by 0 or more quota roots
 			var token = engine.PeekToken (ic.CancellationToken);
 
 			while (token.Type != ImapTokenType.Eoln) {
-				ReadStringToken (engine, ic.CancellationToken);
+				ReadStringToken (engine, format, ic.CancellationToken);
 
 				token = engine.PeekToken (ic.CancellationToken);
 			}
@@ -1765,7 +1770,8 @@ namespace MailKit.Net.Imap {
 
 		static void UntaggedQuota (ImapEngine engine, ImapCommand ic, int index)
 		{
-			var encodedName = ReadStringToken (engine, ic.CancellationToken);
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "QUOTA", "{0}");
+			var encodedName = ReadStringToken (engine, format, ic.CancellationToken);
 			ImapFolder quotaRoot;
 			FolderQuota quota;
 
@@ -1780,7 +1786,7 @@ namespace MailKit.Net.Imap {
 			var token = engine.ReadToken (ic.CancellationToken);
 
 			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (format, token);
 
 			while (token.Type != ImapTokenType.CloseParen) {
 				uint used, limit;
@@ -1789,19 +1795,19 @@ namespace MailKit.Net.Imap {
 				token = engine.ReadToken (ic.CancellationToken);
 
 				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (format, token);
 
 				resource = (string) token.Value;
 
 				token = engine.ReadToken (ic.CancellationToken);
 
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out used))
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (format, token);
 
 				token = engine.ReadToken (ic.CancellationToken);
 
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out limit))
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (format, token);
 
 				switch (resource.ToUpperInvariant ()) {
 				case "MESSAGE":
@@ -1949,7 +1955,8 @@ namespace MailKit.Net.Imap {
 
 		static void UntaggedMetadata (ImapEngine engine, ImapCommand ic, int index)
 		{
-			var encodedName = ReadStringToken (engine, ic.CancellationToken);
+			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "METADATA", "{0}");
+			var encodedName = ReadStringToken (engine, format, ic.CancellationToken);
 			var metadata = (MetadataCollection) ic.UserData;
 			ImapFolder folder;
 
@@ -1958,11 +1965,11 @@ namespace MailKit.Net.Imap {
 			var token = engine.ReadToken (ic.CancellationToken);
 
 			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (format, token);
 
 			while (token.Type != ImapTokenType.CloseParen) {
-				var tag = ReadStringToken (engine, ic.CancellationToken);
-				var value = ReadStringToken (engine, ic.CancellationToken);
+				var tag = ReadStringToken (engine, format, ic.CancellationToken);
+				var value = ReadStringToken (engine, format, ic.CancellationToken);
 
 				metadata.Add (new Metadata (MetadataTag.Create (tag), value));
 
@@ -3201,7 +3208,7 @@ namespace MailKit.Net.Imap {
 			var token = engine.ReadToken (ic.CancellationToken);
 
 			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			var ctx = (FetchSummaryContext) ic.UserData;
 			IMessageSummary isummary;
@@ -3221,9 +3228,10 @@ namespace MailKit.Net.Imap {
 					break;
 
 				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 				var atom = (string) token.Value;
+				string format;
 				ulong value64;
 				uint value;
 				int idx;
@@ -3241,7 +3249,7 @@ namespace MailKit.Net.Imap {
 						summary.InternalDate = null;
 						break;
 					default:
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					}
 
 					summary.Fields |= MessageSummaryItems.InternalDate;
@@ -3250,13 +3258,14 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					summary.Fields |= MessageSummaryItems.MessageSize;
 					summary.Size = value;
 					break;
 				case "BODYSTRUCTURE":
-					summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+					format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODYSTRUCTURE", "{0}");
+					summary.Body = ImapUtils.ParseBody (engine, format, string.Empty, ic.CancellationToken);
 					summary.Fields |= MessageSummaryItems.BodyStructure;
 					break;
 				case "BODY":
@@ -3267,7 +3276,7 @@ namespace MailKit.Net.Imap {
 						token = engine.ReadToken (ic.CancellationToken);
 
 						if (token.Type != ImapTokenType.OpenBracket)
-							throw ImapEngine.UnexpectedToken (token, false);
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 						// References and/or other headers were requested...
 
@@ -3293,21 +3302,21 @@ namespace MailKit.Net.Imap {
 									case ImapTokenType.Atom:
 										break;
 									default:
-										throw ImapEngine.UnexpectedToken (token, false);
+										throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 									}
 								} while (true);
 							} else if (token.Type != ImapTokenType.Atom) {
-								throw ImapEngine.UnexpectedToken (token, false);
+								throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 							}
 						} while (true);
 
 						if (token.Type != ImapTokenType.CloseBracket)
-							throw ImapEngine.UnexpectedToken (token, false);
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 						token = engine.ReadToken (ic.CancellationToken);
 
 						if (token.Type != ImapTokenType.Literal)
-							throw ImapEngine.UnexpectedToken (token, false);
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 						summary.References = new MessageIdList ();
 
@@ -3332,7 +3341,8 @@ namespace MailKit.Net.Imap {
 						summary.Fields |= MessageSummaryItems.Body;
 
 						try {
-							summary.Body = ImapUtils.ParseBody (engine, string.Empty, ic.CancellationToken);
+							format = string.Format (ImapEngine.GenericItemSyntaxErrorFormat, "BODY", "{0}");
+							summary.Body = ImapUtils.ParseBody (engine, format, string.Empty, ic.CancellationToken);
 						} catch (ImapProtocolException ex) {
 							if (!ex.UnexpectedToken)
 								throw;
@@ -3361,24 +3371,24 @@ namespace MailKit.Net.Imap {
 					summary.Fields |= MessageSummaryItems.Envelope;
 					break;
 				case "FLAGS":
-					summary.Flags = ImapUtils.ParseFlagsList (engine, summary.UserFlags, ic.CancellationToken);
+					summary.Flags = ImapUtils.ParseFlagsList (engine, atom, summary.UserFlags, ic.CancellationToken);
 					summary.Fields |= MessageSummaryItems.Flags;
 					break;
 				case "MODSEQ":
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.OpenParen)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.CloseParen)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					summary.Fields |= MessageSummaryItems.ModSeq;
 					summary.ModSeq = value64;
@@ -3387,7 +3397,7 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					summary.UniqueId = new UniqueId (ic.Folder.UidValidity, value);
 					summary.Fields |= MessageSummaryItems.UniqueId;
@@ -3396,7 +3406,7 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					summary.Fields |= MessageSummaryItems.GMailMessageId;
 					summary.GMailMessageId = value64;
@@ -3405,7 +3415,7 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out value64) || value64 == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					summary.Fields |= MessageSummaryItems.GMailThreadId;
 					summary.GMailThreadId = value64;
@@ -3415,12 +3425,12 @@ namespace MailKit.Net.Imap {
 					summary.Fields |= MessageSummaryItems.GMailLabels;
 					break;
 				default:
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 				}
 			} while (true);
 
 			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			if ((ctx.RequestedItems & summary.Fields) == ctx.RequestedItems)
 				OnMessageSummaryFetched (summary);
@@ -5104,7 +5114,7 @@ namespace MailKit.Net.Imap {
 			int n;
 
 			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			do {
 				token = engine.ReadToken (ic.CancellationToken);
@@ -5113,7 +5123,7 @@ namespace MailKit.Net.Imap {
 					break;
 
 				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 				var atom = (string) token.Value;
 				int offset = 0, length;
@@ -5125,7 +5135,7 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.OpenBracket)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					section.Clear ();
 
@@ -5155,7 +5165,7 @@ namespace MailKit.Net.Imap {
 									section.Append ((string) token.Value);
 									break;
 								default:
-									throw ImapEngine.UnexpectedToken (token, false);
+									throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 								}
 							} while (true);
 
@@ -5164,23 +5174,23 @@ namespace MailKit.Net.Imap {
 
 							section.Append (')');
 						} else if (token.Type != ImapTokenType.Atom) {
-							throw ImapEngine.UnexpectedToken (token, false);
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 						} else {
 							section.Append ((string) token.Value);
 						}
 					} while (true);
 
 					if (token.Type != ImapTokenType.CloseBracket)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type == ImapTokenType.Atom) {
 						// this might be a region ("<###>")
-						atom = (string) token.Value;
+						var expr = (string) token.Value;
 
-						if (atom.Length > 2 && atom[0] == '<' && atom[atom.Length - 1] == '>') {
-							var region = atom.Substring (1, atom.Length - 2);
+						if (expr.Length > 2 && expr[0] == '<' && expr[expr.Length - 1] == '>') {
+							var region = expr.Substring (1, expr.Length - 2);
 							int.TryParse (region, out offset);
 
 							token = engine.ReadToken (ic.CancellationToken);
@@ -5230,7 +5240,7 @@ namespace MailKit.Net.Imap {
 						stream = CreateStream (uid, section.ToString (), offset, 0);
 						break;
 					default:
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 					}
 
 					if (uid.HasValue)
@@ -5243,7 +5253,7 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out value) || value == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					uid = new UniqueId (UidValidity, value);
 
@@ -5257,17 +5267,17 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.OpenParen)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = engine.ReadToken (ic.CancellationToken);
 
 					if (token.Type != ImapTokenType.CloseParen)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					labels.ModSeq = modseq;
 					flags.ModSeq = modseq;
@@ -5275,7 +5285,7 @@ namespace MailKit.Net.Imap {
 				case "FLAGS":
 					// even though we didn't request this piece of information, the IMAP server
 					// may send it if another client has recently modified the message flags.
-					flags.Flags = ImapUtils.ParseFlagsList (engine, flags.UserFlags, ic.CancellationToken);
+					flags.Flags = ImapUtils.ParseFlagsList (engine, atom, flags.UserFlags, ic.CancellationToken);
 					flagsChanged = true;
 					break;
 				case "X-GM-LABELS":
@@ -5285,12 +5295,12 @@ namespace MailKit.Net.Imap {
 					labelsChanged = true;
 					break;
 				default:
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 				}
 			} while (true);
 
 			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			if (flagsChanged)
 				ic.Folder.OnMessageFlagsChanged (flags);
@@ -8405,7 +8415,7 @@ namespace MailKit.Net.Imap {
 				token = engine.ReadToken (ic.CancellationToken);
 
 				if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "SEARCH", token);
 
 				uids.Add (new UniqueId (ic.Folder.UidValidity, uid));
 			} while (true);
@@ -8420,7 +8430,7 @@ namespace MailKit.Net.Imap {
 						break;
 
 					if (token.Type != ImapTokenType.Atom)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "SEARCH", token);
 
 					var atom = (string) token.Value;
 
@@ -8430,7 +8440,7 @@ namespace MailKit.Net.Imap {
 
 						if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq)) {
 							Debug.WriteLine ("Expected 64-bit nz-number as the MODSEQ value, but got: {0}", token);
-							throw ImapEngine.UnexpectedToken (token, false);
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 						}
 						break;
 					}
@@ -8464,7 +8474,7 @@ namespace MailKit.Net.Imap {
 						break;
 
 					if (token.Type != ImapTokenType.Atom)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 					atom = (string) token.Value;
 
@@ -8472,7 +8482,7 @@ namespace MailKit.Net.Imap {
 						token = engine.ReadToken (ic.CancellationToken);
 
 						if (token.Type != ImapTokenType.Atom && token.Type != ImapTokenType.QString)
-							throw ImapEngine.UnexpectedToken (token, false);
+							throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 						tag = (string) token.Value;
 
@@ -8497,48 +8507,48 @@ namespace MailKit.Net.Imap {
 				}
 
 				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 				atom = (string) token.Value;
 
 				token = engine.ReadToken (ic.CancellationToken);
 
 				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 
 				switch (atom) {
 				case "MODSEQ":
 					if (!ulong.TryParse ((string) token.Value, out modseq))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.ModSeq = modseq;
 					break;
 				case "COUNT":
 					if (!int.TryParse ((string) token.Value, out count))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Count = count;
 					break;
 				case "MIN":
 					if (!uint.TryParse ((string) token.Value, out min))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Min = new UniqueId (ic.Folder.UidValidity, min);
 					break;
 				case "MAX":
 					if (!uint.TryParse ((string) token.Value, out max))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Max = new UniqueId (ic.Folder.UidValidity, max);
 					break;
 				case "ALL":
 					if (!UniqueIdSet.TryParse ((string) token.Value, ic.Folder.UidValidity, out uids))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					results.Count = uids.Count;
 					break;
 				default:
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
 				}
 
 				token = engine.ReadToken (ic.CancellationToken);
@@ -9590,7 +9600,7 @@ namespace MailKit.Net.Imap {
 			bool flagsChanged = false;
 
 			if (token.Type != ImapTokenType.OpenParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			do {
 				token = engine.ReadToken (cancellationToken);
@@ -9599,7 +9609,7 @@ namespace MailKit.Net.Imap {
 					break;
 
 				if (token.Type != ImapTokenType.Atom)
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 				var atom = (string) token.Value;
 				ulong modseq;
@@ -9610,17 +9620,17 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.OpenParen)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = engine.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !ulong.TryParse ((string) token.Value, out modseq))
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					token = engine.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.CloseParen)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					labels.ModSeq = modseq;
 					flags.ModSeq = modseq;
@@ -9629,13 +9639,13 @@ namespace MailKit.Net.Imap {
 					token = engine.ReadToken (cancellationToken);
 
 					if (token.Type != ImapTokenType.Atom || !uint.TryParse ((string) token.Value, out uid) || uid == 0)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericItemSyntaxErrorFormat, atom, token);
 
 					labels.UniqueId = new UniqueId (UidValidity, uid);
 					flags.UniqueId = new UniqueId (UidValidity, uid);
 					break;
 				case "FLAGS":
-					flags.Flags = ImapUtils.ParseFlagsList (engine, flags.UserFlags, cancellationToken);
+					flags.Flags = ImapUtils.ParseFlagsList (engine, atom, flags.UserFlags, cancellationToken);
 					flagsChanged = true;
 					break;
 				case "X-GM-LABELS":
@@ -9643,12 +9653,12 @@ namespace MailKit.Net.Imap {
 					labelsChanged = true;
 					break;
 				default:
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 				}
 			} while (true);
 
 			if (token.Type != ImapTokenType.CloseParen)
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "FETCH", token);
 
 			if (flagsChanged)
 				OnMessageFlagsChanged (flags);
@@ -9681,7 +9691,7 @@ namespace MailKit.Net.Imap {
 						break;
 
 					if (token.Type != ImapTokenType.Atom)
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
 
 					var atom = (string) token.Value;
 
@@ -9693,7 +9703,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (token.Type != ImapTokenType.Atom || !UniqueIdSet.TryParse ((string) token.Value, UidValidity, out vanished))
-				throw ImapEngine.UnexpectedToken (token, false);
+				throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "VANISHED", token);
 
 			OnMessagesVanished (new MessagesVanishedEventArgs (vanished, earlier));
 		}

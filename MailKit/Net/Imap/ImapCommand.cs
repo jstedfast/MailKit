@@ -676,7 +676,7 @@ namespace MailKit.Net.Imap {
 						case "BAD": result = ImapCommandResponse.Bad; break;
 						case "OK": result = ImapCommandResponse.Ok; break;
 						case "NO": result = ImapCommandResponse.No; break;
-						default: throw ImapEngine.UnexpectedToken (token, false);
+						default: throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
 						}
 
 						token = Engine.ReadToken (CancellationToken);
@@ -693,7 +693,7 @@ namespace MailKit.Net.Imap {
 						}
 					} else {
 						// looks like we didn't get an "OK", "NO", or "BAD"...
-						throw ImapEngine.UnexpectedToken (token, false);
+						throw ImapEngine.UnexpectedToken ("Syntax error in tagged response. Unexpected token: {0}", token);
 					}
 				} else if (token.Type == ImapTokenType.OpenBracket) {
 					// Note: this is a work-around for broken IMAP servers like Office365.com that
@@ -703,7 +703,7 @@ namespace MailKit.Net.Imap {
 					RespCodes.Add (code);
 				} else {
 					// no clue what we got...
-					throw ImapEngine.UnexpectedToken (token, false);
+					throw ImapEngine.UnexpectedToken ("Syntax error in response. Unexpected token: {0}", token);
 				}
 			} while (true);
 
