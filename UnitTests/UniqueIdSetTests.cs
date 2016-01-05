@@ -31,20 +31,21 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using MailKit;
+using MailKit.Search;
 
 namespace UnitTests {
 	[TestFixture]
 	public class UniqueIdSetTests
 	{
 		[Test]
-		public void TestSortedUniqueIdSet ()
+		public void TestAscendingUniqueIdSet ()
 		{
 			UniqueId[] uids = {
 				new UniqueId (1), new UniqueId (2), new UniqueId (3),
 				new UniqueId (4), new UniqueId (5), new UniqueId (6),
 				new UniqueId (7), new UniqueId (8), new UniqueId (9)
 			};
-			var list = new UniqueIdSet (uids, true);
+			var list = new UniqueIdSet (uids, SortOrder.Ascending);
 			var actual = list.ToString ();
 
 			Assert.AreEqual ("1:9", actual, "Incorrect initial value.");
@@ -124,6 +125,93 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestDescendingUniqueIdSet ()
+		{
+			UniqueId[] uids = {
+				new UniqueId (1), new UniqueId (2), new UniqueId (3),
+				new UniqueId (4), new UniqueId (5), new UniqueId (6),
+				new UniqueId (7), new UniqueId (8), new UniqueId (9)
+			};
+			var list = new UniqueIdSet (uids, SortOrder.Descending);
+			var actual = list.ToString ();
+
+			Assert.AreEqual ("9:1", actual, "Incorrect initial value.");
+			Assert.AreEqual (9, list.Count, "Incorrect initial count.");
+
+			// Test Remove()
+
+			list.Remove (uids[0]);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("9:2", actual, "Incorrect results after Remove() #1.");
+			Assert.AreEqual (8, list.Count, "Incorrect count after Remove() #1.");
+
+			list.Remove (uids[uids.Length - 1]);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("8:2", actual, "Incorrect results after Remove() #2.");
+			Assert.AreEqual (7, list.Count, "Incorrect count after Remove() #2.");
+
+			list.Remove (uids[4]);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("8:6,4:2", actual, "Incorrect results after Remove() #3.");
+			Assert.AreEqual (6, list.Count, "Incorrect count after Remove() #3.");
+
+			// Test Add()
+
+			list.Add (new UniqueId (5));
+			actual = list.ToString ();
+
+			Assert.AreEqual ("8:2", actual, "Incorrect results after Add() #1.");
+			Assert.AreEqual (7, list.Count, "Incorrect count after Add() #1.");
+
+			list.Add (new UniqueId (1));
+			actual = list.ToString ();
+
+			Assert.AreEqual ("8:1", actual, "Incorrect results after Add() #2.");
+			Assert.AreEqual (8, list.Count, "Incorrect count after Add() #2.");
+
+			list.Add (new UniqueId (9));
+			actual = list.ToString ();
+
+			Assert.AreEqual ("9:1", actual, "Incorrect results after Add() #3.");
+			Assert.AreEqual (9, list.Count, "Incorrect count after Add() #3.");
+
+			// Test RemoveAt()
+
+			list.RemoveAt (0);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("8:1", actual, "Incorrect results after RemoveAt() #1.");
+			Assert.AreEqual (8, list.Count, "Incorrect count after RemoveAt() #1.");
+
+			list.RemoveAt (7);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("8:2", actual, "Incorrect results after RemoveAt() #2.");
+			Assert.AreEqual (7, list.Count, "Incorrect count after RemoveAt() #2.");
+
+			list.RemoveAt (3);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("8:6,4:2", actual, "Incorrect results after RemoveAt() #3.");
+			Assert.AreEqual (6, list.Count, "Incorrect count after RemoveAt() #3.");
+
+			// Test adding a range of items
+
+			list.AddRange (uids);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("9:1", actual, "Incorrect results after AddRange().");
+			Assert.AreEqual (9, list.Count, "Incorrect count after AddRange().");
+
+			// Test clearing the list
+			list.Clear ();
+			Assert.AreEqual (0, list.Count, "Incorrect count after Clear().");
+		}
+
+		[Test]
 		public void TestUnsortedUniqueIdSet ()
 		{
 			UniqueId[] uids = {
@@ -131,7 +219,7 @@ namespace UnitTests {
 				new UniqueId (4), new UniqueId (5), new UniqueId (6),
 				new UniqueId (7), new UniqueId (8), new UniqueId (9)
 			};
-			var list = new UniqueIdSet (uids, false);
+			var list = new UniqueIdSet (uids);
 			var actual = list.ToString ();
 
 			Assert.AreEqual ("1:9", actual, "Incorrect initial value.");
@@ -221,6 +309,16 @@ namespace UnitTests {
 			var actual = list.ToString ();
 
 			Assert.AreEqual ("1,3,5,7,9", actual);
+
+			list = new UniqueIdSet (uids, SortOrder.Ascending);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("1,3,5,7,9", actual, "Unexpected result for ascending set.");
+
+			list = new UniqueIdSet (uids, SortOrder.Descending);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("9,7,5,3,1", actual, "Unexpected result for descending set.");
 		}
 
 		[Test]
@@ -235,7 +333,17 @@ namespace UnitTests {
 			var list = new UniqueIdSet (uids);
 			var actual = list.ToString ();
 
-			Assert.AreEqual ("1:3,5:6,9:12,15,19:20", actual);
+			Assert.AreEqual ("1:3,5:6,9:12,15,19:20", actual, "Unexpected result for unsorted set.");
+
+			list = new UniqueIdSet (uids, SortOrder.Ascending);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("1:3,5:6,9:12,15,19:20", actual, "Unexpected result for ascending set.");
+
+			list = new UniqueIdSet (uids, SortOrder.Descending);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("20:19,15,12:9,6:5,3:1", actual, "Unexpected result for descending set.");
 		}
 
 		[Test]
@@ -247,15 +355,20 @@ namespace UnitTests {
 				new UniqueId (9), new UniqueId (6), new UniqueId (5),
 				new UniqueId (3), new UniqueId (2), new UniqueId (1)
 			};
-			var list = new UniqueIdSet (uids, false);
+			var list = new UniqueIdSet (uids);
 			var actual = list.ToString ();
 
 			Assert.AreEqual ("20:19,15,12:9,6:5,3:1", actual, "Unexpected result for unsorted set.");
 
-			list = new UniqueIdSet (uids, true);
+			list = new UniqueIdSet (uids, SortOrder.Ascending);
 			actual = list.ToString ();
 
-			Assert.AreEqual ("1:3,5:6,9:12,15,19:20", actual, "Unexpected result for sorted set.");
+			Assert.AreEqual ("1:3,5:6,9:12,15,19:20", actual, "Unexpected result for ascending set.");
+
+			list = new UniqueIdSet (uids, SortOrder.Descending);
+			actual = list.ToString ();
+
+			Assert.AreEqual ("20:19,15,12:9,6:5,3:1", actual, "Unexpected result for descending set.");
 		}
 
 		[Test]
@@ -265,6 +378,7 @@ namespace UnitTests {
 			UniqueIdSet uids;
 
 			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (SortOrder.Ascending, uids.SortOrder);
 			Assert.AreEqual (example, uids.ToString ());
 		}
 
@@ -276,6 +390,7 @@ namespace UnitTests {
 			UniqueIdSet uids;
 
 			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (SortOrder.Descending, uids.SortOrder);
 			Assert.AreEqual (example, uids.ToString ());
 			Assert.AreEqual (ids.Length, uids.Count);
 
@@ -291,6 +406,7 @@ namespace UnitTests {
 			UniqueIdSet uids;
 
 			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (SortOrder.Descending, uids.SortOrder);
 			Assert.AreEqual (example, uids.ToString ());
 			Assert.AreEqual (ids.Length, uids.Count);
 
@@ -306,7 +422,7 @@ namespace UnitTests {
 		}
 
 		[Test]
-		public void TestCopyTo()
+		public void TestCopyTo ()
 		{
 			var ids = new uint[] { 20, 19, 15, 12, 11, 10, 9, 6, 5, 3, 2, 1 };
 			const string example = "20:19,15,12:9,6:5,3:1";
@@ -314,6 +430,7 @@ namespace UnitTests {
 			UniqueIdSet uids;
 
 			Assert.IsTrue (UniqueIdSet.TryParse (example, out uids), "Failed to parse uids.");
+			Assert.AreEqual (SortOrder.Descending, uids.SortOrder);
 			Assert.AreEqual (example, uids.ToString ());
 			Assert.AreEqual (ids.Length, uids.Count);
 
