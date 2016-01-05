@@ -3856,8 +3856,8 @@ namespace MailKit {
 
 			var uids = CopyTo (new [] { uid }, destination, cancellationToken);
 
-			if (uids != null && uids.Count > 0)
-				return uids[0];
+			if (uids != null && uids.Destination.Count > 0)
+				return uids.Destination[0];
 
 			return null;
 		}
@@ -3925,7 +3925,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -3966,7 +3966,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -3974,7 +3974,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -4017,7 +4017,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");
@@ -4087,8 +4087,8 @@ namespace MailKit {
 
 			var uids = MoveTo (new [] { uid }, destination, cancellationToken);
 
-			if (uids != null && uids.Count > 0)
-				return uids[0];
+			if (uids != null && uids.Destination.Count > 0)
+				return uids.Destination[0];
 
 			return null;
 		}
@@ -4156,7 +4156,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -4199,7 +4199,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IList<UniqueId> MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		public abstract UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -4207,7 +4207,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -4250,7 +4250,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IList<UniqueId>> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
 				throw new ArgumentNullException ("uids");

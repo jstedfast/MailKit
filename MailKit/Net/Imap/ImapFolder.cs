@@ -2823,7 +2823,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2869,7 +2869,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			var set = ImapUtils.FormatUidSet (uids);
 
@@ -2882,12 +2882,12 @@ namespace MailKit.Net.Imap {
 			CheckState (true, false);
 
 			if (uids.Count == 0)
-				return new UniqueId[0];
+				return UniqueIdMap.Empty;
 
 			if ((Engine.Capabilities & ImapCapabilities.UidPlus) == 0) {
 				var indexes = Fetch (uids, MessageSummaryItems.UniqueId, cancellationToken).Select (x => x.Index).ToList ();
 				CopyTo (indexes, destination, cancellationToken);
-				return new UniqueId[0];
+				return UniqueIdMap.Empty;
 			}
 
 			var command = string.Format ("UID COPY {0} %F\r\n", set);
@@ -2903,9 +2903,9 @@ namespace MailKit.Net.Imap {
 			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
 
 			if (copy != null)
-				return copy.DestUidSet;
+				return new UniqueIdMap (copy.SrcUidSet, copy.DestUidSet);
 
-			return new UniqueId[0];
+			return UniqueIdMap.Empty;
 		}
 
 		/// <summary>
@@ -2923,7 +2923,7 @@ namespace MailKit.Net.Imap {
 		/// the IMAP server does not support the MOVE command in order to better handle spontanious server
 		/// disconnects and other error conditions.</para>
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to move.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
@@ -2966,7 +2966,7 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapCommandException">
 		/// The server replied with a NO or BAD response.
 		/// </exception>
-		public override IList<UniqueId> MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
+		public override UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((Engine.Capabilities & ImapCapabilities.Move) == 0) {
 				var copied = CopyTo (uids, destination, cancellationToken);
@@ -2979,7 +2979,7 @@ namespace MailKit.Net.Imap {
 				var indexes = Fetch (uids, MessageSummaryItems.UniqueId, cancellationToken).Select (x => x.Index).ToList ();
 				MoveTo (indexes, destination, cancellationToken);
 				Expunge (uids, cancellationToken);
-				return new UniqueId[0];
+				return UniqueIdMap.Empty;
 			}
 
 			var set = ImapUtils.FormatUidSet (uids);
@@ -2993,7 +2993,7 @@ namespace MailKit.Net.Imap {
 			CheckState (true, true);
 
 			if (uids.Count == 0)
-				return new UniqueId[0];
+				return UniqueIdMap.Empty;
 
 			var command = string.Format ("UID MOVE {0} %F\r\n", set);
 			var ic = Engine.QueueCommand (cancellationToken, this, command, destination);
@@ -3008,9 +3008,9 @@ namespace MailKit.Net.Imap {
 			var copy = ic.RespCodes.OfType<CopyUidResponseCode> ().FirstOrDefault ();
 
 			if (copy != null)
-				return copy.DestUidSet;
+				return new UniqueIdMap (copy.SrcUidSet, copy.DestUidSet);
 
-			return new UniqueId[0];
+			return UniqueIdMap.Empty;
 		}
 
 		/// <summary>

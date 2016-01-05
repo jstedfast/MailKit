@@ -257,6 +257,7 @@
     <Compile Include="StatusItems.cs" />
     <Compile Include="ThreadingAlgorithm.cs" />
     <Compile Include="UniqueId.cs" />
+    <Compile Include="UniqueIdMap.cs" />
     <Compile Include="UniqueIdRange.cs" />
     <Compile Include="UniqueIdSet.cs" />
     <Compile Include="UriExtensions.cs" />

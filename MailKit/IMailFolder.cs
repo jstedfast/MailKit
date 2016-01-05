@@ -1193,11 +1193,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		UniqueIdMap CopyTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously copy the specified messages to the destination folder.
@@ -1205,11 +1205,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously copies the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Move the specified message to the destination folder.
@@ -1241,11 +1241,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		IList<UniqueId> MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		UniqueIdMap MoveTo (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously move the specified messages to the destination folder.
@@ -1253,11 +1253,11 @@ namespace MailKit {
 		/// <remarks>
 		/// Asynchronously moves the specified messages to the destination folder.
 		/// </remarks>
-		/// <returns>The UIDs of the messages in the destination folder, if available; otherwise an empty array.</returns>
+		/// <returns>The UID mapping of the messages in the destination folder, if available; otherwise an empty mapping.</returns>
 		/// <param name="uids">The UIDs of the messages to copy.</param>
 		/// <param name="destination">The destination folder.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		Task<IList<UniqueId>> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
+		Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Copy the specified message to the destination folder.
