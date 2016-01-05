@@ -30,57 +30,15 @@ using System.Collections.Generic;
 
 namespace MailKit {
 	/// <summary>
-	/// A unique identifier mapping.
-	/// </summary>
-	/// <remarks>
-	/// Maps a source UID to a destination UID.
-	/// </remarks>
-	public class UniqueIdMapping
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="MailKit.UniqueIdMapping"/> class.
-		/// </summary>
-		/// <remarks>
-		/// Creates a new <see cref="MailKit.UniqueIdMapping"/>.
-		/// </remarks>
-		/// <param name="src">The source UID.</param>
-		/// <param name="dest">The destination UID.</param>
-		public UniqueIdMapping (UniqueId src, UniqueId dest)
-		{
-			Destination = dest;
-			Source = src;
-		}
-
-		/// <summary>
-		/// Gets the unique identifier of the message in the source folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets the unique identifier of the message in the source folder.
-		/// </remarks>
-		/// <value>The unique identifier of the message in the source folder.</value>
-		public UniqueId Source {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the unique identifier of the message in the destination folder.
-		/// </summary>
-		/// <remarks>
-		/// Gets the unique identifier of the message in the destination folder.
-		/// </remarks>
-		/// <value>The unique identifier of the message in the destination folder.</value>
-		public UniqueId Destination {
-			get; private set;
-		}
-	}
-
-	/// <summary>
 	/// A mapping of unique identifiers.
 	/// </summary>
 	/// <remarks>
-	/// A mapping of unique identifiers.
+	/// <para>A <see cref="UniqueIdMap"/> can be used to discover the mapping of one set of unique identifiers
+	/// to another.</para>
+	/// <para>For example, when copying or moving messages from one folder to another, it is often desirable
+	/// to know what the unique identifiers are for each of the messages in the destination folder.</para>
 	/// </remarks>
-	public class UniqueIdMap : IEnumerable<UniqueIdMapping>
+	public class UniqueIdMap : IReadOnlyDictionary<UniqueId, UniqueId>
 	{
 		/// <summary>
 		/// Any empty mapping of unique identifiers.
@@ -121,10 +79,10 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the unique identifiers used in the source folder.
+		/// Gets the list of unique identifiers used in the source folder.
 		/// </summary>
 		/// <remarks>
-		/// Gets the unique identifiers used in the source folder.
+		/// Gets the list of unique identifiers used in the source folder.
 		/// </remarks>
 		/// <value>The unique identifiers used in the source folder.</value>
 		public IList<UniqueId> Source {
@@ -132,14 +90,59 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the unique identifiers used in the destination folder.
+		/// Gets the list of unique identifiers used in the destination folder.
 		/// </summary>
 		/// <remarks>
-		/// Gets the unique identifiers used in the destination folder.
+		/// Gets the list of unique identifiers used in the destination folder.
 		/// </remarks>
 		/// <value>The unique identifiers used in the destination folder.</value>
 		public IList<UniqueId> Destination {
 			get; private set;
+		}
+
+		/// <summary>
+		/// Gets the number of unique identifiers that have been remapped.
+		/// </summary>
+		/// <remarks>
+		/// Gets the number of unique identifiers that have been remapped.
+		/// </remarks>
+		/// <value>The count.</value>
+		public int Count {
+			get { return Source.Count; }
+		}
+
+		/// <summary>
+		/// Gets the keys.
+		/// </summary>
+		/// <remarks>
+		/// Gets the keys.
+		/// </remarks>
+		/// <value>The keys.</value>
+		IEnumerable<UniqueId> IReadOnlyDictionary<UniqueId, UniqueId>.Keys {
+			get { return Source; }
+		}
+
+		/// <summary>
+		/// Gets the values.
+		/// </summary>
+		/// <remarks>
+		/// Gets the values.
+		/// </remarks>
+		/// <value>The values.</value>
+		IEnumerable<UniqueId> IReadOnlyDictionary<UniqueId, UniqueId>.Values {
+			get { return Destination; }
+		}
+
+		/// <summary>
+		/// Checks if the specified unique identifier has been remapped.
+		/// </summary>
+		/// <remarks>
+		/// Checks if the specified unique identifier has been remapped.
+		/// </remarks>
+		/// <param name="key">The unique identifier.</param>
+		public bool ContainsKey (UniqueId key)
+		{
+			return Source.Contains (key);
 		}
 
 		/// <summary>
@@ -149,18 +152,18 @@ namespace MailKit {
 		/// Attempts to get the remapped unique identifier.
 		/// </remarks>
 		/// <returns><c>true</c> on success; otherwise, <c>false</c>.</returns>
-		/// <param name="src">The unique identifier of the message in the source folder.</param>
-		/// <param name="dest">The unique identifier of the message in the destination folder.</param>
-		public bool TryGetValue (UniqueId src, out UniqueId dest)
+		/// <param name="key">The unique identifier of the message in the source folder.</param>
+		/// <param name="value">The unique identifier of the message in the destination folder.</param>
+		public bool TryGetValue (UniqueId key, out UniqueId value)
 		{
-			int index = Source.IndexOf (src);
+			int index = Source.IndexOf (key);
 
 			if (index == -1 || index >= Destination.Count) {
-				dest = UniqueId.Invalid;
+				value = UniqueId.Invalid;
 				return false;
 			}
 
-			dest = Destination[index];
+			value = Destination[index];
 
 			return true;
 		}
@@ -187,28 +190,28 @@ namespace MailKit {
 		}
 
 		/// <summary>
-		/// Gets the enumerator.
+		/// Gets the enumerator for the remapped unique identifiers.
 		/// </summary>
 		/// <remarks>
-		/// Gets the enumerator.
+		/// Gets the enumerator for the remapped unique identifiers.
 		/// </remarks>
 		/// <returns>The enumerator.</returns>
-		public IEnumerator<UniqueIdMapping> GetEnumerator ()
+		public IEnumerator<KeyValuePair<UniqueId, UniqueId>> GetEnumerator ()
 		{
 			var dst = Destination.GetEnumerator ();
 			var src = Source.GetEnumerator ();
 
 			while (src.MoveNext () && dst.MoveNext ())
-				yield return new UniqueIdMapping (src.Current, dst.Current);
+				yield return new KeyValuePair<UniqueId, UniqueId> (src.Current, dst.Current);
 
 			yield break;
 		}
 
 		/// <summary>
-		/// Gets the enumerator.
+		/// Gets the enumerator for the remapped unique identifiers.
 		/// </summary>
 		/// <remarks>
-		/// Gets the enumerator.
+		/// Gets the enumerator for the remapped unique identifiers.
 		/// </remarks>
 		/// <returns>The enumerator.</returns>
 		IEnumerator IEnumerable.GetEnumerator ()
