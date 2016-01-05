@@ -24,6 +24,8 @@
 // THE SOFTWARE.
 //
 
+using System;
+
 namespace MailKit.Search {
 	/// <summary>
 	/// Specifies a sort order for search results.
@@ -35,17 +37,42 @@ namespace MailKit.Search {
 	/// </remarks>
 	public class OrderBy
 	{
-		OrderBy (OrderByType type, SortOrder order)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Search.OrderBy"/> class.
+		/// </summary>
+		/// <param name="type">The field to sort by.</param>
+		/// <param name="order">The sort order.</param>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="order"/> cannot be <see cref="SortOrder.None"/>.
+		/// </exception>
+		public OrderBy (OrderByType type, SortOrder order)
 		{
+			if (order == SortOrder.None)
+				throw new ArgumentOutOfRangeException ("order");
+
 			Order = order;
 			Type = type;
 		}
 
-		internal OrderByType Type {
+		/// <summary>
+		/// Gets the field used for sorting.
+		/// </summary>
+		/// <remarks>
+		/// Gets the field used for sorting.
+		/// </remarks>
+		/// <value>The field used for sorting.</value>
+		public OrderByType Type {
 			get; private set;
 		}
 
-		internal SortOrder Order {
+		/// <summary>
+		/// Gets the sort order.
+		/// </summary>
+		/// <remarks>
+		/// Gets the sort order.
+		/// </remarks>
+		/// <value>The sort order.</value>
+		public SortOrder Order {
 			get; private set;
 		}
 

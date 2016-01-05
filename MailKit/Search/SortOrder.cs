@@ -31,7 +31,12 @@ namespace MailKit.Search {
 	/// <remarks>
 	/// An enumeration of sort orders.
 	/// </remarks>
-	enum SortOrder {
+	public enum SortOrder {
+		/// <summary>
+		/// No sorting order.
+		/// </summary>
+		None,
+
 		/// <summary>
 		/// Sort in ascending order.
 		/// </summary>
