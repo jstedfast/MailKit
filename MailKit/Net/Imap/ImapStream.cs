@@ -328,7 +328,7 @@ namespace MailKit.Net.Imap {
 
 			try {
 #if !NETFX_CORE
-				bool buffered = Stream is SslStream;
+				bool buffered = !(Stream is NetworkStream);
 #else
 				bool buffered = true;
 #endif
