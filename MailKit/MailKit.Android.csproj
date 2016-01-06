@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9BF818C3-C20E-4EFB-9426-F0A6C2EDC627}</ProjectGuid>
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -58,6 +56,10 @@
     <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.Android.csproj">
       <Project>{004B4019-62B7-4A15-AF2C-C20968845C46}</Project>
       <Name>MimeKit.Android</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.Android.csproj">
+      <Project>{A0D302CB-8866-4AB1-98B9-F0772EABF5DF}</Project>
+      <Name>BouncyCastle.Android</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -213,5 +215,5 @@
     <Folder Include="Security\" />
     <Folder Include="Security\Ntlm\" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

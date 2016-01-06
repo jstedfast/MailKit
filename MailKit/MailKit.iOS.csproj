@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{60B5D72B-8219-48B6-B688-AD0FE284A96A}</ProjectGuid>
     <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
@@ -52,6 +50,10 @@
     <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.iOS.csproj">
       <Project>{4C1288AD-12C8-4BF7-AED7-6C4DC539C856}</Project>
       <Name>MimeKit.iOS</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.iOS.csproj">
+      <Project>{0249241C-205E-4AC0-828B-90F822359B9E}</Project>
+      <Name>BouncyCastle.iOS</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

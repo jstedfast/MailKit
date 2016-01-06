@@ -1,9 +1,9 @@
 ﻿//
-// DeflateStream.cs
+// CompressedStream.cs
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2016 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2013-2016 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -26,107 +26,29 @@
 
 using System;
 using System.IO;
-using System.IO.Compression;
+
+using Org.BouncyCastle.Utilities.Zlib;
 
 namespace MailKit {
-//	class LogStream : Stream
-//	{
-//		readonly Stream log;
-//		readonly Stream source;
-//
-//		public LogStream (Stream src, string filename)
-//		{
-//			log = File.Create (filename);
-//			source = src;
-//		}
-//
-//		public override bool CanRead {
-//			get { return source.CanRead; }
-//		}
-//
-//		public override bool CanWrite {
-//			get { return source.CanWrite; }
-//		}
-//
-//		public override bool CanSeek {
-//			get { return source.CanSeek; }
-//		}
-//
-//		public override bool CanTimeout {
-//			get { return source.CanTimeout; }
-//		}
-//
-//		public override int ReadTimeout {
-//			get { return source.ReadTimeout; }
-//			set { source.ReadTimeout = value; }
-//		}
-//
-//		public override int WriteTimeout {
-//			get { return source.WriteTimeout; }
-//			set { source.WriteTimeout = value; }
-//		}
-//
-//		public override long Position {
-//			get { return source.Position; }
-//			set { source.Position = value; }
-//		}
-//
-//		public override long Length {
-//			get { return source.Length; }
-//		}
-//
-//		public override int Read (byte[] buffer, int offset, int count)
-//		{
-//			int n = source.Read (buffer, offset, count);
-//
-//			log.Write (buffer, offset, n);
-//			log.Flush ();
-//
-//			return n;
-//		}
-//
-//		public override void Write (byte[] buffer, int offset, int count)
-//		{
-//			source.Write (buffer, offset, count);
-//
-//			log.Write (buffer, offset, count);
-//			log.Flush ();
-//		}
-//
-//		public override long Seek (long offset, SeekOrigin origin)
-//		{
-//			return source.Seek (offset, origin);
-//		}
-//
-//		public override void SetLength (long value)
-//		{
-//			source.SetLength (value);
-//		}
-//
-//		public override void Flush ()
-//		{
-//			source.Flush ();
-//			log.Flush ();
-//		}
-//
-//		protected override void Dispose (bool disposing)
-//		{
-//			if (disposing)
-//				log.Dispose ();
-//
-//			base.Dispose (disposing);
-//		}
-//	}
-
+	/// <summary>
+	/// A compressed stream.
+	/// </summary>
 	class CompressedStream : Stream
 	{
-		bool disposed;
+		readonly ZStream zIn, zOut;
+		bool eos, disposed;
 
 		public CompressedStream (Stream baseStream)
 		{
-			InputStream = new DeflateStream (baseStream, CompressionMode.Decompress, true);
 			BaseStream = baseStream;
-			Initialize ();
+
+			zOut = new ZStream ();
+			zOut.deflateInit (5, true);
+			zOut.next_out = new byte[4096];
+
+			zIn = new ZStream ();
+			zIn.inflateInit (true);
+			zIn.next_in = new byte[4096];
 		}
 
 		/// <summary>
@@ -135,22 +57,6 @@ namespace MailKit {
 		/// <value>The base stream.</value>
 		public Stream BaseStream {
 			get; private set;
-		}
-
-		/// <summary>
-		/// Gets the input stream.
-		/// </summary>
-		/// <value>The input stream.</value>
-		Stream InputStream {
-			get; set;
-		}
-
-		/// <summary>
-		/// Gets the output stream.
-		/// </summary>
-		/// <value>The output stream.</value>
-		Stream OutputStream {
-			get; set;
 		}
 
 		/// <summary>
@@ -245,12 +151,7 @@ namespace MailKit {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("DeflateStream");
-		}
-
-		void Initialize ()
-		{
-			OutputStream = new DeflateStream (BaseStream, CompressionMode.Compress, true);
+				throw new ObjectDisposedException ("CompressedStream");
 		}
 
 		/// <summary>
@@ -283,7 +184,33 @@ namespace MailKit {
 
 			ValidateArguments (buffer, offset, count);
 
-			return InputStream.Read (buffer, offset, count);
+			if (count == 0)
+				return 0;
+
+			zIn.next_out = buffer;
+			zIn.next_out_index = offset;
+			zIn.avail_out = count;
+
+			do {
+				if (zIn.avail_in == 0 && !eos) {
+					zIn.avail_in = BaseStream.Read (zIn.next_in, 0, zIn.next_in.Length);
+					eos = zIn.avail_in == 0;
+					zIn.next_in_index = 0;
+				}
+
+				int retval = zIn.inflate (JZlib.Z_FULL_FLUSH);
+
+				if (retval == JZlib.Z_STREAM_END)
+					break;
+
+				if (eos && retval == JZlib.Z_BUF_ERROR)
+					return 0;
+
+				if (retval != JZlib.Z_OK)
+					throw new IOException ("Error inflating: " + zIn.msg);
+			} while (zIn.avail_out == count);
+
+			return count - zIn.avail_out;
 		}
 
 		/// <summary>
@@ -317,7 +244,22 @@ namespace MailKit {
 
 			ValidateArguments (buffer, offset, count);
 
-			OutputStream.Write (buffer, offset, count);
+			if (count == 0)
+				return;
+
+			zOut.next_in = buffer;
+			zOut.next_in_index = offset;
+			zOut.avail_in = count;
+
+			do {
+				zOut.avail_out = zOut.next_out.Length;
+				zOut.next_out_index = 0;
+
+				if (zOut.deflate (JZlib.Z_FULL_FLUSH) != JZlib.Z_OK)
+					throw new IOException ("Error deflating: " + zOut.msg);
+
+				BaseStream.Write (zOut.next_out, 0, zOut.next_out.Length - zOut.avail_out);
+			} while (zOut.avail_in > 0 || zOut.avail_out == 0);
 		}
 
 		/// <summary>
@@ -337,9 +279,7 @@ namespace MailKit {
 		{
 			CheckDisposed ();
 
-			OutputStream.Dispose ();
-
-			Initialize ();
+			BaseStream.Flush ();
 		}
 
 		/// <summary>
@@ -377,10 +317,10 @@ namespace MailKit {
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && !disposed) {
-				OutputStream.Dispose ();
-				InputStream.Dispose ();
 				BaseStream.Dispose ();
 				disposed = true;
+				zOut.free ();
+				zIn.free ();
 			}
 
 			base.Dispose (disposing);
