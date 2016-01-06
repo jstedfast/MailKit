@@ -291,8 +291,14 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
-			if (ic.Response != ImapCommandResponse.Ok)
+			if (ic.Response != ImapCommandResponse.Ok) {
+				for (int i = 0; i < ic.RespCodes.Count; i++) {
+					if (ic.RespCodes[i].Type == ImapResponseCodeType.CompressionActive)
+						return;
+				}
+
 				throw ImapCommandException.Create ("COMPRESS", ic);
+			}
 
 			engine.Stream.Stream = new CompressedStream (engine.Stream.Stream);
 
