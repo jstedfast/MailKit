@@ -123,7 +123,7 @@ namespace MailKit {
 		/// Gets the keys.
 		/// </remarks>
 		/// <value>The keys.</value>
-		IEnumerable<UniqueId> IReadOnlyDictionary<UniqueId, UniqueId>.Keys {
+		public IEnumerable<UniqueId> Keys {
 			get { return Source; }
 		}
 
@@ -134,7 +134,7 @@ namespace MailKit {
 		/// Gets the values.
 		/// </remarks>
 		/// <value>The values.</value>
-		IEnumerable<UniqueId> IReadOnlyDictionary<UniqueId, UniqueId>.Values {
+		public IEnumerable<UniqueId> Values {
 			get { return Destination; }
 		}
 
