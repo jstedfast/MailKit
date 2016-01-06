@@ -29,7 +29,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.IO.Compression;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -45,7 +44,6 @@ using System.Security.Cryptography.X509Certificates;
 #endif
 
 using MailKit.Security;
-using MimeKit.Utils;
 
 namespace MailKit.Net.Imap {
 	/// <summary>
@@ -296,10 +294,7 @@ namespace MailKit.Net.Imap {
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("COMPRESS", ic);
 
-			var unzip = new DeflateStream (engine.Stream.Stream, CompressionMode.Decompress);
-			var zip = new DeflateStream (engine.Stream.Stream, CompressionMode.Compress);
-
-			engine.Stream.Stream = new DuplexStream (unzip, zip);
+			engine.Stream.Stream = new CompressedStream (engine.Stream.Stream);
 
 			// Query the CAPABILITIES again if the server did not include an
 			// untagged CAPABILITIES response to the COMPRESS command.
