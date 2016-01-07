@@ -213,8 +213,6 @@ namespace MimeKit.Examples
 				converter = new TextToHtml ();
 			}
 
-			string text = entity.Text;
-
 			body = converter.Convert (entity.Text);
 		}
 
