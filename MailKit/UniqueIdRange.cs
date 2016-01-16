@@ -41,6 +41,26 @@ namespace MailKit {
 	{
 		static readonly UniqueIdRange Invalid = new UniqueIdRange (new UniqueId (0), new UniqueId (0));
 
+		readonly uint validity;
+		internal uint start;
+		internal uint end;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.UniqueIdRange"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new range of unique identifiers.
+		/// </remarks>
+		/// <param name="validity">The uid validity.</param>
+		/// <param name="start">The first unique identifier in the range.</param>
+		/// <param name="end">The last unique identifier in the range.</param>
+		public UniqueIdRange (uint validity, uint start, uint end)
+		{
+			this.validity = validity;
+			this.start = start;
+			this.end = end;
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueIdRange"/> class.
 		/// </summary>
@@ -51,8 +71,20 @@ namespace MailKit {
 		/// <param name="end">The last <see cref="UniqueId"/> in the range.</param>
 		public UniqueIdRange (UniqueId start, UniqueId end)
 		{
-			Start = start;
-			End = end;
+			this.validity = start.Validity;
+			this.start = start.Id;
+			this.end = end.Id;
+		}
+
+		/// <summary>
+		/// Gets the validity, if non-zero.
+		/// </summary>
+		/// <remarks>
+		/// Gets the UidValidity of the containing folder.
+		/// </remarks>
+		/// <value>The UidValidity of the containing folder.</value>
+		public uint Validity {
+			get { return validity; }
 		}
 
 		/// <summary>
@@ -63,7 +95,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The minimum unique identifier.</value>
 		public UniqueId Min {
-			get { return Start < End ? Start : End; }
+			get { return start < end ? new UniqueId (validity, start) : new UniqueId (validity, end); }
 		}
 
 		/// <summary>
@@ -74,7 +106,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The maximum unique identifier.</value>
 		public UniqueId Max {
-			get { return Start > End ? Start : End; }
+			get { return start > end ? new UniqueId (validity, start) : new UniqueId (validity, end); }
 		}
 
 		/// <summary>
@@ -85,7 +117,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The start of the range.</value>
 		public UniqueId Start {
-			get; internal set;
+			get { return new UniqueId (validity, start); }
 		}
 
 		/// <summary>
@@ -96,7 +128,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The end of the range.</value>
 		public UniqueId End {
-			get; internal set;
+			get { return new UniqueId (validity, end); }
 		}
 
 		#region ICollection implementation
@@ -109,7 +141,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The count.</value>
 		public int Count {
-			get { return (int) (Start <= End ? End.Id - Start.Id : Start.Id - End.Id) + 1; }
+			get { return (int) (start <= end ? end - start : start - end) + 1; }
 		}
 
 		/// <summary>
@@ -163,10 +195,10 @@ namespace MailKit {
 		/// <param name="uid">The unique id.</param>
 		public bool Contains (UniqueId uid)
 		{
-			if (Start.Id <= End.Id)
-				return uid.Id >= Start.Id && uid.Id <= End.Id;
+			if (start <= end)
+				return uid.Id >= start && uid.Id <= end;
 
-			return uid.Id <= Start.Id && uid.Id >= End.Id;
+			return uid.Id <= start && uid.Id >= end;
 		}
 
 		/// <summary>
@@ -194,12 +226,12 @@ namespace MailKit {
 
 			int index = arrayIndex;
 
-			if (Start <= End) {
-				for (uint uid = Start.Id; uid <= End.Id; uid++, index++)
-					array[index] = new UniqueId (uid);
+			if (start <= end) {
+				for (uint uid = start; uid <= end; uid++, index++)
+					array[index] = new UniqueId (validity, uid);
 			} else {
-				for (uint uid = Start.Id; uid >= End.Id; uid--, index++)
-					array[index] = new UniqueId (uid);
+				for (uint uid = start; uid >= end; uid--, index++)
+					array[index] = new UniqueId (validity, uid);
 			}
 		}
 
@@ -233,17 +265,17 @@ namespace MailKit {
 		/// <param name="uid">The unique id.</param>
 		public int IndexOf (UniqueId uid)
 		{
-			if (Start <= End) {
-				if (uid.Id < Start.Id || uid.Id > End.Id)
+			if (start <= end) {
+				if (uid.Id < start || uid.Id > end)
 					return -1;
 
-				return (int) (uid.Id - Start.Id);
+				return (int) (uid.Id - start);
 			}
 
-			if (uid.Id > Start.Id || uid.Id < End.Id)
+			if (uid.Id > start || uid.Id < end)
 				return -1;
 
-			return (int) (Start.Id - uid.Id);
+			return (int) (start - uid.Id);
 		}
 
 		/// <summary>
@@ -296,9 +328,9 @@ namespace MailKit {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				uint uid = Start <= End ? Start.Id + (uint) index : Start.Id - (uint) index;
+				uint uid = start <= end ? start + (uint) index : start - (uint) index;
 
-				return new UniqueId (uid);
+				return new UniqueId (validity, uid);
 			}
 			set {
 				throw new NotSupportedException ();
@@ -318,12 +350,12 @@ namespace MailKit {
 		/// <returns>The enumerator.</returns>
 		public IEnumerator<UniqueId> GetEnumerator ()
 		{
-			if (Start <= End) {
-				for (uint uid = Start.Id; uid <= End.Id; uid++)
-					yield return new UniqueId (uid);
+			if (start <= end) {
+				for (uint uid = start; uid <= end; uid++)
+					yield return new UniqueId (validity, uid);
 			} else {
-				for (uint uid = Start.Id; uid >= End.Id; uid--)
-					yield return new UniqueId (uid);
+				for (uint uid = start; uid >= end; uid--)
+					yield return new UniqueId (validity, uid);
 			}
 
 			yield break;
@@ -356,13 +388,13 @@ namespace MailKit {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="UniqueIdRange"/>.</returns>
 		public override string ToString ()
 		{
-			if (Start == End)
-				return Start.ToString ();
+			if (start == end)
+				return start.ToString ();
 
-			if (Start <= End && End == UniqueId.MaxValue)
-				return string.Format ("{0}:*", Start);
+			if (start <= end && end == uint.MaxValue)
+				return string.Format ("{0}:*", start);
 
-			return string.Format ("{0}:{1}", Start, End);
+			return string.Format ("{0}:{1}", start, end);
 		}
 
 		/// <summary>
@@ -378,21 +410,21 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="token"/> is <c>null</c>.
 		/// </exception>
-		public bool TryParse (string token, uint validity, out UniqueIdRange range)
+		public static bool TryParse (string token, uint validity, out UniqueIdRange range)
 		{
 			if (token == null)
 				throw new ArgumentNullException ("token");
 
-			UniqueId start, end;
+			uint start, end;
 			int index = 0;
 
-			if (!UniqueId.TryParse (token, ref index, validity, out start) || index + 2 >= token.Length || token[index++] != ':') {
+			if (!UniqueId.TryParse (token, ref index, out start) || index + 2 >= token.Length || token[index++] != ':') {
 				range = Invalid;
 				return false;
 			}
 
 			if (token[index] != '*') {
-				if (!UniqueId.TryParse (token, ref index, validity, out end) || index < token.Length) {
+				if (!UniqueId.TryParse (token, ref index, out end) || index < token.Length) {
 					range = Invalid;
 					return false;
 				}
@@ -400,10 +432,10 @@ namespace MailKit {
 				range = Invalid;
 				return false;
 			} else {
-				end = UniqueId.MaxValue;
+				end = uint.MaxValue;
 			}
 
-			range = new UniqueIdRange (start, end);
+			range = new UniqueIdRange (validity, start, end);
 
 			return true;
 		}
@@ -420,7 +452,7 @@ namespace MailKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="token"/> is <c>null</c>.
 		/// </exception>
-		public bool TryParse (string token, out UniqueIdRange range)
+		public static bool TryParse (string token, out UniqueIdRange range)
 		{
 			return TryParse (token, 0, out range);
 		}

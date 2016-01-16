@@ -41,7 +41,7 @@ namespace MailKit {
 	/// </remarks>
 	public class UniqueIdSet : IList<UniqueId>
 	{
-		readonly List<UniqueIdRange> ranges;
+		readonly List<UniqueIdRange> ranges = new List<UniqueIdRange> ();
 		long count;
 
 		/// <summary>
@@ -65,7 +65,6 @@ namespace MailKit {
 				throw new ArgumentOutOfRangeException ("order");
 			}
 
-			ranges = new List<UniqueIdRange> ();
 			SortOrder = order;
 		}
 
@@ -212,13 +211,13 @@ namespace MailKit {
 					if (uid.Id == ranges[i].End.Id + 1) {
 						if (i + 1 < ranges.Count && uid.Id + 1 >= ranges[i + 1].Start.Id) {
 							// merge the 2 ranges together
-							ranges[i].End = ranges[i + 1].End;
+							ranges[i].end = ranges[i + 1].end;
 							ranges.RemoveAt (i + 1);
 							count++;
 							return;
 						}
 
-						ranges[i].End = uid;
+						ranges[i].end = uid.Id;
 						count++;
 						return;
 					}
@@ -229,13 +228,13 @@ namespace MailKit {
 					if (uid.Id == ranges[i].Start.Id - 1) {
 						if (i > 0 && uid.Id - 1 <= ranges[i - 1].End.Id) {
 							// merge the 2 ranges together
-							ranges[i - 1].End = ranges[i].End;
+							ranges[i - 1].end = ranges[i].end;
 							ranges.RemoveAt (i);
 							count++;
 							return;
 						}
 
-						ranges[i].Start = uid;
+						ranges[i].start = uid.Id;
 						count++;
 						return;
 					}
@@ -269,13 +268,13 @@ namespace MailKit {
 					if (uid.Id == ranges[i].End.Id - 1) {
 						if (i + 1 < ranges.Count && uid.Id - 1 <= ranges[i + 1].Start.Id) {
 							// merge the 2 ranges together
-							ranges[i].End = ranges[i + 1].End;
+							ranges[i].end = ranges[i + 1].end;
 							ranges.RemoveAt (i + 1);
 							count++;
 							return;
 						}
 
-						ranges[i].End = uid;
+						ranges[i].end = uid.Id;
 						count++;
 						return;
 					}
@@ -286,13 +285,13 @@ namespace MailKit {
 					if (uid.Id == ranges[i].Start.Id + 1) {
 						if (i > 0 && uid.Id + 1 >= ranges[i - 1].End.Id) {
 							// merge the 2 ranges together
-							ranges[i - 1].End = ranges[i].End;
+							ranges[i - 1].end = ranges[i].end;
 							ranges.RemoveAt (i);
 							count++;
 							return;
 						}
 
-						ranges[i].Start = uid;
+						ranges[i].start = uid.Id;
 						count++;
 						return;
 					}
@@ -323,17 +322,17 @@ namespace MailKit {
 
 				if (range.Start == range.End) {
 					if (uid.Id == range.End.Id + 1 || uid.Id == range.End.Id - 1) {
-						range.End = uid;
+						range.end = uid.Id;
 						return;
 					}
 				} else if (range.Start < range.End) {
 					if (uid.Id == range.End.Id + 1) {
-						range.End = uid;
+						range.end = uid.Id;
 						return;
 					}
 				} else if (range.Start > range.End) {
 					if (uid.Id == range.End.Id - 1) {
-						range.End = uid;
+						range.end = uid.Id;
 						return;
 					}
 				}
@@ -445,34 +444,34 @@ namespace MailKit {
 			}
 		}
 
-		void Remove (int index, UniqueId uid)
+		void Remove (int index, uint uid)
 		{
 			var range = ranges[index];
 
-			if (uid == range.Start) {
+			if (uid == range.start) {
 				// remove the first item in the range
-				if (range.Start != range.End) {
-					if (range.Start <= range.End)
-						range.Start = new UniqueId (uid.Id + 1);
+				if (range.start != range.end) {
+					if (range.start <= range.end)
+						range.start = uid + 1;
 					else
-						range.Start = new UniqueId (uid.Id - 1);
+						range.start = uid - 1;
 				} else {
 					ranges.RemoveAt (index);
 				}
-			} else if (uid == range.End) {
+			} else if (uid == range.end) {
 				// remove the last item in the range
-				if (range.Start <= range.End)
-					range.End = new UniqueId (uid.Id - 1);
+				if (range.start <= range.end)
+					range.end = uid - 1;
 				else
-					range.End = new UniqueId (uid.Id + 1);
+					range.end = uid + 1;
 			} else {
 				// remove a uid from the middle of the range
-				if (range.Start < range.End) {
-					ranges.Insert (index, new UniqueIdRange (range.Start, new UniqueId (uid.Id - 1)));
-					range.Start = new UniqueId (uid.Id + 1);
+				if (range.start < range.end) {
+					ranges.Insert (index, new UniqueIdRange (range.Start, new UniqueId (uid - 1)));
+					range.start = uid + 1;
 				} else {
-					ranges.Insert (index, new UniqueIdRange (range.Start, new UniqueId (uid.Id + 1)));
-					range.Start = new UniqueId (uid.Id - 1);
+					ranges.Insert (index, new UniqueIdRange (range.Start, new UniqueId (uid + 1)));
+					range.start = uid - 1;
 				}
 			}
 
@@ -494,7 +493,7 @@ namespace MailKit {
 			if (index == -1)
 				return false;
 
-			Remove (index, uid);
+			Remove (index, uid.Id);
 
 			return true;
 		}
@@ -565,7 +564,7 @@ namespace MailKit {
 				}
 
 				var uid = ranges[i][index - offset];
-				Remove (i, uid);
+				Remove (i, uid.Id);
 				return;
 			}
 		}
@@ -761,47 +760,47 @@ namespace MailKit {
 			uids = new UniqueIdSet ();
 
 			var order = SortOrder.None;
-			UniqueId start, end;
 			bool sorted = true;
+			uint start, end;
 			uint prev = 0;
 			int index = 0;
 
 			do {
-				if (!UniqueId.TryParse (token, ref index, validity, out start))
+				if (!UniqueId.TryParse (token, ref index, out start))
 					return false;
 
 				if (index < token.Length && token[index] == ':') {
 					index++;
 
-					if (!UniqueId.TryParse (token, ref index, validity, out end))
+					if (!UniqueId.TryParse (token, ref index, out end))
 						return false;
 
-					var range = new UniqueIdRange (start, end);
+					var range = new UniqueIdRange (validity, start, end);
 					uids.count += range.Count;
 					uids.ranges.Add (range);
 
 					if (sorted) {
 						switch (order) {
-						default: sorted = true; order = start.Id < end.Id ? SortOrder.Ascending : SortOrder.Descending; break;
-						case SortOrder.Descending: sorted = start.Id > end.Id && start.Id < prev; break;
-						case SortOrder.Ascending: sorted = start.Id < end.Id && start.Id > prev; break;
+						default: sorted = true; order = start <= end ? SortOrder.Ascending : SortOrder.Descending; break;
+						case SortOrder.Descending: sorted = start >= end && start <= prev; break;
+						case SortOrder.Ascending: sorted = start <= end && start >= prev; break;
 						}
 					}
 
-					prev = end.Id;
+					prev = end;
 				} else {
-					uids.ranges.Add (new UniqueIdRange (start, start));
+					uids.ranges.Add (new UniqueIdRange (validity, start, start));
 					uids.count++;
 
 					if (sorted && uids.ranges.Count > 1) {
 						switch (order) {
-						default: sorted = true; order = start.Id > prev ? SortOrder.Ascending : SortOrder.Descending; break;
-						case SortOrder.Descending: sorted = start.Id < prev; break;
-						case SortOrder.Ascending: sorted = start.Id > prev; break;
+						default: sorted = true; order = start >= prev ? SortOrder.Ascending : SortOrder.Descending; break;
+						case SortOrder.Descending: sorted = start <= prev; break;
+						case SortOrder.Ascending: sorted = start >= prev; break;
 						}
 					}
 
-					prev = start.Id;
+					prev = start;
 				}
 
 				if (index >= token.Length)

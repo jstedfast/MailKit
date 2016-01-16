@@ -292,7 +292,7 @@ namespace MailKit {
 		/// <param name="index">The index to start parsing.</param>
 		/// <param name="validity">The UIDVALIDITY value.</param>
 		/// <param name="uid">The unique identifier.</param>
-		internal static bool TryParse (string token, ref int index, uint validity, out UniqueId uid)
+		internal static bool TryParse (string token, ref int index, out uint uid)
 		{
 			uint value = 0;
 
@@ -306,7 +306,7 @@ namespace MailKit {
 				v = (uint) (c - '0');
 
 				if (value > uint.MaxValue / 10 || (value == uint.MaxValue / 10 && v > uint.MaxValue % 10)) {
-					uid = new UniqueId (0);
+					uid = 0;
 					return false;
 				}
 
@@ -314,9 +314,9 @@ namespace MailKit {
 				index++;
 			}
 
-			uid = new UniqueId (validity, value);
+			uid = value;
 
-			return uid.Id != 0;
+			return uid != 0;
 		}
 
 		/// <summary>
