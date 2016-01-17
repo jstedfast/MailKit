@@ -278,7 +278,7 @@ namespace MailKit {
 		/// <returns>A <see cref="System.String"/> that represents the current <see cref="MailKit.UniqueId"/>.</returns>
 		public override string ToString ()
 		{
-			return Id.ToString ();
+			return Id.ToString (CultureInfo.InvariantCulture);
 		}
 
 		/// <summary>
@@ -290,7 +290,6 @@ namespace MailKit {
 		/// <returns><c>true</c> if the unique identifier was successfully parsed; otherwise, <c>false.</c>.</returns>
 		/// <param name="token">The token to parse.</param>
 		/// <param name="index">The index to start parsing.</param>
-		/// <param name="validity">The UIDVALIDITY value.</param>
 		/// <param name="uid">The unique identifier.</param>
 		internal static bool TryParse (string token, ref int index, out uint uid)
 		{
@@ -340,7 +339,7 @@ namespace MailKit {
 			uint id;
 
 			if (!uint.TryParse (token, out id)) {
-				uid = new UniqueId (0);
+				uid = Invalid;
 				return false;
 			}
 
@@ -369,7 +368,7 @@ namespace MailKit {
 			uint id;
 
 			if (!uint.TryParse (token, out id)) {
-				uid = new UniqueId (0);
+				uid = Invalid;
 				return false;
 			}
 

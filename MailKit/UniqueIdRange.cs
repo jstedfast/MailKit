@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Collections.Generic;
 
 namespace MailKit {
@@ -389,12 +390,12 @@ namespace MailKit {
 		public override string ToString ()
 		{
 			if (start == end)
-				return start.ToString ();
+				return start.ToString (CultureInfo.InvariantCulture);
 
 			if (start <= end && end == uint.MaxValue)
-				return string.Format ("{0}:*", start);
+				return string.Format (CultureInfo.InvariantCulture, "{0}:*", start);
 
-			return string.Format ("{0}:{1}", start, end);
+			return string.Format (CultureInfo.InvariantCulture, "{0}:{1}", start, end);
 		}
 
 		/// <summary>
