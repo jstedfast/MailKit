@@ -338,7 +338,7 @@ namespace MailKit {
 
 			uint id;
 
-			if (!uint.TryParse (token, out id)) {
+			if (!uint.TryParse (token, NumberStyles.None, CultureInfo.InvariantCulture, out id)) {
 				uid = Invalid;
 				return false;
 			}
@@ -362,19 +362,7 @@ namespace MailKit {
 		/// </exception>
 		public static bool TryParse (string token, out UniqueId uid)
 		{
-			if (token == null)
-				throw new ArgumentNullException ("token");
-
-			uint id;
-
-			if (!uint.TryParse (token, out id)) {
-				uid = Invalid;
-				return false;
-			}
-
-			uid = new UniqueId (id);
-
-			return true;
+			return TryParse (token, 0, out uid);
 		}
 
 		/// <summary>
@@ -397,7 +385,7 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId Parse (string token, uint validity)
 		{
-			return new UniqueId (validity, uint.Parse (token, NumberStyles.None));
+			return new UniqueId (validity, uint.Parse (token, NumberStyles.None, CultureInfo.InvariantCulture));
 		}
 
 		/// <summary>
@@ -419,7 +407,7 @@ namespace MailKit {
 		/// </exception>
 		public static UniqueId Parse (string token)
 		{
-			return new UniqueId (uint.Parse (token, NumberStyles.None));
+			return new UniqueId (uint.Parse (token, NumberStyles.None, CultureInfo.InvariantCulture));
 		}
 	}
 }

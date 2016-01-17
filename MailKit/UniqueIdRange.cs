@@ -419,7 +419,7 @@ namespace MailKit {
 			uint start, end;
 			int index = 0;
 
-			if (!UniqueId.TryParse (token, ref index, out start) || index + 2 >= token.Length || token[index++] != ':') {
+			if (!UniqueId.TryParse (token, ref index, out start) || index + 2 > token.Length || token[index++] != ':') {
 				range = Invalid;
 				return false;
 			}

@@ -82,9 +82,6 @@ namespace MailKit {
 
 			public uint this [int index] {
 				get {
-					if (index < 0 || index >= Count)
-						throw new ArgumentOutOfRangeException ("index");
-
 					return Start <= End ? Start + (uint) index : Start - (uint) index;
 				}
 			}

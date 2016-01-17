@@ -65,6 +65,8 @@
     <Compile Include="Security\SaslMechanismTests.cs" />
     <Compile Include="BodyPartTests.cs" />
     <Compile Include="UniqueIdSetTests.cs" />
+    <Compile Include="UniqueIdTests.cs" />
+    <Compile Include="UniqueIdRangeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Net\Imap\Resources\acl\authenticate.txt" />
