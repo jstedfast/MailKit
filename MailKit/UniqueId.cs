@@ -60,6 +60,9 @@ namespace MailKit {
 		/// </remarks>
 		public static readonly UniqueId MaxValue = new UniqueId (uint.MaxValue);
 
+		readonly uint validity;
+		readonly uint id;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.UniqueId"/> struct.
 		/// </summary>
@@ -70,8 +73,8 @@ namespace MailKit {
 		/// <param name="id">The unique identifier.</param>
 		public UniqueId (uint validity, uint id)
 		{
-			Validity = validity;
-			Id = id;
+			this.validity = validity;
+			this.id = id;
 		}
 
 		/// <summary>
@@ -83,8 +86,8 @@ namespace MailKit {
 		/// <param name="id">The unique identifier.</param>
 		public UniqueId (uint id)
 		{
-			Validity = 0;
-			Id = id;
+			this.validity = 0;
+			this.id = id;
 		}
 
 		/// <summary>
@@ -95,7 +98,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The identifier.</value>
 		public uint Id {
-			get; private set;
+			get { return id; }
 		}
 
 		/// <summary>
@@ -106,7 +109,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The UidValidity of the containing folder.</value>
 		public uint Validity {
-			get; private set;
+			get { return validity; }
 		}
 
 		/// <summary>
