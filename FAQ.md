@@ -58,7 +58,7 @@ var credential = new ServiceAccountCredential (new ServiceAccountCredential
     User = "username@gmail.com"
 }.FromCertificate (certificate));
 
-bool result = await credential.RequestAccessTokenAsync (cancel.Token);
+bool result = await credential.RequestAccessTokenAsync (CancellationToken.None);
 
 // Note: result will be true if the access token was received successfully
 ```
