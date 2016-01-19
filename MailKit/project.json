@@ -9,7 +9,7 @@
   "language": "en-US",
 
   "frameworks": {
-    "dnxcore50": {
+    "dotnet5.5": {
       "compilationOptions": {
         "define": [ "COREFX" ],
         "allowUnsafe": true
