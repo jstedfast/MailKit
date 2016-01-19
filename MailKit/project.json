@@ -9,7 +9,7 @@
   "language": "en-US",
 
   "frameworks": {
-    "dotnet54": {
+    "dotnet55": {
       "compilationOptions": {
         "define": [ "COREFX" ],
         "allowUnsafe": true

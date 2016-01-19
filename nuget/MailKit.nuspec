@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>MailKit</id>
-		<version>1.3.0-beta5</version>
+		<version>1.3.0-beta6</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -43,18 +43,18 @@ Features include:
 		</frameworkAssemblies>
 	<dependencies>
 		<group targetFramework="net40">
-			<dependency id="MimeKit" version="1.3.0-beta5" />
+			<dependency id="MimeKit" version="1.3.0-beta6" />
 		</group>
 		<group targetFramework="net45">
-			<dependency id="MimeKit" version="1.3.0-beta5" />
+			<dependency id="MimeKit" version="1.3.0-beta6" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.3.0-beta5" />
+			<dependency id="MimeKit" version="1.3.0-beta6" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.3.0-beta5" />
+			<dependency id="MimeKit" version="1.3.0-beta6" />
 		</group>
-		<group targetFramework="dnxcore50">
+		<group targetFramework=".NETPlatform5.5">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
 			<dependency id="System.Security.Cryptography.Primitives" version="4.0.0-beta-23516" />
 			<dependency id="System.Runtime.Serialization.Primitives" version="4.1.0-beta-23516" />
@@ -75,17 +75,17 @@ Features include:
 			<dependency id="System.Linq" version="4.0.1-beta-23516" />
 			<dependency id="Microsoft.CSharp" version="4.0.1-beta-23516" />
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta5" />
+			<dependency id="MimeKit" version="1.3.0-beta6" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta5" />
+			<dependency id="MimeKit" version="1.3.0-beta6" />
 		</group>
 	</dependencies>
 	</metadata>
 	<files>
-		<file src="..\MailKit\bin\Release\lib\corefx\Release\dnxcore50\MailKit.dll" target="lib\dnxcore50\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\lib\corefx\Release\dnxcore50\MailKit.xml" target="lib\dnxcore50\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\lib\corefx\Release\dotnet5.5\MailKit.dll" target="lib\dotnet5.5\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\lib\corefx\Release\dotnet5.5\MailKit.xml" target="lib\dotnet5.5\MailKit.xml" />
 		<file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.dll" target="lib\MonoAndroid10\MailKit.dll" />
 		<file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.xml" target="lib\MonoAndroid10\MailKit.xml" />
 		<file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.dll" target="lib\Xamarin.iOS10\MailKit.dll" />
