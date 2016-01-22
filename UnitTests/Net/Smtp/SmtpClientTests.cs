@@ -101,7 +101,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -159,7 +159,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -236,7 +236,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -295,7 +295,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -351,7 +351,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -413,7 +413,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -471,7 +471,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands), CancellationToken.None);
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -513,4 +513,3 @@ namespace UnitTests.Net.Smtp {
 		}
 	}
 }
-
