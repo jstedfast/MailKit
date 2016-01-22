@@ -26,7 +26,6 @@
 
 using System;
 using System.IO;
-using System.Net;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
@@ -87,7 +86,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestBasicFunctionality ()
+		public async void TestBasicFunctionality ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -123,20 +122,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
 				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
+					await client.SendAsync (CreateSimpleMessage ());
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -146,7 +144,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestEightBitMime ()
+		public async void TestEightBitMime ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -179,20 +177,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
 				try {
-					client.Send (CreateEightBitMessage (), CancellationToken.None);
+					await client.SendAsync (CreateEightBitMessage ());
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -202,7 +199,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestBinaryMime ()
+		public async void TestBinaryMime ()
 		{
 			var message = CreateBinaryMessage ();
 			string bdat;
@@ -259,8 +256,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -269,13 +265,13 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Chunking), "Failed to detect CHUNKING extension");
 
 				try {
-					client.Send (message, CancellationToken.None);
+					await client.SendAsync (message);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -285,7 +281,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestPipelining ()
+		public async void TestPipelining ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -320,20 +316,19 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
 				try {
-					client.Send (CreateEightBitMessage (), CancellationToken.None);
+					await client.SendAsync (CreateEightBitMessage ());
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Send: {0}", ex);
 				}
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -343,7 +338,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestMailFromMailboxUnavailable ()
+		public async void TestMailFromMailboxUnavailable ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -377,14 +372,13 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
 				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
+					await client.SendAsync (CreateSimpleMessage ());
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.SenderNotAccepted, "Unexpected SmtpErrorCode");
@@ -395,7 +389,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -405,7 +399,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestRcptToMailboxUnavailable ()
+		public async void TestRcptToMailboxUnavailable ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -440,14 +434,13 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-					client.Authenticate (credentials, CancellationToken.None);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
 
 				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
+					await client.SendAsync (CreateSimpleMessage ());
 					Assert.Fail ("Expected an SmtpException");
 				} catch (SmtpCommandException sex) {
 					Assert.AreEqual (sex.ErrorCode, SmtpErrorCode.RecipientNotAccepted, "Unexpected SmtpErrorCode");
@@ -458,7 +451,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
@@ -468,7 +461,7 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
-		public void TestUnauthorizedAccessException ()
+		public async void TestUnauthorizedAccessException ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
@@ -499,7 +492,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				try {
-					client.Send (CreateSimpleMessage (), CancellationToken.None);
+					await client.SendAsync (CreateSimpleMessage ());
 					Assert.Fail ("Expected an ServiceNotAuthenticatedException");
 				} catch (ServiceNotAuthenticatedException) {
 					// this is the expected exception
@@ -510,7 +503,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.IsConnected, "Expected the client to still be connected");
 
 				try {
-					client.Disconnect (true, CancellationToken.None);
+					await client.DisconnectAsync (true);
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
 				}
