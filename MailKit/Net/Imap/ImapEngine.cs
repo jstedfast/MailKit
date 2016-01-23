@@ -2026,7 +2026,8 @@ namespace MailKit.Net.Imap {
 			QueueCommand (ic);
 			Wait (ic);
 
-			if (subscribedOnly) {
+			if (lsub) {
+				// the LSUB command does not send \Subscribed flags so we need to add them ourselves
 				for (int i = 0; i < list.Count; i++)
 					list[i].Attributes |= FolderAttributes.Subscribed;
 			}

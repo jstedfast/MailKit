@@ -1054,8 +1054,10 @@ namespace MailKit.Net.Imap {
 				if (canonicalFullName != prefix + canonicalName)
 					continue;
 
-				if (subscribedOnly)
+				if (lsub) {
+					// the LSUB command does not send \Subscribed flags so we need to add them ourselves
 					folder.Attributes |= FolderAttributes.Subscribed;
+				}
 
 				folder.ParentFolder = this;
 				children.Add (folder);

@@ -140,7 +140,7 @@ namespace UnitTests.Net.Imap {
 			if (state != ImapReplayState.SendResponse) {
 				var command = Latin1.GetString (sent.GetBuffer (), 0, (int) sent.Length);
 
-				Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read before command received: {0}", command);
+				Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read before command received. Sent so far: {0}", command);
 			}
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
