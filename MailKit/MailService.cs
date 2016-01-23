@@ -80,11 +80,8 @@ namespace MailKit {
 		/// <remarks>
 		/// Initializes a new instance of the <see cref="MailKit.MailService"/> class.
 		/// </remarks>
-		protected MailService ()
+		protected MailService () : this (new NullProtocolLogger ())
 		{
-#if !NETFX_CORE
-			SslProtocols = DefaultSslProtocols;
-#endif
 		}
 
 		/// <summary>

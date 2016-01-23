@@ -26,8 +26,10 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Text;
+using System.Net.Sockets;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -90,6 +92,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestArgumentExceptions ()
 		{
 			using (var client = new SmtpClient ()) {
+				var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
 				var message = CreateSimpleMessage ();
 				var sender = message.From.Mailboxes.FirstOrDefault ();
 				var recipients = message.To.Mailboxes.ToList ();
@@ -111,6 +114,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (string.Empty, 25, SecureSocketOptions.None));
 				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, SecureSocketOptions.None));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
+
+				Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 25, SecureSocketOptions.None));
+				Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 25, SecureSocketOptions.None));
 
 				// Authenticate
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null));
@@ -148,6 +154,56 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, message, null, recipients));
 				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, message, sender, null));
 				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (options, message, sender, empty));
+			}
+		}
+
+		[Test]
+		public async void TestInvalidStateExceptions ()
+		{
+			var commands = new List<SmtpReplayCommand> ();
+			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
+
+			using (var client = new SmtpClient ()) {
+				var message = CreateSimpleMessage ();
+				var sender = message.From.Mailboxes.FirstOrDefault ();
+				var recipients = message.To.Mailboxes.ToList ();
+				var options = FormatOptions.Default;
+
+				client.LocalDomain = "127.0.0.1";
+
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync ("username", "password"));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.NoOpAsync ());
+
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.SendAsync (options, message, sender, recipients));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.SendAsync (message, sender, recipients));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.SendAsync (options, message));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.SendAsync (message));
+
+				try {
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("host", 465, SecureSocketOptions.SslOnConnect));
+				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("host", 465, true));
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync ("username", "password"));
+				Assert.Throws<InvalidOperationException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+
+				await client.DisconnectAsync (true);
 			}
 		}
 
@@ -200,6 +256,8 @@ namespace UnitTests.Net.Smtp {
 				Assert.AreEqual (36700160, client.MaxSize, "Failed to parse SIZE correctly");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
+
+				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
