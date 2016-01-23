@@ -206,6 +206,7 @@
     <EmbeddedResource Include="Net\Imap\Resources\gmail\fetch.50.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\go-ahead.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\greeting.txt" />
+    <EmbeddedResource Include="Net\Imap\Resources\gmail\list-all.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-inbox.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-personal.txt" />
     <EmbeddedResource Include="Net\Imap\Resources\gmail\list-unittests.txt" />

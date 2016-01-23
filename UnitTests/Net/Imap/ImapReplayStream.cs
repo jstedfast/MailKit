@@ -137,7 +137,11 @@ namespace UnitTests.Net.Imap {
 		{
 			CheckDisposed ();
 
-			Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read when no command given.");
+			if (state != ImapReplayState.SendResponse) {
+				var command = Latin1.GetString (sent.GetBuffer (), 0, (int) sent.Length);
+
+				Assert.AreEqual (ImapReplayState.SendResponse, state, "Trying to read before command received: {0}", command);
+			}
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
 			int nread = stream.Read (buffer, offset, count);

@@ -46,18 +46,18 @@ namespace UnitTests.Net.Imap {
 	public class ImapClientTests
 	{
 		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
-
 		static readonly ImapCapabilities GreetingCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
 			ImapCapabilities.Namespace | ImapCapabilities.Unselect;
 		static readonly ImapCapabilities GMailInitialCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-			ImapCapabilities.Unselect | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Quota |
-			ImapCapabilities.XList | ImapCapabilities.Children | ImapCapabilities.GMailExt1 | ImapCapabilities.SaslIR |
-			ImapCapabilities.Id;
+			ImapCapabilities.Quota | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Id |
+			ImapCapabilities.Children | ImapCapabilities.Unselect | ImapCapabilities.SaslIR | ImapCapabilities.XList |
+			ImapCapabilities.GMailExt1;
 		static readonly ImapCapabilities GMailAuthenticatedCapabilities = ImapCapabilities.IMAP4rev1 | ImapCapabilities.Status |
-			ImapCapabilities.Unselect | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Quota |
-			ImapCapabilities.XList | ImapCapabilities.Children | ImapCapabilities.GMailExt1 | ImapCapabilities.UidPlus |
-			ImapCapabilities.Compress | ImapCapabilities.Enable | ImapCapabilities.Move | ImapCapabilities.CondStore |
-			ImapCapabilities.ESearch | ImapCapabilities.Id;
+			ImapCapabilities.Quota | ImapCapabilities.Idle | ImapCapabilities.Namespace | ImapCapabilities.Id |
+			ImapCapabilities.Children | ImapCapabilities.Unselect | ImapCapabilities.UidPlus | ImapCapabilities.CondStore |
+			ImapCapabilities.ESearch | ImapCapabilities.Compress | ImapCapabilities.Enable | ImapCapabilities.ListExtended |
+			ImapCapabilities.ListStatus | ImapCapabilities.Move | ImapCapabilities.UTF8Accept | ImapCapabilities.XList |
+			ImapCapabilities.GMailExt1;
 		static readonly ImapCapabilities AclInitialCapabilities = GMailInitialCapabilities | ImapCapabilities.Acl;
 		static readonly ImapCapabilities AclAuthenticatedCapabilities = GMailAuthenticatedCapabilities | ImapCapabilities.Acl;
 
@@ -170,13 +170,11 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-
-					// Note: Do not try XOAUTH2
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
-					await client.AuthenticateAsync (credentials);
+					await client.AuthenticateAsync (new NetworkCredential ("username", "password"));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -211,6 +209,83 @@ namespace UnitTests.Net.Imap {
 				Assert.IsFalse (quota.MessageLimit.HasValue);
 
 				await client.DisconnectAsync (false);
+			}
+		}
+
+		static void AssertFolder (IMailFolder folder, string fullName, FolderAttributes attributes, bool subscribed, int count, int unread)
+		{
+			if (subscribed)
+				attributes |= FolderAttributes.Subscribed;
+
+			Assert.AreEqual (fullName, folder.FullName);
+			Assert.AreEqual (attributes, folder.Attributes);
+			Assert.AreEqual (subscribed, folder.IsSubscribed);
+			Assert.AreEqual (count, folder.Count);
+			Assert.AreEqual (unread, folder.Unread);
+		}
+
+		[Test]
+		public async void TestImapClientGetFolders ()
+		{
+			var commands = new List<ImapReplayCommand> ();
+			commands.Add (new ImapReplayCommand ("", "gmail.greeting.txt"));
+			commands.Add (new ImapReplayCommand ("A00000000 CAPABILITY\r\n", "gmail.capability.txt"));
+			commands.Add (new ImapReplayCommand ("A00000001 AUTHENTICATE PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "gmail.authenticate.txt"));
+			commands.Add (new ImapReplayCommand ("A00000002 NAMESPACE\r\n", "gmail.namespace.txt"));
+			commands.Add (new ImapReplayCommand ("A00000003 LIST \"\" \"INBOX\"\r\n", "gmail.list-inbox.txt"));
+			commands.Add (new ImapReplayCommand ("A00000004 XLIST \"\" \"*\"\r\n", "gmail.xlist.txt"));
+			commands.Add (new ImapReplayCommand ("A00000005 LIST \"\" \"*\" RETURN (SUBSCRIBED CHILDREN STATUS (MESSAGES UNSEEN))\r\n", "gmail.list-all.txt"));
+
+			using (var client = new ImapClient ()) {
+				try {
+					client.ReplayConnect ("localhost", new ImapReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
+				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH"), "Expected SASL XOAUTH auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
+				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
+				try {
+					await client.AuthenticateAsync ("username", "password");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
+				}
+
+				Assert.AreEqual (GMailAuthenticatedCapabilities, client.Capabilities);
+
+				var folders = (await client.GetFoldersAsync (client.PersonalNamespaces[0], StatusItems.Unread | StatusItems.Count)).ToList ();
+				Assert.AreEqual (9, folders.Count, "Unexpected folder count.");
+
+				AssertFolder (folders[0], "INBOX", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 60, 0);
+				AssertFolder (folders[1], "[Gmail]", FolderAttributes.HasChildren | FolderAttributes.NonExistent | FolderAttributes.NoSelect, true, 0, 0);
+				AssertFolder (folders[2], "[Gmail]/All Mail", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 67, 3);
+				AssertFolder (folders[3], "[Gmail]/Drafts", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 0, 0);
+				AssertFolder (folders[4], "[Gmail]/Important", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 58, 0);
+				AssertFolder (folders[5], "[Gmail]/Sent Mail", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 4, 0);
+				AssertFolder (folders[6], "[Gmail]/Spam", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 0, 0);
+				AssertFolder (folders[7], "[Gmail]/Starred", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 1, 0);
+				AssertFolder (folders[8], "[Gmail]/Trash", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 0, 0);
+
+				AssertFolder (client.Inbox, "INBOX", FolderAttributes.HasNoChildren | FolderAttributes.Inbox, true, 60, 0);
+				AssertFolder (client.GetFolder (SpecialFolder.All), "[Gmail]/All Mail", FolderAttributes.HasNoChildren | FolderAttributes.All, true, 67, 3);
+				AssertFolder (client.GetFolder (SpecialFolder.Drafts), "[Gmail]/Drafts", FolderAttributes.HasNoChildren | FolderAttributes.Drafts, true, 0, 0);
+				//AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Important", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 58, 0);
+				AssertFolder (client.GetFolder (SpecialFolder.Sent), "[Gmail]/Sent Mail", FolderAttributes.HasNoChildren | FolderAttributes.Sent, true, 4, 0);
+				AssertFolder (client.GetFolder (SpecialFolder.Junk), "[Gmail]/Spam", FolderAttributes.HasNoChildren | FolderAttributes.Junk, true, 0, 0);
+				AssertFolder (client.GetFolder (SpecialFolder.Flagged), "[Gmail]/Starred", FolderAttributes.HasNoChildren | FolderAttributes.Flagged, true, 1, 0);
+				AssertFolder (client.GetFolder (SpecialFolder.Trash), "[Gmail]/Trash", FolderAttributes.HasNoChildren | FolderAttributes.Trash, true, 0, 0);
+
+				client.Disconnect (false);
 			}
 		}
 
@@ -308,13 +383,11 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-
-					// Note: Do not try XOAUTH2
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
-					await client.AuthenticateAsync (credentials);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -337,6 +410,9 @@ namespace UnitTests.Net.Imap {
 						Assert.IsNull (folder, "Expected null {0} folder.", special);
 					}
 				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = (await personal.GetSubfoldersAsync ()).ToList ();
@@ -455,13 +531,11 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-
-					// Note: Do not try XOAUTH2
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
-					await client.AuthenticateAsync (credentials);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -547,13 +621,11 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
 
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-
-					// Note: Do not try XOAUTH2
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
-					await client.AuthenticateAsync (credentials);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}
@@ -576,6 +648,9 @@ namespace UnitTests.Net.Imap {
 						Assert.IsNull (folder, "Expected null {0} folder.", special);
 					}
 				}
+
+				// disable LIST-EXTENDED
+				client.Capabilities &= ~ImapCapabilities.ListExtended;
 
 				var personal = client.GetFolder (client.PersonalNamespaces[0]);
 				var folders = (await personal.GetSubfoldersAsync ()).ToList ();
@@ -628,13 +703,11 @@ namespace UnitTests.Net.Imap {
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
 				
+				// Note: Do not try XOAUTH2
+				client.AuthenticationMechanisms.Remove ("XOAUTH2");
+
 				try {
-					var credentials = new NetworkCredential ("username", "password");
-
-					// Note: Do not try XOAUTH2
-					client.AuthenticationMechanisms.Remove ("XOAUTH2");
-
-					await client.AuthenticateAsync (credentials);
+					await client.AuthenticateAsync ("username", "password");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
 				}

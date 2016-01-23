@@ -1,0 +1,18 @@
+* LIST (\HasNoChildren \Subscribed) "/" "INBOX"
+* STATUS "INBOX" (MESSAGES 60 UNSEEN 0)
+* LIST (\HasChildren \NonExistent \Subscribed) "/" "[Gmail]"
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/All Mail"
+* STATUS "[Gmail]/All Mail" (MESSAGES 67 UNSEEN 3)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Drafts"
+* STATUS "[Gmail]/Drafts" (MESSAGES 0 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Important"
+* STATUS "[Gmail]/Important" (MESSAGES 58 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Sent Mail"
+* STATUS "[Gmail]/Sent Mail" (MESSAGES 4 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Spam"
+* STATUS "[Gmail]/Spam" (MESSAGES 0 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Starred"
+* STATUS "[Gmail]/Starred" (MESSAGES 1 UNSEEN 0)
+* LIST (\HasNoChildren \Subscribed) "/" "[Gmail]/Trash"
+* STATUS "[Gmail]/Trash" (MESSAGES 0 UNSEEN 0)
+A00000005 OK Success
