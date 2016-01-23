@@ -1630,6 +1630,9 @@ namespace MailKit.Net.Smtp {
 		/// </exception>
 		public override void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
+			if (options == null)
+				throw new ArgumentNullException ("options");
+
 			if (message == null)
 				throw new ArgumentNullException ("message");
 

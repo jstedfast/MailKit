@@ -86,6 +86,46 @@ namespace UnitTests.Net.Smtp {
 		}
 
 		[Test]
+		public void TestArgumentExceptions ()
+		{
+			using (var client = new SmtpClient ()) {
+				var message = CreateSimpleMessage ();
+				var sender = message.From.Mailboxes.FirstOrDefault ();
+				var recipients = message.To.Mailboxes.ToList ();
+				var options = FormatOptions.Default;
+				var empty = new MailboxAddress[0];
+
+				Assert.Throws<ArgumentNullException> (() => client.Send (null));
+
+				Assert.Throws<ArgumentNullException> (() => client.Send (null, message));
+				Assert.Throws<ArgumentNullException> (() => client.Send (options, null));
+
+				Assert.Throws<ArgumentNullException> (() => client.Send (message, null, recipients));
+				Assert.Throws<ArgumentNullException> (() => client.Send (message, sender, null));
+				Assert.Throws<InvalidOperationException> (() => client.Send (message, sender, empty));
+
+				Assert.Throws<ArgumentNullException> (() => client.Send (null, message, sender, recipients));
+				Assert.Throws<ArgumentNullException> (() => client.Send (options, message, null, recipients));
+				Assert.Throws<ArgumentNullException> (() => client.Send (options, message, sender, null));
+				Assert.Throws<InvalidOperationException> (() => client.Send (options, message, sender, empty));
+
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (null));
+
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (null, message));
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, null));
+
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (message, null, recipients));
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (message, sender, null));
+				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (message, sender, empty));
+
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (null, message, sender, recipients));
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, message, null, recipients));
+				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, message, sender, null));
+				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (options, message, sender, empty));
+			}
+		}
+
+		[Test]
 		public async void TestBasicFunctionality ()
 		{
 			var commands = new List<SmtpReplayCommand> ();
