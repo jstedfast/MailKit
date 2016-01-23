@@ -109,7 +109,7 @@ namespace MailKit {
 		/// </remarks>
 		/// <value>The folder attributes.</value>
 		public FolderAttributes Attributes {
-			get; protected set;
+			get; internal protected set;
 		}
 
 		/// <summary>

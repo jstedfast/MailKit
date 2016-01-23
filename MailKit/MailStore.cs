@@ -284,7 +284,10 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public abstract IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+		public virtual IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			return GetFolders (@namespace, StatusItems.None, subscribedOnly, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously get all of the folders within the specified namespace.
@@ -320,7 +323,7 @@ namespace MailKit {
 		/// <exception cref="CommandException">
 		/// The command failed.
 		/// </exception>
-		public virtual Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public virtual Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException ("namespace");
@@ -328,6 +331,90 @@ namespace MailKit {
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
 					return GetFolders (@namespace, subscribedOnly, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Get all of the folders within the specified namespace.
+		/// </summary>
+		/// <remarks>
+		/// Gets all of the folders within the specified namespace.
+		/// </remarks>
+		/// <returns>The folders.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <param name="items">The status items to pre-populate.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public abstract IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously get all of the folders within the specified namespace.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously gets all of the folders within the specified namespace.
+		/// </remarks>
+		/// <returns>The folders.</returns>
+		/// <param name="namespace">The namespace.</param>
+		/// <param name="items">The status items to pre-populate.</param>
+		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="namespace"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailStore"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="MailStore"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// The <see cref="MailStore"/> is not authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command failed.
+		/// </exception>
+		public virtual Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (@namespace == null)
+				throw new ArgumentNullException ("namespace");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return GetFolders (@namespace, items, subscribedOnly, cancellationToken);
 				}
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}

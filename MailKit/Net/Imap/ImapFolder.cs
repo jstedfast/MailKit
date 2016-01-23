@@ -1019,7 +1019,7 @@ namespace MailKit.Net.Imap {
 						command.Append ("CHILDREN ");
 					}
 
-					command.AppendFormat ("STATUS ({0})", GetStatusQuery (items));
+					command.AppendFormat ("STATUS ({0})", Engine.GetStatusQuery (items));
 					command.Append (')');
 					status = false;
 				} else if ((Engine.Capabilities & ImapCapabilities.ListExtended) != 0) {
@@ -1197,29 +1197,6 @@ namespace MailKit.Net.Imap {
 				throw ImapCommandException.Create ("CHECK", ic);
 		}
 
-		string GetStatusQuery (StatusItems items)
-		{
-			var flags = string.Empty;
-
-			if ((items & StatusItems.Count) != 0)
-				flags += "MESSAGES ";
-			if ((items & StatusItems.Recent) != 0)
-				flags += "RECENT ";
-			if ((items & StatusItems.UidNext) != 0)
-				flags += "UIDNEXT ";
-			if ((items & StatusItems.UidValidity) != 0)
-				flags += "UIDVALIDITY ";
-			if ((items & StatusItems.Unread) != 0)
-				flags += "UNSEEN ";
-
-			if ((Engine.Capabilities & ImapCapabilities.CondStore) != 0) {
-				if ((items & StatusItems.HighestModSeq) != 0)
-					flags += "HIGHESTMODSEQ ";
-			}
-
-			return flags.TrimEnd ();
-		}
-
 		/// <summary>
 		/// Updates the values of the specified items.
 		/// </summary>
@@ -1274,7 +1251,7 @@ namespace MailKit.Net.Imap {
 			if (items == StatusItems.None)
 				return;
 
-			var command = string.Format ("STATUS %F ({0})\r\n", GetStatusQuery (items));
+			var command = string.Format ("STATUS %F ({0})\r\n", Engine.GetStatusQuery (items));
 			var ic = Engine.QueueCommand (cancellationToken, null, command, this);
 
 			Engine.Wait (ic);

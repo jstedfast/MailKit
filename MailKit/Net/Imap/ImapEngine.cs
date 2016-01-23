@@ -1935,6 +1935,29 @@ namespace MailKit.Net.Imap {
 			return list[0];
 		}
 
+		internal string GetStatusQuery (StatusItems items)
+		{
+			var flags = string.Empty;
+
+			if ((items & StatusItems.Count) != 0)
+				flags += "MESSAGES ";
+			if ((items & StatusItems.Recent) != 0)
+				flags += "RECENT ";
+			if ((items & StatusItems.UidNext) != 0)
+				flags += "UIDNEXT ";
+			if ((items & StatusItems.UidValidity) != 0)
+				flags += "UIDVALIDITY ";
+			if ((items & StatusItems.Unread) != 0)
+				flags += "UNSEEN ";
+
+			if ((Capabilities & ImapCapabilities.CondStore) != 0) {
+				if ((items & StatusItems.HighestModSeq) != 0)
+					flags += "HIGHESTMODSEQ ";
+			}
+
+			return flags.TrimEnd ();
+		}
+
 		/// <summary>
 		/// Get all of the folders within the specified namespace.
 		/// </summary>
@@ -1943,31 +1966,82 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The list of folders.</returns>
 		/// <param name="namespace">The namespace.</param>
+		/// <param name="items">The status items to pre-populate.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
-		public IList<ImapFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken)
+		public IEnumerable<ImapFolder> GetFolders (FolderNamespace @namespace, StatusItems items, bool subscribedOnly, CancellationToken cancellationToken)
 		{
 			var encodedName = EncodeMailboxName (@namespace.Path);
-			var command = subscribedOnly ? "LSUB" : "LIST";
+			var pattern = encodedName.Length > 0 ? encodedName + @namespace.DirectorySeparator : string.Empty;
+			var status = items != StatusItems.None;
 			var list = new List<ImapFolder> ();
+			var command = new StringBuilder ();
+			var lsub = subscribedOnly;
 			ImapFolder folder;
 
 			if (!GetCachedFolder (encodedName, out folder))
 				throw new FolderNotFoundException (@namespace.Path);
 
-			var ic = new ImapCommand (this, cancellationToken, null, command + " %F \"*\"\r\n", folder);
-			ic.RegisterUntaggedHandler (command, ImapUtils.ParseFolderList);
+			if (subscribedOnly) {
+				if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+					command.Append ("LIST (SUBSCRIBED)");
+					lsub = false;
+				} else {
+					command.Append ("LSUB");
+				}
+			} else {
+				command.Append ("LIST");
+			}
+
+			command.Append (" \"\" %S");
+
+			if (!lsub) {
+				if (items != StatusItems.None && (Capabilities & ImapCapabilities.ListStatus) != 0) {
+					command.Append (" RETURN (");
+
+					if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+						if (!subscribedOnly)
+							command.Append ("SUBSCRIBED ");
+						command.Append ("CHILDREN ");
+					}
+
+					command.AppendFormat ("STATUS ({0})", GetStatusQuery (items));
+					command.Append (')');
+					status = false;
+				} else if ((Capabilities & ImapCapabilities.ListExtended) != 0) {
+					command.Append (" RETURN (");
+					if (!subscribedOnly)
+						command.Append ("SUBSCRIBED ");
+					command.Append ("CHILDREN");
+					command.Append (')');
+				}
+			}
+
+			command.Append ("\r\n");
+
+			var ic = new ImapCommand (this, cancellationToken, null, command.ToString (), pattern + "*");
+			ic.RegisterUntaggedHandler (lsub ? "LSUB" : "LIST", ImapUtils.ParseFolderList);
 			ic.UserData = list;
 
 			QueueCommand (ic);
 			Wait (ic);
 
+			if (subscribedOnly) {
+				for (int i = 0; i < list.Count; i++)
+					list[i].Attributes |= FolderAttributes.Subscribed;
+			}
+
 			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
-				throw ImapCommandException.Create (command, ic);
+				throw ImapCommandException.Create (lsub ? "LSUB" : "LIST", ic);
 
 			LookupParentFolders (list, cancellationToken);
+
+			if (status) {
+				for (int i = 0; i < list.Count; i++)
+					list[i].Status (items, cancellationToken);
+			}
 
 			return list;
 		}

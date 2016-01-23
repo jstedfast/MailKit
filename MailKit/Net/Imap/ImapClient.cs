@@ -2005,6 +2005,7 @@ namespace MailKit.Net.Imap {
 		/// </remarks>
 		/// <returns>The folders.</returns>
 		/// <param name="namespace">The namespace.</param>
+		/// <param name="items">The status items to pre-populate.</param>
 		/// <param name="subscribedOnly">If set to <c>true</c>, only subscribed folders will be listed.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -2029,12 +2030,12 @@ namespace MailKit.Net.Imap {
 		/// An I/O error occurred.
 		/// </exception>
 		/// <exception cref="ImapCommandException">
-		/// The server replied to the IDLE command with a NO or BAD response.
+		/// The server replied to the LIST or LSUB command with a NO or BAD response.
 		/// </exception>
 		/// <exception cref="ImapProtocolException">
 		/// The server responded with an unexpected token.
 		/// </exception>
-		public override IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
+		public override IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (@namespace == null)
 				throw new ArgumentNullException ("namespace");
@@ -2043,7 +2044,7 @@ namespace MailKit.Net.Imap {
 			CheckConnected ();
 			CheckAuthenticated ();
 
-			foreach (var folder in engine.GetFolders (@namespace, subscribedOnly, cancellationToken))
+			foreach (var folder in engine.GetFolders (@namespace, items, subscribedOnly, cancellationToken))
 				yield return folder;
 
 			yield break;
