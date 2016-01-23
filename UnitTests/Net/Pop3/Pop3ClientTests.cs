@@ -26,8 +26,10 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Linq;
 using System.Text;
+using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 
@@ -69,6 +71,8 @@ namespace UnitTests.Net.Pop3 {
 		public void TestArgumentExceptions ()
 		{
 			using (var client = new Pop3Client ()) {
+				var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
+
 				// Connect
 				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
 				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Uri) null));
@@ -85,6 +89,9 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, SecureSocketOptions.None));
 				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
 
+				Assert.Throws<ArgumentNullException> (() => client.Connect (null, "host", 110, SecureSocketOptions.None));
+				Assert.Throws<ArgumentException> (() => client.Connect (socket, "host", 110, SecureSocketOptions.None));
+
 				// Authenticate
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null));
@@ -92,6 +99,104 @@ namespace UnitTests.Net.Pop3 {
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null, "password"));
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate ("username", null));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync ("username", null));
+			}
+		}
+
+		[Test]
+		public async void TestInvalidStateExceptions ()
+		{
+			var commands = new List<Pop3ReplayCommand> ();
+			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
+			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
+			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
+			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.err.txt"));
+			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
+
+			using (var client = new Pop3Client ()) {
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync ("username", "password"));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.AuthenticateAsync (new NetworkCredential ("username", "password")));
+
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.NoOpAsync ());
+
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageSizesAsync ());
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageSizeAsync ("uid"));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageSizeAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageUidsAsync ());
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageUidAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageAsync ("uid"));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync ("uid"));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetMessageHeadersAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamAsync (0));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamsAsync (0, 1));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.GetStreamsAsync (new int[] { 0 }));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.DeleteMessageAsync ("uid"));
+				Assert.Throws<ServiceNotConnectedException> (async () => await client.DeleteMessageAsync (0));
+
+				try {
+					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false));
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
+				}
+
+				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+
+				Assert.AreEqual (ComcastCapa1, client.Capabilities);
+				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
+				Assert.AreEqual (31, client.ExpirePolicy);
+
+				Assert.Throws<AuthenticationException> (async () => await client.AuthenticateAsync ("username", "password"));
+				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageSizesAsync ());
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageSizeAsync ("uid"));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageSizeAsync (0));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageUidsAsync ());
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageUidAsync (0));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageAsync ("uid"));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageAsync (0));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageHeadersAsync ("uid"));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetMessageHeadersAsync (0));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetStreamAsync (0));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetStreamsAsync (0, 1));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.GetStreamsAsync (new int[] { 0 }));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessageAsync ("uid"));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.DeleteMessageAsync (0));
+				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
+
+				try {
+					await client.DisconnectAsync (true);
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
+				}
+
+				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
 			}
 		}
 
@@ -200,149 +305,6 @@ namespace UnitTests.Net.Pop3 {
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in GetMessage: {0}", ex);
 				}
-
-				try {
-					await client.DisconnectAsync (true);
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Disconnect: {0}", ex);
-				}
-
-				Assert.IsFalse (client.IsConnected, "Failed to disconnect");
-			}
-		}
-
-		[Test]
-		public async void TestAuthenticationExceptions ()
-		{
-			var commands = new List<Pop3ReplayCommand> ();
-			commands.Add (new Pop3ReplayCommand ("", "comcast.greeting.txt"));
-			commands.Add (new Pop3ReplayCommand ("CAPA\r\n", "comcast.capa1.txt"));
-			commands.Add (new Pop3ReplayCommand ("USER username\r\n", "comcast.ok.txt"));
-			commands.Add (new Pop3ReplayCommand ("PASS password\r\n", "comcast.err.txt"));
-			commands.Add (new Pop3ReplayCommand ("QUIT\r\n", "comcast.quit.txt"));
-
-			using (var client = new Pop3Client ()) {
-				try {
-					client.ReplayConnect ("localhost", new Pop3ReplayStream (commands, false));
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
-
-				Assert.AreEqual (ComcastCapa1, client.Capabilities);
-				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
-
-				try {
-					await client.AuthenticateAsync ("username", "password");
-					Assert.Fail ("Expected AuthenticationException");
-				} catch (AuthenticationException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in Authenticate: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "AuthenticationException should not cause a disconnect.");
-
-				try {
-					var sizes = await client.GetMessageSizesAsync ();
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSizes: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var size = await client.GetMessageSizeAsync ("uid");
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSize(uid): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var size = await client.GetMessageSizeAsync (0);
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageSize(int): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var uids = await client.GetMessageUidsAsync ();
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageUids: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var uid = await client.GetMessageUidAsync (0);
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessageUid: {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var message = await client.GetMessageAsync ("uid");
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage(uid): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					var message = await client.GetMessageAsync (0);
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in GetMessage(int): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					await client.DeleteMessageAsync ("uid");
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessage(uid): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
-
-				try {
-					await client.DeleteMessageAsync (0);
-					Assert.Fail ("Expected ServiceNotAuthenticatedException");
-				} catch (ServiceNotAuthenticatedException) {
-					// we expect this exception...
-				} catch (Exception ex) {
-					Assert.Fail ("Did not expect an exception in DeleteMessage(int): {0}", ex);
-				}
-
-				Assert.IsTrue (client.IsConnected, "ServiceNotAuthenticatedException should not cause a disconnect.");
 
 				try {
 					await client.DisconnectAsync (true);
