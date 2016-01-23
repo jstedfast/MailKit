@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MailKit;
 
 using MimeKit.IO;
@@ -95,6 +96,31 @@ namespace UnitTests.Net.Smtp {
 				var options = FormatOptions.Default;
 				var empty = new MailboxAddress[0];
 
+				// Connect
+				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Uri) null));
+				Assert.Throws<ArgumentNullException> (() => client.Connect (null, 25, false));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, 25, false));
+				Assert.Throws<ArgumentException> (() => client.Connect (string.Empty, 25, false));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (string.Empty, 25, false));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, false));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, false));
+				Assert.Throws<ArgumentNullException> (() => client.Connect (null, 25, SecureSocketOptions.None));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, 25, SecureSocketOptions.None));
+				Assert.Throws<ArgumentException> (() => client.Connect (string.Empty, 25, SecureSocketOptions.None));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (string.Empty, 25, SecureSocketOptions.None));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, SecureSocketOptions.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
+
+				// Authenticate
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null, "password"));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null, "password"));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate ("username", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync ("username", null));
+
+				// Send
 				Assert.Throws<ArgumentNullException> (() => client.Send (null));
 
 				Assert.Throws<ArgumentNullException> (() => client.Send (null, message));
@@ -130,9 +156,9 @@ namespace UnitTests.Net.Smtp {
 		{
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
-			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
@@ -152,6 +178,8 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
 
 			using (var client = new SmtpClient ()) {
+				client.LocalDomain = "unit-tests.mimekit.org";
+
 				try {
 					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
 				} catch (Exception ex) {

@@ -66,6 +66,36 @@ namespace UnitTests.Net.Pop3 {
 		}
 
 		[Test]
+		public void TestArgumentExceptions ()
+		{
+			using (var client = new Pop3Client ()) {
+				// Connect
+				Assert.Throws<ArgumentNullException> (() => client.Connect ((Uri) null));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync ((Uri) null));
+				Assert.Throws<ArgumentNullException> (() => client.Connect (null, 110, false));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, 110, false));
+				Assert.Throws<ArgumentException> (() => client.Connect (string.Empty, 110, false));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (string.Empty, 110, false));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, false));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, false));
+				Assert.Throws<ArgumentNullException> (() => client.Connect (null, 110, SecureSocketOptions.None));
+				Assert.Throws<ArgumentNullException> (async () => await client.ConnectAsync (null, 110, SecureSocketOptions.None));
+				Assert.Throws<ArgumentException> (() => client.Connect (string.Empty, 110, SecureSocketOptions.None));
+				Assert.Throws<ArgumentException> (async () => await client.ConnectAsync (string.Empty, 110, SecureSocketOptions.None));
+				Assert.Throws<ArgumentOutOfRangeException> (() => client.Connect ("host", -1, SecureSocketOptions.None));
+				Assert.Throws<ArgumentOutOfRangeException> (async () => await client.ConnectAsync ("host", -1, SecureSocketOptions.None));
+
+				// Authenticate
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null, "password"));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null, "password"));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate ("username", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync ("username", null));
+			}
+		}
+
+		[Test]
 		public async void TestBasicPop3Client ()
 		{
 			var commands = new List<Pop3ReplayCommand> ();
