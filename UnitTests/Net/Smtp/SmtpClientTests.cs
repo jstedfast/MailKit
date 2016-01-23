@@ -163,6 +163,10 @@ namespace UnitTests.Net.Smtp {
 			var commands = new List<SmtpReplayCommand> ();
 			commands.Add (new SmtpReplayCommand ("", "comcast-greeting.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
+			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "auth-required.txt"));
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO [127.0.0.1]\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("QUIT\r\n", "comcast-quit.txt"));
@@ -193,6 +197,11 @@ namespace UnitTests.Net.Smtp {
 
 				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("host", 465, SecureSocketOptions.SslOnConnect));
 				Assert.Throws<InvalidOperationException> (async () => await client.ConnectAsync ("host", 465, true));
+
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.SendAsync (options, message, sender, recipients));
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.SendAsync (message, sender, recipients));
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.SendAsync (options, message));
+				Assert.Throws<ServiceNotAuthenticatedException> (async () => await client.SendAsync (message));
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
