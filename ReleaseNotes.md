@@ -4,6 +4,21 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.17
+
+* Exposed MailKit.Search.OrderByType and MailKit.Search.SortOrder to the public API.
+* Modified IMailFolder.CopyTo() and MoveTo() to return a UniqueIdMap instead of a UniqueIdSet.
+* Improved ImapProtocolException error messages to be more informative.
+* Added an IsSecure property to ImapClient, Pop3Client and SmtpClient.
+* Fixed support for the IMAP COMPRESS=DEFLATE extension to work properly.
+* Modified UniqueId.Id and .Validity to be properties instead of fields.
+* Reduced memory usage for UniqueIdRange (-33%) and UniqueIdSet (-50%).
+* Vastly improved the performance of UniqueIdSet (~2x).
+* Added an ImapClient.GetFolders() overload that also requests the status of each folder.
+* Modified the headersOnly parameter to the various Pop3Client.GetStream() methods to default to
+  false instead of forcing developers to pass in a value.
+* Updated the IMAP, POP3 and SMTP clients to be stricter with validating SSL certificates.
+
 ### MailKit 1.2.16
 
 * Added support for the SCRAM-SHA-256 SASL mechanism.
