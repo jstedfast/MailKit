@@ -132,6 +132,12 @@ namespace MailKit {
 					case OrderByType.To:
 						cmp = CompareMailboxAddresses (x.Envelope.To, y.Envelope.To);
 						break;
+					case OrderByType.ModSeq:
+						var xmodseq = x.ModSeq ?? 0;
+						var ymodseq = y.ModSeq ?? 0;
+
+						cmp = xmodseq.CompareTo (ymodseq);
+						break;
 					}
 
 					if (cmp == 0)
