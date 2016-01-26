@@ -253,18 +253,15 @@ namespace MailKit.Net.Imap {
 		public long Length {
 			get {
 				if (Type == ImapLiteralType.String)
-					return (long) ((byte[]) Literal).Length;
+					return ((byte[]) Literal).Length;
 
 				using (var measure = new MeasuringStream ()) {
-					switch (Type) {
-					case ImapLiteralType.Stream:
+					if (Type == ImapLiteralType.Stream) {
 						var stream = (Stream) Literal;
 						stream.CopyTo (measure, 4096);
 						stream.Position = 0;
-						break;
-					case ImapLiteralType.MimeMessage:
+					} else {
 						((MimeMessage) Literal).WriteTo (format, measure);
-						break;
 					}
 
 					return measure.Length;
