@@ -3,6 +3,12 @@ os: Visual Studio 2015
 configuration: Debug
 platform: Any CPU
 
+branches:
+  only:
+  - master
+
+skip_tags: true
+
 environment:
   COVERALLS_REPO_TOKEN:
     secure: XvmOROcqgidalZg23H16UjDbAxIMkpuVXwKKPEp0bq3W5J2av35X1BsZvClM25JX
@@ -13,7 +19,7 @@ install:
 
 build:
   project: MailKit.Net45.sln
-  verbosity: detailed
+  verbosity: minimal
 
 test_script:
 - ps: >-
