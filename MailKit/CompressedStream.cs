@@ -88,7 +88,7 @@ namespace MailKit {
 		/// </summary>
 		/// <value><c>true</c> if the stream supports I/O timeouts; otherwise, <c>false</c>.</value>
 		public override bool CanTimeout {
-			get { return BaseStream.CanTimeout && BaseStream.CanTimeout; }
+			get { return BaseStream.CanTimeout; }
 		}
 
 		/// <summary>
