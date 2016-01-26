@@ -304,9 +304,7 @@ namespace MailKit.Net.Imap {
 		{
 			string format = string.Format (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ID", "{0}");
 			var token = engine.ReadToken (ic.CancellationToken);
-			var implementation = new ImapImplementation ();
-
-			ic.UserData = implementation;
+			ImapImplementation implementation;
 
 			if (token.Type == ImapTokenType.Nil)
 				return;
@@ -316,6 +314,8 @@ namespace MailKit.Net.Imap {
 
 			token = engine.PeekToken (ic.CancellationToken);
 
+			implementation = new ImapImplementation ();
+
 			while (token.Type != ImapTokenType.CloseParen) {
 				var property = ReadStringToken (engine, format, ic.CancellationToken);
 				var value = ReadNStringToken (engine, format, false, ic.CancellationToken);
@@ -324,6 +324,8 @@ namespace MailKit.Net.Imap {
 
 				token = engine.PeekToken (ic.CancellationToken);
 			}
+
+			ic.UserData = implementation;
 
 			// read the ')' token
 			engine.ReadToken (ic.CancellationToken);

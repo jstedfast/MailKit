@@ -545,7 +545,7 @@ namespace MailKit.Net.Imap {
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
 		/// </example>
-		/// <returns>The implementation details of the server.</returns>
+		/// <returns>The implementation details of the server if available; otherwise, <c>null</c>.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
@@ -630,7 +630,7 @@ namespace MailKit.Net.Imap {
 		/// would allow tracking of users in ways that violate user privacy expectations and may also make it easier for
 		/// attackers to exploit security holes in the client.</para>
 		/// </remarks>
-		/// <returns>The implementation details of the server.</returns>
+		/// <returns>The implementation details of the server if available; otherwise, <c>null</c>.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
