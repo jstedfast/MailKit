@@ -28,6 +28,10 @@ using System;
 using System.Net;
 using System.Text;
 
+#if NETFX_CORE
+using Encoding = Portable.Text.Encoding;
+#endif
+
 namespace MailKit.Security {
 	/// <summary>
 	/// The PLAIN SASL mechanism.
@@ -40,6 +44,32 @@ namespace MailKit.Security {
 	/// </remarks>
 	public class SaslMechanismPlain : SaslMechanism
 	{
+		Encoding encoding;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismPlain"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new PLAIN SASL context.
+		/// </remarks>
+		/// <param name="uri">The URI of the service.</param>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
+		public SaslMechanismPlain (Uri uri, Encoding encoding, ICredentials credentials) : base (uri, credentials)
+		{
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
+			this.encoding = encoding;
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Security.SaslMechanismPlain"/> class.
 		/// </summary>
@@ -55,6 +85,7 @@ namespace MailKit.Security {
 		/// </exception>
 		public SaslMechanismPlain (Uri uri, ICredentials credentials) : base (uri, credentials)
 		{
+			encoding = Encoding.UTF8;
 		}
 
 		/// <summary>
@@ -102,8 +133,8 @@ namespace MailKit.Security {
 				throw new InvalidOperationException ();
 
 			var cred = Credentials.GetCredential (Uri, MechanismName);
-			var userName = Encoding.UTF8.GetBytes (cred.UserName);
-			var password = Encoding.UTF8.GetBytes (cred.Password);
+			var userName = encoding.GetBytes (cred.UserName);
+			var password = encoding.GetBytes (cred.Password);
 			var buffer = new byte[userName.Length + password.Length + 2];
 			int offset = 0;
 

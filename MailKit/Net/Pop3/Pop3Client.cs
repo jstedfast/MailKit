@@ -272,7 +272,7 @@ namespace MailKit.Net.Pop3 {
 
 		void SendCommand (CancellationToken token, string command)
 		{
-			var pc = engine.QueueCommand (token, null, command);
+			var pc = engine.QueueCommand (token, null, Encoding.ASCII, command);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -284,12 +284,17 @@ namespace MailKit.Net.Pop3 {
 
 		string SendCommand (CancellationToken token, string format, params object[] args)
 		{
+			return SendCommand (token, Encoding.ASCII, format, args);
+		}
+
+		string SendCommand (CancellationToken token, Encoding encoding, string format, params object[] args)
+		{
 			string okText = string.Empty;
 
 			var pc = engine.QueueCommand (token, (pop3, cmd, text) => {
 				if (cmd.Status == Pop3CommandStatus.Ok)
 					okText = text;
-			}, format, args);
+			}, encoding, format, args);
 
 			while (engine.Iterate () < pc.Id) {
 				// continue processing commands
@@ -460,10 +465,13 @@ namespace MailKit.Net.Pop3 {
 		/// <para>In the case of the APOP authentication mechanism, remove it from the
 		/// <see cref="Capabilities"/> property instead.</para></note>
 		/// </remarks>
+		/// <param name="encoding">The text encoding to use for the user's credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="Pop3Client"/> has been disposed.
@@ -492,8 +500,11 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="Pop3ProtocolException">
 		/// An POP3 protocol error occurred.
 		/// </exception>
-		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
 
@@ -521,13 +532,13 @@ namespace MailKit.Net.Pop3 {
 				byte[] digest;
 
 				using (var md5 = MD5.Create ())
-					digest = md5.ComputeHash (Encoding.UTF8.GetBytes (challenge));
+					digest = md5.ComputeHash (encoding.GetBytes (challenge));
 
 				for (int i = 0; i < digest.Length; i++)
 					md5sum.Append (digest[i].ToString ("x2"));
 
 				try {
-					authMessage = SendCommand (cancellationToken, "APOP {0} {1}", userName, md5sum);
+					authMessage = SendCommand (cancellationToken, "APOP {0} {1}", encoding, userName, md5sum);
 					engine.State = Pop3EngineState.Transaction;
 				} catch (Pop3CommandException) {
 				}
@@ -604,8 +615,8 @@ namespace MailKit.Net.Pop3 {
 			password = utf8 ? SaslMechanism.SaslPrep (cred.Password) : cred.Password;
 
 			try {
-				SendCommand (cancellationToken, "USER {0}", userName);
-				authMessage = SendCommand (cancellationToken, "PASS {0}", password);
+				SendCommand (cancellationToken, encoding, "USER {0}", userName);
+				authMessage = SendCommand (cancellationToken, encoding, "PASS {0}", password);
 			} catch (Pop3CommandException) {
 				throw new AuthenticationException ();
 			}

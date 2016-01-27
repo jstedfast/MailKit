@@ -365,7 +365,7 @@ namespace MailKit.Net.Pop3 {
 
 		void SendCommand (Pop3Command pc)
 		{
-			var buf = Encoding.UTF8.GetBytes (pc.Command + "\r\n");
+			var buf = pc.Encoding.GetBytes (pc.Command + "\r\n");
 
 			stream.Write (buf, 0, buf.Length);
 		}
@@ -443,12 +443,17 @@ namespace MailKit.Net.Pop3 {
 			return active[active.Count - 1].Id;
 		}
 
-		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, string format, params object[] args)
+		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, Encoding encoding, string format, params object[] args)
 		{
-			var pc = new Pop3Command (cancellationToken, handler, format, args);
+			var pc = new Pop3Command (cancellationToken, handler, encoding, format, args);
 			pc.Id = nextId++;
 			queue.Add (pc);
 			return pc;
+		}
+
+		public Pop3Command QueueCommand (CancellationToken cancellationToken, Pop3CommandHandler handler, string format, params object[] args)
+		{
+			return QueueCommand (cancellationToken, handler, Encoding.ASCII, format, args);
 		}
 
 		static void CapaHandler (Pop3Engine engine, Pop3Command pc, string text)

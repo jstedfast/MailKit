@@ -242,21 +242,27 @@ namespace MailKit.Security {
 		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
 		/// <param name="uri">The URI of the service to authenticate against.</param>
+		/// <param name="encoding">The text encoding to use for the credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <exception cref="System.ArgumentNullException">
 		/// <para><paramref name="mechanism"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
 		/// <para><paramref name="uri"/> is <c>null</c>.</para>
 		/// <para>-or-</para>
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
 		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
-		public static SaslMechanism Create (string mechanism, Uri uri, ICredentials credentials)
+		public static SaslMechanism Create (string mechanism, Uri uri, Encoding encoding, ICredentials credentials)
 		{
 			if (mechanism == null)
 				throw new ArgumentNullException ("mechanism");
 
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
+
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
 
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
@@ -269,11 +275,34 @@ namespace MailKit.Security {
 			case "CRAM-MD5":      return new SaslMechanismCramMd5 (uri, credentials);
 			//case "GSSAPI":        return null;
 			case "XOAUTH2":       return new SaslMechanismOAuth2 (uri, credentials);
-			case "PLAIN":         return new SaslMechanismPlain (uri, credentials);
-			case "LOGIN":         return new SaslMechanismLogin (uri, credentials);
+			case "PLAIN":         return new SaslMechanismPlain (uri, encoding, credentials);
+			case "LOGIN":         return new SaslMechanismLogin (uri, encoding, credentials);
 			case "NTLM":          return new SaslMechanismNtlm (uri, credentials);
 			default:              return null;
 			}
+		}
+
+		/// <summary>
+		/// Create an instance of the specified SASL mechanism using the uri and credentials.
+		/// </summary>
+		/// <remarks>
+		/// If unsure that a particular SASL mechanism is supported, you should first call
+		/// <see cref="IsSupported"/>.
+		/// </remarks>
+		/// <returns>An instance of the requested SASL mechanism if supported; otherwise <c>null</c>.</returns>
+		/// <param name="mechanism">The name of the SASL mechanism.</param>
+		/// <param name="uri">The URI of the service to authenticate against.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="mechanism"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="uri"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
+		public static SaslMechanism Create (string mechanism, Uri uri, ICredentials credentials)
+		{
+			return Create (mechanism, uri, Encoding.UTF8, credentials);
 		}
 
 		/// <summary>

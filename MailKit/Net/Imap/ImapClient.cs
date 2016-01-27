@@ -898,10 +898,13 @@ namespace MailKit.Net.Imap {
 		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
 		/// before calling this method.</note>
 		/// </remarks>
+		/// <param name="encoding">The text encoding to use for the user's credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="credentials"/> is <c>null</c>.
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The <see cref="ImapClient"/> has been disposed.
@@ -927,8 +930,11 @@ namespace MailKit.Net.Imap {
 		/// <exception cref="ImapProtocolException">
 		/// An IMAP protocol error occurred.
 		/// </exception>
-		public override void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
 
@@ -949,7 +955,7 @@ namespace MailKit.Net.Imap {
 				if (!engine.AuthenticationMechanisms.Contains (authmech))
 					continue;
 
-				if ((sasl = SaslMechanism.Create (authmech, uri, credentials)) == null)
+				if ((sasl = SaslMechanism.Create (authmech, uri, encoding, credentials)) == null)
 					continue;
 
 				cancellationToken.ThrowIfCancellationRequested ();

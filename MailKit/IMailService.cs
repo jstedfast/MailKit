@@ -26,6 +26,7 @@
 
 using System;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -209,12 +210,13 @@ namespace MailKit {
 		/// <para>If the server does not support SASL or if no common SASL mechanisms
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// </remarks>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="ServiceNotConnectedException">
 		/// The <see cref="IMailService"/> is not connected.
 		/// </exception>
-		void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Asynchronously authenticate using the supplied credentials.
@@ -230,6 +232,7 @@ namespace MailKit {
 		/// can be found, then the default login command is used as a fallback.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -259,7 +262,7 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Disconnect the service.

@@ -26,6 +26,7 @@
 
 using System;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -34,6 +35,8 @@ using System.Collections.Generic;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using SslProtocols = System.Security.Authentication.SslProtocols;
+#else
+using Encoding = Portable.Text.Encoding;
 #endif
 
 using MailKit.Security;
@@ -569,6 +572,112 @@ namespace MailKit {
 		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
 		/// before calling this method.</note>
 		/// </remarks>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public abstract void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously authenticates using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="credentials">The user's credentials.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="credentials"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public virtual Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
+			if (credentials == null)
+				throw new ArgumentNullException ("credentials");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					Authenticate (encoding, credentials, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
+		/// Authenticates using the supplied credentials.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
 		/// <param name="credentials">The user's credentials.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -595,7 +704,10 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public abstract void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+		public void Authenticate (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			Authenticate (Encoding.UTF8, credentials, cancellationToken);
+		}
 
 		/// <summary>
 		/// Asynchronously authenticates using the supplied credentials.
@@ -639,16 +751,139 @@ namespace MailKit {
 		/// <exception cref="ProtocolException">
 		/// A protocol error occurred.
 		/// </exception>
-		public virtual Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
+		public Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (credentials == null)
 				throw new ArgumentNullException ("credentials");
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Authenticate (credentials, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			return AuthenticateAsync (Encoding.UTF8, credentials, cancellationToken);
+		}
+
+		/// <summary>
+		/// Authenticates using the specified user name and password.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public void Authenticate (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
+			if (userName == null)
+				throw new ArgumentNullException ("userName");
+
+			if (password == null)
+				throw new ArgumentNullException ("password");
+
+			var credentials = new NetworkCredential (userName, password);
+
+			Authenticate (encoding, credentials, cancellationToken);
+		}
+
+		/// <summary>
+		/// Asynchronously authenticates using the specified user name and password.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		public Task AuthenticateAsync (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (encoding == null)
+				throw new ArgumentNullException ("encoding");
+
+			if (userName == null)
+				throw new ArgumentNullException ("userName");
+
+			if (password == null)
+				throw new ArgumentNullException ("password");
+
+			var credentials = new NetworkCredential (userName, password);
+
+			return AuthenticateAsync (encoding, credentials, cancellationToken);
 		}
 
 		/// <summary>
@@ -708,7 +943,7 @@ namespace MailKit {
 
 			var credentials = new NetworkCredential (userName, password);
 
-			Authenticate (credentials, cancellationToken);
+			Authenticate (Encoding.UTF8, credentials, cancellationToken);
 		}
 
 		/// <summary>
@@ -766,7 +1001,7 @@ namespace MailKit {
 
 			var credentials = new NetworkCredential (userName, password);
 
-			return AuthenticateAsync (credentials, cancellationToken);
+			return AuthenticateAsync (Encoding.UTF8, credentials, cancellationToken);
 		}
 
 		/// <summary>
