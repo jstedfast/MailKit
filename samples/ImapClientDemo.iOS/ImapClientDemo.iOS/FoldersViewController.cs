@@ -64,7 +64,7 @@ namespace ImapClientDemo.iOS
         // Recursive function to load all folders and their subfolders
         async Task LoadChildFolders (Section foldersSection, IMailFolder folder)
         {
-            if (!folder.IsNamespace) {    
+            if (!folder.IsNamespace) {
                 foldersSection.Add (new StyledStringElement (folder.FullName, () =>
                     OpenFolder (folder)));
             }
