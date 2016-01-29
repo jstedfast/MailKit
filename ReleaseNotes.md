@@ -4,6 +4,11 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.18
+
+* If the IMAP server sends a `* ID NIL` response, return null for ImapClient.Identify().
+* Allow developers to override the charset used when authenticating. (issue #292)
+
 ### MailKit 1.2.17
 
 * Exposed MailKit.Search.OrderByType and MailKit.Search.SortOrder to the public API.
