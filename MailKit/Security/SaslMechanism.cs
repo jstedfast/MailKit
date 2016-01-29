@@ -28,6 +28,10 @@ using System;
 using System.Net;
 using System.Text;
 
+#if NETFX_CORE
+using Encoding = Portable.Text.Encoding;
+#endif
+
 namespace MailKit.Security {
 	/// <summary>
 	/// A SASL authentication mechanism.
@@ -207,7 +211,7 @@ namespace MailKit.Security {
 		/// </summary>
 		/// <remarks>
 		/// Use this method to make sure that a SASL mechanism is supported before calling
-		/// <see cref="Create"/>.
+		/// <see cref="Create(string,Uri,ICredentials)"/>.
 		/// </remarks>
 		/// <returns><c>true</c> if the specified SASL mechanism is supported; otherwise, <c>false</c>.</returns>
 		/// <param name="mechanism">The name of the SASL mechanism.</param>
