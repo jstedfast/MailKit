@@ -34,6 +34,7 @@ using System.Collections.Generic;
 
 using MimeKit;
 using MimeKit.IO;
+using System.Threading.Tasks;
 
 #if NETFX_CORE
 using Windows.Networking;
@@ -1727,6 +1728,122 @@ namespace MailKit.Net.Smtp {
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Verify the existence of a mailbox address.
+		/// </summary>
+		/// <remarks>
+		/// Verifies the existence a mailbox address with the SMTP server, returning the expanded
+		/// mailbox address if it exists.
+		/// </remarks>
+		/// <returns>The expanded mailbox address.</returns>
+		/// <param name="address">The mailbox address.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="address"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="address"/> is an empty string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before verifying the existence of an address.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol exception occurred.
+		/// </exception>
+		public MailboxAddress Verify (string address, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			if (address.Length == 0)
+				throw new ArgumentException ("The address cannot be empty.", "address");
+
+			if (address.IndexOfAny (new [] { '\r', '\n' }) != -1)
+				throw new ArgumentException ("The address cannot contain newline characters.", "address");
+
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
+
+			var response = SendCommand (string.Format ("VRFY {0}", address), cancellationToken);
+
+			if (response.StatusCode == SmtpStatusCode.Ok)
+				return MailboxAddress.Parse (response.Response);
+
+			throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+		}
+
+		/// <summary>
+		/// Asynchronously verify the existence of a mailbox address.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously verifies the existence a mailbox address with the SMTP server,
+		/// returning the expanded mailbox address if it exists.
+		/// </remarks>
+		/// <returns>The expanded mailbox address.</returns>
+		/// <param name="address">The mailbox address.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="address"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="address"/> is an empty string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before verifying the existence of an address.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol exception occurred.
+		/// </exception>
+		public Task<MailboxAddress> VerifyAsync (string address, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			if (address.Length == 0)
+				throw new ArgumentException ("The address cannot be empty.", "address");
+
+			if (address.IndexOfAny (new [] { '\r', '\n' }) != -1)
+				throw new ArgumentException ("The address cannot contain newline characters.", "address");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Verify (address, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
 
 		/// <summary>
 		/// Releases the unmanaged resources used by the <see cref="SmtpClient"/> and
