@@ -1730,6 +1730,130 @@ namespace MailKit.Net.Smtp {
 		#endregion
 
 		/// <summary>
+		/// Expand a mailing address alias.
+		/// </summary>
+		/// <remarks>
+		/// Expands a mailing address alias.
+		/// </remarks>
+		/// <returns>The expanded list of mailbox addresses.</returns>
+		/// <param name="alias">The mailing address alias.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="alias"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="alias"/> is an empty string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before verifying the existence of an address.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol exception occurred.
+		/// </exception>
+		public InternetAddressList Expand (string alias, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (alias == null)
+				throw new ArgumentNullException ("alias");
+
+			if (alias.Length == 0)
+				throw new ArgumentException ("The alias cannot be empty.", "alias");
+
+			if (alias.IndexOfAny (new [] { '\r', '\n' }) != -1)
+				throw new ArgumentException ("The alias cannot contain newline characters.", "alias");
+
+			CheckDisposed ();
+
+			if (!IsConnected)
+				throw new ServiceNotConnectedException ("The SmtpClient is not connected.");
+
+			var response = SendCommand (string.Format ("EXPN {0}", alias), cancellationToken);
+
+			if (response.StatusCode != SmtpStatusCode.Ok)
+				throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+			var lines = response.Response.Split ('\n');
+			var list = new InternetAddressList ();
+
+			for (int i = 0; i < lines.Length; i++) {
+				InternetAddress address;
+
+				if (InternetAddress.TryParse (lines[i], out address))
+					list.Add (address);
+			}
+
+			return list;
+		}
+
+		/// <summary>
+		/// Asynchronously expand a mailing address alias.
+		/// </summary>
+		/// <remarks>
+		/// Asynchronously expands a mailing address alias.
+		/// </remarks>
+		/// <returns>The expanded list of mailbox addresses.</returns>
+		/// <param name="alias">The mailing address alias.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="alias"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="alias"/> is an empty string.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="SmtpClient"/> has been disposed.
+		/// </exception>
+		/// <exception cref="ServiceNotConnectedException">
+		/// The <see cref="SmtpClient"/> is not connected.
+		/// </exception>
+		/// <exception cref="ServiceNotAuthenticatedException">
+		/// Authentication is required before verifying the existence of an address.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation has been canceled.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="SmtpCommandException">
+		/// The SMTP command failed.
+		/// </exception>
+		/// <exception cref="SmtpProtocolException">
+		/// An SMTP protocol exception occurred.
+		/// </exception>
+		public Task<InternetAddressList> ExpandAsync (string alias, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			if (alias == null)
+				throw new ArgumentNullException ("alias");
+
+			if (alias.Length == 0)
+				throw new ArgumentException ("The alias cannot be empty.", "alias");
+
+			if (alias.IndexOfAny (new [] { '\r', '\n' }) != -1)
+				throw new ArgumentException ("The alias cannot contain newline characters.", "alias");
+
+			return Task.Factory.StartNew (() => {
+				lock (SyncRoot) {
+					return Expand (alias, cancellationToken);
+				}
+			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+		}
+
+		/// <summary>
 		/// Verify the existence of a mailbox address.
 		/// </summary>
 		/// <remarks>

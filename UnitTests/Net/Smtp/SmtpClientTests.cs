@@ -155,6 +155,14 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ArgumentNullException> (async () => await client.SendAsync (options, message, sender, null));
 				Assert.Throws<InvalidOperationException> (async () => await client.SendAsync (options, message, sender, empty));
 
+				// Expand
+				Assert.Throws<ArgumentNullException> (() => client.Expand (null));
+				Assert.Throws<ArgumentException> (() => client.Expand (string.Empty));
+				Assert.Throws<ArgumentException> (() => client.Expand ("line1\r\nline2"));
+				Assert.Throws<ArgumentNullException> (async () => await client.ExpandAsync (null));
+				Assert.Throws<ArgumentException> (async () => await client.ExpandAsync (string.Empty));
+				Assert.Throws<ArgumentException> (async () => await client.ExpandAsync ("line1\r\nline2"));
+
 				// Verify
 				Assert.Throws<ArgumentNullException> (() => client.Verify (null));
 				Assert.Throws<ArgumentException> (() => client.Verify (string.Empty));
@@ -235,6 +243,7 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("AUTH PLAIN AHVzZXJuYW1lAHBhc3N3b3Jk\r\n", "comcast-auth-plain.txt"));
 			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
+			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
 			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
@@ -289,6 +298,12 @@ namespace UnitTests.Net.Smtp {
 					await client.VerifyAsync ("Smith");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Verify: {0}", ex);
+				}
+
+				try {
+					await client.ExpandAsync ("Example-People");
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
 				}
 
 				var message = CreateSimpleMessage ();

@@ -1,0 +1,6 @@
+250-Jon Postel <Postel@USC-ISIF.ARPA>
+250-Fred Fonebone <Fonebone@USC-ISIQ.ARPA>
+250-Sam Q. Smith <SQSmith@USC-ISIQ.ARPA>
+250-Quincy Smith <@USC-ISIF.ARPA:Q-Smith@ISI-VAXA.ARPA>
+250-<joe@foo-unix.ARPA>
+250 <xyz@bar-unix.ARPA>
