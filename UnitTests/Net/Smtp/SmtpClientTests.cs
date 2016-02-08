@@ -92,6 +92,7 @@ namespace UnitTests.Net.Smtp {
 		public void TestArgumentExceptions ()
 		{
 			using (var client = new SmtpClient ()) {
+				var credentials = new NetworkCredential ("username", "password");
 				var socket = new Socket (SocketType.Stream, ProtocolType.Tcp);
 				var message = CreateSimpleMessage ();
 				var sender = message.From.Mailboxes.FirstOrDefault ();
@@ -125,6 +126,16 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null, "password"));
 				Assert.Throws<ArgumentNullException> (() => client.Authenticate ("username", null));
 				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync ("username", null));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null, credentials));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null, credentials));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (Encoding.UTF8, null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, null));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (null, "username", "password"));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (null, "username", "password"));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (Encoding.UTF8, null, "password"));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, null, "password"));
+				Assert.Throws<ArgumentNullException> (() => client.Authenticate (Encoding.UTF8, "username", null));
+				Assert.Throws<ArgumentNullException> (async () => await client.AuthenticateAsync (Encoding.UTF8, "username", null));
 
 				// Send
 				Assert.Throws<ArgumentNullException> (() => client.Send (null));
