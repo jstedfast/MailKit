@@ -28,6 +28,7 @@ Will you be my +1?
 			// In order to reference sexy-pose.jpg from the html text, we'll need to add it
 			// to builder.LinkedResources and then use its Content-Id value in the img src.
 			var image = builder.LinkedResources.Add (@"C:\Users\Joey\Documents\Selfies\sexy-pose.jpg");
+			image.ContentId = MimeUtils.GenerateMessageId ();
 
 			// Set the html version of the message text
 			builder.HtmlBody = string.Format (@"<p>Hey Alice,<br>
