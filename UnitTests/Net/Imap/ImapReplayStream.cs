@@ -92,6 +92,7 @@ namespace UnitTests.Net.Imap {
 		readonly IList<ImapReplayCommand> commands;
 		readonly bool testUnixFormat;
 		ImapReplayState state;
+		int timeout = 100000;
 		Stream stream;
 		bool disposed;
 		int index;
@@ -124,6 +125,10 @@ namespace UnitTests.Net.Imap {
 			get { return true; }
 		}
 
+		public override bool CanTimeout {
+			get { return true; }
+		}
+
 		public override long Length {
 			get { return stream.Length; }
 		}
@@ -131,6 +136,16 @@ namespace UnitTests.Net.Imap {
 		public override long Position {
 			get { return stream.Position; }
 			set { throw new NotSupportedException (); }
+		}
+
+		public override int ReadTimeout {
+			get { return timeout; }
+			set { timeout = value; }
+		}
+
+		public override int WriteTimeout {
+			get { return timeout; }
+			set { timeout = value; }
 		}
 
 		public override int Read (byte[] buffer, int offset, int count)

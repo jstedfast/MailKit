@@ -54,6 +54,7 @@ namespace UnitTests.Net.Smtp {
 	{
 		readonly MemoryStream sent = new MemoryStream ();
 		readonly IList<SmtpReplayCommand> commands;
+		int timeout = 100000;
 		SmtpReplayState state;
 		Stream stream;
 		bool disposed;
@@ -86,6 +87,10 @@ namespace UnitTests.Net.Smtp {
 			get { return true; }
 		}
 
+		public override bool CanTimeout {
+			get { return true; }
+		}
+
 		public override long Length {
 			get { throw new NotSupportedException (); }
 		}
@@ -93,6 +98,16 @@ namespace UnitTests.Net.Smtp {
 		public override long Position {
 			get { throw new NotSupportedException (); }
 			set { throw new NotSupportedException (); }
+		}
+
+		public override int ReadTimeout {
+			get { return timeout; }
+			set { timeout = value; }
+		}
+
+		public override int WriteTimeout {
+			get { return timeout; }
+			set { timeout = value; }
 		}
 
 		public override int Read (byte[] buffer, int offset, int count)

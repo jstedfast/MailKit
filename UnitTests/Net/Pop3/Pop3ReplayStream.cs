@@ -57,6 +57,7 @@ namespace UnitTests.Net.Pop3 {
 		readonly IList<Pop3ReplayCommand> commands;
 		readonly bool testUnixFormat;
 		Pop3ReplayState state;
+		int timeout = 100000;
 		Stream stream;
 		bool disposed;
 		int index;
@@ -89,6 +90,10 @@ namespace UnitTests.Net.Pop3 {
 			get { return true; }
 		}
 
+		public override bool CanTimeout {
+			get { return true; }
+		}
+
 		public override long Length {
 			get { return stream.Length; }
 		}
@@ -96,6 +101,16 @@ namespace UnitTests.Net.Pop3 {
 		public override long Position {
 			get { return stream.Position; }
 			set { throw new NotSupportedException (); }
+		}
+
+		public override int ReadTimeout {
+			get { return timeout; }
+			set { timeout = value; }
+		}
+
+		public override int WriteTimeout {
+			get { return timeout; }
+			set { timeout = value; }
 		}
 
 		public override int Read (byte[] buffer, int offset, int count)
