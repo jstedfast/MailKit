@@ -221,10 +221,13 @@ namespace UnitTests.Net.Pop3 {
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (ComcastCapa1, client.Capabilities);
 				Assert.AreEqual (0, client.AuthenticationMechanisms.Count);
-				Assert.AreEqual (31, client.ExpirePolicy);
+				Assert.AreEqual (31, client.ExpirePolicy, "ExpirePolicy");
+				Assert.AreEqual (100000, client.Timeout, "Timeout");
+				client.Timeout *= 2;
 
 				try {
 					await client.AuthenticateAsync ("username", "password");

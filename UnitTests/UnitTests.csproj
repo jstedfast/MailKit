@@ -256,6 +256,7 @@
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-ehlo+pipelining.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-greeting.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-mail-from.txt" />
+    <EmbeddedResource Include="Net\Smtp\Resources\comcast-noop.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-quit.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rcpt-to.txt" />
     <EmbeddedResource Include="Net\Smtp\Resources\comcast-rset.txt" />

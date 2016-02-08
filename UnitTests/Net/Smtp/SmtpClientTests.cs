@@ -244,6 +244,7 @@ namespace UnitTests.Net.Smtp {
 			commands.Add (new SmtpReplayCommand ("EHLO unit-tests.mimekit.org\r\n", "comcast-ehlo.txt"));
 			commands.Add (new SmtpReplayCommand ("VRFY Smith\r\n", "rfc0821-vrfy.txt"));
 			commands.Add (new SmtpReplayCommand ("EXPN Example-People\r\n", "rfc0821-expn.txt"));
+			commands.Add (new SmtpReplayCommand ("NOOP\r\n", "comcast-noop.txt"));
 			commands.Add (new SmtpReplayCommand ("MAIL FROM:<sender@example.com>\r\n", "comcast-mail-from.txt"));
 			commands.Add (new SmtpReplayCommand ("RCPT TO:<recipient@example.com>\r\n", "comcast-rcpt-to.txt"));
 			commands.Add (new SmtpReplayCommand ("DATA\r\n", "comcast-data.txt"));
@@ -272,6 +273,7 @@ namespace UnitTests.Net.Smtp {
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.Authentication), "Failed to detect AUTH extension");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("LOGIN"), "Failed to detect the LOGIN auth mechanism");
@@ -287,6 +289,9 @@ namespace UnitTests.Net.Smtp {
 				Assert.IsTrue (client.Capabilities.HasFlag (SmtpCapabilities.StartTLS), "Failed to detect STARTTLS extension");
 
 				Assert.Throws<ArgumentException> (() => client.Capabilities |= SmtpCapabilities.UTF8);
+
+				Assert.AreEqual (100000, client.Timeout, "Timeout");
+				client.Timeout *= 2;
 
 				try {
 					await client.AuthenticateAsync ("username", "password");
@@ -304,6 +309,12 @@ namespace UnitTests.Net.Smtp {
 					await client.ExpandAsync ("Example-People");
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Expand: {0}", ex);
+				}
+
+				try {
+					await client.NoOpAsync ();
+				} catch (Exception ex) {
+					Assert.Fail ("Did not expect an exception in NoOp: {0}", ex);
 				}
 
 				var message = CreateSimpleMessage ();

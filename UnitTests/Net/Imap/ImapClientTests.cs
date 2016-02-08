@@ -162,6 +162,7 @@ namespace UnitTests.Net.Imap {
 				}
 
 				Assert.IsTrue (client.IsConnected, "Client failed to connect.");
+				Assert.IsFalse (client.IsSecure, "IsSecure should be false.");
 
 				Assert.AreEqual (GMailInitialCapabilities, client.Capabilities);
 				Assert.AreEqual (4, client.AuthenticationMechanisms.Count);
@@ -169,6 +170,9 @@ namespace UnitTests.Net.Imap {
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("XOAUTH2"), "Expected SASL XOAUTH2 auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN"), "Expected SASL PLAIN auth mechanism");
 				Assert.IsTrue (client.AuthenticationMechanisms.Contains ("PLAIN-CLIENTTOKEN"), "Expected SASL PLAIN-CLIENTTOKEN auth mechanism");
+
+				Assert.AreEqual (100000, client.Timeout, "Timeout");
+				client.Timeout *= 2;
 
 				// Note: Do not try XOAUTH2
 				client.AuthenticationMechanisms.Remove ("XOAUTH2");
