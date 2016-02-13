@@ -45,7 +45,7 @@
     "packages.*.config"
   ],
   "dependencies": {
-    "MimeKit": "1.3.0-beta6",
+    "MimeKit": "1.2.21",
     "Portable.BouncyCastle": "1.8.1"
   }
 }
