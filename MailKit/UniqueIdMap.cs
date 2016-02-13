@@ -144,6 +144,7 @@ namespace MailKit {
 		/// <remarks>
 		/// Checks if the specified unique identifier has been remapped.
 		/// </remarks>
+		/// <returns><c>true</c> if the unique identifier has been remapped; otherwise, <c>false</c>.</returns>
 		/// <param name="key">The unique identifier.</param>
 		public bool ContainsKey (UniqueId key)
 		{
