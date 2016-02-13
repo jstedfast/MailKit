@@ -4,6 +4,10 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.19
+
+* Added support for the SMTP VRFY and EXPN commands.
+
 ### MailKit 1.2.18
 
 * If the IMAP server sends a `* ID NIL` response, return null for ImapClient.Identify().
