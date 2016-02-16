@@ -54,8 +54,8 @@ namespace MailKit.Net.Smtp {
 	/// </remarks>
 	class SmtpStream : Stream, ICancellableStream
 	{
-		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		static readonly Encoding Latin1;
+		static readonly Encoding UTF8;
 		const int ReadAheadSize = 128;
 		const int BlockSize = 4096;
 		const int PadSize = 4;
@@ -71,6 +71,17 @@ namespace MailKit.Net.Smtp {
 		int inputIndex = ReadAheadSize;
 		int inputEnd = ReadAheadSize;
 		bool disposed;
+
+		static SmtpStream ()
+		{
+			UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
+
+			try {
+				Latin1 = Encoding.GetEncoding (28591);
+			} catch (NotSupportedException) {
+				Latin1 = Encoding.GetEncoding (1252);
+			}
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Smtp.SmtpStream"/> class.

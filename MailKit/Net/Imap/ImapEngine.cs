@@ -124,8 +124,8 @@ namespace MailKit.Net.Imap {
 		const string GenericResponseCodeSyntaxErrorFormat = "Syntax error in {0} response code. Unexpected token: {1}";
 		const string GreetingSyntaxErrorFormat = "Syntax error in IMAP server greeting. Unexpected token: {0}";
 
-		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		internal static readonly Encoding Latin1;
+		internal static readonly Encoding UTF8;
 		static int TagPrefixIndex;
 
 		internal readonly Dictionary<string, ImapFolder> FolderCache;
@@ -138,6 +138,17 @@ namespace MailKit.Net.Imap {
 		internal int Tag;
 		bool disposed;
 		int nextId;
+
+		static ImapEngine ()
+		{
+			UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
+
+			try {
+				Latin1 = Encoding.GetEncoding (28591);
+			} catch (NotSupportedException) {
+				Latin1 = Encoding.GetEncoding (1252);
+			}
+		}
 
 		public ImapEngine (CreateImapFolderDelegate createImapFolderDelegate)
 		{

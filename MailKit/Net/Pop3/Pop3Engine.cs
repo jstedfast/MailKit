@@ -64,11 +64,23 @@ namespace MailKit.Net.Pop3 {
 	/// </summary>
 	class Pop3Engine
 	{
-		static readonly Encoding UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
+		static readonly Encoding Latin1;
+		static readonly Encoding UTF8;
+
 		readonly List<Pop3Command> queue;
 		Pop3Stream stream;
 		int nextId;
+
+		static Pop3Engine ()
+		{
+			UTF8 = Encoding.GetEncoding (65001, new EncoderExceptionFallback (), new DecoderExceptionFallback ());
+
+			try {
+				Latin1 = Encoding.GetEncoding (28591);
+			} catch (NotSupportedException) {
+				Latin1 = Encoding.GetEncoding (1252);
+			}
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MailKit.Net.Pop3.Pop3Engine"/> class.

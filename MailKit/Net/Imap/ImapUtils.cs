@@ -46,7 +46,6 @@ namespace MailKit.Net.Imap {
 	/// </summary>
 	static class ImapUtils
 	{
-		static readonly Encoding Latin1 = Encoding.GetEncoding (28591);
 		const string QuotedSpecials = " \t()<>@,;:\\\"/[]?=";
 		static int InboxLength = "INBOX".Length;
 
@@ -497,7 +496,7 @@ namespace MailKit.Net.Imap {
 				throw ImapEngine.UnexpectedToken (format, token);
 			}
 
-			return rfc2047 ? Rfc2047.DecodeText (Latin1.GetBytes (value)) : value;
+			return rfc2047 ? Rfc2047.DecodeText (ImapEngine.Latin1.GetBytes (value)) : value;
 		}
 
 		static uint ReadNumber (ImapEngine engine, string format, CancellationToken cancellationToken)
@@ -913,7 +912,7 @@ namespace MailKit.Net.Imap {
 				if (Name != null) {
 					// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
 					// to convert bytes to unicode, we can undo that here:
-					name = Rfc2047.DecodePhrase (Latin1.GetBytes (Name));
+					name = Rfc2047.DecodePhrase (ImapEngine.Latin1.GetBytes (Name));
 				}
 
 				// Note: When parsing mailbox addresses w/o a domain, Dovecot will
@@ -938,7 +937,7 @@ namespace MailKit.Net.Imap {
 				if (Mailbox != null) {
 					// Note: since the ImapEngine.ReadLiteral() uses iso-8859-1
 					// to convert bytes to unicode, we can undo that here:
-					name = Rfc2047.DecodePhrase (Latin1.GetBytes (Mailbox));
+					name = Rfc2047.DecodePhrase (ImapEngine.Latin1.GetBytes (Mailbox));
 				}
 
 				return new GroupAddress (name);
