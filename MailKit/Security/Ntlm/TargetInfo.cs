@@ -158,23 +158,23 @@ namespace MailKit.Security.Ntlm {
 
 		int CalculateSize (bool unicode)
 		{
-			int multiplier = unicode ? 2 : 1;
+			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
 			int length = 4;
 
 			if (!string.IsNullOrEmpty (DomainName))
-				length += 4 + DomainName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DomainName);
 
 			if (!string.IsNullOrEmpty (ServerName))
-				length += 4 + ServerName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (ServerName);
 
 			if (!string.IsNullOrEmpty (DnsDomainName))
-				length += 4 + DnsDomainName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DnsDomainName);
 
 			if (!string.IsNullOrEmpty (DnsServerName))
-				length += 4 + DnsServerName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DnsServerName);
 
 			if (!string.IsNullOrEmpty (DnsTreeName))
-				length += 4 + DnsTreeName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DnsTreeName);
 
 			if (Flags.HasValue)
 				length += 8;
@@ -183,7 +183,7 @@ namespace MailKit.Security.Ntlm {
 				length += 12;
 
 			if (!string.IsNullOrEmpty (TargetName))
-				length += 4 + TargetName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (TargetName);
 
 			return length;
 		}
