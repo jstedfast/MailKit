@@ -176,10 +176,9 @@ namespace MailKit.Security.Ntlm {
 
 		string DecodeString (byte[] buffer, int offset, int len)
 		{
-			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
-				return Encoding.Unicode.GetString (buffer, offset, len);
+			var encoding = (Flags & NtlmFlags.NegotiateUnicode) != 0 ? Encoding.Unicode : Encoding.UTF8;
 
-			return Encoding.UTF8.GetString (buffer, offset, len);
+			return encoding.GetString (buffer, offset, len);
 		}
 
 		byte[] EncodeString (string text)
@@ -187,10 +186,9 @@ namespace MailKit.Security.Ntlm {
 			if (text == null)
 				return new byte[0];
 
-			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
-				return Encoding.Unicode.GetBytes (text);
+			var encoding = (Flags & NtlmFlags.NegotiateUnicode) != 0 ? Encoding.Unicode : Encoding.UTF8;
 
-			return Encoding.UTF8.GetBytes (text);
+			return encoding.GetBytes (text);
 		}
 
 		public override byte[] Encode ()
