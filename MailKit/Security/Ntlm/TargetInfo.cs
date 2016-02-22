@@ -146,6 +146,7 @@ namespace MailKit.Security.Ntlm {
 				index += 2;
 
 				switch (type) {
+				case 0: index = startIndex + length; break; // a 'type' of 0 terminates the TargetInfo
 				case 1: ServerName = DecodeString (buffer, ref index, unicode); break;
 				case 2: DomainName = DecodeString (buffer, ref index, unicode); break;
 				case 3: DnsServerName = DecodeString (buffer, ref index, unicode); break;
