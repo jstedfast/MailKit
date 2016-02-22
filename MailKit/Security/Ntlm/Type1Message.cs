@@ -102,12 +102,12 @@ namespace MailKit.Security.Ntlm {
 			// decode the domain
 			count = BitConverterLE.ToUInt16 (message, startIndex + 16);
 			offset = BitConverterLE.ToUInt16 (message, startIndex + 20);
-			domain = Encoding.ASCII.GetString (message, startIndex + offset, count);
+			domain = Encoding.UTF8.GetString (message, startIndex + offset, count);
 
 			// decode the workstation/host
 			count = BitConverterLE.ToUInt16 (message, startIndex + 24);
 			offset = BitConverterLE.ToUInt16 (message, startIndex + 28);
-			host = Encoding.ASCII.GetString (message, startIndex + offset, count);
+			host = Encoding.UTF8.GetString (message, startIndex + offset, count);
 
 			if (offset == 40) {
 				// decode the OS Version
@@ -157,10 +157,10 @@ namespace MailKit.Security.Ntlm {
 				message[39] = 0x0f;
 			}
 
-			var hostName = Encoding.ASCII.GetBytes (host.ToUpperInvariant ());
+			var hostName = Encoding.UTF8.GetBytes (host.ToUpperInvariant ());
 			Buffer.BlockCopy (hostName, 0, message, hostOffset, hostName.Length);
 
-			var domainName = Encoding.ASCII.GetBytes (domain.ToUpperInvariant ());
+			var domainName = Encoding.UTF8.GetBytes (domain.ToUpperInvariant ());
 			Buffer.BlockCopy (domainName, 0, message, domainOffset, domainName.Length);
 
 			return message;

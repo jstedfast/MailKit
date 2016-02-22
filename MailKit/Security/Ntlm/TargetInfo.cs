@@ -77,13 +77,9 @@ namespace MailKit.Security.Ntlm {
 
 		static string DecodeString (byte[] buffer, ref int index, bool unicode)
 		{
-			short length = BitConverterLE.ToInt16 (buffer, index);
-			string value;
-
-			if (unicode)
-				value = Encoding.Unicode.GetString (buffer, index + 2, length);
-			else
-				value = Encoding.ASCII.GetString (buffer, index + 2, length);
+			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
+			var length = BitConverterLE.ToInt16 (buffer, index);
+			var value = encoding.GetString (buffer, index + 2, length);
 
 			index += 2 + length;
 
@@ -202,18 +198,14 @@ namespace MailKit.Security.Ntlm {
 
 		static void EncodeString (byte[] buf, ref int index, short type, string value, bool unicode)
 		{
+			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
 			int length = value.Length;
 
 			if (unicode)
 				length *= 2;
 
 			EncodeTypeAndLength (buf, ref index, type, (short) length);
-
-			if (unicode)
-				Encoding.Unicode.GetBytes (value, 0, value.Length, buf, index);
-			else
-				Encoding.ASCII.GetBytes (value, 0, value.Length, buf, index);
-
+			encoding.GetBytes (value, 0, value.Length, buf, index);
 			index += length;
 		}
 

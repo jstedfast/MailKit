@@ -179,7 +179,7 @@ namespace MailKit.Security.Ntlm {
 			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
 				return Encoding.Unicode.GetString (buffer, offset, len);
 
-			return Encoding.ASCII.GetString (buffer, offset, len);
+			return Encoding.UTF8.GetString (buffer, offset, len);
 		}
 
 		byte[] EncodeString (string text)
@@ -190,7 +190,7 @@ namespace MailKit.Security.Ntlm {
 			if ((Flags & NtlmFlags.NegotiateUnicode) != 0)
 				return Encoding.Unicode.GetBytes (text);
 
-			return Encoding.ASCII.GetBytes (text);
+			return Encoding.UTF8.GetBytes (text);
 		}
 
 		public override byte[] Encode ()

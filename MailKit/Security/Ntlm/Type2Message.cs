@@ -107,12 +107,11 @@ namespace MailKit.Security.Ntlm {
 			var targetNameOffset = BitConverterLE.ToUInt16 (message, startIndex + 16);
 
 			if (targetNameLength > 0) {
-				if ((Flags & NtlmFlags.NegotiateOem) != 0)
-					TargetName = Encoding.ASCII.GetString (message, startIndex + targetNameOffset, targetNameLength);
-				else
-					TargetName = Encoding.Unicode.GetString (message, startIndex + targetNameOffset, targetNameLength);
+				var encoding = (Flags & NtlmFlags.NegotiateOem) != 0 ? Encoding.UTF8 : Encoding.Unicode;
+
+				TargetName = encoding.GetString (message, startIndex + targetNameOffset, targetNameLength);
 			}
-			
+
 			// The Target Info block is optional.
 			if (message.Length >= 48) {
 				var targetInfoLength = BitConverterLE.ToUInt16 (message, startIndex + 40);
