@@ -113,7 +113,7 @@ namespace MailKit.Security.Ntlm {
 			}
 
 			// The Target Info block is optional.
-			if (message.Length >= 48) {
+			if (message.Length >= 48 && targetNameOffset >= 48) {
 				var targetInfoLength = BitConverterLE.ToUInt16 (message, startIndex + 40);
 				var targetInfoOffset = BitConverterLE.ToUInt16 (message, startIndex + 44);
 
