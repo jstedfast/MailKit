@@ -77,13 +77,9 @@ namespace MailKit.Security.Ntlm {
 
 		static string DecodeString (byte[] buffer, ref int index, bool unicode)
 		{
-			short length = BitConverterLE.ToInt16 (buffer, index);
-			string value;
-
-			if (unicode)
-				value = Encoding.Unicode.GetString (buffer, index + 2, length);
-			else
-				value = Encoding.ASCII.GetString (buffer, index + 2, length);
+			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
+			var length = BitConverterLE.ToInt16 (buffer, index);
+			var value = encoding.GetString (buffer, index + 2, length);
 
 			index += 2 + length;
 
@@ -146,6 +142,7 @@ namespace MailKit.Security.Ntlm {
 				index += 2;
 
 				switch (type) {
+				case 0: index = startIndex + length; break; // a 'type' of 0 terminates the TargetInfo
 				case 1: ServerName = DecodeString (buffer, ref index, unicode); break;
 				case 2: DomainName = DecodeString (buffer, ref index, unicode); break;
 				case 3: DnsServerName = DecodeString (buffer, ref index, unicode); break;
@@ -161,23 +158,23 @@ namespace MailKit.Security.Ntlm {
 
 		int CalculateSize (bool unicode)
 		{
-			int multiplier = unicode ? 2 : 1;
+			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
 			int length = 4;
 
 			if (!string.IsNullOrEmpty (DomainName))
-				length += 4 + DomainName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DomainName);
 
 			if (!string.IsNullOrEmpty (ServerName))
-				length += 4 + ServerName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (ServerName);
 
 			if (!string.IsNullOrEmpty (DnsDomainName))
-				length += 4 + DnsDomainName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DnsDomainName);
 
 			if (!string.IsNullOrEmpty (DnsServerName))
-				length += 4 + DnsServerName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DnsServerName);
 
 			if (!string.IsNullOrEmpty (DnsTreeName))
-				length += 4 + DnsTreeName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (DnsTreeName);
 
 			if (Flags.HasValue)
 				length += 8;
@@ -186,7 +183,7 @@ namespace MailKit.Security.Ntlm {
 				length += 12;
 
 			if (!string.IsNullOrEmpty (TargetName))
-				length += 4 + TargetName.Length * multiplier;
+				length += 4 + encoding.GetByteCount (TargetName);
 
 			return length;
 		}
@@ -201,18 +198,14 @@ namespace MailKit.Security.Ntlm {
 
 		static void EncodeString (byte[] buf, ref int index, short type, string value, bool unicode)
 		{
+			var encoding = unicode ? Encoding.Unicode : Encoding.UTF8;
 			int length = value.Length;
 
 			if (unicode)
 				length *= 2;
 
 			EncodeTypeAndLength (buf, ref index, type, (short) length);
-
-			if (unicode)
-				Encoding.Unicode.GetBytes (value, 0, value.Length, buf, index);
-			else
-				Encoding.ASCII.GetBytes (value, 0, value.Length, buf, index);
-
+			encoding.GetBytes (value, 0, value.Length, buf, index);
 			index += length;
 		}
 

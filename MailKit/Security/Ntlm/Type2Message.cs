@@ -107,20 +107,19 @@ namespace MailKit.Security.Ntlm {
 			var targetNameOffset = BitConverterLE.ToUInt16 (message, startIndex + 16);
 
 			if (targetNameLength > 0) {
-				if ((Flags & NtlmFlags.NegotiateOem) != 0)
-					TargetName = Encoding.ASCII.GetString (message, startIndex + targetNameOffset, targetNameLength);
-				else
-					TargetName = Encoding.Unicode.GetString (message, startIndex + targetNameOffset, targetNameLength);
+				var encoding = (Flags & NtlmFlags.NegotiateOem) != 0 ? Encoding.UTF8 : Encoding.Unicode;
+
+				TargetName = encoding.GetString (message, startIndex + targetNameOffset, targetNameLength);
 			}
-			
+
 			// The Target Info block is optional.
-			if (message.Length >= 48) {
+			if (message.Length >= 48 && targetNameOffset >= 48) {
 				var targetInfoLength = BitConverterLE.ToUInt16 (message, startIndex + 40);
 				var targetInfoOffset = BitConverterLE.ToUInt16 (message, startIndex + 44);
 
-				TargetInfo = new TargetInfo (message, targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateUnicode) != 0);
+				if (targetInfoLength > 0 && targetInfoOffset < message.Length && targetInfoLength <= (message.Length - targetInfoOffset)) {
+					TargetInfo = new TargetInfo (message, targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateUnicode) != 0);
 
-				if (targetInfoLength > 0) {
 					targetInfo = new byte[targetInfoLength];
 					Buffer.BlockCopy (message, startIndex + targetInfoOffset, targetInfo, 0, targetInfoLength);
 				}
