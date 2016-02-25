@@ -464,7 +464,18 @@ namespace MailKit {
 		/// Establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
-		/// Establishes a connection to the specified mail server.
+		/// <para>Establishes a connection to the specified mail server.</para>
+		/// <note type="note">
+		/// <para>The <paramref name="useSsl"/> argument only controls whether or
+		/// not the client makes an SSL-wrapped connection. In other words, even if the
+		/// <paramref name="useSsl"/> parameter is <c>false</c>, SSL/TLS may still be used if
+		/// the mail server supports the STARTTLS extension.</para>
+		/// <para>To disable all use of SSL/TLS, use the
+		/// <see cref="Connect(string,int,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)"/>
+		/// overload with a value of
+		/// <see cref="MailKit.Security.SecureSocketOptions.None">SecureSocketOptions.None</see>
+		/// instead.</para>
+		/// </note>
 		/// </remarks>
 		/// <param name="host">The host to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
@@ -512,7 +523,17 @@ namespace MailKit {
 		/// Asynchronously establish a connection to the specified mail server.
 		/// </summary>
 		/// <remarks>
-		/// Asynchronously establishes a connection to the specified mail server.
+		/// <para>Asynchronously establishes a connection to the specified mail server.</para>
+		/// <note type="note">
+		/// <para>The <paramref name="useSsl"/> argument only controls whether or
+		/// not the client makes an SSL-wrapped connection. In other words, even if the
+		/// <paramref name="useSsl"/> parameter is <c>false</c>, SSL/TLS may still be used if
+		/// the mail server supports the STARTTLS extension.</para>
+		/// <para>To disable all use of SSL/TLS, use the
+		/// <see cref="ConnectAsync(string,int,MailKit.Security.SecureSocketOptions,System.Threading.CancellationToken)"/>
+		/// overload with a value of
+		/// <see cref="MailKit.Security.SecureSocketOptions.None">SecureSocketOptions.None</see>
+		/// instead.</para>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="host">The host to connect to.</param>
