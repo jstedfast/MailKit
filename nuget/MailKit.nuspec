@@ -48,6 +48,9 @@ Features include:
 		<group targetFramework="net45">
 			<dependency id="MimeKit" version="1.2.21" />
 		</group>
+		<group targetFramework="net451">
+			<dependency id="MimeKit" version="1.2.21" />
+		</group>
 		<group targetFramework="MonoAndroid10">
 			<dependency id="MimeKit" version="1.2.21" />
 		</group>
@@ -94,6 +97,8 @@ Features include:
 		<file src="..\MailKit\bin\Release\lib\net40\MailKit.xml" target="lib\net40\MailKit.xml" />
 		<file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net45\MailKit.dll" />
 		<file src="..\MailKit\bin\Release\lib\net45\MailKit.xml" target="lib\net45\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\lib\net45\MailKit.dll" target="lib\net451\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\lib\net45\MailKit.xml" target="lib\net451\MailKit.xml" />
 		<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\win81\MailKit.dll" />
 		<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.xml" target="lib\win81\MailKit.xml" />
 		<file src="..\MailKit\bin\Release\lib\wpa81\MailKit.dll" target="lib\wpa81\MailKit.dll" />
