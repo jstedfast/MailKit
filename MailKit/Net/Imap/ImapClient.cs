@@ -529,7 +529,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Passes along the client implementation details to the server while also obtaining implementation
 		/// details from the server.</para>
-		/// <para>If the <paramref name="clientImplementation"/> is null or no properties have been set, no
+		/// <para>If the <paramref name="clientImplementation"/> is <c>null</c> or no properties have been set, no
 		/// identifying information will be sent to the server.</para>
 		/// <note type="security">
 		/// <para>Security Implications</para>
@@ -619,7 +619,7 @@ namespace MailKit.Net.Imap {
 		/// <remarks>
 		/// <para>Passes along the client implementation details to the server while also obtaining implementation
 		/// details from the server.</para>
-		/// <para>If the <paramref name="clientImplementation"/> is null or no properties have been set, no
+		/// <para>If the <paramref name="clientImplementation"/> is <c>null</c> or no properties have been set, no
 		/// identifying information will be sent to the server.</para>
 		/// <note type="security">
 		/// <para>Security Implications</para>
