@@ -531,6 +531,7 @@ namespace MailKit.Net.Imap {
 		/// details from the server.</para>
 		/// <para>If the <paramref name="clientImplementation"/> is null or no properties have been set, no
 		/// identifying information will be sent to the server.</para>
+		/// <note type="security">
 		/// <para>Security Implications</para>
 		/// <para>This command has the danger of violating the privacy of users if misused. Clients should
 		/// notify users that they send the ID command.</para>
@@ -541,6 +542,7 @@ namespace MailKit.Net.Imap {
 		/// Some properties, such as a processor ID number, Ethernet address, or other unique (or mostly unique) identifier
 		/// would allow tracking of users in ways that violate user privacy expectations and may also make it easier for
 		/// attackers to exploit security holes in the client.</para>
+		/// </note>
 		/// </remarks>
 		/// <example>
 		/// <code language="c#" source="Examples\ImapExamples.cs" region="Capabilities"/>
@@ -619,6 +621,7 @@ namespace MailKit.Net.Imap {
 		/// details from the server.</para>
 		/// <para>If the <paramref name="clientImplementation"/> is null or no properties have been set, no
 		/// identifying information will be sent to the server.</para>
+		/// <note type="security">
 		/// <para>Security Implications</para>
 		/// <para>This command has the danger of violating the privacy of users if misused. Clients should
 		/// notify users that they send the ID command.</para>
@@ -629,6 +632,7 @@ namespace MailKit.Net.Imap {
 		/// Some properties, such as a processor ID number, Ethernet address, or other unique (or mostly unique) identifier
 		/// would allow tracking of users in ways that violate user privacy expectations and may also make it easier for
 		/// attackers to exploit security holes in the client.</para>
+		/// </note>
 		/// </remarks>
 		/// <returns>The implementation details of the server if available; otherwise, <c>null</c>.</returns>
 		/// <param name="clientImplementation">The client implementation.</param>
