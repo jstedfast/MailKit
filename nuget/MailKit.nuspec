@@ -44,19 +44,19 @@ Features include:
 		</frameworkAssemblies>
 	<dependencies>
 		<group targetFramework="net40">
-			<dependency id="MimeKit" version="1.2.21" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="net45">
-			<dependency id="MimeKit" version="1.2.21" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="net451">
-			<dependency id="MimeKit" version="1.2.21" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.2.21" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.2.21" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework=".NETPlatform5.5">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
@@ -79,11 +79,11 @@ Features include:
 			<dependency id="System.Linq" version="4.0.1-beta-23516" />
 			<dependency id="Microsoft.CSharp" version="4.0.1-beta-23516" />
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.2.21" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.2.21" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 	</dependencies>
 	</metadata>
