@@ -534,6 +534,7 @@ namespace MailKit {
 		/// overload with a value of
 		/// <see cref="MailKit.Security.SecureSocketOptions.None">SecureSocketOptions.None</see>
 		/// instead.</para>
+		/// </note>
 		/// </remarks>
 		/// <returns>An asynchronous task context.</returns>
 		/// <param name="host">The host to connect to.</param>

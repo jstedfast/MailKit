@@ -404,6 +404,62 @@ message.WriteTo (options, stream);
         <code language="c#" source="Examples\OpenPGPExamples.cs" region="DecryptInlinePGP"/>
       </content>
     </section>
+    
+    <section address="Reply">
+      <title>How do I reply to a message using MimeKit?</title>
+      <content>
+        <para>
+          Replying to a message is fairly simple. For the most part, you'd just create the reply message
+          the same way you'd create any other message. There are only a few slight differences:
+        </para>
+        <list class="ordered">
+          <listItem>
+            <para>
+              In the reply message, you'll want to prefix the <literal>Subject</literal> header with
+              <literal>"Re: "</literal> if the prefix doesn't already exist in the message you are
+              replying to (in other words, if you are replying to a message with a <literal>Subject</literal>
+              of <literal>"Re: party tomorrow night!"</literal>, you would not prefix it with another
+              <literal>"Re: "</literal>).
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              You will want to set the reply message's <literal>In-Reply-To</literal> header to the value
+              of the <literal>Message-Id</literal> header in the original message.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              You will want to copy the original message's <literal>References</literal> header into the
+              reply message's <literal>References</literal> header and then append the original message's
+              <literal>Message-Id</literal> header.
+            </para>
+          </listItem>
+          <listItem>
+            <para>
+              You will probably want to "quote" the original message's text in the reply.
+            </para>
+          </listItem>
+        </list>
+        <para>
+          If this logic were to be expressed in code, it might look something like this:
+        </para>
+        <code language="c#" source="Examples\MimeVisitorExamples.cs" region="ReplySimple"/>
+        <para>
+          But what if you wanted to reply to a message and quote the HTML formatting of the original message
+          body (assuming it has an HTML body) while still including the embedded images?
+        </para>
+        <para>
+          This gets a bit more complicated, but it's still doable...
+        </para>
+        <para>
+          The first thing we'd need to do is implement our own <codeEntityReference>T:MimeKit.MimeVisitor</codeEntityReference>
+          to handle this:
+        </para>
+        <code language="c#" source="Examples\MimeVisitorExamples.cs" region="ReplyVisitor"/>
+        <code language="c#" source="Examples\MimeVisitorExamples.cs" region="Reply"/>
+      </content>
+    </section>
 
     <section address="ParseWebRequestFormData">
       <title>How would I parse multipart/form-data from an HTTP web request?</title>
