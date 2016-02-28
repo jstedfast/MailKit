@@ -4,6 +4,13 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.20
+
+* Added a work-around for GoDaddy's ASP.NET web host which does not support the iso-8859-1
+  System.Text.Encoding (used as a fallback encoding within MailKit) by falling back to
+  Windows-1252 instead.
+* Improved NTLM support.
+
 ### MailKit 1.2.19
 
 * Added support for the SMTP VRFY and EXPN commands.

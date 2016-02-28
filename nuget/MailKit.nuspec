@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>MailKit</id>
-		<version>1.2.19</version>
+		<version>1.2.20</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,7 +22,8 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Added support for the SMTP VRFY and EXPN commands.
+		<releaseNotes>* Added a work-around for GoDaddy's ASP.NET web host which does not support the iso-8859-1 System.Text.Encoding (used as a fallback encoding within MailKit) by falling back to Windows-1252 instead.
+* Improved NTLM support.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
