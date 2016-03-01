@@ -83,5 +83,39 @@ namespace UnitTests.Net.Imap {
 			var decoded = ImapEncoding.Decode (encoded);
 			Assert.AreEqual (chinese, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
 		}
+
+		[Test]
+		public void TestRfc3501Example ()
+		{
+			const string mixed = "~peter/mail/台北/日本語";
+
+			var encoded = ImapEncoding.Encode (mixed);
+			Assert.AreEqual ("~peter/mail/&U,BTFw-/&ZeVnLIqe-", encoded, "UTF-7 encoded text does not match the expected value: {0}", encoded);
+
+			var decoded = ImapEncoding.Decode (encoded);
+			Assert.AreEqual (mixed, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+		}
+
+		[Test]
+		public void TestDecodeBadRfc3501Example ()
+		{
+			const string encoded = "&Jjo!";
+
+			var decoded = ImapEncoding.Decode (encoded);
+			Assert.AreEqual (encoded, decoded, "UTF-7 decoded text does not match the original text: {0}", decoded);
+		}
+
+		[Test]
+		public void TestRfc3501SuperfluousShiftExample ()
+		{
+			const string example = "&U,BTFw-&ZeVnLIqe-";
+
+			// Note: we may want to modify ImapEncoding.Decode() to fail and return the input text in this case
+			var decoded = ImapEncoding.Decode (example);
+			Assert.AreEqual ("台北日本語", decoded, "UTF-7 decoded text does not match the expected value.");
+
+			var encoded = ImapEncoding.Encode (decoded);
+			Assert.AreEqual ("&U,BTF2XlZyyKng-", encoded, "UTF-7 encoded text does not match the expected value.");
+		}
 	}
 }
