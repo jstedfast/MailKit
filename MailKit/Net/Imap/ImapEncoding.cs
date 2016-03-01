@@ -74,7 +74,11 @@ namespace MailKit.Net.Imap {
 						bits += 6;
 
 						if (bits >= 16) {
-							str = char.ConvertFromUtf32 ((v >> (bits - 16)) & 0xffff);
+							try {
+								str = char.ConvertFromUtf32 ((v >> (bits - 16)) & 0xffff);
+							} catch {
+								return text;
+							}
 							decoded.Append (str);
 							bits -= 16;
 						}
