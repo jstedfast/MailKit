@@ -8301,22 +8301,8 @@ namespace MailKit.Net.Imap {
 					throw new NotSupportedException ("The X-GM-LABELS search term is not supported by the IMAP server.");
 
 				text = (TextSearchQuery) query;
-
-				if ((isFlag = text.Text[0] == '\\')) {
-					for (int i = 1; i < text.Text.Length; i++) {
-						if (text.Text[i] < 'A' || (text.Text[i] > 'Z' && text.Text[i] < 'a') || text.Text[i] > 'z') {
-							isFlag = false;
-							break;
-						}
-					}
-				}
-
-				if (isFlag) {
-					builder.AppendFormat ("X-GM-LABELS {0}", text.Text);
-				} else {
-					builder.Append ("X-GM-LABELS %S");
-					args.Add (text.Text);
-				}
+				builder.Append ("X-GM-LABELS %S");
+				args.Add (text.Text);
 				break;
 			case SearchTerm.GMailRaw:
 				if ((Engine.Capabilities & ImapCapabilities.GMailExt1) == 0)
