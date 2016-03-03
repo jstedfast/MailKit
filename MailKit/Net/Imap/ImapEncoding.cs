@@ -48,7 +48,6 @@ namespace MailKit.Net.Imap {
 			bool shifted = false;
 			int bits = 0, v = 0;
 			int index = 0;
-			string str;
 			char c;
 
 			while (index < text.Length) {
@@ -74,12 +73,8 @@ namespace MailKit.Net.Imap {
 						bits += 6;
 
 						if (bits >= 16) {
-							try {
-								str = char.ConvertFromUtf32 ((v >> (bits - 16)) & 0xffff);
-							} catch {
-								return text;
-							}
-							decoded.Append (str);
+							char u = (char) ((v >> (bits - 16)) & 0xffff);
+							decoded.Append (u);
 							bits -= 16;
 						}
 					}
@@ -116,16 +111,9 @@ namespace MailKit.Net.Imap {
 			int bits = 0, u = 0;
 
 			for (int index = 0; index < text.Length; index++) {
-				int unichar;
+				char c = text[index];
 
-				if (index + 1 < text.Length && char.IsSurrogatePair (text[index], text[index + 1])) {
-					unichar = char.ConvertToUtf32 (text[index], text[index + 1]);
-					index++;
-				} else {
-					unichar = (int) text[index];
-				}
-
-				if (unichar >= 0x20 && unichar < 0x7f) {
+				if (c >= 0x20 && c < 0x7f) {
 					// characters with octet values 0x20-0x25 and 0x27-0x7e
 					// represent themselves while 0x26 ("&") is represented
 					// by the two-octet sequence "&-"
@@ -136,10 +124,10 @@ namespace MailKit.Net.Imap {
 						bits = 0;
 					}
 
-					if (unichar != 0x26)
-						encoded.Append ((char) unichar);
-					else
+					if (c == 0x26)
 						encoded.Append ("&-");
+					else
+						encoded.Append (c);
 				} else {
 					// base64 encode
 					if (!shifted) {
@@ -147,7 +135,7 @@ namespace MailKit.Net.Imap {
 						shifted = true;
 					}
 
-					u = (u << 16) | (unichar & 0xffff);
+					u = (u << 16) | (c & 0xffff);
 					bits += 16;
 
 					while (bits >= 6) {

@@ -117,5 +117,17 @@ namespace UnitTests.Net.Imap {
 			var encoded = ImapEncoding.Encode (decoded);
 			Assert.AreEqual ("&U,BTF2XlZyyKng-", encoded, "UTF-7 encoded text does not match the expected value.");
 		}
+
+		[Test]
+		public void TestDecodeSurrogatePair ()
+		{
+			const string example = "&2DzcHA-";
+
+			var decoded = ImapEncoding.Decode (example);
+			Assert.AreEqual ("\ud83c\udc1c", decoded, "UTF-7 decoded text does not match the expected value.");
+
+			var encoded = ImapEncoding.Encode (decoded);
+			Assert.AreEqual ("&2DzcHA-", encoded, "UTF-7 encoded text does not match the expected value.");
+		}
 	}
 }
