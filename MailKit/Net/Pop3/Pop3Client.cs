@@ -245,7 +245,7 @@ namespace MailKit.Net.Pop3 {
 				return ServicePointManager.ServerCertificateValidationCallback (engine.Uri.Host, certificate, chain, sslPolicyErrors);
 #endif
 
-			return sslPolicyErrors == SslPolicyErrors.None;
+			return DefaultServerCertificateValidationCallback (sender, certificate, chain, sslPolicyErrors);
 		}
 #endif
 

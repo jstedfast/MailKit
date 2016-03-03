@@ -249,6 +249,56 @@ namespace MailKit {
 			get; set;
 		}
 
+#if !NETFX_CORE
+		/// <summary>
+		/// The default server certificate validation callback used when connecting via SSL or TLS.
+		/// </summary>
+		/// <remarks>
+		/// <para>The default server certificate validation callback considers self-signed certificates to be
+		/// valid so long as the only error in the certificate chain is an untrusted root.</para>
+		/// <note type="security">It should be noted that self-signed certificates may be an indication of
+		/// a man-in-the-middle (MITM) attack and so it is recommended that the client implement a custom
+		/// server certificate validation callback that presents the certificate to the user in some way,
+		/// allowing the user to confirm or deny its validity.</note>
+		/// </remarks>
+		/// <returns><c>true</c> if the certificate is deemed valid; otherwise, <c>false</c>.</returns>
+		/// <param name="sender">The object that is connecting via SSL or TLS.</param>
+		/// <param name="certificate">The server's SSL certificate.</param>
+		/// <param name="chain">The server's SSL certificate chain.</param>
+		/// <param name="sslPolicyErrors">The SSL policy errors.</param>
+		public static bool DefaultServerCertificateValidationCallback (object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+		{
+			if (sslPolicyErrors == SslPolicyErrors.None)
+				return true;
+
+			// if there are errors in the certificate chain, look at each error to determine the cause
+			if ((sslPolicyErrors & SslPolicyErrors.RemoteCertificateChainErrors) != 0) {
+				if (chain != null && chain.ChainStatus != null) {
+					foreach (var status in chain.ChainStatus) {
+						if ((certificate.Subject == certificate.Issuer) && (status.Status == X509ChainStatusFlags.UntrustedRoot)) {
+							// treat self-signed certificates with an untrusted root as valid since they are so
+							// common among mail server installations
+							continue;
+						}
+
+						if (status.Status != X509ChainStatusFlags.NoError) {
+							// if there are any other errors in the certificate chain, the certificate is invalid,
+							// so return false
+							return false;
+						}
+					}
+				}
+
+				// Note: If we get this far, then the only errors in the certificate chain are untrusted root errors for
+				// self-signed certificates. Since self-signed certificates are so common for mail server installations,
+				// treat the certificate as valid.
+				return true;
+			}
+
+			return false;
+		}
+#endif
+
 		/// <summary>
 		/// Establish a connection to the specified mail server.
 		/// </summary>

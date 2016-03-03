@@ -312,7 +312,7 @@ namespace MailKit.Net.Smtp {
 				return ServicePointManager.ServerCertificateValidationCallback (host, certificate, chain, sslPolicyErrors);
 #endif
 
-			return sslPolicyErrors == SslPolicyErrors.None;
+			return DefaultServerCertificateValidationCallback (sender, certificate, chain, sslPolicyErrors);
 		}
 #endif
 
