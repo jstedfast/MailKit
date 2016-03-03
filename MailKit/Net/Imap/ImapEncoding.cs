@@ -78,7 +78,7 @@ namespace MailKit.Net.Imap {
 							bits -= 16;
 						}
 					}
-				} else if (c == '&') {
+				} else if (c == '&' && index < text.Length) {
 					if (text[index] == '-') {
 						decoded.Append ('&');
 						index++;
