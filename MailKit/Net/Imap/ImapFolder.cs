@@ -1127,7 +1127,7 @@ namespace MailKit.Net.Imap {
 
 			var fullName = FullName.Length > 0 ? FullName + DirectorySeparator + name : name;
 			var encodedName = Engine.EncodeMailboxName (fullName);
-			var list = new List<ImapFolder> ();
+			List<ImapFolder> list;
 			ImapFolder subfolder;
 
 			if (Engine.GetCachedFolder (encodedName, out subfolder))
@@ -1135,7 +1135,7 @@ namespace MailKit.Net.Imap {
 
 			var ic = new ImapCommand (Engine, cancellationToken, null, "LIST \"\" %S\r\n", encodedName);
 			ic.RegisterUntaggedHandler ("LIST", ImapUtils.ParseFolderList);
-			ic.UserData = list;
+			ic.UserData = list = new List<ImapFolder> ();
 
 			Engine.QueueCommand (ic);
 			Engine.Wait (ic);
