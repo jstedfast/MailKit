@@ -101,7 +101,7 @@ of half-working, non-RFC-compliant IMAP implementations out there that it was fi
 designed and implemented IMAP client library to be written.
 
 For POP3, libraries such as OpenPOP.NET are actually fairly decent, although the MIME parser is far
-too strict - throwing exceptions any time it encounteres a Content-Type or Content-Disposition
+too strict - throwing exceptions any time it encounters a Content-Type or Content-Disposition
 parameter that it doesn't already know about, which, if you read over the mailing-list, is a problem
 that OpenPOP.NET users are constantly running into. MailKit's Pop3Client, of course, doesn't have this
 problem. It also parses messages directly from the socket instead of downloading the message into a
