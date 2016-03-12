@@ -1181,18 +1181,27 @@ namespace MailKit.Net.Smtp {
 			return message.From.Mailboxes.FirstOrDefault ();
 		}
 
+		static void AddUnique (IList<MailboxAddress> recipients, HashSet<string> unique, IEnumerable<MailboxAddress> mailboxes)
+		{
+			foreach (var mailbox in mailboxes) {
+				if (unique.Add (mailbox.Address))
+					recipients.Add (mailbox);
+			}
+		}
+
 		static IList<MailboxAddress> GetMessageRecipients (MimeMessage message)
 		{
+			var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			var recipients = new List<MailboxAddress> ();
 
 			if (message.ResentSender != null || message.ResentFrom.Count > 0) {
-				recipients.AddRange (message.ResentTo.Mailboxes);
-				recipients.AddRange (message.ResentCc.Mailboxes);
-				recipients.AddRange (message.ResentBcc.Mailboxes);
+				AddUnique (recipients, unique, message.ResentTo.Mailboxes);
+				AddUnique (recipients, unique, message.ResentCc.Mailboxes);
+				AddUnique (recipients, unique, message.ResentBcc.Mailboxes);
 			} else {
-				recipients.AddRange (message.To.Mailboxes);
-				recipients.AddRange (message.Cc.Mailboxes);
-				recipients.AddRange (message.Bcc.Mailboxes);
+				AddUnique (recipients, unique, message.To.Mailboxes);
+				AddUnique (recipients, unique, message.Cc.Mailboxes);
+				AddUnique (recipients, unique, message.Bcc.Mailboxes);
 			}
 
 			return recipients;
@@ -1555,11 +1564,8 @@ namespace MailKit.Net.Smtp {
 				// queue their commands instead of sending them immediately.
 				MailFrom (message, sender, extensions, cancellationToken);
 
-				var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
-				foreach (var recipient in recipients) {
-					if (unique.Add (recipient.Address))
-						RcptTo (message, recipient, cancellationToken);
-				}
+				for (int i = 0; i < recipients.Count; i++)
+					RcptTo (message, recipients[i], cancellationToken);
 
 				// Note: if PIPELINING is supported, this will flush all outstanding
 				// MAIL FROM and RCPT TO commands to the server and then process all
@@ -1719,7 +1725,10 @@ namespace MailKit.Net.Smtp {
 			if (recipients == null)
 				throw new ArgumentNullException ("recipients");
 
-			var rcpts = recipients.ToList ();
+			var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
+			var rcpts = new List<MailboxAddress> ();
+
+			AddUnique (rcpts, unique, recipients);
 
 			if (rcpts.Count == 0)
 				throw new InvalidOperationException ("No recipients have been specified.");
