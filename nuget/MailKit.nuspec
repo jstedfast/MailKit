@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>MailKit</id>
-		<version>1.3.0-beta7</version>
+		<version>1.2.21</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,7 +22,10 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Added support for dnxcore50
+		<releaseNotes>* Replaced SmtpClient's virtual ProcessRcptToResponse() method with OnRecipientAccepted() and OnRecipientNotAccepted(). (issue #309)
+* Added MailService.DefaultServerCertificateValidationCallback() which accepts all self-signed certificates (a common operation that consumers want).
+* Fixed encoding and decoding of IMAP folder names that include surrogate pairs.
+* Fixed IMAP SEARCH logic for X-GM-LABELS.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
@@ -43,19 +46,19 @@ Features include:
 		</frameworkAssemblies>
 	<dependencies>
 		<group targetFramework="net40">
-			<dependency id="MimeKit" version="1.3.0-beta7" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="net45">
-			<dependency id="MimeKit" version="1.3.0-beta7" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="net451">
-			<dependency id="MimeKit" version="1.3.0-beta7" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.3.0-beta7" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.3.0-beta7" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework=".NETPlatform5.5">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.0.0-beta-23516" />
@@ -78,11 +81,11 @@ Features include:
 			<dependency id="System.Linq" version="4.0.1-beta-23516" />
 			<dependency id="Microsoft.CSharp" version="4.0.1-beta-23516" />
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta7" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 		<group targetFramework="wpa81">
 			<dependency id="Portable.BouncyCastle" version="1.8.0" />
-			<dependency id="MimeKit" version="1.3.0-beta7" />
+			<dependency id="MimeKit" version="1.2.22" />
 		</group>
 	</dependencies>
 	</metadata>

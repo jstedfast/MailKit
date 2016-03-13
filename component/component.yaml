@@ -1,6 +1,6 @@
 id: mailkit
 name: MailKit
-version: 1.2.20
+version: 1.2.21
 publisher: Jeffrey Stedfast
 publisher-url: http://github.com/jstedfast/MailKit
 getting-started: GettingStarted.md
@@ -12,9 +12,9 @@ icons:
   - mailkit_128x128.png
 packages:
   ios-unified:
-    - MailKit, Version=1.2.20
+    - MailKit, Version=1.2.21
   android:
-    - MailKit, Version=1.2.20
+    - MailKit, Version=1.2.21
 samples:
   - name: "Android Sample"
     path: ../samples/ImapClientDemo.Android/ImapClientDemo.Android.sln

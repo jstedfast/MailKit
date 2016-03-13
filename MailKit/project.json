@@ -1,5 +1,5 @@
 ﻿{
-  "version": "1.3.0-beta7",
+  "version": "1.2.21",
   "title": "MailKit",
   "description": "An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.",
   "authors": [ "Jeffrey Stedfast" ],
@@ -45,7 +45,7 @@
     "packages.*.config"
   ],
   "dependencies": {
-    "MimeKit": "1.3.0-beta7",
+    "MimeKit": "1.2.22",
     "Portable.BouncyCastle": "1.8.1"
   }
 }

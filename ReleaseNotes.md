@@ -4,6 +4,15 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.21
+
+* Replaced SmtpClient's virtual ProcessRcptToResponse() method with OnRecipientAccepted()
+  and OnRecipientNotAccepted(). (issue #309)
+* Added MailService.DefaultServerCertificateValidationCallback() which accepts all
+  self-signed certificates (a common operation that consumers want).
+* Fixed encoding and decoding of IMAP folder names that include surrogate pairs.
+* Fixed IMAP SEARCH logic for X-GM-LABELS.
+
 ### MailKit 1.2.20
 
 * Added a work-around for GoDaddy's ASP.NET web host which does not support the iso-8859-1
