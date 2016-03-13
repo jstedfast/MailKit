@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using MimeKit;
@@ -116,7 +113,7 @@ namespace ImapClientDemo
 						continue;
 
 					// our preferred mime-type is text/html
-					if (body.ContentType.Matches ("text", "html")) {
+					if (body.ContentType.IsMimeType ("text", "html")) {
 						text = body;
 						break;
 					}
@@ -128,7 +125,7 @@ namespace ImapClientDemo
 
 			// check if we have a text/html document
 			if (text != null) {
-				if (text.ContentType.Matches ("text", "html")) {
+				if (text.ContentType.IsMimeType ("text", "html")) {
 					// replace image src urls that refer to related MIME parts with "data:" urls
 					// Note: we could also save the related MIME part content to disk and use
 					// file:// urls instead.
@@ -191,7 +188,7 @@ namespace ImapClientDemo
 		{
 			var multipart = body as BodyPartMultipart;
 
-			if (multipart != null && body.ContentType.Matches ("multipart", "related")) {
+			if (multipart != null && body.ContentType.IsMimeType ("multipart", "related")) {
 				RenderMultipartRelated (folder, uid, multipart);
 				return;
 			}
@@ -199,14 +196,14 @@ namespace ImapClientDemo
 			var text = body as BodyPartText;
 
 			if (multipart != null) {
-				if (multipart.ContentType.Matches ("multipart", "alternative")) {
+				if (multipart.ContentType.IsMimeType ("multipart", "alternative")) {
 					// A multipart/alternative is just a collection of alternate views.
 					// The last part is the format that most closely matches what the
 					// user saw in his or her email client's WYSIWYG editor.
 					for (int i = multipart.BodyParts.Count; i > 0; i--) {
 						var multi = multipart.BodyParts[i - 1] as BodyPartMultipart;
 
-						if (multi != null && multi.ContentType.Matches ("multipart", "related")) {
+						if (multi != null && multi.ContentType.IsMimeType ("multipart", "related")) {
 							if (multi.BodyParts.Count == 0)
 								continue;
 
@@ -219,7 +216,7 @@ namespace ImapClientDemo
 								root = multi.BodyParts.OfType<BodyPartText> ().FirstOrDefault (x => x.ContentId == start);
 							}
 
-							if (root != null && root.ContentType.Matches ("text", "html")) {
+							if (root != null && root.ContentType.IsMimeType ("text", "html")) {
 								Render (folder, uid, multi);
 								return;
 							}

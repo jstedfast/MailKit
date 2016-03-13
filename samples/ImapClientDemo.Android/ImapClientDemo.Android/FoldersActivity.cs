@@ -29,9 +29,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
@@ -83,7 +81,7 @@ namespace ImapClientDemo
         }
 
         // Recursive function to load all folders and their subfolders
-		async Task LoadChildFolders (List<IMailFolder> folders, IMailFolder folder)
+		async Task LoadChildFolders (ICollection<IMailFolder> folders, IMailFolder folder)
         {
 			if (!folder.IsNamespace)
                 folders.Add (folder);

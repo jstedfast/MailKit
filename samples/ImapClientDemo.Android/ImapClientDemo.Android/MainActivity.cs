@@ -36,7 +36,7 @@ namespace ImapClientDemo
         {
             base.OnCreate (bundle);
 
-            StartActivity (typeof(LoginActivity));
+            StartActivity (typeof (LoginActivity));
         }
     }
 }
