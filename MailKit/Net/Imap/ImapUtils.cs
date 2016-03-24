@@ -553,7 +553,7 @@ namespace MailKit.Net.Imap {
 
 		static bool ParseContentType (ImapEngine engine, string format, CancellationToken cancellationToken, out ContentType contentType, out string value)
 		{
-			var type = ReadNStringToken (engine, format, false, cancellationToken) ?? string.Empty;
+			var type = ReadNStringToken (engine, format, false, cancellationToken) ?? "application";
 			var token = engine.PeekToken (cancellationToken);
 
 			value = null;
