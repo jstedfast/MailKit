@@ -493,7 +493,7 @@ namespace MailKit {
 			if (!TryParse (text, ref index, out parameters))
 				return false;
 
-			contentType = new ContentType (type ?? "application", subtype);
+			contentType = new ContentType (type ?? "application", subtype ?? "octet-stream");
 
 			foreach (var param in parameters)
 				contentType.Parameters.Add (param);
