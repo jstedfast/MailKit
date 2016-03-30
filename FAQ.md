@@ -6,7 +6,7 @@
 * [How do I create a message with attachments?](#CreateAttachments)
 * [How do I get the main body of a message?](#MessageBody)
 * [How do I tell if a message has attachments?](#HasAttachments)
-* [How do I save attacxhments?](#SaveAttachments)
+* [How do I save attachments?](#SaveAttachments)
 * [How do I get the email addresses in the From, To, and Cc headers?](#AddressHeaders)
 * [Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?](#Serialize)
 * [Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?](#UntitledAttachments)
