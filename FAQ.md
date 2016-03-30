@@ -6,6 +6,7 @@
 * [How do I create a message with attachments?](#CreateAttachments)
 * [How do I get the main body of a message?](#MessageBody)
 * [How do I tell if a message has attachments?](#HasAttachments)
+* [How do I save attacxhments?](#SaveAttachments)
 * [How do I get the email addresses in the From, To, and Cc headers?](#AddressHeaders)
 * [Why doesn't the MimeMessage class implement ISerializable so that I can serialize a message to disk and read it back later?](#Serialize)
 * [Why do attachments with unicode filenames appear as "ATT0####.dat" in Outlook?](#UntitledAttachments)
@@ -424,6 +425,47 @@ void Render (MimeMessage message)
 Once you've rendered the message using the above technique, you'll have a list of attachments that
 were not used, even if they did not match the simplistic criteria used by the `MimeMessage.Attachments`
 property.
+
+### <a name="SaveAttachments">How do I save attachments?</a>
+
+If you've already got a [MimePart](http://www.mimekit.net/docs/html/T_MimeKit_MimePart.htm) that represents
+the attachment that you'd like to save, here's how you might save it:
+
+```csharp
+using (var stream = File.Create (fileName))
+    attachment.ContentObject.DecodeTo (stream);
+```
+
+Pretty simple, right?
+
+But what if your attachment is actually a [MessagePart](http://www.mimekit.net/docs/html/T_MimeKit_MessagePart.htm)?
+
+To save the content of a `message/rfc822` part, you'd use the following code snippet:
+
+```csharp
+using (var stream = File.Create (fileName))
+    attachment.Message.WriteTo (stream);
+```
+
+If you are iterating over all of the attachments in a message, you might do something like this:
+
+```csharp
+foreach (var attachment in message.Attachments) {
+    var fileName = attachment.ContentDisposition?.FileName ?? attachment.ContentType.Name;
+    
+    using (var stream = File.Create (fileName)) {
+        if (attachment is MessagePart) {
+            var rfc822 = (MessagePart) attachment;
+            
+            rfc822.Message.WriteTo (stream);
+        } else {
+            var part = (MimePart) attachment;
+            
+            part.ContentObject.DecodeTo (stream);
+        }
+    }
+}
+```
 
 ### <a name="AddressHeaders">How do I get the email addresses in the From, To, and Cc headers?</a>
 
