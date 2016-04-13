@@ -8423,6 +8423,7 @@ namespace MailKit.Net.Imap {
 			var token = engine.ReadToken (ic.CancellationToken);
 			var results = new SearchResults ();
 			UniqueIdSet uids = null;
+			int parenDepth = 0;
 			//bool uid = false;
 			uint min, max;
 			ulong modseq;
@@ -8465,10 +8466,23 @@ namespace MailKit.Net.Imap {
 			}
 
 			do {
+				if (token.Type == ImapTokenType.CloseParen) {
+					if (parenDepth == 0)
+						throw ImapEngine.UnexpectedToken (ImapEngine.GenericUntaggedResponseSyntaxErrorFormat, "ESEARCH", token);
+
+					token = engine.ReadToken (ic.CancellationToken);
+					parenDepth--;
+				}
+
 				if (token.Type == ImapTokenType.Eoln) {
 					// unget the eoln token
 					engine.Stream.UngetToken (token);
 					break;
+				}
+
+				if (token.Type == ImapTokenType.OpenParen) {
+					token = engine.ReadToken (ic.CancellationToken);
+					parenDepth++;
 				}
 
 				if (token.Type != ImapTokenType.Atom)
