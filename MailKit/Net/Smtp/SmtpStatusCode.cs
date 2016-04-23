@@ -185,6 +185,6 @@ namespace MailKit.Net.Smtp {
 		/// <summary>
 		/// The "mail from/rcpt to parameters not recognized or not implemented" status code.
 		/// </summary>
-		MailFromRctpToParametersNotRecognizedOrNotImplemented = 555,
+		MailFromRcptToParametersNotRecognizedOrNotImplemented = 555,
 	}
 }
