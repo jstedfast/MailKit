@@ -182,9 +182,9 @@ namespace MailKit.Net.Smtp {
 		/// </summary>
 		TransactionFailed = 554,
 
-        /// <summary>
-        /// The "mail from/rcpt to parameters not recognized or not implemented" status code.
-        /// </summary>
-        MailFromRctpToParametersNotRecognizedOrNotImplemented = 555,
+		/// <summary>
+		/// The "mail from/rcpt to parameters not recognized or not implemented" status code.
+		/// </summary>
+		MailFromRctpToParametersNotRecognizedOrNotImplemented = 555,
 	}
 }
