@@ -36,6 +36,13 @@ namespace MailKit.Search {
 	/// </remarks>
 	public class SearchQuery
 	{
+        /// <summary>
+		/// public ctor
+		/// </summary>
+        public SearchQuery()
+        {
+        }
+
 		internal SearchQuery (SearchTerm term)
 		{
 			Term = term;
