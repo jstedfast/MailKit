@@ -35,7 +35,15 @@ namespace MailKit.Search {
 	/// </remarks>
 	public class DateSearchQuery : SearchQuery
 	{
-		internal DateSearchQuery (SearchTerm term, DateTime date) : base (term)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Search.DateSearchQuery"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new date-based search query.
+		/// </remarks>
+		/// <param name="term">The search term.</param>
+		/// <param name="date">The date.</param>
+		public DateSearchQuery (SearchTerm term, DateTime date) : base (term)
 		{
 			Date = date;
 		}

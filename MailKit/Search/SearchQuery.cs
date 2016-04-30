@@ -36,12 +36,35 @@ namespace MailKit.Search {
 	/// </remarks>
 	public class SearchQuery
 	{
-		internal SearchQuery (SearchTerm term)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Search.SearchQuery"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SearchQuery"/> that matches all messages.
+		/// </remarks>
+		public SearchQuery () : this (SearchTerm.All)
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Search.SearchQuery"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="SearchQuery"/> with the specified search term.
+		/// </remarks>
+		protected SearchQuery (SearchTerm term)
 		{
 			Term = term;
 		}
 
-		internal SearchTerm Term {
+		/// <summary>
+		/// Get the search term used by the search query.
+		/// </summary>
+		/// <remarks>
+		/// Gets the search term used by the search query.
+		/// </remarks>
+		/// <value>The term.</value>
+		public SearchTerm Term {
 			get; private set;
 		}
 

@@ -33,7 +33,15 @@ namespace MailKit.Search {
 	/// </remarks>
 	public class HeaderSearchQuery : SearchQuery
 	{
-		internal HeaderSearchQuery (string field, string value) : base (SearchTerm.HeaderContains)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Search.HeaderSearchQuery"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new header search query.
+		/// </remarks>
+		/// <param name="field">The header field name.</param>
+		/// <param name="value">The value to match against.</param>
+		public HeaderSearchQuery (string field, string value) : base (SearchTerm.HeaderContains)
 		{
 			Field = field;
 			Value = value;

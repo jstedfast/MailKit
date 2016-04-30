@@ -31,9 +31,17 @@ namespace MailKit.Search {
 	/// <remarks>
 	/// A text-based search query.
 	/// </remarks>
-	public sealed class TextSearchQuery : SearchQuery
+	public class TextSearchQuery : SearchQuery
 	{
-		internal TextSearchQuery (SearchTerm term, string text) : base (term)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Search.TextSearchQuery"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new text-based search query.
+		/// </remarks>
+		/// <param name="term">The search term.</param>
+		/// <param name="text">The text to match against.</param>
+		public TextSearchQuery (SearchTerm term, string text) : base (term)
 		{
 			Text = text;
 		}

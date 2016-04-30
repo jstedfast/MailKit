@@ -8104,7 +8104,6 @@ namespace MailKit.Net.Imap {
 			BinarySearchQuery binary;
 			UnarySearchQuery unary;
 			DateSearchQuery date;
-			bool isFlag;
 
 			if (builder.Length > 0)
 				builder.Append (' ');

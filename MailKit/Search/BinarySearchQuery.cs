@@ -33,7 +33,16 @@ namespace MailKit.Search {
 	/// </remarks>
 	public class BinarySearchQuery : SearchQuery
 	{
-		internal BinarySearchQuery (SearchTerm term, SearchQuery left, SearchQuery right) : base (term)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Search.BinarySearchQuery"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new binary search query.
+		/// </remarks>
+		/// <param name="term">THe search term.</param>
+		/// <param name="left">The left expression.</param>
+		/// <param name="right">The right expression.</param>
+		public BinarySearchQuery (SearchTerm term, SearchQuery left, SearchQuery right) : base (term)
 		{
 			Right = right;
 			Left = left;

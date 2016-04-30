@@ -33,7 +33,15 @@ namespace MailKit.Search {
 	/// </remarks>
 	public class UnarySearchQuery : SearchQuery
 	{
-		internal UnarySearchQuery (SearchTerm term, SearchQuery operand) : base (term)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:MailKit.Search.UnarySearchQuery"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new unary search query.
+		/// </remarks>
+		/// <param name="term">The search term.</param>
+		/// <param name="operand">The operand.</param>
+		public UnarySearchQuery (SearchTerm term, SearchQuery operand) : base (term)
 		{
 			Operand = operand;
 		}
