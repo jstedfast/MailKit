@@ -2,6 +2,7 @@ language: csharp
 solution: MailKit.Net45.sln
 install:
   - git submodule update --init --recursive
+  - nuget restore submodules/MimeKit/MimeKit.Net45.sln
   - nuget restore MailKit.Net45.sln
 script:
   - xbuild /p:Configuration=Debug MailKit.Net45.sln
