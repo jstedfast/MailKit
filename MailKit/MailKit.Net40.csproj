@@ -43,15 +43,14 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\submodules\MimeKit\MimeKit\MimeKit.Net40.csproj">
       <Project>{C909FC86-6084-41E5-B99C-DCDF2A5B7F82}</Project>
       <Name>MimeKit.Net40</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\submodules\MimeKit\submodules\bc-csharp\crypto\BouncyCastle.csproj">
-      <Project>{4C235092-820C-4DEB-9074-D356FB797D8B}</Project>
-      <Name>BouncyCastle</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +205,9 @@
     <Folder Include="Search\" />
     <Folder Include="Security\" />
     <Folder Include="Security\Ntlm\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.MailKit.Net40.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
