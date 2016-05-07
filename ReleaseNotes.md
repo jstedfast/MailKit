@@ -4,6 +4,15 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.22
+
+* Updated IMAP BODY parser to handle a NIL media type by treating it as "application".
+* Updated IMAP SEARCH response parser to work around search-return-data pairs within parens.
+* Added a missing SmtpStatusCode enum value for code 555. (issue #327)
+* Opened up more of the SearchQuery API to make it possible to serialize/deserialize via JSON.
+  (issue #331)
+* Updated to reference BouncyCastle via NuGet.org packages rather than via project references.
+
 ### MailKit 1.2.21
 
 * Replaced SmtpClient's virtual ProcessRcptToResponse() method with OnRecipientAccepted()
