@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Security;
 using System.Runtime.Serialization;
 
 namespace MailKit.Security {
@@ -116,6 +117,7 @@ namespace MailKit.Security {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="info"/> is <c>null</c>.
 		/// </exception>
+		[SecurityCritical]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
