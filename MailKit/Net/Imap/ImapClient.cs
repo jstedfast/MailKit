@@ -1226,7 +1226,11 @@ namespace MailKit.Net.Imap {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+#if COREFX
+				ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 				secure = true;
 				stream = ssl;
 			} else {
@@ -1278,7 +1282,11 @@ namespace MailKit.Net.Imap {
 					if (ic.Response == ImapCommandResponse.Ok) {
 #if !NETFX_CORE
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+#if COREFX
+						tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 						engine.Stream.Stream = tls;
 #else
 						socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
@@ -1398,7 +1406,11 @@ namespace MailKit.Net.Imap {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+#if COREFX
+				ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 				secure = true;
 				stream = ssl;
 			} else {
@@ -1430,7 +1442,11 @@ namespace MailKit.Net.Imap {
 
 					if (ic.Response == ImapCommandResponse.Ok) {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+#if COREFX
+						tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 						tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 						engine.Stream.Stream = tls;
 
 						secure = true;

@@ -854,7 +854,11 @@ namespace MailKit.Net.Smtp {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+#if COREFX
+				ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 				secure = true;
 				stream = ssl;
 			} else {
@@ -908,7 +912,11 @@ namespace MailKit.Net.Smtp {
 
 #if !NETFX_CORE
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+#if COREFX
+					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 					Stream.Stream = tls;
 #else
 					socket.UpgradeToSslAsync (SocketProtectionLevel.Tls12, new HostName (host))
@@ -1039,7 +1047,11 @@ namespace MailKit.Net.Smtp {
 
 			if (options == SecureSocketOptions.SslOnConnect) {
 				var ssl = new SslStream (new NetworkStream (socket, true), false, ValidateRemoteCertificate);
+#if COREFX
+				ssl.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 				ssl.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 				secure = true;
 				stream = ssl;
 			} else {
@@ -1075,7 +1087,11 @@ namespace MailKit.Net.Smtp {
 						throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
 
 					var tls = new SslStream (stream, false, ValidateRemoteCertificate);
+#if COREFX
+					tls.AuthenticateAsClientAsync (host, ClientCertificates, SslProtocols, true).GetAwaiter ().GetResult ();
+#else
 					tls.AuthenticateAsClient (host, ClientCertificates, SslProtocols, true);
+#endif
 					Stream.Stream = tls;
 
 					secure = true;
