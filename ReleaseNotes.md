@@ -4,6 +4,10 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.23
+
+* Properly apply SecurityCriticalAttribute to GetObjectData() on custom Exceptions. (issue #340)
+
 ### MailKit 1.2.22
 
 * Updated IMAP BODY parser to handle a NIL media type by treating it as "application".
