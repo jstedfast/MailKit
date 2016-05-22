@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.3.0-rc1",
   "title": "MailKit",
   "description": "An Open Source cross-platform .NET mail-client library that is based on MimeKit and optimized for mobile devices.",
@@ -54,7 +54,8 @@
         "MailKit.*.project.json",
         "packages.*.config"
       ]
-    }
+    },
+    "xmlDoc": true
   },
   "dependencies": {
     "MimeKit": "1.3.0-rc1"
