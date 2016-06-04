@@ -139,6 +139,77 @@ namespace MailKit {
 		/// </remarks>
 		/// <param name="host">The host name to connect to.</param>
 		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="host"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="IMailService"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="CommandException">
+		/// The command was rejected by the mail server.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// The server responded with an unexpected token.
+		/// </exception>
+		void Connect (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously establish a connection to the specified mail server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Asynchronously establishes a connection to the specified mail server.</para>
+		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// property will be populated.</para>
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
+		/// <param name="useSsl"><value>true</value> if the client should make an SSL-wrapped connection to the server; otherwise, <value>false</value>.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// The <paramref name="host"/> is <c>null</c>.
+		/// </exception>
+		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <paramref name="port"/> is not between <c>0</c> and <c>65535</c>.
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="IMailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="IMailService"/> is already connected.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		Task ConnectAsync (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Establish a connection to the specified mail server.
+		/// </summary>
+		/// <remarks>
+		/// <para>Establish a connection to the specified mail server.</para>
+		/// <para>If a successful connection is made, the <see cref="AuthenticationMechanisms"/>
+		/// property will be populated.</para>
+		/// </remarks>
+		/// <param name="host">The host name to connect to.</param>
+		/// <param name="port">The port to connect to. If the specified port is <c>0</c>, then the default port will be used.</param>
 		/// <param name="options">The secure socket options to when connecting.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ArgumentNullException">
@@ -383,6 +454,201 @@ namespace MailKit {
 		/// A protocol error occurred.
 		/// </exception>
 		Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Authenticates using the specified user name and password.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		void Authenticate (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously authenticates using the specified user name and password.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="encoding">The encoding to use for the user's credentials.</param>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="encoding"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		Task AuthenticateAsync (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Authenticates using the specified user name and password.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
+		/// <example>
+		/// <code language="c#" source="Examples\SmtpExamples.cs" region="SendMessage"/>
+		/// </example>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		void Authenticate (string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
+
+		/// <summary>
+		/// Asynchronously authenticates using the specified user name and password.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the server supports one or more SASL authentication mechanisms,
+		/// then the SASL mechanisms that both the client and server support are tried
+		/// in order of greatest security to weakest security. Once a SASL
+		/// authentication mechanism is found that both client and server support,
+		/// the credentials are used to authenticate.</para>
+		/// <para>If the server does not support SASL or if no common SASL mechanisms
+		/// can be found, then the default login command is used as a fallback.</para>
+		/// <note type="tip">To prevent the usage of certain authentication mechanisms,
+		/// simply remove them from the <see cref="AuthenticationMechanisms"/> hash set
+		/// before calling this method.</note>
+		/// </remarks>
+		/// <returns>An asynchronous task context.</returns>
+		/// <param name="userName">The user name.</param>
+		/// <param name="password">The password.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <para><paramref name="userName"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="password"/> is <c>null</c>.</para>
+		/// </exception>
+		/// <exception cref="System.ObjectDisposedException">
+		/// The <see cref="MailService"/> has been disposed.
+		/// </exception>
+		/// <exception cref="System.InvalidOperationException">
+		/// The <see cref="MailService"/> is not connected or is already authenticated.
+		/// </exception>
+		/// <exception cref="System.OperationCanceledException">
+		/// The operation was canceled via the cancellation token.
+		/// </exception>
+		/// <exception cref="MailKit.Security.AuthenticationException">
+		/// Authentication using the supplied credentials has failed.
+		/// </exception>
+		/// <exception cref="MailKit.Security.SaslException">
+		/// A SASL authentication error occurred.
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// An I/O error occurred.
+		/// </exception>
+		/// <exception cref="ProtocolException">
+		/// A protocol error occurred.
+		/// </exception>
+		Task AuthenticateAsync (string userName, string password, CancellationToken cancellationToken = default (CancellationToken));
 
 		/// <summary>
 		/// Disconnect the service.
