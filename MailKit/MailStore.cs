@@ -326,7 +326,7 @@ namespace MailKit {
 		public virtual Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, bool subscribedOnly, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (@namespace == null)
-				throw new ArgumentNullException ("namespace");
+				throw new ArgumentNullException (nameof (@namespace));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -410,7 +410,7 @@ namespace MailKit {
 		public virtual Task<IEnumerable<IMailFolder>> GetFoldersAsync (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (@namespace == null)
-				throw new ArgumentNullException ("namespace");
+				throw new ArgumentNullException (nameof (@namespace));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -496,7 +496,7 @@ namespace MailKit {
 		public virtual Task<IMailFolder> GetFolderAsync (string path, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (path == null)
-				throw new ArgumentNullException ("path");
+				throw new ArgumentNullException (nameof (path));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {

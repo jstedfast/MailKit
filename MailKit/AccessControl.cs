@@ -50,12 +50,14 @@ namespace MailKit {
 		/// <param name="name">The identifier name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
 		/// </exception>
 		public AccessControl (string name, IEnumerable<AccessRight> rights)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			Rights = new AccessRights (rights);
 			Name = name;
@@ -71,12 +73,14 @@ namespace MailKit {
 		/// <param name="name">The identifier name.</param>
 		/// <param name="rights">The access rights.</param>
 		/// <exception cref="System.ArgumentNullException">
-		/// <paramref name="name"/> is <c>null</c>.
+		/// <para><paramref name="name"/> is <c>null</c>.</para>
+		/// <para>-or-</para>
+		/// <para><paramref name="rights"/> is <c>null</c>.</para>
 		/// </exception>
 		public AccessControl (string name, string rights)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			Rights = new AccessRights (rights);
 			Name = name;
@@ -96,7 +100,7 @@ namespace MailKit {
 		public AccessControl (string name)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			Rights = new AccessRights ();
 			Name = name;

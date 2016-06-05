@@ -75,7 +75,7 @@ namespace MailKit {
 		public ProtocolLogger (Stream stream)
 		{
 			if (stream == null)
-				throw new ArgumentNullException ("stream");
+				throw new ArgumentNullException (nameof (stream));
 
 			this.stream = stream;
 		}
@@ -98,13 +98,13 @@ namespace MailKit {
 		static void ValidateArguments (byte[] buffer, int offset, int count)
 		{
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+				throw new ArgumentNullException (nameof (buffer));
 
 			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0 || count > (buffer.Length - offset))
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 		}
 
 		void Log (byte[] prefix, ref bool midline, byte[] buffer, int offset, int count)
@@ -154,7 +154,7 @@ namespace MailKit {
 		public void LogConnect (Uri uri)
 		{
 			if (uri == null)
-				throw new ArgumentNullException ("uri");
+				throw new ArgumentNullException (nameof (uri));
 
 			var message = string.Format ("Connected to {0}\r\n", uri);
 			var buf = Encoding.ASCII.GetBytes (message);

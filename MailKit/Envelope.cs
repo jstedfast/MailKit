@@ -544,7 +544,7 @@ namespace MailKit {
 		public static bool TryParse (string text, out Envelope envelope)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			int index = 0;
 

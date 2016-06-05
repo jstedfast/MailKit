@@ -65,7 +65,7 @@ namespace MailKit.Security {
 		public SaslMechanismPlain (Uri uri, Encoding encoding, ICredentials credentials) : base (uri, credentials)
 		{
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			this.encoding = encoding;
 		}

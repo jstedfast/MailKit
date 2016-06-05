@@ -77,7 +77,7 @@ namespace MailKit {
 		public MessageFlagsChangedEventArgs (int index, MessageFlags flags, HashSet<string> userFlags) : base (index)
 		{
 			if (userFlags == null)
-				throw new ArgumentNullException ("userFlags");
+				throw new ArgumentNullException (nameof (userFlags));
 
 			UserFlags = userFlags;
 			Flags = flags;
@@ -115,7 +115,7 @@ namespace MailKit {
 		public MessageFlagsChangedEventArgs (int index, MessageFlags flags, HashSet<string> userFlags, ulong modseq) : base (index)
 		{
 			if (userFlags == null)
-				throw new ArgumentNullException ("userFlags");
+				throw new ArgumentNullException (nameof (userFlags));
 
 			UserFlags = userFlags;
 			ModSeq = modseq;
@@ -154,7 +154,7 @@ namespace MailKit {
 		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags, HashSet<string> userFlags) : base (index)
 		{
 			if (userFlags == null)
-				throw new ArgumentNullException ("userFlags");
+				throw new ArgumentNullException (nameof (userFlags));
 
 			UserFlags = userFlags;
 			UniqueId = uid;
@@ -196,7 +196,7 @@ namespace MailKit {
 		public MessageFlagsChangedEventArgs (int index, UniqueId uid, MessageFlags flags, HashSet<string> userFlags, ulong modseq) : base (index)
 		{
 			if (userFlags == null)
-				throw new ArgumentNullException ("userFlags");
+				throw new ArgumentNullException (nameof (userFlags));
 
 			UserFlags = userFlags;
 			ModSeq = modseq;

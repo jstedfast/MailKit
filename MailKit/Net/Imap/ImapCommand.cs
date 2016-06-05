@@ -560,10 +560,10 @@ namespace MailKit.Net.Imap {
 		public void RegisterUntaggedHandler (string atom, ImapUntaggedHandler handler)
 		{
 			if (atom == null)
-				throw new ArgumentNullException ("atom");
+				throw new ArgumentNullException (nameof (atom));
 
 			if (handler == null)
-				throw new ArgumentNullException ("handler");
+				throw new ArgumentNullException (nameof (handler));
 
 			if (Status != ImapCommandStatus.Created)
 				throw new InvalidOperationException ("Untagged handlers must be registered before the command has been queued.");

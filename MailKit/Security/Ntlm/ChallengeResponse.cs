@@ -76,7 +76,7 @@ namespace MailKit.Security.Ntlm {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("ChallengeResponse");
+				throw new ObjectDisposedException (nameof (ChallengeResponse));
 		}
 
 		public string Password {
@@ -126,7 +126,7 @@ namespace MailKit.Security.Ntlm {
 			get { return null; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("value");
+					throw new ArgumentNullException (nameof (value));
 
 				CheckDisposed ();
 

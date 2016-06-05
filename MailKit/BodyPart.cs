@@ -92,7 +92,7 @@ namespace MailKit {
 		public virtual void Accept (BodyPartVisitor visitor)
 		{
 			if (visitor == null)
-				throw new ArgumentNullException ("visitor");
+				throw new ArgumentNullException (nameof (visitor));
 
 			visitor.VisitBodyPart (this);
 		}
@@ -705,7 +705,7 @@ namespace MailKit {
 		public static bool TryParse (string text, out BodyPart part)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			int index = 0;
 

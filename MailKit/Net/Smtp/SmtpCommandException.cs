@@ -166,7 +166,7 @@ namespace MailKit.Net.Smtp {
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
-				throw new ArgumentNullException ("info");
+				throw new ArgumentNullException (nameof (info));
 
 			if (Mailbox != null)
 				info.AddValue ("Mailbox", Mailbox.ToString ());

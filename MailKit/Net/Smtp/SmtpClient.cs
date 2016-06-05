@@ -179,7 +179,7 @@ namespace MailKit.Net.Smtp {
 			get { return capabilities; }
 			set {
 				if ((capabilities | value) > capabilities)
-					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", "value");
+					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", nameof (value));
 
 				capabilities = value;
 			}
@@ -218,7 +218,7 @@ namespace MailKit.Net.Smtp {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("SmtpClient");
+				throw new ObjectDisposedException (nameof (SmtpClient));
 		}
 
 		#region IMailService implementation
@@ -563,10 +563,10 @@ namespace MailKit.Net.Smtp {
 		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+				throw new ArgumentNullException (nameof (credentials));
 
 			CheckDisposed ();
 
@@ -651,10 +651,10 @@ namespace MailKit.Net.Smtp {
 			CheckDisposed ();
 
 			if (hostName == null)
-				throw new ArgumentNullException ("hostName");
+				throw new ArgumentNullException (nameof (hostName));
 
 			if (replayStream == null)
-				throw new ArgumentNullException ("replayStream");
+				throw new ArgumentNullException (nameof (replayStream));
 
 			Stream = new SmtpStream (replayStream, null, ProtocolLogger);
 			capabilities = SmtpCapabilities.None;
@@ -791,13 +791,13 @@ namespace MailKit.Net.Smtp {
 		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 			
 			CheckDisposed ();
 
@@ -1013,19 +1013,19 @@ namespace MailKit.Net.Smtp {
 		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (socket == null)
-				throw new ArgumentNullException ("socket");
+				throw new ArgumentNullException (nameof (socket));
 
 			if (!socket.Connected)
-				throw new ArgumentException ("The socket is not connected.", "socket");
+				throw new ArgumentException ("The socket is not connected.", nameof (socket));
 
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			CheckDisposed ();
 
@@ -1727,10 +1727,10 @@ namespace MailKit.Net.Smtp {
 		public override void Send (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			var recipients = GetMessageRecipients (message);
 			var sender = GetMessageSender (message);
@@ -1797,16 +1797,16 @@ namespace MailKit.Net.Smtp {
 		public override void Send (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			if (sender == null)
-				throw new ArgumentNullException ("sender");
+				throw new ArgumentNullException (nameof (sender));
 
 			if (recipients == null)
-				throw new ArgumentNullException ("recipients");
+				throw new ArgumentNullException (nameof (recipients));
 
 			var unique = new HashSet<string> (StringComparer.OrdinalIgnoreCase);
 			var rcpts = new List<MailboxAddress> ();
@@ -1860,13 +1860,13 @@ namespace MailKit.Net.Smtp {
 		public InternetAddressList Expand (string alias, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (alias == null)
-				throw new ArgumentNullException ("alias");
+				throw new ArgumentNullException (nameof (alias));
 
 			if (alias.Length == 0)
-				throw new ArgumentException ("The alias cannot be empty.", "alias");
+				throw new ArgumentException ("The alias cannot be empty.", nameof (alias));
 
 			if (alias.IndexOfAny (new [] { '\r', '\n' }) != -1)
-				throw new ArgumentException ("The alias cannot contain newline characters.", "alias");
+				throw new ArgumentException ("The alias cannot contain newline characters.", nameof (alias));
 
 			CheckDisposed ();
 
@@ -1930,13 +1930,13 @@ namespace MailKit.Net.Smtp {
 		public Task<InternetAddressList> ExpandAsync (string alias, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (alias == null)
-				throw new ArgumentNullException ("alias");
+				throw new ArgumentNullException (nameof (alias));
 
 			if (alias.Length == 0)
-				throw new ArgumentException ("The alias cannot be empty.", "alias");
+				throw new ArgumentException ("The alias cannot be empty.", nameof (alias));
 
 			if (alias.IndexOfAny (new [] { '\r', '\n' }) != -1)
-				throw new ArgumentException ("The alias cannot contain newline characters.", "alias");
+				throw new ArgumentException ("The alias cannot contain newline characters.", nameof (alias));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1985,13 +1985,13 @@ namespace MailKit.Net.Smtp {
 		public MailboxAddress Verify (string address, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (address == null)
-				throw new ArgumentNullException ("address");
+				throw new ArgumentNullException (nameof (address));
 
 			if (address.Length == 0)
-				throw new ArgumentException ("The address cannot be empty.", "address");
+				throw new ArgumentException ("The address cannot be empty.", nameof (address));
 
 			if (address.IndexOfAny (new [] { '\r', '\n' }) != -1)
-				throw new ArgumentException ("The address cannot contain newline characters.", "address");
+				throw new ArgumentException ("The address cannot contain newline characters.", nameof (address));
 
 			CheckDisposed ();
 
@@ -2046,13 +2046,13 @@ namespace MailKit.Net.Smtp {
 		public Task<MailboxAddress> VerifyAsync (string address, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (address == null)
-				throw new ArgumentNullException ("address");
+				throw new ArgumentNullException (nameof (address));
 
 			if (address.Length == 0)
-				throw new ArgumentException ("The address cannot be empty.", "address");
+				throw new ArgumentException ("The address cannot be empty.", nameof (address));
 
 			if (address.IndexOfAny (new [] { '\r', '\n' }) != -1)
-				throw new ArgumentException ("The address cannot contain newline characters.", "address");
+				throw new ArgumentException ("The address cannot contain newline characters.", nameof (address));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {

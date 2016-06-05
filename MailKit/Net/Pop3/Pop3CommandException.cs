@@ -88,7 +88,7 @@ namespace MailKit.Net.Pop3 {
 		public Pop3CommandException (string message, string statusText, Exception innerException) : base (message, innerException)
 		{
 			if (statusText == null)
-				throw new ArgumentNullException ("statusText");
+				throw new ArgumentNullException (nameof (statusText));
 
 			StatusText = statusText;
 		}

@@ -430,13 +430,13 @@ namespace MailKit {
 		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, uint uidValidity, ulong highestModSeq, IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException ("access");
+				throw new ArgumentOutOfRangeException (nameof (access));
 
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -522,7 +522,7 @@ namespace MailKit {
 		public virtual Task<FolderAccess> OpenAsync (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException ("access");
+				throw new ArgumentOutOfRangeException (nameof (access));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -692,10 +692,10 @@ namespace MailKit {
 		public virtual Task<IMailFolder> CreateAsync (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", "name");
+				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -795,10 +795,10 @@ namespace MailKit {
 		public virtual Task<IMailFolder> CreateAsync (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", "name");
+				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -901,10 +901,10 @@ namespace MailKit {
 		public virtual Task<IMailFolder> CreateAsync (string name, SpecialFolder specialUse, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", "name");
+				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1011,13 +1011,13 @@ namespace MailKit {
 		public virtual Task RenameAsync (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (parent == null)
-				throw new ArgumentNullException ("parent");
+				throw new ArgumentNullException (nameof (parent));
 
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (name.Length == 0 || name.IndexOf (parent.DirectorySeparator) != -1)
-				throw new ArgumentException ("The name is not a legal folder name.", "name");
+				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			if (IsNamespace)
 				throw new InvalidOperationException ("Cannot rename this folder.");
@@ -1484,10 +1484,10 @@ namespace MailKit {
 		public virtual Task<IMailFolder> GetSubfolderAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (name.Length == 0 || name.IndexOf (DirectorySeparator) != -1)
-				throw new ArgumentException ("The name of the subfolder is invalid.", "name");
+				throw new ArgumentException ("The name of the subfolder is invalid.", nameof (name));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1815,7 +1815,7 @@ namespace MailKit {
 		public virtual Task<AccessRights> GetAccessRightsAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1981,10 +1981,10 @@ namespace MailKit {
 		public virtual Task AddAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -2075,10 +2075,10 @@ namespace MailKit {
 		public virtual Task RemoveAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -2169,10 +2169,10 @@ namespace MailKit {
 		public virtual Task SetAccessRightsAsync (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -2257,7 +2257,7 @@ namespace MailKit {
 		public virtual Task RemoveAccessAsync (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -2854,10 +2854,10 @@ namespace MailKit {
 		public virtual Task ExpungeAsync (IList<UniqueId> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -2950,7 +2950,7 @@ namespace MailKit {
 		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -3045,7 +3045,7 @@ namespace MailKit {
 		public virtual Task<UniqueId?> AppendAsync (MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -3153,10 +3153,10 @@ namespace MailKit {
 		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -3266,10 +3266,10 @@ namespace MailKit {
 		public virtual Task<UniqueId?> AppendAsync (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -3376,7 +3376,7 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
@@ -3384,7 +3384,7 @@ namespace MailKit {
 			}
 
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			if (messages.Count != flags.Count)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
@@ -3500,7 +3500,7 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> AppendAsync (IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
@@ -3508,10 +3508,10 @@ namespace MailKit {
 			}
 
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			if (dates == null)
-				throw new ArgumentNullException ("dates");
+				throw new ArgumentNullException (nameof (dates));
 
 			if (messages.Count != flags.Count || messages.Count != dates.Count)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
@@ -3636,10 +3636,10 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
@@ -3647,7 +3647,7 @@ namespace MailKit {
 			}
 
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			if (messages.Count != flags.Count)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
@@ -3778,10 +3778,10 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> AppendAsync (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
@@ -3789,10 +3789,10 @@ namespace MailKit {
 			}
 
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			if (dates == null)
-				throw new ArgumentNullException ("dates");
+				throw new ArgumentNullException (nameof (dates));
 
 			if (messages.Count != flags.Count || messages.Count != dates.Count)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
@@ -3852,7 +3852,7 @@ namespace MailKit {
 		public virtual UniqueId? CopyTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			var uids = CopyTo (new [] { uid }, destination, cancellationToken);
 
@@ -3910,7 +3910,7 @@ namespace MailKit {
 		public virtual Task<UniqueId?> CopyToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -4020,13 +4020,13 @@ namespace MailKit {
 		public virtual Task<UniqueIdMap> CopyToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -4083,7 +4083,7 @@ namespace MailKit {
 		public virtual UniqueId? MoveTo (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			var uids = MoveTo (new [] { uid }, destination, cancellationToken);
 
@@ -4141,7 +4141,7 @@ namespace MailKit {
 		public virtual Task<UniqueId?> MoveToAsync (UniqueId uid, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -4253,13 +4253,13 @@ namespace MailKit {
 		public virtual Task<UniqueIdMap> MoveToAsync (IList<UniqueId> uids, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -4313,10 +4313,10 @@ namespace MailKit {
 		public virtual void CopyTo (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			CopyTo (new [] { index }, destination, cancellationToken);
 		}
@@ -4367,10 +4367,10 @@ namespace MailKit {
 		public virtual Task CopyToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return CopyToAsync (new [] { index }, destination, cancellationToken);
 		}
@@ -4471,10 +4471,10 @@ namespace MailKit {
 		public virtual Task CopyToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -4528,10 +4528,10 @@ namespace MailKit {
 		public virtual void MoveTo (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			MoveTo (new [] { index }, destination, cancellationToken);
 		}
@@ -4582,10 +4582,10 @@ namespace MailKit {
 		public virtual Task MoveToAsync (int index, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return MoveToAsync (new [] { index }, destination, cancellationToken);
 		}
@@ -4686,10 +4686,10 @@ namespace MailKit {
 		public virtual Task MoveToAsync (IList<int> indexes, IMailFolder destination, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -4802,10 +4802,10 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -4922,13 +4922,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5045,13 +5045,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5183,10 +5183,10 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5322,13 +5322,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5464,13 +5464,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<UniqueId> uids, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5583,10 +5583,10 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5703,13 +5703,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5826,13 +5826,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -5956,10 +5956,10 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -6081,13 +6081,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -6209,13 +6209,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (IList<int> indexes, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -6327,13 +6327,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -6455,16 +6455,16 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -6586,16 +6586,16 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -6719,13 +6719,13 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -6859,16 +6859,16 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<HeaderId> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7002,16 +7002,16 @@ namespace MailKit {
 		public virtual Task<IList<IMessageSummary>> FetchAsync (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7196,7 +7196,7 @@ namespace MailKit {
 		public virtual Task<MimeMessage> GetMessageAsync (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7298,7 +7298,7 @@ namespace MailKit {
 		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7402,7 +7402,7 @@ namespace MailKit {
 		public virtual Task<MimeEntity> GetBodyPartAsync (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7504,10 +7504,10 @@ namespace MailKit {
 		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7611,10 +7611,10 @@ namespace MailKit {
 		public virtual Task<MimeEntity> GetBodyPartAsync (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7728,10 +7728,10 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7843,13 +7843,13 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -7915,16 +7915,16 @@ namespace MailKit {
 		public virtual Stream GetStream (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
-				throw new ArgumentException ("The uid is invalid.", "uid");
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return GetStream (uid, part.PartSpecifier, offset, count, cancellationToken, progress);
 		}
@@ -7986,13 +7986,13 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (UniqueId uid, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -8057,16 +8057,16 @@ namespace MailKit {
 		public virtual Stream GetStream (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return GetStream (index, part.PartSpecifier, offset, count, cancellationToken, progress);
 		}
@@ -8127,16 +8127,16 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (int index, BodyPart part, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -8242,7 +8242,7 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -8368,13 +8368,13 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -8480,10 +8480,10 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -8607,16 +8607,16 @@ namespace MailKit {
 		public virtual Task<Stream> GetStreamAsync (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -8917,13 +8917,13 @@ namespace MailKit {
 		public virtual Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -9034,13 +9034,13 @@ namespace MailKit {
 		public virtual Task AddFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -9344,13 +9344,13 @@ namespace MailKit {
 		public virtual Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -9461,13 +9461,13 @@ namespace MailKit {
 		public virtual Task RemoveFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -9747,10 +9747,10 @@ namespace MailKit {
 		public virtual Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -9851,10 +9851,10 @@ namespace MailKit {
 		public virtual Task SetFlagsAsync (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -9969,13 +9969,13 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -10089,13 +10089,13 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> AddFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -10210,13 +10210,13 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -10330,13 +10330,13 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> RemoveFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -10447,10 +10447,10 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -10560,10 +10560,10 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> SetFlagsAsync (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -10849,10 +10849,10 @@ namespace MailKit {
 		public virtual Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -10957,10 +10957,10 @@ namespace MailKit {
 		public virtual Task AddFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -11246,10 +11246,10 @@ namespace MailKit {
 		public virtual Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -11354,10 +11354,10 @@ namespace MailKit {
 		public virtual Task RemoveFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -11631,7 +11631,7 @@ namespace MailKit {
 		public virtual Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -11732,7 +11732,7 @@ namespace MailKit {
 		public virtual Task SetFlagsAsync (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -11847,10 +11847,10 @@ namespace MailKit {
 		public virtual Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -11964,10 +11964,10 @@ namespace MailKit {
 		public virtual Task<IList<int>> AddFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -12082,10 +12082,10 @@ namespace MailKit {
 		public virtual Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -12199,10 +12199,10 @@ namespace MailKit {
 		public virtual Task<IList<int>> RemoveFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -12313,7 +12313,7 @@ namespace MailKit {
 		public virtual Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -12423,7 +12423,7 @@ namespace MailKit {
 		public virtual Task<IList<int>> SetFlagsAsync (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -12625,16 +12625,16 @@ namespace MailKit {
 		public virtual Task AddLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -12836,16 +12836,16 @@ namespace MailKit {
 		public virtual Task RemoveLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -13039,13 +13039,13 @@ namespace MailKit {
 		public virtual Task SetLabelsAsync (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -13161,16 +13161,16 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> AddLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -13286,16 +13286,16 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> RemoveLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -13407,13 +13407,13 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> SetLabelsAsync (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -13615,16 +13615,16 @@ namespace MailKit {
 		public virtual Task AddLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes were specified.", "indexes");
+				throw new ArgumentException ("No indexes were specified.", nameof (indexes));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -13826,16 +13826,16 @@ namespace MailKit {
 		public virtual Task RemoveLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes were specified.", "indexes");
+				throw new ArgumentException ("No indexes were specified.", nameof (indexes));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14029,10 +14029,10 @@ namespace MailKit {
 		public virtual Task SetLabelsAsync (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14148,13 +14148,13 @@ namespace MailKit {
 		public virtual Task<IList<int>> AddLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14270,13 +14270,13 @@ namespace MailKit {
 		public virtual Task<IList<int>> RemoveLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14388,10 +14388,10 @@ namespace MailKit {
 		public virtual Task<IList<int>> SetLabelsAsync (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14485,7 +14485,7 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> SearchAsync (SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14597,13 +14597,13 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> SearchAsync (SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14709,10 +14709,10 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14834,16 +14834,16 @@ namespace MailKit {
 		public virtual Task<IList<UniqueId>> SearchAsync (IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -14943,7 +14943,7 @@ namespace MailKit {
 		public virtual Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -15057,13 +15057,13 @@ namespace MailKit {
 		public virtual Task<SearchResults> SearchAsync (SearchOptions options, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -15175,10 +15175,10 @@ namespace MailKit {
 		public virtual Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -15302,16 +15302,16 @@ namespace MailKit {
 		public virtual Task<SearchResults> SearchAsync (SearchOptions options, IList<UniqueId> uids, SearchQuery query, IList<OrderBy> orderBy, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -15417,7 +15417,7 @@ namespace MailKit {
 		public virtual Task<IList<MessageThread>> ThreadAsync (ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -15539,13 +15539,13 @@ namespace MailKit {
 		public virtual Task<IList<MessageThread>> ThreadAsync (IList<UniqueId> uids, ThreadingAlgorithm algorithm, SearchQuery query, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {

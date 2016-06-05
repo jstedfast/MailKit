@@ -154,7 +154,7 @@ namespace MailKit {
 		public virtual Task SendAsync (MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -260,13 +260,13 @@ namespace MailKit {
 		public virtual Task SendAsync (MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			if (sender == null)
-				throw new ArgumentNullException ("sender");
+				throw new ArgumentNullException (nameof (sender));
 
 			if (recipients == null)
-				throw new ArgumentNullException ("recipients");
+				throw new ArgumentNullException (nameof (recipients));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -384,10 +384,10 @@ namespace MailKit {
 		public virtual Task SendAsync (FormatOptions options, MimeMessage message, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -502,16 +502,16 @@ namespace MailKit {
 		public virtual Task SendAsync (FormatOptions options, MimeMessage message, MailboxAddress sender, IEnumerable<MailboxAddress> recipients, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			if (sender == null)
-				throw new ArgumentNullException ("sender");
+				throw new ArgumentNullException (nameof (sender));
 
 			if (recipients == null)
-				throw new ArgumentNullException ("recipients");
+				throw new ArgumentNullException (nameof (recipients));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {

@@ -74,10 +74,10 @@ namespace MailKit.Security.Ntlm {
 			get { return (byte[]) nonce.Clone (); }
 			set { 
 				if (value == null)
-					throw new ArgumentNullException ("value");
+					throw new ArgumentNullException (nameof (value));
 
 				if (value.Length != 8)
-					throw new ArgumentException ("Invalid Nonce Length (should be 8 bytes).", "value");
+					throw new ArgumentException ("Invalid Nonce Length (should be 8 bytes).", nameof (value));
 
 				nonce = (byte[]) value.Clone (); 
 			}

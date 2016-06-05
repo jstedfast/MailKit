@@ -76,7 +76,7 @@ namespace MailKit {
 		internal void Add (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
-				throw new ArgumentNullException ("namespace");
+				throw new ArgumentNullException (nameof (@namespace));
 
 			collection.Add (@namespace);
 		}
@@ -107,7 +107,7 @@ namespace MailKit {
 		public bool Contains (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
-				throw new ArgumentNullException ("namespace");
+				throw new ArgumentNullException (nameof (@namespace));
 
 			return collection.Contains (@namespace);
 		}
@@ -127,7 +127,7 @@ namespace MailKit {
 		internal bool Remove (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
-				throw new ArgumentNullException ("namespace");
+				throw new ArgumentNullException (nameof (@namespace));
 
 			return collection.Remove (@namespace);
 		}
@@ -143,7 +143,7 @@ namespace MailKit {
 		public FolderNamespace this [int index] {
 			get {
 				if (index < 0 || index > collection.Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException (nameof (index));
 
 				return collection[index];
 			}

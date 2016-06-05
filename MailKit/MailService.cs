@@ -69,7 +69,7 @@ namespace MailKit {
 		protected MailService (IProtocolLogger protocolLogger)
 		{
 			if (protocolLogger == null)
-				throw new ArgumentNullException ("protocolLogger");
+				throw new ArgumentNullException (nameof (protocolLogger));
 
 #if !NETFX_CORE
 			SslProtocols = DefaultSslProtocols;
@@ -376,13 +376,13 @@ namespace MailKit {
 		public virtual Task ConnectAsync (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -426,10 +426,10 @@ namespace MailKit {
 		public void Connect (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uri == null)
-				throw new ArgumentNullException ("uri");
+				throw new ArgumentNullException (nameof (uri));
 
 			if (!uri.IsAbsoluteUri)
-				throw new ArgumentException ("The uri must be absolute.", "uri");
+				throw new ArgumentException ("The uri must be absolute.", nameof (uri));
 
 			var protocol = uri.Scheme.ToLowerInvariant ();
 			var query = uri.ParsedQuery ();
@@ -445,7 +445,7 @@ namespace MailKit {
 			if (protocol == Protocol + "s") {
 				options = SecureSocketOptions.SslOnConnect;
 			} else if (protocol != Protocol) {
-				throw new ArgumentException ("Unknown URI scheme.", "uri");
+				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
 			} else if (query.TryGetValue ("starttls", out value)) {
 				switch (value.ToLowerInvariant ()) {
 				default:
@@ -498,10 +498,10 @@ namespace MailKit {
 		public Task ConnectAsync (Uri uri, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uri == null)
-				throw new ArgumentNullException ("uri");
+				throw new ArgumentNullException (nameof (uri));
 
 			if (!uri.IsAbsoluteUri)
-				throw new ArgumentException ("The uri must be absolute.", "uri");
+				throw new ArgumentException ("The uri must be absolute.", nameof (uri));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -558,13 +558,13 @@ namespace MailKit {
 		public void Connect (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			Connect (host, port, useSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTlsWhenAvailable, cancellationToken);
 		}
@@ -618,13 +618,13 @@ namespace MailKit {
 		public Task ConnectAsync (string host, int port, bool useSsl, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			return ConnectAsync (host, port, useSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTlsWhenAvailable, cancellationToken);
 		}
@@ -723,10 +723,10 @@ namespace MailKit {
 		public virtual Task AuthenticateAsync (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+				throw new ArgumentNullException (nameof (credentials));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -826,7 +826,7 @@ namespace MailKit {
 		public Task AuthenticateAsync (ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+				throw new ArgumentNullException (nameof (credentials));
 
 			return AuthenticateAsync (Encoding.UTF8, credentials, cancellationToken);
 		}
@@ -881,13 +881,13 @@ namespace MailKit {
 		public void Authenticate (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			if (userName == null)
-				throw new ArgumentNullException ("userName");
+				throw new ArgumentNullException (nameof (userName));
 
 			if (password == null)
-				throw new ArgumentNullException ("password");
+				throw new ArgumentNullException (nameof (password));
 
 			var credentials = new NetworkCredential (userName, password);
 
@@ -945,13 +945,13 @@ namespace MailKit {
 		public Task AuthenticateAsync (Encoding encoding, string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			if (userName == null)
-				throw new ArgumentNullException ("userName");
+				throw new ArgumentNullException (nameof (userName));
 
 			if (password == null)
-				throw new ArgumentNullException ("password");
+				throw new ArgumentNullException (nameof (password));
 
 			var credentials = new NetworkCredential (userName, password);
 
@@ -1008,10 +1008,10 @@ namespace MailKit {
 		public void Authenticate (string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (userName == null)
-				throw new ArgumentNullException ("userName");
+				throw new ArgumentNullException (nameof (userName));
 
 			if (password == null)
-				throw new ArgumentNullException ("password");
+				throw new ArgumentNullException (nameof (password));
 
 			var credentials = new NetworkCredential (userName, password);
 
@@ -1066,10 +1066,10 @@ namespace MailKit {
 		public Task AuthenticateAsync (string userName, string password, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (userName == null)
-				throw new ArgumentNullException ("userName");
+				throw new ArgumentNullException (nameof (userName));
 
 			if (password == null)
-				throw new ArgumentNullException ("password");
+				throw new ArgumentNullException (nameof (password));
 
 			var credentials = new NetworkCredential (userName, password);
 

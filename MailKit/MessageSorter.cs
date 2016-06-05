@@ -175,18 +175,18 @@ namespace MailKit {
 		public static IList<T> Sort<T> (this IEnumerable<T> messages, IList<OrderBy> orderBy) where T : IMessageSummary
 		{
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			var list = new List<T> ();
 			foreach (var message in messages) {
 				if (message.Envelope == null)
-					throw new ArgumentException ("One or more messages is missing information needed for sorting.", "messages");
+					throw new ArgumentException ("One or more messages is missing information needed for sorting.", nameof (messages));
 
 				list.Add (message);
 			}
@@ -224,17 +224,17 @@ namespace MailKit {
 		public static void Sort<T> (this List<T> messages, IList<OrderBy> orderBy) where T : IMessageSummary
 		{
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i].Envelope == null)
-					throw new ArgumentException ("One or more messages is missing information needed for sorting.", "messages");
+					throw new ArgumentException ("One or more messages is missing information needed for sorting.", nameof (messages));
 			}
 
 			if (messages.Count < 2)

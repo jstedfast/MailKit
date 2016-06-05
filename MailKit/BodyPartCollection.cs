@@ -87,7 +87,7 @@ namespace MailKit {
 		public void Add (BodyPart part)
 		{
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			collection.Add (part);
 		}
@@ -117,7 +117,7 @@ namespace MailKit {
 		public bool Contains (BodyPart part)
 		{
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return collection.Contains (part);
 		}
@@ -140,10 +140,10 @@ namespace MailKit {
 		public void CopyTo (BodyPart[] array, int arrayIndex)
 		{
 			if (array == null)
-				throw new ArgumentNullException ("array");
+				throw new ArgumentNullException (nameof (array));
 
 			if (arrayIndex < 0 || arrayIndex + Count > array.Length)
-				throw new ArgumentOutOfRangeException ("arrayIndex");
+				throw new ArgumentOutOfRangeException (nameof (arrayIndex));
 
 			collection.CopyTo (array, arrayIndex);
 		}
@@ -162,7 +162,7 @@ namespace MailKit {
 		public bool Remove (BodyPart part)
 		{
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return collection.Remove (part);
 		}
@@ -181,7 +181,7 @@ namespace MailKit {
 		public BodyPart this [int index] {
 			get {
 				if (index < 0 || index >= collection.Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException (nameof (index));
 
 				return collection[index];
 			}
@@ -207,7 +207,7 @@ namespace MailKit {
 		public int IndexOf (Uri uri)
 		{
 			if (uri == null)
-				throw new ArgumentNullException ("uri");
+				throw new ArgumentNullException (nameof (uri));
 
 			bool cid = uri.IsAbsoluteUri && uri.Scheme.ToLowerInvariant () == "cid";
 

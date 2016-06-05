@@ -71,10 +71,10 @@ namespace MailKit.Security {
 		protected SaslMechanism (Uri uri, ICredentials credentials)
 		{
 			if (uri == null)
-				throw new ArgumentNullException ("uri");
+				throw new ArgumentNullException (nameof (uri));
 
 			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+				throw new ArgumentNullException (nameof (credentials));
 
 			Credentials = credentials;
 			Uri = uri;
@@ -221,7 +221,7 @@ namespace MailKit.Security {
 		public static bool IsSupported (string mechanism)
 		{
 			if (mechanism == null)
-				throw new ArgumentNullException ("mechanism");
+				throw new ArgumentNullException (nameof (mechanism));
 
 			switch (mechanism) {
 			case "SCRAM-SHA-256": return true;
@@ -260,16 +260,16 @@ namespace MailKit.Security {
 		public static SaslMechanism Create (string mechanism, Uri uri, Encoding encoding, ICredentials credentials)
 		{
 			if (mechanism == null)
-				throw new ArgumentNullException ("mechanism");
+				throw new ArgumentNullException (nameof (mechanism));
 
 			if (uri == null)
-				throw new ArgumentNullException ("uri");
+				throw new ArgumentNullException (nameof (uri));
 
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+				throw new ArgumentNullException (nameof (credentials));
 
 			switch (mechanism) {
 			//case "KERBEROS_V4":   return null;
@@ -457,7 +457,7 @@ namespace MailKit.Security {
 		public static string SaslPrep (string s)
 		{
 			if (s == null)
-				throw new ArgumentNullException ("s");
+				throw new ArgumentNullException (nameof (s));
 
 			if (s.Length == 0)
 				return s;
@@ -472,9 +472,9 @@ namespace MailKit.Security {
 					// the "commonly mapped to nothing" characters [StringPrep, B.1]
 					// that can be mapped to nothing.
 				} else if (char.IsControl (s[i])) {
-					throw new ArgumentException ("Control characters are prohibited.", "s");
+					throw new ArgumentException ("Control characters are prohibited.", nameof (s));
 				} else if (IsProhibited (s, i)) {
-					throw new ArgumentException ("One or more characters in the string are prohibited.", "s");
+					throw new ArgumentException ("One or more characters in the string are prohibited.", nameof (s));
 				} else {
 					builder.Append (s[i]);
 				}

@@ -133,7 +133,7 @@ namespace MailKit {
 			case SortOrder.None:
 				break;
 			default:
-				throw new ArgumentOutOfRangeException ("order");
+				throw new ArgumentOutOfRangeException (nameof (order));
 			}
 
 			Validity = validity;
@@ -477,7 +477,7 @@ namespace MailKit {
 		public void AddRange (IEnumerable<UniqueId> uids)
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			foreach (var uid in uids)
 				Add (uid);
@@ -529,10 +529,10 @@ namespace MailKit {
 		public void CopyTo (UniqueId[] array, int arrayIndex)
 		{
 			if (array == null)
-				throw new ArgumentNullException ("array");
+				throw new ArgumentNullException (nameof (array));
 
 			if (arrayIndex < 0 || arrayIndex > (array.Length - Count))
-				throw new ArgumentOutOfRangeException ("arrayIndex");
+				throw new ArgumentOutOfRangeException (nameof (arrayIndex));
 
 			int index = arrayIndex;
 
@@ -651,7 +651,7 @@ namespace MailKit {
 		public void RemoveAt (int index)
 		{
 			if (index < 0 || index >= count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			int offset = 0;
 
@@ -684,7 +684,7 @@ namespace MailKit {
 		public UniqueId this [int index] {
 			get {
 				if (index < 0 || index >= count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException (nameof (index));
 
 				int offset = 0;
 
@@ -699,7 +699,7 @@ namespace MailKit {
 					return new UniqueId (Validity, uid);
 				}
 
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 			}
 			set {
 				throw new NotSupportedException ();
@@ -783,7 +783,7 @@ namespace MailKit {
 		public static string ToString (IList<UniqueId> uids)
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
 				return string.Empty;
@@ -801,7 +801,7 @@ namespace MailKit {
 
 			while (index < uids.Count) {
 				if (uids[index].Id == 0)
-					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
+					throw new ArgumentException ("One or more of the uids is invalid.", nameof (uids));
 
 				uint start = uids[index].Id;
 				uint end = uids[index].Id;
@@ -855,7 +855,7 @@ namespace MailKit {
 		public static bool TryParse (string token, uint validity, out UniqueIdSet uids)
 		{
 			if (token == null)
-				throw new ArgumentNullException ("token");
+				throw new ArgumentNullException (nameof (token));
 
 			uids = new UniqueIdSet (validity);
 

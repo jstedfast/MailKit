@@ -38,7 +38,7 @@ namespace MailKit {
 		public ProgressStream (Stream source, Action<int> update)
 		{
 			if (source == null)
-				throw new ArgumentNullException ("source");
+				throw new ArgumentNullException (nameof (source));
 
 			cancellable = source as ICancellableStream;
 			Source = source;
@@ -86,18 +86,6 @@ namespace MailKit {
 		public override int WriteTimeout {
 			get { return Source.WriteTimeout; }
 			set { Source.WriteTimeout = value; }
-		}
-
-		static void ValidateArguments (byte[] buffer, int offset, int count)
-		{
-			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
-
-			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
-
-			if (count < 0 || count > (buffer.Length - offset))
-				throw new ArgumentOutOfRangeException ("count");
 		}
 
 		public int Read (byte[] buffer, int offset, int count, CancellationToken cancellationToken)

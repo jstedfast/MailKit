@@ -46,6 +46,9 @@ namespace MailKit {
 		/// Creates a new set of access rights.
 		/// </remarks>
 		/// <param name="rights">The access rights.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="rights"/> is <c>null</c>.
+		/// </exception>
 		public AccessRights (IEnumerable<AccessRight> rights)
 		{
 			AddRange (rights);
@@ -58,6 +61,9 @@ namespace MailKit {
 		/// Creates a new set of access rights.
 		/// </remarks>
 		/// <param name="rights">The access rights.</param>
+		/// <exception cref="System.ArgumentNullException">
+		/// <paramref name="rights"/> is <c>null</c>.
+		/// </exception>
 		public AccessRights (string rights)
 		{
 			AddRange (rights);
@@ -151,7 +157,7 @@ namespace MailKit {
 		public void AddRange (string rights)
 		{
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			for (int i = 0; i < rights.Length; i++)
 				Add (new AccessRight (rights[i]));
@@ -170,7 +176,7 @@ namespace MailKit {
 		public void AddRange (IEnumerable<AccessRight> rights)
 		{
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			foreach (var right in rights)
 				Add (right);
@@ -218,10 +224,10 @@ namespace MailKit {
 		public void CopyTo (AccessRight[] array, int arrayIndex)
 		{
 			if (array == null)
-				throw new ArgumentNullException ("array");
+				throw new ArgumentNullException (nameof (array));
 
 			if (arrayIndex < 0 || arrayIndex + Count > array.Length)
-				throw new ArgumentOutOfRangeException ("arrayIndex");
+				throw new ArgumentOutOfRangeException (nameof (arrayIndex));
 
 			list.CopyTo (array, arrayIndex);
 		}
@@ -253,7 +259,7 @@ namespace MailKit {
 		public AccessRight this [int index] {
 			get {
 				if (index < 0 || index >= list.Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException (nameof (index));
 
 				return list[index];
 			}

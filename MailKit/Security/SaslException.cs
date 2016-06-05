@@ -121,7 +121,7 @@ namespace MailKit.Security {
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
-				throw new ArgumentNullException ("info");
+				throw new ArgumentNullException (nameof (info));
 
 			info.AddValue ("ErrorCode", (int) ErrorCode);
 			info.AddValue ("Mechanism", Mechanism);

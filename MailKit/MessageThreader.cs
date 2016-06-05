@@ -152,7 +152,7 @@ namespace MailKit {
 
 			foreach (var message in messages) {
 				if (message.Envelope == null)
-					throw new ArgumentException ("One or more messages is missing information needed for threading.", "messages");
+					throw new ArgumentException ("One or more messages is missing information needed for threading.", nameof (messages));
 
 				var id = message.Envelope.MessageId;
 
@@ -379,7 +379,7 @@ namespace MailKit {
 
 			foreach (var message in messages) {
 				if (message.Envelope == null)
-					throw new ArgumentException ("One or more messages is missing information needed for threading.", "messages");
+					throw new ArgumentException ("One or more messages is missing information needed for threading.", nameof (messages));
 
 				var container = new ThreadableNode ();
 				container.Message = message;
@@ -445,18 +445,18 @@ namespace MailKit {
 		public static IList<MessageThread> Thread (this IEnumerable<IMessageSummary> messages, ThreadingAlgorithm algorithm, IList<OrderBy> orderBy)
 		{
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			switch (algorithm) {
 			case ThreadingAlgorithm.OrderedSubject: return ThreadBySubject (messages, orderBy);
 			case ThreadingAlgorithm.References: return ThreadByReferences (messages, orderBy);
-			default: throw new ArgumentOutOfRangeException ("algorithm");
+			default: throw new ArgumentOutOfRangeException (nameof (algorithm));
 			}
 		}
 
@@ -520,7 +520,7 @@ namespace MailKit {
 		public static string GetThreadableSubject (string subject, out int replyDepth)
 		{
 			if (subject == null)
-				throw new ArgumentNullException ("subject");
+				throw new ArgumentNullException (nameof (subject));
 
 			replyDepth = 0;
 

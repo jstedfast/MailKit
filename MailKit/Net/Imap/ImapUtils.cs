@@ -223,17 +223,17 @@ namespace MailKit.Net.Imap {
 		public static string FormatIndexSet (IList<int> indexes)
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes were specified.", "indexes");
+				throw new ArgumentException ("No indexes were specified.", nameof (indexes));
 
 			var builder = new StringBuilder ();
 			int index = 0;
 
 			while (index < indexes.Count) {
 				if (indexes[index] < 0)
-					throw new ArgumentException ("One or more of the indexes is negative.", "indexes");
+					throw new ArgumentException ("One or more of the indexes is negative.", nameof (indexes));
 
 				int begin = indexes[index];
 				int end = indexes[index];
@@ -285,10 +285,10 @@ namespace MailKit.Net.Imap {
 		public static string FormatUidSet (IList<UniqueId> uids)
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids were specified.", "uids");
+				throw new ArgumentException ("No uids were specified.", nameof (uids));
 
 			return UniqueIdSet.ToString (uids);
 		}

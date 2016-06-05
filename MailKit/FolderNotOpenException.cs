@@ -87,7 +87,7 @@ namespace MailKit {
 		public FolderNotOpenException (string folderName, FolderAccess access, string message, Exception innerException) : base (message, innerException)
 		{
 			if (folderName == null)
-				throw new ArgumentNullException ("folderName");
+				throw new ArgumentNullException (nameof (folderName));
 
 			FolderName = folderName;
 			FolderAccess = access;
@@ -108,7 +108,7 @@ namespace MailKit {
 		public FolderNotOpenException (string folderName, FolderAccess access, string message) : base (message)
 		{
 			if (folderName == null)
-				throw new ArgumentNullException ("folderName");
+				throw new ArgumentNullException (nameof (folderName));
 
 			FolderName = folderName;
 			FolderAccess = access;
@@ -175,7 +175,7 @@ namespace MailKit {
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
-				throw new ArgumentNullException ("info");
+				throw new ArgumentNullException (nameof (info));
 
 			info.AddValue ("FolderAccess", FolderAccess.ToString ());
 			info.AddValue ("FolderName", FolderName);

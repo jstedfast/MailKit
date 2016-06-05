@@ -159,7 +159,7 @@ namespace MailKit.Net.Imap {
 			get { return engine.Capabilities; }
 			set {
 				if ((engine.Capabilities | value) > engine.Capabilities)
-					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", "value");
+					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", nameof (value));
 
 				engine.Capabilities = value;
 			}
@@ -197,7 +197,7 @@ namespace MailKit.Net.Imap {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("ImapClient");
+				throw new ObjectDisposedException (nameof (ImapClient));
 		}
 
 		void CheckConnected ()
@@ -937,10 +937,10 @@ namespace MailKit.Net.Imap {
 		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+				throw new ArgumentNullException (nameof (credentials));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -1055,10 +1055,10 @@ namespace MailKit.Net.Imap {
 			CheckDisposed ();
 
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (replayStream == null)
-				throw new ArgumentNullException ("replayStream");
+				throw new ArgumentNullException (nameof (replayStream));
 
 			engine.Uri = new Uri ("imap://" + host);
 			engine.Connect (new ImapStream (replayStream, null, ProtocolLogger), cancellationToken);
@@ -1170,13 +1170,13 @@ namespace MailKit.Net.Imap {
 		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			CheckDisposed ();
 
@@ -1377,19 +1377,19 @@ namespace MailKit.Net.Imap {
 		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (socket == null)
-				throw new ArgumentNullException ("socket");
+				throw new ArgumentNullException (nameof (socket));
 
 			if (!socket.Connected)
-				throw new ArgumentException ("The socket is not connected.", "socket");
+				throw new ArgumentException ("The socket is not connected.", nameof (socket));
 
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			CheckDisposed ();
 
@@ -1754,7 +1754,7 @@ namespace MailKit.Net.Imap {
 		public void Idle (CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (!doneToken.CanBeCanceled)
-				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
+				throw new ArgumentException ("The doneToken must be cancellable.", nameof (doneToken));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -1838,7 +1838,7 @@ namespace MailKit.Net.Imap {
 		public Task IdleAsync (CancellationToken doneToken, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (!doneToken.CanBeCanceled)
-				throw new ArgumentException ("The doneToken must be cancellable.", "doneToken");
+				throw new ArgumentException ("The doneToken must be cancellable.", nameof (doneToken));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -1978,7 +1978,7 @@ namespace MailKit.Net.Imap {
 			case SpecialFolder.Junk:    return engine.Junk;
 			case SpecialFolder.Sent:    return engine.Sent;
 			case SpecialFolder.Trash:   return engine.Trash;
-			default: throw new ArgumentOutOfRangeException ("folder");
+			default: throw new ArgumentOutOfRangeException (nameof (folder));
 			}
 		}
 
@@ -2008,7 +2008,7 @@ namespace MailKit.Net.Imap {
 		public override IMailFolder GetFolder (FolderNamespace @namespace)
 		{
 			if (@namespace == null)
-				throw new ArgumentNullException ("namespace");
+				throw new ArgumentNullException (nameof (@namespace));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2064,7 +2064,7 @@ namespace MailKit.Net.Imap {
 		public override IEnumerable<IMailFolder> GetFolders (FolderNamespace @namespace, StatusItems items = StatusItems.None, bool subscribedOnly = false, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (@namespace == null)
-				throw new ArgumentNullException ("namespace");
+				throw new ArgumentNullException (nameof (@namespace));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2115,7 +2115,7 @@ namespace MailKit.Net.Imap {
 		public override IMailFolder GetFolder (string path, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (path == null)
-				throw new ArgumentNullException ("path");
+				throw new ArgumentNullException (nameof (path));
 
 			CheckDisposed ();
 			CheckConnected ();

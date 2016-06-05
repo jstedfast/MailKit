@@ -69,10 +69,10 @@ namespace MailKit {
 		public UniqueIdMap (IList<UniqueId> source, IList<UniqueId> destination)
 		{
 			if (source == null)
-				throw new ArgumentNullException ("source");
+				throw new ArgumentNullException (nameof (source));
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			Destination = destination;
 			Source = source;
@@ -189,7 +189,7 @@ namespace MailKit {
 				UniqueId uid;
 
 				if (!TryGetValue (index, out uid))
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException (nameof (index));
 
 				return uid;
 			}

@@ -163,7 +163,7 @@ namespace MailKit.Net.Pop3 {
 			get { return engine.Capabilities; }
 			set {
 				if ((engine.Capabilities | value) > engine.Capabilities)
-					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", "value");
+					throw new ArgumentException ("Capabilities cannot be enabled, they may only be disabled.", nameof (value));
 
 				engine.Capabilities = value;
 			}
@@ -219,7 +219,7 @@ namespace MailKit.Net.Pop3 {
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("Pop3Client");
+				throw new ObjectDisposedException (nameof (Pop3Client));
 		}
 
 		void CheckConnected ()
@@ -503,10 +503,10 @@ namespace MailKit.Net.Pop3 {
 		public override void Authenticate (Encoding encoding, ICredentials credentials, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (encoding == null)
-				throw new ArgumentNullException ("encoding");
+				throw new ArgumentNullException (nameof (encoding));
 
 			if (credentials == null)
-				throw new ArgumentNullException ("credentials");
+				throw new ArgumentNullException (nameof (credentials));
 
 			if (!IsConnected)
 				throw new ServiceNotConnectedException ("The Pop3Client must be connected before you can authenticate.");
@@ -631,10 +631,10 @@ namespace MailKit.Net.Pop3 {
 		internal void ReplayConnect (string host, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (replayStream == null)
-				throw new ArgumentNullException ("replayStream");
+				throw new ArgumentNullException (nameof (replayStream));
 
 			CheckDisposed ();
 
@@ -749,13 +749,13 @@ namespace MailKit.Net.Pop3 {
 		public override void Connect (string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			CheckDisposed ();
 
@@ -949,19 +949,19 @@ namespace MailKit.Net.Pop3 {
 		public void Connect (Socket socket, string host, int port = 0, SecureSocketOptions options = SecureSocketOptions.Auto, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (socket == null)
-				throw new ArgumentNullException ("socket");
+				throw new ArgumentNullException (nameof (socket));
 
 			if (!socket.Connected)
-				throw new ArgumentException ("The socket is not connected.", "socket");
+				throw new ArgumentException ("The socket is not connected.", nameof (socket));
 
 			if (host == null)
-				throw new ArgumentNullException ("host");
+				throw new ArgumentNullException (nameof (host));
 
 			if (host.Length == 0)
-				throw new ArgumentException ("The host name cannot be empty.", "host");
+				throw new ArgumentException ("The host name cannot be empty.", nameof (host));
 
 			if (port < 0 || port > 65535)
-				throw new ArgumentOutOfRangeException ("port");
+				throw new ArgumentOutOfRangeException (nameof (port));
 
 			CheckDisposed ();
 
@@ -1363,10 +1363,10 @@ namespace MailKit.Net.Pop3 {
 		public void SetLanguage (string lang, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (lang == null)
-				throw new ArgumentNullException ("lang");
+				throw new ArgumentNullException (nameof (lang));
 
 			if (lang.Length == 0)
-				throw new ArgumentException ("The language code cannot be empty.", "lang");
+				throw new ArgumentException ("The language code cannot be empty.", nameof (lang));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -1572,7 +1572,7 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (!SupportsUids && (probed & ProbedCapabilities.UIDL) != 0)
 				throw new NotSupportedException ("The POP3 server does not support the UIDL extension.");
@@ -1890,7 +1890,7 @@ namespace MailKit.Net.Pop3 {
 			int seqid;
 
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -1899,7 +1899,7 @@ namespace MailKit.Net.Pop3 {
 			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
-				throw new ArgumentException ("No such message.", "uid");
+				throw new ArgumentException ("No such message.", nameof (uid));
 
 			var ctx = new MessageSizeContext (engine);
 
@@ -1946,7 +1946,7 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			var ctx = new MessageSizeContext (engine);
 
@@ -2284,7 +2284,7 @@ namespace MailKit.Net.Pop3 {
 			int seqid;
 
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2293,7 +2293,7 @@ namespace MailKit.Net.Pop3 {
 			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
-				throw new ArgumentException ("No such message.", "uid");
+				throw new ArgumentException ("No such message.", nameof (uid));
 
 			var ctx = new DownloadHeaderContext (this, parser);
 
@@ -2340,7 +2340,7 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			var ctx = new DownloadHeaderContext (this, parser);
 
@@ -2392,10 +2392,10 @@ namespace MailKit.Net.Pop3 {
 		public override IList<HeaderList> GetMessageHeaders (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids specified.", "uids");
+				throw new ArgumentException ("No uids specified.", nameof (uids));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2409,7 +2409,7 @@ namespace MailKit.Net.Pop3 {
 				int seqid;
 
 				if (!dict.TryGetValue (uids[i], out seqid))
-					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
+					throw new ArgumentException ("One or more of the uids is invalid.", nameof (uids));
 
 				seqids[i] = seqid;
 			}
@@ -2467,10 +2467,10 @@ namespace MailKit.Net.Pop3 {
 		public override IList<HeaderList> GetMessageHeaders (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2480,7 +2480,7 @@ namespace MailKit.Net.Pop3 {
 
 			for (int i = 0; i < indexes.Count; i++) {
 				if (indexes[i] < 0 || indexes[i] >= total)
-					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+					throw new ArgumentException ("One or more of the indexes are invalid.", nameof (indexes));
 
 				seqids[i] = indexes[i] + 1;
 			}
@@ -2535,10 +2535,10 @@ namespace MailKit.Net.Pop3 {
 		public override IList<HeaderList> GetMessageHeaders (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (startIndex < 0 || startIndex >= total)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException (nameof (startIndex));
 
 			if (count < 0 || count > (total - startIndex))
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2602,7 +2602,7 @@ namespace MailKit.Net.Pop3 {
 			int seqid;
 
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2611,7 +2611,7 @@ namespace MailKit.Net.Pop3 {
 			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
-				throw new ArgumentException ("No such message.", "uid");
+				throw new ArgumentException ("No such message.", nameof (uid));
 
 			var ctx = new DownloadMessageContext (this, parser);
 
@@ -2662,7 +2662,7 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			var ctx = new DownloadMessageContext (this, parser, progress);
 
@@ -2714,10 +2714,10 @@ namespace MailKit.Net.Pop3 {
 		public override IList<MimeMessage> GetMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids specified.", "uids");
+				throw new ArgumentException ("No uids specified.", nameof (uids));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2731,7 +2731,7 @@ namespace MailKit.Net.Pop3 {
 				int seqid;
 
 				if (!dict.TryGetValue (uids[i], out seqid))
-					throw new ArgumentException ("One or more of the uids is invalid.", "uids");
+					throw new ArgumentException ("One or more of the uids is invalid.", nameof (uids));
 
 				seqids[i] = seqid;
 			}
@@ -2790,10 +2790,10 @@ namespace MailKit.Net.Pop3 {
 		public override IList<MimeMessage> GetMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2803,7 +2803,7 @@ namespace MailKit.Net.Pop3 {
 
 			for (int i = 0; i < indexes.Count; i++) {
 				if (indexes[i] < 0 || indexes[i] >= total)
-					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+					throw new ArgumentException ("One or more of the indexes are invalid.", nameof (indexes));
 
 				seqids[i] = indexes[i] + 1;
 			}
@@ -2862,10 +2862,10 @@ namespace MailKit.Net.Pop3 {
 		public override IList<MimeMessage> GetMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (startIndex < 0 || startIndex >= total)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException (nameof (startIndex));
 
 			if (count < 0 || count > (total - startIndex))
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -2926,7 +2926,7 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			var ctx = new DownloadStreamContext (this, progress);
 
@@ -2987,16 +2987,16 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			var seqids = new int[indexes.Count];
 
 			for (int i = 0; i < indexes.Count; i++) {
 				if (indexes[i] < 0 || indexes[i] >= total)
-					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+					throw new ArgumentException ("One or more of the indexes are invalid.", nameof (indexes));
 
 				seqids[i] = indexes[i] + 1;
 			}
@@ -3057,10 +3057,10 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (startIndex < 0 || startIndex >= total)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException (nameof (startIndex));
 
 			if (count < 0 || count > (total - startIndex))
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			if (count == 0)
 				return new Stream[0];
@@ -3121,7 +3121,7 @@ namespace MailKit.Net.Pop3 {
 			int seqid;
 
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -3130,7 +3130,7 @@ namespace MailKit.Net.Pop3 {
 			LoadUids ();
 
 			if (!dict.TryGetValue (uid, out seqid))
-				throw new ArgumentException ("No such message.", "uid");
+				throw new ArgumentException ("No such message.", nameof (uid));
 
 			SendCommand (cancellationToken, "DELE {0}", seqid);
 		}
@@ -3179,7 +3179,7 @@ namespace MailKit.Net.Pop3 {
 			CheckAuthenticated ();
 
 			if (index < 0 || index >= total)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			SendCommand (cancellationToken, "DELE {0}", index + 1);
 		}
@@ -3230,10 +3230,10 @@ namespace MailKit.Net.Pop3 {
 		public override void DeleteMessages (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids specified.", "uids");
+				throw new ArgumentException ("No uids specified.", nameof (uids));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -3247,7 +3247,7 @@ namespace MailKit.Net.Pop3 {
 				int seqid;
 
 				if (!dict.TryGetValue (uids[i], out seqid))
-					throw new ArgumentException ("One or more of the uids are invalid.", "uids");
+					throw new ArgumentException ("One or more of the uids are invalid.", nameof (uids));
 
 				seqids[i] = seqid;
 			}
@@ -3319,10 +3319,10 @@ namespace MailKit.Net.Pop3 {
 		public override void DeleteMessages (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			CheckDisposed ();
 			CheckConnected ();
@@ -3332,7 +3332,7 @@ namespace MailKit.Net.Pop3 {
 
 			for (int i = 0; i < indexes.Count; i++) {
 				if (indexes[i] < 0 || indexes[i] >= total)
-					throw new ArgumentException ("One or more of the indexes are invalid.", "indexes");
+					throw new ArgumentException ("One or more of the indexes are invalid.", nameof (indexes));
 
 				seqids[i] = indexes[i] + 1;
 			}
@@ -3404,10 +3404,10 @@ namespace MailKit.Net.Pop3 {
 		public override void DeleteMessages (int startIndex, int count, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (startIndex < 0 || startIndex >= total)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException (nameof (startIndex));
 
 			if (count < 0 || count > (total - startIndex))
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			CheckDisposed ();
 			CheckConnected ();

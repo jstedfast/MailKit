@@ -48,7 +48,7 @@ namespace MailKit.Search {
 		public OrderBy (OrderByType type, SortOrder order)
 		{
 			if (order == SortOrder.None)
-				throw new ArgumentOutOfRangeException ("order");
+				throw new ArgumentOutOfRangeException (nameof (order));
 
 			Order = order;
 			Type = type;

@@ -421,7 +421,7 @@ namespace MailKit {
 		public virtual Task<int> GetMessageSizeAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -661,7 +661,7 @@ namespace MailKit {
 		public virtual Task<HeaderList> GetMessageHeadersAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -836,10 +836,10 @@ namespace MailKit {
 		public virtual Task<IList<HeaderList>> GetMessageHeadersAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids specified.", "uids");
+				throw new ArgumentException ("No uids specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -929,10 +929,10 @@ namespace MailKit {
 		public virtual Task<IList<HeaderList>> GetMessageHeadersAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1107,7 +1107,7 @@ namespace MailKit {
 		public virtual Task<MimeMessage> GetMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1287,10 +1287,10 @@ namespace MailKit {
 		public virtual Task<IList<MimeMessage>> GetMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids specified.", "uids");
+				throw new ArgumentException ("No uids specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1382,10 +1382,10 @@ namespace MailKit {
 		public virtual Task<IList<MimeMessage>> GetMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1649,10 +1649,10 @@ namespace MailKit {
 		public virtual Task<IList<Stream>> GetStreamsAsync (IList<int> indexes, bool headersOnly = false, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -1837,7 +1837,7 @@ namespace MailKit {
 		public virtual Task DeleteMessageAsync (string uid, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uid == null)
-				throw new ArgumentNullException ("uid");
+				throw new ArgumentNullException (nameof (uid));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -2021,10 +2021,10 @@ namespace MailKit {
 		public virtual Task DeleteMessagesAsync (IList<string> uids, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (uids == null)
-				throw new ArgumentNullException ("uids");
+				throw new ArgumentNullException (nameof (uids));
 
 			if (uids.Count == 0)
-				throw new ArgumentException ("No uids specified.", "uids");
+				throw new ArgumentException ("No uids specified.", nameof (uids));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {
@@ -2117,10 +2117,10 @@ namespace MailKit {
 		public virtual Task DeleteMessagesAsync (IList<int> indexes, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (indexes == null)
-				throw new ArgumentNullException ("indexes");
+				throw new ArgumentNullException (nameof (indexes));
 
 			if (indexes.Count == 0)
-				throw new ArgumentException ("No indexes specified.", "indexes");
+				throw new ArgumentException ("No indexes specified.", nameof (indexes));
 
 			return Task.Factory.StartNew (() => {
 				lock (SyncRoot) {

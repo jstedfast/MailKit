@@ -83,16 +83,16 @@ namespace MailKit.Security.Ntlm {
 		protected void ValidateArguments (byte[] message, int startIndex, int length)
 		{
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			if (startIndex < 0 || startIndex > message.Length)
-				throw new ArgumentOutOfRangeException ("startIndex");
+				throw new ArgumentOutOfRangeException (nameof (startIndex));
 
 			if (length < 12 || length > (message.Length - startIndex))
-				throw new ArgumentOutOfRangeException ("length");
+				throw new ArgumentOutOfRangeException (nameof (length));
 
 			if (!CheckHeader (message, startIndex))
-				throw new ArgumentException (string.Format ("Invalid Type{0} message.", type), "message");
+				throw new ArgumentException (string.Format ("Invalid Type{0} message.", type), nameof (message));
 		}
 
 		public abstract byte[] Encode ();

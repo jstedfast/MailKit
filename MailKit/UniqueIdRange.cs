@@ -220,10 +220,10 @@ namespace MailKit {
 		public void CopyTo (UniqueId[] array, int arrayIndex)
 		{
 			if (array == null)
-				throw new ArgumentNullException ("array");
+				throw new ArgumentNullException (nameof (array));
 
 			if (arrayIndex < 0 || arrayIndex > (array.Length - Count))
-				throw new ArgumentOutOfRangeException ("arrayIndex");
+				throw new ArgumentOutOfRangeException (nameof (arrayIndex));
 
 			int index = arrayIndex;
 
@@ -327,7 +327,7 @@ namespace MailKit {
 		public UniqueId this [int index] {
 			get {
 				if (index < 0 || index >= Count)
-					throw new ArgumentOutOfRangeException ("index");
+					throw new ArgumentOutOfRangeException (nameof (index));
 
 				uint uid = start <= end ? start + (uint) index : start - (uint) index;
 
@@ -414,7 +414,7 @@ namespace MailKit {
 		public static bool TryParse (string token, uint validity, out UniqueIdRange range)
 		{
 			if (token == null)
-				throw new ArgumentNullException ("token");
+				throw new ArgumentNullException (nameof (token));
 
 			uint start, end;
 			int index = 0;

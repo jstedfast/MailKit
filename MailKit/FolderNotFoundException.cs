@@ -75,7 +75,7 @@ namespace MailKit {
 		public FolderNotFoundException (string message, string folderName, Exception innerException) : base (message, innerException)
 		{
 			if (folderName == null)
-				throw new ArgumentNullException ("folderName");
+				throw new ArgumentNullException (nameof (folderName));
 
 			FolderName = folderName;
 		}
@@ -94,7 +94,7 @@ namespace MailKit {
 		public FolderNotFoundException (string message, string folderName) : base (message)
 		{
 			if (folderName == null)
-				throw new ArgumentNullException ("folderName");
+				throw new ArgumentNullException (nameof (folderName));
 
 			FolderName = folderName;
 		}
@@ -112,7 +112,7 @@ namespace MailKit {
 		public FolderNotFoundException (string folderName) : base ("The requested folder could not be found.")
 		{
 			if (folderName == null)
-				throw new ArgumentNullException ("folderName");
+				throw new ArgumentNullException (nameof (folderName));
 
 			FolderName = folderName;
 		}
@@ -145,7 +145,7 @@ namespace MailKit {
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
-				throw new ArgumentNullException ("info");
+				throw new ArgumentNullException (nameof (info));
 
 			info.AddValue ("FolderName", FolderName);
 

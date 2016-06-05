@@ -1655,7 +1655,7 @@ namespace MailKit.Net.Imap {
 		public void Wait (ImapCommand ic)
 		{
 			if (ic == null)
-				throw new ArgumentNullException ("ic");
+				throw new ArgumentNullException (nameof (ic));
 
 			while (Iterate () < ic.Id) {
 				// continue processing commands...

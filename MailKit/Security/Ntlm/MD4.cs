@@ -30,6 +30,7 @@
 
 using System;
 using System.IO;
+using System.Security.Cryptography;
 
 namespace MailKit.Security.Ntlm {
 	sealed class MD4 : IDisposable
@@ -287,16 +288,16 @@ namespace MailKit.Security.Ntlm {
 		public byte[] ComputeHash (byte[] buffer, int offset, int count)
 		{
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+				throw new ArgumentNullException (nameof (buffer));
 
 			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0 || offset > buffer.Length - count)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			if (disposed)
-				throw new ObjectDisposedException ("HashAlgorithm");
+				throw new ObjectDisposedException (nameof (MD4));
 
 			HashCore (buffer, offset, count);
 			hashValue = HashFinal ();
@@ -308,7 +309,7 @@ namespace MailKit.Security.Ntlm {
 		public byte[] ComputeHash (byte[] buffer)
 		{
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+				throw new ArgumentNullException (nameof (buffer));
 
 			return ComputeHash (buffer, 0, buffer.Length);
 		}
@@ -317,7 +318,7 @@ namespace MailKit.Security.Ntlm {
 		{
 			// don't read stream unless object is ready to use
 			if (disposed)
-				throw new ObjectDisposedException ("HashAlgorithm");
+				throw new ObjectDisposedException (nameof (MD4));
 
 			var buffer = new byte[4096];
 			int nread;
@@ -336,17 +337,17 @@ namespace MailKit.Security.Ntlm {
 		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
 			if (inputBuffer == null)
-				throw new ArgumentNullException ("inputBuffer");
+				throw new ArgumentNullException (nameof (inputBuffer));
 
 			if (inputOffset < 0 || inputOffset > inputBuffer.Length)
-				throw new ArgumentOutOfRangeException ("inputOffset");
+				throw new ArgumentOutOfRangeException (nameof (inputOffset));
 
 			if (inputCount < 0 || inputOffset > inputBuffer.Length - inputCount)
-				throw new ArgumentOutOfRangeException ("inputCount");
+				throw new ArgumentOutOfRangeException (nameof (inputCount));
 
 			if (outputBuffer != null) {
 				if (outputOffset < 0 || outputOffset > outputBuffer.Length - inputCount)
-					throw new ArgumentOutOfRangeException ("outputOffset");
+					throw new ArgumentOutOfRangeException (nameof (outputOffset));
 			}
 
 			HashCore (inputBuffer, inputOffset, inputCount);
@@ -360,7 +361,7 @@ namespace MailKit.Security.Ntlm {
 		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
 			if (inputCount < 0)
-				throw new ArgumentOutOfRangeException ("inputCount");
+				throw new ArgumentOutOfRangeException (nameof (inputCount));
 
 			var outputBuffer = new byte[inputCount];
 

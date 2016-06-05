@@ -65,7 +65,7 @@ namespace MailKit.Net.Imap {
 		public ImapFolder (ImapFolderConstructorArgs args)
 		{
 			if (args == null)
-				throw new ArgumentNullException ("args");
+				throw new ArgumentNullException (nameof (args));
 
 			DirectorySeparator = args.DirectorySeparator;
 			EncodedName = args.EncodedName;
@@ -117,7 +117,7 @@ namespace MailKit.Net.Imap {
 		void CheckState (bool open, bool rw)
 		{
 			if (Engine.IsDisposed)
-				throw new ObjectDisposedException ("ImapClient");
+				throw new ObjectDisposedException (nameof (ImapClient));
 
 			if (!Engine.IsConnected)
 				throw new ServiceNotConnectedException ("The ImapClient is not connected.");
@@ -279,7 +279,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException ("access");
+				throw new ArgumentOutOfRangeException (nameof (access));
 
 			CheckState (false, false);
 
@@ -381,7 +381,7 @@ namespace MailKit.Net.Imap {
 		public override FolderAccess Open (FolderAccess access, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (access != FolderAccess.ReadOnly && access != FolderAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException ("access");
+				throw new ArgumentOutOfRangeException (nameof (access));
 
 			CheckState (false, false);
 
@@ -535,10 +535,10 @@ namespace MailKit.Net.Imap {
 		public override IMailFolder Create (string name, bool isMessageFolder, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
-				throw new ArgumentException ("The name is not a legal folder name.", "name");
+				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			CheckState (false, false);
 
@@ -627,10 +627,10 @@ namespace MailKit.Net.Imap {
 		public override IMailFolder Create (string name, IEnumerable<SpecialFolder> specialUses, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
-				throw new ArgumentException ("The name is not a legal folder name.", "name");
+				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			CheckState (false, false);
 
@@ -749,16 +749,16 @@ namespace MailKit.Net.Imap {
 		public override void Rename (IMailFolder parent, string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (parent == null)
-				throw new ArgumentNullException ("parent");
+				throw new ArgumentNullException (nameof (parent));
 
 			if (!(parent is ImapFolder) || ((ImapFolder) parent).Engine != Engine)
-				throw new ArgumentException ("The parent folder does not belong to this ImapClient.", "parent");
+				throw new ArgumentException ("The parent folder does not belong to this ImapClient.", nameof (parent));
 
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
-				throw new ArgumentException ("The name is not a legal folder name.", "name");
+				throw new ArgumentException ("The name is not a legal folder name.", nameof (name));
 
 			if (IsNamespace || (Attributes & FolderAttributes.Inbox) != 0)
 				throw new InvalidOperationException ("Cannot rename this folder.");
@@ -1118,10 +1118,10 @@ namespace MailKit.Net.Imap {
 		public override IMailFolder GetSubfolder (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (!Engine.IsValidMailboxName (name, DirectorySeparator))
-				throw new ArgumentException ("The name of the subfolder is invalid.", "name");
+				throw new ArgumentException ("The name of the subfolder is invalid.", nameof (name));
 
 			CheckState (false, false);
 
@@ -1398,7 +1398,7 @@ namespace MailKit.Net.Imap {
 		public override AccessRights GetAccessRights (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
@@ -1547,13 +1547,13 @@ namespace MailKit.Net.Imap {
 		public override void AddAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			if (rights.Count == 0)
-				throw new ArgumentException ("No rights were specified.", "rights");
+				throw new ArgumentException ("No rights were specified.", nameof (rights));
 
 			ModifyAccessRights (name, rights, "+", cancellationToken);
 		}
@@ -1602,13 +1602,13 @@ namespace MailKit.Net.Imap {
 		public override void RemoveAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			if (rights.Count == 0)
-				throw new ArgumentException ("No rights were specified.", "rights");
+				throw new ArgumentException ("No rights were specified.", nameof (rights));
 
 			ModifyAccessRights (name, rights, "-", cancellationToken);
 		}
@@ -1654,10 +1654,10 @@ namespace MailKit.Net.Imap {
 		public override void SetAccessRights (string name, AccessRights rights, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (rights == null)
-				throw new ArgumentNullException ("rights");
+				throw new ArgumentNullException (nameof (rights));
 
 			ModifyAccessRights (name, rights, string.Empty, cancellationToken);
 		}
@@ -1700,7 +1700,7 @@ namespace MailKit.Net.Imap {
 		public override void RemoveAccess (string name, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if ((Engine.Capabilities & ImapCapabilities.Acl) == 0)
 				throw new NotSupportedException ("The IMAP server does not support the ACL extension.");
@@ -2059,7 +2059,7 @@ namespace MailKit.Net.Imap {
 		public override MetadataCollection GetMetadata (IEnumerable<MetadataTag> tags, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (tags == null)
-				throw new ArgumentNullException ("tags");
+				throw new ArgumentNullException (nameof (tags));
 
 			CheckState (false, false);
 
@@ -2135,7 +2135,7 @@ namespace MailKit.Net.Imap {
 		public override void SetMetadata (MetadataCollection metadata, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (metadata == null)
-				throw new ArgumentNullException ("metadata");
+				throw new ArgumentNullException (nameof (metadata));
 
 			CheckState (false, false);
 
@@ -2395,10 +2395,10 @@ namespace MailKit.Net.Imap {
 		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags = MessageFlags.None, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			CheckState (false, false);
 
@@ -2482,10 +2482,10 @@ namespace MailKit.Net.Imap {
 		public override UniqueId? Append (FormatOptions options, MimeMessage message, MessageFlags flags, DateTimeOffset date, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (message == null)
-				throw new ArgumentNullException ("message");
+				throw new ArgumentNullException (nameof (message));
 
 			CheckState (false, false);
 
@@ -2604,10 +2604,10 @@ namespace MailKit.Net.Imap {
 		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
@@ -2615,7 +2615,7 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			if (messages.Count != flags.Count)
 				throw new ArgumentException ("The number of messages and the number of flags must be equal.");
@@ -2732,10 +2732,10 @@ namespace MailKit.Net.Imap {
 		public override IList<UniqueId> Append (FormatOptions options, IList<MimeMessage> messages, IList<MessageFlags> flags, IList<DateTimeOffset> dates, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (options == null)
-				throw new ArgumentNullException ("options");
+				throw new ArgumentNullException (nameof (options));
 
 			if (messages == null)
-				throw new ArgumentNullException ("messages");
+				throw new ArgumentNullException (nameof (messages));
 
 			for (int i = 0; i < messages.Count; i++) {
 				if (messages[i] == null)
@@ -2743,10 +2743,10 @@ namespace MailKit.Net.Imap {
 			}
 
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			if (dates == null)
-				throw new ArgumentNullException ("dates");
+				throw new ArgumentNullException (nameof (dates));
 
 			if (messages.Count != flags.Count || messages.Count != dates.Count)
 				throw new ArgumentException ("The number of messages, the number of flags, and the number of dates must be equal.");
@@ -2860,10 +2860,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, false);
 
@@ -2971,10 +2971,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, true);
 
@@ -3055,10 +3055,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, false);
 
@@ -3139,10 +3139,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (destination == null)
-				throw new ArgumentNullException ("destination");
+				throw new ArgumentNullException (nameof (destination));
 
 			if (!(destination is ImapFolder) || ((ImapFolder) destination).Engine != Engine)
-				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", "destination");
+				throw new ArgumentException ("The destination folder does not belong to this ImapClient.", nameof (destination));
 
 			CheckState (true, true);
 
@@ -3578,7 +3578,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			CheckState (true, false);
 
@@ -3716,10 +3716,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			CheckState (true, false);
 
@@ -3809,7 +3809,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -3971,10 +3971,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatUidSet (uids);
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -4058,7 +4058,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			CheckState (true, false);
 
@@ -4196,10 +4196,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			CheckState (true, false);
 
@@ -4285,7 +4285,7 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -4438,10 +4438,10 @@ namespace MailKit.Net.Imap {
 			var set = ImapUtils.FormatIndexSet (indexes);
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -4532,13 +4532,13 @@ namespace MailKit.Net.Imap {
 		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			CheckState (true, false);
 
@@ -4680,16 +4680,16 @@ namespace MailKit.Net.Imap {
 		public override IList<IMessageSummary> Fetch (int min, int max, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min > Count)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			CheckState (true, false);
 
@@ -4773,13 +4773,13 @@ namespace MailKit.Net.Imap {
 		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min >= Count)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (items == MessageSummaryItems.None)
-				throw new ArgumentOutOfRangeException ("items");
+				throw new ArgumentOutOfRangeException (nameof (items));
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -4933,16 +4933,16 @@ namespace MailKit.Net.Imap {
 		public override IList<IMessageSummary> Fetch (int min, int max, ulong modseq, MessageSummaryItems items, HashSet<string> fields, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (min < 0 || min >= Count)
-				throw new ArgumentOutOfRangeException ("min");
+				throw new ArgumentOutOfRangeException (nameof (min));
 
 			if (max != -1 && max < min)
-				throw new ArgumentOutOfRangeException ("max");
+				throw new ArgumentOutOfRangeException (nameof (max));
 
 			if (fields == null)
-				throw new ArgumentNullException ("fields");
+				throw new ArgumentNullException (nameof (fields));
 
 			if (fields.Count == 0)
-				throw new ArgumentException ("The set of header fields cannot be empty.", "fields");
+				throw new ArgumentException ("The set of header fields cannot be empty.", nameof (fields));
 
 			if (!SupportsModSeq)
 				throw new NotSupportedException ("The ImapFolder does not support mod-sequences.");
@@ -5331,7 +5331,7 @@ namespace MailKit.Net.Imap {
 		public override MimeMessage GetMessage (UniqueId uid, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
-				throw new ArgumentException ("The uid is invalid.", "uid");
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			CheckState (true, false);
 
@@ -5406,7 +5406,7 @@ namespace MailKit.Net.Imap {
 		public override MimeMessage GetMessage (int index, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			CheckState (true, false);
 
@@ -5566,10 +5566,10 @@ namespace MailKit.Net.Imap {
 		public override MimeEntity GetBodyPart (UniqueId uid, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
-				throw new ArgumentException ("The uid is invalid.", "uid");
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return GetBodyPart (uid, part.PartSpecifier, headersOnly, cancellationToken, progress);
 		}
@@ -5671,10 +5671,10 @@ namespace MailKit.Net.Imap {
 		public MimeEntity GetBodyPart (UniqueId uid, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
-				throw new ArgumentException ("The uid is invalid.", "uid");
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (partSpecifier == null)
-				throw new ArgumentNullException ("partSpecifier");
+				throw new ArgumentNullException (nameof (partSpecifier));
 
 			CheckState (true, false);
 
@@ -5829,10 +5829,10 @@ namespace MailKit.Net.Imap {
 		public override MimeEntity GetBodyPart (int index, BodyPart part, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (part == null)
-				throw new ArgumentNullException ("part");
+				throw new ArgumentNullException (nameof (part));
 
 			return GetBodyPart (index, part.PartSpecifier, headersOnly, cancellationToken, progress);
 		}
@@ -5934,10 +5934,10 @@ namespace MailKit.Net.Imap {
 		public MimeEntity GetBodyPart (int index, string partSpecifier, bool headersOnly, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (partSpecifier == null)
-				throw new ArgumentNullException ("partSpecifier");
+				throw new ArgumentNullException (nameof (partSpecifier));
 
 			CheckState (true, false);
 
@@ -6048,13 +6048,13 @@ namespace MailKit.Net.Imap {
 		public override Stream GetStream (UniqueId uid, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
-				throw new ArgumentException ("The uid is invalid.", "uid");
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			CheckState (true, false);
 
@@ -6141,13 +6141,13 @@ namespace MailKit.Net.Imap {
 		public override Stream GetStream (int index, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			CheckState (true, false);
 
@@ -6231,10 +6231,10 @@ namespace MailKit.Net.Imap {
 		public override Stream GetStream (UniqueId uid, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
-				throw new ArgumentException ("The uid is invalid.", "uid");
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			CheckState (true, false);
 
@@ -6326,16 +6326,16 @@ namespace MailKit.Net.Imap {
 		public override Stream GetStream (UniqueId uid, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (uid.Id == 0)
-				throw new ArgumentException ("The uid is invalid.", "uid");
+				throw new ArgumentException ("The uid is invalid.", nameof (uid));
 
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			CheckState (true, false);
 
@@ -6420,10 +6420,10 @@ namespace MailKit.Net.Imap {
 		public override Stream GetStream (int index, string section, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			CheckState (true, false);
 
@@ -6514,16 +6514,16 @@ namespace MailKit.Net.Imap {
 		public override Stream GetStream (int index, string section, int offset, int count, CancellationToken cancellationToken = default (CancellationToken), ITransferProgress progress = null)
 		{
 			if (index < 0 || index >= Count)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			if (section == null)
-				throw new ArgumentNullException ("section");
+				throw new ArgumentNullException (nameof (section));
 
 			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 
 			CheckState (true, false);
 
@@ -6647,7 +6647,7 @@ namespace MailKit.Net.Imap {
 			bool emptyUserFlags = userFlags == null || userFlags.Count == 0;
 
 			if ((flags & SettableFlags) == 0 && emptyUserFlags)
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			ModifyFlags (uids, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -6700,7 +6700,7 @@ namespace MailKit.Net.Imap {
 		public override void RemoveFlags (IList<UniqueId> uids, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			ModifyFlags (uids, null, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -6806,7 +6806,7 @@ namespace MailKit.Net.Imap {
 		public override IList<UniqueId> AddFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return ModifyFlags (uids, modseq, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -6864,7 +6864,7 @@ namespace MailKit.Net.Imap {
 		public override IList<UniqueId> RemoveFlags (IList<UniqueId> uids, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return ModifyFlags (uids, modseq, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -7013,7 +7013,7 @@ namespace MailKit.Net.Imap {
 		public override void AddFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			ModifyFlags (indexes, null, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -7066,7 +7066,7 @@ namespace MailKit.Net.Imap {
 		public override void RemoveFlags (IList<int> indexes, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			ModifyFlags (indexes, null, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -7172,7 +7172,7 @@ namespace MailKit.Net.Imap {
 		public override IList<int> AddFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return ModifyFlags (indexes, modseq, flags, userFlags, silent ? "+FLAGS.SILENT" : "+FLAGS", cancellationToken);
 		}
@@ -7230,7 +7230,7 @@ namespace MailKit.Net.Imap {
 		public override IList<int> RemoveFlags (IList<int> indexes, ulong modseq, MessageFlags flags, HashSet<string> userFlags, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if ((flags & SettableFlags) == 0 && (userFlags == null || userFlags.Count == 0))
-				throw new ArgumentException ("No flags were specified.", "flags");
+				throw new ArgumentException ("No flags were specified.", nameof (flags));
 
 			return ModifyFlags (indexes, modseq, flags, userFlags, silent ? "-FLAGS.SILENT" : "-FLAGS", cancellationToken);
 		}
@@ -7411,10 +7411,10 @@ namespace MailKit.Net.Imap {
 		public override void AddLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			ModifyLabels (uids, null, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
 		}
@@ -7468,10 +7468,10 @@ namespace MailKit.Net.Imap {
 		public override void RemoveLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			ModifyLabels (uids, null, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
 		}
@@ -7523,7 +7523,7 @@ namespace MailKit.Net.Imap {
 		public override void SetLabels (IList<UniqueId> uids, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			ModifyLabels (uids, null, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
 		}
@@ -7579,10 +7579,10 @@ namespace MailKit.Net.Imap {
 		public override IList<UniqueId> AddLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return ModifyLabels (uids, modseq, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
 		}
@@ -7638,10 +7638,10 @@ namespace MailKit.Net.Imap {
 		public override IList<UniqueId> RemoveLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return ModifyLabels (uids, modseq, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
 		}
@@ -7695,7 +7695,7 @@ namespace MailKit.Net.Imap {
 		public override IList<UniqueId> SetLabels (IList<UniqueId> uids, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			return ModifyLabels (uids, modseq, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
 		}
@@ -7792,10 +7792,10 @@ namespace MailKit.Net.Imap {
 		public override void AddLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			ModifyLabels (indexes, null, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
 		}
@@ -7849,10 +7849,10 @@ namespace MailKit.Net.Imap {
 		public override void RemoveLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			ModifyLabels (indexes, null, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
 		}
@@ -7904,7 +7904,7 @@ namespace MailKit.Net.Imap {
 		public override void SetLabels (IList<int> indexes, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			ModifyLabels (indexes, null, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
 		}
@@ -7960,10 +7960,10 @@ namespace MailKit.Net.Imap {
 		public override IList<int> AddLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return ModifyLabels (indexes, modseq, labels, silent ? "+X-GM-LABELS.SILENT" : "+X-GM-LABELS", cancellationToken);
 		}
@@ -8019,10 +8019,10 @@ namespace MailKit.Net.Imap {
 		public override IList<int> RemoveLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			if (labels.Count == 0)
-				throw new ArgumentException ("No labels were specified.", "labels");
+				throw new ArgumentException ("No labels were specified.", nameof (labels));
 
 			return ModifyLabels (indexes, modseq, labels, silent ? "-X-GM-LABELS.SILENT" : "-X-GM-LABELS", cancellationToken);
 		}
@@ -8076,7 +8076,7 @@ namespace MailKit.Net.Imap {
 		public override IList<int> SetLabels (IList<int> indexes, ulong modseq, IList<string> labels, bool silent, CancellationToken cancellationToken = default (CancellationToken))
 		{
 			if (labels == null)
-				throw new ArgumentNullException ("labels");
+				throw new ArgumentNullException (nameof (labels));
 
 			return ModifyLabels (indexes, modseq, labels, silent ? "X-GM-LABELS.SILENT" : "X-GM-LABELS", cancellationToken);
 		}
@@ -8582,7 +8582,7 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			CheckState (true, false);
 
@@ -8678,13 +8678,13 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			CheckState (true, false);
 
@@ -8783,7 +8783,7 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			CheckState (true, false);
 
@@ -8888,13 +8888,13 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			CheckState (true, false);
 
@@ -8992,7 +8992,7 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			CheckState (true, false);
 
@@ -9088,13 +9088,13 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			CheckState (true, false);
 
@@ -9195,7 +9195,7 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			CheckState (true, false);
 
@@ -9300,13 +9300,13 @@ namespace MailKit.Net.Imap {
 			string charset;
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			if (orderBy == null)
-				throw new ArgumentNullException ("orderBy");
+				throw new ArgumentNullException (nameof (orderBy));
 
 			if (orderBy.Count == 0)
-				throw new ArgumentException ("No sort order provided.", "orderBy");
+				throw new ArgumentException ("No sort order provided.", nameof (orderBy));
 
 			CheckState (true, false);
 
@@ -9415,10 +9415,10 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
 
 			if (!Engine.ThreadingAlgorithms.Contains (algorithm))
-				throw new ArgumentOutOfRangeException ("algorithm", "The specified threading algorithm is not supported.");
+				throw new ArgumentOutOfRangeException (nameof (algorithm), "The specified threading algorithm is not supported.");
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			CheckState (true, false);
 
@@ -9512,10 +9512,10 @@ namespace MailKit.Net.Imap {
 				throw new NotSupportedException ("The IMAP server does not support the THREAD extension.");
 
 			if (!Engine.ThreadingAlgorithms.Contains (algorithm))
-				throw new ArgumentOutOfRangeException ("algorithm", "The specified threading algorithm is not supported.");
+				throw new ArgumentOutOfRangeException (nameof (algorithm), "The specified threading algorithm is not supported.");
 
 			if (query == null)
-				throw new ArgumentNullException ("query");
+				throw new ArgumentNullException (nameof (query));
 
 			CheckState (true, false);
 

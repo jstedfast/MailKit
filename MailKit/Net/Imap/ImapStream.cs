@@ -363,19 +363,19 @@ namespace MailKit.Net.Imap {
 		static void ValidateArguments (byte[] buffer, int offset, int count)
 		{
 			if (buffer == null)
-				throw new ArgumentNullException ("buffer");
+				throw new ArgumentNullException (nameof (buffer));
 
 			if (offset < 0 || offset > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset");
+				throw new ArgumentOutOfRangeException (nameof (offset));
 
 			if (count < 0 || count > (buffer.Length - offset))
-				throw new ArgumentOutOfRangeException ("count");
+				throw new ArgumentOutOfRangeException (nameof (count));
 		}
 
 		void CheckDisposed ()
 		{
 			if (disposed)
-				throw new ObjectDisposedException ("ImapStream");
+				throw new ObjectDisposedException (nameof (ImapStream));
 		}
 
 		/// <summary>
@@ -778,7 +778,7 @@ namespace MailKit.Net.Imap {
 		public void UngetToken (ImapToken token)
 		{
 			if (token == null)
-				throw new ArgumentNullException ("token");
+				throw new ArgumentNullException (nameof (token));
 
 			nextToken = token;
 		}

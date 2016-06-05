@@ -93,10 +93,10 @@ namespace MailKit.Search {
 		public static BinarySearchQuery And (SearchQuery left, SearchQuery right)
 		{
 			if (left == null)
-				throw new ArgumentNullException ("left");
+				throw new ArgumentNullException (nameof (left));
 
 			if (right == null)
-				throw new ArgumentNullException ("right");
+				throw new ArgumentNullException (nameof (right));
 
 			return new BinarySearchQuery (SearchTerm.And, left, right);
 		}
@@ -115,7 +115,7 @@ namespace MailKit.Search {
 		public BinarySearchQuery And (SearchQuery expr)
 		{
 			if (expr == null)
-				throw new ArgumentNullException ("expr");
+				throw new ArgumentNullException (nameof (expr));
 
 			return new BinarySearchQuery (SearchTerm.And, this, expr);
 		}
@@ -145,10 +145,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery BccContains (string text)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "text");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
 
 			return new TextSearchQuery (SearchTerm.BccContains, text);
 		}
@@ -170,10 +170,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery BodyContains (string text)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "text");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
 
 			return new TextSearchQuery (SearchTerm.BodyContains, text);
 		}
@@ -195,10 +195,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery CcContains (string text)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "text");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
 
 			return new TextSearchQuery (SearchTerm.CcContains, text);
 		}
@@ -280,7 +280,7 @@ namespace MailKit.Search {
 		public static TextSearchQuery DoesNotHaveCustomFlag (string flag)
 		{
 			if (flag == null)
-				throw new ArgumentNullException ("flag");
+				throw new ArgumentNullException (nameof (flag));
 
 			if (flag.Length == 0)
 				throw new ArgumentException ("Cannot search for an empty string.");
@@ -307,7 +307,7 @@ namespace MailKit.Search {
 		public static SearchQuery DoesNotHaveCustomFlags (IEnumerable<string> flags)
 		{
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			var list = new List<SearchQuery> ();
 
@@ -315,7 +315,7 @@ namespace MailKit.Search {
 				list.Add (new TextSearchQuery (SearchTerm.NotKeyword, flag));
 
 			if (list.Count == 0)
-				throw new ArgumentException ("No flags specified.", "flags");
+				throw new ArgumentException ("No flags specified.", nameof (flags));
 
 			var query = list[0];
 			for (int i = 1; i < list.Count; i++)
@@ -353,7 +353,7 @@ namespace MailKit.Search {
 				list.Add (NotRecent);
 
 			if (list.Count == 0)
-				throw new ArgumentException ("No flags specified.", "flags");
+				throw new ArgumentException ("No flags specified.", nameof (flags));
 
 			var query = list[0];
 			for (int i = 1; i < list.Count; i++)
@@ -395,10 +395,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery FromContains (string text)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "text");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
 
 			return new TextSearchQuery (SearchTerm.FromContains, text);
 		}
@@ -418,7 +418,7 @@ namespace MailKit.Search {
 		public static UnarySearchQuery Fuzzy (SearchQuery expr)
 		{
 			if (expr == null)
-				throw new ArgumentNullException ("expr");
+				throw new ArgumentNullException (nameof (expr));
 
 			return new UnarySearchQuery (SearchTerm.Fuzzy, expr);
 		}
@@ -440,7 +440,7 @@ namespace MailKit.Search {
 		public static TextSearchQuery HasCustomFlag (string flag)
 		{
 			if (flag == null)
-				throw new ArgumentNullException ("flag");
+				throw new ArgumentNullException (nameof (flag));
 
 			if (flag.Length == 0)
 				throw new ArgumentException ("Cannot search for an empty string.");
@@ -467,7 +467,7 @@ namespace MailKit.Search {
 		public static SearchQuery HasCustomFlags (IEnumerable<string> flags)
 		{
 			if (flags == null)
-				throw new ArgumentNullException ("flags");
+				throw new ArgumentNullException (nameof (flags));
 
 			var list = new List<SearchQuery> ();
 
@@ -475,7 +475,7 @@ namespace MailKit.Search {
 				list.Add (new TextSearchQuery (SearchTerm.Keyword, flag));
 
 			if (list.Count == 0)
-				throw new ArgumentException ("No flags specified.", "flags");
+				throw new ArgumentException ("No flags specified.", nameof (flags));
 
 			var query = list[0];
 			for (int i = 1; i < list.Count; i++)
@@ -513,7 +513,7 @@ namespace MailKit.Search {
 				list.Add (Recent);
 
 			if (list.Count == 0)
-				throw new ArgumentException ("No flags specified.", "flags");
+				throw new ArgumentException ("No flags specified.", nameof (flags));
 
 			var query = list[0];
 			for (int i = 1; i < list.Count; i++)
@@ -569,16 +569,16 @@ namespace MailKit.Search {
 		public static HeaderSearchQuery HeaderContains (string field, string text)
 		{
 			if (field == null)
-				throw new ArgumentNullException ("field");
+				throw new ArgumentNullException (nameof (field));
 
 			if (field.Length == 0)
-				throw new ArgumentException ("Cannot search an empty header field name.", "field");
+				throw new ArgumentException ("Cannot search an empty header field name.", nameof (field));
 
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty header value.", "text");
+				throw new ArgumentException ("Cannot search for an empty header value.", nameof (text));
 
 			return new HeaderSearchQuery (field, text);
 		}
@@ -597,7 +597,7 @@ namespace MailKit.Search {
 		public static NumericSearchQuery LargerThan (int octets)
 		{
 			if (octets < 0)
-				throw new ArgumentOutOfRangeException ("octets");
+				throw new ArgumentOutOfRangeException (nameof (octets));
 
 			return new NumericSearchQuery (SearchTerm.LargerThan, (ulong) octets);
 		}
@@ -619,10 +619,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery MessageContains (string text)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "text");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
 
 			return new TextSearchQuery (SearchTerm.MessageContains, text);
 		}
@@ -649,7 +649,7 @@ namespace MailKit.Search {
 		public static UnarySearchQuery Not (SearchQuery expr)
 		{
 			if (expr == null)
-				throw new ArgumentNullException ("expr");
+				throw new ArgumentNullException (nameof (expr));
 
 			return new UnarySearchQuery (SearchTerm.Not, expr);
 		}
@@ -716,7 +716,7 @@ namespace MailKit.Search {
 		public static NumericSearchQuery OlderThan (int seconds)
 		{
 			if (seconds < 1)
-				throw new ArgumentOutOfRangeException ("seconds");
+				throw new ArgumentOutOfRangeException (nameof (seconds));
 
 			return new NumericSearchQuery (SearchTerm.Older, (ulong) seconds);
 		}
@@ -738,10 +738,10 @@ namespace MailKit.Search {
 		public static BinarySearchQuery Or (SearchQuery left, SearchQuery right)
 		{
 			if (left == null)
-				throw new ArgumentNullException ("left");
+				throw new ArgumentNullException (nameof (left));
 
 			if (right == null)
-				throw new ArgumentNullException ("right");
+				throw new ArgumentNullException (nameof (right));
 
 			return new BinarySearchQuery (SearchTerm.Or, left, right);
 		}
@@ -760,7 +760,7 @@ namespace MailKit.Search {
 		public BinarySearchQuery Or (SearchQuery expr)
 		{
 			if (expr == null)
-				throw new ArgumentNullException ("expr");
+				throw new ArgumentNullException (nameof (expr));
 
 			return new BinarySearchQuery (SearchTerm.Or, this, expr);
 		}
@@ -834,7 +834,7 @@ namespace MailKit.Search {
 		public static NumericSearchQuery SmallerThan (int octets)
 		{
 			if (octets < 0)
-				throw new ArgumentOutOfRangeException ("octets");
+				throw new ArgumentOutOfRangeException (nameof (octets));
 
 			return new NumericSearchQuery (SearchTerm.SmallerThan, (ulong) octets);
 		}
@@ -856,10 +856,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery SubjectContains (string text)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "text");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
 
 			return new TextSearchQuery (SearchTerm.SubjectContains, text);
 		}
@@ -881,10 +881,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery ToContains (string text)
 		{
 			if (text == null)
-				throw new ArgumentNullException ("text");
+				throw new ArgumentNullException (nameof (text));
 
 			if (text.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "text");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (text));
 
 			return new TextSearchQuery (SearchTerm.ToContains, text);
 		}
@@ -903,7 +903,7 @@ namespace MailKit.Search {
 		public static NumericSearchQuery YoungerThan (int seconds)
 		{
 			if (seconds < 1)
-				throw new ArgumentOutOfRangeException ("seconds");
+				throw new ArgumentOutOfRangeException (nameof (seconds));
 
 			return new NumericSearchQuery (SearchTerm.Younger, (ulong) seconds);
 		}
@@ -953,10 +953,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery HasGMailLabel (string label)
 		{
 			if (label == null)
-				throw new ArgumentNullException ("label");
+				throw new ArgumentNullException (nameof (label));
 
 			if (label.Length == 0)
-				throw new ArgumentException ("Cannot search for an emty string.", "label");
+				throw new ArgumentException ("Cannot search for an emty string.", nameof (label));
 
 			return new TextSearchQuery (SearchTerm.GMailLabels, label);
 		}
@@ -978,10 +978,10 @@ namespace MailKit.Search {
 		public static TextSearchQuery GMailRawSearch (string expression)
 		{
 			if (expression == null)
-				throw new ArgumentNullException ("expression");
+				throw new ArgumentNullException (nameof (expression));
 
 			if (expression.Length == 0)
-				throw new ArgumentException ("Cannot search for an empty string.", "expression");
+				throw new ArgumentException ("Cannot search for an empty string.", nameof (expression));
 
 			return new TextSearchQuery (SearchTerm.GMailRaw, expression);
 		}

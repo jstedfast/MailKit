@@ -87,7 +87,7 @@ namespace MailKit {
 		public MetadataTag (string id)
 		{
 			if (id == null)
-				throw new ArgumentNullException ("id");
+				throw new ArgumentNullException (nameof (id));
 
 			if (id.Length == 0)
 				throw new ArgumentException ("A metadata tag identifier cannot be empty.");

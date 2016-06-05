@@ -59,7 +59,7 @@ namespace MailKit {
 		public MessageSummary (int index)
 		{
 			if (index < 0)
-				throw new ArgumentOutOfRangeException ("index");
+				throw new ArgumentOutOfRangeException (nameof (index));
 
 			UserFlags = new HashSet<string> ();
 			Index = index;

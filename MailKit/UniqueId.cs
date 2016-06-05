@@ -337,7 +337,7 @@ namespace MailKit {
 		public static bool TryParse (string token, uint validity, out UniqueId uid)
 		{
 			if (token == null)
-				throw new ArgumentNullException ("token");
+				throw new ArgumentNullException (nameof (token));
 
 			uint id;
 
