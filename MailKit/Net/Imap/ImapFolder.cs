@@ -8326,7 +8326,7 @@ namespace MailKit.Net.Imap {
 
 			BuildQuery (builder, query, args, false, ref ascii);
 
-			charset = ascii ? "US-ASCII" : "UTF-8";
+			charset = ascii ? null : "UTF-8";
 
 			return builder.ToString ();
 		}
@@ -8593,7 +8593,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				command += "RETURN () ";
 
-			if (args.Count > 0 && !Engine.UTF8Enabled)
+			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
 				command += "CHARSET " + charset + " ";
 
 			command += expr + "\r\n";
@@ -8706,7 +8706,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				command += "RETURN () ";
 
-			command += order + " " + charset + " " + expr + "\r\n";
+			command += order + " " + (charset ?? "US-ASCII") + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
@@ -8797,7 +8797,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.ESearch) != 0)
 				command += "RETURN () ";
 
-			if (args.Count > 0 && !Engine.UTF8Enabled)
+			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
 				command += "CHARSET " + charset + " ";
 
 			command += "UID " + set + " " + expr + "\r\n";
@@ -8919,7 +8919,7 @@ namespace MailKit.Net.Imap {
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
 				command += "RETURN () ";
 
-			command += order + " " + charset + " UID " + set + " " + expr + "\r\n";
+			command += order + " " + (charset ?? "US-ASCII") + " UID " + set + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			if ((Engine.Capabilities & ImapCapabilities.ESort) != 0)
@@ -9012,7 +9012,7 @@ namespace MailKit.Net.Imap {
 			command = command.TrimEnd ();
 			command += ") ";
 
-			if (args.Count > 0 && !Engine.UTF8Enabled)
+			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
 				command += "CHARSET " + charset + " ";
 
 			command += expr + "\r\n";
@@ -9122,7 +9122,7 @@ namespace MailKit.Net.Imap {
 			command = command.TrimEnd ();
 			command += ") ";
 
-			command += order + " " + charset + " " + expr + "\r\n";
+			command += order + " " + (charset ?? "US-ASCII") + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
@@ -9218,7 +9218,7 @@ namespace MailKit.Net.Imap {
 			command = command.TrimEnd ();
 			command += ") ";
 
-			if (args.Count > 0 && !Engine.UTF8Enabled)
+			if (charset != null && args.Count > 0 && !Engine.UTF8Enabled)
 				command += "CHARSET " + charset + " ";
 
 			command += "UID " + set + " " + expr + "\r\n";
@@ -9337,7 +9337,7 @@ namespace MailKit.Net.Imap {
 			command = command.TrimEnd ();
 			command += ") ";
 
-			command += order + " " + charset + " UID " + set + " " + expr + "\r\n";
+			command += order + " " + (charset ?? "US-ASCII") + " UID " + set + " " + expr + "\r\n";
 
 			var ic = new ImapCommand (Engine, cancellationToken, this, command, args.ToArray ());
 			ic.RegisterUntaggedHandler ("ESEARCH", ESearchMatches);
@@ -9424,7 +9424,7 @@ namespace MailKit.Net.Imap {
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
-			var command = "UID THREAD " + method + " " + charset + " ";
+			var command = "UID THREAD " + method + " " + (charset ?? "US-ASCII") + " ";
 
 			command += expr + "\r\n";
 
@@ -9521,7 +9521,7 @@ namespace MailKit.Net.Imap {
 
 			var optimized = query.Optimize (new ImapSearchQueryOptimizer ());
 			var expr = BuildQueryExpression (optimized, args, out charset);
-			var command = "UID THREAD " + method + " " + charset + " ";
+			var command = "UID THREAD " + method + " " + (charset ?? "US-ASCII") + " ";
 
 			command += "UID " + set + " " + expr + "\r\n";
 

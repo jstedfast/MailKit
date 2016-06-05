@@ -352,7 +352,7 @@ namespace UnitTests.Net.Imap {
 				commands.Add (new ImapReplayCommand (latin1 + "\r\n", string.Format ("gmail.append.{0}.txt", i + 1)));
 			}
 
-			commands.Add (new ImapReplayCommand ("A00000059 UID SEARCH RETURN () CHARSET US-ASCII OR TO nsb CC nsb\r\n", "gmail.search.txt"));
+			commands.Add (new ImapReplayCommand ("A00000059 UID SEARCH RETURN () OR TO nsb CC nsb\r\n", "gmail.search.txt"));
 			commands.Add (new ImapReplayCommand ("A00000060 UID FETCH 1:3,5,7:9,11:14,26:29,31,34,41:43,50 (UID FLAGS INTERNALDATE RFC822.SIZE ENVELOPE BODY)\r\n", "gmail.search-summary.txt"));
 			commands.Add (new ImapReplayCommand ("A00000061 UID FETCH 1 (BODY.PEEK[])\r\n", "gmail.fetch.1.txt"));
 			commands.Add (new ImapReplayCommand ("A00000062 UID FETCH 2 (BODY.PEEK[])\r\n", "gmail.fetch.2.txt"));
