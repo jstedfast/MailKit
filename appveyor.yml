@@ -15,6 +15,7 @@ environment:
 
 install:
   - cmd: git submodule update --init --recursive
+  - cmd: nuget restore submodules\MimeKit\MimeKit.Net45.sln
   - cmd: nuget restore MailKit.Net45.sln
 
 build:
