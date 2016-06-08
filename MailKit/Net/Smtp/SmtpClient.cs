@@ -428,10 +428,10 @@ namespace MailKit.Net.Smtp {
 #else
 			if (!string.IsNullOrEmpty (LocalDomain))
 				command += LocalDomain;
-			if (Stream.Socket.Information.LocalAddress.IPInformation != null)
-				command += "[" + Stream.Socket.Information.LocalAddress.IPInformation + "]";
-			else
+			else if (!string.IsNullOrEmpty (Stream.Socket.Information.LocalAddress.CanonicalName))
 				command += Stream.Socket.Information.LocalAddress.CanonicalName;
+			else
+				command += "localhost.localdomain";
 #endif
 
 			return SendCommand (command, cancellationToken);
