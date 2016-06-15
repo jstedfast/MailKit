@@ -456,7 +456,7 @@ Have a bug or a feature request? [Please open a new issue](https://github.com/js
 
 Before opening a new issue, please search for existing issues to avoid submitting duplicates.
 
-If you are submitting a bug about an unexpected token being encountered, please include a [protocol
+If MailKit does not work with your mail server, please include a [protocol
 log](https://github.com/jstedfast/MailKit/blob/master/FAQ.md#ProtocolLog) in your bug report, otherwise
 there is nothing I can do to fix the problem.
 
