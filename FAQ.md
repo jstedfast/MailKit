@@ -994,6 +994,21 @@ var client = new ImapClient (new ProtocolLogger ("imap.log"));
 var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
 ```
 
+When submitting a protol log as part of a bug report, make sure to scrub any sensitive information
+including your login credentials.
+
+For IMAP, make sure to scrub the base64 value in the `AUTHENTICATE` command and/or the `LOGIN` command.
+
+For POP3, make sure to scrub the base64 value in the `AUTH` command and/or the `USER` and `PASS` commands.
+
+For SMTP, make sure to scrub the base64 value in the `AUTH` command (if any).
+
+Note: If you are reporting a bug in the authentication step, then I *may* need you to send me this
+scrubbed information privately in an email. In most cases, I won't need it *unless* the authentication
+mechanism is `NTLM`, but in that case, your password is never sent across the wire in the clear (it is
+encrypted with various parameters provided by the server and cannot be decrypted) and so there is nothing
+to worry about.
+
 ### <a name="GMailHiddenMessages">Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
 
 By default, GMail's POP3 and IMAP server does not behave like standard POP3 or IMAP servers
