@@ -994,10 +994,10 @@ var client = new ImapClient (new ProtocolLogger ("imap.log"));
 var client = new ImapClient (new ProtocolLogger (Console.OpenStandardOutput ()));
 ```
 
-When submitting a protocol log as part of a bug report, make sure to scrub any sensitive information
-including your authentication credentials. This information will generally be the base64 encoded blob
-immediately following an `AUTHENTICATE` or `AUTH` command (depending on the type of server). The only
-exception to this case is if you are authenticating with `NTLM` in which case I *may* need this
+**Note:** When submitting a protocol log as part of a bug report, make sure to scrub any sensitive
+information including your authentication credentials. This information will generally be the base64
+encoded blob immediately following an `AUTHENTICATE` or `AUTH` command (depending on the type of server).
+The only exception to this case is if you are authenticating with `NTLM` in which case I *may* need this
 information, but *only if* the bug/error is in the authentication step.
 
 ### <a name="GMailHiddenMessages">Why doesn't MailKit find some of my GMail POP3 or IMAP messages?</a>
