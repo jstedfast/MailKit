@@ -30,7 +30,6 @@
 
 using System;
 using System.IO;
-//using System.Security.Cryptography;
 
 namespace MailKit.Security.Ntlm {
 	sealed class MD4 : IDisposable
