@@ -4,6 +4,14 @@
 
 * Added support for dnxcore50.
 
+### MailKit 1.2.24
+
+* Fixed logic for constructing the HELO command on WP8. (issue #351)
+* Modified ImapFolder.Search() to not send the optional CHARSET search param if the charset
+  is US-ASCII. This way work around some broken IMAP servers that do not properly implement
+  support for the CHARSET parameter. (issue #348)
+* Added more MailService methods to IMailService.
+
 ### MailKit 1.2.23
 
 * Properly apply SecurityCriticalAttribute to GetObjectData() on custom Exceptions. (issue #340)

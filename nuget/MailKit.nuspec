@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.8.6">
 		<id>MailKit</id>
-		<version>1.3.0-rc1-1</version>
+		<version>1.2.24</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,7 +22,9 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Updated to support ASP.NET Core 1.0 RC2.
+		<releaseNotes>* Fixed logic for constructing the HELO command on WP8. (issue #351)
+* Modified ImapFolder.Search() to not send the optional CHARSET search param if the charset is US-ASCII. This way work around some broken IMAP servers that do not properly implement support for the CHARSET parameter. (issue #348)
+* Added more MailService methods to IMailService.
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
