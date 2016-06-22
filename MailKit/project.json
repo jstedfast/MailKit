@@ -9,7 +9,7 @@
     "licenseUrl": "https://github.com/jstedfast/MailKit/blob/master/License.md"
   },
   "frameworks": {
-    "netstandard1.5": {
+    "netstandard1.3": {
       "imports": [ "dnxcore50" ],
       "buildOptions": {
         "define": [ "COREFX" ],

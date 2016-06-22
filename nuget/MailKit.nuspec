@@ -62,7 +62,7 @@ Features include:
 		<group targetFramework="Xamarin.iOS10">
 			<dependency id="MimeKit" version="1.2.25" />
 		</group>
-		<group targetFramework=".NETStandard1.5">
+		<group targetFramework=".NETStandard1.3">
 			<dependency id="System.Security.Cryptography.Algorithms" version="4.1.0-rc2-24027" />
 			<dependency id="System.Security.Cryptography.Primitives" version="4.0.0-rc2-24027" />
 			<dependency id="System.Runtime.Serialization.Primitives" version="4.1.1-rc2-24027" />
@@ -94,8 +94,8 @@ Features include:
 	</dependencies>
 	</metadata>
 	<files>
-		<file src="..\MailKit\bin\Release\netstandard1.5\MailKit.dll" target="lib\netstandard1.5\MailKit.dll" />
-		<file src="..\MailKit\bin\Release\netstandard1.5\MailKit.xml" target="lib\netstandard1.5\MailKit.xml" />
+		<file src="..\MailKit\bin\Release\netstandard1.3\MailKit.dll" target="lib\netstandard1.3\MailKit.dll" />
+		<file src="..\MailKit\bin\Release\netstandard1.3\MailKit.xml" target="lib\netstandard1.3\MailKit.xml" />
 		<file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.dll" target="lib\MonoAndroid10\MailKit.dll" />
 		<file src="..\MailKit\bin\Release\lib\MonoAndroid\MailKit.xml" target="lib\MonoAndroid10\MailKit.xml" />
 		<file src="..\MailKit\bin\Release\lib\Xamarin.iOS\MailKit.dll" target="lib\Xamarin.iOS10\MailKit.dll" />
