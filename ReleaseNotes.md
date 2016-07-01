@@ -1,8 +1,8 @@
 # Release Notes
 
-### MailKit 1.3.0
+### MailKit 1.4.0
 
-* Added support for dnxcore50.
+* Added support for .NET Core 1.0
 
 ### MailKit 1.2.24
 

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata minClientVersion="2.8.6">
 		<id>MailKit</id>
-		<version>1.2.24</version>
+		<version>1.4.0</version>
 		<title>MailKit</title>
 		<authors>Jeffrey Stedfast</authors>
 		<owners>Jeffrey Stedfast</owners>
@@ -22,9 +22,7 @@ Features include:
 * S/MIME, OpenPGP and DKIM signature support via MimeKit.
 * Microsoft TNEF support via MimeKit.</description>
 		<summary>An Open Source .NET mail-client library for Windows, Mac, Linux, and mobile platforms such as iOS and Android.</summary>
-		<releaseNotes>* Fixed logic for constructing the HELO command on WP8. (issue #351)
-* Modified ImapFolder.Search() to not send the optional CHARSET search param if the charset is US-ASCII. This way work around some broken IMAP servers that do not properly implement support for the CHARSET parameter. (issue #348)
-* Added more MailService methods to IMailService.
+		<releaseNotes>* Added support for .NET Core 1.0
 </releaseNotes>
 		<copyright>Xamarin Inc.</copyright>
 		<language>en-US</language>
@@ -46,50 +44,50 @@ Features include:
 	<dependencies>
 		<group targetFramework="net40">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.2.25" />
+			<dependency id="MimeKit" version="1.4.0" />
 		</group>
 		<group targetFramework="net45">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.2.25" />
+			<dependency id="MimeKit" version="1.4.0" />
 		</group>
 		<group targetFramework="net451">
 			<dependency id="BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.2.25" />
+			<dependency id="MimeKit" version="1.4.0" />
 		</group>
 		<group targetFramework="MonoAndroid10">
-			<dependency id="MimeKit" version="1.2.25" />
+			<dependency id="MimeKit" version="1.4.0" />
 		</group>
 		<group targetFramework="Xamarin.iOS10">
-			<dependency id="MimeKit" version="1.2.25" />
+			<dependency id="MimeKit" version="1.4.0" />
 		</group>
 		<group targetFramework=".NETStandard1.3">
-			<dependency id="System.Security.Cryptography.Algorithms" version="4.1.0-rc2-24027" />
-			<dependency id="System.Security.Cryptography.Primitives" version="4.0.0-rc2-24027" />
-			<dependency id="System.Runtime.Serialization.Primitives" version="4.1.1-rc2-24027" />
-			<dependency id="System.Runtime.InteropServices" version="4.1.0-rc2-24027" />
-			<dependency id="System.Reflection.TypeExtensions" version="4.1.0-rc2-24027" />
-			<dependency id="System.Text.Encoding.Extensions" version="4.0.11-rc2-24027" />
-			<dependency id="System.Text.Encoding.CodePages" version="4.0.1-rc2-24027" />
-			<dependency id="System.Text.Encoding" version="4.0.11-rc2-24027" />
-			<dependency id="System.Net.NameResolution" version="4.0.0-rc2-24027" />
-			<dependency id="System.Net.NetworkInformation" version="4.1.0-rc2-24027" />
-			<dependency id="System.Net.Primitives" version="4.0.11-rc2-24027" />
-			<dependency id="System.Net.Security" version="4.0.0-rc2-24027" />
-			<dependency id="System.Net.Sockets" version="4.1.0-rc2-24027" />
-			<dependency id="System.IO.Compression" version="4.1.0-rc2-24027" />
-			<dependency id="System.Collections" version="4.0.11-rc2-24027" />
-			<dependency id="System.Data.Common" version="4.0.1-rc2-24027" />
-			<dependency id="System.Reflection" version="4.1.0-rc2-24027" />
-			<dependency id="System.Threading" version="4.0.11-rc2-24027" />
-			<dependency id="System.Runtime" version="4.1.0-rc2-24027" />
-			<dependency id="System.Linq" version="4.1.0-rc2-24027" />
-			<dependency id="Microsoft.CSharp" version="4.0.1-rc2-24027" />
-			<dependency id="Portable.BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.2.25" />
+			<dependency id="System.Security.Cryptography.Algorithms" version="4.2.0" />
+			<dependency id="System.Security.Cryptography.Primitives" version="4.0.0" />
+			<dependency id="System.Runtime.Serialization.Primitives" version="4.1.1" />
+			<dependency id="System.Runtime.InteropServices" version="4.1.0" />
+			<dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+			<dependency id="System.Text.Encoding.Extensions" version="4.0.11" />
+			<dependency id="System.Text.Encoding.CodePages" version="4.0.1" />
+			<dependency id="System.Text.Encoding" version="4.0.11" />
+			<dependency id="System.Net.NameResolution" version="4.0.0" />
+			<dependency id="System.Net.NetworkInformation" version="4.1.0" />
+			<dependency id="System.Net.Primitives" version="4.0.11" />
+			<dependency id="System.Net.Security" version="4.0.0" />
+			<dependency id="System.Net.Sockets" version="4.1.0" />
+			<dependency id="System.IO.Compression" version="4.1.0" />
+			<dependency id="System.Collections" version="4.0.11" />
+			<dependency id="System.Data.Common" version="4.1.0" />
+			<dependency id="System.Reflection" version="4.1.0" />
+			<dependency id="System.Threading" version="4.0.11" />
+			<dependency id="System.Runtime" version="4.1.0" />
+			<dependency id="System.Linq" version="4.1.0" />
+			<dependency id="Microsoft.CSharp" version="4.0.1" />
+			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
+			<dependency id="MimeKit" version="1.4.0" />
 		</group>
 		<group targetFramework="wpa81">
-			<dependency id="Portable.BouncyCastle" version="1.8.1" />
-			<dependency id="MimeKit" version="1.2.25" />
+			<dependency id="Portable.BouncyCastle" version="1.8.1.1" />
+			<dependency id="MimeKit" version="1.4.0" />
 		</group>
 	</dependencies>
 	</metadata>
