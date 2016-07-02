@@ -10,7 +10,6 @@
   },
   "frameworks": {
     "netstandard1.3": {
-      "imports": [ "dnxcore50" ],
       "buildOptions": {
         "define": [ "COREFX" ],
         "allowUnsafe": true,
