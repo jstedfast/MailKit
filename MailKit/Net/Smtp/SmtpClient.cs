@@ -71,6 +71,15 @@ namespace MailKit.Net.Smtp {
 	public class SmtpClient : MailTransport
 	{
 		static readonly byte[] EndData = Encoding.ASCII.GetBytes ("\r\n.\r\n");
+		static readonly string [] BrokenSmtpServersThatResetStateAfterAuthEhlo = {
+			// Note: Some broken SMTP servers reset their state if they receive an EHLO
+			// command after authenticating even though the specifications explicitly
+			// states that clients SHOULD send EHLO again after authenticating.
+			// See https://github.com/jstedfast/MailKit/issues/162 for details.
+			//
+			// Don't you love non RFC-compliant mail servers?
+			"smtp.strato.de", "smtp.sina.com", "smtp.dm.aliyun.com"
+		};
 		const int MaxLineLength = 998;
 
 		enum SmtpCommand {
@@ -507,6 +516,16 @@ namespace MailKit.Net.Smtp {
 			}
 		}
 
+		static bool IsBrokenSmtpServerThatResetsStateAfterAuthEhlo (string host)
+		{
+			for (int i = 0; i < BrokenSmtpServersThatResetStateAfterAuthEhlo.Length; i++) {
+				if (host.Equals (BrokenSmtpServersThatResetStateAfterAuthEhlo [i], StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
+		}
+
 		/// <summary>
 		/// Authenticates using the supplied credentials.
 		/// </summary>
@@ -626,13 +645,7 @@ namespace MailKit.Net.Smtp {
 				}
 
 				if (response.StatusCode == SmtpStatusCode.AuthenticationSuccessful) {
-					// Note: smtp.strato.de is a broken piece of shit that resets state if it receives
-					// an EHLO command after authenticating even though the specifications explicitly
-					// state that clients SHOULD send EHLO again after authenticating.
-					// See https://github.com/jstedfast/MailKit/issues/162 for details.
-					//
-					// Apparently smtp.sina.com has the same problem. Don't you love non RFC-compliant mail servers?
-					if (host != "smtp.strato.de" && host != "smtp.sina.com")
+					if (!IsBrokenSmtpServerThatResetsStateAfterAuthEhlo (host))
 						Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
