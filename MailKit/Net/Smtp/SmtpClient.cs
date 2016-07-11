@@ -632,7 +632,7 @@ namespace MailKit.Net.Smtp {
 					// See https://github.com/jstedfast/MailKit/issues/162 for details.
 					//
 					// Apparently smtp.sina.com has the same problem. Don't you love non RFC-compliant mail servers?
-					if (host != "smtp.strato.de" && host != "smtp.sina.com")
+					if (host != "smtp.strato.de" && host != "smtp.sina.com" && !host.Equals("smtp.dm.aliyun.com", StringComparison.OrdinalIgnoreCase))
 						Ehlo (cancellationToken);
 					authenticated = true;
 					OnAuthenticated (response.Response);
