@@ -74,7 +74,7 @@ namespace MailKit.Net.Smtp {
 		static readonly string [] BrokenSmtpServersThatResetStateAfterAuthEhlo = {
 			// Note: Some broken SMTP servers reset their state if they receive an EHLO
 			// command after authenticating even though the specifications explicitly
-			// states that clients SHOULD send EHLO again after authenticating.
+			// state that clients SHOULD send EHLO again after authenticating.
 			// See https://github.com/jstedfast/MailKit/issues/162 for details.
 			//
 			// Don't you love non RFC-compliant mail servers?
