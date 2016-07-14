@@ -555,19 +555,30 @@ namespace MailKit.Net.Imap {
 		{
 			var type = ReadNStringToken (engine, format, false, cancellationToken) ?? "application";
 			var token = engine.PeekToken (cancellationToken);
+			string subtype;
 
 			value = null;
 
-			if (engine.IsGMail && token.Type == ImapTokenType.OpenParen) {
-				// Note: GMail's IMAP server implementation breaks when it encounters
-				// nested multiparts with the same boundary and returns a BODYSTRUCTURE
-				// like the example in https://github.com/jstedfast/MailKit/issues/205
-				contentType = null;
-				value = type;
-				return false;
-			}
+			// Note: work around broken IMAP server implementations...
+			if (token.Type == ImapTokenType.OpenParen) {
+				if (engine.IsGMail) {
+					// Note: GMail's IMAP server implementation breaks when it encounters
+					// nested multiparts with the same boundary and returns a BODYSTRUCTURE
+					// like the example in https://github.com/jstedfast/MailKit/issues/205
+					contentType = null;
+					value = type;
+					return false;
+				}
 
-			var subtype = ReadNStringToken (engine, format, false, cancellationToken) ?? string.Empty;
+				// Note: In other IMAP server implementations, such as the one found in
+				// https://github.com/jstedfast/MailKit/issues/371, if the server comes
+				// across something like "Content-Type: X-ZIP", it will only send a
+				// media-subtype token and completely fail to send a media-type token.
+				subtype = type;
+				type = "application";
+			} else {
+				subtype = ReadNStringToken (engine, format, false, cancellationToken) ?? string.Empty;
+			}
 
 			token = engine.ReadToken (cancellationToken);
 
