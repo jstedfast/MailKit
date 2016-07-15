@@ -118,7 +118,7 @@ namespace MailKit.Security.Ntlm {
 				var targetInfoOffset = BitConverterLE.ToUInt16 (message, startIndex + 44);
 
 				if (targetInfoLength > 0 && targetInfoOffset < message.Length && targetInfoLength <= (message.Length - targetInfoOffset)) {
-					TargetInfo = new TargetInfo (message, targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateUnicode) != 0);
+					TargetInfo = new TargetInfo (message, startIndex + targetInfoOffset, targetInfoLength, (Flags & NtlmFlags.NegotiateUnicode) != 0);
 
 					targetInfo = new byte[targetInfoLength];
 					Buffer.BlockCopy (message, startIndex + targetInfoOffset, targetInfo, 0, targetInfoLength);
