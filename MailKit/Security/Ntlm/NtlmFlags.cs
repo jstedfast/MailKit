@@ -32,6 +32,7 @@ namespace MailKit.Security.Ntlm {
 	/// </summary>
 	/// <remarks>
 	/// More details here: http://davenport.sourceforge.net/ntlm.html#theNtlmMessageHeaderLayout
+	/// and at https://msdn.microsoft.com/en-us/library/cc236650.aspx
 	/// </remarks>
 	[Flags]
 	enum NtlmFlags {
@@ -53,7 +54,7 @@ namespace MailKit.Security.Ntlm {
 		/// <summary>
 		/// This flag's usage has not been identified.
 		/// </summary>
-		UnknownFlag1 = 0x00000008,
+		R10 = 0x00000008,
 
 		/// <summary>
 		/// Specifies that authenticated communication between the client and server should carry a digital signature (message integrity).
@@ -77,9 +78,9 @@ namespace MailKit.Security.Ntlm {
 		NegotiateLanManagerKey = 0x00000080,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// This flag is unused and MUST be zero. (r8)
 		/// </summary>
-		NegotiateNetware = 0x00000100,
+		R9 = 0x00000100,
 
 		/// <summary>
 		/// Indicates that NTLM authentication is being used.
@@ -87,9 +88,9 @@ namespace MailKit.Security.Ntlm {
 		NegotiateNtlm = 0x00000200,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// This flag is unused and MUST be zero. (r8)
 		/// </summary>
-		UnknownFlag2 = 0x00000400,
+		R8 = 0x00000400,
 
 		/// <summary>
 		/// Sent by the client in the Type 3 message to indicate that an anonymous
@@ -118,6 +119,7 @@ namespace MailKit.Security.Ntlm {
 		/// for authentication instead of calculating a response to the challenge.
 		/// </summary>
 		NegotiateLocalCall = 0x00004000,
+		R7 = NegotiateLocalCall,
 
 		/// <summary>
 		/// Indicates that authenticated communication between the client and server
@@ -143,6 +145,7 @@ namespace MailKit.Security.Ntlm {
 		/// authentication. Usage is unclear.
 		/// </summary>
 		TargetTypeShare = 0x00040000,
+		R6 = TargetTypeShare,
 
 		/// <summary>
 		/// Indicates that the NTLM2 signing and sealing scheme should be used for
@@ -156,15 +159,15 @@ namespace MailKit.Security.Ntlm {
 		/// <summary>
 		/// This flag's usage has not been identified.
 		/// </summary>
-		RequestInitResponse = 0x00100000,
+		NegotiateIdentify = 0x00100000,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// This flag is unused and MUST be zero. (r5)
 		/// </summary>
-		RequestAcceptResponse = 0x00200000,
+		R5 = 0x00200000,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// Indicates that the LMOWF function should be used to generate a session key.
 		/// </summary>
 		RequestNonNTSessionKey = 0x00400000,
 
@@ -176,29 +179,29 @@ namespace MailKit.Security.Ntlm {
 		NegotiateTargetInfo = 0x00800000,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// This flag is unused and MUST be zero. (r4)
 		/// </summary>
-		UnknownFlag3 = 0x01000000,
+		R4 = 0x01000000,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// Indicates that the version field is present.
 		/// </summary>
-		UnknownFlag4 = 0x02000000,
+		NegotiateVersion = 0x02000000,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// This flag is unused and MUST be zero. (r3)
 		/// </summary>
-		UnknownFlag5 = 0x04000000,
+		R3 = 0x04000000,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// This flag is unused and MUST be zero. (r2)
 		/// </summary>
-		UnknownFlag6 = 0x08000000,
+		R2 = 0x08000000,
 
 		/// <summary>
-		/// This flag's usage has not been identified.
+		/// This flag is unused and MUST be zero. (r1)
 		/// </summary>
-		UnknownFlag7 = 0x10000000,
+		R1 = 0x10000000,
 
 		/// <summary>
 		/// Indicates that 128-bit encryption is supported.
