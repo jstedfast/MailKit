@@ -74,6 +74,9 @@ namespace MailKit.Security.Ntlm {
 
 			if ((type2.Flags & NtlmFlags.NegotiateNtlm2Key) != 0)
 				Flags |= NtlmFlags.NegotiateNtlm2Key;
+
+			if ((type2.Flags & NtlmFlags.NegotiateVersion) != 0)
+				Flags |= NtlmFlags.NegotiateVersion;
 		}
 
 		~Type3Message ()
@@ -193,6 +196,8 @@ namespace MailKit.Security.Ntlm {
 
 		public override byte[] Encode ()
 		{
+			var reqVersion = (type2.Flags & NtlmFlags.NegotiateVersion) != 0;
+			var payloadOffset = 64 + (reqVersion ? 8 : 0);
 			var target = EncodeString (domain);
 			var user = EncodeString (Username);
 			var hostName = EncodeString (host);
@@ -213,10 +218,10 @@ namespace MailKit.Security.Ntlm {
 			var lmResponseLength = lm != null ? lm.Length : 0;
 			var ntResponseLength = ntlm != null ? ntlm.Length : 0;
 
-			var data = PrepareMessage (64 + target.Length + user.Length + hostName.Length + lmResponseLength + ntResponseLength);
+			var data = PrepareMessage (payloadOffset + target.Length + user.Length + hostName.Length + lmResponseLength + ntResponseLength);
 
 			// LM response
-			short lmResponseOffset = (short) (64 + target.Length + user.Length + hostName.Length);
+			short lmResponseOffset = (short) (payloadOffset + target.Length + user.Length + hostName.Length);
 			data[12] = (byte) lmResponseLength;
 			data[13] = (byte) 0x00;
 			data[14] = data[12];
@@ -235,7 +240,7 @@ namespace MailKit.Security.Ntlm {
 
 			// target
 			short domainLength = (short) target.Length;
-			const short domainOffset = 64;
+			short domainOffset = (short) payloadOffset;
 			data[28] = (byte) domainLength;
 			data[29] = (byte) (domainLength >> 8);
 			data[30] = data[28];
@@ -269,10 +274,25 @@ namespace MailKit.Security.Ntlm {
 			data[57] = (byte) (messageLength >> 8);
 
 			// options flags
-			data [60] = (byte) Flags;
-			data [61] = (byte)((uint) Flags >> 8);
-			data [62] = (byte)((uint) Flags >> 16);
-			data [63] = (byte)((uint) Flags >> 24);
+			data[60] = (byte) Flags;
+			data[61] = (byte)((uint) Flags >> 8);
+			data[62] = (byte)((uint) Flags >> 16);
+			data[63] = (byte)((uint) Flags >> 24);
+
+			if (reqVersion) {
+				// encode the Windows version as Windows 10.0
+				data[64] = 0x0A;
+				data[65] = 0x0;
+
+				// encode the ProductBuild version
+				data[66] = (byte) (10586 & 0xff);
+				data[67] = (byte) (10586 >> 8);
+
+				// next 3 bytes are reserved and should remain 0
+
+				// encode the NTLMRevisionCurrent version
+				data[71] = 0x0F;
+			}
 
 			Buffer.BlockCopy (target, 0, data, domainOffset, target.Length);
 			Buffer.BlockCopy (user, 0, data, userOffset, user.Length);
