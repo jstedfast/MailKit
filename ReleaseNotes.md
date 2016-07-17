@@ -1,5 +1,16 @@
 # Release Notes
 
+### MailKit 1.4.1
+
+* Updated the NTLM SASL mechanism to include a Windows OS version in the response if the server
+  requests it (apparently this should only happen if the server is in debug mode).
+* Updated the IMAP BODYSTRUCTURE parser to try and work around BODYSTRUCTURE responses that
+  do not properly encode the mime-type of a part where it only provides the media-subtype token
+  instead of both the media-type and media-subtype tokens. (issue #371)
+* Added smtp.dm.aliyun.com to the list of broken SMTP servers that failed to read the SMTP
+  specifications and improperly reset their state after sending an EHLO command after
+  authenticating (which the specifications explicitly state the clients SHOULD do). (issue #370)
+
 ### MailKit 1.4.0
 
 * Added support for .NET Core 1.0
