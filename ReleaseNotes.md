@@ -123,7 +123,7 @@
 * Fixed ImapFolder.Close() to change the state to Closed even if the IMAP server does not
   support the UNSELECT command.
 * Allow the UIDVALIDITY argument to the COPYUID and APPENDUID resp-codes to be 0 even though
-  that value is llegal. Improves compatibility with SmarterMail. (issue #240)
+  that value is illegal. Improves compatibility with SmarterMail. (issue #240)
 
 ### MailKit 1.2.10
 
@@ -400,7 +400,7 @@ Note: If you are not yet ready to port your iOS application to the Unified API,
 
 * Fixed Pop3Client.GetMessages (int startIndex, int count, ...) to use
   1-based sequence numbers.
-* Fixed POP3 PIPELINING support to work as indtended (issue #114).
+* Fixed POP3 PIPELINING support to work as intended (issue #114).
 * Added a work-around for Office365.com IMAP to avoid
   ImapProtocolExceptions about unexpected '[' tokens when moving or
   copying messages between folders (issue #115).
