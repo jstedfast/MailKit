@@ -291,6 +291,8 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
+			ProcessResponseCodes (ic);
+
 			if (ic.Response != ImapCommandResponse.Ok) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
 					if (ic.RespCodes[i].Type == ImapResponseCodeType.CompressionActive)
@@ -414,6 +416,8 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
+			ProcessResponseCodes (ic);
+
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
 
@@ -472,6 +476,8 @@ namespace MailKit.Net.Imap {
 			var ic = engine.QueueCommand (cancellationToken, null, "ENABLE UTF8=ACCEPT\r\n");
 
 			engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ENABLE", ic);
@@ -606,6 +612,8 @@ namespace MailKit.Net.Imap {
 
 			engine.QueueCommand (ic);
 			engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("ID", ic);
@@ -772,11 +780,21 @@ namespace MailKit.Net.Imap {
 			get { return engine.State == ImapEngineState.Idle; }
 		}
 
+		void ProcessResponseCodes (ImapCommand ic)
+		{
+			for (int i = 0; i < ic.RespCodes.Count; i++) {
+				if (ic.RespCodes[i].Type == ImapResponseCodeType.Alert) {
+					OnAlert (new AlertEventArgs (ic.RespCodes[i].Message));
+					break;
+				}
+			}
+		}
+
 		static AuthenticationException CreateAuthenticationException (ImapCommand ic)
 		{
 			if (string.IsNullOrEmpty (ic.ResponseText)) {
 				for (int i = 0; i < ic.RespCodes.Count; i++) {
-					if (ic.RespCodes[i].IsError)
+					if (ic.RespCodes[i].IsError || ic.RespCodes[i].Type == ImapResponseCodeType.Alert)
 						return new AuthenticationException (ic.RespCodes[i].Message);
 				}
 
@@ -992,8 +1010,15 @@ namespace MailKit.Net.Imap {
 
 				engine.Wait (ic);
 
-				if (ic.Response != ImapCommandResponse.Ok)
-					continue;
+				if (ic.Response != ImapCommandResponse.Ok) {
+					for (int i = 0; i < ic.RespCodes.Count; i++) {
+						if (ic.RespCodes[i].Type != ImapResponseCodeType.Alert)
+							continue;
+
+						OnAlert (new AlertEventArgs (ic.RespCodes[i].Message));
+						throw new ArgumentException (ic.RespCodes[i].Message);
+					}
+				}
 
 				engine.State = ImapEngineState.Authenticated;
 
@@ -1028,6 +1053,8 @@ namespace MailKit.Net.Imap {
 			ic = engine.QueueCommand (cancellationToken, null, "LOGIN %S %S\r\n", cred.UserName, cred.Password);
 
 			engine.Wait (ic);
+
+			ProcessResponseCodes (ic);
 
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw CreateAuthenticationException (ic);
@@ -1279,6 +1306,8 @@ namespace MailKit.Net.Imap {
 
 					engine.Wait (ic);
 
+					ProcessResponseCodes (ic);
+
 					if (ic.Response == ImapCommandResponse.Ok) {
 #if !NETFX_CORE
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
@@ -1440,6 +1469,8 @@ namespace MailKit.Net.Imap {
 
 					engine.Wait (ic);
 
+					ProcessResponseCodes (ic);
+
 					if (ic.Response == ImapCommandResponse.Ok) {
 						var tls = new SslStream (stream, false, ValidateRemoteCertificate);
 #if COREFX
@@ -1496,6 +1527,8 @@ namespace MailKit.Net.Imap {
 					var ic = engine.QueueCommand (cancellationToken, null, "LOGOUT\r\n");
 
 					engine.Wait (ic);
+
+					ProcessResponseCodes (ic);
 				} catch (OperationCanceledException) {
 				} catch (ImapProtocolException) {
 				} catch (ImapCommandException) {
@@ -1679,6 +1712,8 @@ namespace MailKit.Net.Imap {
 
 			engine.Wait (ic);
 
+			ProcessResponseCodes (ic);
+
 			if (ic.Response != ImapCommandResponse.Ok)
 				throw ImapCommandException.Create ("NOOP", ic);
 		}
@@ -1777,6 +1812,8 @@ namespace MailKit.Net.Imap {
 				};
 
 				engine.Wait (ic);
+
+				ProcessResponseCodes (ic);
 
 				if (ic.Response != ImapCommandResponse.Ok)
 					throw ImapCommandException.Create ("IDLE", ic);
