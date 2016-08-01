@@ -19,7 +19,8 @@
             "Security/KeyedHashAlgorithm.cs",
             "Security/RandomNumberGenerator.cs"
           ]
-        }
+        },
+        "keyFile": "mailkit.snk"
       },
       "dependencies": {
         "System.Security.Cryptography.Algorithms": "4.2.0",
