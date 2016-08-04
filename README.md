@@ -146,13 +146,39 @@ simply enter the following command:
 
     Install-Package MailKit
 
-## Building
+## Getting the Source Code
 
-First, you'll need to clone MailKit from my GitHub repository:
+First, you'll need to clone MailKit from my GitHub repository. To do this using the command-line version fo Git,
+you'll need to issue the following commands in your terminal:
 
     git clone https://github.com/jstedfast/MailKit.git
     cd MailKit
     git submodule update --init --recursive
+
+If you are using [TortoiseGit](https://tortoisegit.org) on Windows, you'll need to right-click in the directory
+where you'd like to clone MailKit and select **Git Clone...** in the menu. Once you do that, you'll get the
+following dialog:
+
+![Download the source code using TortoiseGit](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/clone.png)
+
+Fill in the areas outlined in red and then click **OK**. This will recursively clone MailKit onto your local machine.
+
+## Updating the Source Code
+
+Occasionally you might want to update your local copy of the source code if I have made changes to MailKit since you
+downloaded the source code in the step above. To do this using the command-line version fo Git, you'll need to issue
+the following commands in your terminal within the MailKit directory:
+
+    git pull
+    git submodule update
+
+If you are using [TortoiseGit](https://tortoisegit.org) on Windows, you'll need to right-click on the MailKit
+directory and select **Git Sync...** in the menu. Once you do that, you'll need to click the **Pull** and
+**Submodule Update** buttons in the following dialog:
+
+![Update the source code using TortoiseGit](https://github.com/jstedfast/MailKit/blob/master/Documentation/media/update.png)
+
+## Building
 
 In the top-level MailKit source directory, there are three solution files: MailKit.sln, MailKit.Net40.sln and MailKit.Mobile.sln.
 
