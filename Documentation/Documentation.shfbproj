@@ -140,6 +140,16 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="media\clone.png">
+      <ImageId>clone</ImageId>
+      <AlternateText>Clone MailKit source code from GitHub using TortoiseGit.</AlternateText>
+    </Image>
+    <Image Include="media\update.png">
+      <ImageId>update</ImageId>
+      <AlternateText>Update MailKit source code via TortoiseGit using the Pull and Submodule Update buttons.</AlternateText>
+    </Image>
+  </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
 </Project>
